@@ -26,8 +26,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
@@ -91,27 +91,27 @@ public class MoneyWiseData
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.MONEYWISEDATA_NAME.getValue(), DataSet.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDataResource.MONEYWISEDATA_NAME.getValue(), DataSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, MoneyWiseDataType> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, MoneyWiseDataType.class);
+    private static final Map<MetisField, MoneyWiseDataType> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, MoneyWiseDataType.class);
 
     /**
      * DateRange Type Field Id.
      */
-    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
+    public static final MetisField FIELD_DATERANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
 
     /**
      * DefaultCurrency Field Id.
      */
-    public static final JDataField FIELD_DEFCURR = FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
+    public static final MetisField FIELD_DEFCURR = FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
     /**
      * SecurityHoldings Field Id.
      */
-    public static final JDataField FIELD_HOLDINGSMAP = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_HOLDINGSMAP.getValue());
+    public static final MetisField FIELD_HOLDINGSMAP = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_HOLDINGSMAP.getValue());
 
     /**
      * DataSet range.
@@ -157,12 +157,12 @@ public class MoneyWiseData
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_DATERANGE.equals(pField)) {
             return theDateRange;
         }

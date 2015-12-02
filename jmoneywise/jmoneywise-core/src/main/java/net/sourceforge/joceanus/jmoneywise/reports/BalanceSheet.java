@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
@@ -92,7 +92,7 @@ public class BalanceSheet
     /**
      * The Formatter.
      */
-    private final JDataFormatter theFormatter;
+    private final MetisDataFormatter theFormatter;
 
     /**
      * Data Analysis.
@@ -310,7 +310,7 @@ public class BalanceSheet
 
             /* Skip record if incorrect category */
             DepositCategory myCurr = myBucket.getAccountCategory();
-            if (!Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
+            if (!MetisDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
@@ -357,7 +357,7 @@ public class BalanceSheet
 
             /* Skip record if incorrect category */
             CashCategory myCurr = myBucket.getAccountCategory();
-            if (!Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
+            if (!MetisDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
@@ -404,7 +404,7 @@ public class BalanceSheet
 
             /* Skip record if incorrect category */
             LoanCategory myCurr = myBucket.getAccountCategory();
-            if (!Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
+            if (!MetisDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
@@ -511,7 +511,7 @@ public class BalanceSheet
             DepositBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
-            if (!Difference.isEqual(myBucket.getCategory(), myCategory)) {
+            if (!MetisDifference.isEqual(myBucket.getCategory(), myCategory)) {
                 continue;
             }
 
@@ -558,7 +558,7 @@ public class BalanceSheet
             CashBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
-            if (!Difference.isEqual(myBucket.getCategory(), myCategory)) {
+            if (!MetisDifference.isEqual(myBucket.getCategory(), myCategory)) {
                 continue;
             }
 
@@ -605,7 +605,7 @@ public class BalanceSheet
             LoanBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
-            if (!Difference.isEqual(myBucket.getCategory(), myCategory)) {
+            if (!MetisDifference.isEqual(myBucket.getCategory(), myCategory)) {
                 continue;
             }
 

@@ -29,15 +29,15 @@ import java.util.Iterator;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.DateDayCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.RateCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.DateDayCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.RateCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
@@ -94,7 +94,7 @@ public class DepositRateTable
     /**
      * The field manager.
      */
-    private final transient JFieldManager theFieldMgr;
+    private final transient MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -147,7 +147,7 @@ public class DepositRateTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected DepositRateTable(final JFieldManager pFieldMgr,
+    protected DepositRateTable(final MetisFieldManager pFieldMgr,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                final ErrorPanel pError) {
         /* Record the passed details */
@@ -210,7 +210,7 @@ public class DepositRateTable
      */
     protected void setDeposit(final Deposit pDeposit) {
         /* Store the deposit */
-        if (!Difference.isEqual(pDeposit, theDeposit)) {
+        if (!MetisDifference.isEqual(pDeposit, theDeposit)) {
             theDeposit = pDeposit;
             theModel.fireNewDataEvents();
         }
@@ -268,7 +268,7 @@ public class DepositRateTable
         }
 
         @Override
-        public JDataField getFieldForCell(final DepositRate pItem,
+        public MetisField getFieldForCell(final DepositRate pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
@@ -626,7 +626,7 @@ public class DepositRateTable
          * @param pColIndex column index
          * @return the field
          */
-        protected JDataField getFieldForCell(final int pColIndex) {
+        protected MetisField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_RATE:

@@ -43,11 +43,11 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldEnum;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldEnum;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
@@ -74,7 +74,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * @author Tony Washer
  * @param <E> the data type enum class
  */
-public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
+public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         extends JPanel
         implements TethysEventProvider {
     /**
@@ -180,7 +180,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     /**
      * The data entry.
      */
-    private final transient ViewerEntry theDataEntry;
+    private final transient MetisViewerEntry theDataEntry;
 
     /**
      * The selection listener.
@@ -207,8 +207,8 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         theUpdateSet = new UpdateSet<E>(pControl, pClass);
 
         /* Create the top level debug entry for this view */
-        ViewerManager myDataMgr = theControl.getViewerManager();
-        ViewerEntry mySection = theControl.getDataEntry(DataControl.DATA_MAINT);
+        MetisViewerManager myDataMgr = theControl.getViewerManager();
+        MetisViewerEntry mySection = theControl.getDataEntry(DataControl.DATA_MAINT);
         theDataEntry = myDataMgr.newEntry(NLS_DATAENTRY);
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
@@ -405,7 +405,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      */
     public void refreshData() throws OceanusException {
         /* Obtain the active profile */
-        JDataProfile myTask = theControl.getActiveTask();
+        MetisProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("StaticData");
 
         /* Loop through the map */
@@ -613,7 +613,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         @Override
         public void propertyChange(final PropertyChangeEvent pEvent) {
             /* If the panel has changed */
-            if (!Difference.isEqual(theActive, theSelectButton.getValue())) {
+            if (!MetisDifference.isEqual(theActive, theSelectButton.getValue())) {
                 /* Move correct card to front */
                 setSelection(theSelectButton.getDisplayName());
                 showNewButton();

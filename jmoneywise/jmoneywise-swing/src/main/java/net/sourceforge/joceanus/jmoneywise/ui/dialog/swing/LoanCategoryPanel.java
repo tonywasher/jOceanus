@@ -29,11 +29,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
@@ -63,7 +63,7 @@ public class LoanCategoryPanel
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<LoanCategory> theFieldSet;
+    private final transient MetisFieldSet<LoanCategory> theFieldSet;
 
     /**
      * Category Type Button Field.
@@ -81,7 +81,7 @@ public class LoanCategoryPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public LoanCategoryPanel(final JFieldManager pFieldMgr,
+    public LoanCategoryPanel(final MetisFieldManager pFieldMgr,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
                              final ErrorPanel pError) {
         /* Initialise the panel */
@@ -105,9 +105,9 @@ public class LoanCategoryPanel
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(LoanCategory.FIELD_NAME, DataType.STRING, myName);
-        theFieldSet.addFieldElement(LoanCategory.FIELD_SUBCAT, DataType.STRING, mySubName);
-        theFieldSet.addFieldElement(LoanCategory.FIELD_DESC, DataType.STRING, myDesc);
+        theFieldSet.addFieldElement(LoanCategory.FIELD_NAME, MetisDataType.STRING, myName);
+        theFieldSet.addFieldElement(LoanCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
+        theFieldSet.addFieldElement(LoanCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
         theFieldSet.addFieldElement(LoanCategory.FIELD_CATTYPE, LoanCategoryType.class, theTypeButton);
         theFieldSet.addFieldElement(LoanCategory.FIELD_PARENT, LoanCategory.class, theParentButton);
 
@@ -169,9 +169,9 @@ public class LoanCategoryPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        JDataField myField = pUpdate.getField();
+        MetisField myField = pUpdate.getField();
         LoanCategory myCategory = getItem();
 
         /* Process updates */

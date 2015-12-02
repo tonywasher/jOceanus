@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
-import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedListIterator;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
@@ -58,22 +58,22 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
     /**
      * TaxYear field Id.
      */
-    public static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TAXYEAR.getItemName());
+    public static final MetisField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TAXYEAR.getItemName());
 
     /**
      * DateRange field Id.
      */
-    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
+    public static final MetisField FIELD_DATERANGE = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
 
     /**
      * TaxRegime field Id.
      */
-    public static final JDataField FIELD_REGIME = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TAXREGIME.getItemName());
+    public static final MetisField FIELD_REGIME = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TAXREGIME.getItemName());
 
     /**
      * Bad Date Error Text.
@@ -108,7 +108,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
             if (myValue instanceof TethysDate) {
                 setValueTaxYear((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                JDataFormatter myFormatter = getDataSet().getDataFormatter();
+                MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
                 TethysDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueTaxYear(myParser.parseDateDay((String) myValue));
             }
@@ -147,7 +147,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_TAXYEAR.equals(pField)) {
             return true;
@@ -211,7 +211,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * @param pValueSet the valueSet
      * @return the date
      */
-    public static TethysDate getTaxYear(final ValueSet pValueSet) {
+    public static TethysDate getTaxYear(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_TAXYEAR, TethysDate.class);
     }
 
@@ -220,7 +220,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * @param pValueSet the valueSet
      * @return the date range
      */
-    public static TethysDateRange getDateRange(final ValueSet pValueSet) {
+    public static TethysDateRange getDateRange(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DATERANGE, TethysDateRange.class);
     }
 
@@ -229,7 +229,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
      * @param pValueSet the valueSet
      * @return the regime
      */
-    public static TaxRegime getTaxRegime(final ValueSet pValueSet) {
+    public static TaxRegime getTaxRegime(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_REGIME, TaxRegime.class);
     }
 
@@ -331,7 +331,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
         }
 
         /* If the dates differ */
-        int iDiff = Difference.compareObject(getTaxYear(), pThat.getTaxYear());
+        int iDiff = MetisDifference.compareObject(getTaxYear(), pThat.getTaxYear());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -423,7 +423,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
         pushHistory();
 
         /* Update the tax regime if required */
-        if (!Difference.isEqual(getTaxRegime(), myTaxYear.getTaxRegime())) {
+        if (!MetisDifference.isEqual(getTaxRegime(), myTaxYear.getTaxRegime())) {
             setTaxRegime(myTaxYear.getTaxRegime());
         }
 
@@ -440,7 +440,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxYearBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(TaxYearBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE TaxYear list.
@@ -558,7 +558,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
          */
         public TethysDateRange getRange() {
             /* Access the iterator */
-            OrderedListIterator<T> myIterator = listIterator();
+            MetisOrderedListIterator<T> myIterator = listIterator();
             TethysDate myStart = null;
             TethysDate myEnd = null;
 

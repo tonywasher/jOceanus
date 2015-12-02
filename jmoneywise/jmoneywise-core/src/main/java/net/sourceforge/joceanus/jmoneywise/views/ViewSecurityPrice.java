@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
@@ -64,17 +64,17 @@ public class ViewSecurityPrice
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, SecurityPrice.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, SecurityPrice.FIELD_DEFS);
 
     /**
      * Dilution Field Id.
      */
-    public static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DILUTION.getValue());
+    public static final MetisField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DILUTION.getValue());
 
     /**
      * Diluted Price Field Id.
      */
-    public static final JDataField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseViewResource.VIEWPRICE_DILUTEDPRICE.getValue());
+    public static final MetisField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseViewResource.VIEWPRICE_DILUTEDPRICE.getValue());
 
     /**
      * Dilution state.
@@ -101,7 +101,7 @@ public class ViewSecurityPrice
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -132,7 +132,7 @@ public class ViewSecurityPrice
      * @param pValueSet the valueSet
      * @return the dilution
      */
-    public static TethysDilution getDilution(final ValueSet pValueSet) {
+    public static TethysDilution getDilution(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DILUTION, TethysDilution.class);
     }
 
@@ -141,7 +141,7 @@ public class ViewSecurityPrice
      * @param pValueSet the valueSet
      * @return the diluted price
      */
-    public static TethysDilutedPrice getDilutedPrice(final ValueSet pValueSet) {
+    public static TethysDilutedPrice getDilutedPrice(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DILUTEDPRICE, TethysDilutedPrice.class);
     }
 
@@ -232,12 +232,12 @@ public class ViewSecurityPrice
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * The Dilutions field id.
          */
-        public static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_DILUTIONS.getValue());
+        public static final MetisField FIELD_DILUTIONS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_DILUTIONS.getValue());
 
         /**
          * Dilutions list.
@@ -280,7 +280,7 @@ public class ViewSecurityPrice
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -290,7 +290,7 @@ public class ViewSecurityPrice
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return ViewSecurityPrice.FIELD_DEFS;
         }
 
@@ -300,10 +300,10 @@ public class ViewSecurityPrice
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_DILUTIONS.equals(pField)) {
                 return theDilutions.isEmpty()
-                                              ? JDataFieldValue.SKIP
+                                              ? MetisFieldValue.SKIP
                                               : theDilutions;
             }
             return super.getFieldValue(pField);

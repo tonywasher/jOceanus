@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 
 /**
  * DataInfoClass interface.
@@ -33,7 +33,7 @@ public interface DataInfoClass
      * Obtain Data Type.
      * @return the date type
      */
-    DataType getDataType();
+    MetisDataType getDataType();
 
     /**
      * is this a Link?

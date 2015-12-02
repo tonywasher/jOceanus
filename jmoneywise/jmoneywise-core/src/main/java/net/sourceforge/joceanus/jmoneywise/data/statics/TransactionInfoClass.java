@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
@@ -35,97 +35,97 @@ public enum TransactionInfoClass implements DataInfoClass {
     /**
      * Tax Credit.
      */
-    TAXCREDIT(1, 0, DataType.MONEY),
+    TAXCREDIT(1, 0, MetisDataType.MONEY),
 
     /**
      * National Insurance.
      */
-    NATINSURANCE(2, 1, DataType.MONEY),
+    NATINSURANCE(2, 1, MetisDataType.MONEY),
 
     /**
      * Deemed Benefit.
      */
-    DEEMEDBENEFIT(3, 2, DataType.MONEY),
+    DEEMEDBENEFIT(3, 2, MetisDataType.MONEY),
 
     /**
      * Pension.
      */
-    PENSION(4, 3, DataType.MONEY),
+    PENSION(4, 3, MetisDataType.MONEY),
 
     /**
      * QualifyingYears.
      */
-    QUALIFYYEARS(5, 4, DataType.INTEGER),
+    QUALIFYYEARS(5, 4, MetisDataType.INTEGER),
 
     /**
      * CreditDate.
      */
-    CREDITDATE(6, 5, DataType.DATEDAY),
+    CREDITDATE(6, 5, MetisDataType.DATEDAY),
 
     /**
      * Credit Units.
      */
-    CREDITUNITS(7, 6, DataType.UNITS),
+    CREDITUNITS(7, 6, MetisDataType.UNITS),
 
     /**
      * Debit Units.
      */
-    DEBITUNITS(8, 7, DataType.UNITS),
+    DEBITUNITS(8, 7, MetisDataType.UNITS),
 
     /**
      * Dilution.
      */
-    DILUTION(9, 8, DataType.DILUTION),
+    DILUTION(9, 8, MetisDataType.DILUTION),
 
     /**
      * Reference.
      */
-    REFERENCE(10, 9, DataType.STRING),
+    REFERENCE(10, 9, MetisDataType.STRING),
 
     /**
      * Charity Donation.
      */
-    CHARITYDONATION(11, 10, DataType.MONEY),
+    CHARITYDONATION(11, 10, MetisDataType.MONEY),
 
     /**
      * Partner Amount.
      */
-    PARTNERAMOUNT(12, 11, DataType.MONEY),
+    PARTNERAMOUNT(12, 11, MetisDataType.MONEY),
 
     /**
      * ThirdParty.
      */
-    THIRDPARTY(13, 12, DataType.LINK),
+    THIRDPARTY(13, 12, MetisDataType.LINK),
 
     /**
      * Comments.
      */
-    COMMENTS(14, 13, DataType.STRING),
+    COMMENTS(14, 13, MetisDataType.STRING),
 
     /**
      * Price.
      */
-    PRICE(15, 14, DataType.PRICE),
+    PRICE(15, 14, MetisDataType.PRICE),
 
     /**
      * Comments.
      */
-    COMMISSION(16, 15, DataType.MONEY),
+    COMMISSION(16, 15, MetisDataType.MONEY),
 
     /**
      * Grant.
      */
-    OPTIONSGRANT(17, 16, DataType.LINK),
+    OPTIONSGRANT(17, 16, MetisDataType.LINK),
 
     /**
      * TransactionTag.
      */
-    TRANSTAG(18, 17, DataType.LINKSET),
+    TRANSTAG(18, 17, MetisDataType.LINKSET),
 
     /**
      * ExchangeRate.
      */
-    XCHANGERATE(19, 18, DataType.RATIO);
+    XCHANGERATE(19, 18, MetisDataType.RATIO);
 
     /**
      * The String name.
@@ -145,7 +145,7 @@ public enum TransactionInfoClass implements DataInfoClass {
     /**
      * Data Type.
      */
-    private final DataType theDataType;
+    private final MetisDataType theDataType;
 
     /**
      * Constructor.
@@ -155,7 +155,7 @@ public enum TransactionInfoClass implements DataInfoClass {
      */
     TransactionInfoClass(final int uId,
                          final int uOrder,
-                         final DataType pDataType) {
+                         final MetisDataType pDataType) {
         theId = uId;
         theOrder = uOrder;
         theDataType = pDataType;
@@ -172,7 +172,7 @@ public enum TransactionInfoClass implements DataInfoClass {
     }
 
     @Override
-    public DataType getDataType() {
+    public MetisDataType getDataType() {
         return theDataType;
     }
 
@@ -189,7 +189,7 @@ public enum TransactionInfoClass implements DataInfoClass {
 
     @Override
     public boolean isLinkSet() {
-        return theDataType == DataType.LINKSET;
+        return theDataType == MetisDataType.LINKSET;
     }
 
     @Override

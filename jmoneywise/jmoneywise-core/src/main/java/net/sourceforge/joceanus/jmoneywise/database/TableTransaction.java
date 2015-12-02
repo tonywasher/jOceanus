@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jmetis.data.EncryptedData;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -61,7 +61,7 @@ public class TableTransaction
         myTableDef.addIntegerColumn(Transaction.FIELD_PAIR);
         myTableDef.addIntegerColumn(Transaction.FIELD_ACCOUNT);
         myTableDef.addIntegerColumn(Transaction.FIELD_PARTNER);
-        myTableDef.addEncryptedColumn(Transaction.FIELD_AMOUNT, EncryptedData.MONEYLEN);
+        myTableDef.addEncryptedColumn(Transaction.FIELD_AMOUNT, MetisEncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(Transaction.FIELD_CATEGORY, TableTransCategory.TABLE_NAME);
         myTableDef.addBooleanColumn(Transaction.FIELD_RECONCILED);
 
@@ -97,7 +97,7 @@ public class TableTransaction
 
     @Override
     protected void setFieldValue(final Transaction pItem,
-                                 final JDataField iField) throws OceanusException {
+                                 final MetisField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (Transaction.FIELD_DATE.equals(iField)) {

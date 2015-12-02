@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.http.YQLClient;
+import net.sourceforge.joceanus.jmetis.http.MetisHTTPYQLClient;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
@@ -65,7 +65,7 @@ public final class YQLDownloader {
         /* If we have a default currency */
         if (myCurrency != null) {
             /* Protect against exceptions */
-            try (YQLClient myClient = new YQLClient(myData.getDataFormatter())) {
+            try (MetisHTTPYQLClient myClient = new MetisHTTPYQLClient(myData.getDataFormatter())) {
                 /* Build the symbols list */
                 List<String> mySymbols = new ArrayList<String>();
                 Iterator<SpotSecurityPrice> myIterator = pPrices.iterator();
@@ -131,7 +131,7 @@ public final class YQLDownloader {
         /* If we have a default currency */
         if (myCurrency != null) {
             /* Protect against exceptions */
-            try (YQLClient myClient = new YQLClient(myData.getDataFormatter())) {
+            try (MetisHTTPYQLClient myClient = new MetisHTTPYQLClient(myData.getDataFormatter())) {
                 /* Build the currency list */
                 List<Currency> myCurrencies = new ArrayList<Currency>();
                 Iterator<SpotExchangeRate> myIterator = pRates.iterator();

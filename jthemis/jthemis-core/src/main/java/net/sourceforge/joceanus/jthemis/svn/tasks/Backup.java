@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
@@ -86,7 +86,7 @@ public class Backup {
     /**
      * The preference manager.
      */
-    private final PreferenceManager thePreferenceMgr;
+    private final MetisPreferenceManager thePreferenceMgr;
 
     /**
      * The Subversion preferences.
@@ -114,7 +114,7 @@ public class Backup {
      * @param pPrefMgr the preference manager
      */
     public Backup(final ReportStatus pStatus,
-                  final PreferenceManager pPrefMgr) {
+                  final MetisPreferenceManager pPrefMgr) {
         /* Store parameters */
         theStatus = pStatus;
         thePreferenceMgr = pPrefMgr;

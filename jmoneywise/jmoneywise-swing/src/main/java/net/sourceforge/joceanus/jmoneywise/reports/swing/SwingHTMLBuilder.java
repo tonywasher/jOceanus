@@ -29,7 +29,7 @@ import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -105,7 +105,7 @@ public class SwingHTMLBuilder
     /**
      * The field manager.
      */
-    private final JFieldManager theFieldManager;
+    private final MetisFieldManager theFieldManager;
 
     /**
      * Constructor.

@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jthemis.scm.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedList;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchList;
 
 /**
@@ -38,26 +38,26 @@ import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchList;
  * @param <R> the repository data type
  */
 public abstract class ScmComponent<C extends ScmComponent<C, R>, R extends ScmRepository<R>>
-        implements JDataContents, Comparable<C> {
+        implements MetisDataContents, Comparable<C> {
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ScmComponent.class.getSimpleName());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(ScmComponent.class.getSimpleName());
 
     /**
      * Repository field id.
      */
-    private static final JDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+    private static final MetisField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
 
     /**
      * Name field id.
      */
-    private static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+    private static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
 
     /**
      * Branches field id.
      */
-    private static final JDataField FIELD_BRAN = FIELD_DEFS.declareLocalField("Branches");
+    private static final MetisField FIELD_BRAN = FIELD_DEFS.declareLocalField("Branches");
 
     @Override
     public String formatObject() {
@@ -70,7 +70,7 @@ public abstract class ScmComponent<C extends ScmComponent<C, R>, R extends ScmRe
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_REPO.equals(pField)) {
             return theRepository;
@@ -83,7 +83,7 @@ public abstract class ScmComponent<C extends ScmComponent<C, R>, R extends ScmRe
         }
 
         /* Unknown */
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**
@@ -201,17 +201,17 @@ public abstract class ScmComponent<C extends ScmComponent<C, R>, R extends ScmRe
      * @param <R> the repository data type
      */
     public abstract static class ScmComponentList<C extends ScmComponent<C, R>, R extends ScmRepository<R>>
-            extends OrderedList<C>
-            implements JDataContents {
+            extends MetisOrderedList<C>
+            implements MetisDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ScmComponentList.class.getSimpleName());
+        protected static final MetisFields FIELD_DEFS = new MetisFields(ScmComponentList.class.getSimpleName());
 
         /**
          * Size field id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
         @Override
         public String formatObject() {
@@ -219,19 +219,19 @@ public abstract class ScmComponent<C extends ScmComponent<C, R>, R extends ScmRe
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
 
             /* Unknown */
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**

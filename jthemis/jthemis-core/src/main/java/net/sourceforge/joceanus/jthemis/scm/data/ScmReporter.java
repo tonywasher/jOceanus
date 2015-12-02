@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jthemis.scm.data;
 import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ScmStatus;
 
 /**
@@ -100,7 +100,7 @@ public final class ScmReporter {
          * Obtain preference manager.
          * @return the preference manager
          */
-        PreferenceManager getPreferenceMgr();
+        MetisPreferenceManager getPreferenceMgr();
 
         /**
          * Obtain secure manager.

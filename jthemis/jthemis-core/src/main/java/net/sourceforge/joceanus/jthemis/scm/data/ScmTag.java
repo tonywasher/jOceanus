@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jthemis.scm.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedList;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
  * @param <R> the repository data type
  */
 public abstract class ScmTag<T extends ScmTag<T, B, C, R>, B extends ScmBranch<B, C, R>, C extends ScmComponent<C, R>, R extends ScmRepository<R>>
-        implements JDataContents, Comparable<T> {
+        implements MetisDataContents, Comparable<T> {
     /**
      * The tag prefix.
      */
@@ -49,22 +49,22 @@ public abstract class ScmTag<T extends ScmTag<T, B, C, R>, B extends ScmBranch<B
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ScmTag.class.getSimpleName());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(ScmTag.class.getSimpleName());
 
     /**
      * Branch field id.
      */
-    private static final JDataField FIELD_BRAN = FIELD_DEFS.declareEqualityField("Branch");
+    private static final MetisField FIELD_BRAN = FIELD_DEFS.declareEqualityField("Branch");
 
     /**
      * Name field id.
      */
-    private static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+    private static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
 
     /**
      * Project definition field id.
      */
-    private static final JDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
+    private static final MetisField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
 
     @Override
     public String formatObject() {
@@ -77,7 +77,7 @@ public abstract class ScmTag<T extends ScmTag<T, B, C, R>, B extends ScmBranch<B
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_BRAN.equals(pField)) {
             return theBranch;
@@ -90,7 +90,7 @@ public abstract class ScmTag<T extends ScmTag<T, B, C, R>, B extends ScmBranch<B
         }
 
         /* Unknown */
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**
@@ -224,17 +224,17 @@ public abstract class ScmTag<T extends ScmTag<T, B, C, R>, B extends ScmBranch<B
      * @param <R> the repository data type
      */
     public abstract static class ScmTagList<T extends ScmTag<T, B, C, R>, B extends ScmBranch<B, C, R>, C extends ScmComponent<C, R>, R extends ScmRepository<R>>
-            extends OrderedList<T>
-            implements JDataContents {
+            extends MetisOrderedList<T>
+            implements MetisDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ScmTagList.class.getSimpleName());
+        protected static final MetisFields FIELD_DEFS = new MetisFields(ScmTagList.class.getSimpleName());
 
         /**
          * Size field id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
         @Override
         public String formatObject() {
@@ -242,19 +242,19 @@ public abstract class ScmTag<T extends ScmTag<T, B, C, R>, B extends ScmBranch<B
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
 
             /* Unknown */
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**

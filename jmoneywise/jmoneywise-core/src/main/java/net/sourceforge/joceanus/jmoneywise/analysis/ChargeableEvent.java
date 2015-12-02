@@ -24,13 +24,13 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
@@ -42,31 +42,31 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Chargeable event for LifeBonds.
  */
 public final class ChargeableEvent
-        implements OrderedIdItem<Integer>, JDataContents, Comparable<ChargeableEvent> {
+        implements MetisOrderedIdItem<Integer>, MetisDataContents, Comparable<ChargeableEvent> {
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.CHARGE_NAME.getValue());
+    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.CHARGE_NAME.getValue());
 
     /**
      * The Gains field id.
      */
-    private static final JDataField FIELD_GAINS = FIELD_DEFS.declareEqualityField(AnalysisResource.SECURITYATTR_GAINS.getValue());
+    private static final MetisField FIELD_GAINS = FIELD_DEFS.declareEqualityField(AnalysisResource.SECURITYATTR_GAINS.getValue());
 
     /**
      * The Slice field id.
      */
-    private static final JDataField FIELD_SLICE = FIELD_DEFS.declareEqualityField(AnalysisResource.CHARGE_SLICE.getValue());
+    private static final MetisField FIELD_SLICE = FIELD_DEFS.declareEqualityField(AnalysisResource.CHARGE_SLICE.getValue());
 
     /**
      * The Taxation field id.
      */
-    private static final JDataField FIELD_TAXATION = FIELD_DEFS.declareEqualityField(AnalysisResource.CHARGE_TAX.getValue());
+    private static final MetisField FIELD_TAXATION = FIELD_DEFS.declareEqualityField(AnalysisResource.CHARGE_TAX.getValue());
 
     /**
      * The Transaction field id.
      */
-    private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
+    private static final MetisField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
 
     /**
      * The Gains.
@@ -105,7 +105,7 @@ public final class ChargeableEvent
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
@@ -115,7 +115,7 @@ public final class ChargeableEvent
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_GAINS.equals(pField)) {
             return theGains;
         }
@@ -124,13 +124,13 @@ public final class ChargeableEvent
         }
         if (FIELD_TAXATION.equals(pField)) {
             return theTaxation == null
-                                      ? JDataFieldValue.SKIP
+                                      ? MetisFieldValue.SKIP
                                       : theTaxation;
         }
         if (FIELD_TRANS.equals(pField)) {
             return theTransaction;
         }
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**
@@ -235,7 +235,7 @@ public final class ChargeableEvent
         ChargeableEvent myThat = (ChargeableEvent) pThat;
 
         /* Check equality */
-        return Difference.isEqual(getTransaction(), myThat.getTransaction());
+        return MetisDifference.isEqual(getTransaction(), myThat.getTransaction());
     }
 
     @Override
@@ -263,17 +263,17 @@ public final class ChargeableEvent
      * List of ChargeableEvents.
      */
     public static class ChargeableEventList
-            extends OrderedIdList<Integer, ChargeableEvent>
-            implements JDataContents {
+            extends MetisOrderedIdList<Integer, ChargeableEvent>
+            implements MetisDataContents {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.CHARGE_LIST.getValue());
+        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.CHARGE_LIST.getValue());
 
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Constructor.
@@ -311,7 +311,7 @@ public final class ChargeableEvent
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -326,11 +326,11 @@ public final class ChargeableEvent
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**

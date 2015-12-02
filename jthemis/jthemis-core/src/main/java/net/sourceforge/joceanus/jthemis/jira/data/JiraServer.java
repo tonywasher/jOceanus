@@ -30,8 +30,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.http.JiraClient;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.http.MetisHTTPJiraClient;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.JThemisLogicException;
@@ -55,7 +55,7 @@ public class JiraServer {
     /**
      * The Http Client.
      */
-    private final JiraClient theClient;
+    private final MetisHTTPJiraClient theClient;
 
     /**
      * The Security.
@@ -107,7 +107,7 @@ public class JiraServer {
      * @param pManager the preference manager
      * @throws OceanusException on error
      */
-    public JiraServer(final PreferenceManager pManager) throws OceanusException {
+    public JiraServer(final MetisPreferenceManager pManager) throws OceanusException {
         /* Allocate the maps */
         theProjects = new HashMap<String, JiraProject>();
         theIssueLinkTypes = new HashMap<String, JiraIssueLinkType>();
@@ -125,7 +125,7 @@ public class JiraServer {
 
         /* Access the Jira Client */
         String myAuth = myUser + ":" + myPass;
-        theClient = new JiraClient(myBaseUrl, myAuth);
+        theClient = new MetisHTTPJiraClient(myBaseUrl, myAuth);
 
         /* Allocate the security class */
         theSecurity = new JiraSecurity(this);
@@ -147,7 +147,7 @@ public class JiraServer {
      * Obtain the client.
      * @return the client
      */
-    protected JiraClient getClient() {
+    protected MetisHTTPJiraClient getClient() {
         return theClient;
     }
 

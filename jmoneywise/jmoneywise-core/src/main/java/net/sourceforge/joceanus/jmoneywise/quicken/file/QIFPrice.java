@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -101,7 +101,7 @@ public class QIFPrice
      * @param pLine the line
      */
     private QIFPrice(final QIFFile pFile,
-                     final JDataFormatter pFormatter,
+                     final MetisDataFormatter pFormatter,
                      final String pLine) {
         /* Split out the parts */
         String[] myParts = pLine.split(QIF_COMMA);
@@ -130,7 +130,7 @@ public class QIFPrice
      * @param pLines the lines
      */
     protected QIFPrice(final QIFFile pFile,
-                       final JDataFormatter pFormatter,
+                       final MetisDataFormatter pFormatter,
                        final List<String> pLines) {
         /* Build the price list */
         thePrices = new ArrayList<QIFPrice>();
@@ -188,7 +188,7 @@ public class QIFPrice
      * @param pFormatter the formatter
      * @param pBuilder the string builder
      */
-    protected void formatRecord(final JDataFormatter pFormatter,
+    protected void formatRecord(final MetisDataFormatter pFormatter,
                                 final StringBuilder pBuilder) {
         /* Format the security */
         pBuilder.append(QIF_QUOTE);

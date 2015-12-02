@@ -26,8 +26,8 @@ import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.swing.FileSelector;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.swing.MetisFileSelector;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisCancelException;
@@ -49,7 +49,7 @@ public class SubversionRestore
     /**
      * The preference manager.
      */
-    private final PreferenceManager thePreferenceMgr;
+    private final MetisPreferenceManager thePreferenceMgr;
 
     /**
      * The secure manager.
@@ -84,7 +84,7 @@ public class SubversionRestore
         String myPrefix = mySVNPreferences.getStringValue(SubVersionPreferences.NAME_REPO_PFIX);
 
         /* Determine the name of the file to load */
-        FileSelector myDialog = new FileSelector(theStatus.getFrame(), "Select Backup to restore", myBackupDir, myPrefix, GordianZipReadFile.ZIPFILE_EXT);
+        MetisFileSelector myDialog = new MetisFileSelector(theStatus.getFrame(), "Select Backup to restore", myBackupDir, myPrefix, GordianZipReadFile.ZIPFILE_EXT);
         myDialog.showDialog();
         File myFile = myDialog.getSelectedFile();
 

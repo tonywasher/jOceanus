@@ -25,9 +25,9 @@ package net.sourceforge.joceanus.jthemis.git.data;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
@@ -53,17 +53,17 @@ public final class GitTag
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(GitTag.class.getSimpleName(), ScmTag.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(GitTag.class.getSimpleName(), ScmTag.FIELD_DEFS);
 
     /**
      * Repository field id.
      */
-    private static final JDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+    private static final MetisField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
 
     /**
      * Component field id.
      */
-    private static final JDataField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
+    private static final MetisField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
 
     /**
      * Parent Repository.
@@ -115,12 +115,12 @@ public final class GitTag
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_REPO.equals(pField)) {
             return theRepository;
@@ -162,11 +162,11 @@ public final class GitTag
      */
     public static class GitTagList
             extends ScmTagList<GitTag, GitBranch, GitComponent, GitRepository>
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(GitTagList.class.getSimpleName(), ScmTagList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(GitTagList.class.getSimpleName(), ScmTagList.FIELD_DEFS);
 
         /**
          * Parent Component.
@@ -188,7 +188,7 @@ public final class GitTag
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 

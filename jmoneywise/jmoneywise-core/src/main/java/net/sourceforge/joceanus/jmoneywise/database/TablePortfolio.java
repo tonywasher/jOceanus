@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.database;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -86,7 +86,7 @@ public class TablePortfolio
 
     @Override
     protected void setFieldValue(final Portfolio pItem,
-                                 final JDataField iField) throws OceanusException {
+                                 final MetisField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (Portfolio.FIELD_NAME.equals(iField)) {

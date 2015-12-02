@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket;
@@ -58,7 +58,7 @@ public class IncomeExpense
     /**
      * The Formatter.
      */
-    private final JDataFormatter theFormatter;
+    private final MetisDataFormatter theFormatter;
 
     /**
      * Data Analysis.
@@ -174,7 +174,7 @@ public class IncomeExpense
 
             /* Skip record if incorrect category */
             TransactionCategory myCurr = myBucket.getTransactionCategory();
-            if (!Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
+            if (!MetisDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 

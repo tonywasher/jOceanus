@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -51,7 +51,7 @@ public class TableExchangeRate
     /**
      * The formatter.
      */
-    private JDataFormatter theFormatter = null;
+    private MetisDataFormatter theFormatter = null;
 
     /**
      * Constructor.
@@ -97,7 +97,7 @@ public class TableExchangeRate
 
     @Override
     protected void setFieldValue(final ExchangeRate pItem,
-                                 final JDataField iField) throws OceanusException {
+                                 final MetisField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (ExchangeRate.FIELD_DATE.equals(iField)) {

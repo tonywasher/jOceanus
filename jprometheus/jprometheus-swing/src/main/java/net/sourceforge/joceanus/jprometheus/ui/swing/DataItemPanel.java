@@ -28,10 +28,10 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -91,12 +91,12 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * The DataFormatter.
      */
-    private final transient JDataFormatter theFormatter;
+    private final transient MetisDataFormatter theFormatter;
 
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<T> theFieldSet;
+    private final transient MetisFieldSet<T> theFieldSet;
 
     /**
      * The Update Set.
@@ -154,7 +154,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected DataItemPanel(final JFieldManager pFieldMgr,
+    protected DataItemPanel(final MetisFieldManager pFieldMgr,
                             final UpdateSet<E> pUpdateSet,
                             final ErrorPanel pError) {
         /* Store parameters */
@@ -168,7 +168,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theFormatter = pFieldMgr.getDataFormatter();
 
         /* Create the New FieldSet */
-        theFieldSet = new JFieldSet<T>(pFieldMgr);
+        theFieldSet = new MetisFieldSet<T>(pFieldMgr);
 
         /* Create the main panel */
         theMainPanel = new TethysSwingEnablePanel();
@@ -191,7 +191,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Obtain the formatter.
      * @return the formatter
      */
-    protected JDataFormatter getFormatter() {
+    protected MetisDataFormatter getFormatter() {
         return theFormatter;
     }
 
@@ -199,7 +199,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Obtain the field Set.
      * @return the FieldSet
      */
-    protected JFieldSet<T> getFieldSet() {
+    protected MetisFieldSet<T> getFieldSet() {
         return theFieldSet;
     }
 
@@ -403,7 +403,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * @param pUpdate the update
      * @throws OceanusException on error
      */
-    protected abstract void updateField(final FieldUpdate pUpdate) throws OceanusException;
+    protected abstract void updateField(final MetisFieldUpdate pUpdate) throws OceanusException;
 
     /**
      * Obtain the list for a class in base updateSet.
@@ -643,7 +643,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
             /* If this is a field update */
             if (theFieldSetReg.isRelevant(pEvent)) {
                 /* Update the item */
-                FieldUpdate myUpdate = pEvent.getDetails(FieldUpdate.class);
+                MetisFieldUpdate myUpdate = pEvent.getDetails(MetisFieldUpdate.class);
                 updateItem(myUpdate);
             }
         }
@@ -652,7 +652,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
          * Update item.
          * @param pUpdate the update
          */
-        private void updateItem(final FieldUpdate pUpdate) {
+        private void updateItem(final MetisFieldUpdate pUpdate) {
             /* Push history */
             theItem.pushHistory();
 

@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.swing;
 
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.SwingViewerManager;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -39,7 +39,7 @@ public class SwingView
      * @param pProfile the profile
      * @throws OceanusException on error
      */
-    public SwingView(final JDataProfile pProfile) throws OceanusException {
+    public SwingView(final MetisProfile pProfile) throws OceanusException {
         super(JOceanusSwingUtilitySet.createDefault(), pProfile);
     }
 
@@ -49,15 +49,15 @@ public class SwingView
     }
 
     @Override
-    public SwingViewerManager getViewerManager() {
-        return (SwingViewerManager) super.getViewerManager();
+    public MetisSwingViewerManager getViewerManager() {
+        return (MetisSwingViewerManager) super.getViewerManager();
     }
 
     /**
      * Obtain the field manager.
      * @return the field manager
      */
-    public JFieldManager getFieldManager() {
+    public MetisFieldManager getFieldManager() {
         return getUtilitySet().getFieldManager();
     }
 }

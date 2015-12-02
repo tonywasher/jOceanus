@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.views;
 
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -84,7 +84,7 @@ public class View
      * @throws OceanusException on error
      */
     public View(final JOceanusUtilitySet pUtilitySet,
-                final JDataProfile pProfile) throws OceanusException {
+                final MetisProfile pProfile) throws OceanusException {
         /* Call super-constructor */
         super(pUtilitySet, pProfile);
 
@@ -174,7 +174,7 @@ public class View
      */
     public final TransactionAnalyser analyseData(final MoneyWiseData pData) throws OceanusException {
         /* Obtain the active profile */
-        JDataProfile myTask = getActiveTask();
+        MetisProfile myTask = getActiveTask();
         myTask = myTask.startTask("analyseData");
 
         /* Initialise the analysis */
@@ -198,7 +198,7 @@ public class View
     @Override
     protected boolean analyseData(final boolean bPreserve) {
         /* Obtain the active profile */
-        JDataProfile myTask = getActiveTask();
+        MetisProfile myTask = getActiveTask();
         myTask = myTask.startTask("analyseData");
 
         /* Clear the errors */
@@ -226,7 +226,7 @@ public class View
             hasActiveSecurities = theAnalysisMgr.haveActiveSecurities();
 
             /* Update the Data entry */
-            ViewerEntry myData = getDataEntry(DATA_ANALYSIS);
+            MetisViewerEntry myData = getDataEntry(DATA_ANALYSIS);
             myData.setObject(theAnalysisMgr);
 
             /* Access the dilutions */

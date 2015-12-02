@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
@@ -79,7 +79,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @author Tony Washer
  */
 public class TransactionAnalyser
-        implements JDataContents {
+        implements MetisDataContents {
     /**
      * Local Report fields.
      */
@@ -88,12 +88,12 @@ public class TransactionAnalyser
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.ANALYSIS_ANALYSER.getValue());
+    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.ANALYSIS_ANALYSER.getValue());
 
     /**
      * Analysis field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * The Amount Tax threshold for "small" transactions (£3000).
@@ -178,7 +178,7 @@ public class TransactionAnalyser
     /**
      * The profile.
      */
-    private final JDataProfile theProfile;
+    private final MetisProfile theProfile;
 
     /**
      * Constructor for a complete set of accounts.
@@ -187,12 +187,12 @@ public class TransactionAnalyser
      * @param pPreferenceMgr the preference manager
      * @throws OceanusException on error
      */
-    public TransactionAnalyser(final JDataProfile pTask,
+    public TransactionAnalyser(final MetisProfile pTask,
                                final MoneyWiseData pData,
-                               final PreferenceManager pPreferenceMgr) throws OceanusException {
+                               final MetisPreferenceManager pPreferenceMgr) throws OceanusException {
         /* Start a new task */
         theProfile = pTask;
-        JDataProfile myTask = theProfile.startTask("analyseTransactions");
+        MetisProfile myTask = theProfile.startTask("analyseTransactions");
 
         /* Store the parameters */
         theHoldingMap = pData.getSecurityHoldingsMap();
@@ -278,12 +278,12 @@ public class TransactionAnalyser
      * @param pTransactions the edited transactions
      * @throws OceanusException on error
      */
-    public TransactionAnalyser(final JDataProfile pTask,
+    public TransactionAnalyser(final MetisProfile pTask,
                                final Analysis pAnalysis,
                                final TransactionList pTransactions) throws OceanusException {
         /* Start a new task */
         theProfile = pTask;
-        JDataProfile myTask = theProfile.startTask("analyseTransactions");
+        MetisProfile myTask = theProfile.startTask("analyseTransactions");
 
         /* Store the parameters */
         theAnalysis = new Analysis(pAnalysis);
@@ -343,18 +343,18 @@ public class TransactionAnalyser
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
 
         /* Unknown */
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
@@ -384,7 +384,7 @@ public class TransactionAnalyser
      */
     public void postProcessAnalysis() throws OceanusException {
         /* Start a new task */
-        JDataProfile myTask = theProfile.startTask("postProcessAnalysis");
+        MetisProfile myTask = theProfile.startTask("postProcessAnalysis");
         myTask.startTask("markActiveAccounts");
 
         /* Mark relevant accounts */

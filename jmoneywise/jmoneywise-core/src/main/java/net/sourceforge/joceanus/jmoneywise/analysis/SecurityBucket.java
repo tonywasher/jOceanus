@@ -26,13 +26,13 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -58,46 +58,46 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * The Security Bucket class.
  */
 public final class SecurityBucket
-        implements JDataContents, Comparable<SecurityBucket>, OrderedIdItem<Integer> {
+        implements MetisDataContents, Comparable<SecurityBucket>, MetisOrderedIdItem<Integer> {
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.SECURITY_NAME.getValue());
+    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.SECURITY_NAME.getValue());
 
     /**
      * Analysis Field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * SecurityHolding Field Id.
      */
-    private static final JDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.ASSETTYPE_SECURITYHOLDING.getValue());
+    private static final MetisField FIELD_HOLDING = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.ASSETTYPE_SECURITYHOLDING.getValue());
 
     /**
      * Currency Field Id.
      */
-    private static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.CURRENCY.getItemName());
+    private static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * Security Type Field Id.
      */
-    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITYTYPE.getItemName());
+    private static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITYTYPE.getItemName());
 
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * History Field Id.
      */
-    private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
+    private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
 
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, SecurityAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, SecurityAttribute.class);
+    private static final Map<MetisField, SecurityAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, SecurityAttribute.class);
 
     /**
      * The analysis.
@@ -179,7 +179,7 @@ public final class SecurityBucket
                                                             : pHolding.getAssetCurrency();
 
         /* Determine whether we are a foreign currency */
-        isForeignCurrency = !Difference.isEqual(myReportingCurrency, myHoldingCurrency);
+        isForeignCurrency = !MetisDifference.isEqual(myReportingCurrency, myHoldingCurrency);
         Currency myCurrency = AccountBucket.deriveCurrency(myHoldingCurrency);
         Currency myRepCurrency = AccountBucket.deriveCurrency(myReportingCurrency);
 
@@ -274,12 +274,12 @@ public final class SecurityBucket
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
@@ -306,12 +306,12 @@ public final class SecurityBucket
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                        ? myValue
-                                                       : JDataFieldValue.SKIP;
+                                                       : MetisFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
@@ -518,7 +518,7 @@ public final class SecurityBucket
         /* Return the value */
         return (myValue != null)
                                 ? myValue
-                                : JDataFieldValue.SKIP;
+                                : MetisFieldValue.SKIP;
     }
 
     /**
@@ -526,7 +526,7 @@ public final class SecurityBucket
      * @param pField the field
      * @return the class
      */
-    private static SecurityAttribute getClassForField(final JDataField pField) {
+    private static SecurityAttribute getClassForField(final MetisField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -552,7 +552,7 @@ public final class SecurityBucket
         }
 
         /* Check the portfolio */
-        int iDiff = Difference.compareObject(getPortfolio(), pThat.getPortfolio());
+        int iDiff = MetisDifference.compareObject(getPortfolio(), pThat.getPortfolio());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -865,23 +865,23 @@ public final class SecurityBucket
      * SecurityBucket list class.
      */
     public static class SecurityBucketList
-            extends OrderedIdList<Integer, SecurityBucket>
-            implements JDataContents {
+            extends MetisOrderedIdList<Integer, SecurityBucket>
+            implements MetisDataContents {
 
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.SECURITY_LIST.getValue());
+        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.SECURITY_LIST.getValue());
 
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * The analysis.
@@ -990,7 +990,7 @@ public final class SecurityBucket
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -1000,14 +1000,14 @@ public final class SecurityBucket
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**

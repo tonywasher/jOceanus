@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jprometheus.swing;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.SwingViewerManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.swing.JFieldPreferences;
@@ -43,12 +43,12 @@ public class JOceanusSwingUtilitySet
     /**
      * Viewer Manager.
      */
-    private final SwingViewerManager theViewerManager;
+    private final MetisSwingViewerManager theViewerManager;
 
     /**
      * Field Manager.
      */
-    private final JFieldManager theFieldManager;
+    private final MetisFieldManager theFieldManager;
 
     /**
      * Field Preferences.
@@ -69,7 +69,7 @@ public class JOceanusSwingUtilitySet
      * @throws OceanusException on error
      */
     public JOceanusSwingUtilitySet(final GordianParameters pParameters) throws OceanusException {
-        this(pParameters, new PreferenceManager());
+        this(pParameters, new MetisPreferenceManager());
     }
 
     /**
@@ -79,7 +79,7 @@ public class JOceanusSwingUtilitySet
      * @throws OceanusException on error
      */
     public JOceanusSwingUtilitySet(final GordianParameters pParameters,
-                                   final PreferenceManager pPrefMgr) throws OceanusException {
+                                   final MetisPreferenceManager pPrefMgr) throws OceanusException {
         /* Create secure manager */
         super(new GordianSwingHashManager(pParameters), pPrefMgr);
 
@@ -87,10 +87,10 @@ public class JOceanusSwingUtilitySet
         theFieldPreferences = pPrefMgr.getPreferenceSet(JFieldPreferences.class);
 
         /* Allocate the FieldManager */
-        theFieldManager = new JFieldManager(theFieldPreferences.getConfiguration());
+        theFieldManager = new MetisFieldManager(theFieldPreferences.getConfiguration());
 
         /* Create components */
-        theViewerManager = new SwingViewerManager(theFieldManager);
+        theViewerManager = new MetisSwingViewerManager(theFieldManager);
 
         /* Create listener */
         new PreferenceListener();
@@ -103,7 +103,7 @@ public class JOceanusSwingUtilitySet
      */
     public static JOceanusSwingUtilitySet createDefault() throws OceanusException {
         /* Preference Manager */
-        PreferenceManager myPrefMgr = new PreferenceManager();
+        MetisPreferenceManager myPrefMgr = new MetisPreferenceManager();
 
         /* Access security preferences */
         SecurityPreferences myPrefs = myPrefMgr.getPreferenceSet(SecurityPreferences.class);
@@ -113,7 +113,7 @@ public class JOceanusSwingUtilitySet
     }
 
     @Override
-    public SwingViewerManager getViewerManager() {
+    public MetisSwingViewerManager getViewerManager() {
         return theViewerManager;
     }
 
@@ -121,7 +121,7 @@ public class JOceanusSwingUtilitySet
      * Obtain the field manager.
      * @return the field manager
      */
-    public JFieldManager getFieldManager() {
+    public MetisFieldManager getFieldManager() {
         return theFieldManager;
     }
 

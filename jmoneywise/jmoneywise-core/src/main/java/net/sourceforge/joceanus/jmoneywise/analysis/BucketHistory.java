@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  */
 public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
         extends LinkedHashMap<Integer, BucketSnapShot<T, E>>
-        implements JDataFormat {
+        implements MetisDataFormat {
     /**
      * Serial Id.
      */

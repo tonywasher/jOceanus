@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedString;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedString;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoLinkSet;
@@ -60,17 +60,17 @@ public class TransactionTag
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
+    public static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
+    public static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
 
     /**
      * New Tag name.
@@ -134,7 +134,7 @@ public class TransactionTag
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -149,7 +149,7 @@ public class TransactionTag
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_NAME.equals(pField)) {
             return true;
@@ -182,7 +182,7 @@ public class TransactionTag
      * Obtain Encrypted Name Field.
      * @return the Field
      */
-    private EncryptedString getNameField() {
+    private MetisEncryptedString getNameField() {
         return getNameField(getValueSet());
     }
 
@@ -206,7 +206,7 @@ public class TransactionTag
      * Obtain Encrypted Description Field.
      * @return the Field
      */
-    private EncryptedString getDescField() {
+    private MetisEncryptedString getDescField() {
         return getDescField(getValueSet());
     }
 
@@ -215,7 +215,7 @@ public class TransactionTag
      * @param pValueSet the valueSet
      * @return the Name
      */
-    public static String getName(final EncryptedValueSet pValueSet) {
+    public static String getName(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_NAME, String.class);
     }
 
@@ -224,7 +224,7 @@ public class TransactionTag
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getNameBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getNameBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_NAME);
     }
 
@@ -233,8 +233,8 @@ public class TransactionTag
      * @param pValueSet the valueSet
      * @return the field
      */
-    private static EncryptedString getNameField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_NAME, EncryptedString.class);
+    private static MetisEncryptedString getNameField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_NAME, MetisEncryptedString.class);
     }
 
     /**
@@ -242,7 +242,7 @@ public class TransactionTag
      * @param pValueSet the valueSet
      * @return the description
      */
-    public static String getDesc(final EncryptedValueSet pValueSet) {
+    public static String getDesc(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
     }
 
@@ -251,7 +251,7 @@ public class TransactionTag
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getDescBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getDescBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
     }
 
@@ -260,8 +260,8 @@ public class TransactionTag
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static EncryptedString getDescField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, EncryptedString.class);
+    private static MetisEncryptedString getDescField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DESC, MetisEncryptedString.class);
     }
 
     /**
@@ -286,7 +286,7 @@ public class TransactionTag
      * Set name value.
      * @param pValue the value
      */
-    private void setValueName(final EncryptedString pValue) {
+    private void setValueName(final MetisEncryptedString pValue) {
         getValueSet().setValue(FIELD_NAME, pValue);
     }
 
@@ -312,7 +312,7 @@ public class TransactionTag
      * Set description value.
      * @param pValue the value
      */
-    private void setValueDesc(final EncryptedString pValue) {
+    private void setValueDesc(final MetisEncryptedString pValue) {
         getValueSet().setValue(FIELD_DESC, pValue);
     }
 
@@ -351,7 +351,7 @@ public class TransactionTag
         }
 
         /* Check the names */
-        int iDiff = Difference.compareObject(getName(), pThat.getName());
+        int iDiff = MetisDifference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -435,12 +435,12 @@ public class TransactionTag
         pushHistory();
 
         /* Update the Name if required */
-        if (!Difference.isEqual(getName(), myTag.getName())) {
+        if (!MetisDifference.isEqual(getName(), myTag.getName())) {
             setValueName(myTag.getNameField());
         }
 
         /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), myTag.getDesc())) {
+        if (!MetisDifference.isEqual(getDesc(), myTag.getDesc())) {
             setValueDesc(myTag.getDescField());
         }
 
@@ -463,7 +463,7 @@ public class TransactionTag
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE Tag list.
@@ -483,7 +483,7 @@ public class TransactionTag
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -493,7 +493,7 @@ public class TransactionTag
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return TransactionTag.FIELD_DEFS;
         }
 

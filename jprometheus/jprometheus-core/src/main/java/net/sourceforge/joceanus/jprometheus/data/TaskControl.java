@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jprometheus.data;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 
 /**
  * Status control interface for use by threads to report status and to detect cancellation.
@@ -89,7 +89,7 @@ public interface TaskControl<T extends DataSet<T, ?>> {
      * Access the data formatter.
      * @return the data formatter
      */
-    JDataFormatter getDataFormatter();
+    MetisDataFormatter getDataFormatter();
 
     /**
      * Is the task cancelled?
@@ -102,17 +102,17 @@ public interface TaskControl<T extends DataSet<T, ?>> {
      * @param pTask the name of the task
      * @return the new profile
      */
-    JDataProfile getNewProfile(final String pTask);
+    MetisProfile getNewProfile(final String pTask);
 
     /**
      * Obtain the active profile.
      * @return the active profile
      */
-    JDataProfile getActiveProfile();
+    MetisProfile getActiveProfile();
 
     /**
      * Obtain the active task.
      * @return the active task
      */
-    JDataProfile getActiveTask();
+    MetisProfile getActiveTask();
 }

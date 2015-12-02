@@ -27,13 +27,13 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * @param <T> the account data type
  */
 public abstract class AccountBucket<T extends AssetBase<T>>
-        implements JDataContents, Comparable<AccountBucket<T>>, OrderedIdItem<Integer> {
+        implements MetisDataContents, Comparable<AccountBucket<T>>, MetisOrderedIdItem<Integer> {
     /**
      * Default currency.
      */
@@ -60,32 +60,32 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucket.class.getSimpleName());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(AccountBucket.class.getSimpleName());
 
     /**
      * Analysis Field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Account Field Id.
      */
-    private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_ACCOUNT.getValue());
+    private static final MetisField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_ACCOUNT.getValue());
 
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * History Field Id.
      */
-    private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
+    private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
 
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, AccountAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
+    private static final Map<MetisField, AccountAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
 
     /**
      * Totals bucket name.
@@ -146,7 +146,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                                                             : pAccount.getAssetCurrency();
 
         /* Determine whether we are a foreign currency */
-        isForeignCurrency = !Difference.isEqual(myReportingCurrency, myAccountCurrency);
+        isForeignCurrency = !MetisDifference.isEqual(myReportingCurrency, myAccountCurrency);
         Currency myCurrency = deriveCurrency(myAccountCurrency);
         Currency myRepCurrency = deriveCurrency(myReportingCurrency);
 
@@ -229,7 +229,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
@@ -250,12 +250,12 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                        ? myValue
-                                                       : JDataFieldValue.SKIP;
+                                                       : MetisFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
@@ -443,7 +443,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         /* Return the value */
         return (myValue != null)
                                 ? myValue
-                                : JDataFieldValue.SKIP;
+                                : MetisFieldValue.SKIP;
     }
 
     /**
@@ -451,7 +451,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @param pField the field
      * @return the class
      */
-    private static AccountAttribute getClassForField(final JDataField pField) {
+    private static AccountAttribute getClassForField(final MetisField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -689,22 +689,22 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @param <T> the account data type
      */
     public abstract static class AccountBucketList<B extends AccountBucket<T>, T extends AssetBase<T>>
-            extends OrderedIdList<Integer, B>
-            implements JDataContents {
+            extends MetisOrderedIdList<Integer, B>
+            implements MetisDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucketList.class.getSimpleName());
+        protected static final MetisFields FIELD_DEFS = new MetisFields(AccountBucketList.class.getSimpleName());
 
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * The analysis.
@@ -729,14 +729,14 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**

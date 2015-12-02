@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -81,7 +81,7 @@ public abstract class SpreadSheet<T extends DataSet<T, ?>> {
     public void createBackup(final TaskControl<T> pTask,
                              final T pData,
                              final File pFile,
-                             final WorkBookType pType) throws OceanusException {
+                             final MetisWorkBookType pType) throws OceanusException {
         /* Create a sheet writer object */
         SheetWriter<T> myWriter = getSheetWriter(pTask);
 

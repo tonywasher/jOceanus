@@ -23,10 +23,10 @@
 package net.sourceforge.joceanus.jprometheus.threads;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
@@ -84,7 +84,7 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
         theStatusBar = pStatusBar;
 
         /* Access the threadStatus properties */
-        PreferenceManager myMgr = theControl.getPreferenceManager();
+        MetisPreferenceManager myMgr = theControl.getPreferenceManager();
         ThreadStatusPreferences myPreferences = myMgr.getPreferenceSet(ThreadStatusPreferences.class);
         theSteps = myPreferences.getIntegerValue(ThreadStatusPreferences.NAME_REPSTEPS);
 
@@ -116,17 +116,17 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public JDataProfile getNewProfile(final String pTask) {
+    public MetisProfile getNewProfile(final String pTask) {
         return theControl.getNewProfile(pTask);
     }
 
     @Override
-    public JDataProfile getActiveProfile() {
+    public MetisProfile getActiveProfile() {
         return theControl.getActiveProfile();
     }
 
     @Override
-    public JDataProfile getActiveTask() {
+    public MetisProfile getActiveTask() {
         return theControl.getActiveTask();
     }
 
@@ -136,7 +136,7 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public JDataFormatter getDataFormatter() {
+    public MetisDataFormatter getDataFormatter() {
         return theControl.getDataFormatter();
     }
 
@@ -272,7 +272,7 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
      * ThreadStatus Preferences.
      */
     public static final class ThreadStatusPreferences
-            extends PreferenceSet {
+            extends MetisPreferenceSet {
         /**
          * Registry name for Reporting Steps.
          */

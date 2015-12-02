@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Date;
 
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedField;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedField;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -63,27 +63,27 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAINFO_NAME.getValue(), EncryptedItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAINFO_NAME.getValue(), EncryptedItem.FIELD_DEFS);
 
     /**
      * InfoType Field Id.
      */
-    public static final JDataField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAINFO_TYPE.getValue());
+    public static final MetisField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAINFO_TYPE.getValue());
 
     /**
      * Owner Field Id.
      */
-    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAINFO_OWNER.getValue());
+    public static final MetisField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAINFO_OWNER.getValue());
 
     /**
      * Value Field Id.
      */
-    public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAINFO_VALUE.getValue());
+    public static final MetisField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAINFO_VALUE.getValue());
 
     /**
      * Link Field Id.
      */
-    public static final JDataField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAINFO_LINK.getValue());
+    public static final MetisField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAINFO_LINK.getValue());
 
     /**
      * Invalid Data Type Error.
@@ -198,12 +198,12 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean skipField(final JDataField pField) {
+    public boolean skipField(final MetisField pField) {
         if ((FIELD_LINK.equals(pField)) && !isInfoLink()) {
             return true;
         }
@@ -219,7 +219,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      */
     private boolean isInfoLink() {
         /* Access Info Class Value */
-        EncryptedValueSet myValues = getValueSet();
+        MetisEncryptedValueSet myValues = getValueSet();
         Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
         if (!(myType instanceof StaticData)) {
             return false;
@@ -232,7 +232,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     @Override
     public String toString() {
         /* Access Info Type Value */
-        EncryptedValueSet myValues = getValueSet();
+        MetisEncryptedValueSet myValues = getValueSet();
         Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
         if (!(myType instanceof StaticData)) {
             return super.formatObject();
@@ -248,7 +248,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     @Override
     public String formatObject() {
         /* Access Info Type Value */
-        EncryptedValueSet myValues = getValueSet();
+        MetisEncryptedValueSet myValues = getValueSet();
         Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
         if (!(myType instanceof StaticData)) {
             return super.formatObject();
@@ -258,7 +258,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         I myInfoType = getInfoType();
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
         S myInfoClass = myInfoType.getStaticClass();
 
         /* Switch on type of Data */
@@ -345,7 +345,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Obtain Value as underlying object.
      * @return the Value
      */
-    public EncryptedField<?> getField() {
+    public MetisEncryptedField<?> getField() {
         return getField(getValueSet());
     }
 
@@ -364,7 +364,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pClass the class of the infoType
      * @return the Info types
      */
-    protected static <X> X getInfoType(final ValueSet pValueSet,
+    protected static <X> X getInfoType(final MetisValueSet pValueSet,
                                        final Class<X> pClass) {
         return pValueSet.getValue(FIELD_INFOTYPE, pClass);
     }
@@ -376,7 +376,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pClass the class of the owner
      * @return the Owner
      */
-    protected static <X> X getOwner(final ValueSet pValueSet,
+    protected static <X> X getOwner(final MetisValueSet pValueSet,
                                     final Class<X> pClass) {
         return pValueSet.getValue(FIELD_OWNER, pClass);
     }
@@ -386,7 +386,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pValueSet the valueSet
      * @return the Bytes
      */
-    public static byte[] getValueBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getValueBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_VALUE);
     }
 
@@ -397,7 +397,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pClass the object class
      * @return the Value
      */
-    public static <X> X getValue(final EncryptedValueSet pValueSet,
+    public static <X> X getValue(final MetisEncryptedValueSet pValueSet,
                                  final Class<X> pClass) {
         return pValueSet.isDeletion()
                                      ? null
@@ -409,10 +409,10 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pValueSet the valueSet
      * @return the Value
      */
-    public static EncryptedField<?> getField(final EncryptedValueSet pValueSet) {
+    public static MetisEncryptedField<?> getField(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.isDeletion()
                                      ? null
-                                     : pValueSet.getValue(FIELD_VALUE, EncryptedField.class);
+                                     : pValueSet.getValue(FIELD_VALUE, MetisEncryptedField.class);
     }
 
     /**
@@ -422,7 +422,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pClass the class of the link
      * @return the Link
      */
-    public static <X extends DataItem<?>> X getLink(final ValueSet pValueSet,
+    public static <X extends DataItem<?>> X getLink(final MetisValueSet pValueSet,
                                                     final Class<X> pClass) {
         return pValueSet.isDeletion()
                                      ? null
@@ -434,7 +434,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pValueSet the valueSet
      * @return the Link
      */
-    protected static Object getLink(final ValueSet pValueSet) {
+    protected static Object getLink(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_LINK, Object.class);
     }
 
@@ -500,8 +500,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Set value.
      * @param pValue the value
      */
-    protected void setValueValue(final EncryptedField<?> pValue) {
-        ValueSet myValues = getValueSet();
+    protected void setValueValue(final MetisEncryptedField<?> pValue) {
+        MetisValueSet myValues = getValueSet();
         myValues.setDeletion(false);
         myValues.setValue(FIELD_VALUE, pValue);
     }
@@ -523,7 +523,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pLink the link
      */
     protected void setValueLink(final DataItem<?> pLink) {
-        ValueSet myValues = getValueSet();
+        MetisValueSet myValues = getValueSet();
         myValues.setDeletion(false);
         myValues.setValue(FIELD_LINK, pLink);
     }
@@ -533,7 +533,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pId the linkId
      */
     private void setValueLink(final Integer pId) {
-        ValueSet myValues = getValueSet();
+        MetisValueSet myValues = getValueSet();
         myValues.setValue(FIELD_LINK, pId);
     }
 
@@ -542,7 +542,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param pName the linkName
      */
     protected void setValueLink(final String pName) {
-        ValueSet myValues = getValueSet();
+        MetisValueSet myValues = getValueSet();
         myValues.setValue(FIELD_LINK, pName);
     }
 
@@ -575,7 +575,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
 
         /* Access the DataSet and parser */
         DataSet<?, ?> myDataSet = getDataSet();
-        JDataFormatter myFormatter = myDataSet.getDataFormatter();
+        MetisDataFormatter myFormatter = myDataSet.getDataFormatter();
         TethysDecimalParser myParser = myFormatter.getDecimalParser();
 
         /* Switch on Info Class */
@@ -662,7 +662,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @return is value valid true/false
      * @throws OceanusException on error
      */
-    private boolean setIntegerValue(final JDataFormatter pFormatter,
+    private boolean setIntegerValue(final MetisDataFormatter pFormatter,
                                     final Object pValue) throws OceanusException {
         try {
             /* Handle various forms */
@@ -931,7 +931,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAINFO_LIST.getValue(), DataList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAINFO_LIST.getValue(), DataList.FIELD_DEFS);
 
         /**
          * Construct a generic data info list.
@@ -956,7 +956,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 

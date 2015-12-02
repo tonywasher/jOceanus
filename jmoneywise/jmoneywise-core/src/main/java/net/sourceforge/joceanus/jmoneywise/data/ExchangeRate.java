@@ -29,13 +29,13 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
@@ -73,30 +73,30 @@ public class ExchangeRate
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS
+    public static final MetisField FIELD_DATE = FIELD_DEFS
             .declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * From Currency Field Id.
      */
-    public static final JDataField FIELD_FROM = FIELD_DEFS
+    public static final MetisField FIELD_FROM = FIELD_DEFS
             .declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_FROM.getValue());
 
     /**
      * To Currency Field Id.
      */
-    public static final JDataField FIELD_TO = FIELD_DEFS
+    public static final MetisField FIELD_TO = FIELD_DEFS
             .declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_TO.getValue());
 
     /**
      * Rate Type Field Id.
      */
-    public static final JDataField FIELD_RATE = FIELD_DEFS
+    public static final MetisField FIELD_RATE = FIELD_DEFS
             .declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_RATE.getValue());
 
     /**
@@ -140,7 +140,7 @@ public class ExchangeRate
         super(pList, pValues);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -195,7 +195,7 @@ public class ExchangeRate
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -212,7 +212,7 @@ public class ExchangeRate
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_DATE.equals(pField)) {
             return true;
@@ -323,7 +323,7 @@ public class ExchangeRate
      * @param pValueSet the valueSet
      * @return the Date
      */
-    public static TethysDate getDate(final ValueSet pValueSet) {
+    public static TethysDate getDate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DATE, TethysDate.class);
     }
 
@@ -332,7 +332,7 @@ public class ExchangeRate
      * @param pValueSet the valueSet
      * @return the currency
      */
-    public static AssetCurrency getFromCurrency(final ValueSet pValueSet) {
+    public static AssetCurrency getFromCurrency(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_FROM, AssetCurrency.class);
     }
 
@@ -341,7 +341,7 @@ public class ExchangeRate
      * @param pValueSet the valueSet
      * @return the currency
      */
-    public static AssetCurrency getToCurrency(final ValueSet pValueSet) {
+    public static AssetCurrency getToCurrency(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_TO, AssetCurrency.class);
     }
 
@@ -350,7 +350,7 @@ public class ExchangeRate
      * @param pValueSet the valueSet
      * @return the rate
      */
-    public static TethysRatio getExchangeRate(final ValueSet pValueSet) {
+    public static TethysRatio getExchangeRate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_RATE, TethysRatio.class);
     }
 
@@ -452,20 +452,20 @@ public class ExchangeRate
         }
 
         /* Check the date */
-        int iDiff = Difference.compareObject(getDate(), pThat.getDate());
+        int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             /* Sort in reverse date order !! */
             return -iDiff;
         }
 
         /* Check the from currency */
-        iDiff = Difference.compareObject(getFromCurrency(), pThat.getFromCurrency());
+        iDiff = MetisDifference.compareObject(getFromCurrency(), pThat.getFromCurrency());
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* Check the to currency */
-        iDiff = Difference.compareObject(getToCurrency(), pThat.getToCurrency());
+        iDiff = MetisDifference.compareObject(getToCurrency(), pThat.getToCurrency());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -612,22 +612,22 @@ public class ExchangeRate
         pushHistory();
 
         /* Update the Date if required */
-        if (!Difference.isEqual(getDate(), myRate.getDate())) {
+        if (!MetisDifference.isEqual(getDate(), myRate.getDate())) {
             setValueDate(myRate.getDate());
         }
 
         /* Update the from currency if required */
-        if (!Difference.isEqual(getFromCurrency(), myRate.getFromCurrency())) {
+        if (!MetisDifference.isEqual(getFromCurrency(), myRate.getFromCurrency())) {
             setValueFromCurrency(myRate.getFromCurrency());
         }
 
         /* Update the to currency if required */
-        if (!Difference.isEqual(getToCurrency(), myRate.getToCurrency())) {
+        if (!MetisDifference.isEqual(getToCurrency(), myRate.getToCurrency())) {
             setValueToCurrency(myRate.getToCurrency());
         }
 
         /* Update the rate if required */
-        if (!Difference.isEqual(getExchangeRate(), myRate.getExchangeRate())) {
+        if (!MetisDifference.isEqual(getExchangeRate(), myRate.getExchangeRate())) {
             setValueExchangeRate(myRate.getExchangeRate());
         }
 
@@ -682,12 +682,12 @@ public class ExchangeRate
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * Default Field Id.
          */
-        private static final JDataField FIELD_DEFAULT = FIELD_DEFS
+        private static final MetisField FIELD_DEFAULT = FIELD_DEFS
                 .declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
         /**
@@ -712,12 +712,12 @@ public class ExchangeRate
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_DEFAULT.equals(pField)) {
                 return theDefault;
@@ -741,7 +741,7 @@ public class ExchangeRate
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return ExchangeRate.FIELD_DEFS;
         }
 
@@ -942,23 +942,23 @@ public class ExchangeRate
      * @param <T> the data type
      */
     public static class ExchangeRateDataMap<T extends ExchangeRate>
-            implements DataMapItem<T, MoneyWiseDataType>, JDataContents {
+            implements DataMapItem<T, MoneyWiseDataType>, MetisDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
+        protected static final MetisFields FIELD_DEFS = new MetisFields(
                 MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
 
         /**
          * CategoryMap Field Id.
          */
-        public static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS
+        public static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS
                 .declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
 
         /**
          * RateMap Field Id.
          */
-        private static final JDataField FIELD_MAPOFRATES = FIELD_DEFS
+        private static final MetisField FIELD_MAPOFRATES = FIELD_DEFS
                 .declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_MAP_MAPOFRATES.getValue());
 
         /**
@@ -981,12 +981,12 @@ public class ExchangeRate
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_MAPOFMAPS.equals(pField)) {
                 return theMapOfMaps;
@@ -996,7 +996,7 @@ public class ExchangeRate
             }
 
             /* Unknown */
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         @Override
@@ -1127,7 +1127,7 @@ public class ExchangeRate
          */
         private static final class RateList
                 extends ArrayList<ExchangeRate>
-                implements JDataContents {
+                implements MetisDataContents {
             /**
              * Serial Id.
              */
@@ -1136,12 +1136,12 @@ public class ExchangeRate
             /**
              * Report fields.
              */
-            private static final JDataFields FIELD_DEFS = new JDataFields(RateList.class.getSimpleName());
+            private static final MetisFields FIELD_DEFS = new MetisFields(RateList.class.getSimpleName());
 
             /**
              * Size Field Id.
              */
-            private static final JDataField FIELD_SIZE = FIELD_DEFS
+            private static final MetisField FIELD_SIZE = FIELD_DEFS
                     .declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
             /**
@@ -1158,16 +1158,16 @@ public class ExchangeRate
             }
 
             @Override
-            public JDataFields getDataFields() {
+            public MetisFields getDataFields() {
                 return FIELD_DEFS;
             }
 
             @Override
-            public Object getFieldValue(final JDataField pField) {
+            public Object getFieldValue(final MetisField pField) {
                 if (FIELD_SIZE.equals(pField)) {
                     return size();
                 }
-                return JDataFieldValue.UNKNOWN;
+                return MetisFieldValue.UNKNOWN;
             }
 
             @Override

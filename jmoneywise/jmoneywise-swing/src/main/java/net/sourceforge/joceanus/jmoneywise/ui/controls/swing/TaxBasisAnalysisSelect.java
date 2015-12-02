@@ -33,8 +33,8 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldElement;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
@@ -122,8 +122,8 @@ public class TaxBasisAnalysisSelect
         theEventManager = new TethysEventManager();
 
         /* Create the labels */
-        JLabel myBasisLabel = new JLabel(NLS_BASIS + JFieldElement.STR_COLON);
-        JLabel myAccountLabel = new JLabel(NLS_ACCOUNT + JFieldElement.STR_COLON);
+        JLabel myBasisLabel = new JLabel(NLS_BASIS + MetisFieldElement.STR_COLON);
+        JLabel myAccountLabel = new JLabel(NLS_ACCOUNT + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -463,7 +463,7 @@ public class TaxBasisAnalysisSelect
          */
         private boolean setTaxBasis(final TaxBasisBucket pTaxBasis) {
             /* Adjust the selected taxBasis */
-            if (!Difference.isEqual(pTaxBasis, theBasis)) {
+            if (!MetisDifference.isEqual(pTaxBasis, theBasis)) {
                 setTheTaxBasis(pTaxBasis);
                 return true;
             }

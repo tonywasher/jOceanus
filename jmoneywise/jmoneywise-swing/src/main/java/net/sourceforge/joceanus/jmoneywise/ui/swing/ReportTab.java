@@ -39,9 +39,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -118,7 +118,7 @@ public class ReportTab
     /**
      * The Spot Analysis Entry.
      */
-    private final transient ViewerEntry theSpotEntry;
+    private final transient MetisViewerEntry theSpotEntry;
 
     /**
      * The Error Panel.
@@ -148,9 +148,9 @@ public class ReportTab
         theEventManager = new TethysEventManager();
 
         /* Create the top level debug entry for this view */
-        ViewerManager myDataMgr = theView.getViewerManager();
-        ViewerEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        ViewerEntry myDataReport = myDataMgr.newEntry(NLS_DATAENTRY);
+        MetisViewerManager myDataMgr = theView.getViewerManager();
+        MetisViewerEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        MetisViewerEntry myDataReport = myDataMgr.newEntry(NLS_DATAENTRY);
         myDataReport.addAsChildOf(mySection);
         theSpotEntry = myDataMgr.newEntry(DataControl.DATA_ANALYSIS);
         theSpotEntry.addAsChildOf(myDataReport);
@@ -204,7 +204,7 @@ public class ReportTab
      */
     private void refreshData() {
         /* Obtain the active profile */
-        JDataProfile myTask = theView.getActiveTask();
+        MetisProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("Reports");
 
         /* Protect against exceptions */

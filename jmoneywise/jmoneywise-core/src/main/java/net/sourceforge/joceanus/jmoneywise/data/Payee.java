@@ -26,13 +26,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EditState;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -71,17 +71,17 @@ public class Payee
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
 
     /**
      * PayeeType Field Id.
      */
-    public static final JDataField FIELD_PAYEETYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.PAYEETYPE.getItemName());
+    public static final MetisField FIELD_PAYEETYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.PAYEETYPE.getItemName());
 
     /**
      * PayeeInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    private static final MetisField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * New Account name.
@@ -174,12 +174,12 @@ public class Payee
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_PAYEETYPE.equals(pField)) {
             return true;
@@ -190,12 +190,12 @@ public class Payee
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
                               ? theInfoSet
-                              : JDataFieldValue.SKIP;
+                              : MetisFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -339,7 +339,7 @@ public class Payee
      * @param pValueSet the valueSet
      * @return the PayeeType
      */
-    public static PayeeType getPayeeType(final ValueSet pValueSet) {
+    public static PayeeType getPayeeType(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PAYEETYPE, PayeeType.class);
     }
 
@@ -378,12 +378,12 @@ public class Payee
     }
 
     @Override
-    public DataState getState() {
+    public MetisDataState getState() {
         /* Pop history for self */
-        DataState myState = super.getState();
+        MetisDataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && useInfoSet) {
+        if ((myState == MetisDataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -393,12 +393,12 @@ public class Payee
     }
 
     @Override
-    public EditState getEditState() {
+    public MetisEditState getEditState() {
         /* Pop history for self */
-        EditState myState = super.getEditState();
+        MetisEditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && useInfoSet) {
+        if ((myState == MetisEditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -462,13 +462,13 @@ public class Payee
     }
 
     @Override
-    public Difference fieldChanged(final JDataField pField) {
+    public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : Difference.IDENTICAL;
+                              : MetisDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -558,7 +558,7 @@ public class Payee
             && (pThat instanceof Payee)) {
             /* Check the payee type */
             Payee myThat = (Payee) pThat;
-            iDiff = Difference.compareObject(getPayeeType(), myThat.getPayeeType());
+            iDiff = MetisDifference.compareObject(getPayeeType(), myThat.getPayeeType());
             if (iDiff == 0) {
                 /* Check the underlying base */
                 iDiff = super.compareAsset(myThat);
@@ -757,7 +757,7 @@ public class Payee
         applyBasicChanges(myPayee);
 
         /* Update the category type if required */
-        if (!Difference.isEqual(getPayeeType(), myPayee.getPayeeType())) {
+        if (!MetisDifference.isEqual(getPayeeType(), myPayee.getPayeeType())) {
             setValueType(myPayee.getPayeeType());
         }
 
@@ -780,7 +780,7 @@ public class Payee
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * The PayeeInfo List.
@@ -809,7 +809,7 @@ public class Payee
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -819,7 +819,7 @@ public class Payee
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return Payee.FIELD_DEFS;
         }
 
@@ -996,17 +996,17 @@ public class Payee
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAMAP_NAME.getValue(), CategoryDataMap.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue(), CategoryDataMap.FIELD_DEFS);
 
         /**
          * CategoryMap Field Id.
          */
-        public static final JDataField FIELD_CATMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
+        public static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
 
         /**
          * CategoryCountMap Field Id.
          */
-        public static final JDataField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
+        public static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
 
         /**
          * Map of category counts.
@@ -1028,12 +1028,12 @@ public class Payee
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_CATMAP.equals(pField)) {
                 return thePayeeMap;

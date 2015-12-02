@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jmetis.sheet.DataCell;
-import net.sourceforge.joceanus.jmetis.sheet.DataRow;
-import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -65,12 +65,12 @@ public final class SheetAccountCategory {
      * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                         final DataWorkBook pWorkBook,
+                                         final MetisDataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_ACTCATEGORIES);
+            MetisDataView myView = pWorkBook.getRangeView(AREA_ACTCATEGORIES);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
@@ -92,7 +92,7 @@ public final class SheetAccountCategory {
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                DataRow myRow = myView.getRowByIndex(i);
+                MetisDataRow myRow = myView.getRowByIndex(i);
 
                 /* Process category */
                 processCategory(pData, myView, myRow);
@@ -124,15 +124,15 @@ public final class SheetAccountCategory {
      * @throws OceanusException on error
      */
     private static void processCategory(final MoneyWiseData pData,
-                                        final DataView pView,
-                                        final DataRow pRow) throws OceanusException {
+                                        final MetisDataView pView,
+                                        final MetisDataRow pRow) throws OceanusException {
         /* Access name */
         int iAdjust = 0;
         String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
         iAdjust++;
 
         /* Access parent */
-        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        MetisDataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
         String myParent = (myCell == null)
                                           ? null
                                           : myCell.getStringValue();

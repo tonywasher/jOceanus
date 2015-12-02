@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.data;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
@@ -60,17 +60,17 @@ public class SvnRepository
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(SvnRepository.class.getSimpleName(), ScmRepository.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(SvnRepository.class.getSimpleName(), ScmRepository.FIELD_DEFS);
 
     /**
      * Base field id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareEqualityField("Base");
+    private static final MetisField FIELD_BASE = FIELD_DEFS.declareEqualityField("Base");
 
     /**
      * HistoryMap field id.
      */
-    private static final JDataField FIELD_HISTMAP = FIELD_DEFS.declareLocalField("HistoryMap");
+    private static final MetisField FIELD_HISTMAP = FIELD_DEFS.declareLocalField("HistoryMap");
 
     /**
      * The Preferences.
@@ -98,7 +98,7 @@ public class SvnRepository
      * @param pReport the report object
      * @throws OceanusException on error
      */
-    public SvnRepository(final PreferenceManager pPreferenceMgr,
+    public SvnRepository(final MetisPreferenceManager pPreferenceMgr,
                          final ReportStatus pReport) throws OceanusException {
         /* Call super constructor */
         super(pPreferenceMgr);
@@ -138,12 +138,12 @@ public class SvnRepository
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_BASE.equals(pField)) {
             return theBase;

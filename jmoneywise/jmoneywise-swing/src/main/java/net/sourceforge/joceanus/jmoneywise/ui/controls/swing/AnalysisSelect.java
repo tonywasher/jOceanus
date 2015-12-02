@@ -40,7 +40,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisType;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
@@ -1304,7 +1304,7 @@ public class AnalysisSelect
         private boolean setRange(final TethysSwingDateRangeSelect pSelect) {
             /* Adjust the selected account */
             TethysDateRange myRange = pSelect.getRange();
-            if (!Difference.isEqual(myRange, theRange)) {
+            if (!MetisDifference.isEqual(myRange, theRange)) {
                 theRange = myRange;
                 return true;
             }
@@ -1317,7 +1317,7 @@ public class AnalysisSelect
          * @return true/false did a change occur
          */
         private boolean setAnalysisType(final AnalysisType pType) {
-            if (!Difference.isEqual(pType, theType)) {
+            if (!MetisDifference.isEqual(pType, theType)) {
                 theType = pType;
                 return true;
             }
@@ -1330,7 +1330,7 @@ public class AnalysisSelect
          * @return true/false did a change occur
          */
         private boolean setBucket(final BucketAttribute pBucket) {
-            if (!Difference.isEqual(pBucket, theBucket)) {
+            if (!MetisDifference.isEqual(pBucket, theBucket)) {
                 /* If this is the null bucket */
                 if (pBucket == null) {
                     showColumns = true;
@@ -1348,7 +1348,7 @@ public class AnalysisSelect
          * @return true/false did a change occur
          */
         private boolean setColumns(final AnalysisColumnSet pColumnSet) {
-            if (!Difference.isEqual(pColumnSet, theColumns)) {
+            if (!MetisDifference.isEqual(pColumnSet, theColumns)) {
                 /* If this is the balance bucket */
                 if (pColumnSet.equals(AnalysisColumnSet.BALANCE)) {
                     showColumns = false;

@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
-import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -67,7 +67,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
     /**
      * Spreadsheet.
      */
-    private DataWorkBook theWorkBook = null;
+    private MetisDataWorkBook theWorkBook = null;
 
     /**
      * The DataSet.
@@ -99,7 +99,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * get workbook.
      * @return the workbook
      */
-    protected DataWorkBook getWorkBook() {
+    protected MetisDataWorkBook getWorkBook() {
         return theWorkBook;
     }
 
@@ -127,7 +127,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      */
     public T loadBackup(final File pFile) throws OceanusException {
         /* Start the task */
-        JDataProfile myTask = theTask.getActiveTask();
+        MetisProfile myTask = theTask.getActiveTask();
         myTask = myTask.startTask("Loading");
 
         /* Access the zip file */
@@ -182,11 +182,11 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
         /* Protect the workbook retrieval */
         try (InputStream myStream = pFile.getInputStream(pEntry)) {
             /* Obtain the active profile */
-            JDataProfile myTask = theTask.getActiveTask();
+            MetisProfile myTask = theTask.getActiveTask();
             myTask.startTask("Parsing");
 
             /* Initialise the workbook */
-            boolean bContinue = initialiseWorkBook(myStream, WorkBookType.determineType(pEntry.getFileName()));
+            boolean bContinue = initialiseWorkBook(myStream, MetisWorkBookType.determineType(pEntry.getFileName()));
 
             /* Load the workbook */
             if (bContinue) {
@@ -228,7 +228,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * @throws IOException on read error
      */
     private boolean initialiseWorkBook(final InputStream pStream,
-                                       final WorkBookType pType) throws OceanusException, IOException {
+                                       final MetisWorkBookType pType) throws OceanusException, IOException {
         /* Create the new DataSet */
         theData = newDataSet();
 
@@ -254,7 +254,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
 
         /* Access the workbook from the stream */
         if (bContinue) {
-            theWorkBook = new DataWorkBook(pStream, pType);
+            theWorkBook = new MetisDataWorkBook(pStream, pType);
         }
 
         /* Return continue status */
@@ -268,7 +268,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      */
     private boolean loadWorkBook() throws OceanusException {
         /* Obtain the active profile */
-        JDataProfile myTask = theTask.getActiveTask();
+        MetisProfile myTask = theTask.getActiveTask();
 
         /* Declare the number of stages */
         boolean bContinue = theTask.setNumStages(theSheets.size() + 1);

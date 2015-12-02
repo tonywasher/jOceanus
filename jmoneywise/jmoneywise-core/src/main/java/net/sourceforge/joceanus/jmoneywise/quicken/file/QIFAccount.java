@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
@@ -178,7 +178,7 @@ public class QIFAccount
      * @param pLines the data lines
      */
     protected QIFAccount(final QIFFile pFile,
-                         final JDataFormatter pFormatter,
+                         final MetisDataFormatter pFormatter,
                          final List<String> pLines) {
         /* Call super-constructor */
         super(pFile, QAccountLineType.class);

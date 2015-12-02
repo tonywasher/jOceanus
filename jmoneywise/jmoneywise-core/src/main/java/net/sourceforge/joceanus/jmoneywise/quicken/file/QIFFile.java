@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.list.OrderedList;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -83,7 +83,7 @@ public class QIFFile {
     /**
      * Sorted List of Accounts with Events.
      */
-    private final OrderedList<QIFAccountEvents> theAccounts;
+    private final MetisOrderedList<QIFAccountEvents> theAccounts;
 
     /**
      * Map of Payees.
@@ -93,7 +93,7 @@ public class QIFFile {
     /**
      * Sorted List of Payees.
      */
-    private final OrderedList<QIFPayee> thePayees;
+    private final MetisOrderedList<QIFPayee> thePayees;
 
     /**
      * Map of Securities with Prices.
@@ -103,7 +103,7 @@ public class QIFFile {
     /**
      * Sorted List of Securities with Prices.
      */
-    private final OrderedList<QIFSecurityPrices> theSecurities;
+    private final MetisOrderedList<QIFSecurityPrices> theSecurities;
 
     /**
      * Map of Symbols to Securities.
@@ -118,7 +118,7 @@ public class QIFFile {
     /**
      * Sorted List of Parent Categories.
      */
-    private final OrderedList<QIFParentCategory> theParentCategories;
+    private final MetisOrderedList<QIFParentCategory> theParentCategories;
 
     /**
      * Map of Categories.
@@ -133,7 +133,7 @@ public class QIFFile {
     /**
      * Sorted List of Classes.
      */
-    private final OrderedList<QIFClass> theClasses;
+    private final MetisOrderedList<QIFClass> theClasses;
 
     /**
      * Constructor.
@@ -153,11 +153,11 @@ public class QIFFile {
         theClassMap = new HashMap<String, QIFClass>();
 
         /* Allocate maps */
-        theAccounts = new OrderedList<QIFAccountEvents>(QIFAccountEvents.class);
-        thePayees = new OrderedList<QIFPayee>(QIFPayee.class);
-        theSecurities = new OrderedList<QIFSecurityPrices>(QIFSecurityPrices.class);
-        theParentCategories = new OrderedList<QIFParentCategory>(QIFParentCategory.class);
-        theClasses = new OrderedList<QIFClass>(QIFClass.class);
+        theAccounts = new MetisOrderedList<QIFAccountEvents>(QIFAccountEvents.class);
+        thePayees = new MetisOrderedList<QIFPayee>(QIFPayee.class);
+        theSecurities = new MetisOrderedList<QIFSecurityPrices>(QIFSecurityPrices.class);
+        theParentCategories = new MetisOrderedList<QIFParentCategory>(QIFParentCategory.class);
+        theClasses = new MetisOrderedList<QIFClass>(QIFClass.class);
     }
 
     /**

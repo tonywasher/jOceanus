@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
@@ -58,7 +58,7 @@ public abstract class WorkerThread<T>
     /**
      * The errors for the operation.
      */
-    private final DataErrorList<JMetisExceptionWrapper> theErrors;
+    private final DataErrorList<MetisExceptionWrapper> theErrors;
 
     /**
      * Constructor.
@@ -70,7 +70,7 @@ public abstract class WorkerThread<T>
         /* Record the parameters */
         theTask = pTask;
         theStatusBar = pStatus.getStatusBar();
-        theErrors = new DataErrorList<JMetisExceptionWrapper>();
+        theErrors = new DataErrorList<MetisExceptionWrapper>();
 
         /* Create a new profiler */
         pStatus.getNewProfile(pTask);
@@ -82,14 +82,14 @@ public abstract class WorkerThread<T>
      */
     protected void addError(final OceanusException pError) {
         /* Store the error */
-        theErrors.add(new JMetisExceptionWrapper(pError));
+        theErrors.add(new MetisExceptionWrapper(pError));
     }
 
     /**
      * Add Error List.
      * @param pErrors the Errors for the task
      */
-    protected void addErrorList(final DataErrorList<JMetisExceptionWrapper> pErrors) {
+    protected void addErrorList(final DataErrorList<MetisExceptionWrapper> pErrors) {
         /* Store the errors */
         theErrors.addList(pErrors);
     }

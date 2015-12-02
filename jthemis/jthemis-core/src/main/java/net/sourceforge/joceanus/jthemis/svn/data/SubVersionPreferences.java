@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SubVersionPreferences
-        extends PreferenceSet {
+        extends MetisPreferenceSet {
     /**
      * Registry name for Subversion Repository Base.
      */

@@ -27,12 +27,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisDataException;
 
@@ -46,51 +46,51 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
  * @author Tony Washer
  */
 public class SvnRevisionHistory
-        implements JDataContents {
+        implements MetisDataContents {
     /**
      * DataFields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(SvnRevisionHistory.class.getSimpleName());
+    private static final MetisFields FIELD_DEFS = new MetisFields(SvnRevisionHistory.class.getSimpleName());
 
     /**
      * Owner field.
      */
-    private static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
+    private static final MetisField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
 
     /**
      * Date field.
      */
-    private static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+    private static final MetisField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
 
     /**
      * Revision field.
      */
-    private static final JDataField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
+    private static final MetisField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
 
     /**
      * Message field.
      */
-    private static final JDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField("LogMessage");
+    private static final MetisField FIELD_MESSAGE = FIELD_DEFS.declareLocalField("LogMessage");
 
     /**
      * Origin field.
      */
-    private static final JDataField FIELD_ORIGIN = FIELD_DEFS.declareLocalField("Origin");
+    private static final MetisField FIELD_ORIGIN = FIELD_DEFS.declareLocalField("Origin");
 
     /**
      * Origin definition.
      */
-    private static final JDataField FIELD_ORIGINDEF = FIELD_DEFS.declareLocalField("OriginDefinition");
+    private static final MetisField FIELD_ORIGINDEF = FIELD_DEFS.declareLocalField("OriginDefinition");
 
     /**
      * CopyDirs field.
      */
-    private static final JDataField FIELD_SOURCEDIRS = FIELD_DEFS.declareLocalField("SourceDirs");
+    private static final MetisField FIELD_SOURCEDIRS = FIELD_DEFS.declareLocalField("SourceDirs");
 
     /**
      * BasedOn field.
      */
-    private static final JDataField FIELD_BASEDON = FIELD_DEFS.declareLocalField("BasedOn");
+    private static final MetisField FIELD_BASEDON = FIELD_DEFS.declareLocalField("BasedOn");
 
     /**
      * The owner.
@@ -393,12 +393,12 @@ public class SvnRevisionHistory
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_OWNER.equals(pField)) {
             return theOwner;
         }
@@ -414,31 +414,31 @@ public class SvnRevisionHistory
         if (FIELD_ORIGIN.equals(pField)) {
             return theOrigin != null
                                     ? theOrigin
-                                    : JDataFieldValue.SKIP;
+                                    : MetisFieldValue.SKIP;
         }
         if (FIELD_ORIGINDEF.equals(pField)) {
             return theOriginDef != null
                                        ? theOriginDef
-                                       : JDataFieldValue.SKIP;
+                                       : MetisFieldValue.SKIP;
         }
         if (FIELD_BASEDON.equals(pField)) {
             return theBasedOn != null
                                      ? theBasedOn
-                                     : JDataFieldValue.SKIP;
+                                     : MetisFieldValue.SKIP;
         }
         if (FIELD_SOURCEDIRS.equals(pField)) {
             return theSourceDirs.isEmpty()
-                                          ? JDataFieldValue.SKIP
+                                          ? MetisFieldValue.SKIP
                                           : theSourceDirs;
         }
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**
      * RevisionKey.
      */
     public static class SvnRevisionKey
-            implements JDataFormat {
+            implements MetisDataFormat {
         /**
          * Hash prime.
          */
@@ -536,26 +536,26 @@ public class SvnRevisionHistory
      * SvnSourceDir entry.
      */
     public static final class SvnSourceDir
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnSourceDir.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnSourceDir.class.getSimpleName());
 
         /**
          * Component field.
          */
-        private static final JDataField FIELD_COMPONENT = FIELD_DEFS.declareLocalField("Component");
+        private static final MetisField FIELD_COMPONENT = FIELD_DEFS.declareLocalField("Component");
 
         /**
          * Source field.
          */
-        private static final JDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
+        private static final MetisField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
 
         /**
          * BasedOn field.
          */
-        private static final JDataField FIELD_BASEDON = FIELD_DEFS.declareLocalField("BasedOn");
+        private static final MetisField FIELD_BASEDON = FIELD_DEFS.declareLocalField("BasedOn");
 
         /**
          * Component.
@@ -641,12 +641,12 @@ public class SvnRevisionHistory
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_COMPONENT.equals(pField)) {
                 return theComponent;
             }
@@ -656,9 +656,9 @@ public class SvnRevisionHistory
             if (FIELD_BASEDON.equals(pField)) {
                 return theBasedOn != null
                                          ? theBasedOn
-                                         : JDataFieldValue.SKIP;
+                                         : MetisFieldValue.SKIP;
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
     }
 
@@ -667,7 +667,7 @@ public class SvnRevisionHistory
      */
     public static class SvnSourceDirList
             extends ArrayList<SvnSourceDir>
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * Serial Id.
          */
@@ -676,12 +676,12 @@ public class SvnRevisionHistory
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnSourceDirList.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnSourceDirList.class.getSimpleName());
 
         /**
          * Size field.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
         @Override
         public String formatObject() {
@@ -689,16 +689,16 @@ public class SvnRevisionHistory
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**
@@ -713,9 +713,9 @@ public class SvnRevisionHistory
                 SvnSourceDir myEntry = myIterator.next();
 
                 /* If we have matching component */
-                if (Difference.isEqual(myEntry.getComponent(), pDir.getComponent())) {
+                if (MetisDifference.isEqual(myEntry.getComponent(), pDir.getComponent())) {
                     /* Reject if different path */
-                    if (!Difference.isEqual(myEntry.getSource(), pDir.getSource())) {
+                    if (!MetisDifference.isEqual(myEntry.getSource(), pDir.getSource())) {
                         throw new JThemisDataException(myEntry, "Conflicting sources");
                     }
 
@@ -777,26 +777,26 @@ public class SvnRevisionHistory
      * Source definition.
      */
     public static class SvnSourceDefinition
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnSourceDefinition.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnSourceDefinition.class.getSimpleName());
 
         /**
          * Component field.
          */
-        private static final JDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Component");
+        private static final MetisField FIELD_COMP = FIELD_DEFS.declareLocalField("Component");
 
         /**
          * Type field.
          */
-        private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField("Type");
+        private static final MetisField FIELD_TYPE = FIELD_DEFS.declareLocalField("Type");
 
         /**
          * Source field.
          */
-        private static final JDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
+        private static final MetisField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
 
         /**
          * Component.
@@ -886,12 +886,12 @@ public class SvnRevisionHistory
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_COMP.equals(pField)) {
                 return theComponent;
             }
@@ -901,7 +901,7 @@ public class SvnRevisionHistory
             if (FIELD_SOURCE.equals(pField)) {
                 return theSource;
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**

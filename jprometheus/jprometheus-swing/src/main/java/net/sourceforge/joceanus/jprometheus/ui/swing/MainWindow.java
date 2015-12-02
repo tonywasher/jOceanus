@@ -40,9 +40,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.viewer.swing.SwingViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerWindow;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.swing.MetisViewerWindow;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
@@ -332,12 +332,12 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Viewer Manager.
      */
-    private SwingViewerManager theViewerMgr = null;
+    private MetisSwingViewerManager theViewerMgr = null;
 
     /**
      * The Started data window.
      */
-    private ViewerWindow theDataWdw = null;
+    private MetisViewerWindow theDataWdw = null;
 
     /**
      * The listener.
@@ -421,7 +421,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         theViewerMgr = pUtilitySet.getViewerManager();
 
         /* Obtain the active profile */
-        JDataProfile myTask = theView.getActiveTask();
+        MetisProfile myTask = theView.getActiveTask();
         myTask.startTask("buildGUI");
 
         /* Create the new status bar */
@@ -749,7 +749,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void undoLastEdit() {
         /* Create a new profile */
-        JDataProfile myTask = theView.getNewProfile("unDoLastEdit");
+        MetisProfile myTask = theView.getNewProfile("unDoLastEdit");
 
         /* Undo the last edit */
         theView.undoLastChange();
@@ -766,7 +766,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void resetEdit() {
         /* Create a new profile */
-        JDataProfile myTask = theView.getNewProfile("resetEdit");
+        MetisProfile myTask = theView.getNewProfile("resetEdit");
 
         /* Reset the edit View */
         theView.resetChanges();
@@ -874,7 +874,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void displayViewerMgr() {
         /* Create the viewer window */
-        theDataWdw = new ViewerWindow(theFrame, theViewerMgr);
+        theDataWdw = new MetisViewerWindow(theFrame, theViewerMgr);
 
         /* Listen for its closure */
         theDataWdw.addWindowListener(theListener);

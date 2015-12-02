@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
@@ -73,7 +73,7 @@ public class QIFWriter {
     /**
      * Data formatter.
      */
-    private final JDataFormatter theFormatter;
+    private final MetisDataFormatter theFormatter;
 
     /**
      * Constructor.
@@ -87,7 +87,7 @@ public class QIFWriter {
         theFile = pFile;
 
         /* Allocate the formatter and set date format */
-        theFormatter = new JDataFormatter();
+        theFormatter = new MetisDataFormatter();
         theFormatter.setFormat(QIF_DATEFORMAT);
     }
 

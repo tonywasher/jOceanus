@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.threads.swing;
 
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader;
@@ -75,7 +75,7 @@ public class LoadArchive
         theStatus.initTask("Loading Extract");
 
         /* Load workbook */
-        PreferenceManager myMgr = theControl.getPreferenceManager();
+        MetisPreferenceManager myMgr = theControl.getPreferenceManager();
         ArchiveLoader myLoader = new ArchiveLoader();
         MoneyWiseData myData = myLoader.loadArchive(theStatus, myMgr.getPreferenceSet(BackupPreferences.class));
 

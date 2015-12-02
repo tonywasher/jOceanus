@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.preference;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSP800Type;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SecurityPreferences
-        extends PreferenceSet {
+        extends MetisPreferenceSet {
     /**
      * Registry name for Restricted Security.
      */

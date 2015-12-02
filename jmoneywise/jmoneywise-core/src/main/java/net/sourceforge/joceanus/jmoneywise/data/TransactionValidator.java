@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
@@ -234,7 +234,7 @@ public final class TransactionValidator {
                                          final TransactionCategory pCategory,
                                          final TransactionAsset pPartner) {
         /* Access details */
-        boolean isRecursive = Difference.isEqual(pAccount, pPartner);
+        boolean isRecursive = MetisDifference.isEqual(pAccount, pPartner);
         AssetType myPartnerType = pPartner.getAssetType();
         TransactionCategoryClass myCatClass = pCategory.getCategoryTypeClass();
 
@@ -319,7 +319,7 @@ public final class TransactionValidator {
 
             case BADDEBT:
                 return (pPartner instanceof Payee)
-                       && Difference.isEqual(pPartner, pAccount.getParent());
+                       && MetisDifference.isEqual(pPartner, pAccount.getParent());
 
             case UNITSADJUST:
             case STOCKSPLIT:
@@ -364,7 +364,7 @@ public final class TransactionValidator {
     private static boolean checkDividend(final TransactionAsset pAccount,
                                          final TransactionAsset pPartner) {
         /* Recursive is allowed */
-        if (Difference.isEqual(pAccount, pPartner)) {
+        if (MetisDifference.isEqual(pAccount, pPartner)) {
             return true;
         }
 
@@ -387,7 +387,7 @@ public final class TransactionValidator {
         }
 
         /* Recursive is not allowed */
-        if (Difference.isEqual(pAccount, pPartner)) {
+        if (MetisDifference.isEqual(pAccount, pPartner)) {
             return false;
         }
 
@@ -396,12 +396,12 @@ public final class TransactionValidator {
         SecurityHolding myPartner = (SecurityHolding) pPartner;
 
         /* Portfolios must be the same */
-        if (!Difference.isEqual(myAccount.getPortfolio(), myPartner.getPortfolio())) {
+        if (!MetisDifference.isEqual(myAccount.getPortfolio(), myPartner.getPortfolio())) {
             return false;
         }
 
         /* Security types must be the same */
-        return Difference.isEqual(myAccount.getSecurity().getSecurityType(), myPartner.getSecurity().getSecurityType());
+        return MetisDifference.isEqual(myAccount.getSecurity().getSecurityType(), myPartner.getSecurity().getSecurityType());
     }
 
     /**
@@ -417,7 +417,7 @@ public final class TransactionValidator {
             && (pPartner instanceof Portfolio)) {
             /* Must be same portfolios */
             SecurityHolding myHolding = (SecurityHolding) pAccount;
-            return Difference.isEqual(myHolding.getPortfolio(), pPartner);
+            return MetisDifference.isEqual(myHolding.getPortfolio(), pPartner);
         }
 
         /* partner must be valued */
@@ -472,11 +472,11 @@ public final class TransactionValidator {
             && (pPartner instanceof SecurityHolding)) {
             /* Must be same portfolios */
             SecurityHolding myHolding = (SecurityHolding) pPartner;
-            return Difference.isEqual(myHolding.getPortfolio(), pAccount);
+            return MetisDifference.isEqual(myHolding.getPortfolio(), pAccount);
         }
 
         /* must be recursive */
-        return Difference.isEqual(pAccount, pPartner);
+        return MetisDifference.isEqual(pAccount, pPartner);
     }
 
     /**
@@ -488,7 +488,7 @@ public final class TransactionValidator {
     private static boolean checkTransfer(final TransactionAsset pAccount,
                                          final TransactionAsset pPartner) {
         /* Must not be recursive */
-        if (Difference.isEqual(pAccount, pPartner)) {
+        if (MetisDifference.isEqual(pAccount, pPartner)) {
             return false;
         }
 
@@ -497,7 +497,7 @@ public final class TransactionValidator {
             && (pPartner instanceof Portfolio)) {
             /* Must be same portfolios */
             SecurityHolding myHolding = (SecurityHolding) pAccount;
-            if (!Difference.isEqual(myHolding.getPortfolio(), pPartner)) {
+            if (!MetisDifference.isEqual(myHolding.getPortfolio(), pPartner)) {
                 return false;
             }
         }
@@ -507,7 +507,7 @@ public final class TransactionValidator {
             && (pAccount instanceof Portfolio)) {
             /* Must be same portfolios */
             SecurityHolding myHolding = (SecurityHolding) pPartner;
-            if (!Difference.isEqual(myHolding.getPortfolio(), pAccount)) {
+            if (!MetisDifference.isEqual(myHolding.getPortfolio(), pAccount)) {
                 return false;
             }
         }
@@ -532,14 +532,14 @@ public final class TransactionValidator {
         /* If account is portfolio */
         if (pAccount instanceof Portfolio) {
             /* Cannot be recursive */
-            return !Difference.isEqual(pAccount, pPartner);
+            return !MetisDifference.isEqual(pAccount, pPartner);
         }
 
         /* If account is security holding */
         if (pAccount instanceof SecurityHolding) {
             /* Must be different portfolios */
             SecurityHolding myHolding = (SecurityHolding) pAccount;
-            return !Difference.isEqual(myHolding.getPortfolio(), pPartner);
+            return !MetisDifference.isEqual(myHolding.getPortfolio(), pPartner);
         }
 
         /* Not allowed */

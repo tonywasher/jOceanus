@@ -25,16 +25,16 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Currency;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EditState;
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedPrice;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedPrice;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -79,32 +79,32 @@ public class StockOption
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
 
     /**
      * StockHolding Field Id.
      */
-    public static final JDataField FIELD_STOCKHOLDING = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_STOCKHOLDING.getValue());
+    public static final MetisField FIELD_STOCKHOLDING = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_STOCKHOLDING.getValue());
 
     /**
      * GrantDate Field Id.
      */
-    public static final JDataField FIELD_GRANTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_GRANTDATE.getValue());
+    public static final MetisField FIELD_GRANTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_GRANTDATE.getValue());
 
     /**
      * Portfolio Field Id.
      */
-    public static final JDataField FIELD_EXPIREDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_EXPIRYDATE.getValue());
+    public static final MetisField FIELD_EXPIREDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_EXPIRYDATE.getValue());
 
     /**
      * Price Field Id.
      */
-    public static final JDataField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue());
+    public static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue());
 
     /**
      * StockOptionInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    private static final MetisField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * New Option name.
@@ -185,7 +185,7 @@ public class StockOption
         super(pList, pValues);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -255,12 +255,12 @@ public class StockOption
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_STOCKHOLDING.equals(pField)) {
             return true;
@@ -280,12 +280,12 @@ public class StockOption
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
                               ? theInfoSet
-                              : JDataFieldValue.SKIP;
+                              : MetisFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -306,12 +306,12 @@ public class StockOption
     @Override
     public String formatObject() {
         /* Access Key Values */
-        EncryptedValueSet myValues = getValueSet();
+        MetisEncryptedValueSet myValues = getValueSet();
         Object myHolding = myValues.getValue(FIELD_STOCKHOLDING);
         Object myPrice = myValues.getValue(FIELD_PRICE);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -420,7 +420,7 @@ public class StockOption
      * Obtain Encrypted Price Field.
      * @return the Field
      */
-    private EncryptedPrice getPriceField() {
+    private MetisEncryptedPrice getPriceField() {
         return getPriceField(getValueSet());
     }
 
@@ -429,7 +429,7 @@ public class StockOption
      * @param pValueSet the valueSet
      * @return the stockHolding
      */
-    public static SecurityHolding getStockHolding(final ValueSet pValueSet) {
+    public static SecurityHolding getStockHolding(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_STOCKHOLDING, SecurityHolding.class);
     }
 
@@ -438,7 +438,7 @@ public class StockOption
      * @param pValueSet the valueSet
      * @return the grantDate
      */
-    public static TethysDate getGrantDate(final ValueSet pValueSet) {
+    public static TethysDate getGrantDate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_GRANTDATE, TethysDate.class);
     }
 
@@ -447,7 +447,7 @@ public class StockOption
      * @param pValueSet the valueSet
      * @return the expiryDate
      */
-    public static TethysDate getExpiryDate(final ValueSet pValueSet) {
+    public static TethysDate getExpiryDate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_EXPIREDATE, TethysDate.class);
     }
 
@@ -456,7 +456,7 @@ public class StockOption
      * @param pValueSet the valueSet
      * @return the symbol
      */
-    public static TethysPrice getPrice(final EncryptedValueSet pValueSet) {
+    public static TethysPrice getPrice(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_PRICE, TethysPrice.class);
     }
 
@@ -465,7 +465,7 @@ public class StockOption
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getPriceBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getPriceBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_PRICE);
     }
 
@@ -474,8 +474,8 @@ public class StockOption
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static EncryptedPrice getPriceField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PRICE, EncryptedPrice.class);
+    private static MetisEncryptedPrice getPriceField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PRICE, MetisEncryptedPrice.class);
     }
 
     /**
@@ -540,7 +540,7 @@ public class StockOption
      * Set price value.
      * @param pValue the value
      */
-    private void setValuePrice(final EncryptedPrice pValue) {
+    private void setValuePrice(final MetisEncryptedPrice pValue) {
         getValueSet().setValue(FIELD_PRICE, pValue);
     }
 
@@ -564,12 +564,12 @@ public class StockOption
     }
 
     @Override
-    public DataState getState() {
+    public MetisDataState getState() {
         /* Pop history for self */
-        DataState myState = super.getState();
+        MetisDataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && useInfoSet) {
+        if ((myState == MetisDataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -579,12 +579,12 @@ public class StockOption
     }
 
     @Override
-    public EditState getEditState() {
+    public MetisEditState getEditState() {
         /* Pop history for self */
-        EditState myState = super.getEditState();
+        MetisEditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && useInfoSet) {
+        if ((myState == MetisEditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -648,13 +648,13 @@ public class StockOption
     }
 
     @Override
-    public Difference fieldChanged(final JDataField pField) {
+    public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : Difference.IDENTICAL;
+                              : MetisDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -688,10 +688,10 @@ public class StockOption
             && (pThat instanceof StockOption)) {
             /* Check the category */
             StockOption myThat = (StockOption) pThat;
-            iDiff = Difference.compareObject(getStockHolding(), myThat.getStockHolding());
+            iDiff = MetisDifference.compareObject(getStockHolding(), myThat.getStockHolding());
             if (iDiff == 0) {
                 /* Check the grant date */
-                iDiff = Difference.compareObject(getGrantDate(), myThat.getGrantDate());
+                iDiff = MetisDifference.compareObject(getGrantDate(), myThat.getGrantDate());
             }
             if (iDiff == 0) {
                 /* Compare the underlying id */
@@ -965,22 +965,22 @@ public class StockOption
         applyBasicChanges(myOption);
 
         /* Update the stockHolding if required */
-        if (!Difference.isEqual(getStockHolding(), myOption.getStockHolding())) {
+        if (!MetisDifference.isEqual(getStockHolding(), myOption.getStockHolding())) {
             setValueStockHolding(myOption.getStockHolding());
         }
 
         /* Update the grantDate if required */
-        if (!Difference.isEqual(getGrantDate(), myOption.getGrantDate())) {
+        if (!MetisDifference.isEqual(getGrantDate(), myOption.getGrantDate())) {
             setValueGrantDate(myOption.getGrantDate());
         }
 
         /* Update the expiryDate if required */
-        if (!Difference.isEqual(getExpiryDate(), myOption.getExpiryDate())) {
+        if (!MetisDifference.isEqual(getExpiryDate(), myOption.getExpiryDate())) {
             setValueExpiryDate(myOption.getExpiryDate());
         }
 
         /* Update the price if required */
-        if (!Difference.isEqual(getPrice(), myOption.getPrice())) {
+        if (!MetisDifference.isEqual(getPrice(), myOption.getPrice())) {
             setValuePrice(myOption.getPriceField());
         }
 
@@ -1003,7 +1003,7 @@ public class StockOption
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * The StockOptionInfo List.
@@ -1044,7 +1044,7 @@ public class StockOption
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -1054,7 +1054,7 @@ public class StockOption
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return StockOption.FIELD_DEFS;
         }
 

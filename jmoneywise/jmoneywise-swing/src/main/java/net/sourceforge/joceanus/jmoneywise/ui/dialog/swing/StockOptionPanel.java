@@ -33,11 +33,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
@@ -85,7 +85,7 @@ public class StockOptionPanel
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<StockOption> theFieldSet;
+    private final transient MetisFieldSet<StockOption> theFieldSet;
 
     /**
      * StockHolding Button Field.
@@ -118,7 +118,7 @@ public class StockOptionPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public StockOptionPanel(final JFieldManager pFieldMgr,
+    public StockOptionPanel(final MetisFieldManager pFieldMgr,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final ErrorPanel pError) {
         /* Initialise the panel */
@@ -189,12 +189,12 @@ public class StockOptionPanel
         restrictField(myClosedButton, StockOption.NAMELEN);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(StockOption.FIELD_NAME, DataType.STRING, myName);
-        theFieldSet.addFieldElement(StockOption.FIELD_DESC, DataType.STRING, myDesc);
+        theFieldSet.addFieldElement(StockOption.FIELD_NAME, MetisDataType.STRING, myName);
+        theFieldSet.addFieldElement(StockOption.FIELD_DESC, MetisDataType.STRING, myDesc);
         theFieldSet.addFieldElement(StockOption.FIELD_STOCKHOLDING, SecurityHolding.class, theHoldingButton);
-        theFieldSet.addFieldElement(StockOption.FIELD_GRANTDATE, DataType.DATEDAY, theGrantButton);
-        theFieldSet.addFieldElement(StockOption.FIELD_EXPIREDATE, DataType.DATEDAY, theExpiryButton);
-        theFieldSet.addFieldElement(StockOption.FIELD_PRICE, DataType.PRICE, myPrice);
+        theFieldSet.addFieldElement(StockOption.FIELD_GRANTDATE, MetisDataType.DATEDAY, theGrantButton);
+        theFieldSet.addFieldElement(StockOption.FIELD_EXPIREDATE, MetisDataType.DATEDAY, theExpiryButton);
+        theFieldSet.addFieldElement(StockOption.FIELD_PRICE, MetisDataType.PRICE, myPrice);
         theFieldSet.addFieldElement(StockOption.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
@@ -226,7 +226,7 @@ public class StockOptionPanel
         JScrollPane myScroll = new JScrollPane(myNotes);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(StockOptionInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
+        theFieldSet.addFieldElement(StockOptionInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -295,9 +295,9 @@ public class StockOptionPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        JDataField myField = pUpdate.getField();
+        MetisField myField = pUpdate.getField();
         StockOption myOption = getItem();
 
         /* Process updates */

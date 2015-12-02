@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jmetis.data.EncryptedData;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -58,8 +58,8 @@ public class TableDepositRate
 
         /* Declare the columns */
         ColumnDefinition myActCol = myTableDef.addReferenceColumn(DepositRate.FIELD_DEPOSIT, TableDeposit.TABLE_NAME);
-        myTableDef.addEncryptedColumn(DepositRate.FIELD_RATE, EncryptedData.RATELEN);
-        myTableDef.addNullEncryptedColumn(DepositRate.FIELD_BONUS, EncryptedData.RATELEN);
+        myTableDef.addEncryptedColumn(DepositRate.FIELD_RATE, MetisEncryptedData.RATELEN);
+        myTableDef.addNullEncryptedColumn(DepositRate.FIELD_BONUS, MetisEncryptedData.RATELEN);
         ColumnDefinition myDateCol = myTableDef.addNullDateColumn(DepositRate.FIELD_ENDDATE);
 
         /* Declare Sort Columns */
@@ -91,7 +91,7 @@ public class TableDepositRate
 
     @Override
     protected void setFieldValue(final DepositRate pItem,
-                                 final JDataField iField) throws OceanusException {
+                                 final MetisField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (DepositRate.FIELD_DEPOSIT.equals(iField)) {

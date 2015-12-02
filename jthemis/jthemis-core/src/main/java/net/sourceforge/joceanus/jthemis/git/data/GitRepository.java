@@ -25,9 +25,9 @@ package net.sourceforge.joceanus.jthemis.git.data;
 import java.io.File;
 import java.io.IOException;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitComponent.GitComponentList;
@@ -48,12 +48,12 @@ public class GitRepository
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(GitRepository.class.getSimpleName(), ScmRepository.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(GitRepository.class.getSimpleName(), ScmRepository.FIELD_DEFS);
 
     /**
      * Base field id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareEqualityField("Base");
+    private static final MetisField FIELD_BASE = FIELD_DEFS.declareEqualityField("Base");
 
     /**
      * The Preferences.
@@ -71,7 +71,7 @@ public class GitRepository
      * @param pReport the report object
      * @throws OceanusException on error
      */
-    public GitRepository(final PreferenceManager pPreferenceMgr,
+    public GitRepository(final MetisPreferenceManager pPreferenceMgr,
                          final ReportStatus pReport) throws OceanusException {
         /* Call super constructor */
         super(pPreferenceMgr);
@@ -105,12 +105,12 @@ public class GitRepository
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_BASE.equals(pField)) {
             return theBase;

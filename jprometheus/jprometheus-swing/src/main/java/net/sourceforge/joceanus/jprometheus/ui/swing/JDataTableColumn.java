@@ -30,8 +30,8 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.RowCellRenderer;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.RowCellRenderer;
 
 /**
  * TableColumn extension class.
@@ -280,9 +280,9 @@ public class JDataTableColumn
          * Access the array of displayed column indices.
          * @return the array of columns
          */
-        protected JDataField[] getColumnFields() {
+        protected MetisField[] getColumnFields() {
             /* Declare the field array */
-            JDataField[] myFields = new JDataField[getColumnCount()];
+            MetisField[] myFields = new MetisField[getColumnCount()];
             int myCol;
 
             /* Loop through the columns */

@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -54,17 +54,17 @@ public class ControlData
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
     /**
      * Field ID for Data Version.
      */
-    public static final JDataField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLDATA_VERSION.getValue());
+    public static final MetisField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLDATA_VERSION.getValue());
 
     /**
      * Field ID for Control Key.
      */
-    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName());
+    public static final MetisField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName());
 
     /**
      * Error message for already exists.
@@ -115,7 +115,7 @@ public class ControlData
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -151,7 +151,7 @@ public class ControlData
      * @param pValueSet the value set
      * @return data version
      */
-    public static Integer getDataVersion(final ValueSet pValueSet) {
+    public static Integer getDataVersion(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DATAVERSION, Integer.class);
     }
 
@@ -160,7 +160,7 @@ public class ControlData
      * @param pValueSet the value set
      * @return control key
      */
-    public static ControlKey getControlKey(final ValueSet pValueSet) {
+    public static ControlKey getControlKey(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CONTROLKEY, ControlKey.class);
     }
 
@@ -256,7 +256,7 @@ public class ControlData
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE Control Data list.
@@ -285,7 +285,7 @@ public class ControlData
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -295,7 +295,7 @@ public class ControlData
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return ControlData.FIELD_DEFS;
         }
 

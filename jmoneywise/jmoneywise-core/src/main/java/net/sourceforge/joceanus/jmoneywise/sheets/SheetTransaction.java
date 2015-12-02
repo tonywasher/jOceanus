@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.sheet.DataCell;
-import net.sourceforge.joceanus.jmetis.sheet.DataRow;
-import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -160,7 +160,7 @@ public class SheetTransaction
      * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                         final DataWorkBook pWorkBook,
+                                         final MetisDataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
                                          final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of transactions */
@@ -182,7 +182,7 @@ public class SheetTransaction
                 ArchiveYear myYear = myIterator.previous();
 
                 /* Find the range of cells */
-                DataView myView = pWorkBook.getRangeView(myYear.getRangeName());
+                MetisDataView myView = pWorkBook.getRangeView(myYear.getRangeName());
 
                 /* Declare the new stage */
                 if (!pTask.setNewStage("Events from " + myYear.getDate().getYear())) {
@@ -200,7 +200,7 @@ public class SheetTransaction
                 /* Loop through the rows of the table */
                 for (int i = 0; i < myTotal; i++) {
                     /* Access the row */
-                    DataRow myRow = myView.getRowByIndex(i);
+                    MetisDataRow myRow = myView.getRowByIndex(i);
 
                     /* Process transaction and break loop if requested */
                     if (!processTransaction(pLoader, pData, myView, myRow)) {
@@ -251,14 +251,14 @@ public class SheetTransaction
      */
     private static boolean processTransaction(final ArchiveLoader pLoader,
                                               final MoneyWiseData pData,
-                                              final DataView pView,
-                                              final DataRow pRow) throws OceanusException {
+                                              final MetisDataView pView,
+                                              final MetisDataRow pRow) throws OceanusException {
         /* Access parent cache */
         ParentCache myCache = pLoader.getParentCache();
         int iAdjust = 0;
 
         /* Access date */
-        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        MetisDataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
         TethysDate myDate = (myCell != null)
                                           ? myCell.getDateValue()
                                           : null;

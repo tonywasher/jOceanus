@@ -44,7 +44,7 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitBranch.GitBranchList;
@@ -73,7 +73,7 @@ public final class GitComponent
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(GitComponent.class.getSimpleName(), ScmComponent.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(GitComponent.class.getSimpleName(), ScmComponent.FIELD_DEFS);
 
     /**
      * Logger.
@@ -105,7 +105,7 @@ public final class GitComponent
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
@@ -279,7 +279,7 @@ public final class GitComponent
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(GitComponentList.class.getSimpleName(), ScmComponentList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(GitComponentList.class.getSimpleName(), ScmComponentList.FIELD_DEFS);
 
         /**
          * Parent Repository.
@@ -299,7 +299,7 @@ public final class GitComponent
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 

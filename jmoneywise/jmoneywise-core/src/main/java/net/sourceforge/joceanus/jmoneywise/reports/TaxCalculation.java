@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
@@ -61,7 +61,7 @@ public class TaxCalculation
     /**
      * The Formatter.
      */
-    private final JDataFormatter theFormatter;
+    private final MetisDataFormatter theFormatter;
 
     /**
      * Data Analysis.

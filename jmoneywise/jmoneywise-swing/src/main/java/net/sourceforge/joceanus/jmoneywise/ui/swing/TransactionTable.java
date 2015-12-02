@@ -30,26 +30,26 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.CalendarCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.DilutionCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.IntegerCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.MoneyCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.ScrollButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.ScrollListButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.UnitsCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IntegerCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.DilutionCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.IntegerCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.MoneyCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.ScrollListButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.UnitsCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IntegerCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
@@ -257,17 +257,17 @@ public class TransactionTable
     /**
      * The field manager.
      */
-    private final transient JFieldManager theFieldMgr;
+    private final transient MetisFieldManager theFieldMgr;
 
     /**
      * The analysis data entry.
      */
-    private final transient ViewerEntry theDataAnalysis;
+    private final transient MetisViewerEntry theDataAnalysis;
 
     /**
      * The filter data entry.
      */
-    private final transient ViewerEntry theDataFilter;
+    private final transient MetisViewerEntry theDataFilter;
 
     /**
      * Analysis View.
@@ -360,9 +360,9 @@ public class TransactionTable
         theBuilder = new TransactionBuilder(theUpdateSet);
 
         /* Create the top level debug entry for this view */
-        ViewerManager myDataMgr = theView.getViewerManager();
-        ViewerEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        ViewerEntry myDataRegister = myDataMgr.newEntry(NLS_DATAENTRY);
+        MetisViewerManager myDataMgr = theView.getViewerManager();
+        MetisViewerEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        MetisViewerEntry myDataRegister = myDataMgr.newEntry(NLS_DATAENTRY);
         myDataRegister.addAsChildOf(mySection);
         theDataFilter = myDataMgr.newEntry(NLS_FILTERDATAENTRY);
         theDataFilter.addAsChildOf(myDataRegister);
@@ -485,7 +485,7 @@ public class TransactionTable
      */
     private void refreshData() {
         /* Obtain the active profile */
-        JDataProfile myTask = theView.getActiveTask();
+        MetisProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("Statement");
 
         /* Update the selection */
@@ -627,7 +627,7 @@ public class TransactionTable
         }
 
         @Override
-        public JDataField getFieldForCell(final Transaction pItem,
+        public MetisField getFieldForCell(final Transaction pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
@@ -814,7 +814,7 @@ public class TransactionTable
 
                 /* Set the selection */
                 TethysDateRange myRange = theSelect.getRange();
-                if (Difference.isEqual(myRange, theRange)) {
+                if (MetisDifference.isEqual(myRange, theRange)) {
                     /* Handle a simple filter change */
                     theModel.fireNewDataEvents();
                     theSelectionModel.handleNewFilter();
@@ -1538,7 +1538,7 @@ public class TransactionTable
          * @param pColIndex column index
          * @return the field
          */
-        private JDataField getFieldForCell(final int pColIndex) {
+        private MetisField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_DATE:

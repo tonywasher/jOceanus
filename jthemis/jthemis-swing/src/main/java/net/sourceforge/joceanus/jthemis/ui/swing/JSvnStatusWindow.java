@@ -36,7 +36,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ScmStatus;
 import net.sourceforge.joceanus.jthemis.threads.swing.ScmThread;
@@ -146,7 +146,7 @@ public class JSvnStatusWindow
     }
 
     @Override
-    public PreferenceManager getPreferenceMgr() {
+    public MetisPreferenceManager getPreferenceMgr() {
         return theManager.getPreferenceMgr();
     }
 

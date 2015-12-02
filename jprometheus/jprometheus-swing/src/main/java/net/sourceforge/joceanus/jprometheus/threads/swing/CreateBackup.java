@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jprometheus.threads.swing;
 import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
@@ -95,14 +95,14 @@ public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
             theStatus.initTask("Creating Backup");
 
             /* Access the Backup preferences */
-            PreferenceManager myMgr = theControl.getPreferenceManager();
+            MetisPreferenceManager myMgr = theControl.getPreferenceManager();
             BackupPreferences myProperties = myMgr.getPreferenceSet(BackupPreferences.class);
 
             /* Determine the archive name */
             String myBackupDir = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR);
             String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
             Boolean doTimeStamp = myProperties.getBooleanValue(BackupPreferences.NAME_BACKUP_TIME);
-            WorkBookType myType = myProperties.getEnumValue(BackupPreferences.NAME_BACKUP_TYPE, WorkBookType.class);
+            MetisWorkBookType myType = myProperties.getEnumValue(BackupPreferences.NAME_BACKUP_TYPE, MetisWorkBookType.class);
 
             /* Create the name of the file */
             StringBuilder myName = new StringBuilder(BUFFER_LEN);

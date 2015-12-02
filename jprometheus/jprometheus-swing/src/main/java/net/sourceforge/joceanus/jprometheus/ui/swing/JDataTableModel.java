@@ -28,10 +28,10 @@ import java.util.ListIterator;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldValue;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldData;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager.PopulateFieldData;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldData;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
@@ -160,7 +160,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
      * @param pColIndex the column
      * @return the field
      */
-    public abstract JDataField getFieldForCell(final T pItem,
+    public abstract MetisField getFieldForCell(final T pItem,
                                                final int pColIndex);
 
     @Override
@@ -174,7 +174,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
 
         /* If we have a null value for an error field, set error description */
         if ((o == null) && (myItem.hasErrors(getFieldForCell(myItem, pColIndex)))) {
-            o = JFieldValue.ERROR;
+            o = MetisFieldValue.ERROR;
         }
 
         /* Return to caller */
@@ -322,7 +322,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     }
 
     @Override
-    public void populateFieldData(final JFieldData pData) {
+    public void populateFieldData(final MetisFieldData pData) {
 
         /* If we have a header decrement the index */
         int iRow = pData.getRow();
@@ -334,7 +334,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
             /* Access the field */
             int iCol = pData.getCol();
             iCol = theTable.convertColumnIndexToModel(iCol);
-            JDataField iField = getFieldForCell(myRow, iCol);
+            MetisField iField = getFieldForCell(myRow, iCol);
 
             /* Has the field changed */
             pData.processTableRow(myRow, iField);
@@ -429,7 +429,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
         }
 
         @Override
-        public void populateFieldData(final JFieldData pData) {
+        public void populateFieldData(final MetisFieldData pData) {
             /* Convert our row # into that of the table */
             int iRow = pData.getRow();
             iRow = theTable.convertRowIndexToModel(iRow);
@@ -444,7 +444,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
                 DataItem<E> myRow = myModel.getItemAtIndex(iRow);
                 @SuppressWarnings("unchecked")
                 JDataTableColumnModel<E> myColModel = (JDataTableColumnModel<E>) theTable.getColumnModel();
-                JDataField[] iFields = myColModel.getColumnFields();
+                MetisField[] iFields = myColModel.getColumnFields();
 
                 /* Has the row changed */
                 pData.processRowHeader(myRow, iFields);

@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
@@ -35,102 +35,102 @@ public enum TaxYearInfoClass implements DataInfoClass {
     /**
      * Personal Allowance.
      */
-    ALLOWANCE(1, 0, DataType.MONEY),
+    ALLOWANCE(1, 0, MetisDataType.MONEY),
 
     /**
      * Low Tax Band.
      */
-    LOTAXBAND(2, 1, DataType.MONEY),
+    LOTAXBAND(2, 1, MetisDataType.MONEY),
 
     /**
      * Basic Tax Band.
      */
-    BASICTAXBAND(3, 2, DataType.MONEY),
+    BASICTAXBAND(3, 2, MetisDataType.MONEY),
 
     /**
      * Rental Allowance.
      */
-    RENTALALLOWANCE(4, 3, DataType.MONEY),
+    RENTALALLOWANCE(4, 3, MetisDataType.MONEY),
 
     /**
      * Capital Allowance.
      */
-    CAPITALALLOWANCE(5, 4, DataType.MONEY),
+    CAPITALALLOWANCE(5, 4, MetisDataType.MONEY),
 
     /**
      * Low Age Allowance.
      */
-    LOAGEALLOWANCE(6, 5, DataType.MONEY),
+    LOAGEALLOWANCE(6, 5, MetisDataType.MONEY),
 
     /**
      * High Age Allowance.
      */
-    HIAGEALLOWANCE(7, 6, DataType.MONEY),
+    HIAGEALLOWANCE(7, 6, MetisDataType.MONEY),
 
     /**
      * Age Allowance Limit.
      */
-    AGEALLOWANCELIMIT(8, 7, DataType.MONEY),
+    AGEALLOWANCELIMIT(8, 7, MetisDataType.MONEY),
 
     /**
      * Additional Allowance Limit.
      */
-    ADDITIONALALLOWANCELIMIT(9, 8, DataType.MONEY),
+    ADDITIONALALLOWANCELIMIT(9, 8, MetisDataType.MONEY),
 
     /**
      * Additional Income Threshold.
      */
-    ADDITIONALINCOMETHRESHOLD(10, 9, DataType.MONEY),
+    ADDITIONALINCOMETHRESHOLD(10, 9, MetisDataType.MONEY),
 
     /**
      * Low Tax Rate.
      */
-    LOTAXRATE(11, 10, DataType.RATE),
+    LOTAXRATE(11, 10, MetisDataType.RATE),
 
     /**
      * Basic Tax Rate.
      */
-    BASICTAXRATE(12, 11, DataType.RATE),
+    BASICTAXRATE(12, 11, MetisDataType.RATE),
 
     /**
      * High Tax Rate.
      */
-    HITAXRATE(13, 12, DataType.RATE),
+    HITAXRATE(13, 12, MetisDataType.RATE),
 
     /**
      * Interest Tax Rate.
      */
-    INTERESTTAXRATE(14, 13, DataType.RATE),
+    INTERESTTAXRATE(14, 13, MetisDataType.RATE),
 
     /**
      * Dividend Tax Rate.
      */
-    DIVIDENDTAXRATE(15, 14, DataType.RATE),
+    DIVIDENDTAXRATE(15, 14, MetisDataType.RATE),
 
     /**
      * High Dividend Tax Rate.
      */
-    HIDIVIDENDTAXRATE(16, 15, DataType.RATE),
+    HIDIVIDENDTAXRATE(16, 15, MetisDataType.RATE),
 
     /**
      * Additional Tax Rate.
      */
-    ADDITIONALTAXRATE(17, 16, DataType.RATE),
+    ADDITIONALTAXRATE(17, 16, MetisDataType.RATE),
 
     /**
      * Additional Dividend Tax Rate.
      */
-    ADDITIONALDIVIDENDTAXRATE(18, 17, DataType.RATE),
+    ADDITIONALDIVIDENDTAXRATE(18, 17, MetisDataType.RATE),
 
     /**
      * Capital Tax Rate.
      */
-    CAPITALTAXRATE(19, 18, DataType.RATE),
+    CAPITALTAXRATE(19, 18, MetisDataType.RATE),
 
     /**
      * High Capital Tax Rate.
      */
-    HICAPITALTAXRATE(20, 19, DataType.RATE);
+    HICAPITALTAXRATE(20, 19, MetisDataType.RATE);
 
     /**
      * The String name.
@@ -150,7 +150,7 @@ public enum TaxYearInfoClass implements DataInfoClass {
     /**
      * Data Type.
      */
-    private final DataType theDataType;
+    private final MetisDataType theDataType;
 
     /**
      * Constructor.
@@ -160,7 +160,7 @@ public enum TaxYearInfoClass implements DataInfoClass {
      */
     TaxYearInfoClass(final int uId,
                      final int uOrder,
-                     final DataType pDataType) {
+                     final MetisDataType pDataType) {
         theId = uId;
         theOrder = uOrder;
         theDataType = pDataType;
@@ -177,7 +177,7 @@ public enum TaxYearInfoClass implements DataInfoClass {
     }
 
     @Override
-    public DataType getDataType() {
+    public MetisDataType getDataType() {
         return theDataType;
     }
 

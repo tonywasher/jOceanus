@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
@@ -56,7 +56,7 @@ public class TransactionInfo
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -122,7 +122,7 @@ public class TransactionInfo
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -162,7 +162,7 @@ public class TransactionInfo
      * @param pValueSet the valueSet
      * @return the Money
      */
-    public static TransactionInfoType getInfoType(final ValueSet pValueSet) {
+    public static TransactionInfoType getInfoType(final MetisValueSet pValueSet) {
         return getInfoType(pValueSet, TransactionInfoType.class);
     }
 
@@ -171,7 +171,7 @@ public class TransactionInfo
      * @param pValueSet the valueSet
      * @return the Deposit
      */
-    public static Deposit getDeposit(final ValueSet pValueSet) {
+    public static Deposit getDeposit(final MetisValueSet pValueSet) {
         return pValueSet.isDeletion()
                                      ? null
                                      : pValueSet.getValue(FIELD_LINK, Deposit.class);
@@ -182,7 +182,7 @@ public class TransactionInfo
      * @param pValueSet the valueSet
      * @return the TransactionTag
      */
-    public static TransactionTag getTransactionTag(final ValueSet pValueSet) {
+    public static TransactionTag getTransactionTag(final MetisValueSet pValueSet) {
         return pValueSet.isDeletion()
                                      ? null
                                      : pValueSet.getValue(FIELD_LINK, TransactionTag.class);
@@ -294,7 +294,7 @@ public class TransactionInfo
         if (myType.isLink()) {
             /* Access data */
             MoneyWiseData myData = getDataSet();
-            ValueSet myValues = getValueSet();
+            MetisValueSet myValues = getValueSet();
             Object myLinkId = myValues.getValue(FIELD_VALUE);
 
             /* Switch on link type */
@@ -336,7 +336,7 @@ public class TransactionInfo
         pushHistory();
 
         /* Update the value if required */
-        if (!Difference.isEqual(getField(), myTransInfo.getField())) {
+        if (!MetisDifference.isEqual(getField(), myTransInfo.getField())) {
             setValueValue(myTransInfo.getField());
             if (getInfoType().isLink()) {
                 setValueLink(myTransInfo.getLink(DataItem.class));
@@ -373,7 +373,7 @@ public class TransactionInfo
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataInfoList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataInfoList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE list.
@@ -392,7 +392,7 @@ public class TransactionInfo
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -402,7 +402,7 @@ public class TransactionInfo
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return TransactionInfo.FIELD_DEFS;
         }
 

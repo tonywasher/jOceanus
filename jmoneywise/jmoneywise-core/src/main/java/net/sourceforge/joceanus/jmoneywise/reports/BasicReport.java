@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
+import net.sourceforge.joceanus.jmetis.list.MetisNestedHashMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
@@ -50,8 +50,8 @@ public abstract class BasicReport {
      */
     protected BasicReport() {
         /* Allocate the hashMaps */
-        theDelayedMap = new NestedHashMap<String, DelayedTable>();
-        theFilterMap = new NestedHashMap<String, Object>();
+        theDelayedMap = new MetisNestedHashMap<String, DelayedTable>();
+        theFilterMap = new MetisNestedHashMap<String, Object>();
     }
 
     /**

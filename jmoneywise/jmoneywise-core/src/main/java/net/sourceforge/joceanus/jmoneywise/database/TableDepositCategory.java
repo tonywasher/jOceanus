@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -90,7 +90,7 @@ public class TableDepositCategory
 
     @Override
     protected void setFieldValue(final DepositCategory pItem,
-                                 final JDataField iField) throws OceanusException {
+                                 final MetisField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (DepositCategory.FIELD_CATTYPE.equals(iField)) {

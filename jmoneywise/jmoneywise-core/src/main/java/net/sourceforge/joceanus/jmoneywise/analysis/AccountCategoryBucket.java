@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.Currency;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
@@ -43,21 +43,21 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * @param <C> the account category data type
  */
 public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
-        implements JDataContents, Comparable<AccountCategoryBucket<T, C>>, OrderedIdItem<Integer> {
+        implements MetisDataContents, Comparable<AccountCategoryBucket<T, C>>, MetisOrderedIdItem<Integer> {
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountCategoryBucket.class.getSimpleName());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(AccountCategoryBucket.class.getSimpleName());
 
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, AccountAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
+    private static final Map<MetisField, AccountAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
 
     /**
      * Totals bucket name.
@@ -88,7 +88,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_BASE.equals(pField)) {
             return theBaseValues;
         }
@@ -100,12 +100,12 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                        ? myValue
-                                                       : JDataFieldValue.SKIP;
+                                                       : MetisFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
@@ -169,7 +169,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
         /* Return the value */
         return (myValue != null)
                                 ? myValue
-                                : JDataFieldValue.SKIP;
+                                : MetisFieldValue.SKIP;
     }
 
     /**
@@ -177,7 +177,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
      * @param pField the field
      * @return the class
      */
-    private static AccountAttribute getClassForField(final JDataField pField) {
+    private static AccountAttribute getClassForField(final MetisField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }

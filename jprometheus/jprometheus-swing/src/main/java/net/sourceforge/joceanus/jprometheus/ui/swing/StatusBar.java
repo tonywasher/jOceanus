@@ -37,8 +37,8 @@ import javax.swing.JProgressBar;
 import javax.swing.Timer;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
-import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
@@ -169,7 +169,7 @@ public class StatusBar
     /**
      * Errors.
      */
-    private final DataErrorList<JMetisExceptionWrapper> theErrors;
+    private final DataErrorList<MetisExceptionWrapper> theErrors;
 
     /**
      * Timer.
@@ -179,7 +179,7 @@ public class StatusBar
     /**
      * Data entry.
      */
-    private final ViewerEntry theDataEntry;
+    private final MetisViewerEntry theDataEntry;
 
     /**
      * Current status.
@@ -204,7 +204,7 @@ public class StatusBar
 
         /* Store access to the Data Entry */
         theDataEntry = theData.getDataEntry(DataControl.DATA_ERROR);
-        theErrors = new DataErrorList<JMetisExceptionWrapper>();
+        theErrors = new DataErrorList<MetisExceptionWrapper>();
 
         /* Create the boxes */
         theCancel = new JButton(NLS_CANCEL);
@@ -290,7 +290,7 @@ public class StatusBar
      * Get error.
      * @return the error
      */
-    public DataErrorList<JMetisExceptionWrapper> getErrors() {
+    public DataErrorList<MetisExceptionWrapper> getErrors() {
         return theErrors;
     }
 
@@ -376,7 +376,7 @@ public class StatusBar
 
     @Override
     public void setFailure(final String pOperation,
-                           final DataErrorList<JMetisExceptionWrapper> pErrors) {
+                           final DataErrorList<MetisExceptionWrapper> pErrors) {
         /* Stop the active task */
         theData.getActiveProfile().end();
 

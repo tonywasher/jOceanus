@@ -26,13 +26,13 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
@@ -53,36 +53,36 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Portfolio Bucket.
  */
 public final class PortfolioBucket
-        implements JDataContents, Comparable<PortfolioBucket>, OrderedIdItem<Integer> {
+        implements MetisDataContents, Comparable<PortfolioBucket>, MetisOrderedIdItem<Integer> {
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.PORTFOLIO_NAME.getValue());
+    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.PORTFOLIO_NAME.getValue());
 
     /**
      * Portfolio Field Id.
      */
-    private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
+    private static final MetisField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
 
     /**
      * CashBucket Field Id.
      */
-    private static final JDataField FIELD_CASH = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH.getItemName());
+    private static final MetisField FIELD_CASH = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH.getItemName());
 
     /**
      * Securities Field Id.
      */
-    private static final JDataField FIELD_SECURITIES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getListName());
+    private static final MetisField FIELD_SECURITIES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getListName());
 
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, AccountAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
+    private static final Map<MetisField, AccountAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
 
     /**
      * Totals bucket name.
@@ -152,7 +152,7 @@ public final class PortfolioBucket
         initValues();
 
         /* Determine whether the portfolio is a foreign currency */
-        isForeignCurrency = !Difference.isEqual(pAnalysis.getCurrency(), theCurrency);
+        isForeignCurrency = !MetisDifference.isEqual(pAnalysis.getCurrency(), theCurrency);
     }
 
     /**
@@ -241,12 +241,12 @@ public final class PortfolioBucket
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_PORTFOLIO.equals(pField)) {
             return thePortfolio;
         }
@@ -267,12 +267,12 @@ public final class PortfolioBucket
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                        ? myValue
-                                                       : JDataFieldValue.SKIP;
+                                                       : MetisFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
@@ -387,7 +387,7 @@ public final class PortfolioBucket
         /* Return the value */
         return (myValue != null)
                                 ? myValue
-                                : JDataFieldValue.SKIP;
+                                : MetisFieldValue.SKIP;
     }
 
     /**
@@ -395,7 +395,7 @@ public final class PortfolioBucket
      * @param pField the field
      * @return the class
      */
-    private static AccountAttribute getClassForField(final JDataField pField) {
+    private static AccountAttribute getClassForField(final MetisField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -693,27 +693,27 @@ public final class PortfolioBucket
      * PortfolioBucket list class.
      */
     public static final class PortfolioBucketList
-            extends OrderedIdList<Integer, PortfolioBucket>
-            implements JDataContents {
+            extends MetisOrderedIdList<Integer, PortfolioBucket>
+            implements MetisDataContents {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.PORTFOLIO_LIST.getValue());
+        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.PORTFOLIO_LIST.getValue());
 
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * Totals field Id.
          */
-        private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
+        private static final MetisField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
 
         /**
          * The analysis.
@@ -835,7 +835,7 @@ public final class PortfolioBucket
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -845,7 +845,7 @@ public final class PortfolioBucket
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
@@ -855,7 +855,7 @@ public final class PortfolioBucket
             if (FIELD_TOTALS.equals(pField)) {
                 return theTotals;
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**

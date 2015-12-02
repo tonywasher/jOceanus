@@ -22,14 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preference;
 
-import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Preferences for a database.
  */
 public class DatabasePreferences
-        extends PreferenceSet {
+        extends MetisPreferenceSet {
     /**
      * Registry name for DataBase driver.
      */

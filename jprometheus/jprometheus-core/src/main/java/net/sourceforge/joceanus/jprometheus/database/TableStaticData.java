@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jprometheus.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -58,7 +58,7 @@ public abstract class TableStaticData<T extends StaticData<T, ?, E>, E extends E
 
     @Override
     protected void setFieldValue(final T pItem,
-                                 final JDataField iField) throws OceanusException {
+                                 final MetisField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (StaticData.FIELD_ENABLED.equals(iField)) {

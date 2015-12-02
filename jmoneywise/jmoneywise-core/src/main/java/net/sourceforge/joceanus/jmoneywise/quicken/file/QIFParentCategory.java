@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.quicken.file;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.list.OrderedList;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 
 /**
@@ -43,7 +43,7 @@ public class QIFParentCategory
     /**
      * Children.
      */
-    private final OrderedList<QIFEventCategory> theChildren;
+    private final MetisOrderedList<QIFEventCategory> theChildren;
 
     /**
      * Constructor.
@@ -56,7 +56,7 @@ public class QIFParentCategory
         theSelf = new QIFEventCategory(pFile, pParent);
 
         /* Create child list */
-        theChildren = new OrderedList<QIFEventCategory>(QIFEventCategory.class);
+        theChildren = new MetisOrderedList<QIFEventCategory>(QIFEventCategory.class);
     }
 
     /**
@@ -68,7 +68,7 @@ public class QIFParentCategory
         theSelf = pParent;
 
         /* Create child list */
-        theChildren = new OrderedList<QIFEventCategory>(QIFEventCategory.class);
+        theChildren = new MetisOrderedList<QIFEventCategory>(QIFEventCategory.class);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class QIFParentCategory
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    public void formatRecord(final JDataFormatter pFormatter,
+    public void formatRecord(final MetisDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
         /* Format own record */
         theSelf.formatRecord(pFormatter, pBuilder);

@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.views;
 
-import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 
 /**
@@ -47,7 +47,7 @@ public interface StatusDisplay {
      * @param pErrors the error list
      */
     void setFailure(final String pOperation,
-                    final DataErrorList<JMetisExceptionWrapper> pErrors);
+                    final DataErrorList<MetisExceptionWrapper> pErrors);
 
     /**
      * Show progress panel.

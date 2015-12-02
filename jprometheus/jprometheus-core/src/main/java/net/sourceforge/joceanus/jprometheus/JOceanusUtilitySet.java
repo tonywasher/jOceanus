@@ -23,9 +23,9 @@
 package net.sourceforge.joceanus.jprometheus;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 
 /**
  * JOceanus Utility Set.
@@ -39,12 +39,12 @@ public abstract class JOceanusUtilitySet {
     /**
      * Preference Manager.
      */
-    private final PreferenceManager thePreferenceMgr;
+    private final MetisPreferenceManager thePreferenceMgr;
 
     /**
      * Data Formatter.
      */
-    private final JDataFormatter theFormatter;
+    private final MetisDataFormatter theFormatter;
 
     /**
      * Constructor.
@@ -52,13 +52,13 @@ public abstract class JOceanusUtilitySet {
      * @param pPrefMgr the preference manager
      */
     protected JOceanusUtilitySet(final GordianHashManager pSecureMgr,
-                                 final PreferenceManager pPrefMgr) {
+                                 final MetisPreferenceManager pPrefMgr) {
         /* Store parameters */
         theSecureMgr = pSecureMgr;
         thePreferenceMgr = pPrefMgr;
 
         /* Create components */
-        theFormatter = new JDataFormatter();
+        theFormatter = new MetisDataFormatter();
     }
 
     /**
@@ -73,7 +73,7 @@ public abstract class JOceanusUtilitySet {
      * Obtain the preference manager.
      * @return the preference manager
      */
-    public PreferenceManager getPreferenceManager() {
+    public MetisPreferenceManager getPreferenceManager() {
         return thePreferenceMgr;
     }
 
@@ -81,7 +81,7 @@ public abstract class JOceanusUtilitySet {
      * Obtain the formatter.
      * @return the formatter
      */
-    public JDataFormatter getDataFormatter() {
+    public MetisDataFormatter getDataFormatter() {
         return theFormatter;
     }
 
@@ -89,5 +89,5 @@ public abstract class JOceanusUtilitySet {
      * Obtain the viewer manager.
      * @return the manager
      */
-    public abstract ViewerManager getViewerManager();
+    public abstract MetisViewerManager getViewerManager();
 }

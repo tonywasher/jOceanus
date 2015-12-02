@@ -27,15 +27,15 @@ import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.DateDayCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.PriceCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.DateDayCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.PriceCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
@@ -103,7 +103,7 @@ public class SecurityPriceTable
     /**
      * The field manager.
      */
-    private final transient JFieldManager theFieldMgr;
+    private final transient MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -163,7 +163,7 @@ public class SecurityPriceTable
      * @param pError the error panel
      */
     protected SecurityPriceTable(final View pView,
-                                 final JFieldManager pFieldMgr,
+                                 final MetisFieldManager pFieldMgr,
                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                  final ErrorPanel pError) {
         /* Record the passed details */
@@ -228,7 +228,7 @@ public class SecurityPriceTable
      */
     protected void setSecurity(final Security pSecurity) {
         /* Store the security */
-        if (!Difference.isEqual(pSecurity, theSecurity)) {
+        if (!MetisDifference.isEqual(pSecurity, theSecurity)) {
             theSecurity = pSecurity;
             theColumns.setAssumedCurrency();
             theModel.fireNewDataEvents();
@@ -309,7 +309,7 @@ public class SecurityPriceTable
         }
 
         @Override
-        public JDataField getFieldForCell(final ViewSecurityPrice pItem,
+        public MetisField getFieldForCell(final ViewSecurityPrice pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
@@ -685,7 +685,7 @@ public class SecurityPriceTable
          * @param pColIndex column index
          * @return the field
          */
-        protected JDataField getFieldForCell(final int pColIndex) {
+        protected MetisField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_DATE:

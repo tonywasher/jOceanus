@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
-import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -68,7 +68,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
     /**
      * Writable spreadsheet.
      */
-    private DataWorkBook theWorkBook = null;
+    private MetisDataWorkBook theWorkBook = null;
 
     /**
      * The DataSet.
@@ -100,7 +100,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      * get workbook.
      * @return the workbook
      */
-    protected DataWorkBook getWorkBook() {
+    protected MetisDataWorkBook getWorkBook() {
         return theWorkBook;
     }
 
@@ -129,9 +129,9 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      */
     public void createBackup(final T pData,
                              final File pFile,
-                             final WorkBookType pType) throws OceanusException {
+                             final MetisWorkBookType pType) throws OceanusException {
         /* Obtain the active profile */
-        JDataProfile myTask = theTask.getActiveTask();
+        MetisProfile myTask = theTask.getActiveTask();
         myTask = myTask.startTask("Writing");
 
         /* Create a similar security control */
@@ -189,9 +189,9 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      * @param pType the workBookType
      * @throws OceanusException on error
      */
-    private void initialiseWorkBook(final WorkBookType pType) throws OceanusException {
+    private void initialiseWorkBook(final MetisWorkBookType pType) throws OceanusException {
         /* Create the workbook attached to the output stream */
-        theWorkBook = new DataWorkBook(pType);
+        theWorkBook = new MetisDataWorkBook(pType);
 
         /* Initialise the list */
         theSheets = new ArrayList<SheetDataItem<?, ?>>();
@@ -214,7 +214,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      */
     private void writeWorkBook(final OutputStream pStream) throws OceanusException, IOException {
         /* Obtain the active profile */
-        JDataProfile myTask = theTask.getActiveTask();
+        MetisProfile myTask = theTask.getActiveTask();
 
         /* Declare the number of stages */
         boolean bContinue = theTask.setNumStages(theSheets.size() + 1);

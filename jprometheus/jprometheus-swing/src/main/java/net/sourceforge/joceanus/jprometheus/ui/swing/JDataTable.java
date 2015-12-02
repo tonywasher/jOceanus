@@ -33,8 +33,8 @@ import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
-import net.sourceforge.joceanus.jmetis.data.EditState;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
+import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -86,7 +86,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * FieldManager.
      */
-    private transient JFieldManager theFieldMgr = null;
+    private transient MetisFieldManager theFieldMgr = null;
 
     /**
      * Data Table Model.
@@ -170,7 +170,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Obtain the field manager.
      * @return the field manager
      */
-    public JFieldManager getFieldMgr() {
+    public MetisFieldManager getFieldMgr() {
         return theFieldMgr;
     }
 
@@ -321,9 +321,9 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Obtain the edit state of the table.
      * @return the edit state
      */
-    public EditState getEditState() {
+    public MetisEditState getEditState() {
         return (theUpdateSet == null)
-                                      ? EditState.CLEAN
+                                      ? MetisEditState.CLEAN
                                       : theUpdateSet.getEditState();
     }
 
@@ -331,7 +331,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Set the field manager for the table.
      * @param pFieldMgr the field manager
      */
-    protected void setFieldMgr(final JFieldManager pFieldMgr) {
+    protected void setFieldMgr(final MetisFieldManager pFieldMgr) {
         theFieldMgr = pFieldMgr;
     }
 

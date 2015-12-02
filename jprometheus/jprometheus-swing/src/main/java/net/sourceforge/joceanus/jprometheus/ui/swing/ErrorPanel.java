@@ -34,9 +34,9 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
@@ -91,20 +91,20 @@ public class ErrorPanel
     /**
      * The data entry for the error.
      */
-    private final transient ViewerEntry theDataError;
+    private final transient MetisViewerEntry theDataError;
 
     /**
      * The error itself.
      */
-    private final transient DataErrorList<JMetisExceptionWrapper> theErrors;
+    private final transient DataErrorList<MetisExceptionWrapper> theErrors;
 
     /**
      * Constructor.
      * @param pManager the data manager
      * @param pParent the parent data entry
      */
-    public ErrorPanel(final ViewerManager pManager,
-                      final ViewerEntry pParent) {
+    public ErrorPanel(final MetisViewerManager pManager,
+                      final MetisViewerEntry pParent) {
         /* Create the error debug entry for this view */
         theDataError = pManager.newEntry(DataControl.DATA_ERROR);
         theDataError.addAsChildOf(pParent);
@@ -114,7 +114,7 @@ public class ErrorPanel
         theEventManager = new TethysEventManager();
 
         /* Create the error list */
-        theErrors = new DataErrorList<JMetisExceptionWrapper>();
+        theErrors = new DataErrorList<MetisExceptionWrapper>();
         theDataError.setObject(theErrors);
 
         /* Create the error field */
@@ -166,7 +166,7 @@ public class ErrorPanel
         }
 
         /* Record the error */
-        theErrors.add(new JMetisExceptionWrapper(pException));
+        theErrors.add(new MetisExceptionWrapper(pException));
 
         /* Set the string for the error field */
         theErrorField.setText(pException.getMessage());
@@ -179,7 +179,7 @@ public class ErrorPanel
     }
 
     @Override
-    public void setErrors(final DataErrorList<JMetisExceptionWrapper> pExceptions) {
+    public void setErrors(final DataErrorList<MetisExceptionWrapper> pExceptions) {
         /* If we currently have an error */
         if (hasError()) {
             /* Clear the error */

@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.threads.swing;
 import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -113,7 +113,7 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
             theStatus.initTask(TASK_NAME);
 
             /* Access the Backup preferences */
-            PreferenceManager myMgr = theControl.getPreferenceManager();
+            MetisPreferenceManager myMgr = theControl.getPreferenceManager();
             BackupPreferences myProperties = myMgr.getPreferenceSet(BackupPreferences.class);
 
             /* Determine the archive name */

@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
@@ -44,12 +44,12 @@ public final class LoanCategoryBucket
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.LOANCATEGORY_NAME.getValue(), AccountCategoryBucket.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.LOANCATEGORY_NAME.getValue(), AccountCategoryBucket.FIELD_DEFS);
 
     /**
      * Loan Category Field Id.
      */
-    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getItemName());
+    private static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getItemName());
 
     /**
      * The loan category.
@@ -73,12 +73,12 @@ public final class LoanCategoryBucket
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_CATEGORY.equals(pField)) {
             return theCategory;
         }
@@ -144,27 +144,27 @@ public final class LoanCategoryBucket
      * LoanCategoryBucket list class.
      */
     public static final class LoanCategoryBucketList
-            extends OrderedIdList<Integer, LoanCategoryBucket>
-            implements JDataContents {
+            extends MetisOrderedIdList<Integer, LoanCategoryBucket>
+            implements MetisDataContents {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.LOANCATEGORY_LIST.getValue());
+        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.LOANCATEGORY_LIST.getValue());
 
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * Totals field Id.
          */
-        private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS.getValue());
+        private static final MetisField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS.getValue());
 
         /**
          * The analysis.
@@ -199,7 +199,7 @@ public final class LoanCategoryBucket
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -209,7 +209,7 @@ public final class LoanCategoryBucket
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
@@ -219,7 +219,7 @@ public final class LoanCategoryBucket
             if (FIELD_TOTALS.equals(pField)) {
                 return theTotals;
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**
@@ -319,7 +319,7 @@ public final class LoanCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
-            OrderedIdList<Integer, LoanCategoryBucket> myTotals = new OrderedIdList<Integer, LoanCategoryBucket>(LoanCategoryBucket.class);
+            MetisOrderedIdList<Integer, LoanCategoryBucket> myTotals = new MetisOrderedIdList<Integer, LoanCategoryBucket>(LoanCategoryBucket.class);
 
             /* Loop through the buckets */
             Iterator<LoanCategoryBucket> myIterator = iterator();

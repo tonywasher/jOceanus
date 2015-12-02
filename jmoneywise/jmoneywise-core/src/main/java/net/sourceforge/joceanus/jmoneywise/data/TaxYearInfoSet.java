@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldRequired;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
@@ -51,17 +51,17 @@ public class TaxYearInfoSet
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.TAXYEAR_INFOSET.getValue());
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDataResource.TAXYEAR_INFOSET.getValue());
 
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, TaxYearInfoClass> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, TaxYearInfoClass.class);
+    private static final Map<MetisField, TaxYearInfoClass> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, TaxYearInfoClass.class);
 
     /**
      * Reverse FieldSet map.
      */
-    private static final Map<TaxYearInfoClass, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, TaxYearInfoClass.class);
+    private static final Map<TaxYearInfoClass, MetisField> REVERSE_FIELDMAP = MetisFields.reverseFieldMap(FIELDSET_MAP, TaxYearInfoClass.class);
 
     /**
      * Default Additional Income Threshold.
@@ -97,12 +97,12 @@ public class TaxYearInfoSet
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle InfoSet fields */
         TaxYearInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
@@ -125,7 +125,7 @@ public class TaxYearInfoSet
         /* Return the value */
         return (myValue != null)
                                 ? myValue
-                                : JDataFieldValue.SKIP;
+                                : MetisFieldValue.SKIP;
     }
 
     /**
@@ -133,7 +133,7 @@ public class TaxYearInfoSet
      * @param pField the field
      * @return the class
      */
-    public static TaxYearInfoClass getClassForField(final JDataField pField) {
+    public static TaxYearInfoClass getClassForField(final MetisField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -143,7 +143,7 @@ public class TaxYearInfoSet
      * @param pClass the class
      * @return the field
      */
-    public static JDataField getFieldForClass(final TaxYearInfoClass pClass) {
+    public static MetisField getFieldForClass(final TaxYearInfoClass pClass) {
         /* Look up field in map */
         return REVERSE_FIELDMAP.get(pClass);
     }
@@ -162,22 +162,22 @@ public class TaxYearInfoSet
      * @param pField the infoSet field
      * @return the status
      */
-    public JDataFieldRequired isFieldRequired(final JDataField pField) {
+    public MetisFieldRequired isFieldRequired(final MetisField pField) {
         TaxYearInfoClass myClass = getClassForField(pField);
         return myClass == null
-                              ? JDataFieldRequired.NOTALLOWED
+                              ? MetisFieldRequired.NOTALLOWED
                               : isClassRequired(myClass);
     }
 
     @Override
-    public JDataFieldRequired isClassRequired(final TaxYearInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final TaxYearInfoClass pClass) {
         /* Access details about the Tax Year */
         TaxYear myTaxYear = getOwner();
         TaxRegime myRegime = myTaxYear.getTaxRegime();
 
         /* If we have no TaxRegime, no class is allowed */
         if (myRegime == null) {
-            return JDataFieldRequired.NOTALLOWED;
+            return MetisFieldRequired.NOTALLOWED;
         }
 
         /* Switch on class */
@@ -189,24 +189,24 @@ public class TaxYearInfoSet
             case ADDITIONALTAXRATE:
             case ADDITIONALDIVIDENDTAXRATE:
                 return myRegime.hasAdditionalTaxBand()
-                                                      ? JDataFieldRequired.MUSTEXIST
-                                                      : JDataFieldRequired.NOTALLOWED;
+                                                      ? MetisFieldRequired.MUSTEXIST
+                                                      : MetisFieldRequired.NOTALLOWED;
 
                 /* Handle CapitalIncome Tax Details */
             case CAPITALTAXRATE:
                 return myRegime.hasCapitalGainsAsIncome()
-                                                         ? JDataFieldRequired.NOTALLOWED
-                                                         : JDataFieldRequired.MUSTEXIST;
+                                                         ? MetisFieldRequired.NOTALLOWED
+                                                         : MetisFieldRequired.MUSTEXIST;
 
                 /* Handle CapitalIncome Tax Details */
             case HICAPITALTAXRATE:
                 return myRegime.hasCapitalGainsAsIncome()
-                                                         ? JDataFieldRequired.NOTALLOWED
-                                                         : JDataFieldRequired.CANEXIST;
+                                                         ? MetisFieldRequired.NOTALLOWED
+                                                         : MetisFieldRequired.CANEXIST;
 
                 /* Handle all other fields */
             default:
-                return JDataFieldRequired.MUSTEXIST;
+                return MetisFieldRequired.MUSTEXIST;
         }
     }
 
@@ -224,19 +224,19 @@ public class TaxYearInfoSet
             boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
 
             /* Determine requirements for class */
-            JDataFieldRequired myState = isClassRequired(myClass);
+            MetisFieldRequired myState = isClassRequired(myClass);
 
             /* If the field is missing */
             if (!isExisting) {
                 /* Handle required field missing */
-                if (myState == JDataFieldRequired.MUSTEXIST) {
+                if (myState == MetisFieldRequired.MUSTEXIST) {
                     myTaxYear.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
                 }
                 continue;
             }
 
             /* If field is not allowed */
-            if (myState == JDataFieldRequired.NOTALLOWED) {
+            if (myState == MetisFieldRequired.NOTALLOWED) {
                 myTaxYear.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
                 continue;
             }

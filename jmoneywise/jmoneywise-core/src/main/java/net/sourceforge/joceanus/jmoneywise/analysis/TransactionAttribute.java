@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 
 /**
  * TransactionAttribute enumeration.
@@ -66,7 +66,7 @@ public enum TransactionAttribute implements BucketAttribute {
     }
 
     @Override
-    public DataType getDataType() {
-        return DataType.MONEY;
+    public MetisDataType getDataType() {
+        return MetisDataType.MONEY;
     }
 }

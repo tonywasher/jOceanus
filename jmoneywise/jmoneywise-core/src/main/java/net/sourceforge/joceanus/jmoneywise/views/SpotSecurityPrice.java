@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.views;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
-import net.sourceforge.joceanus.jmetis.data.EditState;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -67,17 +67,17 @@ public final class SpotSecurityPrice
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, SecurityPrice.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, SecurityPrice.FIELD_DEFS);
 
     /**
      * Previous Date field Id.
      */
-    public static final JDataField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
+    public static final MetisField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
 
     /**
      * Previous Price field Id.
      */
-    public static final JDataField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTPRICE_PREVPRICE.getValue());
+    public static final MetisField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTPRICE_PREVPRICE.getValue());
 
     /**
      * the previous date.
@@ -104,12 +104,12 @@ public final class SpotSecurityPrice
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_PREVDATE.equals(pField)) {
             return thePrevDate;
         }
@@ -160,8 +160,8 @@ public final class SpotSecurityPrice
     @Override
     public void setValidEdit() {
         setEditState(hasHistory()
-                                  ? EditState.VALID
-                                  : EditState.CLEAN);
+                                  ? MetisEditState.VALID
+                                  : MetisEditState.CLEAN);
     }
 
     @Override
@@ -179,27 +179,27 @@ public final class SpotSecurityPrice
     }
 
     @Override
-    public DataState getState() {
-        EncryptedValueSet myCurr = getValueSet();
-        EncryptedValueSet myBase = getOriginalValues();
+    public MetisDataState getState() {
+        MetisEncryptedValueSet myCurr = getValueSet();
+        MetisEncryptedValueSet myBase = getOriginalValues();
 
         /* If we have no changes we are CLEAN */
         if (myCurr.getVersion() == 0) {
-            return DataState.CLEAN;
+            return MetisDataState.CLEAN;
         }
 
         /* If the original price is Null */
         if (getPrice(myBase) == null) {
             /* Return status */
             return getPrice(myCurr) == null
-                                            ? DataState.DELNEW
-                                            : DataState.NEW;
+                                            ? MetisDataState.DELNEW
+                                            : MetisDataState.NEW;
         }
 
         /* If we are deleted return so */
         return getPrice(myCurr) == null
-                                        ? DataState.DELETED
-                                        : DataState.CHANGED;
+                                        ? MetisDataState.DELETED
+                                        : MetisDataState.CHANGED;
     }
 
     /**
@@ -210,27 +210,27 @@ public final class SpotSecurityPrice
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseViewResource.SPOTPRICE_NAME.getValue(), DataList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseViewResource.SPOTPRICE_NAME.getValue(), DataList.FIELD_DEFS);
 
         /**
          * The portfolio field Id.
          */
-        public static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
+        public static final MetisField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
 
         /**
          * The date field Id.
          */
-        public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+        public static final MetisField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
         /**
          * The next date field Id.
          */
-        public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_NEXTDATE.getValue());
+        public static final MetisField FIELD_NEXT = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_NEXTDATE.getValue());
 
         /**
          * The previous date field Id.
          */
-        public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
+        public static final MetisField FIELD_PREV = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
 
         /**
          * The date.
@@ -350,12 +350,12 @@ public final class SpotSecurityPrice
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_PORTFOLIO.equals(pField)) {
                 return thePortfolio;
             }
@@ -377,7 +377,7 @@ public final class SpotSecurityPrice
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return SpotSecurityPrice.FIELD_DEFS;
         }
 

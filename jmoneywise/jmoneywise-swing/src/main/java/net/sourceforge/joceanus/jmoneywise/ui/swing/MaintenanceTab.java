@@ -29,10 +29,10 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.swing.PreferencesPanel;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.swing.MetisPreferencesPanel;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -150,7 +150,7 @@ public class MaintenanceTab
     /**
      * The Preferences Panel.
      */
-    private final PreferencesPanel thePreferences;
+    private final MetisPreferencesPanel thePreferences;
 
     /**
      * Constructor.
@@ -200,8 +200,8 @@ public class MaintenanceTab
         theStatic.addStatic(MoneyWiseDataType.TRANSINFOTYPE, TransactionInfoTypeList.class);
 
         /* Create the Preferences Tab */
-        PreferenceManager myPrefs = theView.getPreferenceManager();
-        thePreferences = new PreferencesPanel(myPrefs, theView.getFieldManager(), theView.getViewerManager(), theView.getDataEntry(DataControl.DATA_MAINT));
+        MetisPreferenceManager myPrefs = theView.getPreferenceManager();
+        thePreferences = new MetisPreferencesPanel(myPrefs, theView.getFieldManager(), theView.getViewerManager(), theView.getDataEntry(DataControl.DATA_MAINT));
         theTabs.addTab(TITLE_PREFERENCES, thePreferences);
 
         /* Add interesting preferences */
@@ -245,7 +245,7 @@ public class MaintenanceTab
      * Obtain the viewer manager.
      * @return the manager
      */
-    public ViewerManager getViewerManager() {
+    public MetisViewerManager getViewerManager() {
         return theView.getViewerManager();
     }
 
@@ -260,7 +260,7 @@ public class MaintenanceTab
      */
     private void refreshData() {
         /* Obtain the active profile */
-        JDataProfile myTask = theView.getActiveTask();
+        MetisProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("MaintenanceTab");
 
         /* Protect against exceptions */

@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch;
@@ -55,17 +55,17 @@ public final class SvnBranch
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(SvnBranch.class.getSimpleName(), ScmBranch.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(SvnBranch.class.getSimpleName(), ScmBranch.FIELD_DEFS);
 
     /**
      * Repository field id.
      */
-    private static final JDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+    private static final MetisField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
 
     /**
      * RevisionPath.
      */
-    private static final JDataField FIELD_REVPATH = FIELD_DEFS.declareLocalField("RevisionPath");
+    private static final MetisField FIELD_REVPATH = FIELD_DEFS.declareLocalField("RevisionPath");
 
     /**
      * Logger.
@@ -152,12 +152,12 @@ public final class SvnBranch
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_REPO.equals(pField)) {
             return theRepository;
@@ -266,7 +266,7 @@ public final class SvnBranch
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnBranchList.class.getSimpleName(), ScmBranchList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnBranchList.class.getSimpleName(), ScmBranchList.FIELD_DEFS);
 
         /**
          * The parent component.
@@ -286,7 +286,7 @@ public final class SvnBranch
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 

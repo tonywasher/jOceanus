@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -36,7 +36,7 @@ public class PortfolioCashBucket
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.PORTFOLIOCASH_NAME.getValue(), AccountBucket.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.PORTFOLIOCASH_NAME.getValue(), AccountBucket.FIELD_DEFS);
 
     /**
      * Constructor.
@@ -87,7 +87,7 @@ public class PortfolioCashBucket
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 

@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
@@ -44,12 +44,12 @@ public final class CashCategoryBucket
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.CASHCATEGORY_NAME.getValue(), AccountCategoryBucket.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.CASHCATEGORY_NAME.getValue(), AccountCategoryBucket.FIELD_DEFS);
 
     /**
      * Cash Category Field Id.
      */
-    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY.getItemName());
+    private static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY.getItemName());
 
     /**
      * The cash category.
@@ -73,12 +73,12 @@ public final class CashCategoryBucket
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_CATEGORY.equals(pField)) {
             return theCategory;
         }
@@ -144,27 +144,27 @@ public final class CashCategoryBucket
      * CashCategoryBucket list class.
      */
     public static final class CashCategoryBucketList
-            extends OrderedIdList<Integer, CashCategoryBucket>
-            implements JDataContents {
+            extends MetisOrderedIdList<Integer, CashCategoryBucket>
+            implements MetisDataContents {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.CASHCATEGORY_LIST.getValue());
+        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.CASHCATEGORY_LIST.getValue());
 
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * Totals field Id.
          */
-        private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS.getValue());
+        private static final MetisField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS.getValue());
 
         /**
          * The analysis.
@@ -199,7 +199,7 @@ public final class CashCategoryBucket
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -209,7 +209,7 @@ public final class CashCategoryBucket
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
@@ -219,7 +219,7 @@ public final class CashCategoryBucket
             if (FIELD_TOTALS.equals(pField)) {
                 return theTotals;
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**
@@ -319,7 +319,7 @@ public final class CashCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
-            OrderedIdList<Integer, CashCategoryBucket> myTotals = new OrderedIdList<Integer, CashCategoryBucket>(CashCategoryBucket.class);
+            MetisOrderedIdList<Integer, CashCategoryBucket> myTotals = new MetisOrderedIdList<Integer, CashCategoryBucket>(CashCategoryBucket.class);
 
             /* Loop through the buckets */
             Iterator<CashCategoryBucket> myIterator = iterator();

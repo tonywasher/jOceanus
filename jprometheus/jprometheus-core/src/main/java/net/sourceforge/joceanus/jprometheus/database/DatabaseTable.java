@@ -29,9 +29,9 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -259,7 +259,7 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
      * @throws OceanusException on error
      */
     protected void setFieldValue(final T pItem,
-                                 final JDataField pField) throws OceanusException {
+                                 final MetisField pField) throws OceanusException {
         /* Switch on field id */
         if (pField.equals(DataItem.FIELD_ID)) {
             theTable.setIntegerValue(DataItem.FIELD_ID, pItem.getId());
@@ -346,7 +346,7 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
      * @param pState the particular state
      * @return the count of items
      */
-    private int countStateItems(final DataState pState) {
+    private int countStateItems(final MetisDataState pState) {
         /* Access the iterator */
         Iterator<T> myIterator = theList.iterator();
         int iCount = 0;
@@ -396,12 +396,12 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
         /* Protect the insert */
         try {
             /* Declare the number of steps */
-            if (!pTask.setNumSteps(countStateItems(DataState.NEW))) {
+            if (!pTask.setNumSteps(countStateItems(MetisDataState.NEW))) {
                 return false;
             }
 
             /* Declare the table and mode */
-            pBatch.setCurrentTable(this, DataState.NEW);
+            pBatch.setCurrentTable(this, MetisDataState.NEW);
 
             /* Prepare the insert statement */
             String myInsert = theTable.getInsertString();
@@ -414,14 +414,14 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
             while (myIterator.hasNext()) {
                 /* Ignore non-new items */
                 myCurr = myIterator.next();
-                if (myCurr.getState() != DataState.NEW) {
+                if (myCurr.getState() != MetisDataState.NEW) {
                     continue;
                 }
 
                 /* Loop through the columns */
                 for (ColumnDefinition myCol : theTable.getColumns()) {
                     /* Access the column id */
-                    JDataField iField = myCol.getColumnId();
+                    MetisField iField = myCol.getColumnId();
 
                     /* Set the field value */
                     setFieldValue(myCurr, iField);
@@ -485,12 +485,12 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
         /* Protect the update */
         try {
             /* Declare the number of steps */
-            if (!pTask.setNumSteps(countStateItems(DataState.CHANGED))) {
+            if (!pTask.setNumSteps(countStateItems(MetisDataState.CHANGED))) {
                 return false;
             }
 
             /* Declare the table and mode */
-            pBatch.setCurrentTable(this, DataState.CHANGED);
+            pBatch.setCurrentTable(this, MetisDataState.CHANGED);
 
             /* Access the iterator */
             Iterator<T> myIterator = theList.iterator();
@@ -499,7 +499,7 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
             while (myIterator.hasNext()) {
                 /* Ignore non-changed items */
                 myCurr = myIterator.next();
-                if (myCurr.getState() != DataState.CHANGED) {
+                if (myCurr.getState() != MetisDataState.CHANGED) {
                     continue;
                 }
 
@@ -554,8 +554,8 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
     private boolean updateItem(final T pItem) throws OceanusException {
 
         /* Access the object and base */
-        ValueSet myCurr = pItem.getValueSet();
-        ValueSet myBase = pItem.getOriginalValues();
+        MetisValueSet myCurr = pItem.getValueSet();
+        MetisValueSet myBase = pItem.getOriginalValues();
         boolean isUpdated = false;
 
         /* Loop through the fields */
@@ -566,7 +566,7 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
             }
 
             /* Access the column id */
-            JDataField iField = myCol.getColumnId();
+            MetisField iField = myCol.getColumnId();
 
             /* Ignore ID column */
             if (DataItem.FIELD_ID.equals(iField)) {
@@ -608,12 +608,12 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
         /* Protect the delete */
         try {
             /* Declare the number of steps */
-            if (!pTask.setNumSteps(countStateItems(DataState.DELETED))) {
+            if (!pTask.setNumSteps(countStateItems(MetisDataState.DELETED))) {
                 return false;
             }
 
             /* Declare the table and mode */
-            pBatch.setCurrentTable(this, DataState.DELETED);
+            pBatch.setCurrentTable(this, MetisDataState.DELETED);
 
             /* Prepare the delete statement */
             String myDelete = theTable.getDeleteString();
@@ -626,7 +626,7 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
             while (myIterator.hasPrevious()) {
                 /* Ignore non-deleted items */
                 myCurr = myIterator.previous();
-                if (myCurr.getState() != DataState.DELETED) {
+                if (myCurr.getState() != MetisDataState.DELETED) {
                     continue;
                 }
 
@@ -634,7 +634,7 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
                 pBatch.addBatchItem();
 
                 /* Ignore DelNew items as far as the database is concerned */
-                if (myCurr.getBase().getState() != DataState.DELNEW) {
+                if (myCurr.getBase().getState() != MetisDataState.DELNEW) {
                     /* Apply the id */
                     theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
                     theTable.updateValues(theStmt);

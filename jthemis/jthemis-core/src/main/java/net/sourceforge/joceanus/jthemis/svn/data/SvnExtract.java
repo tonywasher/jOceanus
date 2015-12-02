@@ -29,12 +29,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisDataException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
@@ -55,31 +55,31 @@ import org.tmatesoft.svn.core.wc.SVNUpdateClient;
  * @author Tony Washer
  */
 public class SvnExtract
-        implements JDataContents {
+        implements MetisDataContents {
     /**
      * DataFields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(SvnExtract.class.getSimpleName());
+    private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtract.class.getSimpleName());
 
     /**
      * Component field.
      */
-    private static final JDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Component");
+    private static final MetisField FIELD_COMP = FIELD_DEFS.declareLocalField("Component");
 
     /**
      * Trunk field.
      */
-    private static final JDataField FIELD_TRUNK = FIELD_DEFS.declareLocalField("Trunk");
+    private static final MetisField FIELD_TRUNK = FIELD_DEFS.declareLocalField("Trunk");
 
     /**
      * Branches field.
      */
-    private static final JDataField FIELD_BRANCHES = FIELD_DEFS.declareLocalField("Branches");
+    private static final MetisField FIELD_BRANCHES = FIELD_DEFS.declareLocalField("Branches");
 
     /**
      * Tags field.
      */
-    private static final JDataField FIELD_TAGS = FIELD_DEFS.declareLocalField("Tags");
+    private static final MetisField FIELD_TAGS = FIELD_DEFS.declareLocalField("Tags");
 
     /**
      * Component.
@@ -167,12 +167,12 @@ public class SvnExtract
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_COMP.equals(pField)) {
             return theComponent;
         }
@@ -185,7 +185,7 @@ public class SvnExtract
         if (FIELD_TAGS.equals(pField)) {
             return theTags;
         }
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**
@@ -290,7 +290,7 @@ public class SvnExtract
      * Extract List.
      */
     public static final class SvnExtractAnchor
-            implements JDataFormat {
+            implements MetisDataFormat {
         /**
          * The owner.
          */
@@ -345,7 +345,7 @@ public class SvnExtract
      */
     public static class SvnBranchExtractPlanList
             extends ArrayList<SvnBranchExtractPlan>
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * Serial Id.
          */
@@ -354,12 +354,12 @@ public class SvnExtract
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnBranchExtractPlanList.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnBranchExtractPlanList.class.getSimpleName());
 
         /**
          * Size field.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
         @Override
         public String formatObject() {
@@ -367,16 +367,16 @@ public class SvnExtract
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
     }
 
@@ -388,7 +388,7 @@ public class SvnExtract
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnBranchExtractPlan.class.getSimpleName(), SvnExtractPlan.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnBranchExtractPlan.class.getSimpleName(), SvnExtractPlan.FIELD_DEFS);
 
         /**
          * Constructor.
@@ -400,7 +400,7 @@ public class SvnExtract
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -419,7 +419,7 @@ public class SvnExtract
      */
     public static class SvnTagExtractPlanList
             extends ArrayList<SvnTagExtractPlan>
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * Serial Id.
          */
@@ -428,12 +428,12 @@ public class SvnExtract
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnTagExtractPlanList.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnTagExtractPlanList.class.getSimpleName());
 
         /**
          * Size field.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
         @Override
         public String formatObject() {
@@ -441,16 +441,16 @@ public class SvnExtract
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
     }
 
@@ -462,7 +462,7 @@ public class SvnExtract
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnTagExtractPlan.class.getSimpleName(), SvnExtractPlan.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnTagExtractPlan.class.getSimpleName(), SvnExtractPlan.FIELD_DEFS);
 
         /**
          * Constructor.
@@ -474,7 +474,7 @@ public class SvnExtract
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -493,26 +493,26 @@ public class SvnExtract
      * @param <T> owner data type
      */
     private abstract static class SvnExtractPlan<T>
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnExtractPlan.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtractPlan.class.getSimpleName());
 
         /**
          * Owner field.
          */
-        private static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
+        private static final MetisField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
 
         /**
          * Anchor field.
          */
-        private static final JDataField FIELD_ANCHOR = FIELD_DEFS.declareLocalField("Anchor");
+        private static final MetisField FIELD_ANCHOR = FIELD_DEFS.declareLocalField("Anchor");
 
         /**
          * Views field.
          */
-        private static final JDataField FIELD_VIEWS = FIELD_DEFS.declareLocalField("Views");
+        private static final MetisField FIELD_VIEWS = FIELD_DEFS.declareLocalField("Views");
 
         /**
          * Repository.
@@ -561,7 +561,7 @@ public class SvnExtract
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_OWNER.equals(pField)) {
                 return theOwner;
             }
@@ -571,7 +571,7 @@ public class SvnExtract
             if (FIELD_VIEWS.equals(pField)) {
                 return theViews;
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**
@@ -883,7 +883,7 @@ public class SvnExtract
      */
     public static class SvnExtractViewList
             extends ArrayList<SvnExtractView>
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * Serial Id.
          */
@@ -892,12 +892,12 @@ public class SvnExtract
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnExtractViewList.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtractViewList.class.getSimpleName());
 
         /**
          * Size field.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
         @Override
         public String formatObject() {
@@ -905,16 +905,16 @@ public class SvnExtract
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
     }
 
@@ -926,12 +926,12 @@ public class SvnExtract
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnExtractMigratedView.class.getSimpleName(), SvnExtractView.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtractMigratedView.class.getSimpleName(), SvnExtractView.FIELD_DEFS);
 
         /**
          * Owner field.
          */
-        private static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
+        private static final MetisField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
 
         /**
          * Original owner.
@@ -954,12 +954,12 @@ public class SvnExtract
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_OWNER.equals(pField)) {
                 return theOwner;
             }
@@ -979,31 +979,31 @@ public class SvnExtract
      * Extract View.
      */
     public static class SvnExtractView
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnExtractView.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtractView.class.getSimpleName());
 
         /**
          * Revision field.
          */
-        private static final JDataField FIELD_REV = FIELD_DEFS.declareLocalField("Revision");
+        private static final MetisField FIELD_REV = FIELD_DEFS.declareLocalField("Revision");
 
         /**
          * Date field.
          */
-        private static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+        private static final MetisField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
 
         /**
          * Message field.
          */
-        private static final JDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField("Message");
+        private static final MetisField FIELD_MESSAGE = FIELD_DEFS.declareLocalField("Message");
 
         /**
          * Items field.
          */
-        private static final JDataField FIELD_ITEMS = FIELD_DEFS.declareLocalField("Items");
+        private static final MetisField FIELD_ITEMS = FIELD_DEFS.declareLocalField("Items");
 
         /**
          * Repository.
@@ -1102,7 +1102,7 @@ public class SvnExtract
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -1112,7 +1112,7 @@ public class SvnExtract
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_REV.equals(pField)) {
                 return theRevision.toString();
             }
@@ -1125,7 +1125,7 @@ public class SvnExtract
             if (FIELD_ITEMS.equals(pField)) {
                 return theItems;
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**
@@ -1249,21 +1249,21 @@ public class SvnExtract
      * Extract Item.
      */
     public static final class SvnExtractItem
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnExtractItem.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtractItem.class.getSimpleName());
 
         /**
          * Target field.
          */
-        private static final JDataField FIELD_TARGET = FIELD_DEFS.declareLocalField("Target");
+        private static final MetisField FIELD_TARGET = FIELD_DEFS.declareLocalField("Target");
 
         /**
          * Source field.
          */
-        private static final JDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
+        private static final MetisField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
 
         /**
          * Target path.
@@ -1296,7 +1296,7 @@ public class SvnExtract
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -1306,14 +1306,14 @@ public class SvnExtract
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_TARGET.equals(pField)) {
                 return theTarget;
             }
             if (FIELD_SOURCE.equals(pField)) {
                 return theSource.toString();
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**
@@ -1365,7 +1365,7 @@ public class SvnExtract
      */
     public static class SvnExtractItemList
             extends ArrayList<SvnExtractItem>
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * Serial Id.
          */
@@ -1374,12 +1374,12 @@ public class SvnExtract
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnExtractItemList.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtractItemList.class.getSimpleName());
 
         /**
          * Size field.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
         @Override
         public String formatObject() {
@@ -1401,16 +1401,16 @@ public class SvnExtract
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**
@@ -1425,9 +1425,9 @@ public class SvnExtract
                 SvnExtractItem myEntry = myIterator.next();
 
                 /* If we have matching target */
-                if (Difference.isEqual(myEntry.getTarget(), pItem.getTarget())) {
+                if (MetisDifference.isEqual(myEntry.getTarget(), pItem.getTarget())) {
                     /* Reject if different path */
-                    if (!Difference.isEqual(myEntry.getSource(), pItem.getSource())) {
+                    if (!MetisDifference.isEqual(myEntry.getSource(), pItem.getSource())) {
                         throw new JThemisDataException(myEntry, "Conflicting sources");
                     }
 

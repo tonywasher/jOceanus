@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.CategoryBase;
@@ -83,7 +83,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected MoneyWiseDataItemPanel(final JFieldManager pFieldMgr,
+    protected MoneyWiseDataItemPanel(final MetisFieldManager pFieldMgr,
                                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                      final ErrorPanel pError) {
         super(pFieldMgr, pUpdateSet, pError);

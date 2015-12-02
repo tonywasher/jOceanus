@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedField;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.EncryptionGenerator;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedField;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptionGenerator;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -43,12 +43,12 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.ENCRYPTED_NAME.getValue(), DataItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.ENCRYPTED_NAME.getValue(), DataItem.FIELD_DEFS);
 
     /**
      * Data Key Set Field Id.
      */
-    public static final JDataField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME);
+    public static final MetisField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME);
 
     /**
      * Error message for bad usage.
@@ -58,7 +58,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Generator field.
      */
-    private EncryptionGenerator theGenerator = null;
+    private MetisEncryptionGenerator theGenerator = null;
 
     /**
      * Standard Constructor. This creates a null encryption generator. This will be overridden when a DataKeySet is assigned to the item.
@@ -68,7 +68,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     public EncryptedItem(final EncryptedList<?, E> pList,
                          final Integer pId) {
         super(pList, pId);
-        theGenerator = new EncryptionGenerator(null);
+        theGenerator = new MetisEncryptionGenerator(null);
     }
 
     /**
@@ -97,18 +97,18 @@ public abstract class EncryptedItem<E extends Enum<E>>
         if (myId != null) {
             setDataKeySet(myId);
         } else {
-            theGenerator = new EncryptionGenerator(null);
+            theGenerator = new MetisEncryptionGenerator(null);
         }
     }
 
     @Override
-    public EncryptedValueSet getValueSet() {
-        return (EncryptedValueSet) super.getValueSet();
+    public MetisEncryptedValueSet getValueSet() {
+        return (MetisEncryptedValueSet) super.getValueSet();
     }
 
     @Override
-    public EncryptedValueSet getOriginalValues() {
-        return (EncryptedValueSet) super.getOriginalValues();
+    public MetisEncryptedValueSet getOriginalValues() {
+        return (MetisEncryptedValueSet) super.getOriginalValues();
     }
 
     /**
@@ -135,7 +135,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pValueSet the valueSet
      * @return the ControlKey
      */
-    public static DataKeySet getDataKeySet(final EncryptedValueSet pValueSet) {
+    public static DataKeySet getDataKeySet(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getValue(FIELD_KEYSET, DataKeySet.class);
     }
 
@@ -199,20 +199,20 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pValue the value to set
      * @throws OceanusException on error
      */
-    protected final void setEncryptedValue(final JDataField pField,
+    protected final void setEncryptedValue(final MetisField pField,
                                            final Object pValue) throws OceanusException {
         /* Obtain the existing value */
-        EncryptedValueSet myValueSet = getValueSet();
+        MetisEncryptedValueSet myValueSet = getValueSet();
         Object myCurrent = myValueSet.getValue(pField);
 
         /* Handle switched usage */
-        if ((myCurrent != null) && (!EncryptedField.class.isInstance(myCurrent))) {
+        if ((myCurrent != null) && (!MetisEncryptedField.class.isInstance(myCurrent))) {
             myCurrent = null;
         }
 
         /* Create the new encrypted value */
-        EncryptedField<?> myCurr = (EncryptedField<?>) myCurrent;
-        EncryptedField<?> myField = theGenerator.encryptValue(myCurr, pValue);
+        MetisEncryptedField<?> myCurr = (MetisEncryptedField<?>) myCurrent;
+        MetisEncryptedField<?> myField = theGenerator.encryptValue(myCurr, pValue);
 
         /* Store the new value */
         myValueSet.setValue(pField, myField);
@@ -225,11 +225,11 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pClass the class of the value
      * @throws OceanusException on error
      */
-    protected final void setEncryptedValue(final JDataField pField,
+    protected final void setEncryptedValue(final MetisField pField,
                                            final byte[] pEncrypted,
                                            final Class<?> pClass) throws OceanusException {
         /* Create the new encrypted value */
-        EncryptedField<?> myField = theGenerator.decryptValue(pEncrypted, pClass);
+        MetisEncryptedField<?> myField = theGenerator.decryptValue(pEncrypted, pClass);
 
         /* Store the new value */
         getValueSet().setValue(pField, myField);
@@ -241,18 +241,18 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pNew The new Pair
      * @return <code>true</code> if the objects differ, <code>false</code> otherwise
      */
-    public static Difference getDifference(final EncryptedField<?> pCurr,
-                                           final EncryptedField<?> pNew) {
+    public static MetisDifference getDifference(final MetisEncryptedField<?> pCurr,
+                                           final MetisEncryptedField<?> pNew) {
         /* Handle case where current value is null */
         if (pCurr == null) {
             return (pNew != null)
-                                 ? Difference.DIFFERENT
-                                 : Difference.IDENTICAL;
+                                 ? MetisDifference.DIFFERENT
+                                 : MetisDifference.IDENTICAL;
         }
 
         /* Handle case where new value is null */
         if (pNew == null) {
-            return Difference.DIFFERENT;
+            return MetisDifference.DIFFERENT;
         }
 
         /* Handle Standard cases */
@@ -278,7 +278,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
         setValueDataKeySet(pKeySet);
 
         /* Access underlying values if they exist */
-        EncryptedValueSet myBaseValues = pBase.getValueSet();
+        MetisEncryptedValueSet myBaseValues = pBase.getValueSet();
 
         /* Try to adopt the underlying */
         getValueSet().adoptSecurity(theGenerator, myBaseValues);

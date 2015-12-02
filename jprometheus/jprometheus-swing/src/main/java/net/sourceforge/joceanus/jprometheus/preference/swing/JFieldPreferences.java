@@ -24,15 +24,15 @@ package net.sourceforge.joceanus.jprometheus.preference.swing;
 
 import java.awt.Color;
 
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldConfig;
-import net.sourceforge.joceanus.jmetis.preference.swing.SwingPreferenceSet;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
+import net.sourceforge.joceanus.jmetis.preference.swing.MetisSwingPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Preferences for JFieldSet.
  */
 public class JFieldPreferences
-        extends SwingPreferenceSet {
+        extends MetisSwingPreferenceSet {
     /**
      * Registry name for Standard foreground.
      */
@@ -135,9 +135,9 @@ public class JFieldPreferences
      * Obtain configuration.
      * @return the render configuration
      */
-    public JFieldConfig getConfiguration() {
+    public MetisFieldConfig getConfiguration() {
         /* Allocate the configuration */
-        JFieldConfig myConfig = new JFieldConfig();
+        MetisFieldConfig myConfig = new MetisFieldConfig();
 
         /* Set the values */
         myConfig.setBackgroundColor(getColorValue(NAME_BACKGROUND));

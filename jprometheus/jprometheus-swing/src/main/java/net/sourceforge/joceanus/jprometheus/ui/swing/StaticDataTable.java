@@ -29,13 +29,13 @@ import java.beans.PropertyChangeListener;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -104,7 +104,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * The field manager.
      */
-    private final transient JFieldManager theFieldMgr;
+    private final transient MetisFieldManager theFieldMgr;
 
     /**
      * The Panel.
@@ -232,7 +232,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      * Determine Focus.
      * @param pEntry the master data entry
      */
-    protected void determineFocus(final ViewerEntry pEntry) {
+    protected void determineFocus(final MetisViewerEntry pEntry) {
         /* Request the focus */
         requestFocusInWindow();
 
@@ -434,7 +434,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         }
 
         @Override
-        public JDataField getFieldForCell(final T pItem,
+        public MetisField getFieldForCell(final T pItem,
                                           final int pColIndex) {
             /* Obtain the column field */
             return theColumns.getFieldForCell(pColIndex);
@@ -694,7 +694,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
          * @param pColIndex column index
          * @return the field
          */
-        private JDataField getFieldForCell(final int pColIndex) {
+        private MetisField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_CLASS:

@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 
 /**
  * Methods for a Bucket Attribute.
@@ -32,7 +32,7 @@ public interface BucketAttribute {
      * Obtain DataType.
      * @return the data type
      */
-    DataType getDataType();
+    MetisDataType getDataType();
 
     /**
      * Is this a counter value.

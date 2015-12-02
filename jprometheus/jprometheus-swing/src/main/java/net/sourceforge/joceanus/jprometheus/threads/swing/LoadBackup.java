@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jprometheus.threads.swing;
 import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.swing.FileSelector;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.swing.MetisFileSelector;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -82,7 +82,7 @@ public class LoadBackup<T extends DataSet<T, E>, E extends Enum<E>>
         theStatus.initTask("Loading Backup");
 
         /* Access the Sheet preferences */
-        PreferenceManager myMgr = theControl.getPreferenceManager();
+        MetisPreferenceManager myMgr = theControl.getPreferenceManager();
         BackupPreferences myProperties = myMgr.getPreferenceSet(BackupPreferences.class);
 
         /* Determine the archive name */
@@ -90,7 +90,7 @@ public class LoadBackup<T extends DataSet<T, E>, E extends Enum<E>>
         String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
 
         /* Determine the name of the file to load */
-        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir, myPrefix, GordianZipReadFile.ZIPFILE_EXT);
+        MetisFileSelector myDialog = new MetisFileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir, myPrefix, GordianZipReadFile.ZIPFILE_EXT);
         myDialog.showDialog();
         File myFile = myDialog.getSelectedFile();
 

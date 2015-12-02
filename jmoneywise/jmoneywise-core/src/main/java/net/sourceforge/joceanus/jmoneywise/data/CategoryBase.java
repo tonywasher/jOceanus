@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedString;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedString;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CategoryInterface;
@@ -58,27 +58,27 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(CategoryBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(CategoryBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
+    public static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
+    public static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
 
     /**
      * Parent Category Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
+    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
 
     /**
      * SubCategory Field Id.
      */
-    public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataResource.CATEGORY_SUBCAT.getValue());
+    public static final MetisField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataResource.CATEGORY_SUBCAT.getValue());
 
     /**
      * New parent name.
@@ -178,7 +178,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_NAME.equals(pField)) {
             return true;
@@ -214,7 +214,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * Obtain Encrypted Name Field.
      * @return the Field
      */
-    private EncryptedString getNameField() {
+    private MetisEncryptedString getNameField() {
         return getNameField(getValueSet());
     }
 
@@ -238,7 +238,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * Obtain Encrypted Description Field.
      * @return the Field
      */
-    private EncryptedString getDescField() {
+    private MetisEncryptedString getDescField() {
         return getDescField(getValueSet());
     }
 
@@ -255,8 +255,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     public Integer getCategoryTypeId() {
         S myType = getCategoryType();
         return (myType == null)
-                               ? null
-                               : myType.getId();
+                                ? null
+                                : myType.getId();
     }
 
     /**
@@ -266,8 +266,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     public String getCategoryTypeName() {
         S myType = getCategoryType();
         return (myType == null)
-                               ? null
-                               : myType.getName();
+                                ? null
+                                : myType.getName();
     }
 
     /**
@@ -289,8 +289,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     public Integer getParentCategoryId() {
         T myParent = getParentCategory();
         return (myParent == null)
-                                 ? null
-                                 : myParent.getId();
+                                  ? null
+                                  : myParent.getId();
     }
 
     /**
@@ -300,8 +300,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     public String getParentCategoryName() {
         T myParent = getParentCategory();
         return (myParent == null)
-                                 ? null
-                                 : myParent.getName();
+                                  ? null
+                                  : myParent.getName();
     }
 
     /**
@@ -317,7 +317,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @param pValueSet the valueSet
      * @return the Name
      */
-    public static String getName(final EncryptedValueSet pValueSet) {
+    public static String getName(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_NAME, String.class);
     }
 
@@ -326,7 +326,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getNameBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getNameBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_NAME);
     }
 
@@ -335,8 +335,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @param pValueSet the valueSet
      * @return the field
      */
-    private static EncryptedString getNameField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_NAME, EncryptedString.class);
+    private static MetisEncryptedString getNameField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_NAME, MetisEncryptedString.class);
     }
 
     /**
@@ -344,7 +344,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @param pValueSet the valueSet
      * @return the description
      */
-    public static String getDesc(final EncryptedValueSet pValueSet) {
+    public static String getDesc(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
     }
 
@@ -353,7 +353,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getDescBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getDescBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
     }
 
@@ -362,8 +362,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static EncryptedString getDescField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, EncryptedString.class);
+    private static MetisEncryptedString getDescField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DESC, MetisEncryptedString.class);
     }
 
     /**
@@ -371,7 +371,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @param pValueSet the valueSet
      * @return the subCategory
      */
-    public static String getSubCategory(final ValueSet pValueSet) {
+    public static String getSubCategory(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_SUBCAT, String.class);
     }
 
@@ -397,7 +397,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * Set name value.
      * @param pValue the value
      */
-    private void setValueName(final EncryptedString pValue) {
+    private void setValueName(final MetisEncryptedString pValue) {
         getValueSet().setValue(FIELD_NAME, pValue);
     }
 
@@ -423,7 +423,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * Set description value.
      * @param pValue the value
      */
-    private void setValueDesc(final EncryptedString pValue) {
+    private void setValueDesc(final MetisEncryptedString pValue) {
         getValueSet().setValue(FIELD_DESC, pValue);
     }
 
@@ -487,13 +487,13 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         }
 
         /* Check the category type */
-        int iDiff = Difference.compareObject(getCategoryType(), pThat.getCategoryType());
+        int iDiff = MetisDifference.compareObject(getCategoryType(), pThat.getCategoryType());
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* Check the names */
-        iDiff = Difference.compareObject(getName(), pThat.getName());
+        iDiff = MetisDifference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -661,8 +661,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
             if (!myMap.validNameCount(myName)) {
                 String mySubName = getSubCategory();
                 addError(ERROR_DUPLICATE, (mySubName == null)
-                                                             ? FIELD_NAME
-                                                             : FIELD_SUBCAT);
+                                                              ? FIELD_NAME
+                                                              : FIELD_SUBCAT);
             }
         }
 
@@ -678,17 +678,17 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      */
     public void applyBasicChanges(final CategoryBase<T, S, C> pCategory) {
         /* Update the Name if required */
-        if (!Difference.isEqual(getName(), pCategory.getName())) {
+        if (!MetisDifference.isEqual(getName(), pCategory.getName())) {
             setValueName(pCategory.getNameField());
         }
 
         /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), pCategory.getDesc())) {
+        if (!MetisDifference.isEqual(getDesc(), pCategory.getDesc())) {
             setValueDesc(pCategory.getDescField());
         }
 
         /* Update the parent category if required */
-        if (!Difference.isEqual(getParentCategory(), pCategory.getParentCategory())) {
+        if (!MetisDifference.isEqual(getParentCategory(), pCategory.getParentCategory())) {
             /* Set value */
             setValueParent(pCategory.getParentCategory());
         }
@@ -724,7 +724,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(CategoryBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(CategoryBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE Category list.
@@ -773,7 +773,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
                 T myItem = myIterator.next();
 
                 /* If this is not deleted and matches */
-                if (!myItem.isDeleted() && Difference.isEqual(pName, myItem.getName())) {
+                if (!myItem.isDeleted() && MetisDifference.isEqual(pName, myItem.getName())) {
                     /* found it */
                     return myItem;
                 }
@@ -791,11 +791,11 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         public String getUniqueName(final T pParent) {
             /* Set up base constraints */
             String myBase = pParent == null
-                                           ? ""
-                                           : pParent.getName() + STR_SEP;
+                                            ? ""
+                                            : pParent.getName() + STR_SEP;
             String myCore = pParent == null
-                                           ? NAME_NEWPARENT
-                                           : NAME_NEWCATEGORY;
+                                            ? NAME_NEWPARENT
+                                            : NAME_NEWCATEGORY;
             int iNextId = 1;
 
             /* Loop until we found a name */

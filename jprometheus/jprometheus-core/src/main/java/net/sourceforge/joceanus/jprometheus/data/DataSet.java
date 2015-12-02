@@ -29,13 +29,13 @@ import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <E> the data type enum class
  */
 public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
-        implements JDataContents, DataListSet<E> {
+        implements MetisDataContents, DataListSet<E> {
     /**
      * The Hash prime.
      */
@@ -63,47 +63,47 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATASET_NAME.getValue());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATASET_NAME.getValue());
 
     /**
      * Generation Field Id.
      */
-    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION.getValue());
+    public static final MetisField FIELD_GENERATION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION.getValue());
 
     /**
      * Granularity Field Id.
      */
-    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GRANULARITY.getValue());
+    public static final MetisField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GRANULARITY.getValue());
 
     /**
      * Version Field Id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
+    public static final MetisField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
 
     /**
      * Security Field Id.
      */
-    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_SECURITY.getValue());
+    public static final MetisField FIELD_SECURITY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_SECURITY.getValue());
 
     /**
      * ControlKeys Field Id.
      */
-    public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEY_LIST.getValue());
+    public static final MetisField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEY_LIST.getValue());
 
     /**
      * DataKeySets Field Id.
      */
-    public static final JDataField FIELD_DATAKEYSETS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_LIST.getValue());
+    public static final MetisField FIELD_DATAKEYSETS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_LIST.getValue());
 
     /**
      * DataKeys Field Id.
      */
-    public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEY_LIST.getValue());
+    public static final MetisField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEY_LIST.getValue());
 
     /**
      * ControlData Field Id.
      */
-    public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLDATA_LIST.getValue());
+    public static final MetisField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLDATA_LIST.getValue());
 
     /**
      * Security Manager.
@@ -168,7 +168,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * General formatter.
      */
-    private final JDataFormatter theFormatter;
+    private final MetisDataFormatter theFormatter;
 
     /**
      * Constructor for new empty DataSet.
@@ -182,7 +182,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theEnumClass = pEnumClass;
 
         /* Access the DataListPreferences */
-        PreferenceManager myPrefMgr = pUtilitySet.getPreferenceManager();
+        MetisPreferenceManager myPrefMgr = pUtilitySet.getPreferenceManager();
         DataListPreferences myDataPreferences = myPrefMgr.getPreferenceSet(DataListPreferences.class);
         theGranularity = myDataPreferences.getIntegerValue(DataListPreferences.NAME_GRANULARITY);
         SecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(SecurityPreferences.class);
@@ -226,12 +226,12 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_GENERATION.equals(pField)) {
             return theGeneration;
         }
@@ -246,25 +246,25 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
         if (FIELD_CONTROLKEYS.equals(pField)) {
             return theControlKeys.isEmpty()
-                                            ? JDataFieldValue.SKIP
+                                            ? MetisFieldValue.SKIP
                                             : theControlKeys;
         }
         if (FIELD_DATAKEYSETS.equals(pField)) {
             return theDataKeySets.isEmpty()
-                                            ? JDataFieldValue.SKIP
+                                            ? MetisFieldValue.SKIP
                                             : theDataKeySets;
         }
         if (FIELD_DATAKEYS.equals(pField)) {
             return theDataKeys.isEmpty()
-                                         ? JDataFieldValue.SKIP
+                                         ? MetisFieldValue.SKIP
                                          : theDataKeys;
         }
         if (FIELD_CONTROLDATA.equals(pField)) {
             return theControlData.isEmpty()
-                                            ? JDataFieldValue.SKIP
+                                            ? MetisFieldValue.SKIP
                                             : theControlData;
         }
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
@@ -276,7 +276,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain the data formatter.
      * @return the formatter
      */
-    public JDataFormatter getDataFormatter() {
+    public MetisDataFormatter getDataFormatter() {
         return theFormatter;
     }
 
@@ -497,8 +497,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
                                      final T pNew,
                                      final T pOld) throws OceanusException {
         /* Access current profile */
-        JDataProfile myTask = pTask.getActiveTask();
-        JDataProfile myStage = myTask.startTask("checkDifferences");
+        MetisProfile myTask = pTask.getActiveTask();
+        MetisProfile myStage = myTask.startTask("checkDifferences");
 
         /* Build the security differences */
         theControlKeys = pNew.getControlKeys().deriveDifferences(this, pOld.getControlKeys());
@@ -537,8 +537,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public void reBase(final TaskControl<T> pTask,
                        final T pOld) throws OceanusException {
         /* Access current profile */
-        JDataProfile myTask = pTask.getActiveTask();
-        JDataProfile myStage = myTask.startTask("ReBase");
+        MetisProfile myTask = pTask.getActiveTask();
+        MetisProfile myStage = myTask.startTask("ReBase");
 
         /* ReBase the security items */
         boolean bUpdates = theControlKeys.reBase(pOld.getControlKeys());
@@ -612,7 +612,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Cast correctly */
         return ((myList == null) || (myList.isEmpty()))
-                                                        ? JDataFieldValue.SKIP
+                                                        ? MetisFieldValue.SKIP
                                                         : myList;
     }
 
@@ -883,8 +883,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public boolean initialiseSecurity(final TaskControl<T> pTask,
                                       final T pBase) throws OceanusException {
         /* Access current profile */
-        JDataProfile myTask = pTask.getActiveTask();
-        JDataProfile myStage = myTask.startTask("InitSecurity");
+        MetisProfile myTask = pTask.getActiveTask();
+        MetisProfile myStage = myTask.startTask("InitSecurity");
 
         /* Set the number of stages */
         if (!pTask.setNumStages(1 + theNumEncrypted)) {
@@ -935,8 +935,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public boolean renewSecurity(final TaskControl<T> pTask) throws OceanusException {
         /* Access current profile */
-        JDataProfile myTask = pTask.getActiveTask();
-        JDataProfile myStage = myTask.startTask("ReNewSecurity");
+        MetisProfile myTask = pTask.getActiveTask();
+        MetisProfile myStage = myTask.startTask("ReNewSecurity");
 
         /* Access ControlData */
         ControlData myControl = getControl();
@@ -963,8 +963,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public boolean checkSecurity(final TaskControl<T> pTask) throws OceanusException {
         /* Access current profile */
-        JDataProfile myTask = pTask.getActiveTask();
-        JDataProfile myStage = myTask.startTask("CheckSecurity");
+        MetisProfile myTask = pTask.getActiveTask();
+        MetisProfile myStage = myTask.startTask("CheckSecurity");
 
         /* If there is more than one controlKey */
         if (theControlKeys.size() > 1) {

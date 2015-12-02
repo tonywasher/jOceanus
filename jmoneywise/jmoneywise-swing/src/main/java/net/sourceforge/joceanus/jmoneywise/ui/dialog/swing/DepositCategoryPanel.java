@@ -29,11 +29,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
@@ -63,7 +63,7 @@ public class DepositCategoryPanel
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<DepositCategory> theFieldSet;
+    private final transient MetisFieldSet<DepositCategory> theFieldSet;
 
     /**
      * Category Type Button Field.
@@ -81,7 +81,7 @@ public class DepositCategoryPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public DepositCategoryPanel(final JFieldManager pFieldMgr,
+    public DepositCategoryPanel(final MetisFieldManager pFieldMgr,
                                 final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                 final ErrorPanel pError) {
         /* Initialise the panel */
@@ -110,9 +110,9 @@ public class DepositCategoryPanel
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(DepositCategory.FIELD_NAME, DataType.STRING, myName);
-        theFieldSet.addFieldElement(DepositCategory.FIELD_SUBCAT, DataType.STRING, mySubName);
-        theFieldSet.addFieldElement(DepositCategory.FIELD_DESC, DataType.STRING, myDesc);
+        theFieldSet.addFieldElement(DepositCategory.FIELD_NAME, MetisDataType.STRING, myName);
+        theFieldSet.addFieldElement(DepositCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
+        theFieldSet.addFieldElement(DepositCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
         theFieldSet.addFieldElement(DepositCategory.FIELD_CATTYPE, DepositCategoryType.class, theTypeButton);
         theFieldSet.addFieldElement(DepositCategory.FIELD_PARENT, DepositCategory.class, theParentButton);
 
@@ -174,9 +174,9 @@ public class DepositCategoryPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        JDataField myField = pUpdate.getField();
+        MetisField myField = pUpdate.getField();
         DepositCategory myCategory = getItem();
 
         /* Process updates */

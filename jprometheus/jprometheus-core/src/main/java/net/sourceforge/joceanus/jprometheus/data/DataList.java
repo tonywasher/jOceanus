@@ -25,14 +25,14 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
-import net.sourceforge.joceanus.jmetis.data.EditState;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
-import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedListIterator;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -44,8 +44,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <E> the data type enum class
  */
 public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends OrderedIdList<Integer, T>
-        implements JDataContents {
+        extends MetisOrderedIdList<Integer, T>
+        implements MetisDataContents {
     /**
      * DataList interface.
      * @param <E> the data type enum class
@@ -65,67 +65,67 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATALIST_NAME.getValue());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATALIST_NAME.getValue());
 
     /**
      * Size Field Id.
      */
-    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+    public static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
     /**
      * Granularity Field Id.
      */
-    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GRANULARITY.getValue());
+    public static final MetisField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GRANULARITY.getValue());
 
     /**
      * ListStyle Field Id.
      */
-    public static final JDataField FIELD_STYLE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_STYLE.getValue());
+    public static final MetisField FIELD_STYLE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_STYLE.getValue());
 
     /**
      * DataSet Field Id.
      */
-    public static final JDataField FIELD_DATASET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_NAME.getValue());
+    public static final MetisField FIELD_DATASET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_NAME.getValue());
 
     /**
      * MapData Field Id.
      */
-    private static final JDataField FIELD_MAPS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATALIST_MAPS.getValue());
+    private static final MetisField FIELD_MAPS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATALIST_MAPS.getValue());
 
     /**
      * Generation Field Id.
      */
-    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION.getValue());
+    public static final MetisField FIELD_GENERATION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION.getValue());
 
     /**
      * NextVersion Field Id.
      */
-    public static final JDataField FIELD_VERS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
+    public static final MetisField FIELD_VERS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
 
     /**
      * EditState Field Id.
      */
-    public static final JDataField FIELD_EDIT = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE.getValue());
+    public static final MetisField FIELD_EDIT = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE.getValue());
 
     /**
      * ListType Field Id.
      */
-    public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE.getValue());
+    public static final MetisField FIELD_TYPE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE.getValue());
 
     /**
      * Base Field Id.
      */
-    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE.getValue());
+    public static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE.getValue());
 
     /**
      * Errors Field Id.
      */
-    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ERRORS.getValue());
+    public static final MetisField FIELD_ERRORS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ERRORS.getValue());
 
     /**
      * Instance ReportFields.
      */
-    private final JDataFields theFields;
+    private final MetisFields theFields;
 
     /**
      * The style of the list.
@@ -135,7 +135,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * The edit state of the list.
      */
-    private EditState theEdit = EditState.CLEAN;
+    private MetisEditState theEdit = MetisEditState.CLEAN;
 
     /**
      * The DataSet.
@@ -219,7 +219,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return theFields;
     }
 
@@ -227,13 +227,13 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * Obtain item fields.
      * @return the item fields
      */
-    public abstract JDataFields getItemFields();
+    public abstract MetisFields getItemFields();
 
     /**
      * Declare fields.
      * @return the fields
      */
-    public abstract JDataFields declareFields();
+    public abstract MetisFields declareFields();
 
     @Override
     public String formatObject() {
@@ -241,7 +241,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_SIZE.equals(pField)) {
             return size();
         }
@@ -265,21 +265,21 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBase == null)
-                                    ? JDataFieldValue.SKIP
+                                    ? MetisFieldValue.SKIP
                                     : theBase;
         }
         if (FIELD_MAPS.equals(pField)) {
             return (theDataMap == null)
-                                       ? JDataFieldValue.SKIP
+                                       ? MetisFieldValue.SKIP
                                        : theDataMap;
         }
         if (FIELD_ERRORS.equals(pField)) {
-            return JDataFieldValue.SKIP;
+            return MetisFieldValue.SKIP;
         }
         if (FIELD_TYPE.equals(pField)) {
             return theItemType;
         }
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**
@@ -340,7 +340,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * Get the EditState of the list.
      * @return the Edit State
      */
-    public EditState getEditState() {
+    public MetisEditState getEditState() {
         return theEdit;
     }
 
@@ -397,7 +397,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @return <code>true/false</code>
      */
     public boolean hasErrors() {
-        return theEdit == EditState.ERROR;
+        return theEdit == MetisEditState.ERROR;
     }
 
     /**
@@ -414,7 +414,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @return <code>true/false</code>
      */
     public boolean isValid() {
-        return (theEdit == EditState.CLEAN) || (theEdit == EditState.VALID);
+        return (theEdit == MetisEditState.CLEAN) || (theEdit == MetisEditState.VALID);
     }
 
     /**
@@ -519,10 +519,10 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         while (myIterator.hasNext()) {
             /* Access the item and its state */
             DataItem<E> myCurr = myIterator.next();
-            DataState myState = myCurr.getState();
+            MetisDataState myState = myCurr.getState();
 
             /* If this is an UPDATE list, ignore clean elements */
-            if ((isUpdate) && (myState == DataState.CLEAN)) {
+            if ((isUpdate) && (myState == MetisDataState.CLEAN)) {
                 continue;
             }
 
@@ -715,9 +715,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
 
     /**
      * Set the EditState for the list (forcible on error/change).
-     * @param pState the new {@link EditState} (only ERROR/DIRTY)
+     * @param pState the new {@link MetisEditState} (only ERROR/DIRTY)
      */
-    public void setEditState(final EditState pState) {
+    public void setEditState(final MetisEditState pState) {
         switch (pState) {
             case CLEAN:
             case VALID:
@@ -725,7 +725,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
                 theEdit = pState;
                 break;
             case DIRTY:
-                if (theEdit != EditState.ERROR) {
+                if (theEdit != MetisEditState.ERROR) {
                     theEdit = pState;
                 }
                 break;
@@ -741,7 +741,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     public DataErrorList<DataItem<E>> validate() {
         /* Allocate error list */
         DataErrorList<DataItem<E>> myErrors = null;
-        EditState myState = EditState.CLEAN;
+        MetisEditState myState = MetisEditState.CLEAN;
 
         /* Loop through the items */
         Iterator<T> myIterator = iterator();
@@ -754,7 +754,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
             /* Skip deleted items */
             if (myCurr.isDeleted()) {
                 myCurr.setValidEdit();
-                myState = myState.combineState(EditState.VALID);
+                myState = myState.combineState(MetisEditState.VALID);
                 continue;
             }
 
@@ -891,7 +891,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
 
         /* Loop through items clearing active flag */
         Iterator<T> myIterator = iterator();
-        EditState myState = EditState.CLEAN;
+        MetisEditState myState = MetisEditState.CLEAN;
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
 
@@ -901,7 +901,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
             /* Skip deleted items */
             if (myCurr.isDeleted()) {
                 myCurr.setValidEdit();
-                myState = myState.combineState(EditState.VALID);
+                myState = myState.combineState(MetisEditState.VALID);
                 continue;
             }
 
@@ -957,7 +957,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void rewindToVersion(final int pVersion) {
         /* Loop through the elements */
-        OrderedListIterator<T> myIterator = listIterator();
+        MetisOrderedListIterator<T> myIterator = listIterator();
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
 
@@ -996,7 +996,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void condenseHistory(final int pNewVersion) {
         /* Loop through the elements */
-        OrderedListIterator<T> myIterator = listIterator();
+        MetisOrderedListIterator<T> myIterator = listIterator();
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
 

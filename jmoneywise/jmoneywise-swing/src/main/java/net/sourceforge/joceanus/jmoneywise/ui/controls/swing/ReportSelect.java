@@ -35,7 +35,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDatePeriod;
@@ -346,7 +346,7 @@ public class ReportSelect
         private boolean setRange(final TethysSwingDateRangeSelect pSelect) {
             /* Adjust the date and build the new range */
             TethysDateRange myRange = new TethysDateRange(pSelect.getRange());
-            if (!Difference.isEqual(myRange, theRange)) {
+            if (!MetisDifference.isEqual(myRange, theRange)) {
                 theRange = myRange;
                 return true;
             }

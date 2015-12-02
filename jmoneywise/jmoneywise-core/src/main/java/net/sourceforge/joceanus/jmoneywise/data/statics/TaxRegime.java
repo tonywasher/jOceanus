@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -50,7 +50,7 @@ public class TaxRegime
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -96,7 +96,7 @@ public class TaxRegime
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -150,7 +150,7 @@ public class TaxRegime
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE tax regime list.
@@ -169,7 +169,7 @@ public class TaxRegime
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -179,7 +179,7 @@ public class TaxRegime
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return TaxRegime.FIELD_DEFS;
         }
 

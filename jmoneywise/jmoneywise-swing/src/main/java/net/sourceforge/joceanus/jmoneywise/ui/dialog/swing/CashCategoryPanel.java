@@ -29,11 +29,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
@@ -63,7 +63,7 @@ public class CashCategoryPanel
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<CashCategory> theFieldSet;
+    private final transient MetisFieldSet<CashCategory> theFieldSet;
 
     /**
      * Category Type Button Field.
@@ -81,7 +81,7 @@ public class CashCategoryPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public CashCategoryPanel(final JFieldManager pFieldMgr,
+    public CashCategoryPanel(final MetisFieldManager pFieldMgr,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
                              final ErrorPanel pError) {
         /* Initialise the panel */
@@ -105,9 +105,9 @@ public class CashCategoryPanel
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(CashCategory.FIELD_NAME, DataType.STRING, myName);
-        theFieldSet.addFieldElement(CashCategory.FIELD_SUBCAT, DataType.STRING, mySubName);
-        theFieldSet.addFieldElement(CashCategory.FIELD_DESC, DataType.STRING, myDesc);
+        theFieldSet.addFieldElement(CashCategory.FIELD_NAME, MetisDataType.STRING, myName);
+        theFieldSet.addFieldElement(CashCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
+        theFieldSet.addFieldElement(CashCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
         theFieldSet.addFieldElement(CashCategory.FIELD_CATTYPE, CashCategoryType.class, theTypeButton);
         theFieldSet.addFieldElement(CashCategory.FIELD_PARENT, CashCategory.class, theParentButton);
 
@@ -169,9 +169,9 @@ public class CashCategoryPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        JDataField myField = pUpdate.getField();
+        MetisField myField = pUpdate.getField();
         CashCategory myCategory = getItem();
 
         /* Process updates */

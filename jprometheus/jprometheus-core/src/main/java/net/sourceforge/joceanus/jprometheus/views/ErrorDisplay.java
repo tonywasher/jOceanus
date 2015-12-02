@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.views;
 
-import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 
 /**
@@ -33,5 +33,5 @@ public interface ErrorDisplay {
      * Set error list for window.
      * @param pExceptions the exceptions
      */
-    void setErrors(final DataErrorList<JMetisExceptionWrapper> pExceptions);
+    void setErrors(final DataErrorList<MetisExceptionWrapper> pExceptions);
 }

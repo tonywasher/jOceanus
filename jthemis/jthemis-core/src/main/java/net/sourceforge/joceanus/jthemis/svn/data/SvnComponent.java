@@ -29,7 +29,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent;
@@ -86,7 +86,7 @@ public final class SvnComponent
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(SvnComponent.class.getSimpleName(), ScmComponent.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(SvnComponent.class.getSimpleName(), ScmComponent.FIELD_DEFS);
 
     /**
      * Logger.
@@ -109,7 +109,7 @@ public final class SvnComponent
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
@@ -335,7 +335,7 @@ public final class SvnComponent
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnComponentList.class.getSimpleName(), ScmComponentList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnComponentList.class.getSimpleName(), ScmComponentList.FIELD_DEFS);
 
         /**
          * Parent Repository.
@@ -355,7 +355,7 @@ public final class SvnComponent
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 

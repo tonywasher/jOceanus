@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
@@ -35,62 +35,62 @@ public enum AccountInfoClass implements DataInfoClass {
     /**
      * Maturity Date.
      */
-    MATURITY(1, 0, DataType.DATEDAY),
+    MATURITY(1, 0, MetisDataType.DATEDAY),
 
     /**
      * Opening Balance.
      */
-    OPENINGBALANCE(2, 1, DataType.MONEY),
+    OPENINGBALANCE(2, 1, MetisDataType.MONEY),
 
     /**
      * AutoExpense Category.
      */
-    AUTOEXPENSE(3, 2, DataType.LINK),
+    AUTOEXPENSE(3, 2, MetisDataType.LINK),
 
     /**
      * AutoExpense Payee.
      */
-    AUTOPAYEE(4, 3, DataType.LINK),
+    AUTOPAYEE(4, 3, MetisDataType.LINK),
 
     /**
      * WebSite.
      */
-    WEBSITE(5, 4, DataType.CHARARRAY),
+    WEBSITE(5, 4, MetisDataType.CHARARRAY),
 
     /**
      * Customer #.
      */
-    CUSTOMERNO(6, 5, DataType.CHARARRAY),
+    CUSTOMERNO(6, 5, MetisDataType.CHARARRAY),
 
     /**
      * User Id.
      */
-    USERID(7, 6, DataType.CHARARRAY),
+    USERID(7, 6, MetisDataType.CHARARRAY),
 
     /**
      * Password.
      */
-    PASSWORD(8, 7, DataType.CHARARRAY),
+    PASSWORD(8, 7, MetisDataType.CHARARRAY),
 
     /**
      * SortCode.
      */
-    SORTCODE(9, 8, DataType.CHARARRAY),
+    SORTCODE(9, 8, MetisDataType.CHARARRAY),
 
     /**
      * Account.
      */
-    ACCOUNT(10, 9, DataType.CHARARRAY),
+    ACCOUNT(10, 9, MetisDataType.CHARARRAY),
 
     /**
      * Reference.
      */
-    REFERENCE(11, 10, DataType.CHARARRAY),
+    REFERENCE(11, 10, MetisDataType.CHARARRAY),
 
     /**
      * Notes.
      */
-    NOTES(12, 11, DataType.CHARARRAY);
+    NOTES(12, 11, MetisDataType.CHARARRAY);
 
     /**
      * The String name.
@@ -110,7 +110,7 @@ public enum AccountInfoClass implements DataInfoClass {
     /**
      * Data Type.
      */
-    private final DataType theDataType;
+    private final MetisDataType theDataType;
 
     /**
      * Constructor.
@@ -120,7 +120,7 @@ public enum AccountInfoClass implements DataInfoClass {
      */
     AccountInfoClass(final int uId,
                      final int uOrder,
-                     final DataType pDataType) {
+                     final MetisDataType pDataType) {
         theId = uId;
         theOrder = uOrder;
         theDataType = pDataType;
@@ -137,13 +137,13 @@ public enum AccountInfoClass implements DataInfoClass {
     }
 
     @Override
-    public DataType getDataType() {
+    public MetisDataType getDataType() {
         return theDataType;
     }
 
     @Override
     public boolean isLink() {
-        return theDataType == DataType.LINK;
+        return theDataType == MetisDataType.LINK;
     }
 
     @Override

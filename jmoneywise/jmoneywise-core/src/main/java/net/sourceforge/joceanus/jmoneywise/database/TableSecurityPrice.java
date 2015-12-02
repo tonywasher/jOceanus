@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jmetis.data.EncryptedData;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
@@ -59,7 +59,7 @@ public class TableSecurityPrice
         /* Declare the columns */
         ColumnDefinition myActCol = myTableDef.addReferenceColumn(SecurityPrice.FIELD_SECURITY, TableSecurity.TABLE_NAME);
         ColumnDefinition myDateCol = myTableDef.addDateColumn(SecurityPrice.FIELD_DATE);
-        myTableDef.addEncryptedColumn(SecurityPrice.FIELD_PRICE, EncryptedData.PRICELEN);
+        myTableDef.addEncryptedColumn(SecurityPrice.FIELD_PRICE, MetisEncryptedData.PRICELEN);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.DESCENDING);
@@ -89,7 +89,7 @@ public class TableSecurityPrice
 
     @Override
     protected void setFieldValue(final SecurityPrice pItem,
-                                 final JDataField iField) throws OceanusException {
+                                 final MetisField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (SecurityPrice.FIELD_SECURITY.equals(iField)) {

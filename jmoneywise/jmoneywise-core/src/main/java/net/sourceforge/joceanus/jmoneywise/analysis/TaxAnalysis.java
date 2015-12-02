@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.time.Month;
 
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxAttribute;
@@ -102,7 +102,7 @@ public class TaxAnalysis {
      * Taxation Preferences.
      */
     public static class TaxPreferences
-            extends PreferenceSet {
+            extends MetisPreferenceSet {
         /**
          * Registry name for BirthDate.
          */
@@ -172,7 +172,7 @@ public class TaxAnalysis {
         TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
 
         /* Access preference manager */
-        PreferenceManager myManager = theAnalysis.getPreferenceMgr();
+        MetisPreferenceManager myManager = theAnalysis.getPreferenceMgr();
 
         /* Calculate the gross income */
         calculateGrossIncome();
@@ -302,7 +302,7 @@ public class TaxAnalysis {
      * @param pManager the preference manager
      * @return the taxBands
      */
-    private TaxBands calculateAllowances(final PreferenceManager pManager) {
+    private TaxBands calculateAllowances(final MetisPreferenceManager pManager) {
         /* Access Tax Calculations */
         TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
 

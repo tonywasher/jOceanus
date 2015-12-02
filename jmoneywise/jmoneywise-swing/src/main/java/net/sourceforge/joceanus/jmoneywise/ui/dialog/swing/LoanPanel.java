@@ -35,11 +35,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
@@ -80,7 +80,7 @@ public class LoanPanel
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<Loan> theFieldSet;
+    private final transient MetisFieldSet<Loan> theFieldSet;
 
     /**
      * LoanCategory Button Field.
@@ -108,7 +108,7 @@ public class LoanPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public LoanPanel(final JFieldManager pFieldMgr,
+    public LoanPanel(final MetisFieldManager pFieldMgr,
                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                      final ErrorPanel pError) {
         /* Initialise the panel */
@@ -174,8 +174,8 @@ public class LoanPanel
         restrictField(myClosedButton, Loan.NAMELEN);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(Loan.FIELD_NAME, DataType.STRING, myName);
-        theFieldSet.addFieldElement(Loan.FIELD_DESC, DataType.STRING, myDesc);
+        theFieldSet.addFieldElement(Loan.FIELD_NAME, MetisDataType.STRING, myName);
+        theFieldSet.addFieldElement(Loan.FIELD_DESC, MetisDataType.STRING, myDesc);
         theFieldSet.addFieldElement(Loan.FIELD_CATEGORY, LoanCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Loan.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Loan.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
@@ -218,10 +218,10 @@ public class LoanPanel
         restrictField(myOpening, myWidth);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
-        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), DataType.CHARARRAY, myAccount);
-        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), DataType.CHARARRAY, myReference);
-        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), DataType.MONEY, myOpening);
+        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
+        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
+        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
+        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
 
         /* Create the extras panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -249,7 +249,7 @@ public class LoanPanel
         JScrollPane myScroll = new JScrollPane(myNotes);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
+        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -310,7 +310,7 @@ public class LoanPanel
         theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
         boolean bHasOpening = myLoan.getOpeningBalance() != null;
         boolean bShowOpening = bIsChangeable || bHasOpening;
-        JDataField myOpeningField = LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
+        MetisField myOpeningField = LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
         theFieldSet.setVisibility(myOpeningField, bShowOpening);
         boolean bShowNotes = isEditable || myLoan.getNotes() != null;
         theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
@@ -328,9 +328,9 @@ public class LoanPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        JDataField myField = pUpdate.getField();
+        MetisField myField = pUpdate.getField();
         Loan myLoan = getItem();
 
         /* Process updates */

@@ -33,8 +33,8 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldElement;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket;
@@ -103,7 +103,7 @@ public class TransactionTagSelect
         theEventManager = new TethysEventManager();
 
         /* Create the label */
-        JLabel myTagLabel = new JLabel(NLS_TAG + JFieldElement.STR_COLON);
+        JLabel myTagLabel = new JLabel(NLS_TAG + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -356,7 +356,7 @@ public class TransactionTagSelect
          */
         private boolean setTag(final TransactionTagBucket pTag) {
             /* Adjust the selected tag */
-            if (!Difference.isEqual(pTag, theTransTag)) {
+            if (!MetisDifference.isEqual(pTag, theTransTag)) {
                 /* Store the tag */
                 setTheTag(pTag);
                 return true;

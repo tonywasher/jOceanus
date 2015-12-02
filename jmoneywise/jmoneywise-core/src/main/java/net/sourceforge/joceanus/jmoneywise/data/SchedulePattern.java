@@ -27,7 +27,7 @@ import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Pattern for Schedule.
  */
 public abstract class SchedulePattern
-        implements JDataFormat {
+        implements MetisDataFormat {
     /**
      * No Items.
      */

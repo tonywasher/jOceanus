@@ -24,14 +24,14 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedString;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedString;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
@@ -55,42 +55,42 @@ public abstract class AssetBase<T extends AssetBase<T>>
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AssetBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(AssetBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
+    public static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
+    public static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
 
     /**
      * isClosed Field Id.
      */
-    public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_CLOSED.getValue());
+    public static final MetisField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_CLOSED.getValue());
 
     /**
      * CloseDate Field Id.
      */
-    private static final JDataField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_CLOSEDATE.getValue());
+    private static final MetisField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_CLOSEDATE.getValue());
 
     /**
      * firstEvent Field Id.
      */
-    private static final JDataField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_FIRSTEVENT.getValue());
+    private static final MetisField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_FIRSTEVENT.getValue());
 
     /**
      * lastEvent Field Id.
      */
-    private static final JDataField FIELD_EVTLAST = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_LASTEVENT.getValue());
+    private static final MetisField FIELD_EVTLAST = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_LASTEVENT.getValue());
 
     /**
      * isRelevant Field Id.
      */
-    private static final JDataField FIELD_ISRELEVANT = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_RELEVANT.getValue());
+    private static final MetisField FIELD_ISRELEVANT = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_RELEVANT.getValue());
 
     /**
      * Bad category error.
@@ -171,7 +171,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         super(pList, pValues);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -226,22 +226,22 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle flags */
         if (FIELD_CLOSEDATE.equals(pField)) {
             return (theCloseDate != null)
-                                         ? theCloseDate
-                                         : JDataFieldValue.SKIP;
+                                          ? theCloseDate
+                                          : MetisFieldValue.SKIP;
         }
         if (FIELD_EVTFIRST.equals(pField)) {
             return (theEarliest != null)
-                                        ? theEarliest
-                                        : JDataFieldValue.SKIP;
+                                         ? theEarliest
+                                         : MetisFieldValue.SKIP;
         }
         if (FIELD_EVTLAST.equals(pField)) {
             return (theLatest != null)
-                                      ? theLatest
-                                      : JDataFieldValue.SKIP;
+                                       ? theLatest
+                                       : MetisFieldValue.SKIP;
         }
         if (FIELD_ISRELEVANT.equals(pField)) {
             return isRelevant;
@@ -252,7 +252,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_NAME.equals(pField)) {
             return true;
@@ -285,8 +285,8 @@ public abstract class AssetBase<T extends AssetBase<T>>
     public Integer getAssetCurrencyId() {
         AssetCurrency myCurrency = getAssetCurrency();
         return (myCurrency == null)
-                                   ? null
-                                   : myCurrency.getId();
+                                    ? null
+                                    : myCurrency.getId();
     }
 
     /**
@@ -296,19 +296,19 @@ public abstract class AssetBase<T extends AssetBase<T>>
     public String getAssetCurrencyName() {
         AssetCurrency myCurrency = getAssetCurrency();
         return (myCurrency == null)
-                                   ? null
-                                   : myCurrency.getName();
+                                    ? null
+                                    : myCurrency.getName();
     }
 
     @Override
     public Currency getCurrency() {
         AssetCurrency myCurrency = getAssetCurrency();
         myCurrency = myCurrency == null
-                                       ? getDataSet().getDefaultCurrency()
-                                       : myCurrency;
+                                        ? getDataSet().getDefaultCurrency()
+                                        : myCurrency;
         return myCurrency == null
-                                 ? null
-                                 : myCurrency.getCurrency();
+                                  ? null
+                                  : myCurrency.getCurrency();
     }
 
     @Override
@@ -410,7 +410,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * Obtain Encrypted Name Field.
      * @return the Field
      */
-    private EncryptedString getNameField() {
+    private MetisEncryptedString getNameField() {
         return getNameField(getValueSet());
     }
 
@@ -434,7 +434,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * Obtain Encrypted Description Field.
      * @return the Field
      */
-    private EncryptedString getDescField() {
+    private MetisEncryptedString getDescField() {
         return getDescField(getValueSet());
     }
 
@@ -453,7 +453,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pValueSet the valueSet
      * @return the Name
      */
-    public static String getName(final EncryptedValueSet pValueSet) {
+    public static String getName(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_NAME, String.class);
     }
 
@@ -462,7 +462,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getNameBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getNameBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_NAME);
     }
 
@@ -471,8 +471,8 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pValueSet the valueSet
      * @return the field
      */
-    private static EncryptedString getNameField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_NAME, EncryptedString.class);
+    private static MetisEncryptedString getNameField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_NAME, MetisEncryptedString.class);
     }
 
     /**
@@ -480,7 +480,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pValueSet the valueSet
      * @return the description
      */
-    public static String getDesc(final EncryptedValueSet pValueSet) {
+    public static String getDesc(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
     }
 
@@ -489,7 +489,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getDescBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getDescBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
     }
 
@@ -498,8 +498,8 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static EncryptedString getDescField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, EncryptedString.class);
+    private static MetisEncryptedString getDescField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DESC, MetisEncryptedString.class);
     }
 
     /**
@@ -507,7 +507,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pValueSet the valueSet
      * @return true/false
      */
-    public static Boolean isClosed(final ValueSet pValueSet) {
+    public static Boolean isClosed(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CLOSED, Boolean.class);
     }
 
@@ -533,7 +533,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * Set name value.
      * @param pValue the value
      */
-    private void setValueName(final EncryptedString pValue) {
+    private void setValueName(final MetisEncryptedString pValue) {
         getValueSet().setValue(FIELD_NAME, pValue);
     }
 
@@ -559,7 +559,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * Set description value.
      * @param pValue the value
      */
-    private void setValueDesc(final EncryptedString pValue) {
+    private void setValueDesc(final MetisEncryptedString pValue) {
         getValueSet().setValue(FIELD_DESC, pValue);
     }
 
@@ -611,8 +611,8 @@ public abstract class AssetBase<T extends AssetBase<T>>
     public void adjustClosed() throws OceanusException {
         /* Access latest activity date */
         TethysDate myCloseDate = (theLatest == null)
-                                                  ? null
-                                                  : theLatest.getDate();
+                                                     ? null
+                                                     : theLatest.getDate();
 
         /* Store the close date */
         theCloseDate = myCloseDate;
@@ -700,7 +700,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     protected int compareAsset(final T pThat) {
         /* Check the names */
-        int iDiff = Difference.compareObject(getName(), pThat.getName());
+        int iDiff = MetisDifference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -715,7 +715,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        ValueSet myValues = getValueSet();
+        MetisValueSet myValues = getValueSet();
 
         /* Adjust Closed */
         Object myClosed = myValues.getValue(FIELD_CLOSED);
@@ -805,17 +805,17 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     protected void applyBasicChanges(final AssetBase<T> pAsset) {
         /* Update the name if required */
-        if (!Difference.isEqual(getName(), pAsset.getName())) {
+        if (!MetisDifference.isEqual(getName(), pAsset.getName())) {
             setValueName(pAsset.getNameField());
         }
 
         /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), pAsset.getDesc())) {
+        if (!MetisDifference.isEqual(getDesc(), pAsset.getDesc())) {
             setValueDesc(pAsset.getDescField());
         }
 
         /* Update the closed indication if required */
-        if (!Difference.isEqual(isClosed(), pAsset.isClosed())) {
+        if (!MetisDifference.isEqual(isClosed(), pAsset.isClosed())) {
             setValueClosed(pAsset.isClosed());
         }
     }

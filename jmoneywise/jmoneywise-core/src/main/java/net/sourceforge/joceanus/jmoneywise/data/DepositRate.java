@@ -28,15 +28,15 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedRate;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedRate;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
@@ -73,27 +73,27 @@ public class DepositRate
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
 
     /**
      * Deposit Field Id.
      */
-    public static final JDataField FIELD_DEPOSIT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.DEPOSIT.getItemName());
+    public static final MetisField FIELD_DEPOSIT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.DEPOSIT.getItemName());
 
     /**
      * Rate Field Id.
      */
-    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE.getValue());
+    public static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE.getValue());
 
     /**
      * Bonus Field Id.
      */
-    public static final JDataField FIELD_BONUS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_BONUS.getValue());
+    public static final MetisField FIELD_BONUS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_BONUS.getValue());
 
     /**
      * EndDate Field Id.
      */
-    public static final JDataField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_ENDDATE.getValue());
+    public static final MetisField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_ENDDATE.getValue());
 
     /**
      * Null Date Error.
@@ -131,7 +131,7 @@ public class DepositRate
         super(pList, pValues);
 
         /* Access the formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -185,12 +185,12 @@ public class DepositRate
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_DEPOSIT.equals(pField)) {
             return true;
@@ -217,13 +217,13 @@ public class DepositRate
     @Override
     public String formatObject() {
         /* Access Key Values */
-        EncryptedValueSet myValues = getValueSet();
+        MetisEncryptedValueSet myValues = getValueSet();
         Object myDeposit = myValues.getValue(FIELD_DEPOSIT);
         Object myRate = myValues.getValue(FIELD_RATE);
         Object myEndDate = myValues.getValue(FIELD_ENDDATE);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -259,7 +259,7 @@ public class DepositRate
      * Obtain Encrypted Rate Field.
      * @return the Field
      */
-    private EncryptedRate getRateField() {
+    private MetisEncryptedRate getRateField() {
         return getRateField(getValueSet());
     }
 
@@ -283,7 +283,7 @@ public class DepositRate
      * Obtain Encrypted Rate Field.
      * @return the Field
      */
-    private EncryptedRate getBonusField() {
+    private MetisEncryptedRate getBonusField() {
         return getBonusField(getValueSet());
     }
 
@@ -338,7 +338,7 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Deposit
      */
-    public static Deposit getDeposit(final ValueSet pValueSet) {
+    public static Deposit getDeposit(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DEPOSIT, Deposit.class);
     }
 
@@ -347,7 +347,7 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Rate
      */
-    public static TethysRate getRate(final EncryptedValueSet pValueSet) {
+    public static TethysRate getRate(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_RATE, TethysRate.class);
     }
 
@@ -356,7 +356,7 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Bytes
      */
-    public static byte[] getRateBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getRateBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_RATE);
     }
 
@@ -365,8 +365,8 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static EncryptedRate getRateField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_RATE, EncryptedRate.class);
+    private static MetisEncryptedRate getRateField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_RATE, MetisEncryptedRate.class);
     }
 
     /**
@@ -374,7 +374,7 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Bonus
      */
-    public static TethysRate getBonus(final EncryptedValueSet pValueSet) {
+    public static TethysRate getBonus(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_BONUS, TethysRate.class);
     }
 
@@ -383,7 +383,7 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Bytes
      */
-    public static byte[] getBonusBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getBonusBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_BONUS);
     }
 
@@ -392,8 +392,8 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static EncryptedRate getBonusField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_BONUS, EncryptedRate.class);
+    private static MetisEncryptedRate getBonusField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_BONUS, MetisEncryptedRate.class);
     }
 
     /**
@@ -401,7 +401,7 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the End Date
      */
-    public static TethysDate getEndDate(final ValueSet pValueSet) {
+    public static TethysDate getEndDate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ENDDATE, TethysDate.class);
     }
 
@@ -451,7 +451,7 @@ public class DepositRate
      * Set the rate.
      * @param pValue the rate
      */
-    private void setValueRate(final EncryptedRate pValue) {
+    private void setValueRate(final MetisEncryptedRate pValue) {
         getValueSet().setValue(FIELD_RATE, pValue);
     }
 
@@ -485,7 +485,7 @@ public class DepositRate
      * Set the bonus.
      * @param pValue the bonus
      */
-    private void setValueBonus(final EncryptedRate pValue) {
+    private void setValueBonus(final MetisEncryptedRate pValue) {
         getValueSet().setValue(FIELD_BONUS, pValue);
     }
 
@@ -543,7 +543,7 @@ public class DepositRate
         }
 
         /* If the date differs */
-        int iDiff = Difference.compareObject(getDate(), pThat.getDate());
+        int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             /* Sort in reverse date order !! */
             return -iDiff;
@@ -687,17 +687,17 @@ public class DepositRate
         pushHistory();
 
         /* Update the rate if required */
-        if (!Difference.isEqual(getRate(), myRate.getRate())) {
+        if (!MetisDifference.isEqual(getRate(), myRate.getRate())) {
             setValueRate(myRate.getRateField());
         }
 
         /* Update the bonus if required */
-        if (!Difference.isEqual(getBonus(), myRate.getBonus())) {
+        if (!MetisDifference.isEqual(getBonus(), myRate.getBonus())) {
             setValueBonus(myRate.getBonusField());
         }
 
         /* Update the date if required */
-        if (!Difference.isEqual(getEndDate(), myRate.getEndDate())) {
+        if (!MetisDifference.isEqual(getEndDate(), myRate.getEndDate())) {
             setValueEndDate(myRate.getEndDate());
         }
 
@@ -720,7 +720,7 @@ public class DepositRate
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE rate list.
@@ -746,12 +746,12 @@ public class DepositRate
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return DepositRate.FIELD_DEFS;
         }
 
@@ -855,21 +855,21 @@ public class DepositRate
      * The dataMap class.
      */
     public static class DepositRateDataMap
-            implements DataMapItem<DepositRate, MoneyWiseDataType>, JDataContents {
+            implements DataMapItem<DepositRate, MoneyWiseDataType>, MetisDataContents {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
 
         /**
          * MapOfMaps Field Id.
          */
-        private static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+        private static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
 
         /**
          * RateMap Field Id.
          */
-        private static final JDataField FIELD_MAPOFRATES = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_MAP_MAPOFRATES.getValue());
+        private static final MetisField FIELD_MAPOFRATES = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_MAP_MAPOFRATES.getValue());
 
         /**
          * Map of Maps.
@@ -891,12 +891,12 @@ public class DepositRate
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_MAPOFMAPS.equals(pField)) {
                 return theMapOfMaps;
@@ -906,7 +906,7 @@ public class DepositRate
             }
 
             /* Unknown */
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         @Override
@@ -1025,7 +1025,7 @@ public class DepositRate
          */
         private static final class RateList
                 extends ArrayList<DepositRate>
-                implements JDataContents {
+                implements MetisDataContents {
             /**
              * Serial Id.
              */
@@ -1034,12 +1034,12 @@ public class DepositRate
             /**
              * Report fields.
              */
-            private static final JDataFields FIELD_DEFS = new JDataFields(RateList.class.getSimpleName());
+            private static final MetisFields FIELD_DEFS = new MetisFields(RateList.class.getSimpleName());
 
             /**
              * Size Field Id.
              */
-            private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+            private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
             /**
              * The deposit.
@@ -1055,16 +1055,16 @@ public class DepositRate
             }
 
             @Override
-            public JDataFields getDataFields() {
+            public MetisFields getDataFields() {
                 return FIELD_DEFS;
             }
 
             @Override
-            public Object getFieldValue(final JDataField pField) {
+            public Object getFieldValue(final MetisField pField) {
                 if (FIELD_SIZE.equals(pField)) {
                     return size();
                 }
-                return JDataFieldValue.UNKNOWN;
+                return MetisFieldValue.UNKNOWN;
             }
 
             @Override

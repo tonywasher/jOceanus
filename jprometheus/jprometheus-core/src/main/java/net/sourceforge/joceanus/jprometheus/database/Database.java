@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
 
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
@@ -217,7 +217,7 @@ public abstract class Database<T extends DataSet<T, ?>> {
         }
 
         /* Obtain the active profile */
-        JDataProfile myTask = pTask.getActiveTask();
+        MetisProfile myTask = pTask.getActiveTask();
         myTask = myTask.startTask("loadDatabase");
 
         /* Create an empty DataSet */
@@ -269,11 +269,11 @@ public abstract class Database<T extends DataSet<T, ?>> {
         }
 
         /* Obtain the active profile */
-        JDataProfile myTask = pTask.getActiveTask();
+        MetisProfile myTask = pTask.getActiveTask();
         myTask = myTask.startTask("updateDatabase");
 
         /* Loop through the tables */
-        JDataProfile myStage = myTask.startTask("insertData");
+        MetisProfile myStage = myTask.startTask("insertData");
         Iterator<DatabaseTable<?, ?>> myIterator = theTables.iterator();
         while ((bContinue) && (myIterator.hasNext())) {
             DatabaseTable<?, ?> myTable = myIterator.next();
@@ -348,7 +348,7 @@ public abstract class Database<T extends DataSet<T, ?>> {
         }
 
         /* Obtain the active profile */
-        JDataProfile myTask = pTask.getActiveTask();
+        MetisProfile myTask = pTask.getActiveTask();
         myTask = myTask.startTask("createTables");
 
         /* Loop through the tables */
@@ -379,7 +379,7 @@ public abstract class Database<T extends DataSet<T, ?>> {
         }
 
         /* Obtain the active profile */
-        JDataProfile myTask = pTask.getActiveTask();
+        MetisProfile myTask = pTask.getActiveTask();
         myTask = myTask.startTask("dropTables");
 
         /* Loop through the tables in reverse order */
@@ -410,7 +410,7 @@ public abstract class Database<T extends DataSet<T, ?>> {
         }
 
         /* Obtain the active profile */
-        JDataProfile myTask = pTask.getActiveTask();
+        MetisProfile myTask = pTask.getActiveTask();
         myTask = myTask.startTask("purgeTables");
 
         /* Loop through the tables in reverse order */

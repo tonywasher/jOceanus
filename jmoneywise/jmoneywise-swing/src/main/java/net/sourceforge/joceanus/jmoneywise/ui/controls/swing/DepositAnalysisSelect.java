@@ -35,8 +35,8 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldElement;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket;
@@ -128,8 +128,8 @@ public class DepositAnalysisSelect
         theEventManager = new TethysEventManager();
 
         /* Create the labels */
-        JLabel myCatLabel = new JLabel(NLS_CATEGORY + JFieldElement.STR_COLON);
-        JLabel myDepLabel = new JLabel(NLS_DEPOSIT + JFieldElement.STR_COLON);
+        JLabel myCatLabel = new JLabel(NLS_CATEGORY + MetisFieldElement.STR_COLON);
+        JLabel myDepLabel = new JLabel(NLS_DEPOSIT + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -266,7 +266,7 @@ public class DepositAnalysisSelect
             DepositBucket myBucket = myIterator.next();
 
             /* Return if correct category */
-            if (Difference.isEqual(pCategory, myBucket.getCategory())) {
+            if (MetisDifference.isEqual(pCategory, myBucket.getCategory())) {
                 return myBucket;
             }
         }
@@ -416,7 +416,7 @@ public class DepositAnalysisSelect
                 DepositBucket myBucket = myIterator.next();
 
                 /* Ignore if not the correct category */
-                if (!Difference.isEqual(myCategory, myBucket.getCategory())) {
+                if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
                     continue;
                 }
 
@@ -514,7 +514,7 @@ public class DepositAnalysisSelect
          */
         private boolean setDeposit(final DepositBucket pDeposit) {
             /* Adjust the selected deposit */
-            if (!Difference.isEqual(pDeposit, theDeposit)) {
+            if (!MetisDifference.isEqual(pDeposit, theDeposit)) {
                 /* Store the deposit */
                 setTheDeposit(pDeposit);
                 return true;
@@ -543,7 +543,7 @@ public class DepositAnalysisSelect
          */
         private boolean setCategory(final DepositCategory pCategory) {
             /* Adjust the selected category */
-            if (!Difference.isEqual(pCategory, theCategory)) {
+            if (!MetisDifference.isEqual(pCategory, theCategory)) {
                 theCategory = pCategory;
                 theDeposit = getFirstDeposit(theCategory);
                 return true;

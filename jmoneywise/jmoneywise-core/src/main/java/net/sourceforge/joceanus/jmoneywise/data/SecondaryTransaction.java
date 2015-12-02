@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -41,12 +41,12 @@ public abstract class SecondaryTransaction<S extends SecondaryTransaction<S, O>,
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(SecondaryTransaction.class.getSimpleName(), TransactionBase.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(SecondaryTransaction.class.getSimpleName(), TransactionBase.FIELD_DEFS);
 
     /**
      * Owner Field Id.
      */
-    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ASSETPAIR.getValue());
+    public static final MetisField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ASSETPAIR.getValue());
 
     /**
      * Copy Constructor.
@@ -114,7 +114,7 @@ public abstract class SecondaryTransaction<S extends SecondaryTransaction<S, O>,
      * @param pClass the class of the owner
      * @return the Owner
      */
-    protected static <X> X getOwner(final ValueSet pValueSet,
+    protected static <X> X getOwner(final MetisValueSet pValueSet,
                                     final Class<X> pClass) {
         return pValueSet.getValue(FIELD_OWNER, pClass);
     }

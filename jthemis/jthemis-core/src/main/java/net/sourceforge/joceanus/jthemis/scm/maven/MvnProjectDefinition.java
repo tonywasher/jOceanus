@@ -33,10 +33,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId.ProjectList;
@@ -52,7 +52,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @author Tony Washer
  */
 public class MvnProjectDefinition
-        implements JDataContents {
+        implements MetisDataContents {
     /**
      * POM name.
      */
@@ -61,17 +61,17 @@ public class MvnProjectDefinition
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(MvnProjectDefinition.class.getSimpleName());
+    private static final MetisFields FIELD_DEFS = new MetisFields(MvnProjectDefinition.class.getSimpleName());
 
     /**
      * Id field id.
      */
-    private static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField("Id");
+    private static final MetisField FIELD_ID = FIELD_DEFS.declareEqualityField("Id");
 
     /**
      * Dependencies field id.
      */
-    private static final JDataField FIELD_DEPS = FIELD_DEFS.declareEqualityField("Dependencies");
+    private static final MetisField FIELD_DEPS = FIELD_DEFS.declareEqualityField("Dependencies");
 
     /**
      * POM Model representation.
@@ -129,12 +129,12 @@ public class MvnProjectDefinition
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_ID.equals(pField)) {
             return theDefinition;
@@ -144,7 +144,7 @@ public class MvnProjectDefinition
         }
 
         /* Unknown */
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**

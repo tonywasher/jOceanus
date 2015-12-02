@@ -26,7 +26,7 @@ import java.time.LocalTime;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
@@ -43,7 +43,7 @@ public class CreateGitRepo
     /**
      * Preference Manager.
      */
-    private final PreferenceManager thePreferenceMgr;
+    private final MetisPreferenceManager thePreferenceMgr;
 
     /**
      * Report object.

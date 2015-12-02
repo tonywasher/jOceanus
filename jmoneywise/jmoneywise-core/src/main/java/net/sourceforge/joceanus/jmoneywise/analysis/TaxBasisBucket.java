@@ -26,12 +26,12 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAccountBucket.TaxBasisAccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
@@ -53,36 +53,36 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * The TaxBasis Bucket class.
  */
 public class TaxBasisBucket
-        implements JDataContents, Comparable<TaxBasisBucket>, OrderedIdItem<Integer> {
+        implements MetisDataContents, Comparable<TaxBasisBucket>, MetisOrderedIdItem<Integer> {
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TAXBASIS_NAME.getValue());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.TAXBASIS_NAME.getValue());
 
     /**
      * Analysis Field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Tax Basis Field Id.
      */
-    private static final JDataField FIELD_TAXBASIS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXBASIS.getItemName());
+    private static final MetisField FIELD_TAXBASIS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXBASIS.getItemName());
 
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * History Field Id.
      */
-    private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
+    private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
 
     /**
      * History Field Id.
      */
-    private static final JDataField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField(AnalysisResource.TAXBASIS_ACCOUNTLIST.getValue());
+    private static final MetisField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField(AnalysisResource.TAXBASIS_ACCOUNTLIST.getValue());
 
     /**
      * Totals bucket name.
@@ -92,7 +92,7 @@ public class TaxBasisBucket
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, TaxBasisAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, TaxBasisAttribute.class);
+    private static final Map<MetisField, TaxBasisAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, TaxBasisAttribute.class);
 
     /**
      * The analysis.
@@ -225,12 +225,12 @@ public class TaxBasisBucket
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
@@ -243,7 +243,7 @@ public class TaxBasisBucket
         if (FIELD_ACCOUNTS.equals(pField)) {
             return hasAccounts
                               ? theAccounts
-                              : JDataFieldValue.SKIP;
+                              : MetisFieldValue.SKIP;
         }
         if (FIELD_BASE.equals(pField)) {
             return theBaseValues;
@@ -256,12 +256,12 @@ public class TaxBasisBucket
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                        ? myValue
-                                                       : JDataFieldValue.SKIP;
+                                                       : MetisFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
@@ -456,7 +456,7 @@ public class TaxBasisBucket
         /* Return the value */
         return (myValue != null)
                                 ? myValue
-                                : JDataFieldValue.SKIP;
+                                : MetisFieldValue.SKIP;
     }
 
     /**
@@ -464,7 +464,7 @@ public class TaxBasisBucket
      * @param pField the field
      * @return the class
      */
-    private static TaxBasisAttribute getClassForField(final JDataField pField) {
+    private static TaxBasisAttribute getClassForField(final MetisField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -885,27 +885,27 @@ public class TaxBasisBucket
      * TaxBasisBucketList class.
      */
     public static class TaxBasisBucketList
-            extends OrderedIdList<Integer, TaxBasisBucket>
-            implements JDataContents {
+            extends MetisOrderedIdList<Integer, TaxBasisBucket>
+            implements MetisDataContents {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TAXBASIS_LIST.getValue());
+        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.TAXBASIS_LIST.getValue());
 
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * Totals field Id.
          */
-        private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
+        private static final MetisField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
 
         /**
          * The analysis.
@@ -997,7 +997,7 @@ public class TaxBasisBucket
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -1007,7 +1007,7 @@ public class TaxBasisBucket
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
@@ -1017,7 +1017,7 @@ public class TaxBasisBucket
             if (FIELD_TOTALS.equals(pField)) {
                 return theTotals;
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**

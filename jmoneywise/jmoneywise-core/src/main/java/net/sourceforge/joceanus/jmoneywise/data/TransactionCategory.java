@@ -26,10 +26,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
@@ -59,12 +59,12 @@ public final class TransactionCategory
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, CategoryBase.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, CategoryBase.FIELD_DEFS);
 
     /**
      * Category Type Field Id.
      */
-    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TRANSTYPE.getItemName());
+    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TRANSTYPE.getItemName());
 
     /**
      * Different Parent Error.
@@ -111,7 +111,7 @@ public final class TransactionCategory
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -121,7 +121,7 @@ public final class TransactionCategory
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_CATTYPE.equals(pField)) {
             return true;
@@ -154,7 +154,7 @@ public final class TransactionCategory
      * @param pValueSet the valueSet
      * @return the CategoryType
      */
-    public static TransactionCategoryType getTransCategoryType(final ValueSet pValueSet) {
+    public static TransactionCategoryType getTransCategoryType(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CATTYPE, TransactionCategoryType.class);
     }
 
@@ -163,7 +163,7 @@ public final class TransactionCategory
      * @param pValueSet the valueSet
      * @return the Parent Category
      */
-    public static TransactionCategory getParentCategory(final ValueSet pValueSet) {
+    public static TransactionCategory getParentCategory(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PARENT, TransactionCategory.class);
     }
 
@@ -391,7 +391,7 @@ public final class TransactionCategory
         applyBasicChanges(myCategory);
 
         /* Update the category type if required */
-        if (!Difference.isEqual(getCategoryType(), myCategory.getCategoryType())) {
+        if (!MetisDifference.isEqual(getCategoryType(), myCategory.getCategoryType())) {
             setValueType(myCategory.getCategoryType());
         }
 
@@ -418,7 +418,7 @@ public final class TransactionCategory
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, CategoryBaseList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, CategoryBaseList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE Category list.
@@ -437,7 +437,7 @@ public final class TransactionCategory
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -447,7 +447,7 @@ public final class TransactionCategory
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return TransactionCategory.FIELD_DEFS;
         }
 
@@ -585,17 +585,17 @@ public final class TransactionCategory
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAMAP_NAME.getValue(), CategoryDataMap.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue(), CategoryDataMap.FIELD_DEFS);
 
         /**
          * CategoryMap Field Id.
          */
-        private static final JDataField FIELD_CATMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
+        private static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
 
         /**
          * CategoryCountMap Field Id.
          */
-        private static final JDataField FIELD_CATCOUNT = FIELD_DEFS
+        private static final MetisField FIELD_CATCOUNT = FIELD_DEFS
                 .declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
 
         /**
@@ -618,12 +618,12 @@ public final class TransactionCategory
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_CATMAP.equals(pField)) {
                 return theCategoryMap;

@@ -22,12 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldEnum;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldEnum;
 
 /**
  * MoneyWise Item Types.
  */
-public enum MoneyWiseDataType implements JDataFieldEnum {
+public enum MoneyWiseDataType implements MetisFieldEnum {
     /**
      * DepositType.
      */

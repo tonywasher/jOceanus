@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.database;
 
-import net.sourceforge.joceanus.jmetis.data.EncryptedData;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest;
@@ -55,7 +55,7 @@ public class TableStockOptionVest
         /* Declare the columns */
         myTableDef.addReferenceColumn(StockOptionVest.FIELD_OPTION, TableStockOption.TABLE_NAME);
         myTableDef.addDateColumn(StockOptionVest.FIELD_DATE);
-        myTableDef.addEncryptedColumn(StockOptionVest.FIELD_UNITS, EncryptedData.UNITSLEN);
+        myTableDef.addEncryptedColumn(StockOptionVest.FIELD_UNITS, MetisEncryptedData.UNITSLEN);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class TableStockOptionVest
 
     @Override
     protected void setFieldValue(final StockOptionVest pItem,
-                                 final JDataField iField) throws OceanusException {
+                                 final MetisField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (StockOptionVest.FIELD_OPTION.equals(iField)) {

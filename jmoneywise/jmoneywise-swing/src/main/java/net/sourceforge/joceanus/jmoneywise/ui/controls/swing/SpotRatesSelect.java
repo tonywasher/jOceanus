@@ -35,7 +35,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
@@ -410,7 +410,7 @@ public class SpotRatesSelect
         private boolean setDate(final TethysSwingDateButton pButton) {
             /* Adjust the date and build the new range */
             TethysDate myDate = new TethysDate(pButton.getSelectedDate());
-            if (!Difference.isEqual(myDate, theDate)) {
+            if (!MetisDifference.isEqual(myDate, theDate)) {
                 theDate = myDate;
                 return true;
             }
@@ -459,7 +459,7 @@ public class SpotRatesSelect
             theDateButton.setSelectedDateDay(theDate);
 
             /* Determine whether we are todays date */
-            boolean isToday = Difference.isEqual(theDate, new TethysDate());
+            boolean isToday = MetisDifference.isEqual(theDate, new TethysDate());
             theDownloadButton.setVisible(isToday);
         }
     }

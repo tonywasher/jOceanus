@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
@@ -106,7 +106,7 @@ public class WriteQIF
         boolean bSuccess = false;
 
         /* Load configuration */
-        PreferenceManager myMgr = theView.getPreferenceManager();
+        MetisPreferenceManager myMgr = theView.getPreferenceManager();
         QIFPreference myPrefs = myMgr.getPreferenceSet(QIFPreference.class);
 
         /* Create QIF file */

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.EnumMap;
 
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  */
 public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
         extends EnumMap<E, Object>
-        implements JDataFormat {
+        implements MetisDataFormat {
     /**
      * Serial Id.
      */

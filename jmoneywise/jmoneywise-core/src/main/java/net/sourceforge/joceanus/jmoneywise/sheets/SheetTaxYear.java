@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.sheet.DataCell;
-import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -123,7 +123,7 @@ public class SheetTaxYear
      * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                         final DataWorkBook pWorkBook,
+                                         final MetisDataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
                                          final ArchiveLoader pLoader) throws OceanusException {
         /* Access the lists */
@@ -133,7 +133,7 @@ public class SheetTaxYear
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_TAXYEARS);
+            MetisDataView myView = pWorkBook.getRangeView(AREA_TAXYEARS);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
@@ -179,7 +179,7 @@ public class SheetTaxYear
                 String myHiDivTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
 
                 /* Handle AddTaxRate which may be missing */
-                DataCell myCell = myView.getCellByPosition(iAdjust++, iRow);
+                MetisDataCell myCell = myView.getCellByPosition(iAdjust++, iRow);
                 String myAddTaxRate = null;
                 if (myCell != null) {
                     myAddTaxRate = myCell.getStringValue();

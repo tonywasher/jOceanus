@@ -26,12 +26,12 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -47,36 +47,36 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * The Tax Bucket class.
  */
 public final class TaxCalcBucket
-        implements JDataContents, Comparable<TaxCalcBucket>, OrderedIdItem<Integer> {
+        implements MetisDataContents, Comparable<TaxCalcBucket>, MetisOrderedIdItem<Integer> {
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TAXCALC_NAME.getValue());
+    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.TAXCALC_NAME.getValue());
 
     /**
      * Analysis Field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Tax Category Field Id.
      */
-    private static final JDataField FIELD_TAXCAT = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXTYPE.getItemName());
+    private static final MetisField FIELD_TAXCAT = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXTYPE.getItemName());
 
     /**
      * Tax Section Field Id.
      */
-    private static final JDataField FIELD_TAXSECT = FIELD_DEFS.declareEqualityField(AnalysisResource.TAXCALC_SECTION.getValue());
+    private static final MetisField FIELD_TAXSECT = FIELD_DEFS.declareEqualityField(AnalysisResource.TAXCALC_SECTION.getValue());
 
     /**
      * Parent Field Id.
      */
-    private static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_PARENT.getValue());
+    private static final MetisField FIELD_PARENT = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_PARENT.getValue());
 
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, TaxAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, TaxAttribute.class);
+    private static final Map<MetisField, TaxAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, TaxAttribute.class);
 
     /**
      * The analysis.
@@ -125,12 +125,12 @@ public final class TaxCalcBucket
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
@@ -143,7 +143,7 @@ public final class TaxCalcBucket
         if (FIELD_PARENT.equals(pField)) {
             return (theParent != null)
                                        ? theParent
-                                       : JDataFieldValue.SKIP;
+                                       : MetisFieldValue.SKIP;
         }
 
         /* Handle Attribute fields */
@@ -153,12 +153,12 @@ public final class TaxCalcBucket
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                         ? myValue
-                                                        : JDataFieldValue.SKIP;
+                                                        : MetisFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
@@ -234,7 +234,7 @@ public final class TaxCalcBucket
         /* Return the value */
         return (myValue != null)
                                  ? myValue
-                                 : JDataFieldValue.SKIP;
+                                 : MetisFieldValue.SKIP;
     }
 
     /**
@@ -242,7 +242,7 @@ public final class TaxCalcBucket
      * @param pField the field
      * @return the class
      */
-    private static TaxAttribute getClassForField(final JDataField pField) {
+    private static TaxAttribute getClassForField(final MetisField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -420,43 +420,43 @@ public final class TaxCalcBucket
      * TaxCategoryBucketList class.
      */
     public static class TaxCalcBucketList
-            extends OrderedIdList<Integer, TaxCalcBucket>
-            implements JDataContents {
+            extends MetisOrderedIdList<Integer, TaxCalcBucket>
+            implements MetisDataContents {
 
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.TAXCALC_LIST.getValue());
+        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.TAXCALC_LIST.getValue());
 
         /**
          * Size Field Id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Analysis field Id.
          */
-        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * TaxYear Field Id.
          */
-        private static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_YEAR.getValue());
+        private static final MetisField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_YEAR.getValue());
 
         /**
          * Age Field Id.
          */
-        private static final JDataField FIELD_AGE = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_AGE.getValue());
+        private static final MetisField FIELD_AGE = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_AGE.getValue());
 
         /**
          * GainsSlices Field Id.
          */
-        private static final JDataField FIELD_GAINS = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_SLICES.getValue());
+        private static final MetisField FIELD_GAINS = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_SLICES.getValue());
 
         /**
          * ReducedAllowance Field Id.
          */
-        private static final JDataField FIELD_ALLOW = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_ALLOW.getValue());
+        private static final MetisField FIELD_ALLOW = FIELD_DEFS.declareLocalField(AnalysisResource.TAXCALC_ALLOW.getValue());
 
         /**
          * The analysis.
@@ -507,7 +507,7 @@ public final class TaxCalcBucket
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -517,7 +517,7 @@ public final class TaxCalcBucket
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
@@ -533,14 +533,14 @@ public final class TaxCalcBucket
             if (FIELD_GAINS.equals(pField)) {
                 return hasGainsSlices
                                       ? hasGainsSlices
-                                      : JDataFieldValue.SKIP;
+                                      : MetisFieldValue.SKIP;
             }
             if (FIELD_ALLOW.equals(pField)) {
                 return hasReducedAllow
                                        ? hasReducedAllow
-                                       : JDataFieldValue.SKIP;
+                                       : MetisFieldValue.SKIP;
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**

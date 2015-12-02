@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.http.JiraClient;
+import net.sourceforge.joceanus.jmetis.http.MetisHTTPJiraClient;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedObject;
@@ -45,7 +45,7 @@ public class JiraSecurity {
     /**
      * HTTP Client.
      */
-    private final JiraClient theClient;
+    private final MetisHTTPJiraClient theClient;
 
     /**
      * Users.

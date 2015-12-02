@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 
 /**
  * Group class for data item.
@@ -34,17 +34,17 @@ import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
  * @param <E> the data type enum class
  */
 public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends OrderedIdList<Integer, T>
-        implements JDataContents {
+        extends MetisOrderedIdList<Integer, T>
+        implements MetisDataContents {
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAGROUP_NAME.getValue());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAGROUP_NAME.getValue());
 
     /**
      * Parent field id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
+    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
 
     /**
      * Parent Event.
@@ -66,11 +66,11 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_PARENT.equals(pField)) {
             return theParent;
         }
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override

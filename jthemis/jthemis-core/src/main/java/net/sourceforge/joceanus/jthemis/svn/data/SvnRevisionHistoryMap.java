@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistory.SvnRevisionKey;
@@ -52,7 +52,7 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
  */
 public class SvnRevisionHistoryMap
         extends LinkedHashMap<SvnRevisionKey, SvnRevisionHistory>
-        implements JDataFormat {
+        implements MetisDataFormat {
     /**
      * Serial Id.
      */
@@ -142,26 +142,26 @@ public class SvnRevisionHistoryMap
      * Details of a revision path for a directory in a SubVersion repository.
      */
     public static class SvnRevisionPath
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnRevisionPath.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnRevisionPath.class.getSimpleName());
 
         /**
          * Path field.
          */
-        private static final JDataField FIELD_PATH = FIELD_DEFS.declareLocalField("Path");
+        private static final MetisField FIELD_PATH = FIELD_DEFS.declareLocalField("Path");
 
         /**
          * Revision field.
          */
-        private static final JDataField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
+        private static final MetisField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
 
         /**
          * Initial History field.
          */
-        private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField("History");
+        private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareLocalField("History");
 
         /**
          * The HistoryMap.
@@ -266,12 +266,12 @@ public class SvnRevisionHistoryMap
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_PATH.equals(pField)) {
                 return thePath;
             }
@@ -281,7 +281,7 @@ public class SvnRevisionHistoryMap
             if (FIELD_HISTORY.equals(pField)) {
                 return theFirstHistory;
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**

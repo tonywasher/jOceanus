@@ -28,12 +28,12 @@ import java.util.Map;
 import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -109,7 +109,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Error List.
      */
-    private final DataErrorList<JMetisExceptionWrapper> theErrors;
+    private final DataErrorList<MetisExceptionWrapper> theErrors;
 
     /**
      * The Frame.
@@ -124,12 +124,12 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Active Profile.
      */
-    private JDataProfile theProfile;
+    private MetisProfile theProfile;
 
     /**
      * The Data Entry hashMap.
      */
-    private final Map<String, ViewerEntry> theMap;
+    private final Map<String, MetisViewerEntry> theMap;
 
     /**
      * Constructor for default control.
@@ -138,13 +138,13 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @throws OceanusException on error
      */
     protected DataControl(final JOceanusUtilitySet pUtilitySet,
-                          final JDataProfile pProfile) throws OceanusException {
+                          final MetisProfile pProfile) throws OceanusException {
         /* Store the parameters */
         theUtilitySet = pUtilitySet;
         theProfile = pProfile;
 
         /* Create the Debug Map */
-        theMap = new HashMap<String, ViewerEntry>();
+        theMap = new HashMap<String, MetisViewerEntry>();
 
         /* Create event manager */
         theEventManager = new TethysEventManager();
@@ -153,11 +153,11 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         initDataMgr();
 
         /* Update the Profile entry */
-        ViewerEntry myData = getDataEntry(DATA_PROFILE);
+        MetisViewerEntry myData = getDataEntry(DATA_PROFILE);
         myData.setObject(theProfile);
 
         /* Create the error list */
-        theErrors = new DataErrorList<JMetisExceptionWrapper>();
+        theErrors = new DataErrorList<MetisExceptionWrapper>();
     }
 
     @Override
@@ -180,7 +180,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         theData = pData;
 
         /* Update the Data entry */
-        ViewerEntry myData = getDataEntry(DATA_DATASET);
+        MetisViewerEntry myData = getDataEntry(DATA_DATASET);
         myData.setObject(pData);
 
         /* Analyse the data */
@@ -216,7 +216,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         theUpdates = theData.deriveUpdateSet();
 
         /* Update the Data entry */
-        ViewerEntry myData = getDataEntry(DATA_UPDATES);
+        MetisViewerEntry myData = getDataEntry(DATA_UPDATES);
         myData.setObject(theUpdates);
     }
 
@@ -233,7 +233,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pError the new Error
      */
     public void addError(final OceanusException pError) {
-        theErrors.add(new JMetisExceptionWrapper(pError));
+        theErrors.add(new MetisExceptionWrapper(pError));
     }
 
     /**
@@ -247,7 +247,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain current error.
      * @return the current Error
      */
-    public DataErrorList<JMetisExceptionWrapper> getErrors() {
+    public DataErrorList<MetisExceptionWrapper> getErrors() {
         return theErrors;
     }
 
@@ -279,7 +279,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain DataFormatter.
      * @return the DataFormatter
      */
-    public JDataFormatter getDataFormatter() {
+    public MetisDataFormatter getDataFormatter() {
         return theUtilitySet.getDataFormatter();
     }
 
@@ -295,7 +295,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain PreferenceManager.
      * @return the PreferenceManager
      */
-    public PreferenceManager getPreferenceManager() {
+    public MetisPreferenceManager getPreferenceManager() {
         return theUtilitySet.getPreferenceManager();
     }
 
@@ -303,7 +303,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain ViewerManager.
      * @return the ViewerManager
      */
-    public ViewerManager getViewerManager() {
+    public MetisViewerManager getViewerManager() {
         return theUtilitySet.getViewerManager();
     }
 
@@ -312,14 +312,14 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void initDataMgr() {
         /* Create Debug Entries */
-        ViewerEntry myUnderlying = getDataEntry(DATA_UNDERLYING);
-        ViewerEntry myData = getDataEntry(DATA_DATASET);
-        ViewerEntry myAnalysis = getDataEntry(DATA_ANALYSIS);
-        ViewerEntry myUpdates = getDataEntry(DATA_UPDATES);
-        ViewerEntry myViews = getDataEntry(DATA_VIEWS);
-        ViewerEntry myMaint = getDataEntry(DATA_MAINT);
-        ViewerEntry myError = getDataEntry(DATA_ERROR);
-        ViewerEntry myProfile = getDataEntry(DATA_PROFILE);
+        MetisViewerEntry myUnderlying = getDataEntry(DATA_UNDERLYING);
+        MetisViewerEntry myData = getDataEntry(DATA_DATASET);
+        MetisViewerEntry myAnalysis = getDataEntry(DATA_ANALYSIS);
+        MetisViewerEntry myUpdates = getDataEntry(DATA_UPDATES);
+        MetisViewerEntry myViews = getDataEntry(DATA_VIEWS);
+        MetisViewerEntry myMaint = getDataEntry(DATA_MAINT);
+        MetisViewerEntry myError = getDataEntry(DATA_ERROR);
+        MetisViewerEntry myProfile = getDataEntry(DATA_PROFILE);
 
         /* Create the structure */
         myProfile.addAsRootChild();
@@ -340,9 +340,9 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pName the Name of the entry
      * @return the Debug Entry
      */
-    public final ViewerEntry getDataEntry(final String pName) {
+    public final MetisViewerEntry getDataEntry(final String pName) {
         /* Access any existing entry */
-        ViewerEntry myEntry = theMap.get(pName);
+        MetisViewerEntry myEntry = theMap.get(pName);
 
         /* If the entry does not exist */
         if (myEntry == null) {
@@ -386,7 +386,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      */
     protected final void refreshViews() {
         /* Obtain the active profile */
-        JDataProfile myTask = getActiveTask();
+        MetisProfile myTask = getActiveTask();
         myTask = myTask.startTask("refreshViews");
 
         /* Refresh the Control */
@@ -401,7 +401,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public void undoLastChange() {
         /* Obtain the active profile */
-        JDataProfile myTask = getActiveTask();
+        MetisProfile myTask = getActiveTask();
         myTask = myTask.startTask("unDoLastChange");
 
         /* UndoLastChange */
@@ -423,7 +423,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public void resetChanges() {
         /* Obtain the active profile */
-        JDataProfile myTask = getActiveTask();
+        MetisProfile myTask = getActiveTask();
         myTask = myTask.startTask("resetChanges");
 
         /* Rewind the data */
@@ -445,12 +445,12 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pTask the name of the task
      * @return the new profile
      */
-    public JDataProfile getNewProfile(final String pTask) {
+    public MetisProfile getNewProfile(final String pTask) {
         /* Create a new profile */
-        theProfile = new JDataProfile(pTask);
+        theProfile = new MetisProfile(pTask);
 
         /* Update the Data entry */
-        ViewerEntry myData = getDataEntry(DATA_PROFILE);
+        MetisViewerEntry myData = getDataEntry(DATA_PROFILE);
         myData.setObject(theProfile);
 
         /* Return the new profile */
@@ -461,7 +461,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain the active profile.
      * @return the active profile
      */
-    public JDataProfile getActiveProfile() {
+    public MetisProfile getActiveProfile() {
         /* Create a new profile */
         return theProfile;
     }
@@ -470,7 +470,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain the active task.
      * @return the active task
      */
-    public JDataProfile getActiveTask() {
+    public MetisProfile getActiveTask() {
         /* Create a new profile */
         return theProfile == null
                                  ? null

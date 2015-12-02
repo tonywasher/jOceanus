@@ -24,21 +24,21 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EditState;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.ItemValidation;
-import net.sourceforge.joceanus.jmetis.data.ItemValidation.ErrorElement;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataValues;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
-import net.sourceforge.joceanus.jmetis.data.ValueSetHistory;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
-import net.sourceforge.joceanus.jmetis.field.JFieldState;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisItemValidation;
+import net.sourceforge.joceanus.jmetis.data.MetisItemValidation.MetisErrorElement;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldState;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -51,11 +51,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <E> the data type enum class
  */
 public abstract class DataItem<E extends Enum<E>>
-        implements OrderedIdItem<Integer>, JDataValues, JFieldSetItem {
+        implements MetisOrderedIdItem<Integer>, MetisDataValues, MetisFieldSetItem {
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAITEM_NAME.getValue());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAITEM_NAME.getValue());
 
     /**
      * Validation error.
@@ -140,72 +140,72 @@ public abstract class DataItem<E extends Enum<E>>
     /**
      * Id Field Id.
      */
-    public static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATAITEM_ID.getValue());
+    public static final MetisField FIELD_ID = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATAITEM_ID.getValue());
 
     /**
      * Type Field Id.
      */
-    public static final JDataField FIELD_DATATYPE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE.getValue());
+    public static final MetisField FIELD_DATATYPE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE.getValue());
 
     /**
      * List Field Id.
      */
-    public static final JDataField FIELD_LIST = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_NAME.getValue());
+    public static final MetisField FIELD_LIST = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_NAME.getValue());
 
     /**
      * Base Field Id.
      */
-    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE.getValue());
+    public static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE.getValue());
 
     /**
      * TouchStatus Field Id.
      */
-    public static final JDataField FIELD_TOUCH = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TOUCH.getValue());
+    public static final MetisField FIELD_TOUCH = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TOUCH.getValue());
 
     /**
      * Deleted Field Id.
      */
-    public static final JDataField FIELD_DELETED = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_DELETED.getValue());
+    public static final MetisField FIELD_DELETED = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_DELETED.getValue());
 
     /**
      * DataState Field Id.
      */
-    public static final JDataField FIELD_STATE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_STATE.getValue());
+    public static final MetisField FIELD_STATE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_STATE.getValue());
 
     /**
      * Edit State Field Id.
      */
-    public static final JDataField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE.getValue());
+    public static final MetisField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE.getValue());
 
     /**
      * Version Field Id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
+    public static final MetisField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
 
     /**
      * Header Field Id.
      */
-    public static final JDataField FIELD_HEADER = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HEADER.getValue());
+    public static final MetisField FIELD_HEADER = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HEADER.getValue());
 
     /**
      * History Field Id.
      */
-    public static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HISTORY.getValue());
+    public static final MetisField FIELD_HISTORY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HISTORY.getValue());
 
     /**
      * Errors Field Id.
      */
-    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ERRORS.getValue());
+    public static final MetisField FIELD_ERRORS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ERRORS.getValue());
 
     /**
      * Instance ReportFields.
      */
-    private final JDataFields theFields;
+    private final MetisFields theFields;
 
     /**
      * ValueSet.
      */
-    private ValueSet theValueSet;
+    private MetisValueSet theValueSet;
 
     /**
      * The list to which this item belongs.
@@ -218,9 +218,9 @@ public abstract class DataItem<E extends Enum<E>>
     private DataItem<?> theBase = null;
 
     /**
-     * The Edit state of this item {@link EditState}.
+     * The Edit state of this item {@link MetisEditState}.
      */
-    private EditState theEdit = EditState.CLEAN;
+    private MetisEditState theEdit = MetisEditState.CLEAN;
 
     /**
      * Is the item a header.
@@ -233,14 +233,14 @@ public abstract class DataItem<E extends Enum<E>>
     private Integer theId = 0;
 
     /**
-     * The history control {@link ValueSetHistory}.
+     * The history control {@link MetisValueSetHistory}.
      */
-    private ValueSetHistory theHistory = null;
+    private MetisValueSetHistory theHistory = null;
 
     /**
-     * The validation control {@link ItemValidation}.
+     * The validation control {@link MetisItemValidation}.
      */
-    private ItemValidation theErrors = null;
+    private MetisItemValidation theErrors = null;
 
     /**
      * Status.
@@ -262,15 +262,15 @@ public abstract class DataItem<E extends Enum<E>>
         theFields = declareFields();
 
         /* Create validation control */
-        theErrors = new ItemValidation();
+        theErrors = new MetisItemValidation();
 
         /* Create history control */
-        theHistory = new ValueSetHistory();
+        theHistory = new MetisValueSetHistory();
 
         /* Allocate initial value set and declare it */
-        ValueSet myValues = (this instanceof EncryptedItem)
-                                                            ? new EncryptedValueSet(this)
-                                                            : new ValueSet(this);
+        MetisValueSet myValues = (this instanceof EncryptedItem)
+                                                            ? new MetisEncryptedValueSet(this)
+                                                            : new MetisValueSet(this);
         declareValues(myValues);
         theHistory.setValues(myValues);
 
@@ -311,7 +311,7 @@ public abstract class DataItem<E extends Enum<E>>
         /* Access the varying styles and the source state */
         ListStyle myStyle = pList.getStyle();
         ListStyle myBaseStyle = pBase.getList().getStyle();
-        DataState myState = pBase.getState();
+        MetisDataState myState = pBase.getState();
 
         /* Switch on the styles */
         switch (myStyle) {
@@ -393,7 +393,7 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return theFields;
     }
 
@@ -401,15 +401,15 @@ public abstract class DataItem<E extends Enum<E>>
      * Declare fields.
      * @return the fields
      */
-    public abstract JDataFields declareFields();
+    public abstract MetisFields declareFields();
 
     @Override
-    public final void declareValues(final ValueSet pValues) {
+    public final void declareValues(final MetisValueSet pValues) {
         theValueSet = pValues;
     }
 
     @Override
-    public ValueSet getValueSet() {
+    public MetisValueSet getValueSet() {
         return theValueSet;
     }
 
@@ -427,12 +427,12 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     @Override
-    public boolean skipField(final JDataField pField) {
+    public boolean skipField(final MetisField pField) {
         return false;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* If this is a valueSet field */
         if (pField.isValueSetField()) {
             /* Access from valueSet */
@@ -454,7 +454,7 @@ public abstract class DataItem<E extends Enum<E>>
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBase == null)
-                                     ? JDataFieldValue.SKIP
+                                     ? MetisFieldValue.SKIP
                                      : theBase;
         }
         if (FIELD_STATE.equals(pField)) {
@@ -466,31 +466,31 @@ public abstract class DataItem<E extends Enum<E>>
         if (FIELD_DELETED.equals(pField)) {
             return isDeleted()
                                ? Boolean.TRUE
-                               : JDataFieldValue.SKIP;
+                               : MetisFieldValue.SKIP;
         }
         if (FIELD_VERSION.equals(pField)) {
             return (theValueSet != null)
                                          ? theValueSet.getVersion()
-                                         : JDataFieldValue.SKIP;
+                                         : MetisFieldValue.SKIP;
         }
         if (FIELD_HEADER.equals(pField)) {
             return isHeader
                             ? isHeader
-                            : JDataFieldValue.SKIP;
+                            : MetisFieldValue.SKIP;
         }
         if (FIELD_HISTORY.equals(pField)) {
             return hasHistory()
                                 ? theHistory
-                                : JDataFieldValue.SKIP;
+                                : MetisFieldValue.SKIP;
         }
         if (FIELD_ERRORS.equals(pField)) {
             return hasErrors()
                                ? theErrors
-                               : JDataFieldValue.SKIP;
+                               : MetisFieldValue.SKIP;
         }
 
         /* Not recognised */
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**
@@ -571,7 +571,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Get the EditState for this item.
      * @return the EditState
      */
-    public EditState getEditState() {
+    public MetisEditState getEditState() {
         return theEdit;
     }
 
@@ -579,8 +579,8 @@ public abstract class DataItem<E extends Enum<E>>
      * Get the State for this item.
      * @return the State
      */
-    public DataState getState() {
-        return DataState.determineState(theHistory);
+    public MetisDataState getState() {
+        return MetisDataState.determineState(theHistory);
     }
 
     /**
@@ -595,7 +595,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Get the history for this item.
      * @return the history
      */
-    protected ValueSetHistory getHistory() {
+    protected MetisValueSetHistory getHistory() {
         return theHistory;
     }
 
@@ -616,7 +616,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Set the Edit State.
      * @param pState the Edit Status
      */
-    protected void setEditState(final EditState pState) {
+    protected void setEditState(final MetisEditState pState) {
         theEdit = pState;
     }
 
@@ -775,7 +775,7 @@ public abstract class DataItem<E extends Enum<E>>
      */
     public void clearHistory() {
         theHistory.clearHistory();
-        theEdit = EditState.CLEAN;
+        theEdit = MetisEditState.CLEAN;
     }
 
     /**
@@ -798,7 +798,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Return the base history object.
      * @return the original values for this object
      */
-    public ValueSet getOriginalValues() {
+    public MetisValueSet getOriginalValues() {
         return theHistory.getOriginalValues();
     }
 
@@ -860,10 +860,10 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pField the field to test
      * @return <code>true/false</code>
      */
-    public Difference fieldChanged(final JDataField pField) {
+    public MetisDifference fieldChanged(final MetisField pField) {
         return ((pField != null) && (pField.isValueSetField()))
                                                                 ? theHistory.fieldChanged(pField)
-                                                                : Difference.IDENTICAL;
+                                                                : MetisDifference.IDENTICAL;
     }
 
     /**
@@ -871,7 +871,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @return <code>true/false</code>
      */
     public boolean hasErrors() {
-        return theEdit == EditState.ERROR;
+        return theEdit == MetisEditState.ERROR;
     }
 
     /**
@@ -879,7 +879,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @return <code>true/false</code>
      */
     public boolean hasChanges() {
-        return theEdit != EditState.CLEAN;
+        return theEdit != MetisEditState.CLEAN;
     }
 
     /**
@@ -887,7 +887,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @return <code>true/false</code>
      */
     public boolean isValid() {
-        return (theEdit == EditState.CLEAN) || (theEdit == EditState.VALID);
+        return (theEdit == MetisEditState.CLEAN) || (theEdit == MetisEditState.VALID);
     }
 
     /**
@@ -895,7 +895,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pField the particular field
      * @return <code>true/false</code>
      */
-    public boolean hasErrors(final JDataField pField) {
+    public boolean hasErrors(final MetisField pField) {
         return (pField != null)
                                 ? theErrors.hasErrors(pField)
                                 : false;
@@ -905,13 +905,13 @@ public abstract class DataItem<E extends Enum<E>>
      * Note that this item has been validated.
      */
     public void setValidEdit() {
-        DataState myState = getState();
-        if (myState == DataState.CLEAN) {
-            theEdit = EditState.CLEAN;
+        MetisDataState myState = getState();
+        if (myState == MetisDataState.CLEAN) {
+            theEdit = MetisEditState.CLEAN;
         } else if (theList.getStyle() == ListStyle.CORE) {
-            theEdit = EditState.DIRTY;
+            theEdit = MetisEditState.DIRTY;
         } else {
-            theEdit = EditState.VALID;
+            theEdit = MetisEditState.VALID;
         }
     }
 
@@ -920,8 +920,8 @@ public abstract class DataItem<E extends Enum<E>>
      */
     public void clearErrors() {
         theEdit = (theValueSet.getVersion() > 0)
-                                                 ? EditState.DIRTY
-                                                 : EditState.CLEAN;
+                                                 ? MetisEditState.DIRTY
+                                                 : MetisEditState.CLEAN;
         theErrors.clearErrors();
     }
 
@@ -931,24 +931,24 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pField the associated field
      */
     public void addError(final String pError,
-                         final JDataField pField) {
+                         final MetisField pField) {
         /* Set edit state and add the error */
-        theEdit = EditState.ERROR;
+        theEdit = MetisEditState.ERROR;
         theErrors.addError(pError, pField);
 
         /* Note that the list has errors */
-        theList.setEditState(EditState.ERROR);
+        theList.setEditState(MetisEditState.ERROR);
     }
 
     @Override
-    public String getFieldErrors(final JDataField pField) {
+    public String getFieldErrors(final MetisField pField) {
         return (pField != null)
                                 ? theErrors.getFieldErrors(pField)
                                 : null;
     }
 
     @Override
-    public String getFieldErrors(final JDataField[] pFields) {
+    public String getFieldErrors(final MetisField[] pFields) {
         return theErrors.getFieldErrors(pFields);
     }
 
@@ -956,7 +956,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Get the first error element for an item.
      * @return the first error (or <code>null</code>)
      */
-    public ErrorElement getFirstError() {
+    public MetisErrorElement getFirstError() {
         return theErrors.getFirst();
     }
 
@@ -981,10 +981,10 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pList the list to resolve against
      * @throws OceanusException on error
      */
-    protected void resolveDataLink(final JDataField pField,
+    protected void resolveDataLink(final MetisField pField,
                                    final DataList<?, ?> pList) throws OceanusException {
         /* Access the values */
-        ValueSet myValues = getValueSet();
+        MetisValueSet myValues = getValueSet();
 
         /* Access value for field */
         Object myValue = myValues.getValue(pField);
@@ -1019,7 +1019,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pField the field to check
      * @return true/false
      */
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         return false;
     }
 
@@ -1047,10 +1047,10 @@ public abstract class DataItem<E extends Enum<E>>
         }
 
         /* Loop through the fields */
-        Iterator<JDataField> myIterator = theFields.fieldIterator();
+        Iterator<MetisField> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            JDataField myField = myIterator.next();
+            MetisField myField = myIterator.next();
 
             /* Skip if not used in equality */
             if (!myField.isEqualityField()) {
@@ -1062,7 +1062,7 @@ public abstract class DataItem<E extends Enum<E>>
             Object myNew = myItem.getFieldValue(myField);
 
             /* Check the field */
-            if (!Difference.isEqual(myValue, myNew)) {
+            if (!MetisDifference.isEqual(myValue, myNew)) {
                 return false;
             }
         }
@@ -1090,10 +1090,10 @@ public abstract class DataItem<E extends Enum<E>>
      * Get the state of the underlying record.
      * @return the underlying state
      */
-    protected DataState getBaseState() {
+    protected MetisDataState getBaseState() {
         DataItem<?> myBase = getBase();
         return (myBase == null)
-                                ? DataState.NOSTATE
+                                ? MetisDataState.NOSTATE
                                 : myBase.getState();
     }
 
@@ -1121,61 +1121,61 @@ public abstract class DataItem<E extends Enum<E>>
      * Dirty items become valid.
      */
     public void validate() {
-        if (getEditState() == EditState.DIRTY) {
-            setEditState(EditState.VALID);
+        if (getEditState() == MetisEditState.DIRTY) {
+            setEditState(MetisEditState.VALID);
         }
     }
 
     @Override
-    public JFieldState getFieldState(final JDataField pField) {
+    public MetisFieldState getFieldState(final MetisField pField) {
         /* Determine DELETED state */
         if (isDeleted()) {
-            return JFieldState.DELETED;
+            return MetisFieldState.DELETED;
 
             /* Determine Error state */
         } else if ((hasErrors()) && (hasErrors(pField))) {
-            return JFieldState.ERROR;
+            return MetisFieldState.ERROR;
 
             /* Determine Changed state */
         } else if (fieldChanged(pField).isDifferent()) {
-            return JFieldState.CHANGED;
+            return MetisFieldState.CHANGED;
 
             /* Determine standard states */
         } else {
             switch (getState()) {
                 case NEW:
-                    return JFieldState.NEW;
+                    return MetisFieldState.NEW;
                 case RECOVERED:
-                    return JFieldState.RESTORED;
+                    return MetisFieldState.RESTORED;
                 default:
-                    return JFieldState.NORMAL;
+                    return MetisFieldState.NORMAL;
             }
         }
     }
 
     @Override
-    public JFieldState getItemState() {
+    public MetisFieldState getItemState() {
         /* Determine DELETED state */
         if (isDeleted()) {
-            return JFieldState.DELETED;
+            return MetisFieldState.DELETED;
 
             /* Determine Error state */
         } else if (hasErrors()) {
-            return JFieldState.ERROR;
+            return MetisFieldState.ERROR;
 
             /* Determine Changed state */
         } else if (hasHistory()) {
-            return JFieldState.CHANGED;
+            return MetisFieldState.CHANGED;
 
             /* Determine standard states */
         } else {
             switch (getState()) {
                 case NEW:
-                    return JFieldState.NEW;
+                    return MetisFieldState.NEW;
                 case RECOVERED:
-                    return JFieldState.RESTORED;
+                    return MetisFieldState.RESTORED;
                 default:
-                    return JFieldState.NORMAL;
+                    return MetisFieldState.NORMAL;
             }
         }
     }

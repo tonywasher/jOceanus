@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -51,7 +51,7 @@ public class TaxYearInfoType
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -97,7 +97,7 @@ public class TaxYearInfoType
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -113,7 +113,7 @@ public class TaxYearInfoType
      * Return the Data Type of the TaxYearInfoType.
      * @return the data type
      */
-    public DataType getDataType() {
+    public MetisDataType getDataType() {
         return getInfoClass().getDataType();
     }
 
@@ -135,7 +135,7 @@ public class TaxYearInfoType
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE account type list.
@@ -154,7 +154,7 @@ public class TaxYearInfoType
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -164,7 +164,7 @@ public class TaxYearInfoType
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return TaxYearInfoType.FIELD_DEFS;
         }
 

@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldRequired;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
@@ -52,17 +52,17 @@ public class CashInfoSet
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.CASH_INFOSET.getValue(), DataInfoSet.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDataResource.CASH_INFOSET.getValue(), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, AccountInfoClass> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, AccountInfoClass.class);
+    private static final Map<MetisField, AccountInfoClass> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, AccountInfoClass.class);
 
     /**
      * Reverse FieldSet map.
      */
-    private static final Map<AccountInfoClass, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, AccountInfoClass.class);
+    private static final Map<AccountInfoClass, MetisField> REVERSE_FIELDMAP = MetisFields.reverseFieldMap(FIELDSET_MAP, AccountInfoClass.class);
 
     /**
      * AutoExpense Not Expense Error Text.
@@ -83,12 +83,12 @@ public class CashInfoSet
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle InfoSet fields */
         AccountInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
@@ -125,7 +125,7 @@ public class CashInfoSet
         /* Return the value */
         return (myValue != null)
                                 ? myValue
-                                : JDataFieldValue.SKIP;
+                                : MetisFieldValue.SKIP;
     }
 
     /**
@@ -133,7 +133,7 @@ public class CashInfoSet
      * @param pField the field
      * @return the class
      */
-    public static AccountInfoClass getClassForField(final JDataField pField) {
+    public static AccountInfoClass getClassForField(final MetisField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -143,7 +143,7 @@ public class CashInfoSet
      * @param pClass the class
      * @return the field
      */
-    public static JDataField getFieldForClass(final AccountInfoClass pClass) {
+    public static MetisField getFieldForClass(final AccountInfoClass pClass) {
         /* Look up field in map */
         return REVERSE_FIELDMAP.get(pClass);
     }
@@ -198,39 +198,39 @@ public class CashInfoSet
      * @param pField the infoSet field
      * @return the status
      */
-    public JDataFieldRequired isFieldRequired(final JDataField pField) {
+    public MetisFieldRequired isFieldRequired(final MetisField pField) {
         AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
-                              ? JDataFieldRequired.NOTALLOWED
+                              ? MetisFieldRequired.NOTALLOWED
                               : isClassRequired(myClass);
     }
 
     @Override
-    public JDataFieldRequired isClassRequired(final AccountInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
         /* Access details about the Cash */
         Cash myCash = getOwner();
         CashCategory myCategory = myCash.getCategory();
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
-            return JDataFieldRequired.NOTALLOWED;
+            return MetisFieldRequired.NOTALLOWED;
         }
 
         /* Switch on class */
         switch (pClass) {
         /* Allowed set */
             case NOTES:
-                return JDataFieldRequired.CANEXIST;
+                return MetisFieldRequired.CANEXIST;
 
             case OPENINGBALANCE:
                 return myCash.isAutoExpense()
-                                             ? JDataFieldRequired.NOTALLOWED
-                                             : JDataFieldRequired.CANEXIST;
+                                             ? MetisFieldRequired.NOTALLOWED
+                                             : MetisFieldRequired.CANEXIST;
             case AUTOPAYEE:
             case AUTOEXPENSE:
                 return myCash.isAutoExpense()
-                                             ? JDataFieldRequired.MUSTEXIST
-                                             : JDataFieldRequired.NOTALLOWED;
+                                             ? MetisFieldRequired.MUSTEXIST
+                                             : MetisFieldRequired.NOTALLOWED;
 
                 /* Disallowed Set */
             case SORTCODE:
@@ -242,7 +242,7 @@ public class CashInfoSet
             case PASSWORD:
             case MATURITY:
             default:
-                return JDataFieldRequired.NOTALLOWED;
+                return MetisFieldRequired.NOTALLOWED;
         }
     }
 
@@ -260,19 +260,19 @@ public class CashInfoSet
             boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
 
             /* Determine requirements for class */
-            JDataFieldRequired myState = isClassRequired(myClass);
+            MetisFieldRequired myState = isClassRequired(myClass);
 
             /* If the field is missing */
             if (!isExisting) {
                 /* Handle required field missing */
-                if (myState == JDataFieldRequired.MUSTEXIST) {
+                if (myState == MetisFieldRequired.MUSTEXIST) {
                     myCash.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
                 }
                 continue;
             }
 
             /* If field is not allowed */
-            if (myState == JDataFieldRequired.NOTALLOWED) {
+            if (myState == MetisFieldRequired.NOTALLOWED) {
                 myCash.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
                 continue;
             }

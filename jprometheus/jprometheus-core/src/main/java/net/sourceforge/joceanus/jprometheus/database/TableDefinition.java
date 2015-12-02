@@ -34,8 +34,8 @@ import java.util.Map;
 import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.BinaryColumn;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.BooleanColumn;
@@ -113,7 +113,7 @@ public class TableDefinition {
     /**
      * The array list for the columns.
      */
-    private final Map<JDataField, ColumnDefinition> theMap;
+    private final Map<MetisField, ColumnDefinition> theMap;
 
     /**
      * The prepared statement for the insert/update.
@@ -138,7 +138,7 @@ public class TableDefinition {
         theSortList = new ArrayList<ColumnDefinition>();
 
         /* Create the initial column map */
-        theMap = new HashMap<JDataField, ColumnDefinition>();
+        theMap = new HashMap<MetisField, ColumnDefinition>();
 
         /* Add an Id column */
         theList.add(new IdColumn(this));
@@ -156,7 +156,7 @@ public class TableDefinition {
      * Obtain the column map.
      * @return the map
      */
-    protected Map<JDataField, ColumnDefinition> getMap() {
+    protected Map<MetisField, ColumnDefinition> getMap() {
         return theMap;
     }
 
@@ -205,7 +205,7 @@ public class TableDefinition {
      * @param pRef the reference table
      * @return the reference column
      */
-    public ReferenceColumn addReferenceColumn(final JDataField pId,
+    public ReferenceColumn addReferenceColumn(final MetisField pId,
                                               final String pRef) {
         /* Create the new reference column */
         ReferenceColumn myColumn = new ReferenceColumn(this, pId, pRef);
@@ -221,7 +221,7 @@ public class TableDefinition {
      * @param pRef the reference table
      * @return the reference column
      */
-    public ReferenceColumn addNullReferenceColumn(final JDataField pId,
+    public ReferenceColumn addNullReferenceColumn(final MetisField pId,
                                                   final String pRef) {
         ReferenceColumn myColumn = addReferenceColumn(pId, pRef);
         myColumn.setNullable();
@@ -233,7 +233,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the integer column
      */
-    public IntegerColumn addIntegerColumn(final JDataField pId) {
+    public IntegerColumn addIntegerColumn(final MetisField pId) {
         /* Create the new integer column */
         IntegerColumn myColumn = new IntegerColumn(this, pId);
 
@@ -247,7 +247,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the integer column
      */
-    public IntegerColumn addNullIntegerColumn(final JDataField pId) {
+    public IntegerColumn addNullIntegerColumn(final MetisField pId) {
         IntegerColumn myColumn = addIntegerColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -258,7 +258,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the long column
      */
-    public LongColumn addLongColumn(final JDataField pId) {
+    public LongColumn addLongColumn(final MetisField pId) {
         /* Create the new long column */
         LongColumn myColumn = new LongColumn(this, pId);
 
@@ -272,7 +272,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the long column
      */
-    public LongColumn addNullLongColumn(final JDataField pId) {
+    public LongColumn addNullLongColumn(final MetisField pId) {
         LongColumn myColumn = addLongColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -283,7 +283,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the boolean column
      */
-    public BooleanColumn addBooleanColumn(final JDataField pId) {
+    public BooleanColumn addBooleanColumn(final MetisField pId) {
         /* Create the new boolean column */
         BooleanColumn myColumn = new BooleanColumn(this, pId);
 
@@ -297,7 +297,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the boolean column
      */
-    public BooleanColumn addNullBooleanColumn(final JDataField pId) {
+    public BooleanColumn addNullBooleanColumn(final MetisField pId) {
         BooleanColumn myColumn = addBooleanColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -308,7 +308,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the date column
      */
-    public DateColumn addDateColumn(final JDataField pId) {
+    public DateColumn addDateColumn(final MetisField pId) {
         /* Create the new date column */
         DateColumn myColumn = new DateColumn(this, pId);
 
@@ -322,7 +322,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the date column
      */
-    public DateColumn addNullDateColumn(final JDataField pId) {
+    public DateColumn addNullDateColumn(final MetisField pId) {
         DateColumn myColumn = addDateColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -333,7 +333,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the money column
      */
-    public MoneyColumn addMoneyColumn(final JDataField pId) {
+    public MoneyColumn addMoneyColumn(final MetisField pId) {
         /* Create the new money column */
         MoneyColumn myColumn = new MoneyColumn(this, pId);
 
@@ -347,7 +347,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the money column
      */
-    public MoneyColumn addNullMoneyColumn(final JDataField pId) {
+    public MoneyColumn addNullMoneyColumn(final MetisField pId) {
         MoneyColumn myColumn = addMoneyColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -358,7 +358,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the rate column
      */
-    public RateColumn addRateColumn(final JDataField pId) {
+    public RateColumn addRateColumn(final MetisField pId) {
         /* Create the new rate column */
         RateColumn myColumn = new RateColumn(this, pId);
 
@@ -372,7 +372,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the rate column
      */
-    public RateColumn addNullRateColumn(final JDataField pId) {
+    public RateColumn addNullRateColumn(final MetisField pId) {
         RateColumn myColumn = addRateColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -383,7 +383,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the rate column
      */
-    public RatioColumn addRatioColumn(final JDataField pId) {
+    public RatioColumn addRatioColumn(final MetisField pId) {
         /* Create the new rate column */
         RatioColumn myColumn = new RatioColumn(this, pId);
 
@@ -397,7 +397,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the rate column
      */
-    public RatioColumn addNullRatioColumn(final JDataField pId) {
+    public RatioColumn addNullRatioColumn(final MetisField pId) {
         RatioColumn myColumn = addRatioColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -409,7 +409,7 @@ public class TableDefinition {
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addBinaryColumn(final JDataField pId,
+    public BinaryColumn addBinaryColumn(final MetisField pId,
                                         final int pLength) {
         /* Create the new binary column */
         BinaryColumn myColumn = new BinaryColumn(this, pId, pLength);
@@ -425,7 +425,7 @@ public class TableDefinition {
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addNullBinaryColumn(final JDataField pId,
+    public BinaryColumn addNullBinaryColumn(final MetisField pId,
                                             final int pLength) {
         BinaryColumn myColumn = addBinaryColumn(pId, pLength);
         myColumn.setNullable();
@@ -438,7 +438,7 @@ public class TableDefinition {
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addEncryptedColumn(final JDataField pId,
+    public BinaryColumn addEncryptedColumn(final MetisField pId,
                                            final int pLength) {
         /* Create the new binary column */
         BinaryColumn myColumn = new BinaryColumn(this, pId, GordianKeySet.getEncryptionOverhead()
@@ -455,7 +455,7 @@ public class TableDefinition {
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addNullEncryptedColumn(final JDataField pId,
+    public BinaryColumn addNullEncryptedColumn(final MetisField pId,
                                                final int pLength) {
         BinaryColumn myColumn = addEncryptedColumn(pId, pLength);
         myColumn.setNullable();
@@ -468,7 +468,7 @@ public class TableDefinition {
      * @param pLength the character length
      * @return the binary column
      */
-    public StringColumn addStringColumn(final JDataField pId,
+    public StringColumn addStringColumn(final MetisField pId,
                                         final int pLength) {
         /* Create the new string column */
         StringColumn myColumn = new StringColumn(this, pId, pLength);
@@ -484,7 +484,7 @@ public class TableDefinition {
      * @param pLength the character length
      * @return the binary column
      */
-    public StringColumn addNullStringColumn(final JDataField pId,
+    public StringColumn addNullStringColumn(final MetisField pId,
                                             final int pLength) {
         StringColumn myColumn = addStringColumn(pId, pLength);
         myColumn.setNullable();
@@ -614,7 +614,7 @@ public class TableDefinition {
      * @return the integer value
      * @throws OceanusException on error
      */
-    public Integer getIntegerValue(final JDataField pId) throws OceanusException {
+    public Integer getIntegerValue(final MetisField pId) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -634,7 +634,7 @@ public class TableDefinition {
      * @return the long value
      * @throws OceanusException on error
      */
-    public Long getLongValue(final JDataField pId) throws OceanusException {
+    public Long getLongValue(final MetisField pId) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -654,7 +654,7 @@ public class TableDefinition {
      * @return the Date value
      * @throws OceanusException on error
      */
-    public TethysDate getDateValue(final JDataField pId) throws OceanusException {
+    public TethysDate getDateValue(final MetisField pId) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -674,7 +674,7 @@ public class TableDefinition {
      * @return the boolean value
      * @throws OceanusException on error
      */
-    public Boolean getBooleanValue(final JDataField pId) throws OceanusException {
+    public Boolean getBooleanValue(final MetisField pId) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -694,7 +694,7 @@ public class TableDefinition {
      * @return the String value
      * @throws OceanusException on error
      */
-    public String getStringValue(final JDataField pId) throws OceanusException {
+    public String getStringValue(final MetisField pId) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -715,8 +715,8 @@ public class TableDefinition {
      * @return the Money value
      * @throws OceanusException on error
      */
-    public TethysMoney getMoneyValue(final JDataField pId,
-                                final JDataFormatter pFormatter) throws OceanusException {
+    public TethysMoney getMoneyValue(final MetisField pId,
+                                final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -737,8 +737,8 @@ public class TableDefinition {
      * @return the price value
      * @throws OceanusException on error
      */
-    public TethysPrice getPriceValue(final JDataField pId,
-                                final JDataFormatter pFormatter) throws OceanusException {
+    public TethysPrice getPriceValue(final MetisField pId,
+                                final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -759,8 +759,8 @@ public class TableDefinition {
      * @return the rate value
      * @throws OceanusException on error
      */
-    public TethysRate getRateValue(final JDataField pId,
-                              final JDataFormatter pFormatter) throws OceanusException {
+    public TethysRate getRateValue(final MetisField pId,
+                              final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -781,8 +781,8 @@ public class TableDefinition {
      * @return the Units value
      * @throws OceanusException on error
      */
-    public TethysUnits getUnitsValue(final JDataField pId,
-                                final JDataFormatter pFormatter) throws OceanusException {
+    public TethysUnits getUnitsValue(final MetisField pId,
+                                final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -803,8 +803,8 @@ public class TableDefinition {
      * @return the Dilution value
      * @throws OceanusException on error
      */
-    public TethysDilution getDilutionValue(final JDataField pId,
-                                      final JDataFormatter pFormatter) throws OceanusException {
+    public TethysDilution getDilutionValue(final MetisField pId,
+                                      final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -825,8 +825,8 @@ public class TableDefinition {
      * @return the Ratio value
      * @throws OceanusException on error
      */
-    public TethysRatio getRatioValue(final JDataField pId,
-                                final JDataFormatter pFormatter) throws OceanusException {
+    public TethysRatio getRatioValue(final MetisField pId,
+                                final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -846,7 +846,7 @@ public class TableDefinition {
      * @return the binary value
      * @throws OceanusException on error
      */
-    public byte[] getBinaryValue(final JDataField pId) throws OceanusException {
+    public byte[] getBinaryValue(final MetisField pId) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -866,7 +866,7 @@ public class TableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setIntegerValue(final JDataField pId,
+    public void setIntegerValue(final MetisField pId,
                                 final Integer pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
@@ -887,7 +887,7 @@ public class TableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setLongValue(final JDataField pId,
+    public void setLongValue(final MetisField pId,
                              final Long pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
@@ -908,7 +908,7 @@ public class TableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setBooleanValue(final JDataField pId,
+    public void setBooleanValue(final MetisField pId,
                                 final Boolean pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
@@ -929,7 +929,7 @@ public class TableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setDateValue(final JDataField pId,
+    public void setDateValue(final MetisField pId,
                              final TethysDate pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
@@ -950,7 +950,7 @@ public class TableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setStringValue(final JDataField pId,
+    public void setStringValue(final MetisField pId,
                                final String pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
@@ -971,7 +971,7 @@ public class TableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setBinaryValue(final JDataField pId,
+    public void setBinaryValue(final MetisField pId,
                                final byte[] pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
@@ -992,7 +992,7 @@ public class TableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setMoneyValue(final JDataField pId,
+    public void setMoneyValue(final MetisField pId,
                               final TethysMoney pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
@@ -1013,7 +1013,7 @@ public class TableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setRateValue(final JDataField pId,
+    public void setRateValue(final MetisField pId,
                              final TethysRate pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
@@ -1034,7 +1034,7 @@ public class TableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setRatioValue(final JDataField pId,
+    public void setRatioValue(final MetisField pId,
                               final TethysRatio pValue) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
@@ -1055,7 +1055,7 @@ public class TableDefinition {
      * @return the column
      * @throws OceanusException on error
      */
-    private ColumnDefinition getColumnForId(final JDataField pId) throws OceanusException {
+    private ColumnDefinition getColumnForId(final MetisField pId) throws OceanusException {
         /* Access the definition */
         ColumnDefinition myDef = theMap.get(pId);
 

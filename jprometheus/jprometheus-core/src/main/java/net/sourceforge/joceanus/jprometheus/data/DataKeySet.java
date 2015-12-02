@@ -31,11 +31,11 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.data.EncryptionGenerator;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptionGenerator;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
@@ -63,27 +63,27 @@ public class DataKeySet
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
     /**
      * Field ID for ControlKey.
      */
-    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName());
+    public static final MetisField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName());
 
     /**
      * Field ID for CreationDate.
      */
-    public static final JDataField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_CREATION.getValue());
+    public static final MetisField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_CREATION.getValue());
 
     /**
      * Field ID for DataKeyMap.
      */
-    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYMAP.getValue());
+    public static final MetisField FIELD_MAP = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYMAP.getValue());
 
     /**
      * Field ID for KeySet.
      */
-    public static final JDataField FIELD_KEYSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYSET.getValue());
+    public static final MetisField FIELD_KEYSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYSET.getValue());
 
     /**
      * The DataKey Map.
@@ -103,7 +103,7 @@ public class DataKeySet
     /**
      * The Encryption Field Generator.
      */
-    private EncryptionGenerator theFieldGenerator = null;
+    private MetisEncryptionGenerator theFieldGenerator = null;
 
     /**
      * Copy Constructor.
@@ -121,7 +121,7 @@ public class DataKeySet
                 theSecurityFactory = pSource.theSecurityFactory;
                 theMap = new EnumMap<GordianSymKeyType, DataKey>(GordianSymKeyType.class);
                 theKeySet = theSecurityFactory.createKeySet();
-                theFieldGenerator = new EncryptionGenerator(theKeySet, getDataSet().getDataFormatter());
+                theFieldGenerator = new MetisEncryptionGenerator(theKeySet, getDataSet().getDataFormatter());
                 break;
             default:
                 break;
@@ -142,7 +142,7 @@ public class DataKeySet
         /* Access the Security manager */
         DataSet<?, ?> myData = getDataSet();
         GordianHashManager mySecure = myData.getSecurity();
-        JDataFormatter myFormatter = myData.getDataFormatter();
+        MetisDataFormatter myFormatter = myData.getDataFormatter();
 
         /* Record the security factory */
         theSecurityFactory = mySecure.getSecurityFactory();
@@ -169,7 +169,7 @@ public class DataKeySet
 
         /* Create the KeySet and security generator */
         theKeySet = theSecurityFactory.createKeySet();
-        theFieldGenerator = new EncryptionGenerator(theKeySet, myFormatter);
+        theFieldGenerator = new MetisEncryptionGenerator(theKeySet, myFormatter);
 
         /* Store the CreationDate */
         myValue = pValues.getValue(FIELD_CREATEDATE);
@@ -201,7 +201,7 @@ public class DataKeySet
             /* Access the Security manager */
             DataSet<?, ?> myData = getDataSet();
             GordianHashManager mySecure = myData.getSecurity();
-            JDataFormatter myFormatter = myData.getDataFormatter();
+            MetisDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Record the security factory */
             theSecurityFactory = mySecure.getSecurityFactory();
@@ -211,7 +211,7 @@ public class DataKeySet
 
             /* Create the KeySet */
             theKeySet = theSecurityFactory.createKeySet();
-            theFieldGenerator = new EncryptionGenerator(theKeySet, myFormatter);
+            theFieldGenerator = new MetisEncryptionGenerator(theKeySet, myFormatter);
 
             /* Set the creationDate */
             setValueCreationDate(new TethysDate());
@@ -227,12 +227,12 @@ public class DataKeySet
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_MAP.equals(pField)) {
             return theMap;
         }
@@ -246,7 +246,7 @@ public class DataKeySet
      * Get the Encryption Field Generator.
      * @return the field generator
      */
-    public EncryptionGenerator getFieldGenerator() {
+    public MetisEncryptionGenerator getFieldGenerator() {
         return theFieldGenerator;
     }
 
@@ -282,7 +282,7 @@ public class DataKeySet
      * @param pValueSet the valueSet
      * @return the control Key
      */
-    public static ControlKey getControlKey(final ValueSet pValueSet) {
+    public static ControlKey getControlKey(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CONTROLKEY, ControlKey.class);
     }
 
@@ -291,7 +291,7 @@ public class DataKeySet
      * @param pValueSet the valueSet
      * @return the creationDate
      */
-    public static TethysDate getCreationDate(final ValueSet pValueSet) {
+    public static TethysDate getCreationDate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CREATEDATE, TethysDate.class);
     }
 
@@ -480,7 +480,7 @@ public class DataKeySet
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE list.
@@ -509,7 +509,7 @@ public class DataKeySet
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -519,7 +519,7 @@ public class DataKeySet
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return DataKeySet.FIELD_DEFS;
         }
 

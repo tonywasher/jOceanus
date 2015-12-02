@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.http.JiraClient;
+import net.sourceforge.joceanus.jmetis.http.MetisHTTPJiraClient;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraProject.JiraComponent;
@@ -191,17 +191,17 @@ public class JiraIssue
             theResolved = JiraServer.parseJiraDateTime(myFields.optString("resolutiondate", null));
 
             /* Determine the project */
-            JSONObject myObject = myFields.getJSONObject(JiraClient.JIRANAME_PROJECT);
+            JSONObject myObject = myFields.getJSONObject(MetisHTTPJiraClient.JIRANAME_PROJECT);
             theProject = theServer.getProject(myObject.getString(JiraProject.FIELD_KEY));
 
             /* Determine Status etc */
-            myObject = myFields.getJSONObject(JiraClient.JIRANAME_ISSUETYPE);
+            myObject = myFields.getJSONObject(MetisHTTPJiraClient.JIRANAME_ISSUETYPE);
             theIssueType = theServer.getIssueType(myObject.getString(JiraIssueType.FIELD_NAME));
-            myObject = myFields.getJSONObject(JiraClient.JIRANAME_STATUS);
+            myObject = myFields.getJSONObject(MetisHTTPJiraClient.JIRANAME_STATUS);
             theStatus = theServer.getStatus(myObject.getString(JiraStatus.FIELD_NAME));
-            myObject = myFields.getJSONObject(JiraClient.JIRANAME_PRIORITY);
+            myObject = myFields.getJSONObject(MetisHTTPJiraClient.JIRANAME_PRIORITY);
             thePriority = theServer.getPriority(myObject.getString(JiraStatus.FIELD_NAME));
-            myObject = myFields.optJSONObject(JiraClient.JIRANAME_RESOLUTION);
+            myObject = myFields.optJSONObject(MetisHTTPJiraClient.JIRANAME_RESOLUTION);
             theResolution = (myObject == null)
                                               ? null
                                               : theServer.getResolution(myObject.getString(JiraResolution.FIELD_NAME));

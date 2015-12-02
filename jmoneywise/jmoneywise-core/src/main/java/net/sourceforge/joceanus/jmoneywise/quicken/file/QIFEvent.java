@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.quicken.file;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFCategoryLine;
@@ -114,7 +114,7 @@ public class QIFEvent
      * @param pLines the data lines
      */
     protected QIFEvent(final QIFFile pFile,
-                       final JDataFormatter pFormatter,
+                       final MetisDataFormatter pFormatter,
                        final List<String> pLines) {
         /* Call super-constructor */
         super(pFile, QEventLineType.class);

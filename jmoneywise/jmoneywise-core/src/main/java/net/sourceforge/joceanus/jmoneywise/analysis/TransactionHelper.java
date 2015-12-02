@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -434,7 +434,7 @@ public class TransactionHelper {
 
             /* Determine foreign account detail */
             AssetCurrency myActCurrency = theAccount.getAssetCurrency();
-            theForeignAccount = Difference.isEqual(myActCurrency, theCurrency)
+            theForeignAccount = MetisDifference.isEqual(myActCurrency, theCurrency)
                                                                               ? null
                                                                               : new ForeignAccountDetail(this, myActCurrency);
 
@@ -442,7 +442,7 @@ public class TransactionHelper {
             if (thePartnerAmount != null) {
                 /* Determine foreign partner detail */
                 myActCurrency = thePartner.getAssetCurrency();
-                theForeignPartner = Difference.isEqual(myActCurrency, theCurrency)
+                theForeignPartner = MetisDifference.isEqual(myActCurrency, theCurrency)
                                                                                   ? null
                                                                                   : new ForeignPartnerDetail(this, myActCurrency);
             } else {

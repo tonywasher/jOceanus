@@ -51,10 +51,10 @@ import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
@@ -135,8 +135,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public boolean createBackup(final T pData,
                                 final File pFile) throws OceanusException {
         /* Obtain the active profile */
-        JDataProfile myTask = theTask.getActiveTask();
-        JDataProfile myStage = myTask.startTask("Writing");
+        MetisProfile myTask = theTask.getActiveTask();
+        MetisProfile myStage = myTask.startTask("Writing");
 
         /* Create a similar security control */
         GordianHashManager mySecure = pData.getSecurity();
@@ -196,8 +196,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public boolean createExtract(final T pData,
                                  final File pFile) throws OceanusException {
         /* Obtain the active profile */
-        JDataProfile myTask = theTask.getActiveTask();
-        JDataProfile myStage = myTask.startTask("Writing");
+        MetisProfile myTask = theTask.getActiveTask();
+        MetisProfile myStage = myTask.startTask("Writing");
 
         /* Access the data version */
         theVersion = pData.getControl().getDataVersion();
@@ -290,7 +290,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         pDocument.appendChild(myElement);
 
         /* Access the Data formatter */
-        JDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
 
         /* Declare the number of steps */
         int myTotal = pList.size();
@@ -355,8 +355,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public boolean loadZipFile(final T pData,
                                final File pFile) throws OceanusException {
         /* Obtain the active profile */
-        JDataProfile myTask = theTask.getActiveTask();
-        JDataProfile myStage = myTask.startTask("Loading");
+        MetisProfile myTask = theTask.getActiveTask();
+        MetisProfile myStage = myTask.startTask("Loading");
         myStage.startTask("Parsing");
 
         /* Access the zip file */
@@ -393,11 +393,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @return success true/false
      * @throws OceanusException on error
      */
-    private boolean parseZipFile(final JDataProfile pProfile,
+    private boolean parseZipFile(final MetisProfile pProfile,
                                  final T pData,
                                  final GordianZipReadFile pZipFile) throws OceanusException {
         /* Start new stage */
-        JDataProfile myStage = pProfile.startTask("Loading");
+        MetisProfile myStage = pProfile.startTask("Loading");
 
         /* Declare the number of stages */
         boolean bContinue = theTask.setNumStages(pData.getListMap().size());
@@ -481,8 +481,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         E myItemType = pList.getItemType();
 
         /* Check that the document name and dataType are correct */
-        if ((!Difference.isEqual(myElement.getNodeName(), pList.listName()))
-            || (!Difference.isEqual(myElement.getAttribute(DataValues.ATTR_TYPE), myItemType.name()))) {
+        if ((!MetisDifference.isEqual(myElement.getNodeName(), pList.listName()))
+            || (!MetisDifference.isEqual(myElement.getAttribute(DataValues.ATTR_TYPE), myItemType.name()))) {
             throw new JPrometheusDataException("Invalid list type");
         }
 
@@ -495,10 +495,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         }
 
         /* Access field types for list */
-        JDataFields myFields = pList.getItemFields();
+        MetisFields myFields = pList.getItemFields();
 
         /* Access the Data formatter */
-        JDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
 
         /* Declare the number of steps */
         int myTotal = getListCount(myFormatter, myElement);
@@ -544,7 +544,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @return the list count
      * @throws OceanusException on error
      */
-    private static Integer getListCount(final JDataFormatter pFormatter,
+    private static Integer getListCount(final MetisDataFormatter pFormatter,
                                         final Element pElement) throws OceanusException {
         try {
             /* Access the list count */

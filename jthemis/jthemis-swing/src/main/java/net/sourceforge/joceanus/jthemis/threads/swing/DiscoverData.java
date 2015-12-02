@@ -28,9 +28,9 @@ import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
@@ -48,7 +48,7 @@ public class DiscoverData
     /**
      * Preference Manager.
      */
-    private final PreferenceManager thePreferenceMgr;
+    private final MetisPreferenceManager thePreferenceMgr;
 
     /**
      * Report object.
@@ -117,15 +117,15 @@ public class DiscoverData
      * @param pDataMgr the data manager
      * @param pParent the parent entry
      */
-    public void declareExtractPlans(final ViewerManager pDataMgr,
-                                    final ViewerEntry pParent) {
+    public void declareExtractPlans(final MetisViewerManager pDataMgr,
+                                    final MetisViewerEntry pParent) {
         /* Loop through the plans */
         Iterator<SvnExtract> myIterator = theExtractPlanMap.values().iterator();
         while (myIterator.hasNext()) {
             SvnExtract myPlan = myIterator.next();
 
             /* Create the data entry */
-            ViewerEntry myEntry = pDataMgr.newEntry(myPlan.getName());
+            MetisViewerEntry myEntry = pDataMgr.newEntry(myPlan.getName());
             myEntry.addAsChildOf(pParent);
             myEntry.setObject(myPlan);
         }

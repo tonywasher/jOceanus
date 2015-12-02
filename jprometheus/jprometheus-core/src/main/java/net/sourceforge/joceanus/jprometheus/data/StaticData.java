@@ -28,13 +28,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedString;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedString;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -51,32 +51,32 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.STATICDATA_NAME.getValue(), EncryptedItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.STATICDATA_NAME.getValue(), EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
+    public static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
+    public static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
 
     /**
      * Enabled Field Id.
      */
-    public static final JDataField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATA_ENABLED.getValue());
+    public static final MetisField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATA_ENABLED.getValue());
 
     /**
      * Order Field Id.
      */
-    public static final JDataField FIELD_ORDER = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATA_SORT.getValue());
+    public static final MetisField FIELD_ORDER = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATA_SORT.getValue());
 
     /**
      * Class Field Id.
      */
-    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATA_CLASS.getValue());
+    public static final MetisField FIELD_CLASS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATA_CLASS.getValue());
 
     /**
      * BadId error.
@@ -168,7 +168,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         super(pList, pValues);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -226,7 +226,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -241,7 +241,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_NAME.equals(pField)) {
             return true;
@@ -280,7 +280,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * Return the encrypted name field of the Static Data.
      * @return the encrypted field
      */
-    private EncryptedString getNameField() {
+    private MetisEncryptedString getNameField() {
         return getNameField(getValueSet());
     }
 
@@ -304,7 +304,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * Return the encrypted description field of the Static Data.
      * @return the encrypted name
      */
-    private EncryptedString getDescField() {
+    private MetisEncryptedString getDescField() {
         return getDescField(getValueSet());
     }
 
@@ -342,7 +342,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pValueSet the valueSet
      * @return the name
      */
-    public static String getName(final EncryptedValueSet pValueSet) {
+    public static String getName(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_NAME, String.class);
     }
 
@@ -351,7 +351,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pValueSet the valueSet
      * @return the encrypted name
      */
-    public static byte[] getNameBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getNameBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_NAME);
     }
 
@@ -360,8 +360,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pValueSet the valueSet
      * @return the encrypted name field
      */
-    private static EncryptedString getNameField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_NAME, EncryptedString.class);
+    private static MetisEncryptedString getNameField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_NAME, MetisEncryptedString.class);
     }
 
     /**
@@ -369,7 +369,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pValueSet the valueSet
      * @return the description
      */
-    public static String getDesc(final EncryptedValueSet pValueSet) {
+    public static String getDesc(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
     }
 
@@ -378,7 +378,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pValueSet the valueSet
      * @return the encrypted description
      */
-    public static byte[] getDescBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getDescBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
     }
 
@@ -387,8 +387,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pValueSet the valueSet
      * @return the encrypted description field
      */
-    private static EncryptedString getDescField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, EncryptedString.class);
+    private static MetisEncryptedString getDescField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DESC, MetisEncryptedString.class);
     }
 
     /**
@@ -396,7 +396,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pValueSet the valueSet
      * @return the order
      */
-    public static Integer getOrder(final ValueSet pValueSet) {
+    public static Integer getOrder(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ORDER, Integer.class);
     }
 
@@ -407,7 +407,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pClass the Enum class
      * @return the class
      */
-    public static <Y extends Enum<Y> & StaticInterface> Y getStaticClass(final ValueSet pValueSet,
+    public static <Y extends Enum<Y> & StaticInterface> Y getStaticClass(final MetisValueSet pValueSet,
                                                                          final Class<Y> pClass) {
         return pValueSet.getValue(FIELD_CLASS, pClass);
     }
@@ -417,7 +417,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pValueSet the valueSet
      * @return <code>true/false</code>
      */
-    public static boolean getEnabled(final ValueSet pValueSet) {
+    public static boolean getEnabled(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ENABLED, Boolean.class);
     }
 
@@ -451,7 +451,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * Set the Name field.
      * @param pField the encrypted name
      */
-    private void setValueName(final EncryptedString pField) {
+    private void setValueName(final MetisEncryptedString pField) {
         getValueSet().setValue(FIELD_NAME, pField);
     }
 
@@ -477,7 +477,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * Set the Description field.
      * @param pField the encrypted description
      */
-    private void setValueDesc(final EncryptedString pField) {
+    private void setValueDesc(final MetisEncryptedString pField) {
         getValueSet().setValue(FIELD_DESC, pField);
     }
 
@@ -516,7 +516,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         /* Make sure that the object is the same enumeration class */
-        if (!Difference.isEqual(getEnumClass(), pThat.getEnumClass())) {
+        if (!MetisDifference.isEqual(getEnumClass(), pThat.getEnumClass())) {
             /* Order the classes by canonical name */
             return getEnumClass().getCanonicalName().compareTo(pThat.getEnumClass().getCanonicalName());
         }
@@ -528,7 +528,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         /* Compare on name */
-        iDiff = Difference.compareObject(getName(), pThat.getName());
+        iDiff = MetisDifference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -709,22 +709,22 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      */
     protected void applyBasicChanges(final StaticData<?, ?, ?> pData) {
         /* Update the name if required */
-        if (!Difference.isEqual(getName(), pData.getName())) {
+        if (!MetisDifference.isEqual(getName(), pData.getName())) {
             setValueName(pData.getNameField());
         }
 
         /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), pData.getDesc())) {
+        if (!MetisDifference.isEqual(getDesc(), pData.getDesc())) {
             setValueDesc(pData.getDescField());
         }
 
         /* Update the enabled indication if required */
-        if (!Difference.isEqual(getEnabled(), pData.getEnabled())) {
+        if (!MetisDifference.isEqual(getEnabled(), pData.getEnabled())) {
             setEnabled(pData.getEnabled());
         }
 
         /* Update the order indication if required */
-        if (!Difference.isEqual(getOrder(), pData.getOrder())) {
+        if (!MetisDifference.isEqual(getOrder(), pData.getOrder())) {
             setOrder(pData.getOrder());
         }
     }
@@ -914,12 +914,12 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.STATICDATAMAP_NAME.getValue(), DataInstanceMap.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.STATICDATAMAP_NAME.getValue(), DataInstanceMap.FIELD_DEFS);
 
         /**
          * OrderCountMap Field Id.
          */
-        public static final JDataField FIELD_ORDERCOUNTS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATAMAP_ORDERCOUNTS.getValue());
+        public static final MetisField FIELD_ORDERCOUNTS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATAMAP_ORDERCOUNTS.getValue());
 
         /**
          * Map of order counts.
@@ -935,12 +935,12 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_ORDERCOUNTS.equals(pField)) {
                 return theOrderCountMap;

@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
  * Transaction data type.
@@ -39,17 +39,17 @@ public abstract class PrimaryTransaction<T extends PrimaryTransaction<T, S>, S e
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(PrimaryTransaction.class.getSimpleName(), TransactionBase.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrimaryTransaction.class.getSimpleName(), TransactionBase.FIELD_DEFS);
 
     /**
      * Do we have secondary transactions Field Id.
      */
-    private static final JDataField FIELD_HASSUBTRANS = FIELD_DEFS.declareDerivedValueField("hasSubTransactions");
+    private static final MetisField FIELD_HASSUBTRANS = FIELD_DEFS.declareDerivedValueField("hasSubTransactions");
 
     /**
      * Secondary Transaction Field Id.
      */
-    private static final JDataField FIELD_SUBTRANS = FIELD_DEFS.declareLocalField("SubTransactions");
+    private static final MetisField FIELD_SUBTRANS = FIELD_DEFS.declareLocalField("SubTransactions");
 
     /**
      * List of secondary transactions.

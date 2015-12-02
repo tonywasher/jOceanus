@@ -28,15 +28,15 @@ import java.awt.Point;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.ScrollButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -109,7 +109,7 @@ public class TaxYearTable
     /**
      * The field manager.
      */
-    private final transient JFieldManager theFieldMgr;
+    private final transient MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -139,7 +139,7 @@ public class TaxYearTable
     /**
      * The data entry.
      */
-    private final transient ViewerEntry theDataEntry;
+    private final transient MetisViewerEntry theDataEntry;
 
     /**
      * The Column Model.
@@ -183,8 +183,8 @@ public class TaxYearTable
         setUpdateSet(theUpdateSet);
 
         /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
-        ViewerManager myDataMgr = theView.getViewerManager();
-        ViewerEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
+        MetisViewerManager myDataMgr = theView.getViewerManager();
+        MetisViewerEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
         theDataEntry = myDataMgr.newEntry(NLS_DATAENTRY);
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
@@ -268,7 +268,7 @@ public class TaxYearTable
      */
     public void refreshData() {
         /* Obtain the active profile */
-        JDataProfile myTask = theView.getActiveTask();
+        MetisProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("TaxYearTab");
 
         /* Access the various lists */
@@ -400,7 +400,7 @@ public class TaxYearTable
         }
 
         @Override
-        public JDataField getFieldForCell(final TaxYear pItem,
+        public MetisField getFieldForCell(final TaxYear pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
@@ -720,7 +720,7 @@ public class TaxYearTable
          * @param pColIndex column index
          * @return the field
          */
-        protected JDataField getFieldForCell(final int pColIndex) {
+        protected MetisField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_YEAR:

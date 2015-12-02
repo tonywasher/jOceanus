@@ -29,7 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
@@ -243,7 +243,7 @@ public abstract class HTMLBuilder {
     /**
      * The data formatter.
      */
-    private final JDataFormatter theFormatter;
+    private final MetisDataFormatter theFormatter;
 
     /**
      * Constructor.
@@ -256,7 +256,7 @@ public abstract class HTMLBuilder {
         /* Protect against exceptions */
         try {
             /* Create the formatter */
-            theFormatter = new JDataFormatter();
+            theFormatter = new MetisDataFormatter();
 
             /* Create the document builder */
             DocumentBuilderFactory myDocFactory = DocumentBuilderFactory.newInstance();
@@ -271,7 +271,7 @@ public abstract class HTMLBuilder {
      * Obtain the data formatter.
      * @return the formatter
      */
-    public JDataFormatter getDataFormatter() {
+    public MetisDataFormatter getDataFormatter() {
         return theFormatter;
     }
 

@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -54,26 +54,26 @@ import org.slf4j.LoggerFactory;
  * Analysis Edit View.
  */
 public class AnalysisView
-        implements JDataContents, TethysEventProvider {
+        implements MetisDataContents, TethysEventProvider {
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseViewResource.ANALYSISVIEW_NAME.getValue());
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseViewResource.ANALYSISVIEW_NAME.getValue());
 
     /**
      * Base Analysis Field Id.
      */
-    private static final JDataField FIELD_BASEANALYSIS = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_BASE.getValue());
+    private static final MetisField FIELD_BASEANALYSIS = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_BASE.getValue());
 
     /**
      * UpdateSet Field Id.
      */
-    private static final JDataField FIELD_UPDATESET = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_UPDATESET.getValue());
+    private static final MetisField FIELD_UPDATESET = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_UPDATESET.getValue());
 
     /**
      * Analysis Field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Logger.
@@ -150,12 +150,12 @@ public class AnalysisView
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_BASEANALYSIS.equals(pField)) {
             return theBaseAnalysis;
         }
@@ -165,7 +165,7 @@ public class AnalysisView
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
@@ -238,7 +238,7 @@ public class AnalysisView
      */
     public void setRange(final TethysDateRange pRange) {
         /* If we have changed the range */
-        if (!Difference.isEqual(theRange, pRange)) {
+        if (!MetisDifference.isEqual(theRange, pRange)) {
             /* Obtain the required analysis and reset to it */
             theRange = pRange;
             theBaseAnalysis = theManager != null

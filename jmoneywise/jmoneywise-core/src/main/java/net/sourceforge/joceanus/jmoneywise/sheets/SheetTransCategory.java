@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jmetis.sheet.DataCell;
-import net.sourceforge.joceanus.jmetis.sheet.DataRow;
-import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -132,7 +132,7 @@ public class SheetTransCategory
      * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                         final DataWorkBook pWorkBook,
+                                         final MetisDataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
                                          final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of categories */
@@ -141,7 +141,7 @@ public class SheetTransCategory
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_TRANSCATEGORIES);
+            MetisDataView myView = pWorkBook.getRangeView(AREA_TRANSCATEGORIES);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
@@ -163,11 +163,11 @@ public class SheetTransCategory
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                DataRow myRow = myView.getRowByIndex(i);
+                MetisDataRow myRow = myView.getRowByIndex(i);
                 int iAdjust = 0;
 
                 /* Access name */
-                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                MetisDataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myName = myCell.getStringValue();
 
                 /* Access Type */

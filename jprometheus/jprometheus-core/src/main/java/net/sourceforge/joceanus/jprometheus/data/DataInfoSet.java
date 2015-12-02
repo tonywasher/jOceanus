@@ -29,15 +29,15 @@ import java.util.Map.Entry;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EditState;
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedField;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldRequired;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedField;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldRequired;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
@@ -53,21 +53,21 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <E> the data type enum class
  */
 public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
-        implements JDataContents, Iterable<T> {
+        implements MetisDataContents, Iterable<T> {
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * Owner Field Id.
      */
-    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_OWNER.getValue());
+    public static final MetisField FIELD_OWNER = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_OWNER.getValue());
 
     /**
      * Values Field Id.
      */
-    public static final JDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_VALUES.getValue());
+    public static final MetisField FIELD_VALUES = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_VALUES.getValue());
 
     /**
      * The Owner to which this set belongs.
@@ -114,14 +114,14 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_OWNER.equals(pField)) {
             return theOwner;
         }
         if (FIELD_VALUES.equals(pField)) {
             return theMap;
         }
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
@@ -212,7 +212,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
      * @param pInfoClass the Info Class
      * @return the value
      */
-    public EncryptedField<?> getField(final S pInfoClass) {
+    public MetisEncryptedField<?> getField(final S pInfoClass) {
         /* Reject if called for LinkSet */
         if (pInfoClass.isLinkSet()) {
             throw new UnsupportedOperationException();
@@ -389,13 +389,13 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
      * @param pInfoClass the class to test
      * @return <code>true/false</code>
      */
-    public Difference fieldChanged(final S pInfoClass) {
+    public MetisDifference fieldChanged(final S pInfoClass) {
         /* If this is called for LinkSet */
         if (pInfoClass.isLinkSet()) {
             /* Access the info */
             DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
             return mySet == null
-                                 ? Difference.IDENTICAL
+                                 ? MetisDifference.IDENTICAL
                                  : mySet.fieldChanged();
         }
 
@@ -404,8 +404,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
 
         /* Return change details */
         return (myInfo != null) && myInfo.hasHistory()
-                                                       ? Difference.DIFFERENT
-                                                       : Difference.IDENTICAL;
+                                                       ? MetisDifference.DIFFERENT
+                                                       : MetisDifference.IDENTICAL;
     }
 
     /**
@@ -753,34 +753,34 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
      * Get the EditState for this item.
      * @return the EditState
      */
-    public EditState getEditState() {
+    public MetisEditState getEditState() {
         /* Loop through each existing value */
         for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
             /* If we have changes */
             if (myValue.hasHistory()) {
                 /* Note that new state is changed */
-                return EditState.VALID;
+                return MetisEditState.VALID;
             }
         }
 
         /* Default to clean */
-        return EditState.CLEAN;
+        return MetisEditState.CLEAN;
     }
 
     /**
      * Get the State for this infoSet.
      * @return the State
      */
-    public DataState getState() {
+    public MetisDataState getState() {
         /* Default to clean */
-        DataState myState = DataState.CLEAN;
+        MetisDataState myState = MetisDataState.CLEAN;
 
         /* Loop through each existing value */
         for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
             /* If we have changes */
-            if (myValue.getState() != DataState.CLEAN) {
+            if (myValue.getState() != MetisDataState.CLEAN) {
                 /* Note that new state is changed */
-                return DataState.CHANGED;
+                return MetisDataState.CHANGED;
             }
         }
 
@@ -823,7 +823,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
         /* Loop through the classes */
         for (S myClass : theTypeList.getEnumClass().getEnumConstants()) {
             /* Access value and requirement */
-            JDataFieldRequired myState = isClassRequired(myClass);
+            MetisFieldRequired myState = isClassRequired(myClass);
 
             /* Switch on required state */
             switch (myState) {
@@ -849,7 +849,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
      * @param pClass the infoSet class
      * @return the status
      */
-    public abstract JDataFieldRequired isClassRequired(final S pClass);
+    public abstract MetisFieldRequired isClassRequired(final S pClass);
 
     /**
      * set default value after update.

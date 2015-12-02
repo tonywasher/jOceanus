@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.views;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
@@ -65,7 +65,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
  * @param <T> the attribute for the filter
  */
 public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
-        implements JDataContents {
+        implements MetisDataContents {
     /**
      * AllFilter.
      */
@@ -74,17 +74,17 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseViewResource.FILTER_NAME.getValue());
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseViewResource.FILTER_NAME.getValue());
 
     /**
      * Bucket Field Id.
      */
-    private static final JDataField FIELD_BUCKET = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_BUCKET.getValue());
+    private static final MetisField FIELD_BUCKET = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_BUCKET.getValue());
 
     /**
      * Attribute Field Id.
      */
-    private static final JDataField FIELD_ATTR = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_ATTR.getValue());
+    private static final MetisField FIELD_ATTR = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_ATTR.getValue());
 
     /**
      * The Underlying bucket.
@@ -113,23 +113,23 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_ATTR.equals(pField)) {
             return theAttr;
         }
         if (FIELD_BUCKET.equals(pField)) {
             return theBucket == null
-                                    ? JDataFieldValue.SKIP
+                                    ? MetisFieldValue.SKIP
                                     : theBucket;
         }
 
         /* Unknown */
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
@@ -322,7 +322,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         AnalysisFilter<?, ?> myThat = (AnalysisFilter<?, ?>) pThat;
 
         /* Check equality */
-        return Difference.isEqual(getBucket(), myThat.getBucket());
+        return MetisDifference.isEqual(getBucket(), myThat.getBucket());
     }
 
     @Override
@@ -891,7 +891,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
 
         @Override
         public int hashCode() {
-            return JDataFields.HASH_PRIME;
+            return MetisFields.HASH_PRIME;
         }
 
         @Override

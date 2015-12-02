@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import net.sourceforge.joceanus.jmetis.list.OrderedIdIndex;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdIndex;
 
 /**
  * Id Manager for data list. Allocates new IDs and checks for uniqueness.
@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.list.OrderedIdIndex;
  * @param <E> the data type enum class
  */
 public class IdManager<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends OrderedIdIndex<Integer, T> {
+        extends MetisOrderedIdIndex<Integer, T> {
     /**
      * The maximum id.
      */

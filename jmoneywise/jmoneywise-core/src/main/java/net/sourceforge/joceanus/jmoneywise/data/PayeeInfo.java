@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
@@ -54,7 +54,7 @@ public class PayeeInfo
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -117,7 +117,7 @@ public class PayeeInfo
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -141,7 +141,7 @@ public class PayeeInfo
      * @param pValueSet the valueSet
      * @return the InfoType
      */
-    public static AccountInfoType getInfoType(final ValueSet pValueSet) {
+    public static AccountInfoType getInfoType(final MetisValueSet pValueSet) {
         return getInfoType(pValueSet, AccountInfoType.class);
     }
 
@@ -232,7 +232,7 @@ public class PayeeInfo
         pushHistory();
 
         /* Update the value if required */
-        if (!Difference.isEqual(getField(), myPayeeInfo.getField())) {
+        if (!MetisDifference.isEqual(getField(), myPayeeInfo.getField())) {
             setValueValue(myPayeeInfo.getField());
         }
 
@@ -248,7 +248,7 @@ public class PayeeInfo
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataInfoList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataInfoList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE info list.
@@ -267,7 +267,7 @@ public class PayeeInfo
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -277,7 +277,7 @@ public class PayeeInfo
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return PayeeInfo.FIELD_DEFS;
         }
 

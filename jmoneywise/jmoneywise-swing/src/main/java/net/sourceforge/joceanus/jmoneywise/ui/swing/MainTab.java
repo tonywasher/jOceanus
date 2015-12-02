@@ -32,7 +32,7 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
@@ -189,7 +189,7 @@ public class MainTab
      * @param pProfile the startup profile
      * @throws OceanusException on error
      */
-    public MainTab(final JDataProfile pProfile) throws OceanusException {
+    public MainTab(final MetisProfile pProfile) throws OceanusException {
         /* Create the view */
         theView = new SwingView(pProfile);
 
@@ -223,7 +223,7 @@ public class MainTab
     @Override
     protected JComponent buildMainPanel() throws OceanusException {
         /* Obtain the active profile */
-        JDataProfile myTask = theView.getActiveTask();
+        MetisProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("buildMain");
 
         /* Create the Tabbed Pane */

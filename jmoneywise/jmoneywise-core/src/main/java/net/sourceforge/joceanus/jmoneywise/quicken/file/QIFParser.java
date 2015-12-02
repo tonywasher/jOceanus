@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 
 /**
@@ -42,7 +42,7 @@ public class QIFParser {
     /**
      * Data formatter.
      */
-    private final JDataFormatter theFormatter;
+    private final MetisDataFormatter theFormatter;
 
     /**
      * Record mode.
@@ -68,7 +68,7 @@ public class QIFParser {
         theFile = new QIFFile(pFileType);
 
         /* Allocate the formatter and set date format */
-        theFormatter = new JDataFormatter();
+        theFormatter = new MetisDataFormatter();
         theFormatter.setFormat(QIFWriter.QIF_DATEFORMAT);
     }
 

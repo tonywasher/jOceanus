@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jthemis.git.data;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitTag.GitTagList;
@@ -61,12 +61,12 @@ public final class GitBranch
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(GitBranch.class.getSimpleName(), ScmBranch.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(GitBranch.class.getSimpleName(), ScmBranch.FIELD_DEFS);
 
     /**
      * Repository field id.
      */
-    private static final JDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+    private static final MetisField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
 
     /**
      * Parent Repository.
@@ -126,12 +126,12 @@ public final class GitBranch
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_REPO.equals(pField)) {
             return theRepository;
@@ -176,7 +176,7 @@ public final class GitBranch
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(GitBranchList.class.getSimpleName(), ScmBranchList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(GitBranchList.class.getSimpleName(), ScmBranchList.FIELD_DEFS);
 
         /**
          * The parent component.
@@ -196,7 +196,7 @@ public final class GitBranch
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 

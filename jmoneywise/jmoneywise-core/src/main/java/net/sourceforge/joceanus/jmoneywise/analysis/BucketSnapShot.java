@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -41,36 +41,36 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @param <E> the enum class
  */
 public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
-        implements JDataContents {
+        implements MetisDataContents {
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisResource.BUCKET_SNAPSHOT.getValue());
+    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.BUCKET_SNAPSHOT.getValue());
 
     /**
      * Id Id.
      */
-    private static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(DataItem.FIELD_ID.getName());
+    private static final MetisField FIELD_ID = FIELD_DEFS.declareEqualityField(DataItem.FIELD_ID.getName());
 
     /**
      * Transaction Id.
      */
-    private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
+    private static final MetisField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
 
     /**
      * Date Id.
      */
-    private static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    private static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * Values Id.
      */
-    private static final JDataField FIELD_VALUES = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_VALUES.getValue());
+    private static final MetisField FIELD_VALUES = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_VALUES.getValue());
 
     /**
      * Previous Values Id.
      */
-    private static final JDataField FIELD_PREVIOUS = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_PREVIOUS.getValue());
+    private static final MetisField FIELD_PREVIOUS = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_PREVIOUS.getValue());
 
     /**
      * The id of the transaction.
@@ -142,12 +142,12 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_ID.equals(pField)) {
             return theId;
         }
@@ -163,7 +163,7 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
         if (FIELD_PREVIOUS.equals(pField)) {
             return thePrevious;
         }
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**

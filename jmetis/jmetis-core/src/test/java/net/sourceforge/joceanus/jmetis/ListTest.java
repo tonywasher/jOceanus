@@ -31,8 +31,8 @@ import java.util.Map;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
-import net.sourceforge.joceanus.jmetis.list.OrderedList;
+import net.sourceforge.joceanus.jmetis.list.MetisNestedHashMap;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
 
 /**
  * Test suite for jSortedList.
@@ -76,7 +76,7 @@ public class ListTest {
     }
 
     protected static void testOrderedList() {
-        OrderedList<Integer> myList = new OrderedList<Integer>(Integer.class, 6);
+        MetisOrderedList<Integer> myList = new MetisOrderedList<Integer>(Integer.class, 6);
         List<Integer> myCache = new LinkedList<Integer>();
 
         /* Access a Random generator */
@@ -138,7 +138,7 @@ public class ListTest {
 
         /* Create a nested hash map */
         if (useNested) {
-            myMap = new NestedHashMap<String, Integer>(8);
+            myMap = new MetisNestedHashMap<String, Integer>(8);
         } else {
             myMap = new HashMap<String, Integer>();
         }
@@ -185,7 +185,7 @@ public class ListTest {
         int iNumElements = 1000;
 
         /* Create the maps */
-        myMap = new NestedHashMap<String, Integer>(8);
+        myMap = new MetisNestedHashMap<String, Integer>(8);
         myBaseMap = new HashMap<String, Integer>();
 
         /* Build the map */

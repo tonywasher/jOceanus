@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.views;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 
 /**
  * Status Data object that is used to report the status of a thread.
@@ -220,7 +220,7 @@ public class StatusData {
      * @return true/false
      */
     public boolean differStage(final StatusData pData) {
-        return (pData == null) || !Difference.isEqual(theStage, pData.getStage());
+        return (pData == null) || !MetisDifference.isEqual(theStage, pData.getStage());
     }
 
     /**
@@ -229,6 +229,6 @@ public class StatusData {
      * @return true/false
      */
     public boolean differTask(final StatusData pData) {
-        return (pData == null) || !Difference.isEqual(theTask, pData.getTask());
+        return (pData == null) || !MetisDifference.isEqual(theTask, pData.getTask());
     }
 }

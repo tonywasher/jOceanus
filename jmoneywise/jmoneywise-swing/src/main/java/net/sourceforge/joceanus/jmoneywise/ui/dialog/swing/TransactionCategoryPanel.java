@@ -29,11 +29,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
@@ -63,7 +63,7 @@ public class TransactionCategoryPanel
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<TransactionCategory> theFieldSet;
+    private final transient MetisFieldSet<TransactionCategory> theFieldSet;
 
     /**
      * Category Type Button Field.
@@ -81,7 +81,7 @@ public class TransactionCategoryPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public TransactionCategoryPanel(final JFieldManager pFieldMgr,
+    public TransactionCategoryPanel(final MetisFieldManager pFieldMgr,
                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                     final ErrorPanel pError) {
         /* Initialise the panel */
@@ -105,9 +105,9 @@ public class TransactionCategoryPanel
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_NAME, DataType.STRING, myName);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_SUBCAT, DataType.STRING, mySubName);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_DESC, DataType.STRING, myDesc);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_NAME, MetisDataType.STRING, myName);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
         theFieldSet.addFieldElement(TransactionCategory.FIELD_CATTYPE, TransactionCategoryType.class, theTypeButton);
         theFieldSet.addFieldElement(TransactionCategory.FIELD_PARENT, TransactionCategory.class, theParentButton);
 
@@ -167,9 +167,9 @@ public class TransactionCategoryPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        JDataField myField = pUpdate.getField();
+        MetisField myField = pUpdate.getField();
         TransactionCategory myCategory = getItem();
 
         /* Process updates */

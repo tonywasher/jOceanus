@@ -35,8 +35,8 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldElement;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket;
@@ -104,7 +104,7 @@ public class TransCategoryAnalysisSelect
         theButton = new JScrollButton<TransactionCategoryBucket>();
 
         /* Create the label */
-        JLabel myLabel = new JLabel(NLS_CATEGORY + JFieldElement.STR_COLON);
+        JLabel myLabel = new JLabel(NLS_CATEGORY + MetisFieldElement.STR_COLON);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager();
@@ -399,7 +399,7 @@ public class TransCategoryAnalysisSelect
          */
         private boolean setCategory(final TransactionCategoryBucket pCategory) {
             /* Adjust the selected category */
-            if (!Difference.isEqual(pCategory, theCategory)) {
+            if (!MetisDifference.isEqual(pCategory, theCategory)) {
                 setTheCategory(pCategory);
                 return true;
             }

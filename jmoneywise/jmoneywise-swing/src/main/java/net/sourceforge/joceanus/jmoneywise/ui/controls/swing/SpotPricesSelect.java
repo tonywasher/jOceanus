@@ -40,8 +40,8 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldElement;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -88,7 +88,7 @@ public class SpotPricesSelect
     /**
      * Text for Portfolio Label.
      */
-    private static final String NLS_PORT = MoneyWiseDataType.PORTFOLIO.getItemName() + JFieldElement.STR_COLON;
+    private static final String NLS_PORT = MoneyWiseDataType.PORTFOLIO.getItemName() + MetisFieldElement.STR_COLON;
 
     /**
      * Text for Show Closed.
@@ -601,7 +601,7 @@ public class SpotPricesSelect
          */
         private boolean setPortfolio(final PortfolioBucket pPortfolio) {
             /* Adjust the selected portfolio */
-            if (!Difference.isEqual(pPortfolio, thePortfolio)) {
+            if (!MetisDifference.isEqual(pPortfolio, thePortfolio)) {
                 thePortfolio = pPortfolio;
                 return true;
             }
@@ -616,7 +616,7 @@ public class SpotPricesSelect
         private boolean setDate(final TethysSwingDateButton pButton) {
             /* Adjust the date and build the new range */
             TethysDate myDate = new TethysDate(pButton.getSelectedDate());
-            if (!Difference.isEqual(myDate, theDate)) {
+            if (!MetisDifference.isEqual(myDate, theDate)) {
                 theDate = myDate;
                 return true;
             }
@@ -666,7 +666,7 @@ public class SpotPricesSelect
             thePortButton.setValue(thePortfolio);
 
             /* Determine whether we are todays date */
-            boolean isToday = Difference.isEqual(theDate, new TethysDate());
+            boolean isToday = MetisDifference.isEqual(theDate, new TethysDate());
             theDownloadButton.setVisible(isToday);
         }
     }

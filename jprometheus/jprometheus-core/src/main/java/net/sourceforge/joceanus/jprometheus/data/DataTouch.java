@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.EnumMap;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jprometheus.data.DataTouch.TouchCounter;
 
 /**
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataTouch.TouchCounter;
  */
 public class DataTouch<E extends Enum<E>>
         extends EnumMap<E, TouchCounter<E>>
-        implements JDataFormat {
+        implements MetisDataFormat {
     /**
      * Serial Id.
      */
@@ -141,7 +141,7 @@ public class DataTouch<E extends Enum<E>>
      * @param <E> the DataItem types
      */
     public static final class TouchCounter<E>
-            implements JDataFormat {
+            implements MetisDataFormat {
         /**
          * The item type.
          */

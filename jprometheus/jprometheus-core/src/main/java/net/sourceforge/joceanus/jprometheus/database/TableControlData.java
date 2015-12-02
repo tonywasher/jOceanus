@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.database;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jprometheus.data.ControlData;
 import net.sourceforge.joceanus.jprometheus.data.DataKey;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -74,7 +74,7 @@ public class TableControlData
 
     @Override
     protected void setFieldValue(final ControlData pItem,
-                                 final JDataField pField) throws OceanusException {
+                                 final MetisField pField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (ControlData.FIELD_DATAVERSION.equals(pField)) {

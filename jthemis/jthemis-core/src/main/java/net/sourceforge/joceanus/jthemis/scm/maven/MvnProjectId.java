@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jthemis.scm.maven;
 
 import java.util.ArrayList;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import org.apache.maven.model.Dependency;
@@ -39,7 +39,7 @@ import org.apache.maven.model.Parent;
  * @author Tony Washer
  */
 public final class MvnProjectId
-        implements JDataContents {
+        implements MetisDataContents {
     /**
      * SnapShot indication.
      */
@@ -58,22 +58,22 @@ public final class MvnProjectId
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(MvnProjectId.class.getSimpleName());
+    private static final MetisFields FIELD_DEFS = new MetisFields(MvnProjectId.class.getSimpleName());
 
     /**
      * Group field id.
      */
-    private static final JDataField FIELD_GROUP = FIELD_DEFS.declareEqualityField("Group");
+    private static final MetisField FIELD_GROUP = FIELD_DEFS.declareEqualityField("Group");
 
     /**
      * Artifact field id.
      */
-    private static final JDataField FIELD_ARTIFACT = FIELD_DEFS.declareEqualityField("Artifact");
+    private static final MetisField FIELD_ARTIFACT = FIELD_DEFS.declareEqualityField("Artifact");
 
     /**
      * Version field id.
      */
-    private static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField("Version");
+    private static final MetisField FIELD_VERSION = FIELD_DEFS.declareEqualityField("Version");
 
     /**
      * The groupId.
@@ -172,12 +172,12 @@ public final class MvnProjectId
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_GROUP.equals(pField)) {
             return theGroupId;
@@ -190,7 +190,7 @@ public final class MvnProjectId
         }
 
         /* Unknown */
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**
@@ -348,7 +348,7 @@ public final class MvnProjectId
      */
     public static final class ProjectList
             extends ArrayList<MvnProjectId>
-            implements JDataContents {
+            implements MetisDataContents {
         /**
          * The Serial Id.
          */
@@ -357,12 +357,12 @@ public final class MvnProjectId
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ProjectList.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(ProjectList.class.getSimpleName());
 
         /**
          * Size field id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareEqualityField("Size");
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareEqualityField("Size");
 
         @Override
         public String formatObject() {
@@ -372,19 +372,19 @@ public final class MvnProjectId
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
 
             /* Unknown */
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
     }
 

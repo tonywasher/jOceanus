@@ -27,12 +27,12 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
@@ -59,37 +59,37 @@ public final class ControlKey
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
     /**
      * Field ID for Prime keySetHash.
      */
-    public static final JDataField FIELD_PRIMEHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIMEHASH.getValue());
+    public static final MetisField FIELD_PRIMEHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIMEHASH.getValue());
 
     /**
      * Field ID for Alternate keySetHash.
      */
-    public static final JDataField FIELD_ALTHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_ALTHASH.getValue());
+    public static final MetisField FIELD_ALTHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_ALTHASH.getValue());
 
     /**
      * HashPrime Field Id.
      */
-    public static final JDataField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue());
+    public static final MetisField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue());
 
     /**
      * Field ID for PrimeHashBytes.
      */
-    public static final JDataField FIELD_PRIMEBYTES = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_PRIMEBYTES.getValue());
+    public static final MetisField FIELD_PRIMEBYTES = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_PRIMEBYTES.getValue());
 
     /**
      * Field ID for AltHashBytes.
      */
-    public static final JDataField FIELD_ALTBYTES = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_ALTBYTES.getValue());
+    public static final MetisField FIELD_ALTBYTES = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_ALTBYTES.getValue());
 
     /**
      * Field ID for DataKeySet.
      */
-    public static final JDataField FIELD_SETS = FIELD_DEFS.declareLocalField(DataKeySet.LIST_NAME);
+    public static final MetisField FIELD_SETS = FIELD_DEFS.declareLocalField(DataKeySet.LIST_NAME);
 
     /**
      * Name of Database.
@@ -218,12 +218,12 @@ public final class ControlKey
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_SETS.equals(pField)) {
             return theDataKeySet;
         }
@@ -283,7 +283,7 @@ public final class ControlKey
      * @param pValueSet the valueSet
      * @return true/false
      */
-    public static Boolean isHashPrime(final ValueSet pValueSet) {
+    public static Boolean isHashPrime(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_HASHPRIME, Boolean.class);
     }
 
@@ -292,7 +292,7 @@ public final class ControlKey
      * @param pValueSet the ValueSet
      * @return the hash bytes
      */
-    public static byte[] getPrimeHashBytes(final ValueSet pValueSet) {
+    public static byte[] getPrimeHashBytes(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PRIMEBYTES, byte[].class);
     }
 
@@ -301,7 +301,7 @@ public final class ControlKey
      * @param pValueSet the ValueSet
      * @return the hash bytes
      */
-    public static byte[] getAltHashBytes(final ValueSet pValueSet) {
+    public static byte[] getAltHashBytes(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ALTBYTES, byte[].class);
     }
 
@@ -310,7 +310,7 @@ public final class ControlKey
      * @param pValueSet the ValueSet
      * @return the keySetHash
      */
-    protected static GordianKeySetHash getPrimeKeySetHash(final ValueSet pValueSet) {
+    protected static GordianKeySetHash getPrimeKeySetHash(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PRIMEHASH, GordianKeySetHash.class);
     }
 
@@ -319,7 +319,7 @@ public final class ControlKey
      * @param pValueSet the ValueSet
      * @return the keySetHash
      */
-    protected static GordianKeySetHash getAltKeySetHash(final ValueSet pValueSet) {
+    protected static GordianKeySetHash getAltKeySetHash(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ALTHASH, GordianKeySetHash.class);
     }
 
@@ -566,7 +566,7 @@ public final class ControlKey
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE ControlKey list.
@@ -595,7 +595,7 @@ public final class ControlKey
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -605,7 +605,7 @@ public final class ControlKey
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return ControlKey.FIELD_DEFS;
         }
 
@@ -789,17 +789,17 @@ public final class ControlKey
      * DataKeySetResource.
      */
     private static final class DataKeySetResource
-            extends OrderedIdList<Integer, DataKeySet>
-            implements JDataContents {
+            extends MetisOrderedIdList<Integer, DataKeySet>
+            implements MetisDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(DataKeySet.LIST_NAME);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(DataKeySet.LIST_NAME);
 
         /**
          * Size Field Id.
          */
-        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+        public static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
         /**
          * Iterator.
@@ -814,7 +814,7 @@ public final class ControlKey
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -824,11 +824,11 @@ public final class ControlKey
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**

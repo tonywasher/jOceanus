@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jmetis.sheet.DataCell;
-import net.sourceforge.joceanus.jmetis.sheet.DataRow;
-import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -89,7 +89,7 @@ public class SheetTaxYearInfoType
      * @throws OceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                         final DataWorkBook pWorkBook,
+                                         final MetisDataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws OceanusException {
         /* Access the list of InfoTypes */
         TaxYearInfoTypeList myList = pData.getTaxInfoTypes();
@@ -97,7 +97,7 @@ public class SheetTaxYearInfoType
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_TAXINFOTYPES);
+            MetisDataView myView = pWorkBook.getRangeView(AREA_TAXINFOTYPES);
 
             /* Declare the new stage */
             if (!pTask.setNewStage(AREA_TAXINFOTYPES)) {
@@ -119,8 +119,8 @@ public class SheetTaxYearInfoType
             /* Loop through the rows of the single column range */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                DataRow myRow = myView.getRowByIndex(i);
-                DataCell myCell = myView.getRowCellByIndex(myRow, 0);
+                MetisDataRow myRow = myView.getRowByIndex(i);
+                MetisDataCell myCell = myView.getRowCellByIndex(myRow, 0);
 
                 /* Access value */
                 String myValue = myCell.getStringValue();

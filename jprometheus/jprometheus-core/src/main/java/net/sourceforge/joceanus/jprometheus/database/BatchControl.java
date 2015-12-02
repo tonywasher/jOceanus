@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.preference.DatabasePreferences;
 
@@ -63,7 +63,7 @@ public class BatchControl {
     /**
      * The Currently active Mode.
      */
-    private DataState theCurrMode = null;
+    private MetisDataState theCurrMode = null;
 
     /**
      * Is the current table in use.
@@ -105,7 +105,7 @@ public class BatchControl {
      * @param pMode the Mode that is in operation
      */
     protected void setCurrentTable(final DatabaseTable<?, ?> pTable,
-                                   final DataState pMode) {
+                                   final MetisDataState pMode) {
         /* Store details */
         theCurrTable = pTable;
         theCurrMode = pMode;
@@ -171,7 +171,7 @@ public class BatchControl {
         /**
          * The State of the table.
          */
-        private final DataState theState;
+        private final MetisDataState theState;
 
         /**
          * Constructor.
@@ -238,7 +238,7 @@ public class BatchControl {
             DataItem<?> myBase = pItem.getBase();
 
             /* If we are handling deletions */
-            if (theState == DataState.DELETED) {
+            if (theState == MetisDataState.DELETED) {
                 /* Unlink the underlying item */
                 myBase.unLink();
 

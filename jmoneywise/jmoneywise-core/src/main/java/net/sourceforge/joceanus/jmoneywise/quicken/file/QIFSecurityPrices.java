@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.quicken.file;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.list.OrderedList;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 
@@ -49,7 +49,7 @@ public class QIFSecurityPrices
     /**
      * The Price List.
      */
-    private final OrderedList<QIFPrice> thePrices;
+    private final MetisOrderedList<QIFPrice> thePrices;
 
     /**
      * Constructor.
@@ -63,7 +63,7 @@ public class QIFSecurityPrices
         theSecurity = new QIFSecurity(pFile, pSecurity);
 
         /* Create the list */
-        thePrices = new OrderedList<QIFPrice>(QIFPrice.class);
+        thePrices = new MetisOrderedList<QIFPrice>(QIFPrice.class);
     }
 
     /**
@@ -78,7 +78,7 @@ public class QIFSecurityPrices
         theSecurity = pSecurity;
 
         /* Create the list */
-        thePrices = new OrderedList<QIFPrice>(QIFPrice.class);
+        thePrices = new MetisOrderedList<QIFPrice>(QIFPrice.class);
     }
 
     /**
@@ -130,7 +130,7 @@ public class QIFSecurityPrices
      * @param pFormatter the formatter
      * @param pBuilder the string builder
      */
-    protected void formatPrices(final JDataFormatter pFormatter,
+    protected void formatPrices(final MetisDataFormatter pFormatter,
                                 final StringBuilder pBuilder) {
         /* Loop through the prices */
         Iterator<QIFPrice> myIterator = thePrices.iterator();

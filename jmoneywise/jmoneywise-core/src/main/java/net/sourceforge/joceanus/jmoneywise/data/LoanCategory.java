@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
@@ -55,12 +55,12 @@ public class LoanCategory
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, CategoryBase.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, CategoryBase.FIELD_DEFS);
 
     /**
      * Category Type Field Id.
      */
-    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.LOANTYPE.getItemName());
+    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.LOANTYPE.getItemName());
 
     /**
      * Copy Constructor.
@@ -102,12 +102,12 @@ public class LoanCategory
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_CATTYPE.equals(pField)) {
             return true;
@@ -140,7 +140,7 @@ public class LoanCategory
      * @param pValueSet the valueSet
      * @return the LoanCategoryType
      */
-    public static LoanCategoryType getLoanCategoryType(final ValueSet pValueSet) {
+    public static LoanCategoryType getLoanCategoryType(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CATTYPE, LoanCategoryType.class);
     }
 
@@ -149,7 +149,7 @@ public class LoanCategory
      * @param pValueSet the valueSet
      * @return the Parent Category
      */
-    public static LoanCategory getParentCategory(final ValueSet pValueSet) {
+    public static LoanCategory getParentCategory(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PARENT, LoanCategory.class);
     }
 
@@ -306,7 +306,7 @@ public class LoanCategory
         applyBasicChanges(myCategory);
 
         /* Update the category type if required */
-        if (!Difference.isEqual(getCategoryType(), myCategory.getCategoryType())) {
+        if (!MetisDifference.isEqual(getCategoryType(), myCategory.getCategoryType())) {
             setValueType(myCategory.getCategoryType());
         }
 
@@ -322,7 +322,7 @@ public class LoanCategory
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, CategoryBaseList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, CategoryBaseList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE Category list.
@@ -341,7 +341,7 @@ public class LoanCategory
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -351,7 +351,7 @@ public class LoanCategory
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return LoanCategory.FIELD_DEFS;
         }
 

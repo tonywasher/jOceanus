@@ -27,18 +27,18 @@ import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.RatioCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.RatioCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
@@ -126,7 +126,7 @@ public class SpotRatesTable
     /**
      * The field manager.
      */
-    private final transient JFieldManager theFieldMgr;
+    private final transient MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -176,7 +176,7 @@ public class SpotRatesTable
     /**
      * The data entry.
      */
-    private final transient ViewerEntry theDataPrice;
+    private final transient MetisViewerEntry theDataPrice;
 
     /**
      * The error panel.
@@ -199,8 +199,8 @@ public class SpotRatesTable
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
-        ViewerManager myDataMgr = theView.getViewerManager();
-        ViewerEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        MetisViewerManager myDataMgr = theView.getViewerManager();
+        MetisViewerEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
         theDataPrice = myDataMgr.newEntry(NLS_DATAENTRY);
         theDataPrice.addAsChildOf(mySection);
         theDataPrice.setObject(theUpdateSet);
@@ -278,7 +278,7 @@ public class SpotRatesTable
      */
     private void refreshData() {
         /* Obtain the active profile */
-        JDataProfile myTask = theView.getActiveTask();
+        MetisProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("SpotPrices");
 
         /* Protect against exceptions */
@@ -445,7 +445,7 @@ public class SpotRatesTable
                 TethysDate myDate = theSelect.getDate();
 
                 /* If the selection differs */
-                if (!Difference.isEqual(theDate, myDate)) {
+                if (!MetisDifference.isEqual(theDate, myDate)) {
                     /* Protect against exceptions */
                     try {
                         /* Set selection */
@@ -563,7 +563,7 @@ public class SpotRatesTable
         }
 
         @Override
-        public JDataField getFieldForCell(final SpotExchangeRate pItem,
+        public MetisField getFieldForCell(final SpotExchangeRate pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
@@ -791,7 +791,7 @@ public class SpotRatesTable
          * @param pColIndex column index
          * @return the field
          */
-        public JDataField getFieldForCell(final int pColIndex) {
+        public MetisField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_CURRENCY:

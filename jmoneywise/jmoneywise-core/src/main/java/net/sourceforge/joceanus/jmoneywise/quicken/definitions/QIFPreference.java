@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.definitions;
 
-import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * Quicken Preferences.
  */
 public class QIFPreference
-        extends PreferenceSet {
+        extends MetisPreferenceSet {
     /**
      * Registry name for QIF Directory.
      */

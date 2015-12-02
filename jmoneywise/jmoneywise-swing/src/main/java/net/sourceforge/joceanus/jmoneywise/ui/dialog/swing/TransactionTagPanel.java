@@ -26,11 +26,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
@@ -52,7 +52,7 @@ public class TransactionTagPanel
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<TransactionTag> theFieldSet;
+    private final transient MetisFieldSet<TransactionTag> theFieldSet;
 
     /**
      * Constructor.
@@ -60,7 +60,7 @@ public class TransactionTagPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public TransactionTagPanel(final JFieldManager pFieldMgr,
+    public TransactionTagPanel(final MetisFieldManager pFieldMgr,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                final ErrorPanel pError) {
         /* Initialise the panel */
@@ -76,8 +76,8 @@ public class TransactionTagPanel
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(TransactionTag.FIELD_NAME, DataType.STRING, myName);
-        theFieldSet.addFieldElement(TransactionTag.FIELD_DESC, DataType.STRING, myDesc);
+        theFieldSet.addFieldElement(TransactionTag.FIELD_NAME, MetisDataType.STRING, myName);
+        theFieldSet.addFieldElement(TransactionTag.FIELD_DESC, MetisDataType.STRING, myDesc);
 
         /* Layout the main panel */
         JPanel myPanel = getMainPanel();
@@ -112,9 +112,9 @@ public class TransactionTagPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        JDataField myField = pUpdate.getField();
+        MetisField myField = pUpdate.getField();
         TransactionTag myTag = getItem();
 
         /* Process updates */

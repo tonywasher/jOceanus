@@ -33,9 +33,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerManager;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
@@ -172,7 +172,7 @@ public class CategoryPanel
     /**
      * The data entry.
      */
-    private final transient ViewerEntry theDataEntry;
+    private final transient MetisViewerEntry theDataEntry;
 
     /**
      * The action buttons panel.
@@ -204,8 +204,8 @@ public class CategoryPanel
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView, MoneyWiseDataType.class);
 
         /* Create the top level debug entry for this view */
-        ViewerManager myDataMgr = pView.getViewerManager();
-        ViewerEntry mySection = pView.getDataEntry(DataControl.DATA_MAINT);
+        MetisViewerManager myDataMgr = pView.getViewerManager();
+        MetisViewerEntry mySection = pView.getDataEntry(DataControl.DATA_MAINT);
         theDataEntry = myDataMgr.newEntry(NLS_DATAENTRY);
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
@@ -316,7 +316,7 @@ public class CategoryPanel
      */
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
-        JDataProfile myTask = theView.getActiveTask();
+        MetisProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("Categories");
 
         /* Note that we are refreshing */

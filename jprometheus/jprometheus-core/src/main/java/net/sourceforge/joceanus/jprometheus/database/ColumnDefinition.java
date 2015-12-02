@@ -34,8 +34,8 @@ import java.util.ListIterator;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.preference.ColumnType;
@@ -92,7 +92,7 @@ public abstract class ColumnDefinition {
     /**
      * Column Identity.
      */
-    private final JDataField theIdentity;
+    private final MetisField theIdentity;
 
     /**
      * Is the column null-able.
@@ -120,7 +120,7 @@ public abstract class ColumnDefinition {
      * @param pId the column id
      */
     protected ColumnDefinition(final TableDefinition pTable,
-                               final JDataField pId) {
+                               final MetisField pId) {
         /* Record the identity and table */
         theIdentity = pId;
         theTable = pTable;
@@ -141,7 +141,7 @@ public abstract class ColumnDefinition {
      * Obtain the column id.
      * @return the id
      */
-    protected JDataField getColumnId() {
+    protected MetisField getColumnId() {
         return theIdentity;
     }
 
@@ -290,7 +290,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected IntegerColumn(final TableDefinition pTable,
-                                final JDataField pId) {
+                                final MetisField pId) {
             /* Record the column type and name */
             super(pTable, pId);
         }
@@ -383,7 +383,7 @@ public abstract class ColumnDefinition {
          * @param pRefTable the name of the referenced table
          */
         protected ReferenceColumn(final TableDefinition pTable,
-                                  final JDataField pId,
+                                  final MetisField pId,
                                   final String pRefTable) {
             /* Record the column type */
             super(pTable, pId);
@@ -543,7 +543,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected ShortColumn(final TableDefinition pTable,
-                              final JDataField pId) {
+                              final MetisField pId) {
             /* Record the column type */
             super(pTable, pId);
         }
@@ -604,7 +604,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected LongColumn(final TableDefinition pTable,
-                             final JDataField pId) {
+                             final MetisField pId) {
             /* Record the column type */
             super(pTable, pId);
         }
@@ -665,7 +665,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected FloatColumn(final TableDefinition pTable,
-                              final JDataField pId) {
+                              final MetisField pId) {
             /* Record the column type */
             super(pTable, pId);
         }
@@ -726,7 +726,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected DoubleColumn(final TableDefinition pTable,
-                               final JDataField pId) {
+                               final MetisField pId) {
             /* Record the column type */
             super(pTable, pId);
         }
@@ -787,7 +787,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected DateColumn(final TableDefinition pTable,
-                             final JDataField pId) {
+                             final MetisField pId) {
             /* Record the column type */
             super(pTable, pId);
         }
@@ -849,7 +849,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected BooleanColumn(final TableDefinition pTable,
-                                final JDataField pId) {
+                                final MetisField pId) {
             /* Record the column type */
             super(pTable, pId);
         }
@@ -916,7 +916,7 @@ public abstract class ColumnDefinition {
          * @param pLength the length
          */
         protected StringColumn(final TableDefinition pTable,
-                               final JDataField pId,
+                               final MetisField pId,
                                final int pLength) {
             /* Record the column type */
             super(pTable, pId);
@@ -973,7 +973,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected MoneyColumn(final TableDefinition pTable,
-                              final JDataField pId) {
+                              final MetisField pId) {
             /* Record the column type */
             super(pTable, pId, 0);
         }
@@ -1013,7 +1013,7 @@ public abstract class ColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysMoney getValue(final JDataFormatter pFormatter) throws OceanusException {
+        public TethysMoney getValue(final MetisDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), TethysMoney.class);
             } catch (IllegalArgumentException e) {
@@ -1033,7 +1033,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected RateColumn(final TableDefinition pTable,
-                             final JDataField pId) {
+                             final MetisField pId) {
             /* Record the column type */
             super(pTable, pId, 0);
         }
@@ -1078,7 +1078,7 @@ public abstract class ColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysRate getValue(final JDataFormatter pFormatter) throws OceanusException {
+        public TethysRate getValue(final MetisDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), TethysRate.class);
             } catch (IllegalArgumentException e) {
@@ -1098,7 +1098,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected PriceColumn(final TableDefinition pTable,
-                              final JDataField pId) {
+                              final MetisField pId) {
             /* Record the column type */
             super(pTable, pId, 0);
         }
@@ -1132,7 +1132,7 @@ public abstract class ColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysPrice getValue(final JDataFormatter pFormatter) throws OceanusException {
+        public TethysPrice getValue(final MetisDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), TethysPrice.class);
             } catch (IllegalArgumentException e) {
@@ -1152,7 +1152,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected UnitsColumn(final TableDefinition pTable,
-                              final JDataField pId) {
+                              final MetisField pId) {
             /* Record the column type */
             super(pTable, pId, 0);
         }
@@ -1186,7 +1186,7 @@ public abstract class ColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysUnits getValue(final JDataFormatter pFormatter) throws OceanusException {
+        public TethysUnits getValue(final MetisDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), TethysUnits.class);
             } catch (IllegalArgumentException e) {
@@ -1206,7 +1206,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected DilutionColumn(final TableDefinition pTable,
-                                 final JDataField pId) {
+                                 final MetisField pId) {
             /* Record the column type */
             super(pTable, pId, 0);
         }
@@ -1240,7 +1240,7 @@ public abstract class ColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysDilution getValue(final JDataFormatter pFormatter) throws OceanusException {
+        public TethysDilution getValue(final MetisDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), TethysDilution.class);
             } catch (IllegalArgumentException e) {
@@ -1260,7 +1260,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected RatioColumn(final TableDefinition pTable,
-                              final JDataField pId) {
+                              final MetisField pId) {
             /* Record the column type */
             super(pTable, pId, 0);
         }
@@ -1294,7 +1294,7 @@ public abstract class ColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysRatio getValue(final JDataFormatter pFormatter) throws OceanusException {
+        public TethysRatio getValue(final MetisDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), TethysRatio.class);
             } catch (IllegalArgumentException e) {
@@ -1320,7 +1320,7 @@ public abstract class ColumnDefinition {
          * @param pLength the length of the column
          */
         protected BinaryColumn(final TableDefinition pTable,
-                               final JDataField pId,
+                               final MetisField pId,
                                final int pLength) {
             /* Record the column type */
             super(pTable, pId);

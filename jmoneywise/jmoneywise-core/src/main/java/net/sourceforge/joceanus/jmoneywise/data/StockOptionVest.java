@@ -26,15 +26,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedUnits;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedUnits;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
@@ -69,22 +69,22 @@ public class StockOptionVest
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
 
     /**
      * Option Field Id.
      */
-    public static final JDataField FIELD_OPTION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.STOCKOPTION.getItemName());
+    public static final MetisField FIELD_OPTION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.STOCKOPTION.getItemName());
 
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    public static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * Units Field Id.
      */
-    public static final JDataField FIELD_UNITS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_UNITS.getValue());
+    public static final MetisField FIELD_UNITS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_UNITS.getValue());
 
     /**
      * Copy Constructor.
@@ -109,7 +109,7 @@ public class StockOptionVest
         super(pList, pValues);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -159,12 +159,12 @@ public class StockOptionVest
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_OPTION.equals(pField)) {
             return true;
@@ -188,13 +188,13 @@ public class StockOptionVest
     @Override
     public String formatObject() {
         /* Access Key Values */
-        EncryptedValueSet myValues = getValueSet();
+        MetisEncryptedValueSet myValues = getValueSet();
         Object myOption = myValues.getValue(FIELD_OPTION);
         Object myDate = myValues.getValue(FIELD_DATE);
         Object myUnits = myValues.getValue(FIELD_UNITS);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -266,7 +266,7 @@ public class StockOptionVest
      * Obtain Encrypted Units Field.
      * @return the Field
      */
-    private EncryptedUnits getUnitsField() {
+    private MetisEncryptedUnits getUnitsField() {
         return getUnitsField(getValueSet());
     }
 
@@ -275,7 +275,7 @@ public class StockOptionVest
      * @param pValueSet the valueSet
      * @return the option
      */
-    public static StockOption getStockOption(final ValueSet pValueSet) {
+    public static StockOption getStockOption(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_OPTION, StockOption.class);
     }
 
@@ -284,7 +284,7 @@ public class StockOptionVest
      * @param pValueSet the valueSet
      * @return the Date
      */
-    public static TethysDate getDate(final ValueSet pValueSet) {
+    public static TethysDate getDate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DATE, TethysDate.class);
     }
 
@@ -293,7 +293,7 @@ public class StockOptionVest
      * @param pValueSet the valueSet
      * @return the symbol
      */
-    public static TethysUnits getUnits(final EncryptedValueSet pValueSet) {
+    public static TethysUnits getUnits(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_UNITS, TethysUnits.class);
     }
 
@@ -302,7 +302,7 @@ public class StockOptionVest
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getUnitsBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getUnitsBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_UNITS);
     }
 
@@ -311,8 +311,8 @@ public class StockOptionVest
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static EncryptedUnits getUnitsField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_UNITS, EncryptedUnits.class);
+    private static MetisEncryptedUnits getUnitsField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_UNITS, MetisEncryptedUnits.class);
     }
 
     /**
@@ -369,7 +369,7 @@ public class StockOptionVest
      * Set units value.
      * @param pValue the value
      */
-    private void setValueUnits(final EncryptedUnits pValue) {
+    private void setValueUnits(final MetisEncryptedUnits pValue) {
         getValueSet().setValue(FIELD_UNITS, pValue);
     }
 
@@ -415,7 +415,7 @@ public class StockOptionVest
         }
 
         /* Compare the dates */
-        int iDiff = Difference.compareObject(getDate(), pThat.getDate());
+        int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             /* Sort in reverse date order !! */
             return -iDiff;
@@ -557,17 +557,17 @@ public class StockOptionVest
         pushHistory();
 
         /* Update the option if required */
-        if (!Difference.isEqual(getStockOption(), myVest.getStockOption())) {
+        if (!MetisDifference.isEqual(getStockOption(), myVest.getStockOption())) {
             setValueStockOption(myVest.getStockOption());
         }
 
         /* Update the Date if required */
-        if (!Difference.isEqual(getDate(), myVest.getDate())) {
+        if (!MetisDifference.isEqual(getDate(), myVest.getDate())) {
             setValueDate(myVest.getDate());
         }
 
         /* Update the units if required */
-        if (!Difference.isEqual(getUnits(), myVest.getUnits())) {
+        if (!MetisDifference.isEqual(getUnits(), myVest.getUnits())) {
             setValueUnits(myVest.getUnitsField());
         }
 
@@ -590,7 +590,7 @@ public class StockOptionVest
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE StockOptionVest list.
@@ -609,7 +609,7 @@ public class StockOptionVest
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -619,7 +619,7 @@ public class StockOptionVest
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return StockOptionVest.FIELD_DEFS;
         }
 
@@ -736,16 +736,16 @@ public class StockOptionVest
      * The dataMap class.
      */
     protected static class StockOptionVestDataMap
-            implements DataMapItem<StockOptionVest, MoneyWiseDataType>, JDataContents {
+            implements DataMapItem<StockOptionVest, MoneyWiseDataType>, MetisDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
+        protected static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
 
         /**
          * CategoryMap Field Id.
          */
-        public static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+        public static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
 
         /**
          * Map of Maps.
@@ -761,19 +761,19 @@ public class StockOptionVest
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_MAPOFMAPS.equals(pField)) {
                 return theMapOfMaps;
             }
 
             /* Unknown */
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         @Override

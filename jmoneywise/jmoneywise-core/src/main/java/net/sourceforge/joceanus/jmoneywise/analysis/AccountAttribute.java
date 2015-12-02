@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 
 /**
  * AccountAttribute enumeration.
@@ -121,14 +121,14 @@ public enum AccountAttribute implements BucketAttribute {
     }
 
     @Override
-    public DataType getDataType() {
+    public MetisDataType getDataType() {
         switch (this) {
             case DEPOSITRATE:
-                return DataType.RATE;
+                return MetisDataType.RATE;
             case EXCHANGERATE:
-                return DataType.RATIO;
+                return MetisDataType.RATIO;
             case MATURITY:
-                return DataType.DATEDAY;
+                return MetisDataType.DATEDAY;
             case VALUATION:
             case FOREIGNVALUE:
             case LOCALVALUE:
@@ -138,7 +138,7 @@ public enum AccountAttribute implements BucketAttribute {
             case SPEND:
             case BADDEBT:
             default:
-                return DataType.MONEY;
+                return MetisDataType.MONEY;
         }
     }
 }

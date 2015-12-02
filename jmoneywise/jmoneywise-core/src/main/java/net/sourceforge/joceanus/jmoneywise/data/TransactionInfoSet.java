@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Currency;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldRequired;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
@@ -57,17 +57,17 @@ public class TransactionInfoSet
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.TRANSACTION_INFOSET.getValue(), DataInfoSet.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDataResource.TRANSACTION_INFOSET.getValue(), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, TransactionInfoClass> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, TransactionInfoClass.class);
+    private static final Map<MetisField, TransactionInfoClass> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, TransactionInfoClass.class);
 
     /**
      * Reverse FieldSet map.
      */
-    private static final Map<TransactionInfoClass, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, TransactionInfoClass.class);
+    private static final Map<TransactionInfoClass, MetisField> REVERSE_FIELDMAP = MetisFields.reverseFieldMap(FIELDSET_MAP, TransactionInfoClass.class);
 
     /**
      * Bad Credit Date Error Text.
@@ -88,12 +88,12 @@ public class TransactionInfoSet
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle InfoSet fields */
         TransactionInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
@@ -130,7 +130,7 @@ public class TransactionInfoSet
         /* Return the value */
         return (myValue != null)
                                 ? myValue
-                                : JDataFieldValue.SKIP;
+                                : MetisFieldValue.SKIP;
     }
 
     /**
@@ -138,7 +138,7 @@ public class TransactionInfoSet
      * @param pField the field
      * @return the class
      */
-    public static TransactionInfoClass getClassForField(final JDataField pField) {
+    public static TransactionInfoClass getClassForField(final MetisField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -148,7 +148,7 @@ public class TransactionInfoSet
      * @param pClass the class
      * @return the field
      */
-    public static JDataField getFieldForClass(final TransactionInfoClass pClass) {
+    public static MetisField getFieldForClass(final TransactionInfoClass pClass) {
         /* Look up field in map */
         return REVERSE_FIELDMAP.get(pClass);
     }
@@ -185,15 +185,15 @@ public class TransactionInfoSet
      * @param pField the infoSet field
      * @return the status
      */
-    public JDataFieldRequired isFieldRequired(final JDataField pField) {
+    public MetisFieldRequired isFieldRequired(final MetisField pField) {
         TransactionInfoClass myClass = getClassForField(pField);
         return myClass == null
-                              ? JDataFieldRequired.NOTALLOWED
+                              ? MetisFieldRequired.NOTALLOWED
                               : isClassRequired(myClass);
     }
 
     @Override
-    public JDataFieldRequired isClassRequired(final TransactionInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final TransactionInfoClass pClass) {
         /* Access details about the Transaction */
         Transaction myTransaction = getOwner();
         TransactionAsset myAccount = myTransaction.getAccount();
@@ -203,7 +203,7 @@ public class TransactionInfoSet
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
-            return JDataFieldRequired.NOTALLOWED;
+            return MetisFieldRequired.NOTALLOWED;
         }
         TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
 
@@ -213,26 +213,26 @@ public class TransactionInfoSet
             case REFERENCE:
             case COMMENTS:
             case TRANSTAG:
-                return JDataFieldRequired.CANEXIST;
+                return MetisFieldRequired.CANEXIST;
 
                 /* NatInsurance and benefit can only occur on salary */
             case NATINSURANCE:
             case DEEMEDBENEFIT:
                 return (myClass == TransactionCategoryClass.TAXEDINCOME)
-                                                                        ? JDataFieldRequired.CANEXIST
-                                                                        : JDataFieldRequired.NOTALLOWED;
+                                                                        ? MetisFieldRequired.CANEXIST
+                                                                        : MetisFieldRequired.NOTALLOWED;
 
                 /* Credit amount and date are only available for transfer */
             case CREDITDATE:
                 return (myClass == TransactionCategoryClass.TRANSFER)
-                                                                     ? JDataFieldRequired.CANEXIST
-                                                                     : JDataFieldRequired.NOTALLOWED;
+                                                                     ? MetisFieldRequired.CANEXIST
+                                                                     : MetisFieldRequired.NOTALLOWED;
 
                 /* Charity donation is only available for interest */
             case CHARITYDONATION:
                 return (myClass == TransactionCategoryClass.INTEREST)
-                                                                     ? JDataFieldRequired.CANEXIST
-                                                                     : JDataFieldRequired.NOTALLOWED;
+                                                                     ? MetisFieldRequired.CANEXIST
+                                                                     : MetisFieldRequired.NOTALLOWED;
 
                 /* Handle Tax Credit */
             case TAXCREDIT:
@@ -259,8 +259,8 @@ public class TransactionInfoSet
                 return ((myClass == TransactionCategoryClass.TRANSFER)
                         && (myAccount instanceof SecurityHolding)
                         && (((SecurityHolding) myAccount).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND)))
-                                                                                                                     ? JDataFieldRequired.MUSTEXIST
-                                                                                                                     : JDataFieldRequired.NOTALLOWED;
+                                                                                                                     ? MetisFieldRequired.MUSTEXIST
+                                                                                                                     : MetisFieldRequired.NOTALLOWED;
 
                 /* Handle ThirdParty separately */
             case THIRDPARTY:
@@ -272,7 +272,7 @@ public class TransactionInfoSet
             case PENSION:
             case XCHANGERATE:
             default:
-                return JDataFieldRequired.NOTALLOWED;
+                return MetisFieldRequired.NOTALLOWED;
         }
     }
 
@@ -302,32 +302,32 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    protected static JDataFieldRequired isTaxCreditClassRequired(final TransactionAsset pDebit,
+    protected static MetisFieldRequired isTaxCreditClassRequired(final TransactionAsset pDebit,
                                                                  final TransactionCategoryClass pClass) {
         /* Switch on class */
         switch (pClass) {
             case TAXEDINCOME:
             case BENEFITINCOME:
-                return JDataFieldRequired.MUSTEXIST;
+                return MetisFieldRequired.MUSTEXIST;
             case GRANTINCOME:
             case LOANINTERESTCHARGED:
-                return JDataFieldRequired.CANEXIST;
+                return MetisFieldRequired.CANEXIST;
             case INTEREST:
             case LOYALTYBONUS:
                 return (pDebit.isTaxFree() || pDebit.isGross())
-                                                               ? JDataFieldRequired.NOTALLOWED
-                                                               : JDataFieldRequired.MUSTEXIST;
+                                                               ? MetisFieldRequired.NOTALLOWED
+                                                               : MetisFieldRequired.MUSTEXIST;
             case DIVIDEND:
                 return pDebit.isTaxFree()
-                                         ? JDataFieldRequired.NOTALLOWED
-                                         : JDataFieldRequired.MUSTEXIST;
+                                         ? MetisFieldRequired.NOTALLOWED
+                                         : MetisFieldRequired.MUSTEXIST;
             case TRANSFER:
                 return (pDebit instanceof SecurityHolding)
                        && (((SecurityHolding) pDebit).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND))
-                                                                                                                ? JDataFieldRequired.MUSTEXIST
-                                                                                                                : JDataFieldRequired.NOTALLOWED;
+                                                                                                                ? MetisFieldRequired.MUSTEXIST
+                                                                                                                : MetisFieldRequired.NOTALLOWED;
             default:
-                return JDataFieldRequired.NOTALLOWED;
+                return MetisFieldRequired.NOTALLOWED;
         }
     }
 
@@ -337,19 +337,19 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    protected static JDataFieldRequired isDebitUnitsClassRequired(final TransactionAsset pDebit,
+    protected static MetisFieldRequired isDebitUnitsClassRequired(final TransactionAsset pDebit,
                                                                   final TransactionCategoryClass pClass) {
         /* Debit Asset must be security holding */
         if (!(pDebit instanceof SecurityHolding)) {
-            return JDataFieldRequired.NOTALLOWED;
+            return MetisFieldRequired.NOTALLOWED;
         }
         switch (pClass) {
             case TRANSFER:
             case UNITSADJUST:
             case STOCKDEMERGER:
-                return JDataFieldRequired.CANEXIST;
+                return MetisFieldRequired.CANEXIST;
             default:
-                return JDataFieldRequired.NOTALLOWED;
+                return MetisFieldRequired.NOTALLOWED;
         }
     }
 
@@ -359,11 +359,11 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    protected static JDataFieldRequired isCreditUnitsClassRequired(final TransactionAsset pCredit,
+    protected static MetisFieldRequired isCreditUnitsClassRequired(final TransactionAsset pCredit,
                                                                    final TransactionCategoryClass pClass) {
         /* Credit Asset must be security holding */
         if (!(pCredit instanceof SecurityHolding)) {
-            return JDataFieldRequired.NOTALLOWED;
+            return MetisFieldRequired.NOTALLOWED;
         }
         switch (pClass) {
             case STOCKRIGHTSISSUE:
@@ -371,14 +371,14 @@ public class TransactionInfoSet
             case SECURITYREPLACE:
             case STOCKTAKEOVER:
             case STOCKSPLIT:
-                return JDataFieldRequired.MUSTEXIST;
+                return MetisFieldRequired.MUSTEXIST;
             case TRANSFER:
             case INHERITED:
             case UNITSADJUST:
             case DIVIDEND:
-                return JDataFieldRequired.CANEXIST;
+                return MetisFieldRequired.CANEXIST;
             default:
-                return JDataFieldRequired.NOTALLOWED;
+                return MetisFieldRequired.NOTALLOWED;
         }
     }
 
@@ -387,15 +387,15 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    protected static JDataFieldRequired isDilutionClassRequired(final TransactionCategoryClass pClass) {
+    protected static MetisFieldRequired isDilutionClassRequired(final TransactionCategoryClass pClass) {
         /* Dilution is only required for stock split/rights/deMerger */
         switch (pClass) {
             case STOCKSPLIT:
-                return JDataFieldRequired.MUSTEXIST;
+                return MetisFieldRequired.MUSTEXIST;
             case STOCKDEMERGER:
-                return JDataFieldRequired.CANEXIST;
+                return MetisFieldRequired.CANEXIST;
             default:
-                return JDataFieldRequired.NOTALLOWED;
+                return MetisFieldRequired.NOTALLOWED;
         }
     }
 
@@ -405,16 +405,16 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    protected static JDataFieldRequired isThirdPartyClassRequired(final Transaction pTransaction,
+    protected static MetisFieldRequired isThirdPartyClassRequired(final Transaction pTransaction,
                                                                   final TransactionCategoryClass pClass) {
         /* ThirdParty is possible only for StockTakeOver */
         switch (pClass) {
             case STOCKTAKEOVER:
                 return pTransaction.getAmount().isNonZero()
-                                                           ? JDataFieldRequired.MUSTEXIST
-                                                           : JDataFieldRequired.NOTALLOWED;
+                                                           ? MetisFieldRequired.MUSTEXIST
+                                                           : MetisFieldRequired.NOTALLOWED;
             default:
-                return JDataFieldRequired.NOTALLOWED;
+                return MetisFieldRequired.NOTALLOWED;
         }
     }
 
@@ -424,17 +424,17 @@ public class TransactionInfoSet
      * @param pPartner the partner
      * @return the status
      */
-    protected static JDataFieldRequired isPartnerAmountClassRequired(final TransactionAsset pAccount,
+    protected static MetisFieldRequired isPartnerAmountClassRequired(final TransactionAsset pAccount,
                                                                      final TransactionAsset pPartner) {
         /* If Partner currency is null or the same as Account then Partner amount is not allowed */
         AssetCurrency myCurrency = pAccount.getAssetCurrency();
         AssetCurrency myPartnerCurrency = pPartner.getAssetCurrency();
         if ((myCurrency == null) || (myPartnerCurrency == null)) {
-            return JDataFieldRequired.NOTALLOWED;
+            return MetisFieldRequired.NOTALLOWED;
         }
-        return Difference.isEqual(myCurrency, myPartnerCurrency)
-                                                                ? JDataFieldRequired.NOTALLOWED
-                                                                : JDataFieldRequired.MUSTEXIST;
+        return MetisDifference.isEqual(myCurrency, myPartnerCurrency)
+                                                                ? MetisFieldRequired.NOTALLOWED
+                                                                : MetisFieldRequired.MUSTEXIST;
     }
 
     /**
@@ -456,19 +456,19 @@ public class TransactionInfoSet
                                                         : getInfo(myClass);
 
             /* Determine requirements for class */
-            JDataFieldRequired myState = isClassRequired(myClass);
+            MetisFieldRequired myState = isClassRequired(myClass);
 
             /* If the field is missing */
             if (!isExisting) {
                 /* Handle required field missing */
-                if (myState == JDataFieldRequired.MUSTEXIST) {
+                if (myState == MetisFieldRequired.MUSTEXIST) {
                     myTransaction.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
                 }
                 continue;
             }
 
             /* If field is not allowed */
-            if (myState == JDataFieldRequired.NOTALLOWED) {
+            if (myState == MetisFieldRequired.NOTALLOWED) {
                 myTransaction.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
                 continue;
             }

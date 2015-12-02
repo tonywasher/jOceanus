@@ -33,8 +33,8 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldElement;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
@@ -103,7 +103,7 @@ public class PayeeAnalysisSelect
         theEventManager = new TethysEventManager();
 
         /* Create the label */
-        JLabel myLabel = new JLabel(NLS_PAYEE + JFieldElement.STR_COLON);
+        JLabel myLabel = new JLabel(NLS_PAYEE + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -353,7 +353,7 @@ public class PayeeAnalysisSelect
          */
         private boolean setPayee(final PayeeBucket pPayee) {
             /* Adjust the selected payee */
-            if (!Difference.isEqual(pPayee, thePayee)) {
+            if (!MetisDifference.isEqual(pPayee, thePayee)) {
                 setThePayee(pPayee);
                 return true;
             }

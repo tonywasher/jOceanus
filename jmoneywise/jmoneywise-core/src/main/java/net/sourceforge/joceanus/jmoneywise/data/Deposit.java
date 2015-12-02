@@ -24,15 +24,15 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EditState;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -76,37 +76,37 @@ public class Deposit
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
 
     /**
      * AccountCategory Field Id.
      */
-    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.DEPOSITCATEGORY.getItemName());
+    public static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.DEPOSITCATEGORY.getItemName());
 
     /**
      * Parent Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
+    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
 
     /**
      * Currency Field Id.
      */
-    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
+    public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * isGross Field Id.
      */
-    public static final JDataField FIELD_GROSS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSIT_GROSS.getValue());
+    public static final MetisField FIELD_GROSS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSIT_GROSS.getValue());
 
     /**
      * isTaxFree Field Id.
      */
-    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_TAXFREE.getValue());
+    public static final MetisField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_TAXFREE.getValue());
 
     /**
      * DepositInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    private static final MetisField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * New Account name.
@@ -187,7 +187,7 @@ public class Deposit
         super(pList, pValues);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -259,12 +259,12 @@ public class Deposit
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_CATEGORY.equals(pField)) {
             return true;
@@ -287,12 +287,12 @@ public class Deposit
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
                               ? theInfoSet
-                              : JDataFieldValue.SKIP;
+                              : MetisFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -458,7 +458,7 @@ public class Deposit
      * @param pValueSet the valueSet
      * @return the Parent
      */
-    public static Payee getParent(final ValueSet pValueSet) {
+    public static Payee getParent(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PARENT, Payee.class);
     }
 
@@ -467,7 +467,7 @@ public class Deposit
      * @param pValueSet the valueSet
      * @return the Deposit Category
      */
-    public static DepositCategory getCategory(final ValueSet pValueSet) {
+    public static DepositCategory getCategory(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CATEGORY, DepositCategory.class);
     }
 
@@ -476,7 +476,7 @@ public class Deposit
      * @param pValueSet the valueSet
      * @return the PortfolioCurrency
      */
-    public static AssetCurrency getCurrency(final ValueSet pValueSet) {
+    public static AssetCurrency getCurrency(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
     }
 
@@ -485,7 +485,7 @@ public class Deposit
      * @param pValueSet the valueSet
      * @return true/false
      */
-    public static Boolean isGross(final ValueSet pValueSet) {
+    public static Boolean isGross(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_GROSS, Boolean.class);
     }
 
@@ -494,7 +494,7 @@ public class Deposit
      * @param pValueSet the valueSet
      * @return true/false
      */
-    public static Boolean isTaxFree(final ValueSet pValueSet) {
+    public static Boolean isTaxFree(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_TAXFREE, Boolean.class);
     }
 
@@ -597,12 +597,12 @@ public class Deposit
     }
 
     @Override
-    public DataState getState() {
+    public MetisDataState getState() {
         /* Pop history for self */
-        DataState myState = super.getState();
+        MetisDataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && useInfoSet) {
+        if ((myState == MetisDataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -612,12 +612,12 @@ public class Deposit
     }
 
     @Override
-    public EditState getEditState() {
+    public MetisEditState getEditState() {
         /* Pop history for self */
-        EditState myState = super.getEditState();
+        MetisEditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && useInfoSet) {
+        if ((myState == MetisEditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -681,13 +681,13 @@ public class Deposit
     }
 
     @Override
-    public Difference fieldChanged(final JDataField pField) {
+    public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         AccountInfoClass myClass = DepositInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : Difference.IDENTICAL;
+                              : MetisDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -829,7 +829,7 @@ public class Deposit
             && (pThat instanceof Deposit)) {
             /* Check the category */
             Deposit myThat = (Deposit) pThat;
-            iDiff = Difference.compareObject(getCategory(), myThat.getCategory());
+            iDiff = MetisDifference.compareObject(getCategory(), myThat.getCategory());
             if (iDiff == 0) {
                 /* Check the underlying base */
                 iDiff = super.compareAsset(myThat);
@@ -847,7 +847,7 @@ public class Deposit
 
         /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        ValueSet myValues = getValueSet();
+        MetisValueSet myValues = getValueSet();
         resolveDataLink(FIELD_CATEGORY, myData.getDepositCategories());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
         resolveDataLink(FIELD_PARENT, myData.getPayees());
@@ -1139,27 +1139,27 @@ public class Deposit
         applyBasicChanges(myDeposit);
 
         /* Update the category if required */
-        if (!Difference.isEqual(getCategory(), myDeposit.getCategory())) {
+        if (!MetisDifference.isEqual(getCategory(), myDeposit.getCategory())) {
             setValueCategory(myDeposit.getCategory());
         }
 
         /* Update the parent if required */
-        if (!Difference.isEqual(getParent(), myDeposit.getParent())) {
+        if (!MetisDifference.isEqual(getParent(), myDeposit.getParent())) {
             setValueParent(myDeposit.getParent());
         }
 
         /* Update the deposit currency if required */
-        if (!Difference.isEqual(getAssetCurrency(), myDeposit.getAssetCurrency())) {
+        if (!MetisDifference.isEqual(getAssetCurrency(), myDeposit.getAssetCurrency())) {
             setValueCurrency(myDeposit.getAssetCurrency());
         }
 
         /* Update the gross status if required */
-        if (!Difference.isEqual(isGross(), myDeposit.isGross())) {
+        if (!MetisDifference.isEqual(isGross(), myDeposit.isGross())) {
             setValueGross(myDeposit.isGross());
         }
 
         /* Update the taxFree status if required */
-        if (!Difference.isEqual(isTaxFree(), myDeposit.isTaxFree())) {
+        if (!MetisDifference.isEqual(isTaxFree(), myDeposit.isTaxFree())) {
             setValueTaxFree(myDeposit.isTaxFree());
         }
 
@@ -1182,7 +1182,7 @@ public class Deposit
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * The DepositInfo List.
@@ -1211,7 +1211,7 @@ public class Deposit
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -1221,7 +1221,7 @@ public class Deposit
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return Deposit.FIELD_DEFS;
         }
 
@@ -1404,16 +1404,16 @@ public class Deposit
      * The dataMap class.
      */
     protected static class DepositDataMap
-            implements DataMapItem<Deposit, MoneyWiseDataType>, JDataContents {
+            implements DataMapItem<Deposit, MoneyWiseDataType>, MetisDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
 
         /**
          * UnderlyingMap Field Id.
          */
-        public static final JDataField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
+        public static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
                 .getValue());
 
         /**
@@ -1429,19 +1429,19 @@ public class Deposit
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_UNDERLYINGMAP.equals(pField)) {
                 return theUnderlyingMap;
             }
 
             /* Unknown */
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         @Override

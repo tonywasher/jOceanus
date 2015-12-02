@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jthemis.scm.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent.ScmComponentList;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
  * @param <R> the data type
  */
 public abstract class ScmRepository<R extends ScmRepository<R>>
-        implements JDataContents, Comparable<R> {
+        implements MetisDataContents, Comparable<R> {
     /**
      * The Hash Prime.
      */
@@ -49,32 +49,32 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ScmRepository.class.getSimpleName());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(ScmRepository.class.getSimpleName());
 
     /**
      * Name field id.
      */
-    private static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+    private static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
 
     /**
      * Components field id.
      */
-    private static final JDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Components");
+    private static final MetisField FIELD_COMP = FIELD_DEFS.declareLocalField("Components");
 
     /**
      * BranchMap field id.
      */
-    private static final JDataField FIELD_BRNMAP = FIELD_DEFS.declareLocalField("BranchMap");
+    private static final MetisField FIELD_BRNMAP = FIELD_DEFS.declareLocalField("BranchMap");
 
     /**
      * TagMap field id.
      */
-    private static final JDataField FIELD_TAGMAP = FIELD_DEFS.declareLocalField("TagMap");
+    private static final MetisField FIELD_TAGMAP = FIELD_DEFS.declareLocalField("TagMap");
 
     /**
      * The Preference Manager.
      */
-    private final PreferenceManager thePreferenceMgr;
+    private final MetisPreferenceManager thePreferenceMgr;
 
     /**
      * Repository Name.
@@ -101,7 +101,7 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
      * @param pPreferenceMgr the preference manager
      * @throws OceanusException on error
      */
-    public ScmRepository(final PreferenceManager pPreferenceMgr) throws OceanusException {
+    public ScmRepository(final MetisPreferenceManager pPreferenceMgr) throws OceanusException {
         /* Store the preference manager */
         thePreferenceMgr = pPreferenceMgr;
 
@@ -111,7 +111,7 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_NAME.equals(pField)) {
             return theName;
@@ -127,7 +127,7 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
         }
 
         /* Unknown */
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**
@@ -142,7 +142,7 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
      * Obtain the preference manager.
      * @return the preference manager
      */
-    public PreferenceManager getPreferenceMgr() {
+    public MetisPreferenceManager getPreferenceMgr() {
         return thePreferenceMgr;
     }
 

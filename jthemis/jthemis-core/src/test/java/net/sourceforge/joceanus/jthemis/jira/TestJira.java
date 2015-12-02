@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jthemis.jira;
 
 import java.util.Properties;
 
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer;
 
@@ -48,7 +48,7 @@ public class TestJira {
             myLogProp.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
             PropertyConfigurator.configure(myLogProp);
 
-            JiraServer myServer = new JiraServer(new PreferenceManager());
+            JiraServer myServer = new JiraServer(new MetisPreferenceManager());
             myServer.getIssue("FIN-47");
             System.exit(0);
         } catch (OceanusException e) {

@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 
 /**
  * SecurityAttribute enumeration.
@@ -181,14 +181,14 @@ public enum SecurityAttribute implements BucketAttribute {
     }
 
     @Override
-    public DataType getDataType() {
+    public MetisDataType getDataType() {
         switch (this) {
             case UNITS:
-                return DataType.UNITS;
+                return MetisDataType.UNITS;
             case PRICE:
-                return DataType.PRICE;
+                return MetisDataType.PRICE;
             case EXCHANGERATE:
-                return DataType.RATIO;
+                return MetisDataType.RATIO;
             case VALUATION:
             case FOREIGNVALUE:
             case VALUEDELTA:
@@ -208,7 +208,7 @@ public enum SecurityAttribute implements BucketAttribute {
             case MARKETPROFIT:
             case PROFIT:
             default:
-                return DataType.MONEY;
+                return MetisDataType.MONEY;
         }
     }
 }

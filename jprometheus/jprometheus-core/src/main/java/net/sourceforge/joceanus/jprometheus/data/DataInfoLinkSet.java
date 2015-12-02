@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -50,7 +50,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
     /**
      * The local fields.
      */
-    private final JDataFields theLocalFields = new JDataFields(DataInfoLinkSet.class.getSimpleName());
+    private final MetisFields theLocalFields = new MetisFields(DataInfoLinkSet.class.getSimpleName());
 
     /**
      * The number of fields.
@@ -122,22 +122,22 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return (theLocalFields == null)
                                         ? DataInfo.FIELD_DEFS
                                         : theLocalFields;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle out of range */
         int iIndex = pField.getIndex();
         if ((iIndex < 0)
             || iIndex >= theNumFields) {
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
         if (iIndex >= theLinks.size()) {
-            return JDataFieldValue.SKIP;
+            return MetisFieldValue.SKIP;
         }
 
         /* Access the element */
@@ -315,7 +315,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
      * Determine whether any item has changed in this edit view.
      * @return <code>true/false</code>
      */
-    public Difference fieldChanged() {
+    public MetisDifference fieldChanged() {
         /* Loop through the list */
         Iterator<T> myIterator = theLinks.iterator();
         while (myIterator.hasNext()) {
@@ -323,12 +323,12 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
 
             /* Notify if the item has changed */
             if (myLink.hasHistory()) {
-                return Difference.DIFFERENT;
+                return MetisDifference.DIFFERENT;
             }
         }
 
         /* No change has occurred */
-        return Difference.IDENTICAL;
+        return MetisDifference.IDENTICAL;
     }
 
     @Override
@@ -408,9 +408,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
      * @return the State
      */
     @Override
-    public DataState getState() {
+    public MetisDataState getState() {
         /* Default to clean */
-        DataState myState = DataState.CLEAN;
+        MetisDataState myState = MetisDataState.CLEAN;
 
         /* Loop through each existing value */
         Iterator<T> myIterator = iterator();
@@ -418,9 +418,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
             T myValue = myIterator.next();
 
             /* If we have changes */
-            if (myValue.getState() != DataState.CLEAN) {
+            if (myValue.getState() != MetisDataState.CLEAN) {
                 /* Note that new state is changed */
-                return DataState.CHANGED;
+                return MetisDataState.CHANGED;
             }
         }
 

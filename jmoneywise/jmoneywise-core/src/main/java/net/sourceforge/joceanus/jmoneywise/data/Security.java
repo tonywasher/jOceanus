@@ -26,15 +26,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EditState;
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedString;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedString;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -84,32 +84,32 @@ public class Security
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
 
     /**
      * SecurityType Field Id.
      */
-    public static final JDataField FIELD_SECTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.SECURITYTYPE.getItemName());
+    public static final MetisField FIELD_SECTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.SECURITYTYPE.getItemName());
 
     /**
      * Parent Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
+    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
 
     /**
      * Symbol Field Id.
      */
-    public static final JDataField FIELD_SYMBOL = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOL.getValue());
+    public static final MetisField FIELD_SYMBOL = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOL.getValue());
 
     /**
      * Currency Field Id.
      */
-    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
+    public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * SecurityInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    private static final MetisField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * New Account name.
@@ -236,12 +236,12 @@ public class Security
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_SECTYPE.equals(pField)) {
             return true;
@@ -261,12 +261,12 @@ public class Security
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
                               ? theInfoSet
-                              : JDataFieldValue.SKIP;
+                              : MetisFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -382,7 +382,7 @@ public class Security
      * Obtain Encrypted Symbol Field.
      * @return the Field
      */
-    private EncryptedString getSymbolField() {
+    private MetisEncryptedString getSymbolField() {
         return getSymbolField(getValueSet());
     }
 
@@ -396,7 +396,7 @@ public class Security
      * @param pValueSet the valueSet
      * @return the Parent
      */
-    public static Payee getParent(final ValueSet pValueSet) {
+    public static Payee getParent(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PARENT, Payee.class);
     }
 
@@ -405,7 +405,7 @@ public class Security
      * @param pValueSet the valueSet
      * @return the SecurityType
      */
-    public static SecurityType getSecurityType(final ValueSet pValueSet) {
+    public static SecurityType getSecurityType(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_SECTYPE, SecurityType.class);
     }
 
@@ -414,7 +414,7 @@ public class Security
      * @param pValueSet the valueSet
      * @return the symbol
      */
-    public static String getSymbol(final EncryptedValueSet pValueSet) {
+    public static String getSymbol(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_SYMBOL, String.class);
     }
 
@@ -423,7 +423,7 @@ public class Security
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getSymbolBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getSymbolBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_SYMBOL);
     }
 
@@ -432,8 +432,8 @@ public class Security
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static EncryptedString getSymbolField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_SYMBOL, EncryptedString.class);
+    private static MetisEncryptedString getSymbolField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_SYMBOL, MetisEncryptedString.class);
     }
 
     /**
@@ -441,7 +441,7 @@ public class Security
      * @param pValueSet the valueSet
      * @return the SecurityCurrency
      */
-    public static AssetCurrency getAssetCurrency(final ValueSet pValueSet) {
+    public static AssetCurrency getAssetCurrency(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
     }
 
@@ -515,7 +515,7 @@ public class Security
      * Set symbol value.
      * @param pValue the value
      */
-    private void setValueSymbol(final EncryptedString pValue) {
+    private void setValueSymbol(final MetisEncryptedString pValue) {
         getValueSet().setValue(FIELD_SYMBOL, pValue);
     }
 
@@ -554,12 +554,12 @@ public class Security
     }
 
     @Override
-    public DataState getState() {
+    public MetisDataState getState() {
         /* Pop history for self */
-        DataState myState = super.getState();
+        MetisDataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && useInfoSet) {
+        if ((myState == MetisDataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -569,12 +569,12 @@ public class Security
     }
 
     @Override
-    public EditState getEditState() {
+    public MetisEditState getEditState() {
         /* Pop history for self */
-        EditState myState = super.getEditState();
+        MetisEditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && useInfoSet) {
+        if ((myState == MetisEditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -638,13 +638,13 @@ public class Security
     }
 
     @Override
-    public Difference fieldChanged(final JDataField pField) {
+    public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : Difference.IDENTICAL;
+                              : MetisDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -794,7 +794,7 @@ public class Security
             && (pThat instanceof Security)) {
             /* Check the security type */
             Security myThat = (Security) pThat;
-            iDiff = Difference.compareObject(getSecurityType(), myThat.getSecurityType());
+            iDiff = MetisDifference.compareObject(getSecurityType(), myThat.getSecurityType());
             if (iDiff == 0) {
                 /* Check the underlying base */
                 iDiff = super.compareAsset(myThat);
@@ -1031,22 +1031,22 @@ public class Security
         applyBasicChanges(mySecurity);
 
         /* Update the category type if required */
-        if (!Difference.isEqual(getSecurityType(), mySecurity.getSecurityType())) {
+        if (!MetisDifference.isEqual(getSecurityType(), mySecurity.getSecurityType())) {
             setValueType(mySecurity.getSecurityType());
         }
 
         /* Update the parent if required */
-        if (!Difference.isEqual(getParent(), mySecurity.getParent())) {
+        if (!MetisDifference.isEqual(getParent(), mySecurity.getParent())) {
             setValueParent(mySecurity.getParent());
         }
 
         /* Update the symbol if required */
-        if (!Difference.isEqual(getSymbol(), mySecurity.getSymbol())) {
+        if (!MetisDifference.isEqual(getSymbol(), mySecurity.getSymbol())) {
             setValueSymbol(mySecurity.getSymbolField());
         }
 
         /* Update the security currency if required */
-        if (!Difference.isEqual(getAssetCurrency(), mySecurity.getAssetCurrency())) {
+        if (!MetisDifference.isEqual(getAssetCurrency(), mySecurity.getAssetCurrency())) {
             setValueCurrency(mySecurity.getAssetCurrency());
         }
 
@@ -1069,7 +1069,7 @@ public class Security
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * The SecurityInfo List.
@@ -1098,7 +1098,7 @@ public class Security
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -1108,7 +1108,7 @@ public class Security
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return Security.FIELD_DEFS;
         }
 
@@ -1298,17 +1298,17 @@ public class Security
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAMAP_NAME.getValue(), DataInstanceMap.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue(), DataInstanceMap.FIELD_DEFS);
 
         /**
          * SymbolMap Field Id.
          */
-        private static final JDataField FIELD_SYMMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOLMAP.getValue());
+        private static final MetisField FIELD_SYMMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOLMAP.getValue());
 
         /**
          * SymbolCountMap Field Id.
          */
-        private static final JDataField FIELD_SYMCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOLCOUNTMAP.getValue());
+        private static final MetisField FIELD_SYMCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOLCOUNTMAP.getValue());
 
         /**
          * Map of symbol counts.
@@ -1330,12 +1330,12 @@ public class Security
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_SYMMAP.equals(pField)) {
                 return theSymbolMap;

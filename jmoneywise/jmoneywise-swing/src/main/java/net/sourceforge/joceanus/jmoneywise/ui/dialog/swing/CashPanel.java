@@ -35,11 +35,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
@@ -83,7 +83,7 @@ public class CashPanel
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<Cash> theFieldSet;
+    private final transient MetisFieldSet<Cash> theFieldSet;
 
     /**
      * CashCategory Button Field.
@@ -116,7 +116,7 @@ public class CashPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public CashPanel(final JFieldManager pFieldMgr,
+    public CashPanel(final MetisFieldManager pFieldMgr,
                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                      final ErrorPanel pError) {
         /* Initialise the panel */
@@ -182,8 +182,8 @@ public class CashPanel
         restrictField(myClosedButton, Cash.NAMELEN);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(Cash.FIELD_NAME, DataType.STRING, myName);
-        theFieldSet.addFieldElement(Cash.FIELD_DESC, DataType.STRING, myDesc);
+        theFieldSet.addFieldElement(Cash.FIELD_NAME, MetisDataType.STRING, myName);
+        theFieldSet.addFieldElement(Cash.FIELD_DESC, MetisDataType.STRING, myDesc);
         theFieldSet.addFieldElement(Cash.FIELD_CATEGORY, CashCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Cash.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
         theFieldSet.addFieldElement(Cash.FIELD_CLOSED, Boolean.class, myClosedButton);
@@ -222,7 +222,7 @@ public class CashPanel
         /* Build the FieldSet */
         theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), TransactionCategory.class, theAutoExpenseButton);
         theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), Payee.class, theAutoPayeeButton);
-        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), DataType.MONEY, myOpening);
+        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
 
         /* Create the extras panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -249,7 +249,7 @@ public class CashPanel
         JScrollPane myScroll = new JScrollPane(myNotes);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
+        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -301,13 +301,13 @@ public class CashPanel
         theFieldSet.setVisibility(Cash.FIELD_DESC, bShowDesc);
 
         /* AutoExpense/Payee is hidden unless we are autoExpense */
-        JDataField myAutoExpenseField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE);
-        JDataField myAutoPayeeField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE);
+        MetisField myAutoExpenseField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE);
+        MetisField myAutoPayeeField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE);
         theFieldSet.setVisibility(myAutoExpenseField, isAutoExpense);
         theFieldSet.setVisibility(myAutoPayeeField, isAutoExpense);
 
         /* OpeningBalance is hidden if we are autoExpense */
-        JDataField myOpeningField = CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
+        MetisField myOpeningField = CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
         boolean bHasOpening = myCash.getOpeningBalance() != null;
         boolean bShowOpening = bIsChangeable || bHasOpening;
         theFieldSet.setVisibility(myOpeningField, !isAutoExpense && bShowOpening);
@@ -328,9 +328,9 @@ public class CashPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        JDataField myField = pUpdate.getField();
+        MetisField myField = pUpdate.getField();
         Cash myCash = getItem();
 
         /* Process updates */

@@ -24,15 +24,15 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EditState;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldRequired;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldRequired;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -79,17 +79,17 @@ public class Transaction
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, TransactionBase.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, TransactionBase.FIELD_DEFS);
 
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    public static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * EventInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    private static final MetisField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * Bad InfoSet Error Text.
@@ -178,7 +178,7 @@ public class Transaction
         super(pList, pValues);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -203,12 +203,12 @@ public class Transaction
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_DATE.equals(pField)) {
             return true;
@@ -219,12 +219,12 @@ public class Transaction
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
                               ? theInfoSet
-                              : JDataFieldValue.SKIP;
+                              : MetisFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -250,7 +250,7 @@ public class Transaction
      * @param pValueSet the valueSet
      * @return the Date
      */
-    public static TethysDate getDate(final ValueSet pValueSet) {
+    public static TethysDate getDate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DATE, TethysDate.class);
     }
 
@@ -438,12 +438,12 @@ public class Transaction
     }
 
     @Override
-    public DataState getState() {
+    public MetisDataState getState() {
         /* Pop history for self */
-        DataState myState = super.getState();
+        MetisDataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && useInfoSet) {
+        if ((myState == MetisDataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -453,12 +453,12 @@ public class Transaction
     }
 
     @Override
-    public EditState getEditState() {
+    public MetisEditState getEditState() {
         /* Pop history for self */
-        EditState myState = super.getEditState();
+        MetisEditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && useInfoSet) {
+        if ((myState == MetisEditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -522,13 +522,13 @@ public class Transaction
     }
 
     @Override
-    public Difference fieldChanged(final JDataField pField) {
+    public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         TransactionInfoClass myClass = TransactionInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : Difference.IDENTICAL;
+                              : MetisDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -592,7 +592,7 @@ public class Transaction
         }
 
         /* If the dates differ */
-        int iDiff = Difference.compareObject(getDate(), pThat.getDate());
+        int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -617,7 +617,7 @@ public class Transaction
      * @param pClass the infoSet class
      * @return the status
      */
-    public JDataFieldRequired isClassRequired(final TransactionInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final TransactionInfoClass pClass) {
         /* Check the class */
         return theInfoSet.isClassRequired(pClass);
     }
@@ -657,7 +657,7 @@ public class Transaction
         super.validate();
 
         /* Cannot have Credit and Debit if securities are identical */
-        if ((myCreditUnits != null) && (myDebitUnits != null) && (Difference.isEqual(myAccount, myPartner))) {
+        if ((myCreditUnits != null) && (myDebitUnits != null) && (MetisDifference.isEqual(myAccount, myPartner))) {
             addError(ERROR_CIRCULAR, TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS));
         }
 
@@ -976,7 +976,7 @@ public class Transaction
         pushHistory();
 
         /* Update the Date if required */
-        if (!Difference.isEqual(getDate(), myTrans.getDate())) {
+        if (!MetisDifference.isEqual(getDate(), myTrans.getDate())) {
             setValueDate(myTrans.getDate());
         }
 
@@ -995,7 +995,7 @@ public class Transaction
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * The TransactionInfo List.
@@ -1024,7 +1024,7 @@ public class Transaction
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -1034,7 +1034,7 @@ public class Transaction
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return Transaction.FIELD_DEFS;
         }
 

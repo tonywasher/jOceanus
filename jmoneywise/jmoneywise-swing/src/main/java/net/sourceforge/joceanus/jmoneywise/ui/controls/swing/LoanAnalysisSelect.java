@@ -35,8 +35,8 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldElement;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket;
@@ -128,8 +128,8 @@ public class LoanAnalysisSelect
         theEventManager = new TethysEventManager();
 
         /* Create the labels */
-        JLabel myCatLabel = new JLabel(NLS_CATEGORY + JFieldElement.STR_COLON);
-        JLabel myLoanLabel = new JLabel(NLS_LOAN + JFieldElement.STR_COLON);
+        JLabel myCatLabel = new JLabel(NLS_CATEGORY + MetisFieldElement.STR_COLON);
+        JLabel myLoanLabel = new JLabel(NLS_LOAN + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -266,7 +266,7 @@ public class LoanAnalysisSelect
             LoanBucket myBucket = myIterator.next();
 
             /* Return if correct category */
-            if (Difference.isEqual(pCategory, myBucket.getCategory())) {
+            if (MetisDifference.isEqual(pCategory, myBucket.getCategory())) {
                 return myBucket;
             }
         }
@@ -412,7 +412,7 @@ public class LoanAnalysisSelect
                 LoanBucket myBucket = myIterator.next();
 
                 /* Ignore if not the correct category */
-                if (!Difference.isEqual(myCategory, myBucket.getCategory())) {
+                if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
                     continue;
                 }
 
@@ -501,7 +501,7 @@ public class LoanAnalysisSelect
          */
         private boolean setLoan(final LoanBucket pLoan) {
             /* Adjust the selected loan */
-            if (!Difference.isEqual(pLoan, theLoan)) {
+            if (!MetisDifference.isEqual(pLoan, theLoan)) {
                 /* Set the Loan */
                 setTheLoan(pLoan);
                 return true;
@@ -530,7 +530,7 @@ public class LoanAnalysisSelect
          */
         private boolean setCategory(final LoanCategory pCategory) {
             /* Adjust the selected category */
-            if (!Difference.isEqual(pCategory, theCategory)) {
+            if (!MetisDifference.isEqual(pCategory, theCategory)) {
                 theCategory = pCategory;
                 theLoan = getFirstLoan(theCategory);
                 return true;

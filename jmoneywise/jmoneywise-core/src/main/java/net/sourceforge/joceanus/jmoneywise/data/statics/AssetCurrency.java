@@ -26,10 +26,10 @@ import java.text.DecimalFormatSymbols;
 import java.util.Currency;
 import java.util.Locale;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -58,12 +58,12 @@ public class AssetCurrency
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
     /**
      * Default Field Id.
      */
-    public static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField(StaticDataResource.CURRENCY_DEFAULT.getValue());
+    public static final MetisField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
     /**
      * Copy Constructor.
@@ -118,18 +118,18 @@ public class AssetCurrency
         if (myValue instanceof Boolean) {
             setValueDefault((Boolean) myValue);
         } else if (myValue instanceof String) {
-            JDataFormatter myFormatter = getDataSet().getDataFormatter();
+            MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
             setValueDefault(myFormatter.parseValue((String) myValue, Boolean.class));
         }
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_DEFAULT.equals(pField)) {
             return isDefault();
@@ -152,7 +152,7 @@ public class AssetCurrency
      * @param pValueSet the valueSet
      * @return true/false
      */
-    public static Boolean isDefault(final ValueSet pValueSet) {
+    public static Boolean isDefault(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DEFAULT, Boolean.class);
     }
 
@@ -219,7 +219,7 @@ public class AssetCurrency
         super.resolveDataSetLinks();
 
         /* Access Relevant lists */
-        ValueSet myValues = getValueSet();
+        MetisValueSet myValues = getValueSet();
 
         /* Adjust Default */
         Object myDefault = myValues.getValue(FIELD_DEFAULT);
@@ -295,7 +295,7 @@ public class AssetCurrency
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, StaticList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, StaticList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE account currency list.
@@ -314,7 +314,7 @@ public class AssetCurrency
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -324,7 +324,7 @@ public class AssetCurrency
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return AssetCurrency.FIELD_DEFS;
         }
 
@@ -518,12 +518,12 @@ public class AssetCurrency
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.STATICDATAMAP_NAME.getValue(), StaticDataMap.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.STATICDATAMAP_NAME.getValue(), StaticDataMap.FIELD_DEFS);
 
         /**
          * Default Field Id.
          */
-        public static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField(StaticDataResource.CURRENCY_DEFAULT.getValue());
+        public static final MetisField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
         /**
          * Default value.
@@ -542,12 +542,12 @@ public class AssetCurrency
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_DEFAULT.equals(pField)) {
                 return theDefault;

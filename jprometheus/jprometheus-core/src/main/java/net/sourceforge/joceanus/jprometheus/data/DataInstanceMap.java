@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 
 /**
  * Template for a Data Instance Map.
@@ -38,21 +38,21 @@ import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
  * @param <K> the instance key
  */
 public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, K>
-        implements DataMapItem<T, E>, JDataContents {
+        implements DataMapItem<T, E>, MetisDataContents {
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
 
     /**
      * NameMap Field Id.
      */
-    private static final JDataField FIELD_KEYS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAMAP_KEYS.getValue());
+    private static final MetisField FIELD_KEYS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAMAP_KEYS.getValue());
 
     /**
      * NameCountMap Field Id.
      */
-    private static final JDataField FIELD_KEYCOUNTS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAMAP_KEYCOUNTS.getValue());
+    private static final MetisField FIELD_KEYCOUNTS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAMAP_KEYCOUNTS.getValue());
 
     /**
      * Standard integer ONE.
@@ -79,12 +79,12 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_KEYS.equals(pField)) {
             return theKeyMap;
@@ -94,7 +94,7 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
         }
 
         /* Unknown */
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override

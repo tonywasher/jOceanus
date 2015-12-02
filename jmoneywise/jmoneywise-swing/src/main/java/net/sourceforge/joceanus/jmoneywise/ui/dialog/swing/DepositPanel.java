@@ -35,11 +35,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
@@ -87,7 +87,7 @@ public class DepositPanel
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<Deposit> theFieldSet;
+    private final transient MetisFieldSet<Deposit> theFieldSet;
 
     /**
      * DepositCategory Button Field.
@@ -130,7 +130,7 @@ public class DepositPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public DepositPanel(final JFieldManager pFieldMgr,
+    public DepositPanel(final MetisFieldManager pFieldMgr,
                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
                         final ErrorPanel pError) {
         /* Initialise the panel */
@@ -208,8 +208,8 @@ public class DepositPanel
         restrictField(myGrossButton, Deposit.NAMELEN);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(Deposit.FIELD_NAME, DataType.STRING, myName);
-        theFieldSet.addFieldElement(Deposit.FIELD_DESC, DataType.STRING, myDesc);
+        theFieldSet.addFieldElement(Deposit.FIELD_NAME, MetisDataType.STRING, myName);
+        theFieldSet.addFieldElement(Deposit.FIELD_DESC, MetisDataType.STRING, myDesc);
         theFieldSet.addFieldElement(Deposit.FIELD_CATEGORY, DepositCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Deposit.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Deposit.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
@@ -258,11 +258,11 @@ public class DepositPanel
         restrictField(myOpening, myWidth);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), DataType.DATEDAY, myMaturity);
-        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
-        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), DataType.CHARARRAY, myAccount);
-        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), DataType.CHARARRAY, myReference);
-        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), DataType.MONEY, myOpening);
+        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), MetisDataType.DATEDAY, myMaturity);
+        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
+        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
+        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
+        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
 
         /* Create the extras panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -291,7 +291,7 @@ public class DepositPanel
         JScrollPane myScroll = new JScrollPane(myNotes);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
+        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -366,14 +366,14 @@ public class DepositPanel
         theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
         boolean bHasOpening = myDeposit.getOpeningBalance() != null;
         boolean bShowOpening = bIsChangeable || bHasOpening;
-        JDataField myOpeningField = DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
+        MetisField myOpeningField = DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
         theFieldSet.setVisibility(myOpeningField, bShowOpening);
         boolean bShowNotes = isEditable || myDeposit.getNotes() != null;
         theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Maturity is only visible if the item is a bond */
         boolean bShowMaturity = DepositCategoryClass.BOND.equals(myDeposit.getCategoryClass());
-        JDataField myMaturityField = DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY);
+        MetisField myMaturityField = DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY);
         theFieldSet.setVisibility(myMaturityField, bShowMaturity);
         theFieldSet.setEditable(myMaturityField, isEditable && !bIsClosed);
 
@@ -395,9 +395,9 @@ public class DepositPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        JDataField myField = pUpdate.getField();
+        MetisField myField = pUpdate.getField();
         Deposit myDeposit = getItem();
 
         /* Process updates */

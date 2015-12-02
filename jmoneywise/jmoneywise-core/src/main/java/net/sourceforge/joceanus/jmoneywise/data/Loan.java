@@ -24,14 +24,14 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.DataState;
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EditState;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -73,27 +73,27 @@ public class Loan
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
 
     /**
      * LoanCategory Field Id.
      */
-    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.LOANCATEGORY.getItemName());
+    public static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.LOANCATEGORY.getItemName());
 
     /**
      * Parent Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
+    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
 
     /**
      * Currency Field Id.
      */
-    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
+    public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * PayeeInfoSet field Id.
      */
-    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    private static final MetisField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * New Account name.
@@ -204,12 +204,12 @@ public class Loan
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_CATEGORY.equals(pField)) {
             return true;
@@ -226,12 +226,12 @@ public class Loan
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
                               ? theInfoSet
-                              : JDataFieldValue.SKIP;
+                              : MetisFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -377,7 +377,7 @@ public class Loan
      * @param pValueSet the valueSet
      * @return the Parent
      */
-    public static Payee getParent(final ValueSet pValueSet) {
+    public static Payee getParent(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PARENT, Payee.class);
     }
 
@@ -386,7 +386,7 @@ public class Loan
      * @param pValueSet the valueSet
      * @return the LoanCategory
      */
-    public static LoanCategory getCategory(final ValueSet pValueSet) {
+    public static LoanCategory getCategory(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CATEGORY, LoanCategory.class);
     }
 
@@ -395,7 +395,7 @@ public class Loan
      * @param pValueSet the valueSet
      * @return the LoanCurrency
      */
-    public static AssetCurrency getAssetCurrency(final ValueSet pValueSet) {
+    public static AssetCurrency getAssetCurrency(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
     }
 
@@ -482,12 +482,12 @@ public class Loan
     }
 
     @Override
-    public DataState getState() {
+    public MetisDataState getState() {
         /* Pop history for self */
-        DataState myState = super.getState();
+        MetisDataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && useInfoSet) {
+        if ((myState == MetisDataState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -497,12 +497,12 @@ public class Loan
     }
 
     @Override
-    public EditState getEditState() {
+    public MetisEditState getEditState() {
         /* Pop history for self */
-        EditState myState = super.getEditState();
+        MetisEditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && useInfoSet) {
+        if ((myState == MetisEditState.CLEAN) && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -566,13 +566,13 @@ public class Loan
     }
 
     @Override
-    public Difference fieldChanged(final JDataField pField) {
+    public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         AccountInfoClass myClass = LoanInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : Difference.IDENTICAL;
+                              : MetisDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -703,7 +703,7 @@ public class Loan
             && (pThat instanceof Loan)) {
             /* Check the category */
             Loan myThat = (Loan) pThat;
-            iDiff = Difference.compareObject(getCategory(), myThat.getCategory());
+            iDiff = MetisDifference.compareObject(getCategory(), myThat.getCategory());
             if (iDiff == 0) {
                 /* Check the underlying base */
                 iDiff = super.compareAsset(myThat);
@@ -914,17 +914,17 @@ public class Loan
         applyBasicChanges(myLoan);
 
         /* Update the category if required */
-        if (!Difference.isEqual(getCategory(), myLoan.getCategory())) {
+        if (!MetisDifference.isEqual(getCategory(), myLoan.getCategory())) {
             setValueCategory(myLoan.getCategory());
         }
 
         /* Update the parent if required */
-        if (!Difference.isEqual(getParent(), myLoan.getParent())) {
+        if (!MetisDifference.isEqual(getParent(), myLoan.getParent())) {
             setValueParent(myLoan.getParent());
         }
 
         /* Update the deposit currency if required */
-        if (!Difference.isEqual(getAssetCurrency(), myLoan.getAssetCurrency())) {
+        if (!MetisDifference.isEqual(getAssetCurrency(), myLoan.getAssetCurrency())) {
             setValueCurrency(myLoan.getAssetCurrency());
         }
 
@@ -947,7 +947,7 @@ public class Loan
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * The LoanInfo List.
@@ -976,7 +976,7 @@ public class Loan
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -986,7 +986,7 @@ public class Loan
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return Loan.FIELD_DEFS;
         }
 
@@ -1152,16 +1152,16 @@ public class Loan
      * The dataMap class.
      */
     protected static class LoanDataMap
-            implements DataMapItem<Loan, MoneyWiseDataType>, JDataContents {
+            implements DataMapItem<Loan, MoneyWiseDataType>, MetisDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
 
         /**
          * UnderlyingMap Field Id.
          */
-        public static final JDataField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
+        public static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
                 .getValue());
 
         /**
@@ -1178,19 +1178,19 @@ public class Loan
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_UNDERLYINGMAP.equals(pField)) {
                 return theUnderlyingMap;
             }
 
             /* Unknown */
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         @Override

@@ -28,15 +28,15 @@ import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedPrice;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedPrice;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
@@ -75,22 +75,22 @@ public class SecurityPrice
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
 
     /**
      * Security Field Id.
      */
-    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.SECURITY.getItemName());
+    public static final MetisField FIELD_SECURITY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.SECURITY.getItemName());
 
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    public static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * Price Field Id.
      */
-    public static final JDataField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue());
+    public static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue());
 
     /**
      * Invalid currency error.
@@ -129,7 +129,7 @@ public class SecurityPrice
         super(pList, pValues);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -171,12 +171,12 @@ public class SecurityPrice
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_SECURITY.equals(pField)) {
             return true;
@@ -200,13 +200,13 @@ public class SecurityPrice
     @Override
     public String formatObject() {
         /* Access Key Values */
-        EncryptedValueSet myValues = getValueSet();
+        MetisEncryptedValueSet myValues = getValueSet();
         Object mySecurity = myValues.getValue(FIELD_SECURITY);
         Object myDate = myValues.getValue(FIELD_DATE);
         Object myPrice = myValues.getValue(FIELD_PRICE);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -240,7 +240,7 @@ public class SecurityPrice
      * Obtain Encrypted Price Field.
      * @return the field
      */
-    public EncryptedPrice getPriceField() {
+    public MetisEncryptedPrice getPriceField() {
         return getPriceField(getValueSet());
     }
 
@@ -287,7 +287,7 @@ public class SecurityPrice
      * @param pValueSet the valueSet
      * @return the Security
      */
-    public static Security getSecurity(final ValueSet pValueSet) {
+    public static Security getSecurity(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_SECURITY, Security.class);
     }
 
@@ -296,7 +296,7 @@ public class SecurityPrice
      * @param pValueSet the valueSet
      * @return the Date
      */
-    public static TethysDate getDate(final ValueSet pValueSet) {
+    public static TethysDate getDate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DATE, TethysDate.class);
     }
 
@@ -305,7 +305,7 @@ public class SecurityPrice
      * @param pValueSet the valueSet
      * @return the Price
      */
-    public static TethysPrice getPrice(final EncryptedValueSet pValueSet) {
+    public static TethysPrice getPrice(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_PRICE, TethysPrice.class);
     }
 
@@ -314,7 +314,7 @@ public class SecurityPrice
      * @param pValueSet the valueSet
      * @return the Price
      */
-    public static byte[] getPriceBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getPriceBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_PRICE);
     }
 
@@ -323,8 +323,8 @@ public class SecurityPrice
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static EncryptedPrice getPriceField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PRICE, EncryptedPrice.class);
+    private static MetisEncryptedPrice getPriceField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PRICE, MetisEncryptedPrice.class);
     }
 
     /**
@@ -382,7 +382,7 @@ public class SecurityPrice
      * Set the price.
      * @param pValue the price
      */
-    public void setValuePrice(final EncryptedPrice pValue) {
+    public void setValuePrice(final MetisEncryptedPrice pValue) {
         getValueSet().setValue(FIELD_PRICE, pValue);
     }
 
@@ -428,7 +428,7 @@ public class SecurityPrice
         }
 
         /* Compare the dates */
-        int iDiff = Difference.compareObject(getDate(), pThat.getDate());
+        int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             /* Sort in reverse date order !! */
             return -iDiff;
@@ -572,12 +572,12 @@ public class SecurityPrice
         pushHistory();
 
         /* Update the price if required */
-        if (!Difference.isEqual(getPrice(), myPrice.getPrice())) {
+        if (!MetisDifference.isEqual(getPrice(), myPrice.getPrice())) {
             setValuePrice(myPrice.getPriceField());
         }
 
         /* Update the date if required */
-        if (!Difference.isEqual(getDate(), myPrice.getDate())) {
+        if (!MetisDifference.isEqual(getDate(), myPrice.getDate())) {
             setValueDate(myPrice.getDate());
         }
 
@@ -640,7 +640,7 @@ public class SecurityPrice
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE price list.
@@ -659,7 +659,7 @@ public class SecurityPrice
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -669,7 +669,7 @@ public class SecurityPrice
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return SecurityPrice.FIELD_DEFS;
         }
 
@@ -734,21 +734,21 @@ public class SecurityPrice
      * @param <T> the data type
      */
     public static class SecurityPriceDataMap<T extends SecurityPrice>
-            implements DataMapItem<T, MoneyWiseDataType>, JDataContents {
+            implements DataMapItem<T, MoneyWiseDataType>, MetisDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
+        protected static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
 
         /**
          * InstanceMap Field Id.
          */
-        private static final JDataField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+        private static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
 
         /**
          * PriceMap Field Id.
          */
-        private static final JDataField FIELD_MAPOFPRICES = FIELD_DEFS
+        private static final MetisField FIELD_MAPOFPRICES = FIELD_DEFS
                 .declareEqualityValueField(MoneyWiseDataResource.SECURITYPRICE_MAP_MAPOFPRICES.getValue());
 
         /**
@@ -771,12 +771,12 @@ public class SecurityPrice
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_MAPOFMAPS.equals(pField)) {
                 return theMapOfMaps;
@@ -786,7 +786,7 @@ public class SecurityPrice
             }
 
             /* Unknown */
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         @Override
@@ -962,7 +962,7 @@ public class SecurityPrice
          */
         private static final class PriceList
                 extends ArrayList<SecurityPrice>
-                implements JDataContents {
+                implements MetisDataContents {
             /**
              * Serial Id.
              */
@@ -971,12 +971,12 @@ public class SecurityPrice
             /**
              * Report fields.
              */
-            private static final JDataFields FIELD_DEFS = new JDataFields(PriceList.class.getSimpleName());
+            private static final MetisFields FIELD_DEFS = new MetisFields(PriceList.class.getSimpleName());
 
             /**
              * Size Field Id.
              */
-            private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+            private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
             /**
              * The security.
@@ -992,16 +992,16 @@ public class SecurityPrice
             }
 
             @Override
-            public JDataFields getDataFields() {
+            public MetisFields getDataFields() {
                 return FIELD_DEFS;
             }
 
             @Override
-            public Object getFieldValue(final JDataField pField) {
+            public Object getFieldValue(final MetisField pField) {
                 if (FIELD_SIZE.equals(pField)) {
                     return size();
                 }
-                return JDataFieldValue.UNKNOWN;
+                return MetisFieldValue.UNKNOWN;
             }
 
             @Override

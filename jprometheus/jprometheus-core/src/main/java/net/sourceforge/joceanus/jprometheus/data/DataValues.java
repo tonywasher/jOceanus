@@ -28,10 +28,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -111,7 +111,7 @@ public class DataValues<E extends Enum<E>> {
     /**
      * Field Definitions.
      */
-    private final Map<JDataField, Object> theFields;
+    private final Map<MetisField, Object> theFields;
 
     /**
      * InfoSet values.
@@ -134,18 +134,18 @@ public class DataValues<E extends Enum<E>> {
         theItemType = pItemName;
 
         /* Create the map and list */
-        theFields = new LinkedHashMap<JDataField, Object>();
+        theFields = new LinkedHashMap<MetisField, Object>();
 
         /* Store the id */
         theFields.put(DataItem.FIELD_ID, pItem.getId());
 
         /* Access values */
-        ValueSet myValues = pItem.getValueSet();
+        MetisValueSet myValues = pItem.getValueSet();
 
         /* Iterate through the fields */
-        Iterator<JDataField> myIterator = pItem.getDataFields().fieldIterator();
+        Iterator<MetisField> myIterator = pItem.getDataFields().fieldIterator();
         while (myIterator.hasNext()) {
-            JDataField myField = myIterator.next();
+            MetisField myField = myIterator.next();
 
             /* Ignore field if it is irrelevant */
             if (!myField.isValueSetField() || !myField.isEqualityField()) {
@@ -236,7 +236,7 @@ public class DataValues<E extends Enum<E>> {
         theItemType = "";
 
         /* Create the map and list */
-        theFields = new LinkedHashMap<JDataField, Object>();
+        theFields = new LinkedHashMap<MetisField, Object>();
 
         /* Store the id if available */
         Integer myId = pInfo.getId();
@@ -264,7 +264,7 @@ public class DataValues<E extends Enum<E>> {
      * @param pFields the field definitions
      */
     public DataValues(final Element pElement,
-                      final JDataFields pFields) {
+                      final MetisFields pFields) {
         this(pElement, pFields, pElement.getNodeName());
     }
 
@@ -275,13 +275,13 @@ public class DataValues<E extends Enum<E>> {
      * @param pItemName the item name
      */
     protected DataValues(final Element pElement,
-                         final JDataFields pFields,
+                         final MetisFields pFields,
                          final String pItemName) {
         /* Store Item type */
         theItemType = pItemName;
 
         /* Create the map */
-        theFields = new LinkedHashMap<JDataField, Object>();
+        theFields = new LinkedHashMap<MetisField, Object>();
 
         /* Declare the id if it exists */
         Integer myId = getId(pElement);
@@ -290,9 +290,9 @@ public class DataValues<E extends Enum<E>> {
         }
 
         /* Loop through the children */
-        Iterator<JDataField> myIterator = pFields.fieldIterator();
+        Iterator<MetisField> myIterator = pFields.fieldIterator();
         while (myIterator.hasNext()) {
-            JDataField myField = myIterator.next();
+            MetisField myField = myIterator.next();
 
             /* If the field is an equality valueSet item */
             if (myField.isValueSetField() && myField.isEqualityField()) {
@@ -363,7 +363,7 @@ public class DataValues<E extends Enum<E>> {
         theItemType = pName;
 
         /* Create the map */
-        theFields = new LinkedHashMap<JDataField, Object>();
+        theFields = new LinkedHashMap<MetisField, Object>();
 
         /* No underlying arrays */
         theInfoItems = null;
@@ -390,7 +390,7 @@ public class DataValues<E extends Enum<E>> {
      * Obtain Field iterator.
      * @return the Field iterator
      */
-    public final Iterator<Map.Entry<JDataField, Object>> fieldIterator() {
+    public final Iterator<Map.Entry<MetisField, Object>> fieldIterator() {
         return theFields.entrySet().iterator();
     }
 
@@ -431,7 +431,7 @@ public class DataValues<E extends Enum<E>> {
      * @param pField the Field definition
      * @param pValue the field value
      */
-    public void addValue(final JDataField pField,
+    public void addValue(final MetisField pField,
                          final Object pValue) {
         /* If the value is non-null */
         if (pValue != null) {
@@ -445,7 +445,7 @@ public class DataValues<E extends Enum<E>> {
      * @param pField the Field definition
      * @return the field value
      */
-    public Object getValue(final JDataField pField) {
+    public Object getValue(final MetisField pField) {
         /* Return the field */
         return theFields.get(pField);
     }
@@ -457,7 +457,7 @@ public class DataValues<E extends Enum<E>> {
      * @param <T> the item type
      * @return the field value
      */
-    public <T> T getValue(final JDataField pField,
+    public <T> T getValue(final MetisField pField,
                           final Class<T> pClass) {
         /* Return the properly cast field */
         return pClass.cast(getValue(pField));
@@ -505,15 +505,15 @@ public class DataValues<E extends Enum<E>> {
      * @return the new element
      */
     protected Element createXML(final Document pDocument,
-                                final JDataFormatter pFormatter,
+                                final MetisDataFormatter pFormatter,
                                 final boolean pStoreIds) {
         /* Create an element for the item */
         Element myElement = pDocument.createElement(theItemType);
 
         /* Loop through the values */
-        for (Map.Entry<JDataField, Object> myEntry : theFields.entrySet()) {
+        for (Map.Entry<MetisField, Object> myEntry : theFields.entrySet()) {
             /* Access parts */
-            JDataField myField = myEntry.getKey();
+            MetisField myField = myEntry.getKey();
             Object myValue = myEntry.getValue();
 
             /* If this is the Id */

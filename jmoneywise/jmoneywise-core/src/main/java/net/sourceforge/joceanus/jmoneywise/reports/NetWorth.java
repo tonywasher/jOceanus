@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
@@ -123,7 +123,7 @@ public class NetWorth
     /**
      * The Formatter.
      */
-    private final JDataFormatter theFormatter;
+    private final MetisDataFormatter theFormatter;
 
     /**
      * Data Analysis.
@@ -309,7 +309,7 @@ public class NetWorth
             /* Skip record if inactive or incorrect category */
             DepositCategory myCurr = myBucket.getAccountCategory();
             if (!myBucket.isActive()
-                || !Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
+                || !MetisDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
@@ -354,7 +354,7 @@ public class NetWorth
             /* Skip record if inactive or incorrect category */
             CashCategory myCurr = myBucket.getAccountCategory();
             if (!myBucket.isActive()
-                || !Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
+                || !MetisDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
@@ -399,7 +399,7 @@ public class NetWorth
             /* Skip record if inactive or incorrect category */
             LoanCategory myCurr = myBucket.getAccountCategory();
             if (!myBucket.isActive()
-                || !Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
+                || !MetisDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
@@ -513,7 +513,7 @@ public class NetWorth
 
             /* Skip record if inactive or incorrect category */
             if (!myBucket.isActive()
-                || !Difference.isEqual(myBucket.getCategory(), myCategory)) {
+                || !MetisDifference.isEqual(myBucket.getCategory(), myCategory)) {
                 continue;
             }
 
@@ -560,7 +560,7 @@ public class NetWorth
 
             /* Skip record if inactive or incorrect category */
             if (!myBucket.isActive()
-                || !Difference.isEqual(myBucket.getCategory(), myCategory)) {
+                || !MetisDifference.isEqual(myBucket.getCategory(), myCategory)) {
                 continue;
             }
 
@@ -605,7 +605,7 @@ public class NetWorth
 
             /* Skip record if inactive or incorrect category */
             if (!myBucket.isActive()
-                || !Difference.isEqual(myBucket.getCategory(), myCategory)) {
+                || !MetisDifference.isEqual(myBucket.getCategory(), myCategory)) {
                 continue;
             }
 

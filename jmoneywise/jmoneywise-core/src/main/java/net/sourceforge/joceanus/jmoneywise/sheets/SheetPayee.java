@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jmetis.sheet.DataCell;
-import net.sourceforge.joceanus.jmetis.sheet.DataRow;
-import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
@@ -129,8 +129,8 @@ public class SheetPayee
      */
     protected static void processPayee(final ArchiveLoader pLoader,
                                        final MoneyWiseData pData,
-                                       final DataView pView,
-                                       final DataRow pRow) throws OceanusException {
+                                       final MetisDataView pView,
+                                       final MetisDataRow pRow) throws OceanusException {
         /* Access name and type */
         int iAdjust = 0;
         String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
@@ -142,7 +142,7 @@ public class SheetPayee
         iAdjust++;
 
         /* Handle closed which may be missing */
-        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        MetisDataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
             isClosed = myCell.getBooleanValue();

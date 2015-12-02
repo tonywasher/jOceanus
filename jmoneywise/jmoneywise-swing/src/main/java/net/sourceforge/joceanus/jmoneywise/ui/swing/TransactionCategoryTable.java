@@ -37,16 +37,16 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.ScrollButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -132,7 +132,7 @@ public class TransactionCategoryTable
     /**
      * The field manager.
      */
-    private final transient JFieldManager theFieldMgr;
+    private final transient MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -301,7 +301,7 @@ public class TransactionCategoryTable
      * Determine Focus.
      * @param pEntry the master data entry
      */
-    protected void determineFocus(final ViewerEntry pEntry) {
+    protected void determineFocus(final MetisViewerEntry pEntry) {
         /* Request the focus */
         requestFocusInWindow();
 
@@ -315,7 +315,7 @@ public class TransactionCategoryTable
      */
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
-        JDataProfile myTask = theView.getActiveTask();
+        MetisProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("Transactions");
 
         /* Get the Category edit list */
@@ -380,7 +380,7 @@ public class TransactionCategoryTable
         TransactionCategory myParent = pCategory.getParentCategory();
 
         /* If we have a changed category */
-        if (!Difference.isEqual(myParent, theParent)) {
+        if (!MetisDifference.isEqual(myParent, theParent)) {
             if (myParent != null) {
                 myParent = theCategories.findItemById(myParent.getId());
             }
@@ -455,7 +455,7 @@ public class TransactionCategoryTable
         }
 
         @Override
-        public JDataField getFieldForCell(final TransactionCategory pItem,
+        public MetisField getFieldForCell(final TransactionCategory pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
@@ -695,7 +695,7 @@ public class TransactionCategoryTable
             if (theSelectButton.equals(o)) {
                 /* If this is a different category */
                 TransactionCategory myCategory = theSelectButton.getValue();
-                if (!Difference.isEqual(myCategory, theParent)) {
+                if (!MetisDifference.isEqual(myCategory, theParent)) {
                     /* Store new category */
                     selectParent(myCategory);
                 }
@@ -920,7 +920,7 @@ public class TransactionCategoryTable
          * @param pColIndex column index
          * @return the field
          */
-        protected JDataField getFieldForCell(final int pColIndex) {
+        protected MetisField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_NAME:

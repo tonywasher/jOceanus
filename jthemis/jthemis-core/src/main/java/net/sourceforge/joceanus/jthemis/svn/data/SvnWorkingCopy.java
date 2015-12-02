@@ -26,11 +26,11 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedList;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
@@ -52,41 +52,41 @@ import org.tmatesoft.svn.core.wc.SVNStatusClient;
  * @author Tony Washer
  */
 public final class SvnWorkingCopy
-        implements JDataContents, Comparable<SvnWorkingCopy> {
+        implements MetisDataContents, Comparable<SvnWorkingCopy> {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(SvnWorkingCopy.class.getSimpleName());
+    private static final MetisFields FIELD_DEFS = new MetisFields(SvnWorkingCopy.class.getSimpleName());
 
     /**
      * Component field id.
      */
-    private static final JDataField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
+    private static final MetisField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
 
     /**
      * Branch field id.
      */
-    private static final JDataField FIELD_BRAN = FIELD_DEFS.declareEqualityField("Branch");
+    private static final MetisField FIELD_BRAN = FIELD_DEFS.declareEqualityField("Branch");
 
     /**
      * Alias field id.
      */
-    private static final JDataField FIELD_ALIAS = FIELD_DEFS.declareLocalField("Alias");
+    private static final MetisField FIELD_ALIAS = FIELD_DEFS.declareLocalField("Alias");
 
     /**
      * Revision field id.
      */
-    private static final JDataField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
+    private static final MetisField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
 
     /**
      * Project field id.
      */
-    private static final JDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
+    private static final MetisField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
 
     /**
      * Update list field id.
      */
-    private static final JDataField FIELD_UPDATES = FIELD_DEFS.declareLocalField("Updates");
+    private static final MetisField FIELD_UPDATES = FIELD_DEFS.declareLocalField("Updates");
 
     /**
      * The branch associated with the working copy.
@@ -148,16 +148,16 @@ public final class SvnWorkingCopy
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_ALIAS.equals(pField)) {
             return getComponentName().equals(theAlias)
-                                                      ? JDataFieldValue.SKIP
+                                                      ? MetisFieldValue.SKIP
                                                       : theAlias;
         }
         if (FIELD_BRAN.equals(pField)) {
@@ -174,12 +174,12 @@ public final class SvnWorkingCopy
         }
         if (FIELD_UPDATES.equals(pField)) {
             return (theUpdates.isEmpty())
-                                         ? JDataFieldValue.SKIP
+                                         ? MetisFieldValue.SKIP
                                          : theUpdates;
         }
 
         /* Unknown */
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**
@@ -375,27 +375,27 @@ public final class SvnWorkingCopy
      * Working Copy Set.
      */
     public static final class SvnWorkingCopySet
-            extends OrderedList<SvnWorkingCopy>
-            implements JDataContents {
+            extends MetisOrderedList<SvnWorkingCopy>
+            implements MetisDataContents {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnWorkingCopySet.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(SvnWorkingCopySet.class.getSimpleName());
 
         /**
          * Size field id.
          */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
         /**
          * Repository field id.
          */
-        private static final JDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+        private static final MetisField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
 
         /**
          * Location field id.
          */
-        private static final JDataField FIELD_LOC = FIELD_DEFS.declareLocalField("Location");
+        private static final MetisField FIELD_LOC = FIELD_DEFS.declareLocalField("Location");
 
         /**
          * The repository for which these are working sets.
@@ -457,12 +457,12 @@ public final class SvnWorkingCopy
         }
 
         @Override
-        public JDataFields getDataFields() {
+        public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_SIZE.equals(pField)) {
                 return size();
@@ -475,7 +475,7 @@ public final class SvnWorkingCopy
             }
 
             /* Unknown */
-            return JDataFieldValue.UNKNOWN;
+            return MetisFieldValue.UNKNOWN;
         }
 
         /**

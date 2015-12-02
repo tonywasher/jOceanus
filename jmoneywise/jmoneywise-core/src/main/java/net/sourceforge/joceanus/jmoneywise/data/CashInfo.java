@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
@@ -56,7 +56,7 @@ public class CashInfo
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -122,7 +122,7 @@ public class CashInfo
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -162,7 +162,7 @@ public class CashInfo
      * @param pValueSet the valueSet
      * @return the InfoType
      */
-    public static AccountInfoType getInfoType(final ValueSet pValueSet) {
+    public static AccountInfoType getInfoType(final MetisValueSet pValueSet) {
         return getInfoType(pValueSet, AccountInfoType.class);
     }
 
@@ -171,7 +171,7 @@ public class CashInfo
      * @param pValueSet the valueSet
      * @return the Payee
      */
-    public static Payee getPayee(final ValueSet pValueSet) {
+    public static Payee getPayee(final MetisValueSet pValueSet) {
         return pValueSet.isDeletion()
                                      ? null
                                      : pValueSet.getValue(FIELD_LINK, Payee.class);
@@ -182,7 +182,7 @@ public class CashInfo
      * @param pValueSet the valueSet
      * @return the EventCategory
      */
-    public static TransactionCategory getEventCategory(final ValueSet pValueSet) {
+    public static TransactionCategory getEventCategory(final MetisValueSet pValueSet) {
         return pValueSet.isDeletion()
                                      ? null
                                      : pValueSet.getValue(FIELD_LINK, TransactionCategory.class);
@@ -282,7 +282,7 @@ public class CashInfo
         if (myType.isLink()) {
             /* Access data */
             MoneyWiseData myData = getDataSet();
-            ValueSet myValues = getValueSet();
+            MetisValueSet myValues = getValueSet();
             Object myLinkId = myValues.getValue(FIELD_VALUE);
 
             /* Switch on link type */
@@ -324,7 +324,7 @@ public class CashInfo
         pushHistory();
 
         /* Update the value if required */
-        if (!Difference.isEqual(getField(), myInfo.getField())) {
+        if (!MetisDifference.isEqual(getField(), myInfo.getField())) {
             setValueValue(myInfo.getField());
             if (getInfoType().isLink()) {
                 setValueLink(myInfo.getLink(DataItem.class));
@@ -373,7 +373,7 @@ public class CashInfo
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataInfoList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataInfoList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE account list.
@@ -392,7 +392,7 @@ public class CashInfo
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -402,7 +402,7 @@ public class CashInfo
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return CashInfo.FIELD_DEFS;
         }
 

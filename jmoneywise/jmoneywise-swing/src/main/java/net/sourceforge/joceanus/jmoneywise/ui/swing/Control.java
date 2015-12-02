@@ -30,7 +30,7 @@ import java.awt.Graphics2D;
 import java.awt.SplashScreen;
 import java.util.Properties;
 
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import org.apache.log4j.PropertyConfigurator;
@@ -72,7 +72,7 @@ public final class Control {
      * Create and show the GUI.
      * @param pProfile the startup profile
      */
-    private static void createAndShowGUI(final JDataProfile pProfile) {
+    private static void createAndShowGUI(final MetisProfile pProfile) {
         try {
             /* Configure log4j */
             Properties myLogProp = new Properties();
@@ -140,7 +140,7 @@ public final class Control {
      */
     public static void main(final String[] args) {
         /* Create a timer */
-        JDataProfile myProfile = new JDataProfile("StartUp");
+        MetisProfile myProfile = new MetisProfile("StartUp");
 
         /* Sort out splash frame */
         renderSplashFrame();

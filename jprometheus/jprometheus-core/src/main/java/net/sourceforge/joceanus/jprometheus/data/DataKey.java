@@ -28,9 +28,9 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -57,37 +57,37 @@ public class DataKey
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
     /**
      * DataKeySet Field Id.
      */
-    public static final JDataField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME);
+    public static final MetisField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME);
 
     /**
      * KeyType Field Id.
      */
-    public static final JDataField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_TYPE.getValue());
+    public static final MetisField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_TYPE.getValue());
 
     /**
      * KeyTypeId Field Id.
      */
-    public static final JDataField FIELD_KEYTYPEID = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAKEY_TYPEID.getValue());
+    public static final MetisField FIELD_KEYTYPEID = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAKEY_TYPEID.getValue());
 
     /**
      * HashPrime Field Id.
      */
-    public static final JDataField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue());
+    public static final MetisField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue());
 
     /**
      * KeyDefinition Field Id.
      */
-    public static final JDataField FIELD_KEYDEF = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_DEF.getValue());
+    public static final MetisField FIELD_KEYDEF = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_DEF.getValue());
 
     /**
      * DataKey Field Id.
      */
-    public static final JDataField FIELD_KEY = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAKEY_KEY.getValue());
+    public static final MetisField FIELD_KEY = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAKEY_KEY.getValue());
 
     /**
      * Encrypted Symmetric Key Length.
@@ -259,7 +259,7 @@ public class DataKey
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -327,7 +327,7 @@ public class DataKey
      * @param pValueSet the valueSet
      * @return the dataKeySet
      */
-    public static DataKeySet getDataKeySet(final ValueSet pValueSet) {
+    public static DataKeySet getDataKeySet(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_KEYSET, DataKeySet.class);
     }
 
@@ -336,7 +336,7 @@ public class DataKey
      * @param pValueSet the valueSet
      * @return the Key type
      */
-    public static GordianSymKeyType getKeyType(final ValueSet pValueSet) {
+    public static GordianSymKeyType getKeyType(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_KEYTYPE, GordianSymKeyType.class);
     }
 
@@ -345,7 +345,7 @@ public class DataKey
      * @param pValueSet the valueSet
      * @return the Key type Id
      */
-    public static Integer getKeyTypeId(final ValueSet pValueSet) {
+    public static Integer getKeyTypeId(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_KEYTYPEID, Integer.class);
     }
 
@@ -354,7 +354,7 @@ public class DataKey
      * @param pValueSet the valueSet
      * @return true/false
      */
-    public static Boolean isHashPrime(final ValueSet pValueSet) {
+    public static Boolean isHashPrime(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_HASHPRIME, Boolean.class);
     }
 
@@ -363,7 +363,7 @@ public class DataKey
      * @param pValueSet the valueSet
      * @return the Key Definition
      */
-    public static byte[] getSecuredKeyDef(final ValueSet pValueSet) {
+    public static byte[] getSecuredKeyDef(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_KEYDEF, byte[].class);
     }
 
@@ -373,7 +373,7 @@ public class DataKey
      * @return the data Key
      */
     @SuppressWarnings("unchecked")
-    protected static GordianKey<GordianSymKeyType> getDataKey(final ValueSet pValueSet) {
+    protected static GordianKey<GordianSymKeyType> getDataKey(final MetisValueSet pValueSet) {
         return (GordianKey<GordianSymKeyType>) pValueSet.getValue(FIELD_KEY, GordianKey.class);
     }
 
@@ -505,7 +505,7 @@ public class DataKey
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE DataKey list.
@@ -534,7 +534,7 @@ public class DataKey
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -544,7 +544,7 @@ public class DataKey
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return DataKey.FIELD_DEFS;
         }
 

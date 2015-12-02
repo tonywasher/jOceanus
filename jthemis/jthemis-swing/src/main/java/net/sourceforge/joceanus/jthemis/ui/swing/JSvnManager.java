@@ -40,12 +40,12 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.swing.PreferencesPanel;
-import net.sourceforge.joceanus.jmetis.viewer.ViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.swing.SwingViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.ViewerWindow;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.swing.MetisPreferencesPanel;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.swing.MetisViewerWindow;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.swing.JFieldPreferences;
@@ -94,12 +94,12 @@ public final class JSvnManager {
     /**
      * The Preference Manager.
      */
-    private final PreferenceManager thePrefMgr;
+    private final MetisPreferenceManager thePrefMgr;
 
     /**
      * The Viewer Manager.
      */
-    private final SwingViewerManager theViewerMgr;
+    private final MetisSwingViewerManager theViewerMgr;
 
     /**
      * The Security Manager.
@@ -169,17 +169,17 @@ public final class JSvnManager {
     /**
      * The Started data window.
      */
-    private ViewerWindow theDataWdw = null;
+    private MetisViewerWindow theDataWdw = null;
 
     /**
      * The GitRepo entry.
      */
-    private ViewerEntry theGitEntry = null;
+    private MetisViewerEntry theGitEntry = null;
 
     /**
      * The Error entry.
      */
-    private ViewerEntry theErrorEntry = null;
+    private MetisViewerEntry theErrorEntry = null;
 
     /**
      * The Window Close handler.
@@ -207,7 +207,7 @@ public final class JSvnManager {
      */
     protected JSvnManager() throws OceanusException {
         /* Create the preference manager */
-        thePrefMgr = new PreferenceManager();
+        thePrefMgr = new MetisPreferenceManager();
         thePreferences = thePrefMgr.getPreferenceSet(SubVersionPreferences.class);
 
         /* Access the Security Preferences */
@@ -218,8 +218,8 @@ public final class JSvnManager {
 
         /* Create the fieldManager and viewer manager */
         JFieldPreferences myFieldPrefs = thePrefMgr.getPreferenceSet(JFieldPreferences.class);
-        JFieldManager myFieldMgr = new JFieldManager(myFieldPrefs.getConfiguration());
-        theViewerMgr = new SwingViewerManager(myFieldMgr);
+        MetisFieldManager myFieldMgr = new MetisFieldManager(myFieldPrefs.getConfiguration());
+        theViewerMgr = new MetisSwingViewerManager(myFieldMgr);
 
         /* Create the frame */
         theFrame = new JFrame(JSvnManager.class.getSimpleName());
@@ -231,8 +231,8 @@ public final class JSvnManager {
         theStatusPanel = new JSvnStatusWindow(this);
 
         /* Create the Preferences Tab */
-        ViewerEntry myMaintEntry = theViewerMgr.newEntry("Maintenance");
-        PreferencesPanel myPrefPanel = new PreferencesPanel(thePrefMgr, myFieldMgr, theViewerMgr, myMaintEntry);
+        MetisViewerEntry myMaintEntry = theViewerMgr.newEntry("Maintenance");
+        MetisPreferencesPanel myPrefPanel = new MetisPreferencesPanel(thePrefMgr, myFieldMgr, theViewerMgr, myMaintEntry);
         myTabs.addTab("Status", theStatusPanel);
         myTabs.addTab("Preferences", myPrefPanel);
 
@@ -324,7 +324,7 @@ public final class JSvnManager {
      * Obtain preference manager.
      * @return the preference manager
      */
-    protected PreferenceManager getPreferenceMgr() {
+    protected MetisPreferenceManager getPreferenceMgr() {
         return thePrefMgr;
     }
 
@@ -350,20 +350,20 @@ public final class JSvnManager {
      */
     protected void setSubversionData(final DiscoverData pData) {
         /* Declare repository to data manager */
-        ViewerEntry myRepEntry = theViewerMgr.newEntry("SvnRepository");
+        MetisViewerEntry myRepEntry = theViewerMgr.newEntry("SvnRepository");
         myRepEntry.addAsRootChild();
         theRepository = pData.getRepository();
         myRepEntry.setObject(theRepository);
         myRepEntry.setFocus();
 
         /* Declare WorkingCopySet to data manager */
-        ViewerEntry mySetEntry = theViewerMgr.newEntry("WorkingSet");
+        MetisViewerEntry mySetEntry = theViewerMgr.newEntry("WorkingSet");
         mySetEntry.addAsRootChild();
         theWorkingSet = pData.getWorkingCopySet();
         mySetEntry.setObject(theWorkingSet);
 
         /* Declare Extract Plans to data manager */
-        ViewerEntry myPlanEntry = theViewerMgr.newEntry("ExtractPlans");
+        MetisViewerEntry myPlanEntry = theViewerMgr.newEntry("ExtractPlans");
         myPlanEntry.addAsRootChild();
         pData.declareExtractPlans(theViewerMgr, myPlanEntry);
 
@@ -592,7 +592,7 @@ public final class JSvnManager {
             /* If this is the DataManager window */
             if (theShowDataMgr.equals(o)) {
                 /* Create the data window */
-                theDataWdw = new ViewerWindow(theFrame, theViewerMgr);
+                theDataWdw = new MetisViewerWindow(theFrame, theViewerMgr);
 
                 /* Listen for its closure */
                 theDataWdw.addWindowListener(theCloseHandler);

@@ -34,11 +34,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.sheet.DataCell;
-import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
-import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
+import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
@@ -222,7 +222,7 @@ public class ArchiveLoader {
         try (FileInputStream myInFile = new FileInputStream(myArchive);
              InputStream myStream = new BufferedInputStream(myInFile)) {
             /* Determine the WorkBookType */
-            WorkBookType myType = WorkBookType.determineType(myName);
+            MetisWorkBookType myType = MetisWorkBookType.determineType(myName);
 
             /* Load the data from the stream */
             MoneyWiseData myData = loadArchiveStream(pTask, myStream, myType);
@@ -246,15 +246,15 @@ public class ArchiveLoader {
      * @throws OceanusException on error
      */
     private boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                final DataWorkBook pWorkBook,
+                                final MetisDataWorkBook pWorkBook,
                                 final MoneyWiseData pData) throws OceanusException {
         /* Find the range of cells */
-        DataView myView = pWorkBook.getRangeView(AREA_YEARRANGE);
+        MetisDataView myView = pWorkBook.getRangeView(AREA_YEARRANGE);
 
         /* Loop through the cells */
         for (int myIndex = 0; myIndex < myView.getColumnCount(); myIndex++) {
             /* Access the cell and add year to the list */
-            DataCell myCell = myView.getCellByPosition(myIndex, 0);
+            MetisDataCell myCell = myView.getCellByPosition(myIndex, 0);
             addYear(myCell.getStringValue());
         }
 
@@ -281,11 +281,11 @@ public class ArchiveLoader {
      */
     private MoneyWiseData loadArchiveStream(final TaskControl<MoneyWiseData> pTask,
                                             final InputStream pStream,
-                                            final WorkBookType pType) throws OceanusException {
+                                            final MetisWorkBookType pType) throws OceanusException {
         /* Protect the workbook retrieval */
         try {
             /* Access current profile */
-            JDataProfile myTask = pTask.getActiveTask();
+            MetisProfile myTask = pTask.getActiveTask();
             myTask = myTask.startTask("LoadArchive");
             myTask.startTask("ParseWorkBook");
 
@@ -294,11 +294,11 @@ public class ArchiveLoader {
             theParentCache = new ParentCache(myData);
 
             /* Access the workbook from the stream */
-            DataWorkBook myWorkbook = new DataWorkBook(pStream, pType);
+            MetisDataWorkBook myWorkbook = new MetisDataWorkBook(pStream, pType);
             boolean bContinue = !pTask.isCancelled();
 
             /* Determine Year Range */
-            JDataProfile myStage = myTask.startTask("LoadSheets");
+            MetisProfile myStage = myTask.startTask("LoadSheets");
             if (bContinue) {
                 myStage.startTask("Range");
                 bContinue = loadArchive(pTask, myWorkbook, myData);

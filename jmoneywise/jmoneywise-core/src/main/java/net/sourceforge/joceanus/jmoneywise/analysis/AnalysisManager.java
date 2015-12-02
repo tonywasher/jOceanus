@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataFormat;
-import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.list.MetisNestedHashMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
@@ -46,8 +46,8 @@ import org.slf4j.LoggerFactory;
  * Analysis manager.
  */
 public class AnalysisManager
-        extends NestedHashMap<TethysDateRange, Analysis>
-        implements JDataFormat {
+        extends MetisNestedHashMap<TethysDateRange, Analysis>
+        implements MetisDataFormat {
     /**
      * Serial Id.
      */

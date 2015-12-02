@@ -24,13 +24,13 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.EncryptedData.EncryptedMoney;
-import net.sourceforge.joceanus.jmetis.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedMoney;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
@@ -64,42 +64,42 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
 
     /**
      * AssetPair Field Id.
      */
-    public static final JDataField FIELD_PAIR = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ASSETPAIR.getValue());
+    public static final MetisField FIELD_PAIR = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ASSETPAIR.getValue());
 
     /**
      * Account Field Id.
      */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ACCOUNT.getValue());
+    public static final MetisField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ACCOUNT.getValue());
 
     /**
      * Partner Field Id.
      */
-    public static final JDataField FIELD_PARTNER = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_PARTNER.getValue());
+    public static final MetisField FIELD_PARTNER = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_PARTNER.getValue());
 
     /**
      * Direction Field Id.
      */
-    public static final JDataField FIELD_DIRECTION = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataResource.TRANSACTION_DIRECTION.getValue());
+    public static final MetisField FIELD_DIRECTION = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataResource.TRANSACTION_DIRECTION.getValue());
 
     /**
      * Amount Field Id.
      */
-    public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_AMOUNT.getValue());
+    public static final MetisField FIELD_AMOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_AMOUNT.getValue());
 
     /**
      * Category Field Id.
      */
-    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TRANSCATEGORY.getItemName());
+    public static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TRANSCATEGORY.getItemName());
 
     /**
      * Reconciled Field Id.
      */
-    public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_RECONCILED.getValue());
+    public static final MetisField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_RECONCILED.getValue());
 
     /**
      * Invalid Debit/Credit/Category Combination Error Text.
@@ -150,7 +150,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         super(pList, pValues);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -223,7 +223,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_PAIR.equals(pField)) {
             return true;
@@ -256,7 +256,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     @Override
     public String formatObject() {
         /* Access Key Values */
-        EncryptedValueSet myValues = getValueSet();
+        MetisEncryptedValueSet myValues = getValueSet();
         Object myAccount = myValues.getValue(FIELD_ACCOUNT);
         Object myPartner = myValues.getValue(FIELD_PARTNER);
         Object myPair = myValues.getValue(FIELD_PAIR);
@@ -267,7 +267,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         Object myAmount = myValues.getValue(FIELD_AMOUNT);
 
         /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -375,7 +375,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Obtain Encrypted Amount Field.
      * @return the Field
      */
-    protected EncryptedMoney getAmountField() {
+    protected MetisEncryptedMoney getAmountField() {
         return getAmountField(getValueSet());
     }
 
@@ -441,7 +441,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValueSet the valueSet
      * @return the AssetPair
      */
-    protected static AssetPair getAssetPair(final ValueSet pValueSet) {
+    protected static AssetPair getAssetPair(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PAIR, AssetPair.class);
     }
 
@@ -450,7 +450,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValueSet the valueSet
      * @return the category
      */
-    public static TransactionCategory getCategory(final ValueSet pValueSet) {
+    public static TransactionCategory getCategory(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CATEGORY, TransactionCategory.class);
     }
 
@@ -459,7 +459,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValueSet the valueSet
      * @return the Amount
      */
-    public static TethysMoney getAmount(final EncryptedValueSet pValueSet) {
+    public static TethysMoney getAmount(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_AMOUNT, TethysMoney.class);
     }
 
@@ -468,7 +468,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getAmountBytes(final EncryptedValueSet pValueSet) {
+    public static byte[] getAmountBytes(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_AMOUNT);
     }
 
@@ -477,8 +477,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValueSet the valueSet
      * @return the field
      */
-    private static EncryptedMoney getAmountField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_AMOUNT, EncryptedMoney.class);
+    private static MetisEncryptedMoney getAmountField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_AMOUNT, MetisEncryptedMoney.class);
     }
 
     /**
@@ -486,7 +486,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValueSet the valueSet
      * @return the Account Asset
      */
-    public static TransactionAsset getAccount(final ValueSet pValueSet) {
+    public static TransactionAsset getAccount(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ACCOUNT, TransactionAsset.class);
     }
 
@@ -495,7 +495,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValueSet the valueSet
      * @return the Partner Asset
      */
-    public static TransactionAsset getPartner(final ValueSet pValueSet) {
+    public static TransactionAsset getPartner(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PARTNER, TransactionAsset.class);
     }
 
@@ -504,7 +504,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValueSet the valueSet
      * @return the Reconciled State
      */
-    public static Boolean isReconciled(final ValueSet pValueSet) {
+    public static Boolean isReconciled(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_RECONCILED, Boolean.class);
     }
 
@@ -513,7 +513,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValue the value
      */
     protected final void setValueAssetPair(final AssetPair pValue) {
-        EncryptedValueSet myValues = getValueSet();
+        MetisEncryptedValueSet myValues = getValueSet();
         myValues.setValue(FIELD_PAIR, pValue);
         myValues.setValue(FIELD_DIRECTION, pValue.getDirection());
     }
@@ -580,7 +580,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Set amount value.
      * @param pValue the value
      */
-    protected final void setValueAmount(final EncryptedMoney pValue) {
+    protected final void setValueAmount(final MetisEncryptedMoney pValue) {
         getValueSet().setValue(FIELD_AMOUNT, pValue);
     }
 
@@ -697,7 +697,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         }
 
         /* If the categories differ */
-        int iDiff = Difference.compareObject(getCategory(), pThat.getCategory());
+        int iDiff = MetisDifference.compareObject(getCategory(), pThat.getCategory());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -713,7 +713,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
         /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        ValueSet myValues = getValueSet();
+        MetisValueSet myValues = getValueSet();
         AssetPairManager myManager = getAssetPairManager();
 
         /* Adjust Reconciled */
@@ -777,7 +777,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         if (!isDividend()) {
             return false;
         }
-        return (getAccount() != null) && Difference.isEqual(getAccount(), getPartner());
+        return (getAccount() != null) && MetisDifference.isEqual(getAccount(), getPartner());
     }
 
     /**
@@ -1012,32 +1012,32 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     protected void applyBasicChanges(final T pTrans) {
         /* Update the assetPair if required */
-        if (!Difference.isEqual(getAssetPair(), pTrans.getAssetPair())) {
+        if (!MetisDifference.isEqual(getAssetPair(), pTrans.getAssetPair())) {
             setValueAssetPair(pTrans.getAssetPair());
         }
 
         /* Update the category if required */
-        if (!Difference.isEqual(getCategory(), pTrans.getCategory())) {
+        if (!MetisDifference.isEqual(getCategory(), pTrans.getCategory())) {
             setValueCategory(pTrans.getCategory());
         }
 
         /* Update the account if required */
-        if (!Difference.isEqual(getAccount(), pTrans.getAccount())) {
+        if (!MetisDifference.isEqual(getAccount(), pTrans.getAccount())) {
             setValueAccount(pTrans.getAccount());
         }
 
         /* Update the partner if required */
-        if (!Difference.isEqual(getPartner(), pTrans.getPartner())) {
+        if (!MetisDifference.isEqual(getPartner(), pTrans.getPartner())) {
             setValuePartner(pTrans.getPartner());
         }
 
         /* Update the amount if required */
-        if (!Difference.isEqual(getAmount(), pTrans.getAmount())) {
+        if (!MetisDifference.isEqual(getAmount(), pTrans.getAmount())) {
             setValueAmount(pTrans.getAmountField());
         }
 
         /* Update the reconciled state if required */
-        if (!Difference.isEqual(isReconciled(), pTrans.isReconciled())) {
+        if (!MetisDifference.isEqual(isReconciled(), pTrans.isReconciled())) {
             setValueReconciled(pTrans.isReconciled());
         }
     }
@@ -1051,12 +1051,12 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TransactionBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(TransactionBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         /**
          * Range field id.
          */
-        private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
+        private static final MetisField FIELD_RANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
 
         /**
          * DataSet range.
@@ -1097,7 +1097,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
+        public Object getFieldValue(final MetisField pField) {
             if (FIELD_RANGE.equals(pField)) {
                 return theRange;
             }

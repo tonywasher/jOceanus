@@ -34,12 +34,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataFieldRequired;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldRequired;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
@@ -108,7 +108,7 @@ public class TransactionPanel
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<Transaction> theFieldSet;
+    private final transient MetisFieldSet<Transaction> theFieldSet;
 
     /**
      * Info Tab Title.
@@ -188,7 +188,7 @@ public class TransactionPanel
      * @param pAnalysisSelect the analysis selection panel
      * @param pError the error panel
      */
-    public TransactionPanel(final JFieldManager pFieldMgr,
+    public TransactionPanel(final MetisFieldManager pFieldMgr,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final TransactionBuilder pBuilder,
                             final AnalysisSelect pAnalysisSelect,
@@ -275,12 +275,12 @@ public class TransactionPanel
         restrictField(myReconciledButton, Transaction.DESCLEN);
 
         /* Declare fields */
-        theFieldSet.addFieldElement(Transaction.FIELD_DATE, DataType.DATEDAY, theDateButton);
+        theFieldSet.addFieldElement(Transaction.FIELD_DATE, MetisDataType.DATEDAY, theDateButton);
         theFieldSet.addFieldElement(Transaction.FIELD_ACCOUNT, TransactionAsset.class, theAccountButton);
         theFieldSet.addFieldElement(Transaction.FIELD_CATEGORY, TransactionCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Transaction.FIELD_DIRECTION, AssetDirection.class, myDirectionButton);
         theFieldSet.addFieldElement(Transaction.FIELD_PARTNER, TransactionAsset.class, thePartnerButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_AMOUNT, DataType.MONEY, myAmount);
+        theFieldSet.addFieldElement(Transaction.FIELD_AMOUNT, MetisDataType.MONEY, myAmount);
         theFieldSet.addFieldElement(Transaction.FIELD_RECONCILED, Boolean.class, myReconciledButton);
 
         /* Create the main panel */
@@ -322,9 +322,9 @@ public class TransactionPanel
         restrictField(theTagButton, myWidth);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), DataType.MONEY, myAmount);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), DataType.STRING, myComments);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), DataType.STRING, myReference);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), MetisDataType.MONEY, myAmount);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), MetisDataType.STRING, myComments);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), MetisDataType.STRING, myReference);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), theTagButton);
 
         /* Create the Tax panel */
@@ -363,11 +363,11 @@ public class TransactionPanel
         restrictField(myYears, myWidth);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), DataType.MONEY, myTaxCredit);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE), DataType.MONEY, myNatIns);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), DataType.MONEY, myBenefit);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION), DataType.MONEY, myDonation);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), DataType.INTEGER, myYears);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), MetisDataType.MONEY, myTaxCredit);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE), MetisDataType.MONEY, myNatIns);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), MetisDataType.MONEY, myBenefit);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION), MetisDataType.MONEY, myDonation);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), MetisDataType.INTEGER, myYears);
 
         /* Create the Tax panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -404,9 +404,9 @@ public class TransactionPanel
         restrictField(theThirdPartyButton, myWidth);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS), DataType.UNITS, myCredUnits);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS), DataType.UNITS, myDebUnits);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), DataType.DILUTION, myDilution);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS), MetisDataType.UNITS, myCredUnits);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS), MetisDataType.UNITS, myDebUnits);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), MetisDataType.DILUTION, myDilution);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY), Deposit.class, theThirdPartyButton);
 
         /* Create the Tax panel */
@@ -508,7 +508,7 @@ public class TransactionPanel
         }
 
         /* Determine whether the partnerAmount field should be visible */
-        JDataField myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT);
+        MetisField myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT);
         boolean bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PARTNERAMOUNT);
         bShowField = bEditField || myTrans.getPartnerAmount() != null;
         theFieldSet.setVisibility(myField, bShowField);
@@ -625,14 +625,14 @@ public class TransactionPanel
         }
 
         /* Check whether the field is available */
-        JDataFieldRequired isRequired = myInfoSet.isClassRequired(pField);
-        return !isRequired.equals(JDataFieldRequired.NOTALLOWED);
+        MetisFieldRequired isRequired = myInfoSet.isClassRequired(pField);
+        return !isRequired.equals(MetisFieldRequired.NOTALLOWED);
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        JDataField myField = pUpdate.getField();
+        MetisField myField = pUpdate.getField();
         Transaction myTrans = getItem();
 
         /* Process updates */

@@ -36,11 +36,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
@@ -82,7 +82,7 @@ public class TaxYearPanel
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<TaxYear> theFieldSet;
+    private final transient MetisFieldSet<TaxYear> theFieldSet;
 
     /**
      * The tax year field.
@@ -100,7 +100,7 @@ public class TaxYearPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public TaxYearPanel(final JFieldManager pFieldMgr,
+    public TaxYearPanel(final MetisFieldManager pFieldMgr,
                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
                         final ErrorPanel pError) {
         /* Initialise the panel */
@@ -222,11 +222,11 @@ public class TaxYearPanel
         myRentalAllow.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ALLOWANCE), DataType.MONEY, myAllowance);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOAGEALLOWANCE), DataType.MONEY, myLoAgeAllow);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), DataType.MONEY, myHiAgeAllow);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), DataType.MONEY, myCapitalAllow);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), DataType.MONEY, myRentalAllow);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ALLOWANCE), MetisDataType.MONEY, myAllowance);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOAGEALLOWANCE), MetisDataType.MONEY, myLoAgeAllow);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), MetisDataType.MONEY, myHiAgeAllow);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), MetisDataType.MONEY, myCapitalAllow);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), MetisDataType.MONEY, myRentalAllow);
 
         /* Create the allow panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -262,8 +262,8 @@ public class TaxYearPanel
         myAddLimit.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.AGEALLOWANCELIMIT), DataType.MONEY, myAgeLimit);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), DataType.MONEY, myAddLimit);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.AGEALLOWANCELIMIT), MetisDataType.MONEY, myAgeLimit);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), MetisDataType.MONEY, myAddLimit);
 
         /* Create the limits panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -298,9 +298,9 @@ public class TaxYearPanel
         myAddIncBdy.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXBAND), DataType.MONEY, myLoBand);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXBAND), DataType.MONEY, myBasicBand);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), DataType.MONEY, myAddIncBdy);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXBAND), MetisDataType.MONEY, myLoBand);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXBAND), MetisDataType.MONEY, myBasicBand);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), MetisDataType.MONEY, myAddIncBdy);
 
         /* Create the bands panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -338,10 +338,10 @@ public class TaxYearPanel
         myAddTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXRATE), DataType.RATE, myLoTaxRate);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXRATE), DataType.RATE, myBasicTaxRate);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HITAXRATE), DataType.RATE, myHiTaxRate);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), DataType.RATE, myAddTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXRATE), MetisDataType.RATE, myLoTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXRATE), MetisDataType.RATE, myBasicTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HITAXRATE), MetisDataType.RATE, myHiTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), MetisDataType.RATE, myAddTaxRate);
 
         /* Create the rates panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -380,10 +380,10 @@ public class TaxYearPanel
         myAddDivTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.INTERESTTAXRATE), DataType.RATE, myIntTaxRate);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDTAXRATE), DataType.RATE, myDivTaxRate);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIDIVIDENDTAXRATE), DataType.RATE, myHiDivTaxRate);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), DataType.RATE, myAddDivTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.INTERESTTAXRATE), MetisDataType.RATE, myIntTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDTAXRATE), MetisDataType.RATE, myDivTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIDIVIDENDTAXRATE), MetisDataType.RATE, myHiDivTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), MetisDataType.RATE, myAddDivTaxRate);
 
         /* Create the rates panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -418,8 +418,8 @@ public class TaxYearPanel
         myHiCapTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), DataType.RATE, myCapTaxRate);
-        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), DataType.RATE, myHiCapTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), MetisDataType.RATE, myCapTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), MetisDataType.RATE, myHiCapTaxRate);
 
         /* Create the rates panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -471,9 +471,9 @@ public class TaxYearPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        JDataField myField = pUpdate.getField();
+        MetisField myField = pUpdate.getField();
         TaxYear myYear = getItem();
 
         if (myField.equals(TaxYear.FIELD_REGIME)) {

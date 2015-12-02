@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
@@ -54,7 +54,7 @@ public class TaxYearInfo
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -117,7 +117,7 @@ public class TaxYearInfo
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
@@ -141,7 +141,7 @@ public class TaxYearInfo
      * @param pValueSet the valueSet
      * @return the Money
      */
-    public static TaxYearInfoType getInfoType(final ValueSet pValueSet) {
+    public static TaxYearInfoType getInfoType(final MetisValueSet pValueSet) {
         return getInfoType(pValueSet, TaxYearInfoType.class);
     }
 
@@ -150,7 +150,7 @@ public class TaxYearInfo
      * @param pValueSet the valueSet
      * @return the TaxYear
      */
-    public static TaxYear getTaxYear(final ValueSet pValueSet) {
+    public static TaxYear getTaxYear(final MetisValueSet pValueSet) {
         return getOwner(pValueSet, TaxYear.class);
     }
 
@@ -241,7 +241,7 @@ public class TaxYearInfo
         pushHistory();
 
         /* Update the value if required */
-        if (!Difference.isEqual(getField(), myTaxInfo.getField())) {
+        if (!MetisDifference.isEqual(getField(), myTaxInfo.getField())) {
             setValueValue(myTaxInfo.getField());
         }
 
@@ -257,7 +257,7 @@ public class TaxYearInfo
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataInfoList.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataInfoList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE account list.
@@ -276,7 +276,7 @@ public class TaxYearInfo
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -286,7 +286,7 @@ public class TaxYearInfo
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return TaxYearInfo.FIELD_DEFS;
         }
 

@@ -35,8 +35,8 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldElement;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket;
@@ -128,8 +128,8 @@ public class CashAnalysisSelect
         theEventManager = new TethysEventManager();
 
         /* Create the labels */
-        JLabel myCatLabel = new JLabel(NLS_CATEGORY + JFieldElement.STR_COLON);
-        JLabel myCshLabel = new JLabel(NLS_CASH + JFieldElement.STR_COLON);
+        JLabel myCatLabel = new JLabel(NLS_CATEGORY + MetisFieldElement.STR_COLON);
+        JLabel myCshLabel = new JLabel(NLS_CASH + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -266,7 +266,7 @@ public class CashAnalysisSelect
             CashBucket myBucket = myIterator.next();
 
             /* Return if correct category */
-            if (Difference.isEqual(pCategory, myBucket.getCategory())) {
+            if (MetisDifference.isEqual(pCategory, myBucket.getCategory())) {
                 return myBucket;
             }
         }
@@ -420,7 +420,7 @@ public class CashAnalysisSelect
                 CashBucket myBucket = myIterator.next();
 
                 /* Ignore if not the correct category */
-                if (!Difference.isEqual(myCategory, myBucket.getCategory())) {
+                if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
                     continue;
                 }
 
@@ -518,7 +518,7 @@ public class CashAnalysisSelect
          */
         private boolean setCash(final CashBucket pCash) {
             /* Adjust the selected cash */
-            if (!Difference.isEqual(pCash, theCash)) {
+            if (!MetisDifference.isEqual(pCash, theCash)) {
                 /* Store the cash */
                 setTheCash(pCash);
                 return true;
@@ -547,7 +547,7 @@ public class CashAnalysisSelect
          */
         private boolean setCategory(final CashCategory pCategory) {
             /* Adjust the selected category */
-            if (!Difference.isEqual(pCategory, theCategory)) {
+            if (!MetisDifference.isEqual(pCategory, theCategory)) {
                 theCategory = pCategory;
                 theCash = getFirstCash(theCategory);
                 return true;

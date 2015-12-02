@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jprometheus.preference;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
-import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
+import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * @author Tony Washer
  */
 public class BackupPreferences
-        extends PreferenceSet {
+        extends MetisPreferenceSet {
     /**
      * Registry name for Backup Directory.
      */
@@ -108,7 +108,7 @@ public class BackupPreferences
     /**
      * Default value for BackupType.
      */
-    private static final WorkBookType DEFAULT_BACKUP_TYPE = WorkBookType.EXCELXLS;
+    private static final MetisWorkBookType DEFAULT_BACKUP_TYPE = MetisWorkBookType.EXCELXLS;
 
     /**
      * Default value for Archive File.
@@ -138,7 +138,7 @@ public class BackupPreferences
         /* Define the preferences */
         defineDirectoryPreference(NAME_BACKUP_DIR, DEFAULT_BACKUPDIR);
         defineStringPreference(NAME_BACKUP_PFIX, DEFAULT_BACKUP_PFIX);
-        definePreference(NAME_BACKUP_TYPE, DEFAULT_BACKUP_TYPE, WorkBookType.class);
+        definePreference(NAME_BACKUP_TYPE, DEFAULT_BACKUP_TYPE, MetisWorkBookType.class);
         defineFilePreference(NAME_ARCHIVE_FILE, DEFAULT_ARCHIVE_FILE);
         defineDatePreference(NAME_LAST_EVENT, DEFAULT_LAST_EVENT);
         defineBooleanPreference(NAME_BACKUP_TIME, DEFAULT_BACKUP_TIME);

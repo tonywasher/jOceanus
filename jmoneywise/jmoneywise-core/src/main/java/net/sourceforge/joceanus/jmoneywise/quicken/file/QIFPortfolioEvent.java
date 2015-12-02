@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.quicken.file;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QPortfolioLineType;
@@ -105,7 +105,7 @@ public class QIFPortfolioEvent
      * @param pLines the data lines
      */
     protected QIFPortfolioEvent(final QIFFile pFile,
-                                final JDataFormatter pFormatter,
+                                final MetisDataFormatter pFormatter,
                                 final List<String> pLines) {
         /* Call super-constructor */
         super(pFile, QPortfolioLineType.class);
@@ -607,7 +607,7 @@ public class QIFPortfolioEvent
         }
 
         @Override
-        protected void formatData(final JDataFormatter pFormatter,
+        protected void formatData(final MetisDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Add the action */
             pBuilder.append(theAction.getSymbol());

@@ -26,13 +26,13 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.EditState;
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.data.JDataProfile;
-import net.sourceforge.joceanus.jmetis.data.JMetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -52,16 +52,16 @@ import org.slf4j.LoggerFactory;
  * @param <E> the data type enum class
  */
 public class UpdateSet<E extends Enum<E>>
-        implements JDataContents, TethysEventProvider, DataListSet<E> {
+        implements MetisDataContents, TethysEventProvider, DataListSet<E> {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(PrometheusViewResource.UPDATESET_NAME.getValue());
+    private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusViewResource.UPDATESET_NAME.getValue());
 
     /**
      * Version field id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATASET_VERSION.getValue());
+    public static final MetisField FIELD_VERSION = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATASET_VERSION.getValue());
 
     /**
      * Logger.
@@ -96,7 +96,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * Report fields.
      */
-    private final JDataFields theLocalFields;
+    private final MetisFields theLocalFields;
 
     /**
      * The entry map.
@@ -132,14 +132,14 @@ public class UpdateSet<E extends Enum<E>>
         theEventManager = new TethysEventManager();
 
         /* Create local fields */
-        theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
+        theLocalFields = new MetisFields(FIELD_DEFS.getName(), FIELD_DEFS);
 
         /* Create the map */
         theMap = new EnumMap<E, UpdateEntry<?, E>>(pClass);
     }
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return theLocalFields;
     }
 
@@ -149,7 +149,7 @@ public class UpdateSet<E extends Enum<E>>
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_VERSION.equals(pField)) {
             return theVersion;
@@ -162,7 +162,7 @@ public class UpdateSet<E extends Enum<E>>
         }
 
         /* Unknown */
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
@@ -256,13 +256,13 @@ public class UpdateSet<E extends Enum<E>>
                 /* Return the value */
                 DataList<?, ?> myList = myEntry.getDataList();
                 return (myList == null)
-                                       ? JDataFieldValue.SKIP
+                                       ? MetisFieldValue.SKIP
                                        : myList;
             }
         }
 
         /* Not found , so add it */
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**
@@ -270,7 +270,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     public void incrementVersion() {
         /* Obtain the active profile */
-        JDataProfile myTask = theControl.getNewProfile("incrementVersion");
+        MetisProfile myTask = theControl.getNewProfile("incrementVersion");
 
         /* Increment the version */
         theVersion++;
@@ -307,8 +307,8 @@ public class UpdateSet<E extends Enum<E>>
      */
     private void rewindToVersion(final int pVersion) {
         /* Obtain the active profile */
-        JDataProfile myTask = theControl.getActiveTask();
-        JDataProfile mySubTask = myTask.startTask("reWindToVersion");
+        MetisProfile myTask = theControl.getActiveTask();
+        MetisProfile mySubTask = myTask.startTask("reWindToVersion");
 
         /* Record the version */
         theVersion = pVersion;
@@ -397,7 +397,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     private void applyChanges() {
         /* Obtain the active profile */
-        JDataProfile myTask = theControl.getActiveTask();
+        MetisProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("applyChanges");
 
         /* Validate the changes */
@@ -452,7 +452,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     private boolean prepareChanges() {
         /* Obtain the active profile */
-        JDataProfile myTask = theControl.getActiveTask();
+        MetisProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("prepareChanges");
         boolean bSuccess = true;
 
@@ -485,7 +485,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     private void commitChanges() {
         /* Obtain the active profile */
-        JDataProfile myTask = theControl.getActiveTask();
+        MetisProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("commitChanges");
 
         /* Loop through the items in the list */
@@ -513,7 +513,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     private void rollBackChanges() {
         /* Obtain the active profile */
-        JDataProfile myTask = theControl.getActiveTask();
+        MetisProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("rollBackChanges");
 
         /* Loop through the items in the list */
@@ -568,7 +568,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     public void validate() {
         /* Obtain the active profile */
-        JDataProfile myTask = theControl.getActiveTask();
+        MetisProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("validate");
 
         /* Loop through the items in the list */
@@ -596,10 +596,10 @@ public class UpdateSet<E extends Enum<E>>
      * Get the edit state of this set of tables.
      * @return the edit state
      */
-    public EditState getEditState() {
+    public MetisEditState getEditState() {
         /* Loop through the items in the list */
         Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
-        EditState myState = EditState.CLEAN;
+        MetisEditState myState = MetisEditState.CLEAN;
         while (myIterator.hasNext()) {
             /* Access list */
             UpdateEntry<?, E> myEntry = myIterator.next();
@@ -623,7 +623,7 @@ public class UpdateSet<E extends Enum<E>>
     public void processCommand(final int pCmd,
                                final ErrorDisplay pError) {
         /* Create a new profile */
-        JDataProfile myTask = theControl.getNewProfile("EditCommand");
+        MetisProfile myTask = theControl.getNewProfile("EditCommand");
 
         /* Switch on command */
         if (CMD_OK == pCmd) {
@@ -635,7 +635,7 @@ public class UpdateSet<E extends Enum<E>>
         }
 
         /* Access any error */
-        DataErrorList<JMetisExceptionWrapper> myErrors = theControl.getErrors();
+        DataErrorList<MetisExceptionWrapper> myErrors = theControl.getErrors();
 
         /* Show the error */
         if (!myErrors.isEmpty()) {
@@ -656,7 +656,7 @@ public class UpdateSet<E extends Enum<E>>
                                    final int pVersion,
                                    final ErrorDisplay pError) {
         /* Create a new profile */
-        JDataProfile myTask = theControl.getNewProfile("ItemCommand");
+        MetisProfile myTask = theControl.getNewProfile("ItemCommand");
 
         /* Switch on command */
         if (CMD_OK == pCmd) {
@@ -668,7 +668,7 @@ public class UpdateSet<E extends Enum<E>>
         }
 
         /* Access any error */
-        DataErrorList<JMetisExceptionWrapper> myErrors = theControl.getErrors();
+        DataErrorList<MetisExceptionWrapper> myErrors = theControl.getErrors();
 
         /* Show the error */
         if (!myErrors.isEmpty()) {

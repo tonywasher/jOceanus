@@ -33,11 +33,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import net.sourceforge.joceanus.jmetis.data.DataType;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetBase.FieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
@@ -74,7 +74,7 @@ public class PortfolioPanel
     /**
      * The Field Set.
      */
-    private final transient JFieldSet<Portfolio> theFieldSet;
+    private final transient MetisFieldSet<Portfolio> theFieldSet;
 
     /**
      * Parent Button Field.
@@ -102,7 +102,7 @@ public class PortfolioPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public PortfolioPanel(final JFieldManager pFieldMgr,
+    public PortfolioPanel(final MetisFieldManager pFieldMgr,
                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
                           final ErrorPanel pError) {
         /* Initialise the panel */
@@ -170,8 +170,8 @@ public class PortfolioPanel
         restrictField(myTaxFreeButton, Portfolio.NAMELEN);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(Portfolio.FIELD_NAME, DataType.STRING, myName);
-        theFieldSet.addFieldElement(Portfolio.FIELD_DESC, DataType.STRING, myDesc);
+        theFieldSet.addFieldElement(Portfolio.FIELD_NAME, MetisDataType.STRING, myName);
+        theFieldSet.addFieldElement(Portfolio.FIELD_DESC, MetisDataType.STRING, myDesc);
         theFieldSet.addFieldElement(Portfolio.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_CLOSED, Boolean.class, myClosedButton);
@@ -220,13 +220,13 @@ public class PortfolioPanel
         restrictField(myPassWord, myWidth);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), DataType.CHARARRAY, myAccount);
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), DataType.CHARARRAY, myReference);
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), DataType.CHARARRAY, myWebSite);
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), DataType.CHARARRAY, myCustNo);
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), DataType.CHARARRAY, myUserId);
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), DataType.CHARARRAY, myPassWord);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), MetisDataType.CHARARRAY, myWebSite);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), MetisDataType.CHARARRAY, myCustNo);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), MetisDataType.CHARARRAY, myUserId);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), MetisDataType.CHARARRAY, myPassWord);
 
         /* Create the extras panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -257,7 +257,7 @@ public class PortfolioPanel
         JScrollPane myScroll = new JScrollPane(myNotes);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -340,9 +340,9 @@ public class PortfolioPanel
     }
 
     @Override
-    protected void updateField(final FieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        JDataField myField = pUpdate.getField();
+        MetisField myField = pUpdate.getField();
         Portfolio myPortfolio = getItem();
 
         /* Process updates */

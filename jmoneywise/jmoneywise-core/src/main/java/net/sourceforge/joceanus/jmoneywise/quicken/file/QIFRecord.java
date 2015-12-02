@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QLineType;
 
 /**
@@ -170,7 +170,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    public void formatRecord(final JDataFormatter pFormatter,
+    public void formatRecord(final MetisDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
         /* Format the standard lines */
         formatLines(pFormatter, pBuilder);
@@ -197,7 +197,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    private void formatLines(final JDataFormatter pFormatter,
+    private void formatLines(final MetisDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
         /* Loop through the map in ordinal order */
         for (T myType : theClass.getEnumConstants()) {

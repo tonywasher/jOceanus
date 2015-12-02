@@ -33,8 +33,8 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.field.swing.JFieldElement;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
@@ -103,7 +103,7 @@ public class PortfolioAnalysisSelect
         theEventManager = new TethysEventManager();
 
         /* Create the labels */
-        JLabel myPortLabel = new JLabel(NLS_PORTFOLIO + JFieldElement.STR_COLON);
+        JLabel myPortLabel = new JLabel(NLS_PORTFOLIO + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -356,7 +356,7 @@ public class PortfolioAnalysisSelect
          */
         private boolean setPortfolio(final PortfolioBucket pPortfolio) {
             /* Adjust the selected portfolio */
-            if (!Difference.isEqual(pPortfolio, thePortfolio)) {
+            if (!MetisDifference.isEqual(pPortfolio, thePortfolio)) {
                 setThePortfolio(pPortfolio);
                 return true;
             }

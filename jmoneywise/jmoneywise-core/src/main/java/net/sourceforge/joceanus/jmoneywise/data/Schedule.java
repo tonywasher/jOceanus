@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.Difference;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.ValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
@@ -61,37 +61,37 @@ public class Schedule
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
     /**
      * StartDate Field Id.
      */
-    public static final JDataField FIELD_STARTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_STARTDATE.getValue());
+    public static final MetisField FIELD_STARTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_STARTDATE.getValue());
 
     /**
      * EndDate Field Id.
      */
-    public static final JDataField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_ENDDATE.getValue());
+    public static final MetisField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_ENDDATE.getValue());
 
     /**
      * Frequency Field Id.
      */
-    public static final JDataField FIELD_FREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.FREQUENCY.getItemName());
+    public static final MetisField FIELD_FREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.FREQUENCY.getItemName());
 
     /**
      * RepeatFrequency Field Id.
      */
-    public static final JDataField FIELD_REPFREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_REPEATFREQ.getValue());
+    public static final MetisField FIELD_REPFREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_REPEATFREQ.getValue());
 
     /**
      * Pattern Field Id.
      */
-    public static final JDataField FIELD_PATTERN = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_PATTERN.getValue());
+    public static final MetisField FIELD_PATTERN = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_PATTERN.getValue());
 
     /**
      * NextDate Field Id.
      */
-    public static final JDataField FIELD_NEXTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_NEXTDATE.getValue());
+    public static final MetisField FIELD_NEXTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_NEXTDATE.getValue());
 
     /**
      * Bad Frequency error.
@@ -131,7 +131,7 @@ public class Schedule
         super(pList, pValues);
 
         /* Access parsers */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
         TethysDateFormatter myParser = myFormatter.getDateFormatter();
 
         /* Protect against exceptions */
@@ -196,12 +196,12 @@ public class Schedule
     }
 
     @Override
-    public JDataFields declareFields() {
+    public MetisFields declareFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public boolean includeXmlField(final JDataField pField) {
+    public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
         if (FIELD_STARTDATE.equals(pField)) {
             return true;
@@ -362,7 +362,7 @@ public class Schedule
      * @param pValueSet the valueSet
      * @return the date
      */
-    public static TethysDate getStartDate(final ValueSet pValueSet) {
+    public static TethysDate getStartDate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_STARTDATE, TethysDate.class);
     }
 
@@ -371,7 +371,7 @@ public class Schedule
      * @param pValueSet the valueSet
      * @return the date
      */
-    public static TethysDate getEndDate(final ValueSet pValueSet) {
+    public static TethysDate getEndDate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ENDDATE, TethysDate.class);
     }
 
@@ -380,7 +380,7 @@ public class Schedule
      * @param pValueSet the valueSet
      * @return the Frequency
      */
-    public static Frequency getFrequency(final ValueSet pValueSet) {
+    public static Frequency getFrequency(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_FREQ, Frequency.class);
     }
 
@@ -389,7 +389,7 @@ public class Schedule
      * @param pValueSet the valueSet
      * @return the Repeat Frequency
      */
-    public static Frequency getRepeatFrequency(final ValueSet pValueSet) {
+    public static Frequency getRepeatFrequency(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_REPFREQ, Frequency.class);
     }
 
@@ -398,7 +398,7 @@ public class Schedule
      * @param pValueSet the valueSet
      * @return the Frequency Interval
      */
-    public static Integer getRepeatInterval(final ValueSet pValueSet) {
+    public static Integer getRepeatInterval(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_REPFREQ, Integer.class);
     }
 
@@ -407,7 +407,7 @@ public class Schedule
      * @param pValueSet the valueSet
      * @return the Pattern
      */
-    public static SchedulePattern getPattern(final ValueSet pValueSet) {
+    public static SchedulePattern getPattern(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PATTERN, SchedulePattern.class);
     }
 
@@ -416,7 +416,7 @@ public class Schedule
      * @param pValueSet the valueSet
      * @return the date
      */
-    public static TethysDate getNextDate(final ValueSet pValueSet) {
+    public static TethysDate getNextDate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_NEXTDATE, TethysDate.class);
     }
 
@@ -545,19 +545,19 @@ public class Schedule
         }
 
         /* Check the next date */
-        int iDiff = Difference.compareObject(getNextDate(), pThat.getNextDate());
+        int iDiff = MetisDifference.compareObject(getNextDate(), pThat.getNextDate());
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* Check the start date */
-        iDiff = Difference.compareObject(getStartDate(), pThat.getStartDate());
+        iDiff = MetisDifference.compareObject(getStartDate(), pThat.getStartDate());
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* Check the frequency */
-        iDiff = Difference.compareObject(getFrequency(), pThat.getFrequency());
+        iDiff = MetisDifference.compareObject(getFrequency(), pThat.getFrequency());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -573,9 +573,9 @@ public class Schedule
 
         /* Access data */
         MoneyWiseData myData = getDataSet();
-        JDataFormatter myFormatter = myData.getDataFormatter();
+        MetisDataFormatter myFormatter = myData.getDataFormatter();
         FrequencyList myFreqs = myData.getFrequencys();
-        ValueSet myValues = getValueSet();
+        MetisValueSet myValues = getValueSet();
 
         /* Resolve dataLinks */
         resolveDataLink(FIELD_FREQ, myFreqs);
@@ -765,33 +765,33 @@ public class Schedule
         pushHistory();
 
         /* Update the start/end dates if required */
-        if (!Difference.isEqual(getStartDate(), mySchedule.getStartDate())) {
+        if (!MetisDifference.isEqual(getStartDate(), mySchedule.getStartDate())) {
             setStartDate(mySchedule.getStartDate());
         }
-        if (!Difference.isEqual(getEndDate(), mySchedule.getEndDate())) {
+        if (!MetisDifference.isEqual(getEndDate(), mySchedule.getEndDate())) {
             setEndDate(mySchedule.getEndDate());
         }
 
         /* Update the frequency if required */
-        if (!Difference.isEqual(getFrequency(), mySchedule.getFrequency())) {
+        if (!MetisDifference.isEqual(getFrequency(), mySchedule.getFrequency())) {
             setFrequency(mySchedule.getFrequency());
         }
 
         /* Update the repeat frequency if required */
-        if (!Difference.isEqual(getRepeatFrequency(), mySchedule.getRepeatFrequency())) {
+        if (!MetisDifference.isEqual(getRepeatFrequency(), mySchedule.getRepeatFrequency())) {
             setRepeatFrequency(mySchedule.getRepeatFrequency());
         }
-        if (!Difference.isEqual(getRepeatInterval(), mySchedule.getRepeatInterval())) {
+        if (!MetisDifference.isEqual(getRepeatInterval(), mySchedule.getRepeatInterval())) {
             setRepeatInterval(mySchedule.getRepeatInterval());
         }
 
         /* Update the pattern if required */
-        if (!Difference.isEqual(getPattern(), mySchedule.getPattern())) {
+        if (!MetisDifference.isEqual(getPattern(), mySchedule.getPattern())) {
             setPattern(mySchedule.getPattern());
         }
 
         /* Update the next date if required */
-        if (!Difference.isEqual(getNextDate(), mySchedule.getNextDate())) {
+        if (!MetisDifference.isEqual(getNextDate(), mySchedule.getNextDate())) {
             setNextDate(mySchedule.getNextDate());
         }
 
@@ -816,7 +816,7 @@ public class Schedule
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ScheduleList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final MetisFields FIELD_DEFS = new MetisFields(ScheduleList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         /**
          * Construct an empty CORE pattern list.
@@ -835,7 +835,7 @@ public class Schedule
         }
 
         @Override
-        public JDataFields declareFields() {
+        public MetisFields declareFields() {
             return FIELD_DEFS;
         }
 
@@ -845,7 +845,7 @@ public class Schedule
         }
 
         @Override
-        public JDataFields getItemFields() {
+        public MetisFields getItemFields() {
             return Schedule.FIELD_DEFS;
         }
 

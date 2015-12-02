@@ -25,18 +25,18 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.JDataFields;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.data.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 
 /**
  * Report-able object list.
  * @param <T> the object type
  */
-public class DataErrorList<T extends JDataContents>
+public class DataErrorList<T extends MetisDataContents>
         extends ArrayList<T>
-        implements JDataContents {
+        implements MetisDataContents {
     /**
      * Serial Id.
      */
@@ -45,15 +45,15 @@ public class DataErrorList<T extends JDataContents>
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(PrometheusDataResource.ERRORLIST_NAME.getValue());
+    private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.ERRORLIST_NAME.getValue());
 
     /**
      * Size Field Id.
      */
-    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+    public static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
 
     @Override
-    public JDataFields getDataFields() {
+    public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
 
@@ -66,11 +66,11 @@ public class DataErrorList<T extends JDataContents>
     }
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public Object getFieldValue(final MetisField pField) {
         if (FIELD_SIZE.equals(pField)) {
             return size();
         }
-        return JDataFieldValue.UNKNOWN;
+        return MetisFieldValue.UNKNOWN;
     }
 
     /**

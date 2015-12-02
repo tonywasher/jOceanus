@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
@@ -55,7 +55,7 @@ public class CashFlow
     /**
      * The Formatter.
      */
-    private final JDataFormatter theFormatter;
+    private final MetisDataFormatter theFormatter;
 
     /**
      * Constructor.

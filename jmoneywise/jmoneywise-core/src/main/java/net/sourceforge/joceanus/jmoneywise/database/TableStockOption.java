@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.database;
 
-import net.sourceforge.joceanus.jmetis.data.EncryptedData;
-import net.sourceforge.joceanus.jmetis.data.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
@@ -56,7 +56,7 @@ public class TableStockOption
         myTableDef.addIntegerColumn(StockOption.FIELD_STOCKHOLDING);
         myTableDef.addDateColumn(StockOption.FIELD_GRANTDATE);
         myTableDef.addDateColumn(StockOption.FIELD_EXPIREDATE);
-        myTableDef.addEncryptedColumn(StockOption.FIELD_PRICE, EncryptedData.PRICELEN);
+        myTableDef.addEncryptedColumn(StockOption.FIELD_PRICE, MetisEncryptedData.PRICELEN);
         myTableDef.addEncryptedColumn(StockOption.FIELD_NAME, StockOption.NAMELEN);
         myTableDef.addNullEncryptedColumn(StockOption.FIELD_DESC, StockOption.DESCLEN);
         myTableDef.addBooleanColumn(StockOption.FIELD_CLOSED);
@@ -89,7 +89,7 @@ public class TableStockOption
 
     @Override
     protected void setFieldValue(final StockOption pItem,
-                                 final JDataField iField) throws OceanusException {
+                                 final MetisField iField) throws OceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (StockOption.FIELD_STOCKHOLDING.equals(iField)) {
