@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
-public class SheetTest {
+public class MetisSheetTester {
     /**
      * Main entry point.
      * @param args the command line arguments

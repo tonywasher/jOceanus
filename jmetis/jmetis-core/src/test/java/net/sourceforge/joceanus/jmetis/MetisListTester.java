@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
  * Test suite for jSortedList.
  * @author Tony Washer
  */
-public class ListTest {
+public class MetisListTester {
     /**
      * Main entry point.
      * @param args the parameters
