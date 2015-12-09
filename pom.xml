@@ -74,10 +74,10 @@
     <SvnKitVersion>1.8.11</SvnKitVersion>
     <JGitVersion>4.1.1.201511131810-r</JGitVersion>
     <HttpClientVersion>4.5.1</HttpClientVersion>
-    <JSONVersion>20150729</JSONVersion>
+    <JSONVersion>20151123</JSONVersion>
     <ApacheMavenVersion>3.3.9</ApacheMavenVersion>
-    <MySQLVersion>5.1.37</MySQLVersion>
-    <PostGreSQLVersion>9.4-1205-jdbc42</PostGreSQLVersion>
+    <MySQLVersion>5.1.38</MySQLVersion>
+    <PostGreSQLVersion>9.4-1206-jdbc42</PostGreSQLVersion>
     <ApachePOIVersion>3.13</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <XercesVersion>2.11.0</XercesVersion>

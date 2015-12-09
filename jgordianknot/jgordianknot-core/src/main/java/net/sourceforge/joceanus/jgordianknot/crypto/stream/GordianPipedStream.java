@@ -205,10 +205,6 @@ public class GordianPipedStream {
                     theDataLen = 0;
                     theReadOffset = 0;
                 }
-
-                /* else if we have no data check for EOF and report it if required */
-            } else if (hasEOFbeenSeen) {
-                iNumRead = -1;
             }
 
             /* Return the number of bytes read */
