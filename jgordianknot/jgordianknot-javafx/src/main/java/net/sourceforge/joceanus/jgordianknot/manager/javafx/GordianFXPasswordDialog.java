@@ -183,8 +183,8 @@ public class GordianFXPasswordDialog
      * @param pNeedConfirm true/false
      */
     public GordianFXPasswordDialog(final Stage pParent,
-                                       final String pTitle,
-                                       final boolean pNeedConfirm) {
+                                   final String pTitle,
+                                   final boolean pNeedConfirm) {
         /* Initialise the dialog */
         initModality(Modality.WINDOW_MODAL);
         initOwner(pParent);

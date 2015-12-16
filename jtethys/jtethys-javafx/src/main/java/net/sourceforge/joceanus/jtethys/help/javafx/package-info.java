@@ -21,6 +21,6 @@
  * $Date: 2015-11-24 10:46:21 +0000 (Tue, 24 Nov 2015) $
  ******************************************************************************/
 /**
- * JavaFX UI utilities.
+ * JavaFX Help utilities.
  */
-package net.sourceforge.joceanus.jtethys.ui.javafx;
+package net.sourceforge.joceanus.jtethys.help.javafx;

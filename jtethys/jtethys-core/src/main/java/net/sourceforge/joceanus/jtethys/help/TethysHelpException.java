@@ -22,12 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.help;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
  * Exception indicating that there was a failure in the help system.
  * @author Tony Washer
  */
 public class TethysHelpException
-        extends Exception {
+        extends OceanusException {
     /**
      * Serial id.
      */

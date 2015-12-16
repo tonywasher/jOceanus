@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.help;
 
+import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 
@@ -36,6 +37,20 @@ public class MoneyWiseHelp
      * @throws TethysHelpException on error
      */
     public MoneyWiseHelp() throws TethysHelpException {
-        super(MoneyWiseHelp.class, "help.xml");
+        /* Initialise the underlying module */
+        super(MoneyWiseHelp.class, "MoneyWise Help");
+
+        /* Create accounts tree */
+        TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
+        myAccounts.addChildEntry(defineHelpEntry("Deposits", "Deposits.html"));
+        myAccounts.addChildEntry(defineHelpEntry("Loans", "Loans.html"));
+
+        /* Create static tree */
+        TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
+        myStatic.addChildEntry(defineHelpEntry("AccountTypes", "AccountTypes.html"));
+        myStatic.addChildEntry(defineHelpEntry("TransactionTypes", "TransactionTypes.html"));
+
+        /* Load help pages */
+        loadHelpPages();
     }
 }

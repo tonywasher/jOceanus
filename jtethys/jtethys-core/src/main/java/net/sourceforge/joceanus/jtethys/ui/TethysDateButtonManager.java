@@ -62,6 +62,9 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
 
     /**
      * Constructor.
+     * @param pConfig the date configuration
+     * @param pFormatter the date formatter
+     * 
      */
     protected TethysDateButtonManager(final JDateBaseConfig<B> pConfig,
                                       final TethysDateFormatter pFormatter) {

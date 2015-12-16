@@ -22,26 +22,27 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.help;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 /**
  * The help module that is implemented by each Help System.
  */
 public abstract class TethysHelpModule {
+    /**
+     * Byte encoding.
+     */
+    private static final String ENCODING = "UTF-8";
+
+    /**
+     * The Buffer length.
+     */
+    private static final int BUFFER_LEN = 10000;
+
     /**
      * The Hash prime.
      */
@@ -58,29 +59,24 @@ public abstract class TethysHelpModule {
     protected static final String ATTR_INITIAL = "initial";
 
     /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TethysHelpModule.class);
-
-    /**
      * The stream close error.
      */
     public static final String ERROR_STREAM = "Failed to close stream";
 
     /**
-     * The list of Help pages.
-     */
-    private final List<TethysHelpPage> thePages;
-
-    /**
      * The Help Entries.
      */
-    private List<TethysHelpEntry> theEntries;
+    private final List<TethysHelpEntry> theEntries;
 
     /**
      * The title of the Help System.
      */
-    private String theTitle = "Help System";
+    private final Class<?> theClass;
+
+    /**
+     * The title of the Help System.
+     */
+    private final String theTitle;
 
     /**
      * The initial entry of the help system.
@@ -90,27 +86,25 @@ public abstract class TethysHelpModule {
     /**
      * Constructor.
      * @param pClass the class representing the resource
-     * @param pDefinitions the definitions file name
+     * @param pTitle the title
      * @throws TethysHelpException on error
      */
     public TethysHelpModule(final Class<?> pClass,
-                            final String pDefinitions) throws TethysHelpException {
-        /* Allocate the page list */
-        thePages = new ArrayList<TethysHelpPage>();
+                            final String pTitle) throws TethysHelpException {
+        /* Store parameters */
+        theClass = pClass;
+        theTitle = pTitle;
 
-        /* Parse the help definitions */
-        parseHelpDefinition(pClass, pDefinitions);
-
-        /* Loop through the entities */
-        loadHelpPages(pClass, theEntries);
+        /* Create entry list */
+        theEntries = new ArrayList<TethysHelpEntry>();
     }
 
     /**
-     * Obtain the list of pages.
-     * @return the list of pages
+     * Set the initial name.
+     * @param pInitial the initial name
      */
-    public List<TethysHelpPage> getHelpPages() {
-        return thePages;
+    public void setInitialName(final String pInitial) {
+        theInitial = pInitial;
     }
 
     /**
@@ -138,109 +132,116 @@ public abstract class TethysHelpModule {
     }
 
     /**
-     * Search for a help page in the list.
-     * @param pName the name of the help page
-     * @return the help page
+     * Add root entry
+     * @param pEntry the entry
+     * @return the HelpEntry
      */
-    public final TethysHelpPage searchFor(final String pName) {
-        /* Loop through the entries */
-        Iterator<TethysHelpPage> myIterator = thePages.iterator();
-        while (myIterator.hasNext()) {
-            /* Access the entry */
-            TethysHelpPage myPage = myIterator.next();
-
-            /* If we have found the page return it */
-            if (pName.equals(myPage.getName())) {
-                return myPage;
-            }
-        }
-
-        /* Return not found */
-        return null;
+    public TethysHelpEntry addRootEntry(final TethysHelpEntry pEntry) {
+        theEntries.add(pEntry);
+        return pEntry;
     }
 
     /**
-     * Parse Help Definition.
-     * @param pClass the class representing the resource
-     * @param pFile the XML file containing the definitions
-     * @throws TethysHelpException on error
+     * Define Standard Help entry.
+     * @param pName the name
+     * @param pFileName the filename
+     * @return the HelpEntry
      */
-    private void parseHelpDefinition(final Class<?> pClass,
-                                     final String pFile) throws TethysHelpException {
-        /* Protect against exceptions */
-        try (InputStream myStream = pClass.getResourceAsStream(pFile)) {
-            /* Create the document builder */
-            DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
+    public static TethysHelpEntry defineHelpEntry(final String pName,
+                                                  final String pFileName) {
+        return defineTitledHelpEntry(pName, pName, pFileName);
+    }
 
-            /* Access the XML document element */
-            Document myDoc = myBuilder.parse(myStream);
-            Element myElement = myDoc.getDocumentElement();
+    /**
+     * Define Titled Help entry.
+     * @param pName the name
+     * @param pTitle the title
+     * @param pFileName the filename
+     * @return the HelpEntry
+     */
+    public static TethysHelpEntry defineTitledHelpEntry(final String pName,
+                                                        final String pTitle,
+                                                        final String pFileName) {
+        return new TethysHelpEntry(pName, pTitle, pFileName);
+    }
 
-            /* Reject if this is not a Help Definitions file */
-            if (!myElement.getNodeName().equals(DOC_NAME)) {
-                throw new TethysHelpException("Invalid document name: " + myElement.getNodeName());
-            }
+    /**
+     * Define Contents Help entry.
+     * @param pName the name
+     * @return the HelpEntry
+     */
+    public static TethysHelpEntry defineContentsEntry(final String pName) {
+        return defineTitledContentsEntry(pName, pName);
+    }
 
-            /* Set title of document */
-            if (myElement.getAttribute(TethysHelpEntry.ATTR_TITLE) != null) {
-                theTitle = myElement.getAttribute(TethysHelpEntry.ATTR_TITLE);
-            }
-
-            /* Access the entries */
-            theEntries = TethysHelpEntry.getHelpEntryList(myElement);
-
-            /* Default the initial entry */
-            theInitial = theEntries.get(0).getName();
-
-            /* Set initial element */
-            if (myElement.getAttribute(ATTR_INITIAL) != null) {
-                theInitial = myElement.getAttribute(ATTR_INITIAL);
-            }
-
-            /* Close the stream */
-            myStream.close();
-
-            /* Catch exceptions */
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            /* Throw Exception */
-            throw new TethysHelpException("Failed to initiate parser", e);
-        }
+    /**
+     * Define Contents Help entry.
+     * @param pName the name
+     * @param pTitle the title
+     * @return the HelpEntry
+     */
+    public static TethysHelpEntry defineTitledContentsEntry(final String pName,
+                                                            final String pTitle) {
+        return new TethysHelpEntry(pName, pTitle);
     }
 
     /**
      * Load Help entries from the file system.
-     * @param pClass the class representing the resource
+     * @throws TethysHelpException on error
+     */
+    protected void loadHelpPages() throws TethysHelpException {
+        loadHelpPages(theEntries);
+    }
+
+    /**
+     * Load Help entries from the file system.
      * @param pEntries the Help Entries
      * @throws TethysHelpException on error
      */
-    private void loadHelpPages(final Class<?> pClass,
-                               final List<TethysHelpEntry> pEntries) throws TethysHelpException {
+    private void loadHelpPages(final List<TethysHelpEntry> pEntries) throws TethysHelpException {
+        /* Allocate a string builder */
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+
         /* Loop through the entities */
         for (TethysHelpEntry myEntry : pEntries) {
-            /* Check that the entry is not already in the list */
-            if (searchFor(myEntry.getName()) != null) {
-                throw new TethysHelpException("Duplicate Help object Name: " + myEntry.getName());
-            }
-
             /* If we have a file name */
             if (myEntry.getFileName() != null) {
-                try (InputStream myStream = pClass.getResourceAsStream(myEntry.getFileName())) {
-                    /* Build the help page */
-                    TethysHelpPage myPage = new TethysHelpPage(myEntry, myStream);
+                /* Reset the builder */
+                myBuilder.setLength(0);
 
-                    /* Add it to the list */
-                    thePages.add(myPage);
+                /* Protect against exceptions */
+                try (InputStream myStream = theClass.getResourceAsStream(myEntry.getFileName());
+                     InputStreamReader myInputReader = new InputStreamReader(myStream, ENCODING);
+                     BufferedReader myReader = new BufferedReader(myInputReader)) {
 
-                } catch (IOException ex) {
-                    LOGGER.error(ERROR_STREAM, ex);
+                    /* Read the header entry */
+                    for (;;) {
+                        /* Read next line */
+                        String myLine = myReader.readLine();
+                        if (myLine == null) {
+                            break;
+                        }
+
+                        /* Add to the string buffer */
+                        myBuilder.append(myLine);
+                        myBuilder.append('\n');
+                    }
+
+                    /* Set the HTML for the entry */
+                    myEntry.setHtml(myBuilder.toString());
+
+                    /* Catch exceptions */
+                } catch (IOException e) {
+                    /* Throw an exception */
+                    throw new TethysHelpException("Failed to load help file "
+                                                  + myEntry.getName(), e);
                 }
             }
 
             /* If we have children */
             if (myEntry.getChildren() != null) {
                 /* Load the entries */
-                loadHelpPages(pClass, myEntry.getChildren());
+                loadHelpPages(myEntry.getChildren());
             }
         }
     }

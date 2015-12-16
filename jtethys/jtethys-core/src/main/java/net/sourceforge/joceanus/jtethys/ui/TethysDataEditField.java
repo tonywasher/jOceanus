@@ -262,10 +262,6 @@ public abstract class TethysDataEditField<T, N, C, F, I>
     /**
      * DataEditTextField base class.
      * @param <T> the data type
-     * @param <N> the Node type
-     * @param <C> the Colour type
-     * @param <F> the Font type
-     * @param <I> the Icon type
      */
     protected static class TethysDataEditTextFieldControl<T> {
         /**

@@ -40,6 +40,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisViewerWindow;
@@ -60,11 +63,10 @@ import net.sourceforge.joceanus.jprometheus.threads.swing.WorkerThread;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
-import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpManager;
 
 /**
  * Main window for application.
@@ -327,7 +329,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Started Help window.
      */
-    private TethysSwingHelpWindow theHelpWdw = null;
+    private TethysSwingHelpManager theHelpWdw;
 
     /**
      * The Viewer Manager.
@@ -892,10 +894,19 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private void displayHelp() {
         try {
             /* Create the help window */
-            theHelpWdw = new TethysSwingHelpWindow(theFrame, getHelpModule());
+            theHelpWdw = new TethysSwingHelpManager();
+            theHelpWdw.setFrame(theFrame);
+            theHelpWdw.setModule(getHelpModule());
 
             /* Listen for its closure */
-            theHelpWdw.addWindowListener(theListener);
+            theHelpWdw.getEventRegistrar().addActionListener(new TethysActionEventListener() {
+                @Override
+                public void processAction(TethysActionEvent pEvent) {
+                    theHelpMgr.setEnabled(true);
+                    theHelpWdw.hideDialog();
+                    theHelpWdw = null;
+                }
+            });
 
             /* Disable the menu item */
             theHelpMgr.setEnabled(false);
@@ -944,7 +955,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
                     theDataWdw.dispose();
                 }
                 if (theHelpWdw != null) {
-                    theHelpWdw.dispose();
+                    theHelpWdw.hideDialog();
                 }
 
                 /* Dispose of the frame */
@@ -965,7 +976,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
             } else if (o.equals(theHelpWdw)) {
                 /* Re-enable the help menu item */
                 theHelpMgr.setEnabled(true);
-                theHelpWdw.dispose();
+                theHelpWdw.hideDialog();
                 theHelpWdw = null;
             }
         }

@@ -48,6 +48,9 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
+/**
+ * Sheet Tester.
+ */
 public class MetisSheetTester {
     /**
      * Main entry point.
@@ -183,32 +186,32 @@ public class MetisSheetTester {
                 String myType = myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 1);
                 String myParent = (myCell == null)
-                        ? null
-                        : myCell.getStringValue();
+                                                   ? null
+                                                   : myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 2);
                 String myAlias = (myCell == null)
-                        ? null
-                        : myCell.getStringValue();
+                                                  ? null
+                                                  : myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 3);
                 String myPortfolio = (myCell == null)
-                        ? null
-                        : myCell.getStringValue();
+                                                      ? null
+                                                      : myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 4);
                 String myBalance = (myCell == null)
-                        ? null
-                        : myCell.getStringValue();
+                                                    ? null
+                                                    : myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 5);
                 String mySymbol = (myCell == null)
-                        ? null
-                        : myCell.getStringValue();
+                                                   ? null
+                                                   : myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 6);
                 Boolean isTaxFree = (myCell == null)
-                        ? null
-                        : myCell.getBooleanValue();
+                                                     ? null
+                                                     : myCell.getBooleanValue();
                 myCell = myView.getRowCellByIndex(myRow, 7);
                 Boolean isClosed = (myCell == null)
-                        ? null
-                        : myCell.getBooleanValue();
+                                                    ? null
+                                                    : myCell.getBooleanValue();
                 myCell = myView.getRowCellByIndex(myRow, 8);
                 myCell = null;
             }

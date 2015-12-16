@@ -64,9 +64,6 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import net.sourceforge.jdatebutton.javafx.JDateConfig;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateButton;
 import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateCell;
 import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateConfig;
@@ -600,8 +597,8 @@ public class TethysFXDateExample
      * @return the requested date
      */
     private static TethysDate makeDate(final int pYear,
-                                     final Month pMonth,
-                                     final int pDay) {
+                                       final Month pMonth,
+                                       final int pDay) {
         return new TethysDate(pYear, pMonth, pDay);
     }
 

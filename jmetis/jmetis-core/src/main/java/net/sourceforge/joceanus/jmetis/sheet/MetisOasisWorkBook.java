@@ -66,8 +66,8 @@ import net.sourceforge.joceanus.jmetis.MetisIOException;
 import net.sourceforge.joceanus.jmetis.MetisLogicException;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.sheet.MetisOasisCellAddress.OasisCellRange;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * The Oasis WorkBook.
@@ -309,8 +309,8 @@ public class MetisOasisWorkBook {
      * @return the new sheet.
      */
     protected MetisDataSheet newSheet(final String pName,
-                                 final int pNumRows,
-                                 final int pNumCols) {
+                                      final int pNumRows,
+                                      final int pNumCols) {
         /* Create the new Sheet */
         TableTableElement myElement = theContents.newTableTableElement();
         myElement.setTableNameAttribute(pName);
@@ -387,8 +387,8 @@ public class MetisOasisWorkBook {
         MetisDataSheet mySheet = getSheet(myFirstCell.getSheetName());
         if (mySheet == null) {
             throw new MetisLogicException("Sheet for "
-                                           + pName
-                                           + " not found in workbook");
+                                          + pName
+                                          + " not found in workbook");
         }
 
         /* Return the view */
@@ -441,8 +441,8 @@ public class MetisOasisWorkBook {
         /* Check for existing range */
         if (theRangeMap.get(pName) != null) {
             throw new MetisLogicException("Name "
-                                           + pName
-                                           + "already exists in workbook");
+                                          + pName
+                                          + "already exists in workbook");
         }
 
         /* Protect against exceptions */

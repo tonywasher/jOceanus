@@ -77,12 +77,12 @@ public class TethysSwingDateButtonManager
         JDateDialog myDialog = theButton.getDialog();
         myDialog.addWindowFocusListener(new WindowFocusListener() {
             @Override
-            public void windowGainedFocus(java.awt.event.WindowEvent e) {
+            public void windowGainedFocus(final java.awt.event.WindowEvent e) {
                 handleDialogRequest();
             }
 
             @Override
-            public void windowLostFocus(java.awt.event.WindowEvent e) {
+            public void windowLostFocus(final java.awt.event.WindowEvent e) {
                 if (myDialog.haveSelected()) {
                     handleNewValue();
                 }

@@ -50,7 +50,7 @@ public class TethysFXTreeManager<T>
      * Constructor.
      * @throws OceanusException on error
      */
-    public TethysFXTreeManager() throws OceanusException {
+    public TethysFXTreeManager() {
         /* Create the tree */
         theRoot = new TethysFXTreeItem<T>(this);
         theTree = new TreeView<TethysFXTreeItem<T>>(theRoot.getNode());
@@ -77,6 +77,11 @@ public class TethysFXTreeManager<T>
     }
 
     @Override
+    public TethysFXTreeItem<T> getRoot() {
+        return theRoot;
+    }
+
+    @Override
     public T getSelectedItem() {
         return theTree.getSelectionModel().getSelectedItem().getValue().getItem();
     }
@@ -92,9 +97,15 @@ public class TethysFXTreeManager<T>
     }
 
     @Override
-    public void lookUpAndSelectItem(final String pName) {
+    public void setRootVisible() {
+        theTree.setShowRoot(true);
+    }
+
+    @Override
+    public boolean lookUpAndSelectItem(final String pName) {
         /* Look up the item */
         TethysFXTreeItem<T> myItem = lookUpItem(pName);
+        boolean bFound = false;
 
         /* If we found the item */
         if (myItem != null) {
@@ -109,7 +120,24 @@ public class TethysFXTreeManager<T>
 
             /* Select this item */
             theTree.getSelectionModel().select(myNode);
+            bFound = true;
         }
+
+        /* Return result */
+        return bFound;
+    }
+
+    @Override
+    public TethysFXTreeItem<T> addRootItem(final String pName,
+                                           final T pItem) throws OceanusException {
+        return new TethysFXTreeItem<T>(this, theRoot, pName, pItem);
+    }
+
+    @Override
+    public TethysFXTreeItem<T> addChildItem(final TethysTreeItem<T, Node> pParent,
+                                            final String pName,
+                                            final T pItem) throws OceanusException {
+        return new TethysFXTreeItem<T>(this, (TethysFXTreeItem<T>) pParent, pName, pItem);
     }
 
     /**
@@ -126,9 +154,8 @@ public class TethysFXTreeManager<T>
         /**
          * Constructor for root item.
          * @param pTree the tree
-         * @throws OceanusException on error
          */
-        private TethysFXTreeItem(final TethysFXTreeManager<X> pTree) throws OceanusException {
+        private TethysFXTreeItem(final TethysFXTreeManager<X> pTree) {
             /* build underlying item */
             super(pTree);
 
@@ -163,7 +190,7 @@ public class TethysFXTreeManager<T>
         }
 
         /**
-         * Obtain the node
+         * Obtain the node.
          * @return the node
          */
         private TethysFXTreeNode<X> getNode() {
@@ -222,13 +249,13 @@ public class TethysFXTreeManager<T>
      * TreeNode class.
      * @param <X> the data type
      */
-    private static class TethysFXTreeNode<X>
+    private static final class TethysFXTreeNode<X>
             extends TreeItem<TethysFXTreeItem<X>> {
         /**
          * Constructor.
          * @param pItem the tree item
          */
-        public TethysFXTreeNode(final TethysFXTreeItem<X> pItem) {
+        private TethysFXTreeNode(final TethysFXTreeItem<X> pItem) {
             super(pItem);
         }
 

@@ -56,9 +56,8 @@ public class TethysSwingTreeManager<T>
 
     /**
      * Constructor.
-     * @throws OceanusException on error
      */
-    public TethysSwingTreeManager() throws OceanusException {
+    public TethysSwingTreeManager() {
         /* Create the tree */
         theRoot = new TethysSwingTreeItem<T>(this);
         theTree = new JTree(theRoot.getNode());
@@ -83,6 +82,16 @@ public class TethysSwingTreeManager<T>
     @Override
     public JTree getNode() {
         return theTree;
+    }
+
+    @Override
+    public TethysSwingTreeItem<T> getRoot() {
+        return theRoot;
+    }
+
+    @Override
+    public void setRootVisible() {
+        theTree.setRootVisible(true);
     }
 
     @Override
@@ -112,9 +121,10 @@ public class TethysSwingTreeManager<T>
     }
 
     @Override
-    public void lookUpAndSelectItem(final String pName) {
+    public boolean lookUpAndSelectItem(final String pName) {
         /* Look up the item */
         TethysSwingTreeItem<T> myItem = lookUpItem(pName);
+        boolean bFound = false;
 
         /* If we found the item */
         if (myItem != null) {
@@ -122,7 +132,24 @@ public class TethysSwingTreeManager<T>
             TreePath myPath = new TreePath(myItem.getNode().getPath());
             theTree.setSelectionPath(myPath);
             theTree.scrollPathToVisible(myPath);
+            bFound = true;
         }
+
+        /* Return result */
+        return bFound;
+    }
+
+    @Override
+    public TethysSwingTreeItem<T> addRootItem(final String pName,
+                                              final T pItem) throws OceanusException {
+        return new TethysSwingTreeItem<T>(this, theRoot, pName, pItem);
+    }
+
+    @Override
+    public TethysSwingTreeItem<T> addChildItem(final TethysTreeItem<T, JComponent> pParent,
+                                               final String pName,
+                                               final T pItem) throws OceanusException {
+        return new TethysSwingTreeItem<T>(this, (TethysSwingTreeItem<T>) pParent, pName, pItem);
     }
 
     /**
@@ -139,9 +166,8 @@ public class TethysSwingTreeManager<T>
         /**
          * Constructor for root item.
          * @param pTree the tree
-         * @throws OceanusException on error
          */
-        private TethysSwingTreeItem(final TethysSwingTreeManager<X> pTree) throws OceanusException {
+        private TethysSwingTreeItem(final TethysSwingTreeManager<X> pTree) {
             /* build underlying item */
             super(pTree);
 
@@ -176,7 +202,7 @@ public class TethysSwingTreeManager<T>
         }
 
         /**
-         * Obtain the node
+         * Obtain the node.
          * @return the node
          */
         private TethysSwingTreeNode<X> getNode() {
@@ -199,6 +225,16 @@ public class TethysSwingTreeManager<T>
 
             /* handle children */
             super.attachToTree();
+
+            /* If we are the root */
+            if (myParent == null) {
+                /* Ensure that the node is expanded */
+                TreePath myPath = new TreePath(theNode);
+                JTree myTree = getTree().theTree;
+                if (myTree.isCollapsed(myPath)) {
+                    myTree.expandPath(myPath);
+                }
+            }
         }
 
         @Override
@@ -235,7 +271,7 @@ public class TethysSwingTreeManager<T>
      * TreeNode class.
      * @param <X> the data type
      */
-    private static class TethysSwingTreeNode<X>
+    private static final class TethysSwingTreeNode<X>
             extends DefaultMutableTreeNode {
         /**
          * Serial Id.
@@ -246,7 +282,7 @@ public class TethysSwingTreeManager<T>
          * Constructor.
          * @param pItem the tree item
          */
-        public TethysSwingTreeNode(final TethysSwingTreeItem<X> pItem) {
+        private TethysSwingTreeNode(final TethysSwingTreeItem<X> pItem) {
             super(pItem);
         }
 
@@ -267,5 +303,4 @@ public class TethysSwingTreeManager<T>
                                    : myValue.toString();
         }
     }
-
 }

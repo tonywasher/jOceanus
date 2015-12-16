@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysS
 /**
  * Generic class for displaying and editing a button data field.
  */
-public class TethysSwingDataButtonField {
+public final class TethysSwingDataButtonField {
     /**
      * Private constructor.
      */

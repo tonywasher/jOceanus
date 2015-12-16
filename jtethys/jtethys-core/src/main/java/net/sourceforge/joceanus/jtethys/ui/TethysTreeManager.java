@@ -64,6 +64,11 @@ public abstract class TethysTreeManager<T, N>
     private TethysTreeItem<T, N> theRoot;
 
     /**
+     * The root name.
+     */
+    private String theRootName = "TreeRoot";
+
+    /**
      * Constructor.
      */
     protected TethysTreeManager() {
@@ -89,6 +94,11 @@ public abstract class TethysTreeManager<T, N>
     public abstract T getSelectedItem();
 
     /**
+     * Set the root as visible.
+     */
+    public abstract void setRootVisible();
+
+    /**
      * Fire event.
      * @param pActionId the actionId
      * @param pValue the relevant value
@@ -103,6 +113,22 @@ public abstract class TethysTreeManager<T, N>
      */
     protected void setRoot(final TethysTreeItem<T, N> pRoot) {
         theRoot = pRoot;
+    }
+
+    /**
+     * Obtain the root.
+     * @return the root
+     */
+    public TethysTreeItem<T, N> getRoot() {
+        return theRoot;
+    }
+
+    /**
+     * Set the root name.
+     * @param pName the root name
+     */
+    public void setRootName(final String pName) {
+        theRootName = pName;
     }
 
     /**
@@ -145,8 +171,9 @@ public abstract class TethysTreeManager<T, N>
     /**
      * Select and display item.
      * @param pName the name of the item
+     * @return was an item selected? true/false
      */
-    public abstract void lookUpAndSelectItem(final String pName);
+    public abstract boolean lookUpAndSelectItem(final String pName);
 
     /**
      * LookUp item by name.
@@ -186,6 +213,28 @@ public abstract class TethysTreeManager<T, N>
         /* Remove the name if it exists */
         theItemMap.remove(myName);
     }
+
+    /**
+     * Add item to root.
+     * @param pName the name
+     * @param pItem the item
+     * @return the new tree item
+     * @throws OceanusException on error
+     */
+    public abstract TethysTreeItem<T, N> addRootItem(final String pName,
+                                                     final T pItem) throws OceanusException;
+
+    /**
+     * Add item to parent.
+     * @param pParent the parent
+     * @param pName the name
+     * @param pItem the item
+     * @return the new tree item
+     * @throws OceanusException on error
+     */
+    public abstract TethysTreeItem<T, N> addChildItem(final TethysTreeItem<T, N> pParent,
+                                                      final String pName,
+                                                      final T pItem) throws OceanusException;
 
     /**
      * TreeItem class.
@@ -241,10 +290,14 @@ public abstract class TethysTreeManager<T, N>
         /**
          * Constructor for root item.
          * @param pTree the tree
-         * @throws OceanusException on error
          */
-        protected TethysTreeItem(final TethysTreeManager<X, C> pTree) throws OceanusException {
-            this(pTree, null, null, null);
+        protected TethysTreeItem(final TethysTreeManager<X, C> pTree) {
+            /* Store parameters */
+            theTree = pTree;
+            theParent = null;
+            theName = null;
+            theItem = null;
+            isVisible = false;
         }
 
         /**
@@ -289,8 +342,8 @@ public abstract class TethysTreeManager<T, N>
                 theTree.registerItem(this);
             }
 
-            /* Initially not visible */
-            isVisible = false;
+            /* Initially visible */
+            isVisible = true;
         }
 
         /**
@@ -375,7 +428,7 @@ public abstract class TethysTreeManager<T, N>
         }
 
         /**
-         * Attach as particular child
+         * Attach as particular child.
          * @param pChildNo the child #
          */
         protected abstract void attachAsChildNo(final int pChildNo);
@@ -406,7 +459,7 @@ public abstract class TethysTreeManager<T, N>
         }
 
         /**
-         * Attach this node and children to the tree
+         * Attach this node and children to the tree.
          */
         protected void attachToTree() {
             /* loop through visible children */
@@ -421,7 +474,7 @@ public abstract class TethysTreeManager<T, N>
         }
 
         /**
-         * Detach this node and children from the tree
+         * Detach this node and children from the tree.
          */
         protected void detachFromTree() {
             /* loop through children */
@@ -460,7 +513,9 @@ public abstract class TethysTreeManager<T, N>
 
         @Override
         public String toString() {
-            return theItem.toString();
+            return theItem != null
+                                   ? theItem.toString()
+                                   : theTree.theRootName;
         }
     }
 }
