@@ -26,12 +26,13 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
- * Provides the implementation of a history buffer for a DataItem. Each element represents a changed set of values and refers to a {@link MetisValueSet} object which
- * is the set of changeable values for the object.
+ * Provides the implementation of a history buffer for a DataItem. Each element represents a changed
+ * set of values and refers to a {@link MetisValueSet} object which is the set of changeable values
+ * for the object.
  * @see MetisValueSet
  */
 public class MetisValueSetHistory
@@ -90,13 +91,17 @@ public class MetisValueSetHistory
 
         /* Loop through the fields */
         Iterator<MetisValueSetDelta> myIterator = theDeltas.descendingIterator();
-        for (int i = 0; myIterator.hasNext(); i++) {
+        int i = 0;
+        while (myIterator.hasNext()) {
             MetisValueSetDelta myDelta = myIterator.next();
 
             /* Return field if we found it */
             if (i == myIndex) {
                 return myDelta;
             }
+
+            /* Increment index */
+            i++;
         }
 
         /* Not found */

@@ -387,6 +387,14 @@ public abstract class TethysTreeManager<T, N>
         }
 
         /**
+         * Is the item root?
+         * @return true/false
+         */
+        public boolean isRoot() {
+            return theItem == null;
+        }
+
+        /**
          * Set the item.
          * @param pItem the item
          */
@@ -408,16 +416,14 @@ public abstract class TethysTreeManager<T, N>
                 if (theTree.isVisible()) {
                     /* If we are showing the item */
                     if (pVisible) {
-                        /* If the parent is visible */
-                        if (theParent.isVisible) {
-                            /* Attach parent at required position */
-                            int myPos = countPreviousVisibleSiblings();
-                            attachAsChildNo(myPos);
-
-                            /* else must make parent visible */
-                        } else {
+                        /* Ensure that the parent is visible */
+                        if (!theParent.isVisible()) {
                             theParent.setVisible(true);
                         }
+
+                        /* Attach to parent at required position */
+                        int myPos = countPreviousVisibleSiblings();
+                        attachAsChildNo(myPos);
 
                         /* else just detach item and children */
                     } else {
@@ -442,8 +448,8 @@ public abstract class TethysTreeManager<T, N>
         }
 
         /**
-         * Count the number of previous siblings.
-         * @return the previous visible sibling
+         * Count previous visible items.
+         * @return the count
          */
         public int countPreviousVisibleSiblings() {
             /* Determine the previous visible sibling */
@@ -513,9 +519,9 @@ public abstract class TethysTreeManager<T, N>
 
         @Override
         public String toString() {
-            return theItem != null
-                                   ? theItem.toString()
-                                   : theTree.theRootName;
+            return isRoot()
+                            ? theTree.theRootName
+                            : theItem.toString();
         }
     }
 }

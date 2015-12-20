@@ -105,9 +105,8 @@ public class MetisExcelCell
                     case HSSFCell.CELL_TYPE_BOOLEAN:
                         return myValue.getBooleanValue();
                     default:
-                        break;
+                        return null;
                 }
-                return null;
             default:
                 return null;
         }
@@ -136,9 +135,8 @@ public class MetisExcelCell
                         Double myDouble = myCellValue.getNumberValue();
                         return myDouble.intValue();
                     default:
-                        break;
+                        return null;
                 }
-                return null;
             default:
                 return null;
         }
@@ -161,10 +159,8 @@ public class MetisExcelCell
                     case HSSFCell.CELL_TYPE_BOOLEAN:
                         return myValue.formatAsString();
                     default:
-                        break;
+                        return null;
                 }
-                return null;
-
             case HSSFCell.CELL_TYPE_STRING:
             default:
                 return theExcelCell.getStringCellValue();

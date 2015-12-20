@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.swing.JFieldPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableTabbed;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager;
 import net.sourceforge.joceanus.jthemis.git.data.GitPreferences;
 import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
@@ -225,7 +225,7 @@ public final class JSvnManager {
         theFrame = new JFrame(JSvnManager.class.getSimpleName());
 
         /* Create the Tabbed Pane */
-        TethysSwingEnableTabbed myTabs = new TethysSwingEnableTabbed();
+        TethysSwingTabManager myTabs = new TethysSwingTabManager();
 
         /* Create the panel */
         theStatusPanel = new JSvnStatusWindow(this);
@@ -233,8 +233,8 @@ public final class JSvnManager {
         /* Create the Preferences Tab */
         MetisViewerEntry myMaintEntry = theViewerMgr.newEntry("Maintenance");
         MetisPreferencesPanel myPrefPanel = new MetisPreferencesPanel(thePrefMgr, myFieldMgr, theViewerMgr, myMaintEntry);
-        myTabs.addTab("Status", theStatusPanel);
-        myTabs.addTab("Preferences", myPrefPanel);
+        myTabs.addTabItem("Status", theStatusPanel);
+        myTabs.addTabItem("Preferences", myPrefPanel);
 
         /* Add interesting preferences */
         thePrefMgr.getPreferenceSet(BackupPreferences.class);
@@ -305,7 +305,7 @@ public final class JSvnManager {
 
         /* Attach the panel to the frame */
         theStatusPanel.setOpaque(true);
-        theFrame.setContentPane(myTabs);
+        theFrame.setContentPane(myTabs.getNode());
         theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         theFrame.addWindowListener(theCloseHandler);
 

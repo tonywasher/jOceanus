@@ -70,7 +70,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * Top-level panel for Accounts.
  */
 public class AccountPanel
-        extends JPanel
+        extends TethysSwingEnablePanel
         implements TethysEventProvider {
     /**
      * Serial Id.
@@ -269,7 +269,7 @@ public class AccountPanel
         theFilterCardPanel.add(theOptionTable.getFilterPanel(), PanelName.OPTIONS.toString());
 
         /* Create the selection panel */
-        JPanel mySelect = new JPanel();
+        JPanel mySelect = new TethysSwingEnablePanel();
         mySelect.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
 
         /* Create the layout for the selection panel */
@@ -287,7 +287,7 @@ public class AccountPanel
         mySelect.setMaximumSize(new Dimension(Integer.MAX_VALUE, CategoryPanel.PANEL_PAD));
 
         /* Create the header panel */
-        JPanel myHeader = new JPanel();
+        JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
         myHeader.add(mySelect);
         myHeader.add(theError);

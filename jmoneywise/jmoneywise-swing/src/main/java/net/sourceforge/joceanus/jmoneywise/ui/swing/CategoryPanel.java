@@ -67,7 +67,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * Top-level panel for Account/EventCategories.
  */
 public class CategoryPanel
-        extends JPanel
+        extends TethysSwingEnablePanel
         implements TethysEventProvider {
     /**
      * Serial Id.
@@ -272,7 +272,7 @@ public class CategoryPanel
         mySelect.setMaximumSize(new Dimension(Integer.MAX_VALUE, PANEL_PAD));
 
         /* Create the header panel */
-        JPanel myHeader = new JPanel();
+        JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
         myHeader.add(mySelect);
         myHeader.add(theError);

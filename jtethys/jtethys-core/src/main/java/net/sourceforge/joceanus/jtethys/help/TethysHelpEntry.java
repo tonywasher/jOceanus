@@ -83,7 +83,7 @@ public class TethysHelpEntry {
     }
 
     /**
-     * Add child entry
+     * Add child entry.
      * @param pChild the child
      * @return the HelpEntry
      */

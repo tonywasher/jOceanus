@@ -49,17 +49,11 @@ import java.util.Map;
 public class MetisOrderedIdList<I, T extends Comparable<? super T> & MetisOrderedIdItem<I>>
         extends MetisOrderedList<T> {
     /**
-     * Ordered Index.
-     */
-    private final MetisOrderedIdIndex<I, T> theIndex;
-
-    /**
      * Construct a list.
      * @param pClass the class of the sortedItem
      */
     public MetisOrderedIdList(final Class<T> pClass) {
         super(pClass, new MetisOrderedIdIndex<I, T>());
-        theIndex = getTheIndex();
     }
 
     /**
@@ -70,7 +64,6 @@ public class MetisOrderedIdList<I, T extends Comparable<? super T> & MetisOrdere
     public MetisOrderedIdList(final Class<T> pClass,
                               final int pIndexGranularity) {
         super(pClass, new MetisOrderedIdIndex<I, T>(pIndexGranularity));
-        theIndex = getTheIndex();
     }
 
     /**
@@ -110,7 +103,6 @@ public class MetisOrderedIdList<I, T extends Comparable<? super T> & MetisOrdere
     protected MetisOrderedIdList(final Class<T> pClass,
                                  final MetisOrderedIdIndex<I, T> pIndex) {
         super(pClass, pIndex);
-        theIndex = pIndex;
     }
 
     /**
@@ -129,7 +121,7 @@ public class MetisOrderedIdList<I, T extends Comparable<? super T> & MetisOrdere
      */
     public T findItemById(final I pId) {
         /* Return results */
-        return theIndex.findItemById(pId);
+        return getTheIndex().findItemById(pId);
     }
 
     /**
@@ -138,7 +130,7 @@ public class MetisOrderedIdList<I, T extends Comparable<? super T> & MetisOrdere
      */
     public Map<I, T> getIdMap() {
         /* Return the map */
-        return theIndex.getElementMap();
+        return getTheIndex().getElementMap();
     }
 
     /**
@@ -153,7 +145,7 @@ public class MetisOrderedIdList<I, T extends Comparable<? super T> & MetisOrdere
         }
 
         /* Access the node of the item */
-        MetisOrderedNode<T> myNode = theIndex.findNodeForObject(pItem);
+        MetisOrderedNode<T> myNode = getTheIndex().findNodeForObject(pItem);
 
         /* If the node does not belong to the list then ignore */
         if (myNode == null) {
@@ -181,7 +173,7 @@ public class MetisOrderedIdList<I, T extends Comparable<? super T> & MetisOrdere
         }
 
         /* Access the node of the item */
-        MetisOrderedNode<T> myNode = theIndex.findNodeForObject(pItem);
+        MetisOrderedNode<T> myNode = getTheIndex().findNodeForObject(pItem);
 
         /* If the node does not belong to the list then ignore */
         if (myNode == null) {
@@ -222,7 +214,7 @@ public class MetisOrderedIdList<I, T extends Comparable<? super T> & MetisOrdere
         }
 
         /* Reject if the object is already a link member of this list */
-        if (theIndex.findNodeForObject(pItem) != null) {
+        if (getTheIndex().findNodeForObject(pItem) != null) {
             return false;
         }
 
@@ -244,7 +236,7 @@ public class MetisOrderedIdList<I, T extends Comparable<? super T> & MetisOrdere
         }
 
         /* Reject if the object is already a link member of this list */
-        if (theIndex.findNodeForObject(pItem) != null) {
+        if (getTheIndex().findNodeForObject(pItem) != null) {
             return false;
         }
 

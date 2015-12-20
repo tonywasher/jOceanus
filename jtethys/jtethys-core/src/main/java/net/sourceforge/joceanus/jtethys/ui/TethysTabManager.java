@@ -1,0 +1,392 @@
+/*******************************************************************************
+ * jTethys: Java Utilities
+ * Copyright 2012,2014 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/src/main/java/net/sourceforge/joceanus/jtethys/swing/JIconButton.java $
+ * $Revision: 570 $
+ * $Author: Tony $
+ * $Date: 2015-02-14 06:54:38 +0000 (Sat, 14 Feb 2015) $
+ ******************************************************************************/
+package net.sourceforge.joceanus.jtethys.ui;
+
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+
+/**
+ * Tab Manager.
+ * @param <N> the Node type
+ */
+public abstract class TethysTabManager<N>
+        implements TethysEventProvider {
+    /**
+     * Value updated.
+     */
+    public static final int ACTION_TAB_SELECTED = TethysScrollButtonManager.ACTION_NEW_VALUE;
+
+    /**
+     * The Event Manager.
+     */
+    private final TethysEventManager theEventManager;
+
+    /**
+     * The first child item.
+     */
+    private TethysTabItem<N> theFirstChild;
+
+    /**
+     * The last child item.
+     */
+    private TethysTabItem<N> theLastChild;
+
+    /**
+     * Is the pane enabled?
+     */
+    private boolean isEnabled;
+
+    /**
+     * Constructor.
+     */
+    protected TethysTabManager() {
+        theEventManager = new TethysEventManager();
+        isEnabled = true;
+    }
+
+    @Override
+    public TethysEventRegistrar getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Obtain the node.
+     * @return the node.
+     */
+    public abstract N getNode();
+
+    /**
+     * Obtain selected tab.
+     * @return the selected tab
+     */
+    public abstract TethysTabItem<N> getSelectedTab();
+
+    /**
+     * find Item by name.
+     * @param pName the name of the item
+     * @return the item (or null)
+     */
+    public TethysTabItem<N> findItemByName(final String pName) {
+        /* loop through children */
+        TethysTabItem<N> myChild = theFirstChild;
+        while (myChild != null) {
+            /* Break if we have found the item */
+            if (myChild.getName().equals(pName)) {
+                break;
+            }
+
+            /* Move to next child */
+            myChild = myChild.theNextSibling;
+        }
+
+        /* return the relevant child */
+        return myChild;
+    }
+
+    /**
+     * find visible Item by index.
+     * @param pIndex the index of the item
+     * @return the item (or null)
+     */
+    public TethysTabItem<N> findItemByIndex(final int pIndex) {
+        /* loop through children */
+        TethysTabItem<N> myChild = theFirstChild;
+        int myIndex = 0;
+        while (myChild != null) {
+            /* If the child is visible */
+            if (myChild.isVisible()) {
+                /* If this is the required index */
+                if (pIndex == myIndex) {
+                    break;
+                }
+                myIndex++;
+            }
+
+            /* Move to next child */
+            myChild = myChild.theNextSibling;
+        }
+
+        /* return the relevant child */
+        return myChild;
+    }
+
+    /**
+     * enable Item by name.
+     * @param pName the name of the item
+     * @param pEnabled the enabled state
+     */
+    public void enableItemByName(final String pName,
+                                 final boolean pEnabled) {
+        /* Look up child and adjust */
+        TethysTabItem<N> myItem = findItemByName(pName);
+        if (myItem != null) {
+            myItem.setEnabled(pEnabled);
+        }
+    }
+
+    /**
+     * Notify of selection.
+     * @param pItem the item that has been selected
+     */
+    protected void notifySelection(final Object pItem) {
+        theEventManager.fireActionEvent(ACTION_TAB_SELECTED, pItem);
+    }
+
+    /**
+     * Add tab item.
+     * @param pName the name
+     * @param pItem the item
+     * @return the new tab item
+     */
+    public abstract TethysTabItem<N> addTabItem(final String pName,
+                                                final N pItem);
+
+    /**
+     * Set the enabled state of the item.
+     * @param pEnabled true/false
+     */
+    public void setEnabled(final boolean pEnabled) {
+        /* If we are changing enabled state */
+        if (pEnabled != isEnabled) {
+            /* Set new enabled state */
+            isEnabled = pEnabled;
+
+            /* enable the tab */
+            enablePane(isEnabled);
+
+            /* loop through children */
+            TethysTabItem<N> myChild = theFirstChild;
+            while (myChild != null) {
+                /* If the child is visible */
+                if (myChild.isVisible()) {
+                    /* set correct enabled status */
+                    myChild.enableTab(pEnabled
+                                               ? myChild.isEnabled()
+                                               : false);
+                }
+
+                /* Move to next child */
+                myChild = myChild.theNextSibling;
+            }
+        }
+    }
+
+    /**
+     * Enable/disable the pane.
+     * @param pEnabled true/false
+     */
+    protected abstract void enablePane(final boolean pEnabled);
+
+    /**
+     * TabItem class.
+     * @param <C> the component type
+     */
+    public abstract static class TethysTabItem<C> {
+        /**
+         * The pane to which this item belongs.
+         */
+        private final TethysTabManager<C> thePane;
+
+        /**
+         * The name of this item.
+         */
+        private final String theName;
+
+        /**
+         * The previous sibling of this item.
+         */
+        private TethysTabItem<C> thePrevSibling;
+
+        /**
+         * The next sibling of this item.
+         */
+        private TethysTabItem<C> theNextSibling;
+
+        /**
+         * Is the item visible (i.e. part of the actual tabs)?
+         */
+        private boolean isVisible;
+
+        /**
+         * Is the item enabled?
+         */
+        private boolean isEnabled;
+
+        /**
+         * Constructor.
+         * @param pPane the containing pane
+         * @param pName the name of the tab
+         */
+        protected TethysTabItem(final TethysTabManager<C> pPane,
+                                final String pName) {
+            /* Store parameters */
+            thePane = pPane;
+            theName = pName;
+            isVisible = true;
+            isEnabled = true;
+
+            /* If the pane already has children */
+            TethysTabItem<C> myChild = thePane.theLastChild;
+            if (myChild != null) {
+                /* Link to last child */
+                myChild.theNextSibling = this;
+                thePrevSibling = myChild;
+
+                /* else set as first child */
+            } else {
+                thePane.theFirstChild = this;
+            }
+
+            /* Add as last child of pane */
+            thePane.theLastChild = this;
+        }
+
+        /**
+         * Obtain the name.
+         * @return the name
+         */
+        public String getName() {
+            return theName;
+        }
+
+        /**
+         * Obtain the node.
+         * @return the node.
+         */
+        public abstract C getNode();
+
+        /**
+         * Obtain the tree.
+         * @return the tree
+         */
+        public TethysTabManager<C> getPane() {
+            return thePane;
+        }
+
+        /**
+         * Is the item visible?
+         * @return true/false
+         */
+        public boolean isVisible() {
+            return isVisible;
+        }
+
+        /**
+         * Is the item enabled?
+         * @return true/false
+         */
+        public boolean isEnabled() {
+            return isEnabled;
+        }
+
+        /**
+         * Set the visibility of the item.
+         * @param pVisible true/false
+         */
+        public void setVisible(final boolean pVisible) {
+            /* If we are changing visibility */
+            if (pVisible != isVisible) {
+                /* Set new visibility */
+                isVisible = pVisible;
+
+                /* If we are showing the item */
+                if (pVisible) {
+                    /* Attach to parent at required position */
+                    attachToPane();
+
+                    /* make sure that we have correct enable state */
+                    enableTab(isEnabled);
+
+                    /* else just detach item */
+                } else {
+                    detachFromPane();
+                }
+            }
+        }
+
+        /**
+         * Set the enabled state of the item.
+         * @param pEnabled true/false
+         */
+        public void setEnabled(final boolean pEnabled) {
+            /* If we are changing enabled state */
+            if (pEnabled != isEnabled) {
+                /* Set new enabled state */
+                isEnabled = pEnabled;
+
+                /* If the pane is enabled and the tab is visible */
+                if (thePane.isEnabled
+                    && isVisible) {
+                    /* enable the tab */
+                    enableTab(isEnabled);
+                }
+            }
+        }
+
+        /**
+         * Enable/disable the tab.
+         * @param pEnabled true/false
+         */
+        protected abstract void enableTab(final boolean pEnabled);
+
+        /**
+         * Attach to pane.
+         */
+        protected abstract void attachToPane();
+
+        /**
+         * Detach from pane.
+         */
+        protected abstract void detachFromPane();
+
+        /**
+         * Select item.
+         */
+        public abstract void selectItem();
+
+        /**
+         * Notify of selection.
+         */
+        protected void notifySelection() {
+            getPane().notifySelection(this);
+        }
+
+        /**
+         * Count previous visible items.
+         * @return the count
+         */
+        public int countPreviousVisibleSiblings() {
+            /* Determine the previous visible sibling */
+            int myCount = 0;
+            TethysTabItem<C> mySibling = thePrevSibling;
+            while (mySibling != null) {
+                if (mySibling.isVisible) {
+                    myCount++;
+                }
+                mySibling = mySibling.thePrevSibling;
+            }
+            return myCount;
+        }
+    }
+}

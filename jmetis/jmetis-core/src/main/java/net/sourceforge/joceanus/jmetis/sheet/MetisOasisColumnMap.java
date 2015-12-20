@@ -215,8 +215,7 @@ public class MetisOasisColumnMap {
      */
     private void addAdditionalColumns(final int pXtraCols) {
         /* If we have an existing reference that is empty */
-        if ((theLastReference != null)
-            && (isEmpty(theLastReference.getElement()))) {
+        if (isEmpty(theLastReference.getElement())) {
             /* Obtain the last column */
             TableTableColumnElement myElement = theLastReference.getElement();
 

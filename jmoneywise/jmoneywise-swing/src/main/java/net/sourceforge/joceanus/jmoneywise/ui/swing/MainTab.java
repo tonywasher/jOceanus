@@ -22,15 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
@@ -56,7 +53,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListe
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableTabbed;
+import net.sourceforge.joceanus.jtethys.ui.TethysTabManager.TethysTabItem;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager.TethysSwingTabItem;
 
 /**
  * Main Window for jMoneyWise.
@@ -142,47 +141,47 @@ public class MainTab
     /**
      * The tabs.
      */
-    private TethysSwingEnableTabbed theTabs = null;
+    private TethysSwingTabManager theTabs;
 
     /**
      * The register panel.
      */
-    private TransactionTable theRegister = null;
+    private TransactionTable theRegister;
 
     /**
      * The SpotPricesPanel.
      */
-    private SpotPricesTable theSpotPrices = null;
+    private SpotPricesTable theSpotPrices;
 
     /**
      * The SpotRatesPanel.
      */
-    private SpotRatesTable theSpotRates = null;
+    private SpotRatesTable theSpotRates;
 
     /**
      * The report panel.
      */
-    private ReportTab theReports = null;
+    private ReportTab theReports;
 
     /**
      * The maintenance panel.
      */
-    private MaintenanceTab theMaint = null;
+    private MaintenanceTab theMaint;
 
     /**
      * The Load Sheet menus.
      */
-    private JMenuItem theLoadSheet = null;
+    private JMenuItem theLoadSheet;
 
     /**
      * The CreateQIF menu.
      */
-    private JMenuItem theCreateQIF = null;
+    private JMenuItem theCreateQIF;
 
     /**
      * The listener.
      */
-    private MainListener theListener = null;
+    private MainListener theListener;
 
     /**
      * Constructor.
@@ -227,32 +226,32 @@ public class MainTab
         myTask = myTask.startTask("buildMain");
 
         /* Create the Tabbed Pane */
-        theTabs = new TethysSwingEnableTabbed();
+        theTabs = new TethysSwingTabManager();
 
         /* Create the Report Tab */
         myTask.startTask("Report");
         theReports = new ReportTab(theView);
-        theTabs.addTab(TITLE_REPORT, theReports);
+        theTabs.addTabItem(TITLE_REPORT, theReports);
 
         /* Create the Register Tab */
         myTask.startTask("Register");
         theRegister = new TransactionTable(theView);
-        theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
+        theTabs.addTabItem(TITLE_REGISTER, theRegister.getPanel());
 
         /* Create the SpotPrices Tab */
         myTask.startTask("SpotPrices");
         theSpotPrices = new SpotPricesTable(theView);
-        theTabs.addTab(TITLE_SPOTPRICES, theSpotPrices.getPanel());
+        theTabs.addTabItem(TITLE_SPOTPRICES, theSpotPrices.getPanel());
 
         /* Create the SpotRates Tab */
         myTask.startTask("SpotRates");
         theSpotRates = new SpotRatesTable(theView);
-        theTabs.addTab(TITLE_SPOTRATES, theSpotRates.getPanel());
+        theTabs.addTabItem(TITLE_SPOTRATES, theSpotRates.getPanel());
 
         /* Create the Maintenance Tab */
         myTask.startTask("Maintenance");
         theMaint = new MaintenanceTab(this);
-        theTabs.addTab(TITLE_MAINT, theMaint);
+        theTabs.addTabItem(TITLE_MAINT, theMaint);
 
         /* Create listener and initialise focus */
         theListener = new MainListener();
@@ -265,7 +264,7 @@ public class MainTab
         myTask.end();
 
         /* Return the panel */
-        return theTabs;
+        return theTabs.getNode();
     }
 
     /**
@@ -378,11 +377,11 @@ public class MainTab
      * @param pTabName the tab name
      */
     private void gotoNamedTab(final String pTabName) {
-        /* Access the Named index */
-        int iIndex = theTabs.indexOfTab(pTabName);
-
-        /* Select the required tab */
-        theTabs.setSelectedIndex(iIndex);
+        /* Look up item and select it */
+        TethysTabItem<?> myItem = theTabs.findItemByName(pTabName);
+        if (myItem != null) {
+            myItem.selectItem();
+        }
     }
 
     @Override
@@ -402,77 +401,29 @@ public class MainTab
         /* Disable menus if we have no data */
         theCreateQIF.setEnabled(!hasWorker && hasControl);
 
-        /* Note insert point */
-        int iInsert = 0;
         /* Enable/Disable the reports tab */
-        int iIndex = theTabs.indexOfTab(TITLE_REPORT);
-        if (iIndex != -1) {
-            boolean doEnabled = !hasWorker && !hasSession;
-            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
-                theTabs.setEnabledAt(iIndex, doEnabled);
-            }
-            iInsert = iIndex + 1;
-        }
+        boolean doEnabled = !hasWorker && !hasSession;
+        theTabs.enableItemByName(TITLE_REPORT, doEnabled);
 
         /* Enable/Disable the register tab */
-        iIndex = theTabs.indexOfTab(TITLE_REGISTER);
-        if (iIndex != -1) {
-            boolean doEnabled = !hasWorker && (!hasSession || theRegister.hasSession());
-            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
-                theTabs.setEnabledAt(iIndex, doEnabled);
-            }
-            iInsert = iIndex + 1;
-        }
+        doEnabled = !hasWorker && (!hasSession || theRegister.hasSession());
+        theTabs.enableItemByName(TITLE_REGISTER, doEnabled);
 
-        /* Enable/Disable the spotPrices tab */
-        iIndex = theTabs.indexOfTab(TITLE_SPOTPRICES);
-        if (iIndex != -1) {
-            boolean doEnabled = !hasWorker && (!hasSession || theSpotPrices.hasSession());
-            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
-                theTabs.setEnabledAt(iIndex, doEnabled);
-            }
+        /* Enable/Disable/Hide the spotPrices tab */
+        doEnabled = !hasWorker && (!hasSession || theSpotPrices.hasSession());
+        TethysSwingTabItem myItem = theTabs.findItemByName(TITLE_SPOTPRICES);
+        myItem.setEnabled(doEnabled);
+        myItem.setVisible(theView.hasActiveSecurities());
 
-            /* Hide the tab if necessary */
-            if (!theView.hasActiveSecurities()) {
-                theTabs.removeTabAt(iIndex);
-            } else {
-                iInsert = iIndex + 1;
-            }
-
-            /* else if we need to display the tab */
-        } else if (theView.hasActiveSecurities()) {
-            /* Insert it correctly */
-            theTabs.insertTab(TITLE_SPOTPRICES, null, theSpotPrices.getPanel(), null, iInsert);
-            iInsert++;
-        }
-
-        /* Enable/Disable the spotRates tab */
-        iIndex = theTabs.indexOfTab(TITLE_SPOTRATES);
-        if (iIndex != -1) {
-            boolean doEnabled = !hasWorker && (!hasSession || theSpotRates.hasSession());
-            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
-                theTabs.setEnabledAt(iIndex, doEnabled);
-            }
-
-            /* Hide the tab if necessary */
-            if (!theView.hasMultipleCurrencies()) {
-                theTabs.removeTabAt(iIndex);
-            }
-
-            /* else if we need to display the tab */
-        } else if (theView.hasMultipleCurrencies()) {
-            /* Insert it correctly */
-            theTabs.insertTab(TITLE_SPOTRATES, null, theSpotRates.getPanel(), null, iInsert);
-        }
+        /* Enable/Disable/Hide the spotRates tab */
+        doEnabled = !hasWorker && (!hasSession || theSpotRates.hasSession());
+        myItem = theTabs.findItemByName(TITLE_SPOTRATES);
+        myItem.setEnabled(doEnabled);
+        myItem.setVisible(theView.hasMultipleCurrencies());
 
         /* Enable/Disable the maintenance tab */
-        iIndex = theTabs.indexOfTab(TITLE_MAINT);
-        if (iIndex != -1) {
-            boolean doEnabled = !hasWorker && (!hasSession || theMaint.hasSession());
-            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
-                theTabs.setEnabledAt(iIndex, doEnabled);
-            }
-        }
+        doEnabled = !hasWorker && (!hasSession || theMaint.hasSession());
+        theTabs.enableItemByName(TITLE_MAINT, doEnabled);
 
         /* Enable/Disable the tabs */
         theTabs.setEnabled(!hasWorker);
@@ -486,7 +437,8 @@ public class MainTab
      */
     private void determineFocus() {
         /* Access the selected component */
-        Component myComponent = theTabs.getSelectedComponent();
+        TethysSwingTabItem myItem = theTabs.getSelectedTab();
+        JComponent myComponent = myItem.getNode();
 
         /* If the selected component is Register */
         if (myComponent.equals(theRegister)) {
@@ -523,7 +475,7 @@ public class MainTab
      * The listener class.
      */
     private final class MainListener
-            implements ActionListener, ChangeListener, TethysActionEventListener, TethysChangeEventListener {
+            implements ActionListener, TethysActionEventListener, TethysChangeEventListener {
         /**
          * Constructor.
          */
@@ -540,26 +492,19 @@ public class MainTab
             myRegistrar.addChangeListener(this);
             myRegistrar.addActionListener(this);
 
-            /* Listen to swing events */
-            theTabs.addChangeListener(this);
+            /* Listen to tab selection events */
+            theTabs.getEventRegistrar().addActionListener(new TethysActionEventListener() {
+                @Override
+                public void processAction(final TethysActionEvent pEvent) {
+                    determineFocus();
+                }
+            });
         }
 
         @Override
         public void processChange(final TethysChangeEvent pEvent) {
             /* Set Visibility */
             setVisibility();
-        }
-
-        @Override
-        public void stateChanged(final ChangeEvent e) {
-            Object o = e.getSource();
-
-            /* If this is the tabs */
-            if (theTabs.equals(o)) {
-
-                /* Determine the focus */
-                determineFocus();
-            }
         }
 
         @Override

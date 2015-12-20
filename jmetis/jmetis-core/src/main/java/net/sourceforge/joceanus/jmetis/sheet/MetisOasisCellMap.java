@@ -34,15 +34,18 @@ import org.w3c.dom.Node;
 /**
  * Class representing a list of cells in Oasis.
  * <p>
- * A simple array list is maintained to map from cell number to the underlying element. Each such element may have a repeat count that means that multiple cells
- * map to the same element.
+ * A simple array list is maintained to map from cell number to the underlying element. Each such
+ * element may have a repeat count that means that multiple cells map to the same element.
  * <p>
- * The map is sparsely populated at the end to avoid addressing unused cells. This situation can occur when the sheet is extended to the full 1024 possible
- * columns, but with no active cells. The map will initially only map up to the last TableTableCellElement regardless of the number of cells that this last
- * element represents. If cells are subsequently referenced past this point, then the map will be expanded as required, so that the cell is included in the map.
+ * The map is sparsely populated at the end to avoid addressing unused cells. This situation can
+ * occur when the sheet is extended to the full 1024 possible columns, but with no active cells. The
+ * map will initially only map up to the last TableTableCellElement regardless of the number of
+ * cells that this last element represents. If cells are subsequently referenced past this point,
+ * then the map will be expanded as required, so that the cell is included in the map.
  * <p>
- * If cells are referenced past those initially declared, then null will be returned to indicate that the cell does not exist. In addition, if the
- * {@link #getReadOnlyCellByIndex} method is used for a cell that is empty, then null will be returned to indicate that the cell is empty.
+ * If cells are referenced past those initially declared, then null will be returned to indicate
+ * that the cell does not exist. In addition, if the {@link #getReadOnlyCellByIndex} method is used
+ * for a cell that is empty, then null will be returned to indicate that the cell is empty.
  */
 public class MetisOasisCellMap {
     /**
@@ -161,8 +164,8 @@ public class MetisOasisCellMap {
         /* Just return the cell */
         CellReference myRef = theCells.get(pCellIndex);
         return myRef.isDataEmpty()
-                                  ? null
-                                  : myRef.getReadOnlyCell();
+                                   ? null
+                                   : myRef.getReadOnlyCell();
     }
 
     /**
@@ -194,8 +197,7 @@ public class MetisOasisCellMap {
      */
     protected void addAdditionalCells(final int pXtraCells) {
         /* If we have an existing reference that is empty */
-        if ((theLastReference != null)
-            && (isEmpty(theLastReference.getElement()))) {
+        if (isEmpty(theLastReference.getElement())) {
             /* Obtain the last row */
             TableTableCellElement myElement = theLastReference.getElement();
 
@@ -287,8 +289,8 @@ public class MetisOasisCellMap {
             /* Determine the maximum instance */
             Integer myRepeat = theElement.getTableNumberColumnsRepeatedAttribute();
             return (myRepeat == null)
-                                     ? 1
-                                     : myRepeat;
+                                      ? 1
+                                      : myRepeat;
         }
 
         /**

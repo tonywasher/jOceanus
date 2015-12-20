@@ -23,11 +23,9 @@
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
@@ -68,7 +66,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableTabbed;
+import net.sourceforge.joceanus.jtethys.ui.TethysTabManager.TethysTabItem;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager.TethysSwingTabItem;
 
 /**
  * Maintenance Tab panel.
@@ -125,7 +125,7 @@ public class MaintenanceTab
     /**
      * The Tabs.
      */
-    private final TethysSwingEnableTabbed theTabs;
+    private final transient TethysSwingTabManager theTabs;
 
     /**
      * The TaxYear Panel.
@@ -165,23 +165,23 @@ public class MaintenanceTab
         theEventManager = new TethysEventManager();
 
         /* Create the Tabbed Pane */
-        theTabs = new TethysSwingEnableTabbed();
+        theTabs = new TethysSwingTabManager();
 
         /* Create the account Tab and add it */
         theAccountTab = new AccountPanel(theView);
-        theTabs.addTab(TITLE_ACCOUNT, theAccountTab);
+        theTabs.addTabItem(TITLE_ACCOUNT, theAccountTab);
 
         /* Create the category Tab and add it */
         theCategoryTab = new CategoryPanel(theView);
-        theTabs.addTab(TITLE_CATEGORY, theCategoryTab);
+        theTabs.addTabItem(TITLE_CATEGORY, theCategoryTab);
 
         /* Create the TaxYears Tab */
         theTaxYearTab = new TaxYearTable(theView);
-        theTabs.addTab(TITLE_TAXYEARS, theTaxYearTab.getPanel());
+        theTabs.addTabItem(TITLE_TAXYEARS, theTaxYearTab.getPanel());
 
         /* Create the Static Tab */
         theStatic = new StaticDataPanel<MoneyWiseDataType>(theView, theView.getUtilitySet(), MoneyWiseDataType.class);
-        theTabs.addTab(TITLE_STATIC, theStatic);
+        theTabs.addTabItem(TITLE_STATIC, theStatic);
 
         /* Add the static elements */
         theStatic.addStatic(MoneyWiseDataType.DEPOSITTYPE, DepositCategoryTypeList.class);
@@ -202,7 +202,7 @@ public class MaintenanceTab
         /* Create the Preferences Tab */
         MetisPreferenceManager myPrefs = theView.getPreferenceManager();
         thePreferences = new MetisPreferencesPanel(myPrefs, theView.getFieldManager(), theView.getViewerManager(), theView.getDataEntry(DataControl.DATA_MAINT));
-        theTabs.addTab(TITLE_PREFERENCES, thePreferences);
+        theTabs.addTabItem(TITLE_PREFERENCES, thePreferences);
 
         /* Add interesting preferences */
         myPrefs.getPreferenceSet(DatabasePreferences.class);
@@ -214,7 +214,7 @@ public class MaintenanceTab
         setLayout(myLayout);
 
         /* Set the layout */
-        add(theTabs);
+        add(theTabs.getNode());
 
         /* Create a listener */
         new MaintenanceListener();
@@ -397,11 +397,11 @@ public class MaintenanceTab
      * @param pTabName the tab name
      */
     private void gotoNamedTab(final String pTabName) {
-        /* Access the Named index */
-        int iIndex = theTabs.indexOfTab(pTabName);
-
-        /* Select the required tab */
-        theTabs.setSelectedIndex(iIndex);
+        /* Look up item and select it */
+        TethysTabItem<?> myItem = theTabs.findItemByName(pTabName);
+        if (myItem != null) {
+            myItem.selectItem();
+        }
     }
 
     /**
@@ -412,49 +412,24 @@ public class MaintenanceTab
         boolean hasSession = hasSession();
 
         /* Enable/Disable the Account tab */
-        int iIndex = theTabs.indexOfTab(TITLE_ACCOUNT);
-        if (iIndex != -1) {
-            boolean doEnabled = !hasSession || theAccountTab.hasSession();
-            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
-                theTabs.setEnabledAt(iIndex, doEnabled);
-            }
-        }
+        boolean doEnabled = !hasSession || theAccountTab.hasSession();
+        theTabs.enableItemByName(TITLE_ACCOUNT, doEnabled);
 
         /* Enable/Disable the Category tab */
-        iIndex = theTabs.indexOfTab(TITLE_CATEGORY);
-        if (iIndex != -1) {
-            boolean doEnabled = !hasSession || theCategoryTab.hasSession();
-            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
-                theTabs.setEnabledAt(iIndex, doEnabled);
-            }
-        }
+        doEnabled = !hasSession || theCategoryTab.hasSession();
+        theTabs.enableItemByName(TITLE_CATEGORY, doEnabled);
 
         /* Enable/Disable the TaxYear tab */
-        iIndex = theTabs.indexOfTab(TITLE_TAXYEARS);
-        if (iIndex != -1) {
-            boolean doEnabled = !hasSession || theTaxYearTab.hasSession();
-            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
-                theTabs.setEnabledAt(iIndex, doEnabled);
-            }
-        }
+        doEnabled = !hasSession || theTaxYearTab.hasSession();
+        theTabs.enableItemByName(TITLE_TAXYEARS, doEnabled);
 
         /* Enable/Disable the static tab */
-        iIndex = theTabs.indexOfTab(TITLE_STATIC);
-        if (iIndex != -1) {
-            boolean doEnabled = !hasSession || theStatic.hasSession();
-            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
-                theTabs.setEnabledAt(iIndex, doEnabled);
-            }
-        }
+        doEnabled = !hasSession || theStatic.hasSession();
+        theTabs.enableItemByName(TITLE_STATIC, doEnabled);
 
         /* Enable/Disable the Properties tab */
-        iIndex = theTabs.indexOfTab(TITLE_PREFERENCES);
-        if (iIndex != -1) {
-            boolean doEnabled = !hasSession || thePreferences.hasSession();
-            if (doEnabled != theTabs.isEnabledAt(iIndex)) {
-                theTabs.setEnabledAt(iIndex, doEnabled);
-            }
-        }
+        doEnabled = !hasSession || thePreferences.hasSession();
+        theTabs.enableItemByName(TITLE_PREFERENCES, doEnabled);
 
         /* Update the top level tabs */
         theParent.setVisibility();
@@ -465,7 +440,8 @@ public class MaintenanceTab
      */
     protected void determineFocus() {
         /* Access the selected component */
-        Component myComponent = theTabs.getSelectedComponent();
+        TethysSwingTabItem myItem = theTabs.getSelectedTab();
+        JComponent myComponent = myItem.getNode();
 
         /* If the selected component is Account */
         if (myComponent.equals(theAccountTab)) {
@@ -498,7 +474,7 @@ public class MaintenanceTab
      * The listener class.
      */
     private final class MaintenanceListener
-            implements ChangeListener, TethysActionEventListener, TethysChangeEventListener {
+            implements TethysActionEventListener, TethysChangeEventListener {
         /**
          * View Registration.
          */
@@ -531,8 +507,13 @@ public class MaintenanceTab
             myRegistrar.addActionListener(this);
             thePreferences.getEventRegistrar().addChangeListener(this);
 
-            /* Listen to swing events */
-            theTabs.addChangeListener(this);
+            /* Listen to tab selection events */
+            theTabs.getEventRegistrar().addActionListener(new TethysActionEventListener() {
+                @Override
+                public void processAction(final TethysActionEvent pEvent) {
+                    determineFocus();
+                }
+            });
         }
 
         @Override
@@ -551,17 +532,6 @@ public class MaintenanceTab
             } else if (!refreshing) {
                 /* Set the visibility */
                 setVisibility();
-            }
-        }
-
-        @Override
-        public void stateChanged(final ChangeEvent e) {
-            Object o = e.getSource();
-
-            /* if it is the tabs */
-            if (theTabs.equals(o)) {
-                /* Determine the focus */
-                determineFocus();
             }
         }
 

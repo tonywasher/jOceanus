@@ -182,7 +182,7 @@ public class TethysFXHTMLManager
     }
 
     /**
-     * Obtain JSObject Double
+     * Obtain JSObject Double.
      * @param pObject the returned number (either Double or Integer)
      * @return the Double
      */
@@ -197,7 +197,7 @@ public class TethysFXHTMLManager
     }
 
     /**
-     * Obtain JSObject Integer
+     * Obtain JSObject Integer.
      * @param pObject the returned number (either Double or Integer)
      * @return the Integer
      */

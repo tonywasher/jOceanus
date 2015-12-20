@@ -132,7 +132,7 @@ public abstract class TethysHelpModule {
     }
 
     /**
-     * Add root entry
+     * Add root entry.
      * @param pEntry the entry
      * @return the HelpEntry
      */

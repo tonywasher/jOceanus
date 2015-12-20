@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * @param <E> the data type enum class
  */
 public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends JPanel
+        extends TethysSwingEnablePanel
         implements TethysEventProvider {
     /**
      * Serial Id.

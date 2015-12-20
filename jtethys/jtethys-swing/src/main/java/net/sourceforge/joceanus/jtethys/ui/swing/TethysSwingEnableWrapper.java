@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 
 /**
  * Wrappers for simple Swing objects that enable/disable child elements.
@@ -112,47 +112,17 @@ public final class TethysSwingEnableWrapper {
 
         @Override
         public void setEnabled(final boolean bEnabled) {
+            /* Pass on call to the scrollBars */
+            JScrollBar myScrollBar = getVerticalScrollBar();
+            myScrollBar.setEnabled(bEnabled);
+            myScrollBar = getHorizontalScrollBar();
+            myScrollBar.setEnabled(bEnabled);
+
             /* Loop through the registered components */
             for (Component myComp : theList) {
                 /* Pass call on */
                 myComp.setEnabled(bEnabled);
             }
-        }
-    }
-
-    /**
-     * TabbedPane Enabler Wrapper.
-     */
-    public static class TethysSwingEnableTabbed
-            extends JTabbedPane {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -6858420962478125147L;
-
-        /**
-         * List of components.
-         */
-        private final transient List<Component> theList = new ArrayList<Component>();
-
-        @Override
-        public void addTab(final String pName,
-                           final Component pComponent) {
-            /* Add to list */
-            theList.add(pComponent);
-            super.addTab(pName, pComponent);
-        }
-
-        @Override
-        public void setEnabled(final boolean bEnabled) {
-            /* Loop through the registered components */
-            for (Component myComp : theList) {
-                /* Pass call on */
-                myComp.setEnabled(bEnabled);
-            }
-
-            /* Pass on the call */
-            super.setEnabled(bEnabled);
         }
     }
 }

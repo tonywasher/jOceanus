@@ -569,7 +569,6 @@ public class MetisNestedHashMap<K, V>
                 myArray = (ArrayElement) myEntry;
 
                 /* Re-loop */
-                continue;
 
                 /* If this is an empty slot */
             } else if (myEntry == null) {
@@ -630,7 +629,6 @@ public class MetisNestedHashMap<K, V>
                 myArray = myNewArray;
 
                 /* Re-loop */
-                continue;
             }
         }
     }
