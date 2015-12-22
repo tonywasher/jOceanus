@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.swing;
+package net.sourceforge.joceanus.jtethys.swing;
 
 import java.awt.Color;
 import java.awt.Component;

@@ -44,6 +44,7 @@ import javax.swing.event.PopupMenuListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 
 /**
  * PopUp menu that displays a list of checkMenu items.

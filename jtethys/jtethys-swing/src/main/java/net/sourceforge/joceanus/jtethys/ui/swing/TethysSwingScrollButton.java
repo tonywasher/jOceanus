@@ -31,6 +31,7 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager.TethysScrollButton;
 

@@ -20,7 +20,7 @@
  * $Author: Tony $
  * $Date: 2015-03-03 17:54:12 +0000 (Tue, 03 Mar 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.javafx;
+package net.sourceforge.joceanus.jtethys.javafx;
 
 import java.awt.Point;
 

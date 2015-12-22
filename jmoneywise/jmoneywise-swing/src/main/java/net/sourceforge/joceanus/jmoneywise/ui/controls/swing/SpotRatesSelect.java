@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 
 /**
  * SpotRates selection panel.

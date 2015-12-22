@@ -157,7 +157,6 @@ public class TethysFXTabManager
         @Override
         protected void enableTab(final boolean pEnable) {
             theTab.setDisable(!pEnable);
-            // theNode.getContent().setDisable(!pEnabled);
         }
     }
 }
