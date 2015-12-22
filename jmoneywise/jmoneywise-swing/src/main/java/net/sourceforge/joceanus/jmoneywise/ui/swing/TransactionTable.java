@@ -21,12 +21,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -395,20 +395,20 @@ public class TransactionTable
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();
-        myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
-        myHeader.add(theSelect);
-        myHeader.add(theError);
-        myHeader.add(theActionButtons);
+        myHeader.setLayout(new BorderLayout());
+        myHeader.add(theSelect, BorderLayout.CENTER);
+        myHeader.add(theError, BorderLayout.PAGE_START);
+        myHeader.add(theActionButtons, BorderLayout.LINE_END);
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(myHeader);
-        thePanel.add(getScrollPane());
+        thePanel.setLayout(new BorderLayout());
+        thePanel.add(myHeader, BorderLayout.PAGE_START);
+        thePanel.add(getScrollPane(), BorderLayout.CENTER);
 
         /* Create a transaction panel */
         theActiveTrans = new TransactionPanel(theFieldMgr, theUpdateSet, theBuilder, theSelect, theError);
-        thePanel.add(theActiveTrans);
+        thePanel.add(theActiveTrans, BorderLayout.PAGE_END);
 
         /* Prevent reordering of columns and auto-resizing */
         getTableHeader().setReorderingAllowed(false);

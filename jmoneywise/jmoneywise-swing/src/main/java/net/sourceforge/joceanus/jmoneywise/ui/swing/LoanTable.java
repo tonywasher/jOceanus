@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -37,13 +38,13 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -261,12 +262,12 @@ public class LoanTable
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(getScrollPane());
+        thePanel.setLayout(new BorderLayout());
+        thePanel.add(getScrollPane(), BorderLayout.CENTER);
 
         /* Create an account panel */
         theActiveAccount = new LoanPanel(theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveAccount);
+        thePanel.add(theActiveAccount, BorderLayout.PAGE_END);
 
         /* Create the selection model */
         theSelectionModel = new JDataTableSelection<Loan, MoneyWiseDataType>(this, theActiveAccount);

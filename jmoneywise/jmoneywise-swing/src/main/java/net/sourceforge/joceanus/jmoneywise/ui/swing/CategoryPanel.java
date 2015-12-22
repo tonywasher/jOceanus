@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
@@ -273,16 +274,15 @@ public class CategoryPanel
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();
-        myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
-        myHeader.add(mySelect);
-        myHeader.add(theError);
-        myHeader.add(theActionButtons);
+        myHeader.setLayout(new BorderLayout());
+        myHeader.add(mySelect, BorderLayout.CENTER);
+        myHeader.add(theError, BorderLayout.PAGE_START);
+        myHeader.add(theActionButtons, BorderLayout.LINE_END);
 
         /* Now define the panel */
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(myHeader);
-        add(Box.createVerticalGlue());
-        add(theCardPanel);
+        setLayout(new BorderLayout());
+        add(myHeader, BorderLayout.PAGE_START);
+        add(theCardPanel, BorderLayout.CENTER);
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);

@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -40,12 +41,12 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -256,12 +257,12 @@ public class TransactionCategoryTable
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(getScrollPane());
+        thePanel.setLayout(new BorderLayout());
+        thePanel.add(getScrollPane(), BorderLayout.CENTER);
 
         /* Create a Category panel */
         theActiveCategory = new TransactionCategoryPanel(theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveCategory);
+        thePanel.add(theActiveCategory, BorderLayout.PAGE_END);
 
         /* Initialise the columns */
         theColumns.setColumns();

@@ -22,19 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 
-import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -212,19 +212,19 @@ public class TaxYearTable
 
         /* Create the main panel */
         JPanel myMain = new TethysSwingEnablePanel();
-        myMain.setLayout(new BoxLayout(myMain, BoxLayout.X_AXIS));
-        myMain.add(getScrollPane());
-        myMain.add(theActionButtons);
+        myMain.setLayout(new BorderLayout());
+        myMain.add(getScrollPane(), BorderLayout.CENTER);
+        myMain.add(theActionButtons, BorderLayout.LINE_END);
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(theError);
-        thePanel.add(myMain);
+        thePanel.setLayout(new BorderLayout());
+        thePanel.add(theError, BorderLayout.PAGE_START);
+        thePanel.add(myMain, BorderLayout.CENTER);
 
         /* Create a TaxYear panel */
         theActiveYear = new TaxYearPanel(theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveYear);
+        thePanel.add(theActiveYear, BorderLayout.PAGE_END);
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);

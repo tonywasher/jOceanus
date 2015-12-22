@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -229,18 +229,18 @@ public class SpotRatesTable
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();
-        myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
-        myHeader.add(theSelect);
-        myHeader.add(theError);
-        myHeader.add(theActionButtons);
+        myHeader.setLayout(new BorderLayout());
+        myHeader.add(theSelect, BorderLayout.CENTER);
+        myHeader.add(theError, BorderLayout.PAGE_START);
+        myHeader.add(theActionButtons, BorderLayout.LINE_END);
 
         /* Create the panel */
         thePanel = new TethysSwingEnablePanel();
 
         /* Create the layout for the panel */
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(myHeader);
-        thePanel.add(getScrollPane());
+        thePanel.setLayout(new BorderLayout());
+        thePanel.add(myHeader, BorderLayout.PAGE_START);
+        thePanel.add(getScrollPane(), BorderLayout.CENTER);
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);

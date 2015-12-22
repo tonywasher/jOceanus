@@ -22,12 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterAbortException;
 import java.awt.print.PrinterException;
 
-import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.text.AttributeSet;
@@ -67,6 +67,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableScroll;
 
 /**
@@ -176,11 +177,16 @@ public class ReportTab
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, myDataReport);
 
+        /* Create the header panel */
+        JPanel myHeader = new TethysSwingEnablePanel();
+        myHeader.setLayout(new BorderLayout());
+        myHeader.add(theSelect, BorderLayout.CENTER);
+        myHeader.add(theError, BorderLayout.PAGE_START);
+
         /* Now define the panel */
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(theError);
-        add(theSelect);
-        add(theScroll);
+        setLayout(new BorderLayout());
+        add(myHeader, BorderLayout.PAGE_START);
+        add(theScroll, BorderLayout.CENTER);
 
         /* Create listener */
         new ReportListener();

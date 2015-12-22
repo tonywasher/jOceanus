@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference.swing;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -250,11 +251,10 @@ public class MetisPreferencesPanel
         myScroll.setViewportView(theProperties);
 
         /* Now define the panel */
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(mySelection);
-        add(myScroll);
-        add(Box.createVerticalGlue());
-        add(theButtons);
+        setLayout(new BorderLayout());
+        add(mySelection, BorderLayout.PAGE_START);
+        add(myScroll, BorderLayout.CENTER);
+        add(theButtons, BorderLayout.PAGE_END);
 
         /* Determine the active items */
         theActive = thePanels.get(0);

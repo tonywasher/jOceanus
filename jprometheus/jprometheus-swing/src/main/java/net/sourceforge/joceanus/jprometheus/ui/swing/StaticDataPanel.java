@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -256,10 +257,10 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
 
         /* Create the header panel */
         JPanel myHeader = new JPanel();
-        myHeader.setLayout(new BoxLayout(myHeader, BoxLayout.X_AXIS));
-        myHeader.add(mySelect);
-        myHeader.add(theError);
-        myHeader.add(theActionButtons);
+        myHeader.setLayout(new BorderLayout());
+        myHeader.add(mySelect, BorderLayout.CENTER);
+        myHeader.add(theError, BorderLayout.PAGE_START);
+        myHeader.add(theActionButtons, BorderLayout.LINE_END);
 
         /* Create the table card panel */
         theTableCard = new TethysSwingEnablePanel();
@@ -270,10 +271,9 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theMap = new LinkedHashMap<String, StaticDataTable<?, ?, ?, E>>();
 
         /* Now define the panel */
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(myHeader);
-        add(Box.createVerticalGlue());
-        add(theTableCard);
+        setLayout(new BorderLayout());
+        add(myHeader, BorderLayout.PAGE_START);
+        add(theTableCard, BorderLayout.CENTER);
 
         /* Set visibility of new button */
         showNewButton();
