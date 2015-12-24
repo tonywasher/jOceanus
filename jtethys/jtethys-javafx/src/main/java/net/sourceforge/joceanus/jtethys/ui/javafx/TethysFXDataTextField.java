@@ -27,7 +27,6 @@ import java.util.Currency;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -123,21 +122,10 @@ public abstract class TethysFXDataTextField<T>
         theNode.setCenter(theLabel);
 
         /* handle command button action */
-        theCmdButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent t) {
-                handleCmdMenuRequest();
-            }
-        });
+        theCmdButton.setOnAction(e -> handleCmdMenuRequest());
 
         /* Set context menu listener */
-        getCmdMenu().addEventHandler(TethysFXContextEvent.MENU_SELECT, new EventHandler<TethysFXContextEvent<?>>() {
-            @Override
-            public void handle(final TethysFXContextEvent<?> e) {
-                /* Handle the close of the menu */
-                handleCmdMenuClosed();
-            }
-        });
+        getCmdMenu().addEventHandler(TethysFXContextEvent.MENU_SELECT, e -> handleCmdMenuClosed());
     }
 
     /**
@@ -246,7 +234,7 @@ public abstract class TethysFXDataTextField<T>
             super(new TextField());
 
             /* Create the converter control */
-            theControl = new TethysDataEditTextFieldControl<T>(this, pConverter);
+            theControl = new TethysDataEditTextFieldControl<>(this, pConverter);
 
             /* Access the fields */
             Label myLabel = getLabel();

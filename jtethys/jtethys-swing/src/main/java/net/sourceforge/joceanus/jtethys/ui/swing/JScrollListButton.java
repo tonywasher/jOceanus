@@ -73,7 +73,7 @@ public class JScrollListButton<T>
         setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the menu builder */
-        theMenuBuilder = new JScrollListMenuBuilder<T>(this);
+        theMenuBuilder = new JScrollListMenuBuilder<>(this);
     }
 
     /**
@@ -112,7 +112,7 @@ public class JScrollListButton<T>
         public JScrollListMenuBuilder(final JScrollListButton<X> pButton) {
             /* Store details */
             theButton = pButton;
-            theMenu = new JScrollListMenu<X>(this);
+            theMenu = new JScrollListMenu<>(this);
             theButton.addActionListener(this);
 
             /* Create event manager */
@@ -306,7 +306,7 @@ public class JScrollListButton<T>
         private JScrollListMenu(final JScrollListMenuBuilder<X> pBuilder) {
             /* Allocate the map */
             theBuilder = pBuilder;
-            theItemMap = new LinkedHashMap<X, JCheckBoxMenuItem>();
+            theItemMap = new LinkedHashMap<>();
         }
 
         /**
@@ -422,7 +422,7 @@ public class JScrollListButton<T>
          */
         private List<X> getSelectedItems() {
             /* Create a new list */
-            List<X> myList = new ArrayList<X>();
+            List<X> myList = new ArrayList<>();
 
             /* Loop through the entries */
             for (Map.Entry<X, JCheckBoxMenuItem> myEntry : theItemMap.entrySet()) {

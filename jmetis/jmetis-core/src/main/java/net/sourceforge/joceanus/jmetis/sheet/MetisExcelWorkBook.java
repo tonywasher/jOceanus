@@ -142,8 +142,8 @@ public class MetisExcelWorkBook {
     public MetisExcelWorkBook() {
         /* Create new book and map */
         theBook = new HSSFWorkbook();
-        theStyleMap = new HashMap<String, HSSFCellStyle>();
-        theConstraintMap = new HashMap<Object, DVConstraint>();
+        theStyleMap = new HashMap<>();
+        theConstraintMap = new HashMap<>();
 
         /* Allocate the formatter */
         theDataFormatter = MetisDataWorkBook.createFormatter();
@@ -289,8 +289,8 @@ public class MetisExcelWorkBook {
         Name myName = theBook.getName(pName);
         if (myName != null) {
             throw new MetisLogicException("Name "
-                                           + pName
-                                           + " already exists in workbook");
+                                          + pName
+                                          + " already exists in workbook");
         }
 
         /* Build the basic name */

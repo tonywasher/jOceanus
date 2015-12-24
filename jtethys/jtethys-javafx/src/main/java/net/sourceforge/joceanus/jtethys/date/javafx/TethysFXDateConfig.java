@@ -69,7 +69,7 @@ public class TethysFXDateConfig
      * Constructor.
      */
     public TethysFXDateConfig() {
-        theSelectedDateDay = new SimpleObjectProperty<TethysDate>(this, TethysFXDateButton.PROPERTY_DATEDAY);
+        theSelectedDateDay = new SimpleObjectProperty<>(this, TethysFXDateButton.PROPERTY_DATEDAY);
         addDateListener();
     }
 
@@ -79,7 +79,7 @@ public class TethysFXDateConfig
      */
     public TethysFXDateConfig(final TethysDateFormatter pFormatter) {
         super(pFormatter);
-        theSelectedDateDay = new SimpleObjectProperty<TethysDate>(this, TethysFXDateButton.PROPERTY_DATEDAY);
+        theSelectedDateDay = new SimpleObjectProperty<>(this, TethysFXDateButton.PROPERTY_DATEDAY);
         pFormatter.getEventRegistrar().addChangeListener(new LocaleListener(pFormatter));
         addDateListener();
     }

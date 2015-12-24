@@ -28,6 +28,7 @@ import java.awt.event.MouseEvent;
 import java.awt.print.PrinterAbortException;
 import java.awt.print.PrinterException;
 
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.text.AttributeSet;
@@ -74,13 +75,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * Report panel.
  */
 public class ReportTab
-        extends JPanel
         implements TethysEventProvider {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 2219752518436850014L;
-
     /**
      * Text for DataEntry Title.
      */
@@ -94,12 +89,17 @@ public class ReportTab
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final TethysEventManager theEventManager;
 
     /**
      * The Data View.
      */
-    private final transient SwingView theView;
+    private final SwingView theView;
+
+    /**
+     * The Panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The Scroll Pane.
@@ -119,7 +119,7 @@ public class ReportTab
     /**
      * The Spot Analysis Entry.
      */
-    private final transient MetisViewerEntry theSpotEntry;
+    private final MetisViewerEntry theSpotEntry;
 
     /**
      * The Error Panel.
@@ -129,12 +129,12 @@ public class ReportTab
     /**
      * The Report Manager.
      */
-    private final transient SwingReportManager theManager;
+    private final SwingReportManager theManager;
 
     /**
      * The ReportBuilder.
      */
-    private final transient ReportBuilder theBuilder;
+    private final ReportBuilder theBuilder;
 
     /**
      * Constructor for Report Window.
@@ -147,6 +147,9 @@ public class ReportTab
 
         /* Create the event manager */
         theEventManager = new TethysEventManager();
+
+        /* Create the Panel */
+        thePanel = new TethysSwingEnablePanel();
 
         /* Create the top level debug entry for this view */
         MetisViewerManager myDataMgr = theView.getViewerManager();
@@ -184,9 +187,9 @@ public class ReportTab
         myHeader.add(theError, BorderLayout.PAGE_START);
 
         /* Now define the panel */
-        setLayout(new BorderLayout());
-        add(myHeader, BorderLayout.PAGE_START);
-        add(theScroll, BorderLayout.CENTER);
+        thePanel.setLayout(new BorderLayout());
+        thePanel.add(myHeader, BorderLayout.PAGE_START);
+        thePanel.add(theScroll, BorderLayout.CENTER);
 
         /* Create listener */
         new ReportListener();
@@ -197,12 +200,23 @@ public class ReportTab
         return theEventManager.getEventRegistrar();
     }
 
-    @Override
-    public void setEnabled(final boolean bEnabled) {
+    /**
+     * Obtain the node.
+     * @return the node
+     */
+    public JComponent getNode() {
+        return thePanel;
+    }
+
+    /**
+     * Set enabled state
+     * @param pEnabled the state true/false
+     */
+    public void setEnabled(final boolean pEnabled) {
         /* Pass on to important elements */
-        theSelect.setEnabled(bEnabled);
-        theError.setEnabled(bEnabled);
-        theScroll.setEnabled(bEnabled);
+        theSelect.setEnabled(pEnabled);
+        theError.setEnabled(pEnabled);
+        theScroll.setEnabled(pEnabled);
     }
 
     /**

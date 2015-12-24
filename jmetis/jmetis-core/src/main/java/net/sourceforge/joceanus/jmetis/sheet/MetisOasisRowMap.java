@@ -78,7 +78,7 @@ public class MetisOasisRowMap {
     /**
      * List of of rows.
      */
-    private List<RowReference> theRows = new ArrayList<RowReference>();
+    private List<RowReference> theRows = new ArrayList<>();
 
     /**
      * Constructor.

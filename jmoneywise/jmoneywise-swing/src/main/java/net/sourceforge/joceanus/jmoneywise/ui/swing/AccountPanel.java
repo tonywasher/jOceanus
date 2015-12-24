@@ -31,6 +31,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -71,13 +72,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * Top-level panel for Accounts.
  */
 public class AccountPanel
-        extends TethysSwingEnablePanel
         implements TethysEventProvider {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 2128429177675141337L;
-
     /**
      * Strut width.
      */
@@ -101,12 +96,17 @@ public class AccountPanel
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final TethysEventManager theEventManager;
 
     /**
      * The Data View.
      */
-    private final transient SwingView theView;
+    private final SwingView theView;
+
+    /**
+     * The Panel.
+     */
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The select button.
@@ -176,12 +176,12 @@ public class AccountPanel
     /**
      * The UpdateSet.
      */
-    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The data entry.
      */
-    private final transient MetisViewerEntry theDataEntry;
+    private final MetisViewerEntry theDataEntry;
 
     /**
      * The error panel.
@@ -211,6 +211,9 @@ public class AccountPanel
 
         /* Build the Update set */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView, MoneyWiseDataType.class);
+
+        /* Create the Panel */
+        thePanel = new TethysSwingEnablePanel();
 
         /* Create the top level debug entry for this view */
         MetisViewerManager myDataMgr = pView.getViewerManager();
@@ -245,13 +248,13 @@ public class AccountPanel
         theCardPanel.setLayout(theLayout);
 
         /* Add to the card panels */
-        theCardPanel.add(theDepositTable.getPanel(), PanelName.DEPOSITS.toString());
-        theCardPanel.add(theCashTable.getPanel(), PanelName.CASH.toString());
-        theCardPanel.add(theLoanTable.getPanel(), PanelName.LOANS.toString());
-        theCardPanel.add(thePortfolioTable.getPanel(), PanelName.PORTFOLIOS.toString());
-        theCardPanel.add(theSecurityTable.getPanel(), PanelName.SECURITIES.toString());
-        theCardPanel.add(thePayeeTable.getPanel(), PanelName.PAYEES.toString());
-        theCardPanel.add(theOptionTable.getPanel(), PanelName.OPTIONS.toString());
+        theCardPanel.add(theDepositTable.getNode(), PanelName.DEPOSITS.toString());
+        theCardPanel.add(theCashTable.getNode(), PanelName.CASH.toString());
+        theCardPanel.add(theLoanTable.getNode(), PanelName.LOANS.toString());
+        theCardPanel.add(thePortfolioTable.getNode(), PanelName.PORTFOLIOS.toString());
+        theCardPanel.add(theSecurityTable.getNode(), PanelName.SECURITIES.toString());
+        theCardPanel.add(thePayeeTable.getNode(), PanelName.PAYEES.toString());
+        theCardPanel.add(theOptionTable.getNode(), PanelName.OPTIONS.toString());
         theActive = PanelName.DEPOSITS;
         theSelectButton.setText(theActive.toString());
 
@@ -295,9 +298,9 @@ public class AccountPanel
         myHeader.add(theActionButtons, BorderLayout.LINE_END);
 
         /* Now define the panel */
-        setLayout(new BorderLayout());
-        add(myHeader, BorderLayout.PAGE_START);
-        add(theCardPanel, BorderLayout.CENTER);
+        thePanel.setLayout(new BorderLayout());
+        thePanel.add(myHeader, BorderLayout.PAGE_START);
+        thePanel.add(theCardPanel, BorderLayout.CENTER);
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
@@ -309,6 +312,14 @@ public class AccountPanel
     @Override
     public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Obtain the node.
+     * @return the node
+     */
+    public JComponent getNode() {
+        return thePanel;
     }
 
     /**

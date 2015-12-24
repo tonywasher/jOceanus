@@ -376,7 +376,7 @@ public class GordianZipFileEntry {
      */
     public List<GordianStreamDefinition> buildInputList() throws OceanusException {
         /* Create list */
-        List<GordianStreamDefinition> myList = new ArrayList<GordianStreamDefinition>();
+        List<GordianStreamDefinition> myList = new ArrayList<>();
 
         /* Loop through the streamProperties */
         int myIndex = 1;

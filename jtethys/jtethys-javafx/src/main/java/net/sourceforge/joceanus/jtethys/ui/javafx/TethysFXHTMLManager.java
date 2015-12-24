@@ -32,8 +32,6 @@ import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 import javafx.scene.Node;
@@ -97,26 +95,10 @@ public class TethysFXHTMLManager
         theWebEngine.setJavaScriptEnabled(true);
 
         /* Create the hyperLink listener */
-        theListener = new EventListener() {
-            @Override
-            public void handleEvent(final Event ev) {
-                if (EVENT_TYPE_CLICK.equals(ev.getType())) {
-                    processReference(((Element) ev.getTarget()).getAttribute(ATTR_REF));
-                }
-            }
-        };
+        theListener = this::handleClick;
 
         /* Create the load listener */
-        theWebEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
-            @Override
-            public void changed(final ObservableValue<? extends State> pValue,
-                                final State pOldState,
-                                final State pNewState) {
-                if (pNewState == Worker.State.SUCCEEDED) {
-                    attachListenerToDoc();
-                }
-            }
-        });
+        theWebEngine.getLoadWorker().stateProperty().addListener((v, o, n) -> handleStateChange(n));
     }
 
     @Override
@@ -209,6 +191,26 @@ public class TethysFXHTMLManager
             return ((Double) pObject).intValue();
         }
         throw new IllegalArgumentException();
+    }
+
+    /**
+     * Handle click.
+     * @param pEvent the event
+     */
+    private void handleClick(final Event pEvent) {
+        if (EVENT_TYPE_CLICK.equals(pEvent.getType())) {
+            processReference(((Element) pEvent.getTarget()).getAttribute(ATTR_REF));
+        }
+    }
+
+    /**
+     * Handle load state change.
+     * @param pNewState the new state
+     */
+    private void handleStateChange(final State pNewState) {
+        if (pNewState == Worker.State.SUCCEEDED) {
+            attachListenerToDoc();
+        }
     }
 
     /**

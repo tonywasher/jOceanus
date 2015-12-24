@@ -27,8 +27,6 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -53,8 +51,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 
@@ -145,20 +141,11 @@ public abstract class TethysSwingDataTextField<T>
         theNode.add(theEditNode, NAME_EDIT);
 
         /* Set command button action handler */
-        theCmdButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                handleCmdMenuRequest();
-            }
-        });
+        theCmdButton.addActionListener(e -> handleCmdMenuRequest());
 
         /* Set command menu listener */
-        getCmdMenu().getEventRegistrar().addFilteredActionListener(TethysSwingScrollContextMenu.ACTION_SELECTED, new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent e) {
-                handleCmdMenuClosed();
-            }
-        });
+        getCmdMenu().getEventRegistrar().addFilteredActionListener(TethysSwingScrollContextMenu.ACTION_SELECTED,
+                e -> handleCmdMenuClosed());
     }
 
     @Override
@@ -265,7 +252,7 @@ public abstract class TethysSwingDataTextField<T>
             super(new JTextField());
 
             /* Create the converter control */
-            theControl = new TethysDataEditTextFieldControl<T>(this, pConverter);
+            theControl = new TethysDataEditTextFieldControl<>(this, pConverter);
 
             /* Access the fields */
             JLabel myLabel = getLabel();
@@ -341,18 +328,14 @@ public abstract class TethysSwingDataTextField<T>
                 theTextField.setBackground(COLOR_ERROR);
 
                 /* request focus again */
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        theTextField.requestFocus();
-                    }
-                });
+                SwingUtilities.invokeLater(() -> theTextField.requestFocus());
 
                 /* else value was OK */
             } else {
                 /* Clear error indications */
                 clearError();
             }
+
         }
 
         /**

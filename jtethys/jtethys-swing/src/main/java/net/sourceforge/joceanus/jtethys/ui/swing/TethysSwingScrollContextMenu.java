@@ -253,7 +253,7 @@ public class TethysSwingScrollContextMenu<T>
         theDownItem = new ScrollControl(TethysSwingArrowIcon.DOWN, 1);
 
         /* Allocate the list */
-        theMenuItems = new ArrayList<TethysSwingScrollElement>();
+        theMenuItems = new ArrayList<>();
         theActiveItems = new JPanel();
         theActiveItems.setLayout(new BoxLayout(theActiveItems, BoxLayout.Y_AXIS));
         theActiveItems.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -705,7 +705,7 @@ public class TethysSwingScrollContextMenu<T>
         }
 
         /* Create element */
-        TethysSwingScrollMenuItem<T> myItem = new TethysSwingScrollMenuItem<T>(this, pValue, pName, pGraphic);
+        TethysSwingScrollMenuItem<T> myItem = new TethysSwingScrollMenuItem<>(this, pValue, pName, pGraphic);
 
         /* Add to the list of menuItems */
         theMenuItems.add(myItem);
@@ -729,7 +729,7 @@ public class TethysSwingScrollContextMenu<T>
         }
 
         /* Create menu */
-        TethysSwingScrollSubMenu<T> myMenu = new TethysSwingScrollSubMenu<T>(this, pName, pGraphic);
+        TethysSwingScrollSubMenu<T> myMenu = new TethysSwingScrollSubMenu<>(this, pName, pGraphic);
 
         /* Add to the list of menuItems */
         theMenuItems.add(myMenu);
@@ -753,7 +753,7 @@ public class TethysSwingScrollContextMenu<T>
         }
 
         /* Create element */
-        TethysSwingScrollToggleItem<T> myItem = new TethysSwingScrollToggleItem<T>(this, pValue, pName);
+        TethysSwingScrollToggleItem<T> myItem = new TethysSwingScrollToggleItem<>(this, pValue, pName);
 
         /* Add to the list of menuItems */
         theMenuItems.add(myItem);
@@ -1290,7 +1290,7 @@ public class TethysSwingScrollContextMenu<T>
             theContext = pContext;
 
             /* Create the subMenu */
-            theSubMenu = new TethysSwingScrollContextMenu<T>(this);
+            theSubMenu = new TethysSwingScrollContextMenu<>(this);
 
             /* Determine the index */
             theIndex = theContext.getItemCount();
@@ -1453,17 +1453,13 @@ public class TethysSwingScrollContextMenu<T>
             theTimerTask = new TimerTask() {
                 @Override
                 public void run() {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            processScroll();
-                        }
-                    });
+                    SwingUtilities.invokeLater(() -> processScroll());
                 }
             };
 
             /* Schedule the task */
             theTimer.schedule(theTimerTask, TethysScrollMenuContent.INITIAL_SCROLLDELAY, TethysScrollMenuContent.REPEAT_SCROLLDELAY);
+
         }
 
         /**

@@ -28,8 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -204,41 +202,21 @@ public class GordianFXPasswordDialog
         /* Create OK button */
         theOKButton = new Button(NLS_OK);
         theOKButton.setMaxWidth(Double.MAX_VALUE);
-        theOKButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent e) {
-                processPassword();
-            }
-        });
+        theOKButton.setOnAction(e -> processPassword());
 
         /* Create cancel button */
         theCancelButton = new Button(NLS_CANCEL);
-        theCancelButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent e) {
-                processCancel();
-            }
-        });
+        theCancelButton.setOnAction(e -> processCancel());
 
         /* Create password field */
         thePassField = new PasswordField();
         thePassField.setPrefWidth(PASSWORD_FIELD_LEN);
-        thePassField.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent e) {
-                processPassword();
-            }
-        });
+        thePassField.setOnAction(e -> processPassword());
 
         /* Create confirm field */
         theConfirmField = new PasswordField();
         theConfirmField.setPrefWidth(PASSWORD_FIELD_LEN);
-        theConfirmField.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent e) {
-                processPassword();
-            }
-        });
+        theConfirmField.setOnAction(e -> processPassword());
 
         /* Create the error panel */
         theErrorField = new Label();
@@ -420,13 +398,7 @@ public class GordianFXPasswordDialog
             /* else we must use invokeAndWait */
         } else {
             try {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        /* invoke the dialog */
-                        pDialog.showDialog();
-                    }
-                });
+                Platform.runLater(() -> pDialog.showDialog());
             } catch (IllegalStateException e) {
                 LOGGER.error("Failed to display dialog", e);
             }

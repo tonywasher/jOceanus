@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -433,10 +434,10 @@ public class TransactionTable
     }
 
     /**
-     * Obtain the panel.
-     * @return the panel
+     * Obtain the node.
+     * @return the node
      */
-    public JPanel getPanel() {
+    public JComponent getNode() {
         return thePanel;
     }
 
@@ -529,6 +530,7 @@ public class TransactionTable
     public void setEnabled(final boolean bEnable) {
         /* Ensure that we are disabled whilst editing */
         super.setEnabled(bEnable && !isItemEditing());
+        theNewButton.setEnabled(bEnable && !isItemEditing());
     }
 
     /**

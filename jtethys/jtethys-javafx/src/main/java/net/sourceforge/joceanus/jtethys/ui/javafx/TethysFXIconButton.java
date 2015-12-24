@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -51,12 +49,7 @@ public class TethysFXIconButton
         setMaxWidth(Double.MAX_VALUE);
 
         /* Handle action */
-        setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent event) {
-                pManager.progressToNextState();
-            }
-        });
+        setOnAction(e -> pManager.progressToNextState());
     }
 
     @Override

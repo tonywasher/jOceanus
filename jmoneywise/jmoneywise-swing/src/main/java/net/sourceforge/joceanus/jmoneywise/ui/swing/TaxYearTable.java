@@ -26,6 +26,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -237,10 +238,10 @@ public class TaxYearTable
     }
 
     /**
-     * Obtain the panel.
-     * @return the panel
+     * Obtain the node.
+     * @return the node
      */
-    public JPanel getPanel() {
+    public JComponent getNode() {
         return thePanel;
     }
 

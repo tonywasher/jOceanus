@@ -22,15 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager.TethysScrollButton;
@@ -58,12 +53,7 @@ public final class TethysSwingScrollButton
         setHorizontalTextPosition(SwingConstants.LEFT);
 
         /* Set action handler */
-        addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                pManager.handleMenuRequest();
-            }
-        });
+        addActionListener(e -> pManager.handleMenuRequest());
     }
 
     @Override
@@ -99,13 +89,8 @@ public final class TethysSwingScrollButton
             declareMenu(new TethysSwingScrollContextMenu<T>());
 
             /* Set context menu listener */
-            getMenu().getEventRegistrar().addFilteredActionListener(TethysSwingScrollContextMenu.ACTION_SELECTED, new TethysActionEventListener() {
-                @Override
-                public void processAction(final TethysActionEvent e) {
-                    /* Handle the close of the menu */
-                    handleMenuClosed();
-                }
-            });
+            getMenu().getEventRegistrar().addFilteredActionListener(TethysSwingScrollContextMenu.ACTION_SELECTED,
+                    e -> handleMenuClosed());
         }
 
         @Override

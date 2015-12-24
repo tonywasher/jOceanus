@@ -64,7 +64,7 @@ public final class GordianStreamManager {
      */
     public List<GordianStreamDefinition> analyseStreams(final OutputStream pStream) throws OceanusException {
         /* Allocate the list */
-        List<GordianStreamDefinition> myStreams = new ArrayList<GordianStreamDefinition>();
+        List<GordianStreamDefinition> myStreams = new ArrayList<>();
 
         /* Loop through the streams */
         OutputStream myStream = pStream;

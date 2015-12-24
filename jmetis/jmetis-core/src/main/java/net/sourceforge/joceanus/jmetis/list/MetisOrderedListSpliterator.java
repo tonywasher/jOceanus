@@ -103,7 +103,7 @@ public class MetisOrderedListSpliterator<T extends Comparable<? super T>>
         int mySplit = (int) (myRemaining >> 1);
 
         /* Create the spliterator */
-        MetisOrderedListSpliterator<T> mySpliterator = new MetisOrderedListSpliterator<T>(this, mySplit);
+        MetisOrderedListSpliterator<T> mySpliterator = new MetisOrderedListSpliterator<>(this, mySplit);
 
         /* Adjust self */
         theLastIndex = theCurrIndex + mySplit;

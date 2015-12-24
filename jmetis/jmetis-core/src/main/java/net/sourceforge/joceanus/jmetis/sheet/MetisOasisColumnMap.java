@@ -71,7 +71,7 @@ public class MetisOasisColumnMap {
     /**
      * List of of columns.
      */
-    private final List<ColumnReference> theColumns = new ArrayList<ColumnReference>();
+    private final List<ColumnReference> theColumns = new ArrayList<>();
 
     /**
      * Constructor.

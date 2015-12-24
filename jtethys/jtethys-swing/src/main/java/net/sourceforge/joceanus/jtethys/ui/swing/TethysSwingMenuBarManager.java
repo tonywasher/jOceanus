@@ -22,9 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -142,12 +139,7 @@ public class TethysSwingMenuBarManager<T>
             theMenuItem.setText(pItem.toString());
 
             /* Add listener */
-            theMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    notifySelection();
-                }
-            });
+            theMenuItem.addActionListener(e -> notifySelection());
         }
 
         /**

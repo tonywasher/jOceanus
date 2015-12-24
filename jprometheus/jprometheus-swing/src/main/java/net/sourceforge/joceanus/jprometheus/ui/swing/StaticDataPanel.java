@@ -38,6 +38,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -76,13 +77,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * @param <E> the data type enum class
  */
 public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
-        extends JPanel
         implements TethysEventProvider {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -1089967527250331711L;
-
     /**
      * Strut width.
      */
@@ -111,17 +106,22 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final TethysEventManager theEventManager;
 
     /**
      * The UtilitySet.
      */
-    private final transient JOceanusSwingUtilitySet theUtilitySet;
+    private final JOceanusSwingUtilitySet theUtilitySet;
 
     /**
      * The data control.
      */
-    private final transient DataControl<?, E> theControl;
+    private final DataControl<?, E> theControl;
+
+    /**
+     * The Panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The table card panel.
@@ -156,12 +156,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     /**
      * The Panel map.
      */
-    private final transient Map<String, StaticDataTable<?, ?, ?, E>> theMap;
-
-    /**
-     * The Active panel.
-     */
-    private StaticDataTable<?, ?, ?, E> theActive;
+    private final Map<String, StaticDataTable<?, ?, ?, E>> theMap;
 
     /**
      * The error panel.
@@ -176,17 +171,22 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     /**
      * The UpdateSet.
      */
-    private final transient UpdateSet<E> theUpdateSet;
+    private final UpdateSet<E> theUpdateSet;
 
     /**
      * The data entry.
      */
-    private final transient MetisViewerEntry theDataEntry;
+    private final MetisViewerEntry theDataEntry;
 
     /**
      * The selection listener.
      */
-    private final transient StaticListener theListener;
+    private final StaticListener theListener;
+
+    /**
+     * The Active panel.
+     */
+    private StaticDataTable<?, ?, ?, E> theActive;
 
     /**
      * Constructor.
@@ -203,6 +203,9 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
 
         /* Create the event manager */
         theEventManager = new TethysEventManager();
+
+        /* Create the Panel */
+        thePanel = new TethysSwingEnablePanel();
 
         /* Build the Update set */
         theUpdateSet = new UpdateSet<E>(pControl, pClass);
@@ -231,7 +234,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theListener = new StaticListener();
 
         /* Create the selection panel */
-        JPanel mySelect = new JPanel();
+        JPanel mySelect = new TethysSwingEnablePanel();
         mySelect.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
 
         /* Create the standard strut */
@@ -256,7 +259,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         mySelect.add(Box.createHorizontalGlue());
 
         /* Create the header panel */
-        JPanel myHeader = new JPanel();
+        JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
         myHeader.add(mySelect, BorderLayout.CENTER);
         myHeader.add(theError, BorderLayout.PAGE_START);
@@ -271,9 +274,9 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theMap = new LinkedHashMap<String, StaticDataTable<?, ?, ?, E>>();
 
         /* Now define the panel */
-        setLayout(new BorderLayout());
-        add(myHeader, BorderLayout.PAGE_START);
-        add(theTableCard, BorderLayout.CENTER);
+        thePanel.setLayout(new BorderLayout());
+        thePanel.add(myHeader, BorderLayout.PAGE_START);
+        thePanel.add(theTableCard, BorderLayout.CENTER);
 
         /* Set visibility of new button */
         showNewButton();
@@ -285,6 +288,14 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     @Override
     public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Obtain the node.
+     * @return the node
+     */
+    public JComponent getNode() {
+        return thePanel;
     }
 
     /**
@@ -315,7 +326,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         String myName = pItemType.getFieldName();
 
         /* Add to the card panels */
-        theTableCard.add(myPanel.getPanel(), myName);
+        theTableCard.add(myPanel.getNode(), myName);
         theNewCard.add(myPanel.getNewButton(), myName);
 
         /* Add to the Map */

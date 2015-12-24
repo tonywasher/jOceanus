@@ -68,7 +68,7 @@ public final class JcaFactory
     /**
      * Predicate for all supported digest types.
      */
-    private static final Predicate<GordianDigestType> PREDICATE_DIGESTS = p -> JcaDigest.isSupported(p);
+    private static final Predicate<GordianDigestType> PREDICATE_DIGESTS = JcaDigest::isSupported;
 
     /**
      * Predicate for all supported macTypes.
@@ -179,7 +179,7 @@ public final class JcaFactory
             /* Create the new generator */
             String myAlgorithm = getKeyAlgorithm(pKeyType);
             KeyGenerator myJavaGenerator = getJavaKeyGenerator(myAlgorithm);
-            myGenerator = new JcaKeyGenerator<T>(this, pKeyType, myJavaGenerator);
+            myGenerator = new JcaKeyGenerator<>(this, pKeyType, myJavaGenerator);
 
             /* Add to cache */
             theGeneratorCache.cacheKeyGenerator(myGenerator);
@@ -208,7 +208,7 @@ public final class JcaFactory
 
         /* Create the cipher */
         Cipher myBCCipher = getJavaCipher(pKeyType, pMode, pPadding);
-        return new JcaCipher<GordianSymKeyType>(this, pKeyType, pMode, pPadding, myBCCipher);
+        return new JcaCipher<>(this, pKeyType, pMode, pPadding, myBCCipher);
     }
 
     @Override
@@ -220,7 +220,7 @@ public final class JcaFactory
 
         /* Create the cipher */
         Cipher myJavaCipher = getJavaCipher(pKeyType);
-        return new JcaCipher<GordianStreamKeyType>(this, pKeyType, null, false, myJavaCipher);
+        return new JcaCipher<>(this, pKeyType, null, false, myJavaCipher);
     }
 
     @Override

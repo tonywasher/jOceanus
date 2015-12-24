@@ -25,17 +25,17 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog.swing;
 import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.DateDayCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.UnitsCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
@@ -176,10 +176,10 @@ public class StockOptionVestTable
     }
 
     /**
-     * Obtain the panel.
-     * @return the panel
+     * Obtain the node.
+     * @return the node
      */
-    protected JPanel getPanel() {
+    protected JComponent getNode() {
         return thePanel;
     }
 

@@ -210,7 +210,7 @@ public final class BouncyFactory
         if (myGenerator == null) {
             /* Create the new generator */
             CipherKeyGenerator myBCGenerator = getBCKeyGenerator(pKeyType);
-            myGenerator = new BouncyKeyGenerator<T>(this, pKeyType, myBCGenerator);
+            myGenerator = new BouncyKeyGenerator<>(this, pKeyType, myBCGenerator);
 
             /* Add to cache */
             theGeneratorCache.cacheKeyGenerator(myGenerator);

@@ -30,8 +30,6 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
@@ -58,15 +56,7 @@ public class TethysSwingHelpManager
      */
     public TethysSwingHelpManager() {
         /* Initialise underlying class */
-        super(new TethysSwingSplitTreeManager<TethysHelpEntry>());
-
-        /* Listen to the TreeManager */
-        getSplitTreeManager().getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                handleSplitTreeAction(pEvent);
-            }
-        });
+        super(new TethysSwingSplitTreeManager<>());
     }
 
     @Override

@@ -62,8 +62,8 @@ public class MetisValueSetHistory
      */
     public MetisValueSetHistory() {
         /* Allocate the stack */
-        theStack = new ArrayDeque<MetisValueSet>();
-        theDeltas = new ArrayDeque<MetisValueSetDelta>();
+        theStack = new ArrayDeque<>();
+        theDeltas = new ArrayDeque<>();
     }
 
     @Override

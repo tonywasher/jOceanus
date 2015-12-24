@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -122,7 +120,7 @@ public class TethysFXDateRangeSelector
         theNode = new HBox();
 
         /* Create the period button */
-        TethysFXScrollButtonManager<TethysDatePeriod> myPeriodButton = new TethysFXScrollButtonManager<TethysDatePeriod>();
+        TethysFXScrollButtonManager<TethysDatePeriod> myPeriodButton = new TethysFXScrollButtonManager<>();
         myPeriodButton.getButton().setMaxHeight(Double.MAX_VALUE);
         declarePeriodButton(myPeriodButton);
 
@@ -148,23 +146,13 @@ public class TethysFXDateRangeSelector
         theNextButton = new Button();
         theNextButton.setGraphic(ArrowIcon.RIGHT.getArrow());
         theNextButton.setTooltip(new Tooltip(NLS_NEXTTIP));
-        theNextButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent e) {
-                handleNextDate();
-            }
-        });
+        theNextButton.setOnAction(e -> handleNextDate());
 
         /* Create the Previous button */
         thePrevButton = new Button();
         thePrevButton.setGraphic(ArrowIcon.LEFT.getArrow());
         thePrevButton.setTooltip(new Tooltip(NLS_PREVTIP));
-        thePrevButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent e) {
-                handlePreviousDate();
-            }
-        });
+        thePrevButton.setOnAction(e -> handlePreviousDate());
 
         /* Create the Custom HBox */
         theCustomBox = new HBox();

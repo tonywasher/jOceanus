@@ -156,7 +156,7 @@ public class JScrollPopupMenu
         theDownItem = new ScrollItem(TethysSwingArrowIcon.DOWN, 1);
 
         /* Allocate the list */
-        theMenuItems = new ArrayList<JMenuItem>();
+        theMenuItems = new ArrayList<>();
 
         /* Create listener and add it */
         ScrollListener myListener = new ScrollListener();

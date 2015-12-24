@@ -204,13 +204,13 @@ public class TethysFXDateRangeSelect
         theFormatter = pFormatter;
 
         /* Create the range property */
-        theSelectedRange = new SimpleObjectProperty<TethysDateRange>(this, PROPERTY_RANGE);
+        theSelectedRange = new SimpleObjectProperty<>(this, PROPERTY_RANGE);
 
         /* Create initial state */
         theState = new TethysDateRangeState(pBaseIsStart);
 
         /* Create the period button */
-        thePeriodButton = new ChoiceBox<TethysDatePeriod>();
+        thePeriodButton = new ChoiceBox<>();
         buildPeriodMenu(thePeriodButton.getItems());
         thePeriodButton.setMaxHeight(Double.MAX_VALUE);
         thePeriodButton.valueProperty().addListener(new ChangeListener<TethysDatePeriod>() {

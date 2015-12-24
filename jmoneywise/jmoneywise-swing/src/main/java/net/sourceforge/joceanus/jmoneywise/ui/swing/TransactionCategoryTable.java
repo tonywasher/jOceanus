@@ -34,6 +34,7 @@ import java.util.Iterator;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -275,10 +276,10 @@ public class TransactionCategoryTable
     }
 
     /**
-     * Obtain the panel.
-     * @return the panel
+     * Obtain the node.
+     * @return the node
      */
-    public JPanel getPanel() {
+    public JComponent getNode() {
         return thePanel;
     }
 

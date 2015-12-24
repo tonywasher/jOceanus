@@ -49,9 +49,9 @@ public abstract class GordianKeyGeneratorCache {
      * Constructor.
      */
     protected GordianKeyGeneratorCache() {
-        theSymKeyCache = new EnumMap<GordianSymKeyType, GordianKeyGenerator<GordianSymKeyType>>(GordianSymKeyType.class);
-        theStreamKeyCache = new EnumMap<GordianStreamKeyType, GordianKeyGenerator<GordianStreamKeyType>>(GordianStreamKeyType.class);
-        theMacKeyCache = new HashMap<GordianMacSpec, GordianKeyGenerator<GordianMacSpec>>();
+        theSymKeyCache = new EnumMap<>(GordianSymKeyType.class);
+        theStreamKeyCache = new EnumMap<>(GordianStreamKeyType.class);
+        theMacKeyCache = new HashMap<>();
     }
 
     /**

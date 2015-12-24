@@ -63,7 +63,7 @@ public class GordianPipedStream {
      */
     public GordianPipedStream() {
         /* Create the queue */
-        theQueue = new ArrayBlockingQueue<byte[]>(QUEUE_LEN);
+        theQueue = new ArrayBlockingQueue<>(QUEUE_LEN);
 
         /* Create the source stream */
         theSource = new PipedInputStream();

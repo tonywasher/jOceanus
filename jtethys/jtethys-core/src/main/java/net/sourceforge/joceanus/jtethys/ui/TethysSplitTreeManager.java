@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jtethys.ui;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -65,20 +64,10 @@ public abstract class TethysSplitTreeManager<T, N>
         theEventManager = new TethysEventManager();
 
         /* Listen to the TreeManager */
-        theTreeManager.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                theEventManager.cascadeActionEvent(pEvent);
-            }
-        });
+        theTreeManager.getEventRegistrar().addActionListener(theEventManager::cascadeActionEvent);
 
         /* Listen to the HTMLManager */
-        theHTMLManager.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                handleReferenceLookup(pEvent);
-            }
-        });
+        theHTMLManager.getEventRegistrar().addActionListener(this::handleReferenceLookup);
     }
 
     /**

@@ -89,7 +89,7 @@ public abstract class GordianHashManager {
                                                                              : new JcaFactory(pParameters);
 
         /* Allocate a new Hash list */
-        theHashList = new ArrayList<GordianKeySetHash>();
+        theHashList = new ArrayList<>();
     }
 
     /**
@@ -124,7 +124,7 @@ public abstract class GordianHashManager {
         /* Prepare to prompt for password */
         String myTitle;
         boolean needConfirm = false;
-        char[] myPassword = null;
+        char[] myPassword;
 
         /* Determine whether we need confirmation */
         if (pHashBytes == null) {

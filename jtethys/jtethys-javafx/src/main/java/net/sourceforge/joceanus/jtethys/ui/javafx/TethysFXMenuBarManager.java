@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -141,12 +139,7 @@ public class TethysFXMenuBarManager<T>
             theMenuItem.setText(pItem.toString());
 
             /* Add listener */
-            theMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(final ActionEvent event) {
-                    notifySelection();
-                }
-            });
+            theMenuItem.setOnAction(e -> notifySelection());
         }
 
         /**

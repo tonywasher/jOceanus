@@ -106,7 +106,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
         theGranularityMask = (1 << theGranularityShift) - 1;
 
         /* Allocate and initialise the map */
-        theMap = (MetisOrderedNode<T>[]) new MetisOrderedNode[EXPANSION_SIZE];
+        theMap = new MetisOrderedNode[EXPANSION_SIZE];
         Arrays.fill(theMap, null);
         theMapLength = EXPANSION_SIZE;
     }
@@ -133,7 +133,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
      * @return the new index
      */
     protected MetisOrderedIndex<T> newIndex(final MetisOrderedList<T> pList) {
-        MetisOrderedIndex<T> myIndex = new MetisOrderedIndex<T>(theGranularityShift);
+        MetisOrderedIndex<T> myIndex = new MetisOrderedIndex<>(theGranularityShift);
         myIndex.declareList(pList);
         return myIndex;
     }

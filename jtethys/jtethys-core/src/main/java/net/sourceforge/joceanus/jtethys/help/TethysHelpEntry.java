@@ -89,7 +89,7 @@ public class TethysHelpEntry {
      */
     public TethysHelpEntry addChildEntry(final TethysHelpEntry pChild) {
         if (theChildren == null) {
-            theChildren = new ArrayList<TethysHelpEntry>();
+            theChildren = new ArrayList<>();
         }
         theChildren.add(pChild);
         return pChild;

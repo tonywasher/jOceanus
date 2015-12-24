@@ -96,7 +96,7 @@ public abstract class TethysHelpModule {
         theTitle = pTitle;
 
         /* Create entry list */
-        theEntries = new ArrayList<TethysHelpEntry>();
+        theEntries = new ArrayList<>();
     }
 
     /**

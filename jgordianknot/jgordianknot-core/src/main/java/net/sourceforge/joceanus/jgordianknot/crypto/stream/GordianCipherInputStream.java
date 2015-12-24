@@ -90,7 +90,7 @@ public class GordianCipherInputStream<T>
         public int processBytes(final byte[] pBuffer,
                                 final int pLength) throws OceanusException {
             /* Initialise variables */
-            int iNumBytes = 0;
+            int iNumBytes;
             int iLength = pLength;
 
             /* If we have EOF from the input stream */

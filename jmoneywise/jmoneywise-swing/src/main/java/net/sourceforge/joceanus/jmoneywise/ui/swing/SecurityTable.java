@@ -34,6 +34,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -284,10 +285,10 @@ public class SecurityTable
     }
 
     /**
-     * Obtain the panel.
-     * @return the panel
+     * Obtain the node.
+     * @return the node
      */
-    public JPanel getPanel() {
+    public JComponent getNode() {
         return thePanel;
     }
 

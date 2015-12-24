@@ -75,7 +75,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * Selection panel for Analysis Statement.
  */
 public class AnalysisSelect
-        extends JPanel
+        extends TethysSwingEnablePanel
         implements TethysEventProvider {
     /**
      * Serial Id.
@@ -426,7 +426,7 @@ public class AnalysisSelect
      */
     private JPanel buildControlPanel(final JButton pNewButton) {
         /* Create the control panel */
-        JPanel myPanel = new JPanel();
+        JPanel myPanel = new TethysSwingEnablePanel();
 
         /* Create the labels */
         JLabel myRangeLabel = new JLabel(NLS_RANGE);

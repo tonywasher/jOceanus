@@ -231,27 +231,27 @@ public class MainTab
         /* Create the Report Tab */
         myTask.startTask("Report");
         theReports = new ReportTab(theView);
-        theTabs.addTabItem(TITLE_REPORT, theReports);
+        theTabs.addTabItem(TITLE_REPORT, theReports.getNode());
 
         /* Create the Register Tab */
         myTask.startTask("Register");
         theRegister = new TransactionTable(theView);
-        theTabs.addTabItem(TITLE_REGISTER, theRegister.getPanel());
+        theTabs.addTabItem(TITLE_REGISTER, theRegister.getNode());
 
         /* Create the SpotPrices Tab */
         myTask.startTask("SpotPrices");
         theSpotPrices = new SpotPricesTable(theView);
-        theTabs.addTabItem(TITLE_SPOTPRICES, theSpotPrices.getPanel());
+        theTabs.addTabItem(TITLE_SPOTPRICES, theSpotPrices.getNode());
 
         /* Create the SpotRates Tab */
         myTask.startTask("SpotRates");
         theSpotRates = new SpotRatesTable(theView);
-        theTabs.addTabItem(TITLE_SPOTRATES, theSpotRates.getPanel());
+        theTabs.addTabItem(TITLE_SPOTRATES, theSpotRates.getNode());
 
         /* Create the Maintenance Tab */
         myTask.startTask("Maintenance");
         theMaint = new MaintenanceTab(this);
-        theTabs.addTabItem(TITLE_MAINT, theMaint);
+        theTabs.addTabItem(TITLE_MAINT, theMaint.getNode());
 
         /* Create listener and initialise focus */
         theListener = new MainListener();
@@ -441,22 +441,22 @@ public class MainTab
         JComponent myComponent = myItem.getNode();
 
         /* If the selected component is Register */
-        if (myComponent.equals(theRegister)) {
+        if (myComponent.equals(theRegister.getNode())) {
             /* Determine focus of Register */
             theRegister.determineFocus();
 
             /* If the selected component is SpotPrices */
-        } else if (myComponent.equals(theSpotPrices.getPanel())) {
+        } else if (myComponent.equals(theSpotPrices.getNode())) {
             /* Determine focus of SpotPrices */
             theSpotPrices.determineFocus();
 
             /* If the selected component is SpotRates */
-        } else if (myComponent.equals(theSpotRates.getPanel())) {
+        } else if (myComponent.equals(theSpotRates.getNode())) {
             /* Determine focus of SpotRates */
             theSpotRates.determineFocus();
 
             /* If the selected component is Maintenance */
-        } else if (myComponent.equals(theMaint)) {
+        } else if (myComponent.equals(theMaint.getNode())) {
             /* Determine focus of maintenance */
             theMaint.determineFocus();
         }

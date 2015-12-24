@@ -22,16 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.help.javafx;
 
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.stage.WindowEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXHTMLManager;
@@ -59,14 +55,6 @@ public class TethysFXHelpManager
     public TethysFXHelpManager() {
         /* Initialise underlying class */
         super(new TethysFXSplitTreeManager<TethysHelpEntry>());
-
-        /* Listen to the TreeManager */
-        getSplitTreeManager().getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                handleSplitTreeAction(pEvent);
-            }
-        });
     }
 
     @Override
@@ -92,13 +80,7 @@ public class TethysFXHelpManager
             theDialog = new HelpDialog();
 
             /* Change visibility of tree when hiding */
-            theDialog.setOnHiding(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(final WindowEvent event) {
-                    getTreeManager().setVisible(false);
-                    fireEvent(ACTION_WINDOW_CLOSED, null);
-                }
-            });
+            theDialog.setOnHiding(e -> handleDialogClosing());
         }
 
         /* If the dialog is not visible */
@@ -106,6 +88,14 @@ public class TethysFXHelpManager
             /* Show it */
             theDialog.showDialog();
         }
+    }
+
+    /**
+     * Handle dialog closing.
+     */
+    private void handleDialogClosing() {
+        getTreeManager().setVisible(false);
+        fireEvent(ACTION_WINDOW_CLOSED, null);
     }
 
     @Override

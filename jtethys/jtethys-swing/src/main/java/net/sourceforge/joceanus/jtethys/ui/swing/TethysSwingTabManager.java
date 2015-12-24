@@ -24,10 +24,9 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysTabManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableTabbed;
 
 /**
  * Swing Tab Manager.
@@ -44,13 +43,8 @@ public class TethysSwingTabManager
      */
     public TethysSwingTabManager() {
         /* Create the pane */
-        theTabPane = new JTabbedPane();
-        theTabPane.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(final ChangeEvent e) {
-                notifySelection(getSelectedTab());
-            }
-        });
+        theTabPane = new TethysSwingEnableTabbed();
+        theTabPane.addChangeListener(e -> notifySelection(getSelectedTab()));
     }
 
     @Override

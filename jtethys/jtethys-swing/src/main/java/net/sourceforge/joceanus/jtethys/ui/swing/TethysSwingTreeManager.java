@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import javax.swing.JComponent;
 import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -59,7 +57,7 @@ public class TethysSwingTreeManager<T>
      */
     public TethysSwingTreeManager() {
         /* Create the tree */
-        theRoot = new TethysSwingTreeItem<T>(this);
+        theRoot = new TethysSwingTreeItem<>(this);
         theTree = new JTree(theRoot.getNode());
         theModel = theTree.getSelectionModel();
         setRoot(theRoot);
@@ -71,12 +69,7 @@ public class TethysSwingTreeManager<T>
         theModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         /* Create the listener */
-        theModel.addTreeSelectionListener(new TreeSelectionListener() {
-            @Override
-            public void valueChanged(final TreeSelectionEvent e) {
-                fireEvent(ACTION_NEW_VALUE, getSelectedItemFromPath(e.getPath()));
-            }
-        });
+        theModel.addTreeSelectionListener(e -> fireEvent(ACTION_NEW_VALUE, getSelectedItemFromPath(e.getPath())));
     }
 
     @Override
@@ -142,14 +135,14 @@ public class TethysSwingTreeManager<T>
     @Override
     public TethysSwingTreeItem<T> addRootItem(final String pName,
                                               final T pItem) throws OceanusException {
-        return new TethysSwingTreeItem<T>(this, theRoot, pName, pItem);
+        return new TethysSwingTreeItem<>(this, theRoot, pName, pItem);
     }
 
     @Override
     public TethysSwingTreeItem<T> addChildItem(final TethysTreeItem<T, JComponent> pParent,
                                                final String pName,
                                                final T pItem) throws OceanusException {
-        return new TethysSwingTreeItem<T>(this, (TethysSwingTreeItem<T>) pParent, pName, pItem);
+        return new TethysSwingTreeItem<>(this, (TethysSwingTreeItem<T>) pParent, pName, pItem);
     }
 
     /**
@@ -172,7 +165,7 @@ public class TethysSwingTreeManager<T>
             super(pTree);
 
             /* Create the node */
-            theNode = new TethysSwingTreeNode<X>(this);
+            theNode = new TethysSwingTreeNode<>(this);
         }
 
         /**
@@ -217,7 +210,7 @@ public class TethysSwingTreeManager<T>
             /* If we are not the root */
             if (myParent != null) {
                 /* Create the node */
-                theNode = new TethysSwingTreeNode<X>(this);
+                theNode = new TethysSwingTreeNode<>(this);
 
                 /* add to list of children */
                 myParent.getNode().add(theNode);
@@ -251,7 +244,7 @@ public class TethysSwingTreeManager<T>
         @Override
         protected void attachAsChildNo(final int pChildNo) {
             /* Create the node */
-            theNode = new TethysSwingTreeNode<X>(this);
+            theNode = new TethysSwingTreeNode<>(this);
 
             /* Obtain the parent */
             TethysSwingTreeItem<X> myParent = getParent();

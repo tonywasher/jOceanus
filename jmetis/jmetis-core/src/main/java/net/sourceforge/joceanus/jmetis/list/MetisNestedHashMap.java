@@ -573,7 +573,7 @@ public class MetisNestedHashMap<K, V>
                 /* If this is an empty slot */
             } else if (myEntry == null) {
                 /* Create and store the new entry */
-                HashEntry<K, V> myHashEntry = new HashEntry<K, V>(pHash, pKey);
+                HashEntry<K, V> myHashEntry = new HashEntry<>(pHash, pKey);
                 myHashEntry.setValue(pValue);
                 myArray.theArray[myIndex] = myHashEntry;
 
@@ -969,7 +969,7 @@ public class MetisNestedHashMap<K, V>
 
                 /* If no next entry, allocate new entry */
                 if (myNext == null) {
-                    theNext = new HashEntry<K, V>(theHash, pKey);
+                    theNext = new HashEntry<>(theHash, pKey);
                     return theNext;
                 }
 

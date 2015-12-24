@@ -28,8 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Class represents the properties of an encrypted file in the Zip file.
@@ -70,7 +70,7 @@ public class GordianZipFileProperties {
      */
     protected GordianZipFileProperties() {
         /* Allocate the array */
-        theList = new ArrayList<Property>();
+        theList = new ArrayList<>();
     }
 
     /**
@@ -322,7 +322,7 @@ public class GordianZipFileProperties {
         /* Check that we found the value separator */
         if (myLoc == -1) {
             throw new GordianDataException("Missing value separator: "
-                                            + pValue);
+                                           + pValue);
         }
 
         /* Split the values and name */
@@ -333,7 +333,7 @@ public class GordianZipFileProperties {
         /* If the name is already present reject it */
         if (getProperty(myName) != null) {
             throw new GordianDataException("Duplicate name: "
-                                            + pValue);
+                                           + pValue);
         }
 
         /* Locate the Long separator in the string */
@@ -342,7 +342,7 @@ public class GordianZipFileProperties {
         /* Check that we found the long separator */
         if (myLoc == -1) {
             throw new GordianDataException("Missing long separator: "
-                                            + pValue);
+                                           + pValue);
         }
 
         /* Access the separate byte and long values */
@@ -357,7 +357,7 @@ public class GordianZipFileProperties {
         if ((myBytes == null)
             && (myLong == null)) {
             throw new GordianDataException("Invalid property: "
-                                            + myName);
+                                           + myName);
         }
 
         /* Create a new property */

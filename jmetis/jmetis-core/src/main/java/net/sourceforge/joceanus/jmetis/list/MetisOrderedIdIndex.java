@@ -56,12 +56,12 @@ public class MetisOrderedIdIndex<I, T extends Comparable<? super T> & MetisOrder
         super(pIndexGranularity);
 
         /* Allocate hash map */
-        theHashMap = new MetisNestedHashMap<I, MetisOrderedNode<T>>();
+        theHashMap = new MetisNestedHashMap<>();
     }
 
     @Override
     protected MetisOrderedIndex<T> newIndex(final MetisOrderedList<T> pList) {
-        MetisOrderedIndex<T> myIndex = new MetisOrderedIdIndex<I, T>(getGranularityShift());
+        MetisOrderedIndex<T> myIndex = new MetisOrderedIdIndex<>(getGranularityShift());
         myIndex.declareList(pList);
         return myIndex;
     }
@@ -72,7 +72,7 @@ public class MetisOrderedIdIndex<I, T extends Comparable<? super T> & MetisOrder
      */
     protected Map<I, T> getElementMap() {
         /* Create the new map */
-        Map<I, T> myMap = new MetisNestedHashMap<I, T>();
+        Map<I, T> myMap = new MetisNestedHashMap<>();
 
         /* Loop through the elements */
         Iterator<Entry<I, MetisOrderedNode<T>>> myIterator = theHashMap.entrySet().iterator();

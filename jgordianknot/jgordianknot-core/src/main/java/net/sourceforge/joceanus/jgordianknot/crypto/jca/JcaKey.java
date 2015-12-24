@@ -66,7 +66,7 @@ public final class JcaKey<T>
 
     @Override
     public <X> JcaKey<X> convertToKeyType(final X pKeyType) {
-        return new JcaKey<X>(pKeyType, theKey);
+        return new JcaKey<>(pKeyType, theKey);
     }
 
     /**

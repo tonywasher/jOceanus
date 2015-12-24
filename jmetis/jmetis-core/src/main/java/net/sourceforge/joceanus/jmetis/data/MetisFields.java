@@ -99,7 +99,7 @@ public final class MetisFields {
         theNextValue = (theParent == null)
                                            ? 0
                                            : theParent.getNumValues();
-        theFields = new ArrayList<MetisField>();
+        theFields = new ArrayList<>();
 
         /* Store the anchorId */
         theAnchorId = getNextAnchorId();
@@ -512,7 +512,7 @@ public final class MetisFields {
     public static <E extends Enum<E>> Map<MetisField, E> buildFieldMap(final MetisFields pAnchor,
                                                                        final Class<E> pClass) {
         /* Create the map */
-        Map<MetisField, E> myMap = new HashMap<MetisField, E>();
+        Map<MetisField, E> myMap = new HashMap<>();
 
         /* Loop through the enum values */
         for (E myValue : pClass.getEnumConstants()) {
@@ -542,7 +542,7 @@ public final class MetisFields {
     public static <E extends Enum<E>> Map<E, MetisField> reverseFieldMap(final Map<MetisField, E> pSourceMap,
                                                                          final Class<E> pClass) {
         /* Create the map */
-        Map<E, MetisField> myMap = new EnumMap<E, MetisField>(pClass);
+        Map<E, MetisField> myMap = new EnumMap<>(pClass);
 
         /* Loop through the enum values */
         for (Map.Entry<MetisField, E> myEntry : pSourceMap.entrySet()) {
@@ -581,6 +581,7 @@ public final class MetisFields {
     /**
      * Enum naming interface.
      */
+    @FunctionalInterface
     public interface MetisFieldEnum {
         /**
          * Get Field name.

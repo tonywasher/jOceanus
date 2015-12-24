@@ -203,7 +203,7 @@ public class TethysSwingDateRangeSelect
         theState = new TethysDateRangeState(pBaseIsStart);
 
         /* Create the period button */
-        thePeriodButton = new JScrollButton<TethysDatePeriod>();
+        thePeriodButton = new JScrollButton<>();
         buildPeriodMenu();
 
         /* Create the period panel */

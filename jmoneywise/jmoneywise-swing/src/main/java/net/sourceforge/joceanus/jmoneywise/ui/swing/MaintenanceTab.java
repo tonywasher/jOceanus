@@ -67,6 +67,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabManager.TethysTabItem;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager.TethysSwingTabItem;
 
@@ -75,13 +76,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager.TethysSwi
  * @author Tony Washer
  */
 public class MaintenanceTab
-        extends JPanel
         implements TethysEventProvider {
-    /**
-     * The serial Id.
-     */
-    private static final long serialVersionUID = 4291381331160920L;
-
     /**
      * TaxYears tab title.
      */
@@ -110,22 +105,27 @@ public class MaintenanceTab
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final TethysEventManager theEventManager;
 
     /**
      * The Data View.
      */
-    private final transient SwingView theView;
+    private final SwingView theView;
 
     /**
      * The Parent.
      */
-    private final transient MainTab theParent;
+    private final MainTab theParent;
+
+    /**
+     * The Panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The Tabs.
      */
-    private final transient TethysSwingTabManager theTabs;
+    private final TethysSwingTabManager theTabs;
 
     /**
      * The TaxYear Panel.
@@ -164,24 +164,27 @@ public class MaintenanceTab
         /* Create the event manager */
         theEventManager = new TethysEventManager();
 
+        /* Create the Panel */
+        thePanel = new TethysSwingEnablePanel();
+
         /* Create the Tabbed Pane */
         theTabs = new TethysSwingTabManager();
 
         /* Create the account Tab and add it */
         theAccountTab = new AccountPanel(theView);
-        theTabs.addTabItem(TITLE_ACCOUNT, theAccountTab);
+        theTabs.addTabItem(TITLE_ACCOUNT, theAccountTab.getNode());
 
         /* Create the category Tab and add it */
         theCategoryTab = new CategoryPanel(theView);
-        theTabs.addTabItem(TITLE_CATEGORY, theCategoryTab);
+        theTabs.addTabItem(TITLE_CATEGORY, theCategoryTab.getNode());
 
         /* Create the TaxYears Tab */
         theTaxYearTab = new TaxYearTable(theView);
-        theTabs.addTabItem(TITLE_TAXYEARS, theTaxYearTab.getPanel());
+        theTabs.addTabItem(TITLE_TAXYEARS, theTaxYearTab.getNode());
 
         /* Create the Static Tab */
         theStatic = new StaticDataPanel<MoneyWiseDataType>(theView, theView.getUtilitySet(), MoneyWiseDataType.class);
-        theTabs.addTabItem(TITLE_STATIC, theStatic);
+        theTabs.addTabItem(TITLE_STATIC, theStatic.getNode());
 
         /* Add the static elements */
         theStatic.addStatic(MoneyWiseDataType.DEPOSITTYPE, DepositCategoryTypeList.class);
@@ -202,7 +205,7 @@ public class MaintenanceTab
         /* Create the Preferences Tab */
         MetisPreferenceManager myPrefs = theView.getPreferenceManager();
         thePreferences = new MetisPreferencesPanel(myPrefs, theView.getFieldManager(), theView.getViewerManager(), theView.getDataEntry(DataControl.DATA_MAINT));
-        theTabs.addTabItem(TITLE_PREFERENCES, thePreferences);
+        theTabs.addTabItem(TITLE_PREFERENCES, thePreferences.getNode());
 
         /* Add interesting preferences */
         myPrefs.getPreferenceSet(DatabasePreferences.class);
@@ -211,10 +214,8 @@ public class MaintenanceTab
 
         /* Create the layout for the panel */
         BorderLayout myLayout = new BorderLayout();
-        setLayout(myLayout);
-
-        /* Set the layout */
-        add(theTabs.getNode());
+        thePanel.setLayout(myLayout);
+        thePanel.add(theTabs.getNode());
 
         /* Create a listener */
         new MaintenanceListener();
@@ -223,6 +224,14 @@ public class MaintenanceTab
     @Override
     public TethysEventRegistrar getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Obtain the node.
+     * @return the node
+     */
+    public JComponent getNode() {
+        return thePanel;
     }
 
     /**
@@ -249,10 +258,13 @@ public class MaintenanceTab
         return theView.getViewerManager();
     }
 
-    @Override
-    public void setEnabled(final boolean bEnabled) {
+    /**
+     * Set enabled state
+     * @param pEnabled the state true/false
+     */
+    public void setEnabled(final boolean pEnabled) {
         /* Pass on to important elements */
-        theTabs.setEnabled(bEnabled);
+        theTabs.setEnabled(pEnabled);
     }
 
     /**
@@ -444,27 +456,27 @@ public class MaintenanceTab
         JComponent myComponent = myItem.getNode();
 
         /* If the selected component is Account */
-        if (myComponent.equals(theAccountTab)) {
+        if (myComponent.equals(theAccountTab.getNode())) {
             /* Set the debug focus */
             theAccountTab.determineFocus();
 
             /* If the selected component is Category */
-        } else if (myComponent.equals(theCategoryTab)) {
+        } else if (myComponent.equals(theCategoryTab.getNode())) {
             /* Set the debug focus */
             theCategoryTab.determineFocus();
 
             /* If the selected component is TaxYear */
-        } else if (myComponent.equals(theTaxYearTab.getPanel())) {
+        } else if (myComponent.equals(theTaxYearTab.getNode())) {
             /* Set the debug focus */
             theTaxYearTab.determineFocus();
 
             /* If the selected component is Static */
-        } else if (myComponent.equals(theStatic)) {
+        } else if (myComponent.equals(theStatic.getNode())) {
             /* Set the debug focus */
             theStatic.determineFocus();
 
             /* If the selected component is Preferences */
-        } else if (myComponent.equals(thePreferences)) {
+        } else if (myComponent.equals(thePreferences.getNode())) {
             /* Set the debug focus */
             thePreferences.determineFocus();
         }

@@ -113,7 +113,7 @@ public class JScrollButton<T>
         super(pIcon);
         setVerticalTextPosition(AbstractButton.CENTER);
         setHorizontalTextPosition(AbstractButton.LEFT);
-        theMenuBuilder = new JScrollMenuBuilder<T>(this);
+        theMenuBuilder = new JScrollMenuBuilder<>(this);
         theText = pText;
         fireOnClose = false;
         if ((theText != null)
@@ -362,7 +362,7 @@ public class JScrollButton<T>
         public JMenuItem addItem(final T pValue,
                                  final String pName) {
             /* Create the action */
-            ItemAction<T> myAction = new ItemAction<T>(theButton, pValue, pName);
+            ItemAction<T> myAction = new ItemAction<>(theButton, pValue, pName);
             JMenuItem myItem = new JMenuItem(myAction);
 
             /* Add the item */
@@ -417,7 +417,7 @@ public class JScrollButton<T>
                                  final T pValue,
                                  final String pName) {
             /* Create the action */
-            ItemAction<T> myAction = new ItemAction<T>(theButton, pValue, pName);
+            ItemAction<T> myAction = new ItemAction<>(theButton, pValue, pName);
             JMenuItem myItem = new JMenuItem(myAction);
 
             /* Add the item */

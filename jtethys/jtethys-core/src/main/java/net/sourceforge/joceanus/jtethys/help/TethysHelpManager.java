@@ -87,6 +87,9 @@ public abstract class TethysHelpManager<N>
         theSplitTree = pSplitManager;
         theTree = theSplitTree.getTreeManager();
         theHtml = theSplitTree.getHTMLManager();
+
+        /* Listen to the TreeManager */
+        theSplitTree.getEventRegistrar().addActionListener(this::handleSplitTreeAction);
     }
 
     @Override

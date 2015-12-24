@@ -234,7 +234,7 @@ public final class JSvnManager {
         MetisViewerEntry myMaintEntry = theViewerMgr.newEntry("Maintenance");
         MetisPreferencesPanel myPrefPanel = new MetisPreferencesPanel(thePrefMgr, myFieldMgr, theViewerMgr, myMaintEntry);
         myTabs.addTabItem("Status", theStatusPanel);
-        myTabs.addTabItem("Preferences", myPrefPanel);
+        myTabs.addTabItem("Preferences", myPrefPanel.getNode());
 
         /* Add interesting preferences */
         thePrefMgr.getPreferenceSet(BackupPreferences.class);

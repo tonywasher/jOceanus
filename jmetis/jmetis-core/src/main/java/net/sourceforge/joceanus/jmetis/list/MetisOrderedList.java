@@ -220,7 +220,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         theModCount++;
 
         /* Allocate the new node */
-        MetisOrderedNode<T> myNode = new MetisOrderedNode<T>(this, pItem);
+        MetisOrderedNode<T> myNode = new MetisOrderedNode<>(this, pItem);
 
         /* Register link between object and node */
         theIndexMap.registerLink(myNode);
@@ -248,7 +248,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         theModCount++;
 
         /* Allocate the new node */
-        MetisOrderedNode<T> myNode = new MetisOrderedNode<T>(this, pItem);
+        MetisOrderedNode<T> myNode = new MetisOrderedNode<>(this, pItem);
 
         /* Register link between object and node */
         theIndexMap.registerLink(myNode);
@@ -337,7 +337,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
     @Override
     public MetisOrderedListIterator<T> listIterator() {
         /* Return a new iterator */
-        return new MetisOrderedListIterator<T>(this);
+        return new MetisOrderedListIterator<>(this);
     }
 
     @Override
@@ -350,7 +350,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
 
     @Override
     public Spliterator<T> spliterator() {
-        return new MetisOrderedListSpliterator<T>(this);
+        return new MetisOrderedListSpliterator<>(this);
     }
 
     @Override
@@ -396,7 +396,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         }
 
         /* Create a list iterator */
-        return new MetisOrderedListIterator<T>(this, myNode);
+        return new MetisOrderedListIterator<>(this, myNode);
     }
 
     @Override
@@ -420,7 +420,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         }
 
         /* Create a list iterator */
-        return new MetisOrderedListIterator<T>(this, myNode);
+        return new MetisOrderedListIterator<>(this, myNode);
     }
 
     @Override

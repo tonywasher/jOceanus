@@ -106,7 +106,7 @@ public abstract class TethysListButtonManager<T, I>
     protected TethysListButtonManager() {
         /* Create event manager */
         theEventManager = new TethysEventManager();
-        theItemMap = new LinkedHashMap<T, TethysScrollMenuToggleItem<T>>();
+        theItemMap = new LinkedHashMap<>();
     }
 
     /**
@@ -287,7 +287,7 @@ public abstract class TethysListButtonManager<T, I>
      */
     public List<T> getSelected() {
         /* Build list */
-        List<T> myList = new ArrayList<T>();
+        List<T> myList = new ArrayList<>();
         for (TethysScrollMenuToggleItem<T> myItem : theItemMap.values()) {
             if (myItem.isSelected()) {
                 myList.add(myItem.getValue());

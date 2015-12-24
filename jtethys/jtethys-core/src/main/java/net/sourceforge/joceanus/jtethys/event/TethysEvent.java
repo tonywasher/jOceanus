@@ -32,6 +32,7 @@ public abstract class TethysEvent {
     /**
      * Interface for event consumers.
      */
+    @FunctionalInterface
     public interface TethysChangeEventListener {
         /**
          * Process a TethysEvent.
@@ -43,6 +44,7 @@ public abstract class TethysEvent {
     /**
      * Interface for action event consumers.
      */
+    @FunctionalInterface
     public interface TethysActionEventListener {
         /**
          * Process a TethysActionEvent.
@@ -54,6 +56,7 @@ public abstract class TethysEvent {
     /**
      * Interface for item event consumers.
      */
+    @FunctionalInterface
     public interface TethysItemEventListener {
         /**
          * Process a TethysItemEvent.

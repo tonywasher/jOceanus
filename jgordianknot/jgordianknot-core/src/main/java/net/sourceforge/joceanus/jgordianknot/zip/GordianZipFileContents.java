@@ -63,7 +63,7 @@ public class GordianZipFileContents {
      */
     protected GordianZipFileContents() {
         /* Allocate the list */
-        theList = new ArrayList<GordianZipFileEntry>();
+        theList = new ArrayList<>();
     }
 
     /**

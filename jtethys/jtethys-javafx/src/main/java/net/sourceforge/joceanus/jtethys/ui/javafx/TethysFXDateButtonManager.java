@@ -71,12 +71,7 @@ public class TethysFXDateButtonManager
 
         /* Catch the dialog opening */
         JDateDialog myDialog = theButton.getDialog();
-        myDialog.setOnShowing(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(final WindowEvent event) {
-                handleDialogRequest();
-            }
-        });
+        myDialog.setOnShowing(e -> handleDialogRequest());
 
         /* Catch the dialog closing */
         myDialog.setOnHidden(new EventHandler<WindowEvent>() {

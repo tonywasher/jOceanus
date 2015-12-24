@@ -218,8 +218,8 @@ public class MetisOasisWorkBook {
             theFormatter = MetisDataWorkBook.createFormatter();
 
             /* Allocate the maps */
-            theSheetMap = new HashMap<String, SheetReference>();
-            theRangeMap = new HashMap<String, TableNamedRangeElement>();
+            theSheetMap = new HashMap<>();
+            theRangeMap = new HashMap<>();
 
             /* Access Key elements */
             theExpressions = OdfElement.findFirstChildNode(TableNamedExpressionsElement.class, theContents);
@@ -260,10 +260,10 @@ public class MetisOasisWorkBook {
             theFilters = theContents.newTableDatabaseRangesElement();
 
             /* Allocate the maps */
-            theSheetMap = new HashMap<String, SheetReference>();
-            theStyleMap = new HashMap<String, OdfStyle>();
-            theRangeMap = new HashMap<String, TableNamedRangeElement>();
-            theConstraintMap = new HashMap<Object, TableContentValidationElement>();
+            theSheetMap = new HashMap<>();
+            theStyleMap = new HashMap<>();
+            theRangeMap = new HashMap<>();
+            theConstraintMap = new HashMap<>();
 
             /* Create the cellStyles */
             createCellStyles();

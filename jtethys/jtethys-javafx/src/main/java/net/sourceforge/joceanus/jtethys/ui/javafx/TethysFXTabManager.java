@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.SingleSelectionModel;
@@ -55,14 +53,7 @@ public class TethysFXTabManager
         theModel = theTabPane.getSelectionModel();
 
         /* Listen to selections */
-        theModel.selectedItemProperty().addListener(new ChangeListener<Tab>() {
-            @Override
-            public void changed(final ObservableValue<? extends Tab> pValue,
-                                final Tab pOldValue,
-                                final Tab pNewValue) {
-                notifySelection(pNewValue.getUserData());
-            }
-        });
+        theModel.selectedItemProperty().addListener((v, o, n) -> notifySelection(n.getUserData()));
     }
 
     @Override

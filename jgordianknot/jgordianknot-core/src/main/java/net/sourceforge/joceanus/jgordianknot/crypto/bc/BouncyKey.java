@@ -64,7 +64,7 @@ public final class BouncyKey<T>
 
     @Override
     public <X> BouncyKey<X> convertToKeyType(final X pKeyType) {
-        return new BouncyKey<X>(pKeyType, theKey);
+        return new BouncyKey<>(pKeyType, theKey);
     }
 
     /**

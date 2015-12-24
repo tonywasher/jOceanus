@@ -243,7 +243,7 @@ public class MetisHTTPYQLClient
         expectLargeResponses(true);
 
         /* Create the result map */
-        Map<String, TethysPrice> myMap = new HashMap<String, TethysPrice>();
+        Map<String, TethysPrice> myMap = new HashMap<>();
 
         /* Perform the query */
         JSONObject myJSON = queryJSONObjectWithTrailer(myBuilder.toString(), YQL_TAIL);
@@ -357,7 +357,7 @@ public class MetisHTTPYQLClient
         myBuilder.append(YQLSEL_END);
 
         /* Create the result map */
-        Map<Currency, TethysRatio> myMap = new HashMap<Currency, TethysRatio>();
+        Map<Currency, TethysRatio> myMap = new HashMap<>();
 
         /* Perform the query */
         JSONObject myJSON = queryJSONObjectWithTrailer(myBuilder.toString(), YQL_TAIL);

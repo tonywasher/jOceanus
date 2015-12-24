@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -52,8 +50,8 @@ public class TethysFXTreeManager<T>
      */
     public TethysFXTreeManager() {
         /* Create the tree */
-        theRoot = new TethysFXTreeItem<T>(this);
-        theTree = new TreeView<TethysFXTreeItem<T>>(theRoot.getNode());
+        theRoot = new TethysFXTreeItem<>(this);
+        theTree = new TreeView<>(theRoot.getNode());
         setRoot(theRoot);
 
         /* Configure the tree */
@@ -61,14 +59,7 @@ public class TethysFXTreeManager<T>
         theTree.setShowRoot(false);
 
         /* Add listener */
-        theTree.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<TethysFXTreeItem<T>>>() {
-            @Override
-            public void changed(final ObservableValue<? extends TreeItem<TethysFXTreeItem<T>>> pProperty,
-                                final TreeItem<TethysFXTreeItem<T>> pOldValue,
-                                final TreeItem<TethysFXTreeItem<T>> pNewValue) {
-                fireEvent(ACTION_NEW_VALUE, pNewValue.getValue().getItem());
-            }
-        });
+        theTree.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> fireEvent(ACTION_NEW_VALUE, n.getValue().getItem()));
     }
 
     @Override
@@ -130,14 +121,14 @@ public class TethysFXTreeManager<T>
     @Override
     public TethysFXTreeItem<T> addRootItem(final String pName,
                                            final T pItem) throws OceanusException {
-        return new TethysFXTreeItem<T>(this, theRoot, pName, pItem);
+        return new TethysFXTreeItem<>(this, theRoot, pName, pItem);
     }
 
     @Override
     public TethysFXTreeItem<T> addChildItem(final TethysTreeItem<T, Node> pParent,
                                             final String pName,
                                             final T pItem) throws OceanusException {
-        return new TethysFXTreeItem<T>(this, (TethysFXTreeItem<T>) pParent, pName, pItem);
+        return new TethysFXTreeItem<>(this, (TethysFXTreeItem<T>) pParent, pName, pItem);
     }
 
     /**
@@ -160,7 +151,7 @@ public class TethysFXTreeManager<T>
             super(pTree);
 
             /* Create the node */
-            theNode = new TethysFXTreeNode<X>(this);
+            theNode = new TethysFXTreeNode<>(this);
         }
 
         /**
@@ -205,7 +196,7 @@ public class TethysFXTreeManager<T>
             /* If we are not the root */
             if (myParent != null) {
                 /* Create the node */
-                theNode = new TethysFXTreeNode<X>(this);
+                theNode = new TethysFXTreeNode<>(this);
 
                 /* add to list of children */
                 myParent.getNode().getChildren().add(theNode);
@@ -229,7 +220,7 @@ public class TethysFXTreeManager<T>
         @Override
         protected void attachAsChildNo(final int pChildNo) {
             /* Create the node */
-            theNode = new TethysFXTreeNode<X>(this);
+            theNode = new TethysFXTreeNode<>(this);
 
             /* Obtain the parent */
             TethysFXTreeItem<X> myParent = getParent();

@@ -81,7 +81,7 @@ public final class BouncyKeyGenerator<T>
     @Override
     protected BouncyKey<T> buildKeyFromBytes(final byte[] pBytes) {
         /* Build the new key */
-        return new BouncyKey<T>(getKeyType(), pBytes);
+        return new BouncyKey<>(getKeyType(), pBytes);
     }
 
     @Override

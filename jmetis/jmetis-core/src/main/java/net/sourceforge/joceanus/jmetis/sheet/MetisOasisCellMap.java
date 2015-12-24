@@ -71,7 +71,7 @@ public class MetisOasisCellMap {
     /**
      * List of of cells.
      */
-    private List<CellReference> theCells = new ArrayList<CellReference>();
+    private List<CellReference> theCells = new ArrayList<>();
 
     /**
      * Constructor.

@@ -368,14 +368,9 @@ public class GordianSwingPasswordDialog
             /* else we must use invokeAndWait */
         } else {
             try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        /* invoke the dialog */
-                        pDialog.showDialog();
-                    }
-                });
-            } catch (InvocationTargetException | InterruptedException e) {
+                SwingUtilities.invokeAndWait(() -> pDialog.showDialog());
+            } catch (InvocationTargetException
+                    | InterruptedException e) {
                 LOGGER.error("Failed to display dialog", e);
             }
         }

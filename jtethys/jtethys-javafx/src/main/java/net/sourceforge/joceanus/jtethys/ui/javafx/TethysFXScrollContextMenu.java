@@ -233,7 +233,7 @@ public class TethysFXScrollContextMenu<T>
         theDownItem = new ScrollControl(TethysFXArrowIcon.DOWN.getArrow(), 1);
 
         /* Allocate the list */
-        theMenuItems = new ArrayList<TethysFXScrollElement>();
+        theMenuItems = new ArrayList<>();
         VBox myBox = new VBox();
         myBox.setSpacing(2);
         myBox.setPadding(new Insets(2, 2, 2, 2));
@@ -669,7 +669,7 @@ public class TethysFXScrollContextMenu<T>
         }
 
         /* Create element */
-        TethysFXScrollMenuItem<T> myItem = new TethysFXScrollMenuItem<T>(this, pValue, pName, pGraphic);
+        TethysFXScrollMenuItem<T> myItem = new TethysFXScrollMenuItem<>(this, pValue, pName, pGraphic);
 
         /* Add to the list of menuItems */
         theMenuItems.add(myItem);
@@ -692,7 +692,7 @@ public class TethysFXScrollContextMenu<T>
         }
 
         /* Create menu */
-        TethysFXScrollSubMenu<T> myMenu = new TethysFXScrollSubMenu<T>(this, pName, pGraphic);
+        TethysFXScrollSubMenu<T> myMenu = new TethysFXScrollSubMenu<>(this, pName, pGraphic);
 
         /* Add to the list of menuItems */
         theMenuItems.add(myMenu);
@@ -715,7 +715,7 @@ public class TethysFXScrollContextMenu<T>
         }
 
         /* Create element */
-        TethysFXScrollToggleItem<T> myItem = new TethysFXScrollToggleItem<T>(this, pValue, pName);
+        TethysFXScrollToggleItem<T> myItem = new TethysFXScrollToggleItem<>(this, pValue, pName);
 
         /* Add to the list of menuItems */
         theMenuItems.add(myItem);
@@ -941,7 +941,7 @@ public class TethysFXScrollContextMenu<T>
          * @param pGraphic the icon for the item
          */
         private TethysFXScrollElement(final String pName,
-                                    final Node pGraphic) {
+                                      final Node pGraphic) {
             /* Create a Label for the name */
             theLabel = new Label();
             theLabel.setText(pName);
@@ -1028,21 +1028,10 @@ public class TethysFXScrollContextMenu<T>
             theIndex = theContext.getItemCount();
 
             /* Handle removal of subMenus */
-            addEventFilter(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(final MouseEvent event) {
-                    /* handle the active item */
-                    theContext.handleActiveItem(TethysFXScrollMenuItem.this);
-                }
-            });
+            addEventFilter(MouseEvent.MOUSE_ENTERED, e -> theContext.handleActiveItem(TethysFXScrollMenuItem.this));
 
             /* Handle selection */
-            addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(final MouseEvent event) {
-                    theContext.setSelectedItem(TethysFXScrollMenuItem.this);
-                }
-            });
+            addEventFilter(MouseEvent.MOUSE_CLICKED, e -> theContext.setSelectedItem(TethysFXScrollMenuItem.this));
         }
 
         @Override
@@ -1138,7 +1127,7 @@ public class TethysFXScrollContextMenu<T>
             theContext = pContext;
 
             /* Create the subMenu */
-            theSubMenu = new TethysFXScrollContextMenu<T>(this);
+            theSubMenu = new TethysFXScrollContextMenu<>(this);
 
             /* Determine the index */
             theIndex = theContext.getItemCount();
@@ -1240,28 +1229,13 @@ public class TethysFXScrollContextMenu<T>
             theIncrement = pIncrement;
 
             /* Handle selection */
-            addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(final MouseEvent e) {
-                    processScroll();
-                }
-            });
+            addEventFilter(MouseEvent.MOUSE_CLICKED, e -> processScroll());
 
             /* Handle mouse enters */
-            addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(final MouseEvent e) {
-                    processMouseEnter();
-                }
-            });
+            addEventHandler(MouseEvent.MOUSE_ENTERED, e -> processMouseEnter());
 
             /* Handle mouse exits */
-            addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(final MouseEvent e) {
-                    processMouseExit();
-                }
-            });
+            addEventHandler(MouseEvent.MOUSE_EXITED, e -> processMouseExit());
         }
 
         /**
@@ -1291,12 +1265,7 @@ public class TethysFXScrollContextMenu<T>
             theTimerTask = new TimerTask() {
                 @Override
                 public void run() {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            processScroll();
-                        }
-                    });
+                    Platform.runLater(() -> processScroll());
                 }
             };
 

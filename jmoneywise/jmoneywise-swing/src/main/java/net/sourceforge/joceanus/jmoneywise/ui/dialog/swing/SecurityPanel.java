@@ -148,7 +148,7 @@ public class SecurityPanel
 
         /* Create the SecurityPrices table */
         thePrices = new SecurityPriceTable(pView, pFieldMgr, getUpdateSet(), pError);
-        myTabs.add(TAB_PRICES, thePrices.getPanel());
+        myTabs.add(TAB_PRICES, thePrices.getNode());
 
         /* Layout the main panel */
         myPanel = getMainPanel();

@@ -86,14 +86,14 @@ public final class TethysResourceBuilder {
 
         /* Access the cached bundle */
         ResourceBundle myBundle = theBundle == null
-                                                   ? null
-                                                   : theBundle.get();
+                                                    ? null
+                                                    : theBundle.get();
 
         /* If the bundle is not cached */
         if (myBundle == null) {
             /* Access and cache the bundle */
             myBundle = ResourceBundle.getBundle(theBundleName);
-            theBundle = new WeakReference<ResourceBundle>(myBundle);
+            theBundle = new WeakReference<>(myBundle);
         }
 
         /* Access the required resource */

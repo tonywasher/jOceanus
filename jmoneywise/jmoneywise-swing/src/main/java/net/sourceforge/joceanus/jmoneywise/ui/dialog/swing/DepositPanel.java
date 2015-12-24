@@ -165,7 +165,7 @@ public class DepositPanel
 
         /* Create the DepositRates table */
         theRates = new DepositRateTable(pFieldMgr, getUpdateSet(), pError);
-        myTabs.add(TAB_RATES, theRates.getPanel());
+        myTabs.add(TAB_RATES, theRates.getNode());
 
         /* Layout the main panel */
         myPanel = getMainPanel();

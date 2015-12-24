@@ -77,7 +77,7 @@ public final class GordianKeySet {
         theFactory = pFactory;
 
         /* Create map */
-        theKeyMap = new EnumMap<GordianSymKeyType, GordianKey<GordianSymKeyType>>(GordianSymKeyType.class);
+        theKeyMap = new EnumMap<>(GordianSymKeyType.class);
 
         /* Create the cipher */
         theCipher = new GordianMultiCipher(this);

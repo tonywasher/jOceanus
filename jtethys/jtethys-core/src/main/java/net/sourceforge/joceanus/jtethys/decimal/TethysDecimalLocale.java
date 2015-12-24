@@ -101,7 +101,7 @@ public class TethysDecimalLocale {
         theLocale = pLocale;
 
         /* Create currency map */
-        theMap = new HashMap<String, Currency>();
+        theMap = new HashMap<>();
 
         /* Access decimal formats */
         DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(theLocale);

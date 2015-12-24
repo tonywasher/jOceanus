@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -250,10 +251,10 @@ public class SpotRatesTable
     }
 
     /**
-     * Obtain the panel.
-     * @return the panel
+     * Obtain the node.
+     * @return the node
      */
-    public JPanel getPanel() {
+    public JComponent getNode() {
         return thePanel;
     }
 

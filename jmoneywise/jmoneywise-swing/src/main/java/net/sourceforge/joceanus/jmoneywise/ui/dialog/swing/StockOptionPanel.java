@@ -150,7 +150,7 @@ public class StockOptionPanel
 
         /* Create the StockOptionVests table */
         theVests = new StockOptionVestTable(pFieldMgr, getUpdateSet(), pError);
-        myTabs.add(TAB_VESTS, theVests.getPanel());
+        myTabs.add(TAB_VESTS, theVests.getNode());
 
         /* Layout the main panel */
         myPanel = getMainPanel();

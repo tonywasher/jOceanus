@@ -37,6 +37,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -65,19 +66,14 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChan
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableScroll;
 
 /**
  * Preference maintenance panel.
  * @author Tony Washer
  */
 public class MetisPreferencesPanel
-        extends JPanel
         implements TethysEventProvider {
-    /**
-     * The serial Id.
-     */
-    private static final long serialVersionUID = -1512860688570367124L;
-
     /**
      * Strut width.
      */
@@ -121,17 +117,22 @@ public class MetisPreferencesPanel
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final TethysEventManager theEventManager;
 
     /**
      * The field manager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The Data entry.
      */
-    private final transient MetisViewerEntry theDataEntry;
+    private final MetisViewerEntry theDataEntry;
+
+    /**
+     * The Panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The OK button.
@@ -171,12 +172,12 @@ public class MetisPreferencesPanel
     /**
      * The list of panels.
      */
-    private final transient List<MetisPreferenceSetPanel> thePanels;
+    private final List<MetisPreferenceSetPanel> thePanels;
 
     /**
      * The listener.
      */
-    private final transient PropertyListener theListener;
+    private final PropertyListener theListener;
 
     /**
      * Constructor.
@@ -195,12 +196,15 @@ public class MetisPreferencesPanel
         /* Create the event manager */
         theEventManager = new TethysEventManager();
 
+        /* Create the Panel */
+        thePanel = new TethysSwingEnablePanel();
+
         /* Create the buttons */
         theOKButton = new JButton(NLS_OK);
         theResetButton = new JButton(NLS_RESET);
 
         /* Create the buttons panel */
-        theButtons = new JPanel();
+        theButtons = new TethysSwingEnablePanel();
         theButtons.setBorder(BorderFactory.createTitledBorder(NLS_OPTIONS));
 
         /* Create the layout for the buttons panel */
@@ -216,7 +220,7 @@ public class MetisPreferencesPanel
         theSelectButton = new JScrollButton<MetisPreferenceSetPanel>();
 
         /* Create the selection panel */
-        JPanel mySelection = new JPanel();
+        JPanel mySelection = new TethysSwingEnablePanel();
         mySelection.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
 
         /* Create the layout for the selection panel */
@@ -247,14 +251,14 @@ public class MetisPreferencesPanel
         }
 
         /* Create a new Scroll Pane and add this table to it */
-        JScrollPane myScroll = new JScrollPane();
+        JScrollPane myScroll = new TethysSwingEnableScroll();
         myScroll.setViewportView(theProperties);
 
         /* Now define the panel */
-        setLayout(new BorderLayout());
-        add(mySelection, BorderLayout.PAGE_START);
-        add(myScroll, BorderLayout.CENTER);
-        add(theButtons, BorderLayout.PAGE_END);
+        thePanel.setLayout(new BorderLayout());
+        thePanel.add(mySelection, BorderLayout.PAGE_START);
+        thePanel.add(myScroll, BorderLayout.CENTER);
+        thePanel.add(theButtons, BorderLayout.PAGE_END);
 
         /* Determine the active items */
         theActive = thePanels.get(0);
@@ -276,21 +280,32 @@ public class MetisPreferencesPanel
     }
 
     /**
+     * Obtain the node.
+     * @return the node
+     */
+    public JComponent getNode() {
+        return thePanel;
+    }
+
+    /**
      * Determine Focus.
      */
     public void determineFocus() {
         /* Request the focus */
-        requestFocusInWindow();
+        thePanel.requestFocusInWindow();
 
         /* Set the required focus */
         theDataEntry.setFocus();
     }
 
-    @Override
-    public void setEnabled(final boolean bEnabled) {
+    /**
+     * Set enabled state
+     * @param pEnabled the state true/false
+     */
+    public void setEnabled(final boolean pEnabled) {
         /* Pass on to important elements */
-        theSelectButton.setEnabled(bEnabled);
-        theProperties.setEnabled(bEnabled);
+        theSelectButton.setEnabled(pEnabled);
+        theProperties.setEnabled(pEnabled);
     }
 
     /**

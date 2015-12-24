@@ -40,6 +40,7 @@ public abstract class TethysIconButtonManager<T, I>
      * Icon Button.
      * @param <I> the Icon type
      */
+    @FunctionalInterface
     public interface TethysIconButton<I> {
         /**
          * Set the state.
@@ -290,7 +291,7 @@ public abstract class TethysIconButtonManager<T, I>
          */
         public TethysStateIconButtonManager(final S pState) {
             /* Allocate the maps */
-            theStateMap = new HashMap<S, IconMapSet<T, I>>();
+            theStateMap = new HashMap<>();
 
             /* Register the initial state */
             theMachineState = pState;
@@ -321,7 +322,7 @@ public abstract class TethysIconButtonManager<T, I>
             /* If this is a new state */
             if (mySet == null) {
                 /* Create the new state and record it */
-                mySet = new IconMapSet<T, I>();
+                mySet = new IconMapSet<>();
                 theStateMap.put(pState, mySet);
             }
 
@@ -358,9 +359,9 @@ public abstract class TethysIconButtonManager<T, I>
          */
         private IconMapSet() {
             /* Allocate the maps */
-            theValueMap = new HashMap<T, T>();
-            theIconMap = new HashMap<T, I>();
-            theTipMap = new HashMap<T, String>();
+            theValueMap = new HashMap<>();
+            theIconMap = new HashMap<>();
+            theTipMap = new HashMap<>();
         }
 
         /**

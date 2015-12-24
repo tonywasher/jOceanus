@@ -190,7 +190,7 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
         theModel = pModel;
         doSort = sortEntries;
         allRowsChanged();
-        theSortList = new ArrayList<SortKey>();
+        theSortList = new ArrayList<>();
     }
 
     /**
@@ -231,7 +231,7 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
         for (int i = 0; i < iSrcLen; i++) {
             RowEntry<X> myEntry = pSource[i];
             if (myEntry != null) {
-                myArray[i] = new RowEntry<X>(myEntry);
+                myArray[i] = new RowEntry<>(myEntry);
             }
         }
 
@@ -252,12 +252,12 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
         for (int i = 0; i < iNumRows; i++) {
             /* Access the row */
             T myRow = theModel.getItemAtIndex(i);
-            RowEntry<T> myEntry = new RowEntry<T>(myRow);
+            RowEntry<T> myEntry = new RowEntry<>(myRow);
 
             /* If the row is visible */
             if (theModel.includeRow(myRow)) {
                 /* Update view and link arrays */
-                theViewToModel[iView] = new RowEntry<T>(myRow, i);
+                theViewToModel[iView] = new RowEntry<>(myRow, i);
                 myEntry.theReference = iView++;
 
                 /* else not visible */
@@ -454,12 +454,12 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
         for (int i = pFirstRow; i <= pEndRow; i++) {
             /* Access the row */
             T myRow = theModel.getItemAtIndex(i);
-            RowEntry<T> myEntry = new RowEntry<T>(myRow);
+            RowEntry<T> myEntry = new RowEntry<>(myRow);
 
             /* If the row is visible */
             if (theModel.includeRow(myRow)) {
                 /* Update view and link arrays */
-                newViewToModel[iView] = new RowEntry<T>(myRow, i);
+                newViewToModel[iView] = new RowEntry<>(myRow, i);
                 myEntry.theReference = iView++;
 
                 /* else not visible */
@@ -525,7 +525,7 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
             /* If the row is visible */
             if (isNowVisible) {
                 /* Set indices */
-                newViewToModel[iView] = new RowEntry<T>(myRow, i);
+                newViewToModel[iView] = new RowEntry<>(myRow, i);
                 theModelToView[i].theReference = iView++;
 
                 /* else not visible */

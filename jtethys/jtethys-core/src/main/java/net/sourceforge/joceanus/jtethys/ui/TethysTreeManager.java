@@ -72,7 +72,7 @@ public abstract class TethysTreeManager<T, N>
      * Constructor.
      */
     protected TethysTreeManager() {
-        theItemMap = new HashMap<String, TethysTreeItem<T, N>>();
+        theItemMap = new HashMap<>();
         theEventManager = new TethysEventManager();
     }
 

@@ -50,7 +50,7 @@ public class MetisItemValidation
      */
     public MetisItemValidation() {
         /* Store details */
-        theErrors = new ArrayList<MetisErrorElement>();
+        theErrors = new ArrayList<>();
         allocateNewFields();
     }
 

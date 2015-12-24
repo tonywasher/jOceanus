@@ -47,6 +47,7 @@ public class TethysEventRegistrar {
     /**
      * Interface for event providers.
      */
+    @FunctionalInterface
     public interface TethysEventProvider {
         /**
          * Obtain registration object for listeners.
@@ -79,7 +80,7 @@ public class TethysEventRegistrar {
         theMgrId = pMgrId;
 
         /* Allocate the list */
-        theRegistrations = new ArrayList<TethysEventRegistration<?>>();
+        theRegistrations = new ArrayList<>();
     }
 
     /**
@@ -202,7 +203,7 @@ public class TethysEventRegistrar {
      */
     private synchronized Integer addToListenerList(final TethysEventRegistration<?> pRegistration) {
         /* Create a new list to avoid affecting any currently firing iterations */
-        List<TethysEventRegistration<?>> myNew = new ArrayList<TethysEventRegistration<?>>(theRegistrations);
+        List<TethysEventRegistration<?>> myNew = new ArrayList<>(theRegistrations);
 
         /* Set the new registration Id */
         pRegistration.setRegId(getNextRegistrationId());
@@ -223,7 +224,7 @@ public class TethysEventRegistrar {
      */
     private synchronized void removeFromListenerList(final TethysEventRegistration<?> pRegistration) {
         /* Create a new list to avoid affecting any currently firing iterations */
-        List<TethysEventRegistration<?>> myNew = new ArrayList<TethysEventRegistration<?>>(theRegistrations);
+        List<TethysEventRegistration<?>> myNew = new ArrayList<>(theRegistrations);
 
         /* Iterate through the registrations */
         Iterator<TethysEventRegistration<?>> myIterator = myNew.iterator();

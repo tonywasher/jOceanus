@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -53,12 +51,7 @@ public final class TethysFXScrollButton
         setMaxWidth(Double.MAX_VALUE);
 
         /* Set action handler */
-        setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent event) {
-                pManager.handleMenuRequest();
-            }
-        });
+        setOnAction(e -> pManager.handleMenuRequest());
     }
 
     @Override
@@ -97,13 +90,7 @@ public final class TethysFXScrollButton
             declareMenu(new TethysFXScrollContextMenu<T>());
 
             /* Set context menu listener */
-            getMenu().addEventHandler(TethysFXContextEvent.MENU_SELECT, new EventHandler<TethysFXContextEvent<?>>() {
-                @Override
-                public void handle(final TethysFXContextEvent<?> e) {
-                    /* Handle the close of the menu */
-                    handleMenuClosed();
-                }
-            });
+            getMenu().addEventHandler(TethysFXContextEvent.MENU_SELECT, e -> handleMenuClosed());
         }
 
         @Override

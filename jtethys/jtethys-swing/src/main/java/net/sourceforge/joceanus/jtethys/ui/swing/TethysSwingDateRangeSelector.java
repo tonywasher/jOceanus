@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -118,7 +116,7 @@ public class TethysSwingDateRangeSelector
         theNode = new TethysSwingEnablePanel();
 
         /* Create the period button */
-        TethysSwingScrollButtonManager<TethysDatePeriod> myPeriodButton = new TethysSwingScrollButtonManager<TethysDatePeriod>();
+        TethysSwingScrollButtonManager<TethysDatePeriod> myPeriodButton = new TethysSwingScrollButtonManager<>();
         declarePeriodButton(myPeriodButton);
 
         /* Create the period panel */
@@ -142,20 +140,10 @@ public class TethysSwingDateRangeSelector
         /* Create the buttons */
         theNextButton = new JButton(TethysSwingArrowIcon.RIGHT);
         theNextButton.setToolTipText(NLS_NEXTTIP);
-        theNextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                handleNextDate();
-            }
-        });
+        theNextButton.addActionListener(e -> handleNextDate());
         thePrevButton = new JButton(TethysSwingArrowIcon.LEFT);
         thePrevButton.setToolTipText(NLS_PREVTIP);
-        thePrevButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                handlePreviousDate();
-            }
-        });
+        thePrevButton.addActionListener(e -> handlePreviousDate());
 
         /* Create the Custom Pane */
         theCustomPane = new TethysSwingEnablePanel();

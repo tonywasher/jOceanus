@@ -32,6 +32,7 @@ public final class MetisDataObject {
     /**
      * Format object interface.
      */
+    @FunctionalInterface
     public interface MetisDataFormat {
         /**
          * Obtain Object summary.
@@ -87,6 +88,7 @@ public final class MetisDataObject {
     /**
      * Difference interface.
      */
+    @FunctionalInterface
     public interface MetisDataDiffers {
         /**
          * Test for difference with another object.

@@ -90,7 +90,7 @@ public final class GordianMultiCipher {
 
         /* Create map */
         theKeyMap = pKeySet.getKeyMap();
-        theCipherMap = new EnumMap<GordianSymKeyType, KeyCiphers>(GordianSymKeyType.class);
+        theCipherMap = new EnumMap<>(GordianSymKeyType.class);
     }
 
     /**

@@ -326,7 +326,7 @@ public class JIconButton<T>
          */
         public ComplexIconButtonState(final S pState) {
             /* Allocate the maps */
-            theStateMap = new HashMap<S, IconMapSet<T>>();
+            theStateMap = new HashMap<>();
 
             /* Register the initial state */
             theState = pState;
@@ -349,7 +349,7 @@ public class JIconButton<T>
             /* If this is a new state */
             if (mySet == null) {
                 /* Create the new state and record it */
-                mySet = new IconMapSet<T>();
+                mySet = new IconMapSet<>();
                 theStateMap.put(pState, mySet);
             }
 
@@ -420,9 +420,9 @@ public class JIconButton<T>
          */
         private IconMapSet() {
             /* Allocate the maps */
-            theValueMap = new HashMap<T, T>();
-            theIconMap = new HashMap<T, Icon>();
-            theTipMap = new HashMap<T, String>();
+            theValueMap = new HashMap<>();
+            theIconMap = new HashMap<>();
+            theTipMap = new HashMap<>();
         }
 
         /**

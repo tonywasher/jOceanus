@@ -27,6 +27,7 @@ package net.sourceforge.joceanus.jmetis.list;
  * @author Tony Washer
  * @param <I> the data-type of the id
  */
+@FunctionalInterface
 public interface MetisOrderedIdItem<I> {
     /**
      * Get the Id to anchor the list.

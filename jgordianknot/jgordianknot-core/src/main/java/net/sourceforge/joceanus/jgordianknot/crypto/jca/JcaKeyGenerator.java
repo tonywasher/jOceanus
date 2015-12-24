@@ -67,7 +67,7 @@ public final class JcaKeyGenerator<T>
         SecretKey myKey = theGenerator.generateKey();
 
         /* Build the new key */
-        return new JcaKey<T>(getKeyType(), myKey);
+        return new JcaKey<>(getKeyType(), myKey);
     }
 
     @Override
@@ -83,7 +83,7 @@ public final class JcaKeyGenerator<T>
     protected JcaKey<T> buildKeyFromBytes(final byte[] pBytes) {
         /* Build the new key */
         SecretKey myKey = new SecretKeySpec(pBytes, theGenerator.getAlgorithm());
-        return new JcaKey<T>(getKeyType(), myKey);
+        return new JcaKey<>(getKeyType(), myKey);
     }
 
     @Override

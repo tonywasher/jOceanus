@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
@@ -133,8 +133,8 @@ public class MetisProfile
         myBuilder.append(theName);
         myBuilder.append(": ");
         myBuilder.append(theStatus.isRunning()
-                                              ? theStatus.toString()
-                                              : theElapsed.toString());
+                                               ? theStatus.toString()
+                                               : theElapsed.toString());
         return myBuilder.toString();
     }
 
@@ -150,18 +150,18 @@ public class MetisProfile
         }
         if (FIELD_STATUS.equals(pField)) {
             return theStatus.isRunning()
-                                        ? theStatus
-                                        : MetisFieldValue.SKIP;
+                                         ? theStatus
+                                         : MetisFieldValue.SKIP;
         }
         if (FIELD_ELAPSED.equals(pField)) {
             return theStatus.isRunning()
-                                        ? MetisFieldValue.SKIP
-                                        : theElapsed;
+                                         ? MetisFieldValue.SKIP
+                                         : theElapsed;
         }
         if (FIELD_HIDDEN.equals(pField)) {
             return theHidden == null
-                                    ? MetisFieldValue.SKIP
-                                    : theHidden;
+                                     ? MetisFieldValue.SKIP
+                                     : theHidden;
         }
 
         /* Only possible if we have subTasks */
@@ -175,8 +175,8 @@ public class MetisProfile
 
         /* return the value */
         return ((iIndex < 0) || (iIndex >= theSubTasks.size()))
-                                                               ? MetisFieldValue.UNKNOWN
-                                                               : theSubTasks.get(iIndex);
+                                                                ? MetisFieldValue.UNKNOWN
+                                                                : theSubTasks.get(iIndex);
     }
 
     /**
@@ -219,7 +219,7 @@ public class MetisProfile
         /* If we do not currently have a subTask list */
         if (theSubTasks == null) {
             /* Create the list */
-            theSubTasks = new ArrayList<MetisProfile>();
+            theSubTasks = new ArrayList<>();
         }
     }
 
@@ -248,8 +248,8 @@ public class MetisProfile
             theEnd = System.nanoTime();
             theElapsed = new TethysDecimal(theEnd - theStart, NUM_DECIMALS);
             theHidden = theSubTasks == null
-                                           ? null
-                                           : calculateHidden();
+                                            ? null
+                                            : calculateHidden();
 
             /* Mark time as stopped */
             theStatus = ProfileStatus.STOPPED;
@@ -298,8 +298,8 @@ public class MetisProfile
 
         /* Return self is no active and running subTask else ask subTask */
         return theCurrentTask == null || !theCurrentTask.isRunning()
-                                                                    ? this
-                                                                    : theCurrentTask.getActiveTask();
+                                                                     ? this
+                                                                     : theCurrentTask.getActiveTask();
     }
 
     /**

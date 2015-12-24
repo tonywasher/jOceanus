@@ -231,6 +231,7 @@ public abstract class TethysScrollMenuContent {
      * @param <T> the value type
      * @param <I> the Icon type
      */
+    @FunctionalInterface
     public interface TethysScrollSubMenu<T, I> {
         /**
          * Obtain the subMenu.

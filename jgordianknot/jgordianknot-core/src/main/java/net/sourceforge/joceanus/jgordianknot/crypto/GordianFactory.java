@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * GordianKnot base for Factory.
@@ -361,7 +361,7 @@ public abstract class GordianFactory {
         GordianSymKeyType[] myTypes = theIdManager.generateRandomSymKeyTypes(myCount, supportedSymKeys());
 
         /* Loop through the keys */
-        List<GordianKey<GordianSymKeyType>> myKeyList = new ArrayList<GordianKey<GordianSymKeyType>>();
+        List<GordianKey<GordianSymKeyType>> myKeyList = new ArrayList<>();
         for (int i = 0; i < myCount; i++) {
             /* Generate a random key */
             GordianSymKeyType myType = myTypes[i];

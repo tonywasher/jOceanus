@@ -261,12 +261,12 @@ public class MetisHTTPJiraClient
      */
     public List<String> getIssueKeysForProject(final String pProjectKey) throws OceanusException {
         /* Create the list to return */
-        List<String> myList = new ArrayList<String>();
+        List<String> myList = new ArrayList<>();
 
         /* Enter loop */
         int iMaxSearch = MAX_SEARCH;
         int iStartAt = 0;
-        int myTotalIssues = iMaxSearch;
+        int myTotalIssues;
         do {
             /* Access the next portion of the search */
             JSONObject myResponse = queryJSONObjectWithHeaderAndTrailer("search?jql=",
