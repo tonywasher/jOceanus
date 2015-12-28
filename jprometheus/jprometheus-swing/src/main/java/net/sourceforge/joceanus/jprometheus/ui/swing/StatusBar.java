@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPrometheus: Application Framework
+-=- * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -204,7 +204,7 @@ public class StatusBar
 
         /* Store access to the Data Entry */
         theDataEntry = theData.getDataEntry(DataControl.DATA_ERROR);
-        theErrors = new DataErrorList<MetisExceptionWrapper>();
+        theErrors = new DataErrorList<>();
 
         /* Create the boxes */
         theCancel = new JButton(NLS_CANCEL);

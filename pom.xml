@@ -77,7 +77,7 @@
     <JSONVersion>20151123</JSONVersion>
     <ApacheMavenVersion>3.3.9</ApacheMavenVersion>
     <MySQLVersion>5.1.38</MySQLVersion>
-    <PostGreSQLVersion>9.4-1206-jdbc42</PostGreSQLVersion>
+    <PostGreSQLVersion>9.4.1207.jre7</PostGreSQLVersion>
     <ApachePOIVersion>3.13</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <XercesVersion>2.11.0</XercesVersion>

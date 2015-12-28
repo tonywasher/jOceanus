@@ -62,7 +62,7 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
     /**
      * The modification count.
      */
-    private int theExpectedModCount = 0;
+    private int theExpectedModCount;
 
     /**
      * Constructor for iterator that can show all elements.

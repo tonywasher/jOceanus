@@ -100,7 +100,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
     /**
      * The modification count.
      */
-    private int theModCount = 0;
+    private volatile int theModCount = 0;
 
     /**
      * Index map for list.

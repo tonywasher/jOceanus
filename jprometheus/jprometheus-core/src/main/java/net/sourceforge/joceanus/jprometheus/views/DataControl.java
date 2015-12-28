@@ -29,8 +29,8 @@ import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
@@ -144,7 +144,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         theProfile = pProfile;
 
         /* Create the Debug Map */
-        theMap = new HashMap<String, MetisViewerEntry>();
+        theMap = new HashMap<>();
 
         /* Create event manager */
         theEventManager = new TethysEventManager();
@@ -157,7 +157,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         myData.setObject(theProfile);
 
         /* Create the error list */
-        theErrors = new DataErrorList<MetisExceptionWrapper>();
+        theErrors = new DataErrorList<>();
     }
 
     @Override
@@ -473,7 +473,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     public MetisProfile getActiveTask() {
         /* Create a new profile */
         return theProfile == null
-                                 ? null
-                                 : theProfile.getActiveTask();
+                                  ? null
+                                  : theProfile.getActiveTask();
     }
 }

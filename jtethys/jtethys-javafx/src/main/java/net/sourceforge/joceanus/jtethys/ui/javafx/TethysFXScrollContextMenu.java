@@ -33,8 +33,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -249,56 +247,13 @@ public class TethysFXScrollContextMenu<T>
         setScene(myScene);
 
         /* Add listener to shut dialog on loss of focus */
-        focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(final ObservableValue<? extends Boolean> observable,
-                                final Boolean oldValue,
-                                final Boolean newValue) {
-                /* If we've lost focus to other than the active subMenu */
-                if ((!newValue)
-                    && (theActiveMenu == null)) {
-                    /* fire cancellation event */
-                    if (theParentMenu == null) {
-                        fireEvent(new TethysFXContextEvent<T>());
-                    }
-
-                    /* Close the menu hierarchy if we are currently showing */
-                    if (isShowing()) {
-                        closeOnFocusLoss();
-                    }
-                }
-            }
-        });
+        focusedProperty().addListener((v, o, n) -> handleFocusChange(n));
 
         /* ensure that escape closes menu */
-        myScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(final KeyEvent t) {
-                switch (t.getCode()) {
-                    case ESCAPE:
-                        handleEscapeKey();
-                        break;
-                    case ENTER:
-                        handleEnterKey();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
+        myScene.setOnKeyPressed(this::handleKeyPress);
 
         /* Handle scroll events */
-        addEventFilter(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
-            @Override
-            public void handle(final ScrollEvent e) {
-                /* request the scroll */
-                double myDelta = e.getDeltaY() / e.getMultiplierY();
-                requestScroll((int) -myDelta);
-
-                /* Consume the event */
-                e.consume();
-            }
-        });
+        addEventFilter(ScrollEvent.SCROLL, this::handleScroll);
     }
 
     /**
@@ -520,6 +475,56 @@ public class TethysFXScrollContextMenu<T>
             /* assume item is selected */
             setSelectedItem(theActiveItem);
         }
+    }
+
+    /**
+     * Handle focusChange.
+     * @param pState the focus state
+     */
+    private void handleFocusChange(final Boolean pState) {
+        /* If we've lost focus to other than the active subMenu */
+        if ((!pState)
+            && (theActiveMenu == null)) {
+            /* fire cancellation event */
+            if (theParentMenu == null) {
+                fireEvent(new TethysFXContextEvent<T>());
+            }
+
+            /* Close the menu hierarchy if we are currently showing */
+            if (isShowing()) {
+                closeOnFocusLoss();
+            }
+        }
+    }
+
+    /**
+     * Handle keyPress.
+     * @param pEvent the event
+     */
+    private void handleKeyPress(final KeyEvent pEvent) {
+        switch (pEvent.getCode()) {
+            case ESCAPE:
+                handleEscapeKey();
+                break;
+            case ENTER:
+                handleEnterKey();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Handle scroll.
+     * @param pEvent the event
+     */
+    private void handleScroll(final ScrollEvent pEvent) {
+        /* request the scroll */
+        double myDelta = pEvent.getDeltaY() / pEvent.getMultiplierY();
+        requestScroll((int) -myDelta);
+
+        /* Consume the event */
+        pEvent.consume();
     }
 
     /**

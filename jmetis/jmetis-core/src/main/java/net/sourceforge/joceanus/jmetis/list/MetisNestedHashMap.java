@@ -86,12 +86,12 @@ public class MetisNestedHashMap<K, V>
     /**
      * The adjustment shift.
      */
-    private transient int theShiftBits = 0;
+    private transient int theShiftBits;
 
     /**
      * The size of the array.
      */
-    private transient int theArraySize = 0;
+    private transient int theArraySize;
 
     /**
      * The self reference.
@@ -101,22 +101,22 @@ public class MetisNestedHashMap<K, V>
     /**
      * The number of entries in this hashMap.
      */
-    private transient int theSize = 0;
+    private transient int theSize;
 
     /**
      * The cached entrySet.
      */
-    private transient EntrySet theEntrySet = null;
+    private transient EntrySet theEntrySet;
 
     /**
      * The cached keySet.
      */
-    private transient KeySet theKeySet = null;
+    private transient KeySet theKeySet;
 
     /**
      * The cached value collection.
      */
-    private transient Values theValueCollection = null;
+    private transient Values theValueCollection;
 
     /**
      * The hashMap array.
@@ -126,7 +126,7 @@ public class MetisNestedHashMap<K, V>
     /**
      * The modification count.
      */
-    private transient int theModCount = 0;
+    private transient volatile int theModCount;
 
     /**
      * Constructor.
