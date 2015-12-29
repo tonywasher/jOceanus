@@ -59,6 +59,7 @@ public class MetisFXThread<T>
 
     /**
      * Constructor.
+     * @param pManager the thread manager
      * @param pThread the thread to wrap
      */
     protected MetisFXThread(final MetisFXThreadManager pManager,

@@ -138,7 +138,7 @@ public class MetisFXThreadStatusManager
 
         /* Create the stage progress pane */
         GridPane myProgressGrid = new GridPane();
-        myProgressGrid.addRow(0, theTaskProgress, theStageProgress);
+        myProgressGrid.addRow(0, myTaskProgress, myStageProgress);
 
         /* Create the progress pane */
         BorderPane myProgressNode = new BorderPane();

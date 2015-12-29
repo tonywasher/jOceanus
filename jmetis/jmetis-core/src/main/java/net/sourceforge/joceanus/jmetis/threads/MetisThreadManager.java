@@ -207,6 +207,7 @@ public abstract class MetisThreadManager<N>
      * Create thread wrapper.
      * @param <T> the thread result
      * @param pThread the thread to wrap
+     * @return the runnable thread
      */
     protected abstract <T> Runnable wrapThread(final MetisThread<T> pThread);
 
@@ -250,7 +251,7 @@ public abstract class MetisThreadManager<N>
         }
 
         /* Return to caller */
-        return isCancelled;
+        return !isCancelled;
     }
 
     /**
@@ -267,7 +268,7 @@ public abstract class MetisThreadManager<N>
         }
 
         /* Return to caller */
-        return isCancelled;
+        return !isCancelled;
     }
 
     /**
@@ -287,7 +288,7 @@ public abstract class MetisThreadManager<N>
         }
 
         /* Return to caller */
-        return isCancelled;
+        return !isCancelled;
     }
 
     /**
@@ -307,7 +308,7 @@ public abstract class MetisThreadManager<N>
         }
 
         /* Return to caller */
-        return isCancelled;
+        return !isCancelled;
     }
 
     /**
@@ -332,12 +333,12 @@ public abstract class MetisThreadManager<N>
         }
 
         /* Return to caller */
-        return isCancelled;
+        return !isCancelled;
     }
 
     /**
      * Publish the status.
-     * @param pStatus
+     * @param pStatus the status to publish
      */
     protected abstract void publishStatus(final MetisThreadStatus pStatus);
 
@@ -367,6 +368,7 @@ public abstract class MetisThreadManager<N>
 
     /**
      * Set error.
+     * @param pException the exception
      */
     protected void setError(final Throwable pException) {
         /* Record the error */

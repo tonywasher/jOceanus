@@ -60,7 +60,7 @@ public class MetisSwingThreadManager
     }
 
     @Override
-    protected <T> Runnable wrapThread(MetisThread<T> pThread) {
+    protected <T> Runnable wrapThread(final MetisThread<T> pThread) {
         /* Create the wrapped thread and listen to state transition */
         theWorker = new MetisSwingThread<>(this, pThread);
 
@@ -85,7 +85,9 @@ public class MetisSwingThreadManager
 
     @Override
     protected void publishStatus(final MetisThreadStatus pStatus) {
-        theWorker.publishStatus(pStatus);
+        if (!isCancelled()) {
+            theWorker.publishStatus(new MetisThreadStatus(pStatus));
+        }
     }
 
     /**

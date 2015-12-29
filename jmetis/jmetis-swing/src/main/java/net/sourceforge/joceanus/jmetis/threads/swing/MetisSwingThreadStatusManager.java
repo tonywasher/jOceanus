@@ -25,9 +25,12 @@ package net.sourceforge.joceanus.jmetis.threads.swing;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -53,6 +56,11 @@ public class MetisSwingThreadStatusManager
      * Progress panel name.
      */
     private static final String PROGRESS_PANEL = "Progress";
+
+    /**
+     * Strut width.
+     */
+    private static final int STRUT_WIDTH = 10;
 
     /**
      * Task Name.
@@ -144,36 +152,62 @@ public class MetisSwingThreadStatusManager
         theTaskProgress.setUI(new ProgressUI());
         theStageProgress.setUI(new ProgressUI());
 
+        /* Create the status text pane */
+        JPanel myStatusText = new JPanel();
+        myStatusText.setLayout(new BoxLayout(myStatusText, BoxLayout.X_AXIS));
+        myStatusText.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        myStatusText.add(theStatusField);
+
         /* Create the status pane */
         theStatusNode = new JPanel();
         theStatusNode.setLayout(new BorderLayout());
         theStatusNode.setBorder(BorderFactory.createTitledBorder(NLS_STATUS));
-        theStatusNode.add(theStatusField, BorderLayout.CENTER);
+        theStatusNode.add(myStatusText, BorderLayout.CENTER);
         theStatusNode.add(theClearButton, BorderLayout.LINE_START);
+
+        /* Create the task text pane */
+        JPanel myTaskText = new JPanel();
+        myTaskText.setLayout(new BoxLayout(myTaskText, BoxLayout.X_AXIS));
+        myTaskText.add(theTaskField);
+        myTaskText.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Create the task progress pane */
         JPanel myTaskProgress = new JPanel();
         myTaskProgress.setLayout(new BorderLayout());
         myTaskProgress.add(theTaskProgress, BorderLayout.CENTER);
-        myTaskProgress.add(theTaskField, BorderLayout.LINE_START);
+        myTaskProgress.add(myTaskText, BorderLayout.LINE_START);
+
+        /* Create the task text pane */
+        JPanel myStageText = new JPanel();
+        myStageText.setLayout(new BoxLayout(myStageText, BoxLayout.X_AXIS));
+        myStageText.add(theStageField);
+        myStageText.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Create the stage progress pane */
         JPanel myStageProgress = new JPanel();
         myStageProgress.setLayout(new BorderLayout());
         myStageProgress.add(theStageProgress, BorderLayout.CENTER);
-        myStageProgress.add(theStageField, BorderLayout.LINE_START);
+        myStageProgress.add(myStageText, BorderLayout.LINE_START);
 
-        /* Create the stage progress pane */
+        /* Create the progress grid */
         JPanel myProgressGrid = new JPanel();
-        myProgressGrid.setLayout(new GridLayout(1, 2));
-        myProgressGrid.add(theTaskProgress);
-        myProgressGrid.add(theStageProgress);
+        GridLayout myGridLayout = new GridLayout(1, 2);
+        myGridLayout.setHgap(STRUT_WIDTH);
+        myProgressGrid.setLayout(myGridLayout);
+        myProgressGrid.add(myTaskProgress);
+        myProgressGrid.add(myStageProgress);
+
+        /* Create the task text pane */
+        JPanel myProgressBox = new JPanel();
+        myProgressBox.setLayout(new BoxLayout(myProgressBox, BoxLayout.X_AXIS));
+        myProgressBox.add(myProgressGrid);
+        myProgressBox.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Create the progress pane */
         theProgressNode = new JPanel();
         theProgressNode.setLayout(new BorderLayout());
         theProgressNode.setBorder(BorderFactory.createTitledBorder(NLS_PROGRESS));
-        theProgressNode.add(myProgressGrid, BorderLayout.CENTER);
+        theProgressNode.add(myProgressBox, BorderLayout.CENTER);
         theProgressNode.add(theCancelButton, BorderLayout.LINE_END);
 
         /* Create the basic Pane */

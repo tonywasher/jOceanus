@@ -93,13 +93,18 @@ public class MetisFXThreadManager
 
     @Override
     protected void publishStatus(final MetisThreadStatus pStatus) {
-        /* Take a copy as the active status */
-        theActiveStatus = new MetisThreadStatus(pStatus);
+        if (!isCancelled()) {
+            /* Take a copy as the active status */
+            theActiveStatus = new MetisThreadStatus(pStatus);
 
-        /* update status */
-        theWorker.publishStatus();
+            /* update status */
+            theWorker.publishStatus();
+        }
     }
 
+    /**
+     * Process the status.
+     */
     protected void processStatus() {
         /* Pass to the status bar */
         getStatusManager().setProgress(theActiveStatus);

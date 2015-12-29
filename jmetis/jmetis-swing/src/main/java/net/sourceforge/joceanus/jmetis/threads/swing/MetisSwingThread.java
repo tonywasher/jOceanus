@@ -93,13 +93,14 @@ public class MetisSwingThread<T>
 
     /**
      * Process the result.
+     * @throws OceanusException on error
      */
     protected void processResult() throws OceanusException {
         theThread.processResult(theResult);
     }
 
     /**
-     * Publish the status
+     * Publish the status.
      * @param pStatus the status
      */
     protected void publishStatus(final MetisThreadStatus pStatus) {

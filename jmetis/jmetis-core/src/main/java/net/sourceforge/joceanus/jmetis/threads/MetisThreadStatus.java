@@ -155,8 +155,7 @@ public class MetisThreadStatus {
     }
 
     /**
-     * Set Number of steps completed in this stage.
-     * @param pValue the value
+     * Set Next step.
      */
     public void setNextStep() {
         theStepsDone++;

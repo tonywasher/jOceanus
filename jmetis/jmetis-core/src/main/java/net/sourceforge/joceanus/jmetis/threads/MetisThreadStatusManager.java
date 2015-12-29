@@ -55,17 +55,17 @@ public abstract class MetisThreadStatusManager<N> {
     /**
      * Failed message.
      */
-    protected static final String NLS_FAILED = MetisThreadResource.STATUSBAR_STATUS_FAIL.getValue();;
+    protected static final String NLS_FAILED = MetisThreadResource.STATUSBAR_STATUS_FAIL.getValue();
 
     /**
      * Progress title.
      */
-    protected static final String NLS_PROGRESS = MetisThreadResource.STATUSBAR_TITLE_PROGRESS.getValue();;
+    protected static final String NLS_PROGRESS = MetisThreadResource.STATUSBAR_TITLE_PROGRESS.getValue();
 
     /**
      * Status title.
      */
-    protected static final String NLS_STATUS = MetisThreadResource.STATUSBAR_TITLE_STATUS.getValue();;
+    protected static final String NLS_STATUS = MetisThreadResource.STATUSBAR_TITLE_STATUS.getValue();
 
     /**
      * The Thread Manager.

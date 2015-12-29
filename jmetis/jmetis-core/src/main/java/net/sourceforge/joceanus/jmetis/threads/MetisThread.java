@@ -51,7 +51,7 @@ public interface MetisThread<T> {
     void processResult(final T pResult) throws OceanusException;
 
     /**
-     * interruptForCancel
+     * interruptForCancel.
      * <p>
      * Hook to allow threads on a long running read to close the file and force an interrupt
      */
