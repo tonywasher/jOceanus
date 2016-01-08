@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TaxYearPanel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
@@ -59,16 +60,11 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
@@ -178,7 +174,7 @@ public class TaxYearTable
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and Entry */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView, MoneyWiseDataType.class);
+        theUpdateSet = new UpdateSet<>(theView, MoneyWiseDataType.class);
         theTaxYearEntry = theUpdateSet.registerType(MoneyWiseDataType.TAXYEAR);
         theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.TAXYEARINFO);
         setUpdateSet(theUpdateSet);
@@ -215,7 +211,7 @@ public class TaxYearTable
         JPanel myMain = new TethysSwingEnablePanel();
         myMain.setLayout(new BorderLayout());
         myMain.add(getScrollPane(), BorderLayout.CENTER);
-        myMain.add(theActionButtons, BorderLayout.LINE_END);
+        myMain.add(theActionButtons.getNode(), BorderLayout.LINE_END);
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
@@ -231,10 +227,14 @@ public class TaxYearTable
         theActionButtons.setVisible(false);
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<TaxYear, MoneyWiseDataType>(this, theActiveYear);
+        theSelectionModel = new JDataTableSelection<>(this, theActiveYear);
 
         /* Create listener */
-        new TaxYearListener();
+        theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
+        theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
+        theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
+        theActiveYear.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActiveYear.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
     }
 
     /**
@@ -368,6 +368,63 @@ public class TaxYearTable
     }
 
     /**
+     * Handle updateSet rewind.
+     */
+    private void handleRewind() {
+        /* Only action if we are not editing */
+        if (!theActiveYear.isEditing()) {
+            /* Handle the reWind */
+            theSelectionModel.handleReWind();
+        }
+
+        /* Adjust for changes */
+        notifyChanges();
+    }
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+        if (!theActiveYear.isEditing()) {
+            /* handle the edit transition */
+            theSelectionModel.handleEditTransition();
+        }
+
+        /* Note changes */
+        notifyChanges();
+    }
+
+    /**
+     * handleErrorPane.
+     */
+    private void handleErrorPane() {
+        /* Determine whether we have an error */
+        boolean isError = theError.hasError();
+
+        /* Lock scroll area */
+        getScrollPane().setEnabled(!isError);
+
+        /* Lock Action Buttons */
+        theActionButtons.setEnabled(!isError);
+    }
+
+    /**
+     * handle Action Buttons.
+     * @param pEvent the event
+     */
+    private void handleActionButtons(final TethysEvent<PrometheusUIEvent> pEvent) {
+        /* Cancel editing */
+        cancelEditing();
+
+        /* Perform the command */
+        theUpdateSet.processCommand(pEvent.getEventId(), theError);
+
+        /* Adjust for changes */
+        notifyChanges();
+    }
+
+    /**
      * JTable Data Model.
      */
     private final class TaxYearTableModel
@@ -452,100 +509,6 @@ public class TaxYearTable
     }
 
     /**
-     * Listener class.
-     */
-    private final class TaxYearListener
-            implements TethysActionEventListener, TethysChangeEventListener {
-        /**
-         * UpdateSet Registration.
-         */
-        private final TethysChangeRegistration theUpdateSetReg;
-
-        /**
-         * Error Registration.
-         */
-        private final TethysChangeRegistration theErrorReg;
-
-        /**
-         * Action Registration.
-         */
-        private final TethysActionRegistration theActionReg;
-
-        /**
-         * Tax Panel Change Registration.
-         */
-        private final TethysChangeRegistration theTaxPanelReg;
-
-        /**
-         * Constructor.
-         */
-        private TaxYearListener() {
-            /* Register listeners */
-            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
-            theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
-            theErrorReg = theError.getEventRegistrar().addChangeListener(this);
-            TethysEventRegistrar myRegistrar = theActiveYear.getEventRegistrar();
-            theTaxPanelReg = myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If we are performing a rewind */
-            if (theUpdateSetReg.isRelevant(pEvent)) {
-                /* Only action if we are not editing */
-                if (!theActiveYear.isEditing()) {
-                    /* Handle the reWind */
-                    theSelectionModel.handleReWind();
-                }
-
-                /* Adjust for changes */
-                notifyChanges();
-
-                /* If we are handling tax panel state */
-            } else if (theTaxPanelReg.isRelevant(pEvent)) {
-                /* Only action if we are not editing */
-                if (!theActiveYear.isEditing()) {
-                    /* handle the edit transition */
-                    theSelectionModel.handleEditTransition();
-                }
-
-                /* Note changes */
-                notifyChanges();
-
-                /* If we are handling errors */
-            } else if (theErrorReg.isRelevant(pEvent)) {
-                /* Determine whether we have an error */
-                boolean isError = theError.hasError();
-
-                /* Lock scroll area */
-                getScrollPane().setEnabled(!isError);
-
-                /* Lock Action Buttons */
-                theActionButtons.setEnabled(!isError);
-            }
-        }
-
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            if (theActionReg.isRelevant(pEvent)) {
-                /* Cancel Editing */
-                cancelEditing();
-
-                /* Perform the command */
-                theUpdateSet.processCommand(pEvent.getActionId(), theError);
-
-                /* Adjust for changes */
-                notifyChanges();
-
-                /* else cascade the event */
-            } else {
-                cascadeActionEvent(pEvent);
-            }
-        }
-    }
-
-    /**
      * Column Model class.
      */
     private final class TaxYearColumnModel
@@ -613,7 +576,7 @@ public class TaxYearTable
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
 
             /* Add listeners */
-            new EditorListener();
+            theRegimeEditor.getEventRegistrar().addEventListener(e -> buildRegimeMenu());
         }
 
         /**
@@ -736,36 +699,18 @@ public class TaxYearTable
         }
 
         /**
-         * EditorListener.
+         * Build the popUpMenu for regimes.
          */
-        private final class EditorListener
-                implements TethysChangeEventListener {
-            /**
-             * Constructor.
-             */
-            private EditorListener() {
-                theRegimeEditor.getEventRegistrar().addChangeListener(this);
-            }
+        private void buildRegimeMenu() {
+            /* Access details */
+            JScrollMenuBuilder<TaxRegime> myBuilder = theRegimeEditor.getMenuBuilder();
 
-            @Override
-            public void processChange(final TethysChangeEvent pEvent) {
-                buildRegimeMenu();
-            }
+            /* Record active item */
+            Point myCell = theRegimeEditor.getPoint();
+            TaxYear myYear = theTaxYears.get(myCell.y);
 
-            /**
-             * Build the popUpMenu for regimes.
-             */
-            private void buildRegimeMenu() {
-                /* Access details */
-                JScrollMenuBuilder<TaxRegime> myBuilder = theRegimeEditor.getMenuBuilder();
-
-                /* Record active item */
-                Point myCell = theRegimeEditor.getPoint();
-                TaxYear myYear = theTaxYears.get(myCell.y);
-
-                /* Build the menu */
-                theActiveYear.buildRegimeMenu(myBuilder, myYear);
-            }
+            /* Build the menu */
+            theActiveYear.buildRegimeMenu(myBuilder, myYear);
         }
     }
 }

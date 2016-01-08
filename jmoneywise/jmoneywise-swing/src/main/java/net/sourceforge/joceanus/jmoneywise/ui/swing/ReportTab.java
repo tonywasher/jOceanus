@@ -54,20 +54,17 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.ReportSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateRangeSelect;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableScroll;
 
@@ -75,7 +72,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * Report panel.
  */
 public class ReportTab
-        implements TethysEventProvider {
+        implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for DataEntry Title.
      */
@@ -89,7 +86,7 @@ public class ReportTab
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The Data View.
@@ -146,7 +143,7 @@ public class ReportTab
         theView = pView;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the Panel */
         thePanel = new TethysSwingEnablePanel();
@@ -192,11 +189,16 @@ public class ReportTab
         thePanel.add(theScroll, BorderLayout.CENTER);
 
         /* Create listener */
-        new ReportListener();
+        theView.getEventRegistrar().addEventListener(e -> refreshData());
+        theManager.getEventRegistrar().addEventListener(this::handleGoToRequest);
+        theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
+        theSelect.getEventRegistrar().addEventListener(e -> handleReportRequest());
+        theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.PRINT, e -> printIt());
+        theEditor.addMouseListener(new ReportMouseListener());
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -209,7 +211,7 @@ public class ReportTab
     }
 
     /**
-     * Set enabled state
+     * Set enabled state.
      * @param pEnabled the state true/false
      */
     public void setEnabled(final boolean pEnabled) {
@@ -325,52 +327,63 @@ public class ReportTab
     }
 
     /**
+     * handleErrorPane.
+     */
+    private void handleErrorPane() {
+        /* Determine whether we have an error */
+        boolean isError = theError.hasError();
+
+        /* Hide selection panel on error */
+        theSelect.setVisible(!isError);
+
+        /* Lock scroll area */
+        theScroll.setEnabled(!isError);
+    }
+
+    /**
+     * handleGoToRequest.
+     * @param pEvent the event
+     */
+    private void handleGoToRequest(final TethysEvent<PrometheusDataEvent> pEvent) {
+        /* Create the details of the report */
+        TethysSwingDateRangeSelect mySelect = theSelect.getDateRangeSelect();
+        AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
+        StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
+
+        /* Request the action */
+        theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, new PrometheusGoToEvent(MainTab.ACTION_VIEWSTATEMENT, myStatement));
+    }
+
+    /**
+     * handleReportRequest.
+     */
+    private void handleReportRequest() {
+        /* Protect against exceptions */
+        try {
+            /* build the report */
+            buildReport();
+
+            /* Create SavePoint */
+            theSelect.createSavePoint();
+
+            /* Catch Exceptions */
+        } catch (OceanusException e) {
+            /* Build the error */
+            OceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
+
+            /* Show the error */
+            theError.addError(myError);
+
+            /* Restore SavePoint */
+            theSelect.restoreSavePoint();
+        }
+    }
+
+    /**
      * Listener class.
      */
-    private final class ReportListener
-            extends MouseAdapter
-            implements TethysChangeEventListener, TethysActionEventListener {
-        /**
-         * View Registration.
-         */
-        private final TethysChangeRegistration theViewReg;
-
-        /**
-         * Manager Registration.
-         */
-        private final TethysActionRegistration theManagerReg;
-
-        /**
-         * Error Registration.
-         */
-        private final TethysChangeRegistration theErrorReg;
-
-        /**
-         * Select Registration.
-         */
-        private final TethysChangeRegistration theSelectReg;
-
-        /**
-         * Print Registration.
-         */
-        private final TethysActionRegistration thePrintReg;
-
-        /**
-         * Constructor.
-         */
-        private ReportListener() {
-            /* Add swing listeners */
-            theEditor.addMouseListener(this);
-
-            /* Listen to correct events */
-            theViewReg = theView.getEventRegistrar().addChangeListener(this);
-            theManagerReg = theManager.getEventRegistrar().addActionListener(this);
-            theErrorReg = theError.getEventRegistrar().addChangeListener(this);
-            TethysEventRegistrar myRegistrar = theSelect.getEventRegistrar();
-            theSelectReg = myRegistrar.addChangeListener(this);
-            thePrintReg = myRegistrar.addActionListener(this);
-        }
-
+    private final class ReportMouseListener
+            extends MouseAdapter {
         @Override
         public void mouseClicked(final MouseEvent evt) {
             /* If this is a left click event */
@@ -421,65 +434,5 @@ public class ReportTab
             return null;
         }
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the data view */
-            if (theViewReg.isRelevant(pEvent)) {
-                /* Refresh Data */
-                refreshData();
-
-                /* else if this is the error panel */
-            } else if (theErrorReg.isRelevant(pEvent)) {
-                /* Determine whether we have an error */
-                boolean isError = theError.hasError();
-
-                /* Hide selection panel on error */
-                theSelect.setVisible(!isError);
-
-                /* Lock scroll area */
-                theScroll.setEnabled(!isError);
-
-                /* else if this is the selection panel */
-            } else if (theSelectReg.isRelevant(pEvent)) {
-                /* Protect against exceptions */
-                try {
-                    /* build the report */
-                    buildReport();
-
-                    /* Create SavePoint */
-                    theSelect.createSavePoint();
-
-                    /* Catch Exceptions */
-                } catch (OceanusException e) {
-                    /* Build the error */
-                    OceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
-
-                    /* Show the error */
-                    theError.addError(myError);
-
-                    /* Restore SavePoint */
-                    theSelect.restoreSavePoint();
-                }
-            }
-        }
-
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            /* If this is the report manager */
-            if (theManagerReg.isRelevant(pEvent)) {
-                /* Create the details of the report */
-                TethysSwingDateRangeSelect mySelect = theSelect.getDateRangeSelect();
-                AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
-                StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
-
-                /* Request the action */
-                theEventManager.fireActionEvent(MainTab.ACTION_VIEWSTATEMENT, myStatement);
-
-                /* If this is the print request */
-            } else if (thePrintReg.isRelevant(pEvent)) {
-                /* Print the report */
-                printIt();
-            }
-        }
     }
 }

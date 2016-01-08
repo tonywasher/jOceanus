@@ -58,9 +58,6 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -120,6 +117,21 @@ public class DepositPanel
     private final transient ComplexIconButtonState<Boolean, Boolean> theGrossState;
 
     /**
+     * The Category Menu Builder.
+     */
+    private final JScrollMenuBuilder<DepositCategory> theCategoryMenuBuilder;
+
+    /**
+     * The Parent Menu Builder.
+     */
+    private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
+
+    /**
+     * The Currency Menu Builder.
+     */
+    private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
+
+    /**
      * DepositRate Table.
      */
     private final DepositRateTable theRates;
@@ -137,14 +149,14 @@ public class DepositPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the buttons */
-        theCategoryButton = new JScrollButton<DepositCategory>();
-        theParentButton = new JScrollButton<Payee>();
-        theCurrencyButton = new JScrollButton<AssetCurrency>();
+        theCategoryButton = new JScrollButton<>();
+        theParentButton = new JScrollButton<>();
+        theCurrencyButton = new JScrollButton<>();
 
         /* Create icon button states */
-        theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
-        theTaxFreeState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
-        theGrossState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
+        theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
+        theTaxFreeState = new ComplexIconButtonState<>(Boolean.FALSE);
+        theGrossState = new ComplexIconButtonState<>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -176,8 +188,17 @@ public class DepositPanel
         /* Layout the panel */
         layoutPanel();
 
-        /* Create the listener */
-        new DepositListener();
+        /* Create the listeners */
+        theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
+        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu(theCategoryMenuBuilder, getItem()));
+        theParentMenuBuilder = theParentButton.getMenuBuilder();
+        theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
+        theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
+        theCurrencyMenuBuilder.getEventRegistrar().addEventListener(e -> buildCurrencyMenu(theCurrencyMenuBuilder, getItem()));
+        theRates.getEventRegistrar().addEventListener(e -> {
+            updateActions();
+            fireStateChanged();
+        });
     }
 
     /**
@@ -186,11 +207,11 @@ public class DepositPanel
      */
     private JPanel buildMainPanel() {
         /* Set states */
-        JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
+        JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
         MoneyWiseIcons.buildLockedButton(theClosedState);
-        JIconButton<Boolean> myTaxFreeButton = new JIconButton<Boolean>(theTaxFreeState);
+        JIconButton<Boolean> myTaxFreeButton = new JIconButton<>(theTaxFreeState);
         MoneyWiseIcons.buildOptionButton(theTaxFreeState);
-        JIconButton<Boolean> myGrossButton = new JIconButton<Boolean>(theGrossState);
+        JIconButton<Boolean> myGrossButton = new JIconButton<>(theGrossState);
         MoneyWiseIcons.buildOptionButton(theGrossState);
 
         /* Create the text fields */
@@ -520,7 +541,7 @@ public class DepositPanel
         DepositCategoryList myCategories = getDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+        Map<String, JScrollMenu> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         Iterator<DepositCategory> myIterator = myCategories.iterator();
@@ -643,75 +664,5 @@ public class DepositPanel
 
         /* Ensure active item is visible */
         pMenuBuilder.showItem(myActive);
-    }
-
-    /**
-     * Deposit Listener.
-     */
-    private final class DepositListener
-            implements TethysChangeEventListener {
-        /**
-         * The Category Menu Builder.
-         */
-        private final JScrollMenuBuilder<DepositCategory> theCategoryMenuBuilder;
-
-        /**
-         * The Parent Menu Builder.
-         */
-        private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
-
-        /**
-         * The Currency Menu Builder.
-         */
-        private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
-
-        /**
-         * CategoryMenu Registration.
-         */
-        private final TethysChangeRegistration theCategoryMenuReg;
-
-        /**
-         * ParentMenu Registration.
-         */
-        private final TethysChangeRegistration theParentMenuReg;
-
-        /**
-         * CurrencyMenu Registration.
-         */
-        private final TethysChangeRegistration theCurrencyMenuReg;
-
-        /**
-         * Rates panel Registration.
-         */
-        private final TethysChangeRegistration theRatesReg;
-
-        /**
-         * Constructor.
-         */
-        private DepositListener() {
-            /* Access the MenuBuilders */
-            theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
-            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theParentMenuBuilder = theParentButton.getMenuBuilder();
-            theParentMenuReg = theParentMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-            theCurrencyMenuReg = theCurrencyMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theRatesReg = theRates.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle menu type */
-            if (theCategoryMenuReg.isRelevant(pEvent)) {
-                buildCategoryMenu(theCategoryMenuBuilder, getItem());
-            } else if (theParentMenuReg.isRelevant(pEvent)) {
-                buildParentMenu(theParentMenuBuilder, getItem());
-            } else if (theCurrencyMenuReg.isRelevant(pEvent)) {
-                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
-            } else if (theRatesReg.isRelevant(pEvent)) {
-                updateActions();
-                fireStateChanged();
-            }
-        }
     }
 }

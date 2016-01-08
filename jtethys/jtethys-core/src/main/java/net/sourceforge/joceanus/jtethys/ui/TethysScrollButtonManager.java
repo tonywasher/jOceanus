@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <I> the Icon type
  */
 public abstract class TethysScrollButtonManager<T, I>
-        implements TethysEventProvider {
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * Scroll Button.
      * @param <I> the Icon type
@@ -60,24 +60,9 @@ public abstract class TethysScrollButtonManager<T, I>
     }
 
     /**
-     * Value updated.
-     */
-    public static final int ACTION_NEW_VALUE = 100;
-
-    /**
-     * Menu build.
-     */
-    public static final int ACTION_MENU_BUILD = ACTION_NEW_VALUE + 100;
-
-    /**
-     * Menu cancelled.
-     */
-    public static final int ACTION_MENU_CANCELLED = ACTION_MENU_BUILD + 1;
-
-    /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The value.
@@ -104,7 +89,7 @@ public abstract class TethysScrollButtonManager<T, I>
      */
     protected TethysScrollButtonManager() {
         /* Create event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
         isFixedText = false;
     }
 
@@ -133,7 +118,7 @@ public abstract class TethysScrollButtonManager<T, I>
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -205,18 +190,13 @@ public abstract class TethysScrollButtonManager<T, I>
      * handleMenuRequest.
      */
     public void handleMenuRequest() {
-        /* fire menuBuild actionEvent */
-        theEventManager.fireActionEvent(ACTION_MENU_BUILD, theMenu);
+        /* fire menuBuild Event */
+        theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theMenu);
 
         /* If a menu is provided */
         if (!theMenu.isEmpty()) {
             /* Show the menu */
             showMenu();
-
-            /* Else nothing to display */
-        } else {
-            /* notify cancellation */
-            notifyCancelled();
         }
     }
 
@@ -235,21 +215,8 @@ public abstract class TethysScrollButtonManager<T, I>
             /* Set the new value */
             setValue(mySelected.getValue(), mySelected.getText());
 
-            /* fire new value actionEvent */
-            theEventManager.fireActionEvent(ACTION_NEW_VALUE, theValue);
-
-            /* Else no value was selected */
-        } else {
-            /* notify cancellation */
-            notifyCancelled();
+            /* fire new value Event */
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theValue);
         }
-    }
-
-    /**
-     * notifyCancelled.
-     */
-    protected void notifyCancelled() {
-        /* fire menu cancelled event */
-        theEventManager.fireActionEvent(ACTION_MENU_CANCELLED);
     }
 }

@@ -25,10 +25,6 @@ package net.sourceforge.joceanus.jprometheus.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -42,8 +38,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldEnum;
@@ -54,19 +48,16 @@ import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
@@ -77,7 +68,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * @param <E> the data type enum class
  */
 public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
-        implements TethysEventProvider {
+        implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * Strut width.
      */
@@ -106,7 +97,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The UtilitySet.
@@ -149,6 +140,11 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     private final JScrollButton<StaticDataTable<?, ?, ?, E>> theSelectButton;
 
     /**
+     * Data menu builder.
+     */
+    private final JScrollMenuBuilder<StaticDataTable<?, ?, ?, E>> theDataMenuBuilder;
+
+    /**
      * The disabled check box.
      */
     private final JCheckBox theDisabledCheckBox;
@@ -179,11 +175,6 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     private final MetisViewerEntry theDataEntry;
 
     /**
-     * The selection listener.
-     */
-    private final StaticListener theListener;
-
-    /**
      * The Active panel.
      */
     private StaticDataTable<?, ?, ?, E> theActive;
@@ -202,13 +193,13 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theUtilitySet = pUtilitySet;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the Panel */
         thePanel = new TethysSwingEnablePanel();
 
         /* Build the Update set */
-        theUpdateSet = new UpdateSet<E>(pControl, pClass);
+        theUpdateSet = new UpdateSet<>(pControl, pClass);
 
         /* Create the top level debug entry for this view */
         MetisViewerManager myDataMgr = theControl.getViewerManager();
@@ -225,13 +216,10 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
-        theSelectButton = new JScrollButton<StaticDataTable<?, ?, ?, E>>();
+        theSelectButton = new JScrollButton<>();
 
         /* Create the CheckBox */
         theDisabledCheckBox = new JCheckBox(NLS_DISABLED);
-
-        /* Add the listener for item changes */
-        theListener = new StaticListener();
 
         /* Create the selection panel */
         JPanel mySelect = new TethysSwingEnablePanel();
@@ -263,7 +251,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         myHeader.setLayout(new BorderLayout());
         myHeader.add(mySelect, BorderLayout.CENTER);
         myHeader.add(theError, BorderLayout.PAGE_START);
-        myHeader.add(theActionButtons, BorderLayout.LINE_END);
+        myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
 
         /* Create the table card panel */
         theTableCard = new TethysSwingEnablePanel();
@@ -271,7 +259,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theTableCard.setLayout(theTableLayout);
 
         /* Create the panel map */
-        theMap = new LinkedHashMap<String, StaticDataTable<?, ?, ?, E>>();
+        theMap = new LinkedHashMap<>();
 
         /* Now define the panel */
         thePanel.setLayout(new BorderLayout());
@@ -283,10 +271,21 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
+
+        /* Add listeners */
+        theDisabledCheckBox.addItemListener(e -> showDisabled(theDisabledCheckBox.isSelected()));
+        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handlePanelSelection());
+        theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
+        theError.getEventRegistrar().addEventListener(e -> handleErrorPanel());
+        theDataMenuBuilder = theSelectButton.getMenuBuilder();
+        theDataMenuBuilder.getEventRegistrar().addEventListener(e -> {
+            cancelEditing();
+            buildDataMenu();
+        });
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -296,6 +295,80 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
      */
     public JComponent getNode() {
         return thePanel;
+    }
+
+    /**
+     * Handle action buttons.
+     * @param pEvent the event
+     */
+    private void handleActionButtons(final TethysEvent<PrometheusUIEvent> pEvent) {
+        /* Cancel Editing */
+        cancelEditing();
+
+        /* Process the command */
+        theUpdateSet.processCommand(pEvent.getEventId(), theError);
+
+        /* Adjust visibility */
+        setVisibility();
+    }
+
+    /**
+     * Handle panel selection.
+     */
+    private void handlePanelSelection() {
+        /* If the panel has changed */
+        if (!MetisDifference.isEqual(theActive, theSelectButton.getValue())) {
+            /* Move correct card to front */
+            setSelection(theSelectButton.getDisplayName());
+            showNewButton();
+        }
+    }
+
+    /**
+     * Handle error panel.
+     */
+    private void handleErrorPanel() {
+        /* Determine whether we have an error */
+        boolean isError = theError.hasError();
+
+        /* Hide selection panel on error */
+        theSelectButton.setVisible(!isError);
+
+        /* Lock scroll-able area */
+        theTableCard.setEnabled(!isError);
+
+        /* Lock Action Buttons */
+        theActionButtons.setEnabled(!isError);
+    }
+
+    /**
+     * Build StaticData menu.
+     */
+    private void buildDataMenu() {
+        /* Reset the popUp menu */
+        theDataMenuBuilder.clearMenu();
+
+        /* Record active item */
+        JMenuItem myActive = null;
+
+        /* Loop through the panels */
+        Iterator<Map.Entry<String, StaticDataTable<?, ?, ?, E>>> myIterator = theMap.entrySet().iterator();
+        while (myIterator.hasNext()) {
+            Map.Entry<String, StaticDataTable<?, ?, ?, E>> myEntry = myIterator.next();
+
+            /* Create a new JMenuItem and add it to the popUp */
+            StaticDataTable<?, ?, ?, E> myTable = myEntry.getValue();
+            JMenuItem myItem = theDataMenuBuilder.addItem(myTable, myEntry.getKey());
+
+            /* If this is the active panel */
+            if (myTable.equals(theActive)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        theDataMenuBuilder.showItem(myActive);
     }
 
     /**
@@ -317,10 +390,10 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     public <L extends StaticList<T, S, E>, T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface> void addStatic(final E pItemType,
                                                                                                                               final Class<L> pListClass) {
         /* Create the new panel */
-        StaticDataTable<L, T, S, E> myPanel = new StaticDataTable<L, T, S, E>(theControl, theUpdateSet, theUtilitySet, theError, pItemType, pListClass);
+        StaticDataTable<L, T, S, E> myPanel = new StaticDataTable<>(theControl, theUpdateSet, theUtilitySet, theError, pItemType, pListClass);
 
         /* Add the listener for the panel */
-        myPanel.getEventRegistrar().addChangeListener(theListener);
+        myPanel.getEventRegistrar().addEventListener(e -> setVisibility());
 
         /* Access list name */
         String myName = pItemType.getFieldName();
@@ -483,152 +556,6 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         showNewButton();
 
         /* Alert listeners that there has been a change */
-        theEventManager.fireStateChanged();
-    }
-
-    /**
-     * Listener class.
-     */
-    private final class StaticListener
-            implements PropertyChangeListener, ChangeListener, ItemListener, TethysChangeEventListener, TethysActionEventListener {
-        /**
-         * Data menu builder.
-         */
-        private final JScrollMenuBuilder<StaticDataTable<?, ?, ?, E>> theDataMenuBuilder;
-
-        /**
-         * DataMenu Registration.
-         */
-        private final TethysChangeRegistration theDataMenuReg;
-
-        /**
-         * ErrorPanel Registration.
-         */
-        private final TethysChangeRegistration theErrorReg;
-
-        /**
-         * ActionPanel Registration.
-         */
-        private final TethysActionRegistration theActionReg;
-
-        /**
-         * Constructor.
-         */
-        private StaticListener() {
-            /* Access builder */
-            theDataMenuBuilder = theSelectButton.getMenuBuilder();
-            theDataMenuReg = theDataMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theErrorReg = theError.getEventRegistrar().addChangeListener(this);
-            theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
-
-            /* Add swing listeners */
-            theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theDisabledCheckBox.addItemListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle menu type */
-            if (theDataMenuReg.isRelevant(pEvent)) {
-                /* Cancel Editing */
-                cancelEditing();
-
-                /* build data menu */
-                buildDataMenu();
-
-                /* Handle error panel */
-            } else if (theErrorReg.isRelevant(pEvent)) {
-                /* Determine whether we have an error */
-                boolean isError = theError.hasError();
-
-                /* Hide selection panel on error */
-                theSelectButton.setVisible(!isError);
-
-                /* Lock scroll-able area */
-                theTableCard.setEnabled(!isError);
-
-                /* Lock Action Buttons */
-                theActionButtons.setEnabled(!isError);
-            }
-        }
-
-        /**
-         * Build StaticData menu.
-         */
-        private void buildDataMenu() {
-            /* Reset the popUp menu */
-            theDataMenuBuilder.clearMenu();
-
-            /* Record active item */
-            JMenuItem myActive = null;
-
-            /* Loop through the panels */
-            Iterator<Map.Entry<String, StaticDataTable<?, ?, ?, E>>> myIterator = theMap.entrySet().iterator();
-            while (myIterator.hasNext()) {
-                Map.Entry<String, StaticDataTable<?, ?, ?, E>> myEntry = myIterator.next();
-
-                /* Create a new JMenuItem and add it to the popUp */
-                StaticDataTable<?, ?, ?, E> myTable = myEntry.getValue();
-                JMenuItem myItem = theDataMenuBuilder.addItem(myTable, myEntry.getKey());
-
-                /* If this is the active panel */
-                if (myTable.equals(theActive)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theDataMenuBuilder.showItem(myActive);
-        }
-
-        @Override
-        public void stateChanged(final ChangeEvent evt) {
-            /* Access reporting object */
-            Object o = evt.getSource();
-
-            /* if this is one of the static data panels */
-            if (o instanceof StaticDataTable) {
-                /* Adjust visibility */
-                setVisibility();
-            }
-        }
-
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            /* if this is the action buttons reporting */
-            if (theActionReg.isRelevant(pEvent)) {
-                /* Cancel Editing */
-                cancelEditing();
-
-                /* Process the command */
-                theUpdateSet.processCommand(pEvent.getActionId(), theError);
-
-                /* Adjust visibility */
-                setVisibility();
-            }
-        }
-
-        @Override
-        public void itemStateChanged(final ItemEvent pEvent) {
-            /* Access reporting object */
-            Object o = pEvent.getSource();
-
-            /* if this is the disabled check box reporting */
-            if (theDisabledCheckBox.equals(o)) {
-                /* Adjust the disabled settings */
-                showDisabled(theDisabledCheckBox.isSelected());
-            }
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* If the panel has changed */
-            if (!MetisDifference.isEqual(theActive, theSelectButton.getValue())) {
-                /* Move correct card to front */
-                setSelection(theSelectButton.getDisplayName());
-                showNewButton();
-            }
-        }
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 }

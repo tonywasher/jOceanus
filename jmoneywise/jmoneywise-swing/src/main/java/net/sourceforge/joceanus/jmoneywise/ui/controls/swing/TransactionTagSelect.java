@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
 import javax.swing.Box;
@@ -42,12 +40,10 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket.Transac
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TagFilter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -56,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class TransactionTagSelect
         extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider {
+        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -70,7 +66,7 @@ public class TransactionTagSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The active transaction tag list.
@@ -93,14 +89,19 @@ public class TransactionTagSelect
     private final JScrollButton<TransactionTagBucket> theTagButton;
 
     /**
+     * Tag menu builder.
+     */
+    private final JScrollMenuBuilder<TransactionTagBucket> theTagMenuBuilder;
+
+    /**
      * Constructor.
      */
     public TransactionTagSelect() {
         /* Create the tags button */
-        theTagButton = new JScrollButton<TransactionTagBucket>();
+        theTagButton = new JScrollButton<>();
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the label */
         JLabel myTagLabel = new JLabel(NLS_TAG + MetisFieldElement.STR_COLON);
@@ -118,11 +119,13 @@ public class TransactionTagSelect
         theState.applyState();
 
         /* Create the listener */
-        new TagListener();
+        theTagMenuBuilder = theTagButton.getMenuBuilder();
+        theTagMenuBuilder.getEventRegistrar().addEventListener(e -> buildTagMenu());
+        theTagButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewTag());
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -235,83 +238,43 @@ public class TransactionTagSelect
     }
 
     /**
-     * Listener class.
+     * Build Tag menu.
      */
-    private final class TagListener
-            implements PropertyChangeListener, TethysChangeEventListener {
-        /**
-         * Tag menu builder.
-         */
-        private final JScrollMenuBuilder<TransactionTagBucket> theTagMenuBuilder;
+    private void buildTagMenu() {
+        /* Reset the popUp menu */
+        theTagMenuBuilder.clearMenu();
 
-        /**
-         * TagMenu Registration.
-         */
-        private final TethysChangeRegistration theTagMenuReg;
+        /* Record active item */
+        TransactionTagBucket myCurrent = theState.getTag();
+        JMenuItem myActive = null;
 
-        /**
-         * Constructor.
-         */
-        private TagListener() {
-            /* Access builders */
-            theTagMenuBuilder = theTagButton.getMenuBuilder();
-            theTagMenuReg = theTagMenuBuilder.getEventRegistrar().addChangeListener(this);
+        /* Loop through the available tag values */
+        Iterator<TransactionTagBucket> myIterator = theTags.iterator();
+        while (myIterator.hasNext()) {
+            TransactionTagBucket myTag = myIterator.next();
 
-            /* Add swing listener */
-            theTagButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-        }
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = theTagMenuBuilder.addItem(myTag);
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the TagMenu */
-            if (theTagMenuReg.isRelevant(pEvent)) {
-                buildTagMenu();
+            /* If this is the active category */
+            if (myTag.equals(myCurrent)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
 
-        /**
-         * Build Tag menu.
-         */
-        private void buildTagMenu() {
-            /* Reset the popUp menu */
-            theTagMenuBuilder.clearMenu();
+        /* Ensure active item is visible */
+        theTagMenuBuilder.showItem(myActive);
+    }
 
-            /* Record active item */
-            TransactionTagBucket myCurrent = theState.getTag();
-            JMenuItem myActive = null;
-
-            /* Loop through the available tag values */
-            Iterator<TransactionTagBucket> myIterator = theTags.iterator();
-            while (myIterator.hasNext()) {
-                TransactionTagBucket myTag = myIterator.next();
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theTagMenuBuilder.addItem(myTag);
-
-                /* If this is the active category */
-                if (myTag.equals(myCurrent)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theTagMenuBuilder.showItem(myActive);
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* Access the source */
-            Object o = pEvent.getSource();
-
-            /* If this is the tag button */
-            if (theTagButton.equals(o)) {
-                /* Select the new tag */
-                if (theState.setTag(theTagButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
-            }
+    /**
+     * Handle new Tag.
+     */
+    private void handleNewTag() {
+        /* Select the new tag */
+        if (theState.setTag(theTagButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
     }
 

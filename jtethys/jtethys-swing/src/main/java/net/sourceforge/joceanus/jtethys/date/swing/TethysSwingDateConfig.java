@@ -26,9 +26,10 @@ import java.time.LocalDate;
 
 import net.sourceforge.jdatebutton.swing.JDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
 
 /**
  * Class that extends {@link JDateConfig} to handle {@link TethysDate} objects.
@@ -79,7 +80,7 @@ public class TethysSwingDateConfig
      */
     public TethysSwingDateConfig(final TethysDateFormatter pFormatter) {
         super(pFormatter);
-        pFormatter.getEventRegistrar().addChangeListener(new LocaleListener(pFormatter));
+        pFormatter.getEventRegistrar().addEventListener(new LocaleListener(pFormatter));
     }
 
     /**
@@ -188,7 +189,7 @@ public class TethysSwingDateConfig
      * Locale Listener class.
      */
     private final class LocaleListener
-            implements TethysChangeEventListener {
+            implements TethysEventListener<TethysDateEvent> {
         /**
          * The formatter.
          */
@@ -203,7 +204,7 @@ public class TethysSwingDateConfig
         }
 
         @Override
-        public void processChange(final TethysChangeEvent e) {
+        public void handleEvent(final TethysEvent<TethysDateEvent> e) {
             setTheLocale(theFormatter.getLocale());
             refreshText();
         }

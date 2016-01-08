@@ -27,9 +27,10 @@ import java.time.LocalDate;
 import net.sourceforge.jdatebutton.JDateBaseButton;
 import net.sourceforge.jdatebutton.JDateBaseConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -39,21 +40,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <B> the button type
  */
 public abstract class TethysDateButtonManager<B extends JDateBaseButton>
-        implements TethysEventProvider {
-    /**
-     * Value updated.
-     */
-    public static final int ACTION_NEW_VALUE = TethysScrollButtonManager.ACTION_NEW_VALUE;
-
-    /**
-     * Dialog prepare.
-     */
-    public static final int ACTION_DIALOG_PREPARE = TethysScrollButtonManager.ACTION_MENU_BUILD;
-
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The Configuration.
@@ -72,10 +63,10 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
         theConfig = pConfig;
 
         /* Create event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Add listener for locale changes */
-        pFormatter.getEventRegistrar().addChangeListener(new LocaleListener(pFormatter));
+        pFormatter.getEventRegistrar().addEventListener(new LocaleListener(pFormatter));
     }
 
     /**
@@ -85,7 +76,7 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
     public abstract B getButton();
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -180,21 +171,21 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
      * handleDialogRequest.
      */
     public void handleDialogRequest() {
-        theEventManager.fireActionEvent(ACTION_DIALOG_PREPARE, theConfig);
+        theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theConfig);
     }
 
     /**
      * handleNewValue.
      */
     public void handleNewValue() {
-        theEventManager.fireActionEvent(ACTION_NEW_VALUE, getSelectedDate());
+        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, getSelectedDate());
     }
 
     /**
      * Locale Listener class.
      */
     private final class LocaleListener
-            implements TethysChangeEventListener {
+            implements TethysEventListener<TethysDateEvent> {
         /**
          * The formatter.
          */
@@ -209,7 +200,7 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
         }
 
         @Override
-        public void processChange(final TethysChangeEvent e) {
+        public void handleEvent(final TethysEvent<TethysDateEvent> e) {
             theConfig.setTheLocale(theFormatter.getLocale());
             getButton().refreshText();
         }

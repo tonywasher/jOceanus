@@ -24,15 +24,15 @@ package net.sourceforge.joceanus.jprometheus.ui.swing;
 
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -46,13 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonSt
  * @author Tony Washer
  */
 public class ActionButtons
-        extends JPanel
-        implements TethysEventProvider {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 8671520716355146811L;
-
+        implements TethysEventProvider<PrometheusUIEvent> {
     /**
      * Strut width.
      */
@@ -66,12 +60,17 @@ public class ActionButtons
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final TethysEventManager<PrometheusUIEvent> theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The update set.
      */
-    private final transient UpdateSet<?> theUpdateSet;
+    private final UpdateSet<?> theUpdateSet;
 
     /**
      * The Commit button.
@@ -107,17 +106,17 @@ public class ActionButtons
         theUpdateSet = pUpdateSet;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the button states */
-        DefaultIconButtonState<Boolean> myCommitState = new DefaultIconButtonState<Boolean>();
-        DefaultIconButtonState<Boolean> myUndoState = new DefaultIconButtonState<Boolean>();
-        DefaultIconButtonState<Boolean> myResetState = new DefaultIconButtonState<Boolean>();
+        DefaultIconButtonState<Boolean> myCommitState = new DefaultIconButtonState<>();
+        DefaultIconButtonState<Boolean> myUndoState = new DefaultIconButtonState<>();
+        DefaultIconButtonState<Boolean> myResetState = new DefaultIconButtonState<>();
 
         /* Create the buttons */
-        theCommitButton = new JIconButton<Boolean>(myCommitState);
-        theUndoButton = new JIconButton<Boolean>(myUndoState);
-        theResetButton = new JIconButton<Boolean>(myResetState);
+        theCommitButton = new JIconButton<>(myCommitState);
+        theUndoButton = new JIconButton<>(myUndoState);
+        theResetButton = new JIconButton<>(myResetState);
 
         /* Make buttons the size of the icons */
         Insets myInsets = new Insets(0, 0, 0, 0);
@@ -130,11 +129,17 @@ public class ActionButtons
         PrometheusIcons.buildUndoButton(myUndoState);
         PrometheusIcons.buildResetButton(myResetState);
 
+        /* Create the panel */
+        thePanel = new JPanel();
+        thePanel.setLayout(new BoxLayout(thePanel, pHorizontal
+                                                               ? BoxLayout.X_AXIS
+                                                               : BoxLayout.Y_AXIS));
+
         /* Create the title */
         if (pHorizontal) {
-            setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
+            thePanel.setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
         } else {
-            add(new JLabel(NLS_TITLE));
+            thePanel.add(new JLabel(NLS_TITLE));
         }
 
         /* Create the standard strut */
@@ -143,22 +148,18 @@ public class ActionButtons
                                             : new Dimension(0, STRUT_LENGTH);
 
         /* Define the layout */
-        setLayout(new BoxLayout(this, pHorizontal
-                                                  ? BoxLayout.X_AXIS
-                                                  : BoxLayout.Y_AXIS));
-        add(Box.createRigidArea(myStrutSize));
-        add(theCommitButton);
-        add(Box.createRigidArea(myStrutSize));
-        add(theUndoButton);
-        add(Box.createRigidArea(myStrutSize));
-        add(theResetButton);
-        add(Box.createRigidArea(myStrutSize));
+        thePanel.add(Box.createRigidArea(myStrutSize));
+        thePanel.add(theCommitButton);
+        thePanel.add(Box.createRigidArea(myStrutSize));
+        thePanel.add(theUndoButton);
+        thePanel.add(Box.createRigidArea(myStrutSize));
+        thePanel.add(theResetButton);
+        thePanel.add(Box.createRigidArea(myStrutSize));
 
         /* Add the listener for item changes */
-        SaveListener myListener = new SaveListener();
-        theCommitButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, myListener);
-        theUndoButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, myListener);
-        theResetButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, myListener);
+        theCommitButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, e -> theEventManager.fireEvent(PrometheusUIEvent.OK));
+        theUndoButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, e -> theEventManager.fireEvent(PrometheusUIEvent.UNDO));
+        theResetButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, e -> theEventManager.fireEvent(PrometheusUIEvent.RESET));
 
         /* Buttons are initially disabled */
         theCommitButton.setEnabled(false);
@@ -166,12 +167,31 @@ public class ActionButtons
         theResetButton.setEnabled(false);
     }
 
-    @Override
-    public TethysEventRegistrar getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
+    public JComponent getNode() {
+        return thePanel;
     }
 
     @Override
+    public TethysEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Set visibility.
+     * @param pVisible true/false
+     */
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
+    }
+
+    /**
+     * Set enabled.
+     * @param bEnabled the enabled status
+     */
     public void setEnabled(final boolean bEnabled) {
         /* If the table is locked clear the buttons */
         if (!bEnabled) {
@@ -204,33 +224,6 @@ public class ActionButtons
                     break;
                 default:
                     break;
-            }
-        }
-    }
-
-    /**
-     * Listener class.
-     */
-    private class SaveListener
-            implements PropertyChangeListener {
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            Object o = pEvent.getSource();
-
-            /* If this event relates to the OK button */
-            if (theCommitButton.equals(o)) {
-                /* Pass command to the table */
-                theEventManager.fireActionEvent(UpdateSet.CMD_OK);
-
-                /* If this event relates to the Undo button */
-            } else if (theUndoButton.equals(o)) {
-                /* Pass command to the table */
-                theEventManager.fireActionEvent(UpdateSet.CMD_UNDO);
-
-                /* If this event relates to the Reset button */
-            } else if (theResetButton.equals(o)) {
-                /* Pass command to the table */
-                theEventManager.fireActionEvent(UpdateSet.CMD_RESET);
             }
         }
     }

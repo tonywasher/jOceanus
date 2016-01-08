@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager;
@@ -85,9 +86,7 @@ public class TethysSwingHelpManager
             theDialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(final WindowEvent e) {
-                    getTreeManager().setVisible(false);
-                    theDialog.dispose();
-                    fireEvent(ACTION_WINDOW_CLOSED, null);
+                    handleWindowClosing();
                 }
             });
         }
@@ -97,6 +96,15 @@ public class TethysSwingHelpManager
             /* Show it */
             theDialog.showDialog();
         }
+    }
+
+    /**
+     * handleWindow Closing.
+     */
+    private void handleWindowClosing() {
+        getTreeManager().setVisible(false);
+        theDialog.dispose();
+        fireEvent(TethysUIEvent.WINDOWCLOSED, null);
     }
 
     @Override

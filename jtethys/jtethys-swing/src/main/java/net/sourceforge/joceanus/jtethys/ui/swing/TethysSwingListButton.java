@@ -29,6 +29,7 @@ import javax.swing.SwingConstants;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager.TethysListButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * PopUp menu that displays a list of checkMenu items.
@@ -89,7 +90,7 @@ public final class TethysSwingListButton
             declareMenu(new TethysSwingScrollContextMenu<T>());
 
             /* Set context menu listener */
-            getMenu().getEventRegistrar().addFilteredActionListener(TethysSwingScrollContextMenu.ACTION_TOGGLED,
+            getMenu().getEventRegistrar().addEventListener(TethysUIEvent.TOGGLEITEM,
                     e -> handleToggleItem());
         }
 

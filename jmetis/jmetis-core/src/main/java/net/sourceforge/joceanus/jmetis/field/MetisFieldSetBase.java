@@ -32,21 +32,22 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Field Set. This handles a set of fields for an item, populating the fields rendering and parsing
  * the data.
  */
 public abstract class MetisFieldSetBase
-        implements TethysEventProvider {
+        implements TethysEventProvider<MetisFieldEvent> {
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<MetisFieldEvent> theEventManager;
 
     /**
      * The Data Formatter.
@@ -67,11 +68,11 @@ public abstract class MetisFieldSetBase
         theFormatter = pFormatter;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<MetisFieldEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -105,7 +106,7 @@ public abstract class MetisFieldSetBase
             MetisFieldUpdate myUpdate = new MetisFieldUpdate(pField, pNewValue);
 
             /* Fire the notification */
-            theEventManager.fireActionEvent(myUpdate);
+            theEventManager.fireEvent(MetisFieldEvent.FIELDUPDATED, myUpdate);
         }
     }
 
@@ -270,8 +271,9 @@ public abstract class MetisFieldSetBase
          * @return the value
          * @throws OceanusException on error
          */
-        public TethysItemEvent getItemEvent() throws OceanusException {
-            return getValue(TethysItemEvent.class);
+        @SuppressWarnings("unchecked")
+        public TethysEvent<TethysUIEvent> getItemEvent() throws OceanusException {
+            return (TethysEvent<TethysUIEvent>) getValue(TethysEvent.class);
         }
     }
 }

@@ -55,17 +55,15 @@ import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.StaticDataPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabManager.TethysTabItem;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager;
@@ -76,7 +74,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager.TethysSwi
  * @author Tony Washer
  */
 public class MaintenanceTab
-        implements TethysEventProvider {
+        implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * TaxYears tab title.
      */
@@ -105,7 +103,7 @@ public class MaintenanceTab
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The Data View.
@@ -153,6 +151,11 @@ public class MaintenanceTab
     private final MetisPreferencesPanel thePreferences;
 
     /**
+     * Refreshing flag.
+     */
+    private boolean isRefreshing;
+
+    /**
      * Constructor.
      * @param pTop top window
      */
@@ -162,7 +165,7 @@ public class MaintenanceTab
         theParent = pTop;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the Panel */
         thePanel = new TethysSwingEnablePanel();
@@ -183,7 +186,7 @@ public class MaintenanceTab
         theTabs.addTabItem(TITLE_TAXYEARS, theTaxYearTab.getNode());
 
         /* Create the Static Tab */
-        theStatic = new StaticDataPanel<MoneyWiseDataType>(theView, theView.getUtilitySet(), MoneyWiseDataType.class);
+        theStatic = new StaticDataPanel<>(theView, theView.getUtilitySet(), MoneyWiseDataType.class);
         theTabs.addTabItem(TITLE_STATIC, theStatic.getNode());
 
         /* Add the static elements */
@@ -217,13 +220,42 @@ public class MaintenanceTab
         thePanel.setLayout(myLayout);
         thePanel.add(theTabs.getNode());
 
-        /* Create a listener */
-        new MaintenanceListener();
+        /* Create a listeners */
+        theTabs.getEventRegistrar().addEventListener(e -> determineFocus());
+        setChildListeners(theAccountTab.getEventRegistrar());
+        setChildListeners(theCategoryTab.getEventRegistrar());
+        setChildListeners(theTaxYearTab.getEventRegistrar());
+        setChildListeners(theStatic.getEventRegistrar());
+        thePreferences.getEventRegistrar().addEventListener(e -> setVisibility());
+
+        /* Handle Refresh */
+        theView.getEventRegistrar().addEventListener(e -> {
+            /* Refresh the data locking visibility setting for the duration */
+            isRefreshing = true;
+            refreshData();
+            isRefreshing = false;
+
+            /* Update visibility */
+            setVisibility();
+        });
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * setChildListeners.
+     * @param pRegistrar the registrar
+     */
+    private void setChildListeners(final TethysEventRegistrar<PrometheusDataEvent> pRegistrar) {
+        pRegistrar.addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> {
+            if (!isRefreshing) {
+                setVisibility();
+            }
+        });
+        pRegistrar.addEventListener(PrometheusDataEvent.GOTOWINDOW, this::handleGoToEvent);
     }
 
     /**
@@ -259,7 +291,7 @@ public class MaintenanceTab
     }
 
     /**
-     * Set enabled state
+     * Set enabled state.
      * @param pEnabled the state true/false
      */
     public void setEnabled(final boolean pEnabled) {
@@ -344,9 +376,9 @@ public class MaintenanceTab
      * Select maintenance.
      * @param pEvent the action request
      */
-    protected void selectMaintenance(final TethysActionEvent pEvent) {
+    protected void selectMaintenance(final PrometheusGoToEvent pEvent) {
         /* Switch on the subId */
-        switch (pEvent.getActionId()) {
+        switch (pEvent.getId()) {
             /* View the requested account */
             case MainTab.ACTION_VIEWACCOUNT:
                 /* Select the requested account */
@@ -483,90 +515,30 @@ public class MaintenanceTab
     }
 
     /**
-     * The listener class.
+     * handle GoTo Event.
+     * @param pEvent the event
      */
-    private final class MaintenanceListener
-            implements TethysActionEventListener, TethysChangeEventListener {
-        /**
-         * View Registration.
-         */
-        private final TethysChangeRegistration theViewReg;
+    private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
+        /* Access details */
+        PrometheusGoToEvent myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
 
-        /**
-         * Refreshing flag.
-         */
-        private boolean refreshing = false;
+        /* Access event and obtain details */
+        switch (myEvent.getId()) {
+            /* Pass through the event */
+            case MainTab.ACTION_VIEWSTATEMENT:
+                theEventManager.cascadeEvent(pEvent);
+                break;
 
-        /**
-         * Constructor.
-         */
-        private MaintenanceListener() {
-            /* Register listeners */
-            theViewReg = theView.getEventRegistrar().addChangeListener(this);
-
-            /* Handle sub-panels */
-            TethysEventRegistrar myRegistrar = theAccountTab.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-            myRegistrar = theCategoryTab.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-            myRegistrar = theTaxYearTab.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-            myRegistrar = theStatic.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-            thePreferences.getEventRegistrar().addChangeListener(this);
-
-            /* Listen to tab selection events */
-            theTabs.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-                @Override
-                public void processAction(final TethysActionEvent pEvent) {
-                    determineFocus();
-                }
-            });
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the data view */
-            if (theViewReg.isRelevant(pEvent)) {
-                /* Refresh the data locking visibility setting for the duration */
-                refreshing = true;
-                refreshData();
-                refreshing = false;
-
-                /* Update visibility */
-                setVisibility();
-
-                /* Don't set visibility if called from refresh */
-            } else if (!refreshing) {
-                /* Set the visibility */
-                setVisibility();
-            }
-        }
-
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            /* else handle or cascade */
-            switch (pEvent.getActionId()) {
-                /* Pass through the event */
-                case MainTab.ACTION_VIEWSTATEMENT:
-                    theEventManager.cascadeActionEvent(pEvent);
-                    break;
-
-                /* Access maintenance */
-                case MainTab.ACTION_VIEWACCOUNT:
-                case MainTab.ACTION_VIEWTAXYEAR:
-                case MainTab.ACTION_VIEWCATEGORY:
-                case MainTab.ACTION_VIEWTAG:
-                case MainTab.ACTION_VIEWSTATIC:
-                    selectMaintenance(pEvent);
-                    break;
-                default:
-                    break;
-            }
+            /* Access maintenance */
+            case MainTab.ACTION_VIEWACCOUNT:
+            case MainTab.ACTION_VIEWTAXYEAR:
+            case MainTab.ACTION_VIEWCATEGORY:
+            case MainTab.ACTION_VIEWTAG:
+            case MainTab.ACTION_VIEWSTATIC:
+                selectMaintenance(myEvent);
+                break;
+            default:
+                break;
         }
     }
 }

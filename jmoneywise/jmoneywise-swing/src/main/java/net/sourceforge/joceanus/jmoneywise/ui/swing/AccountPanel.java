@@ -25,8 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -49,21 +47,19 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
@@ -72,7 +68,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * Top-level panel for Accounts.
  */
 public class AccountPanel
-        implements TethysEventProvider {
+        implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * Strut width.
      */
@@ -96,7 +92,7 @@ public class AccountPanel
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The Data View.
@@ -196,7 +192,7 @@ public class AccountPanel
     /**
      * Are we refreshing?
      */
-    private boolean isRefreshing = false;
+    private boolean isRefreshing;
 
     /**
      * Constructor.
@@ -207,10 +203,10 @@ public class AccountPanel
         theView = pView;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Build the Update set */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView, MoneyWiseDataType.class);
+        theUpdateSet = new UpdateSet<>(pView, MoneyWiseDataType.class);
 
         /* Create the Panel */
         thePanel = new TethysSwingEnablePanel();
@@ -239,7 +235,7 @@ public class AccountPanel
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
-        theSelectButton = new JScrollButton<PanelName>();
+        theSelectButton = new JScrollButton<>();
         buildSelectMenu();
 
         /* Create the card panel */
@@ -295,7 +291,7 @@ public class AccountPanel
         myHeader.setLayout(new BorderLayout());
         myHeader.add(mySelect, BorderLayout.CENTER);
         myHeader.add(theError, BorderLayout.PAGE_START);
-        myHeader.add(theActionButtons, BorderLayout.LINE_END);
+        myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
 
         /* Now define the panel */
         thePanel.setLayout(new BorderLayout());
@@ -305,13 +301,38 @@ public class AccountPanel
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
 
-        /* Create the listener */
-        new AccountListener();
+        /* Create the listeners */
+        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> {
+            cancelEditing();
+            showPanel(theSelectButton.getValue());
+        });
+        theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
+        theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
+        setChildListeners(theDepositTable.getEventRegistrar());
+        setChildListeners(theCashTable.getEventRegistrar());
+        setChildListeners(theLoanTable.getEventRegistrar());
+        setChildListeners(thePayeeTable.getEventRegistrar());
+        setChildListeners(thePortfolioTable.getEventRegistrar());
+        setChildListeners(theSecurityTable.getEventRegistrar());
+        setChildListeners(theOptionTable.getEventRegistrar());
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * setChildListeners.
+     * @param pRegistrar the registrar
+     */
+    private void setChildListeners(final TethysEventRegistrar<PrometheusDataEvent> pRegistrar) {
+        pRegistrar.addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> {
+            if (!isRefreshing) {
+                setVisibility();
+            }
+        });
+        pRegistrar.addEventListener(PrometheusDataEvent.GOTOWINDOW, this::handleGoToEvent);
     }
 
     /**
@@ -616,125 +637,63 @@ public class AccountPanel
         theFilterCardPanel.setEnabled(!isItemEditing);
 
         /* Alert listeners that there has been a change */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
-     * Listener.
+     * handleErrorPane.
      */
-    private final class AccountListener
-            implements TethysActionEventListener, TethysChangeEventListener, PropertyChangeListener {
-        /**
-         * Error Registration.
-         */
-        private final TethysChangeRegistration theErrorReg;
+    private void handleErrorPane() {
+        /* Determine whether we have an error */
+        boolean isError = theError.hasError();
 
-        /**
-         * Action Registration.
-         */
-        private final TethysActionRegistration theActionReg;
+        /* Hide selection button on error */
+        theSelectButton.setVisible(!isError);
 
-        /**
-         * Constructor.
-         */
-        private AccountListener() {
-            /* Handle interesting items */
-            theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theErrorReg = theError.getEventRegistrar().addChangeListener(this);
-            theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
+        /* Lock card panel */
+        theCardPanel.setEnabled(!isError);
 
-            /* Handle sub-panels */
-            TethysEventRegistrar myRegistrar = theDepositTable.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-            myRegistrar = theCashTable.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-            myRegistrar = theLoanTable.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-            myRegistrar = thePortfolioTable.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-            myRegistrar = theSecurityTable.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-            myRegistrar = thePayeeTable.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-            myRegistrar = theOptionTable.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-        }
+        /* Lock Action Buttons */
+        theActionButtons.setEnabled(!isError);
+    }
 
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            /* if this is the action buttons reporting */
-            if (theActionReg.isRelevant(pEvent)) {
-                /* Cancel Editing */
-                cancelEditing();
+    /**
+     * handle Action Buttons.
+     * @param pEvent the event
+     */
+    private void handleActionButtons(final TethysEvent<PrometheusUIEvent> pEvent) {
+        /* Cancel editing */
+        cancelEditing();
 
-                /* Process the command */
-                theUpdateSet.processCommand(pEvent.getActionId(), theError);
+        /* Perform the command */
+        theUpdateSet.processCommand(pEvent.getEventId(), theError);
+    }
 
-                /* else handle or cascade */
-            } else {
-                /* Access event and obtain details */
-                switch (pEvent.getActionId()) {
-                    /* Pass through the event */
-                    case MainTab.ACTION_VIEWSTATEMENT:
-                    case MainTab.ACTION_VIEWCATEGORY:
-                    case MainTab.ACTION_VIEWTAG:
-                    case MainTab.ACTION_VIEWTAXYEAR:
-                    case MainTab.ACTION_VIEWSTATIC:
-                        theEventManager.cascadeActionEvent(pEvent);
-                        break;
+    /**
+     * handle GoTo Event.
+     * @param pEvent the event
+     */
+    private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
+        /* Access details */
+        PrometheusGoToEvent myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
 
-                    /* Access subPanels */
-                    case MainTab.ACTION_VIEWACCOUNT:
-                        selectAccount(pEvent.getDetails(AssetBase.class));
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
+        /* Access event and obtain details */
+        switch (myEvent.getId()) {
+            /* Pass through the event */
+            case MainTab.ACTION_VIEWSTATEMENT:
+            case MainTab.ACTION_VIEWCATEGORY:
+            case MainTab.ACTION_VIEWTAG:
+            case MainTab.ACTION_VIEWTAXYEAR:
+            case MainTab.ACTION_VIEWSTATIC:
+                theEventManager.cascadeEvent(pEvent);
+                break;
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the error panel reporting */
-            if (theErrorReg.isRelevant(pEvent)) {
-                /* Determine whether we have an error */
-                boolean isError = theError.hasError();
-
-                /* Hide selection panel on error */
-                theSelectButton.setVisible(!isError);
-
-                /* Lock scroll-able area */
-                theCardPanel.setEnabled(!isError);
-
-                /* Lock Action Buttons */
-                theActionButtons.setEnabled(!isError);
-
-                /* if this is one of the sub-panels */
-            } else if (!isRefreshing) {
-                /* Adjust visibility */
-                setVisibility();
-            }
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent evt) {
-            Object o = evt.getSource();
-
-            /* if this event relates to the select button */
-            if (theSelectButton.equals(o)) {
-                /* Cancel Editing */
-                cancelEditing();
-
-                /* Show the correct panel */
-                showPanel(theSelectButton.getValue());
-            }
+            /* Access subPanels */
+            case MainTab.ACTION_VIEWACCOUNT:
+                selectAccount(myEvent.getDetails(AssetBase.class));
+                break;
+            default:
+                break;
         }
     }
 

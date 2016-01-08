@@ -29,6 +29,7 @@ import javax.swing.SwingConstants;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager.TethysScrollButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * JavaFX Button which provides a PopUpMenu selection.
@@ -89,7 +90,7 @@ public final class TethysSwingScrollButton
             declareMenu(new TethysSwingScrollContextMenu<T>());
 
             /* Set context menu listener */
-            getMenu().getEventRegistrar().addFilteredActionListener(TethysSwingScrollContextMenu.ACTION_SELECTED,
+            getMenu().getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
                     e -> handleMenuClosed());
         }
 

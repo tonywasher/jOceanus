@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <I> the Icon type
  */
 public abstract class TethysIconButtonManager<T, I>
-        implements TethysEventProvider {
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * Icon Button.
      * @param <I> the Icon type
@@ -52,14 +52,9 @@ public abstract class TethysIconButtonManager<T, I>
     }
 
     /**
-     * Icon updated.
-     */
-    public static final int ACTION_NEW_VALUE = TethysScrollButtonManager.ACTION_NEW_VALUE;
-
-    /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The value.
@@ -76,7 +71,7 @@ public abstract class TethysIconButtonManager<T, I>
      */
     protected TethysIconButtonManager() {
         /* Create event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
     }
 
     /**
@@ -96,7 +91,7 @@ public abstract class TethysIconButtonManager<T, I>
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -134,8 +129,8 @@ public abstract class TethysIconButtonManager<T, I>
         /* Set the value */
         setValue(myValue);
 
-        /* fire new actionEvent */
-        theEventManager.fireActionEvent(ACTION_NEW_VALUE, myValue);
+        /* fire new Event */
+        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myValue);
     }
 
     /**

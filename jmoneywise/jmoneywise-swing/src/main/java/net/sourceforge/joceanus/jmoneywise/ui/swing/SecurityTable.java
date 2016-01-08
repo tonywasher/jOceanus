@@ -25,10 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -70,14 +66,10 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
@@ -278,10 +270,16 @@ public class SecurityTable
         thePanel.add(theActiveAccount, BorderLayout.PAGE_END);
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<Security, MoneyWiseDataType>(this, theActiveAccount);
+        theSelectionModel = new JDataTableSelection<>(this, theActiveAccount);
 
         /* Create listener */
-        new SecurityListener();
+        theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
+        theActiveAccount.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActiveAccount.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
+
+        /* Listen to swing events */
+        theNewButton.addActionListener(e -> theModel.addNewItem());
+        theLockedCheckBox.addItemListener(e -> setShowAll(theLockedCheckBox.isSelected()));
     }
 
     /**
@@ -412,6 +410,34 @@ public class SecurityTable
     }
 
     /**
+     * Handle updateSet rewind.
+     */
+    private void handleRewind() {
+        /* Only action if we are not editing */
+        if (!theActiveAccount.isEditing()) {
+            /* Handle the reWind */
+            theSelectionModel.handleReWind();
+        }
+
+        /* Adjust for changes */
+        notifyChanges();
+    }
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+        if (!theActiveAccount.isEditing()) {
+            /* handle the edit transition */
+            theSelectionModel.handleEditTransition();
+        }
+
+        /* Note changes */
+        notifyChanges();
+    }
+
+    /**
      * JTable Data Model.
      */
     private final class SecurityTableModel
@@ -526,90 +552,6 @@ public class SecurityTable
 
                 /* Show the error */
                 setError(myError);
-            }
-        }
-    }
-
-    /**
-     * Listener class.
-     */
-    private final class SecurityListener
-            implements ActionListener, ItemListener, TethysActionEventListener, TethysChangeEventListener {
-        /**
-         * UpdateSet Registration.
-         */
-        private final TethysChangeRegistration theUpdateSetReg;
-
-        /**
-         * Account Change Registration.
-         */
-        private final TethysChangeRegistration theActPanelReg;
-
-        /**
-         * Constructor.
-         */
-        private SecurityListener() {
-            /* Register listeners */
-            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
-            theActPanelReg = theActiveAccount.getEventRegistrar().addChangeListener(this);
-            theActiveAccount.getEventRegistrar().addActionListener(this);
-
-            /* Listen to swing events */
-            theNewButton.addActionListener(this);
-            theLockedCheckBox.addItemListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If we are performing a rewind */
-            if (theUpdateSetReg.isRelevant(pEvent)) {
-                /* Only action if we are not editing */
-                if (!theActiveAccount.isEditing()) {
-                    /* Handle the reWind */
-                    theSelectionModel.handleReWind();
-                }
-
-                /* Adjust for changes */
-                notifyChanges();
-
-                /* If we are handling panel state */
-            } else if (theActPanelReg.isRelevant(pEvent)) {
-                /* Only action if we are not editing */
-                if (!theActiveAccount.isEditing()) {
-                    /* handle the edit transition */
-                    theSelectionModel.handleEditTransition();
-                }
-
-                /* Note changes */
-                notifyChanges();
-            }
-        }
-
-        @Override
-        public void itemStateChanged(final ItemEvent pEvent) {
-            /* Access reporting object and command */
-            Object o = pEvent.getSource();
-
-            /* if this is the locked check box reporting */
-            if (theLockedCheckBox.equals(o)) {
-                /* Adjust the showAll settings */
-                setShowAll(theLockedCheckBox.isSelected());
-            }
-        }
-
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            cascadeActionEvent(pEvent);
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
-
-            /* Handle actions */
-            if (theNewButton.equals(o)) {
-                theModel.addNewItem();
             }
         }
     }
@@ -752,7 +694,9 @@ public class SecurityTable
             setColumns();
 
             /* Add listeners */
-            new EditorListener();
+            theTypeEditor.getEventRegistrar().addEventListener(e -> buildSecurityTypeMenu());
+            theCurrencyEditor.getEventRegistrar().addEventListener(e -> buildCurrencyMenu());
+            theParentEditor.getEventRegistrar().addEventListener(e -> buildParentMenu());
         }
 
         /**
@@ -928,89 +872,48 @@ public class SecurityTable
         }
 
         /**
-         * EditorListener.
+         * Build the popUpMenu for parents.
          */
-        private final class EditorListener
-                implements TethysChangeEventListener {
-            /**
-             * Type Registration.
-             */
-            private final TethysChangeRegistration theTypeReg;
+        private void buildParentMenu() {
+            /* Access details */
+            JScrollMenuBuilder<Payee> myBuilder = theParentEditor.getMenuBuilder();
 
-            /**
-             * Parent Registration.
-             */
-            private final TethysChangeRegistration theParentReg;
+            /* Record active item */
+            Point myCell = theParentEditor.getPoint();
+            Security mySecurity = theSecurities.get(myCell.y);
 
-            /**
-             * Currency Registration.
-             */
-            private final TethysChangeRegistration theCurrencyReg;
+            /* Build the menu */
+            theActiveAccount.buildParentMenu(myBuilder, mySecurity);
+        }
 
-            /**
-             * Constructor.
-             */
-            private EditorListener() {
-                theTypeReg = theTypeEditor.getEventRegistrar().addChangeListener(this);
-                theParentReg = theParentEditor.getEventRegistrar().addChangeListener(this);
-                theCurrencyReg = theCurrencyEditor.getEventRegistrar().addChangeListener(this);
-            }
+        /**
+         * Build the popUpMenu for securityType.
+         */
+        private void buildSecurityTypeMenu() {
+            /* Access details */
+            JScrollMenuBuilder<SecurityType> myBuilder = theTypeEditor.getMenuBuilder();
 
-            @Override
-            public void processChange(final TethysChangeEvent pEvent) {
-                if (theTypeReg.isRelevant(pEvent)) {
-                    buildSecurityTypeMenu();
-                } else if (theParentReg.isRelevant(pEvent)) {
-                    buildParentMenu();
-                } else if (theCurrencyReg.isRelevant(pEvent)) {
-                    buildCurrencyMenu();
-                }
-            }
+            /* Record active item */
+            Point myCell = theTypeEditor.getPoint();
+            Security mySecurity = theSecurities.get(myCell.y);
 
-            /**
-             * Build the popUpMenu for parents.
-             */
-            private void buildParentMenu() {
-                /* Access details */
-                JScrollMenuBuilder<Payee> myBuilder = theParentEditor.getMenuBuilder();
+            /* Build the menu */
+            theActiveAccount.buildSecTypeMenu(myBuilder, mySecurity);
+        }
 
-                /* Record active item */
-                Point myCell = theParentEditor.getPoint();
-                Security mySecurity = theSecurities.get(myCell.y);
+        /**
+         * Build the popUpMenu for currencies.
+         */
+        private void buildCurrencyMenu() {
+            /* Access details */
+            JScrollMenuBuilder<AssetCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
 
-                /* Build the menu */
-                theActiveAccount.buildParentMenu(myBuilder, mySecurity);
-            }
+            /* Record active item */
+            Point myCell = theCurrencyEditor.getPoint();
+            Security mySecurity = theSecurities.get(myCell.y);
 
-            /**
-             * Build the popUpMenu for securityType.
-             */
-            private void buildSecurityTypeMenu() {
-                /* Access details */
-                JScrollMenuBuilder<SecurityType> myBuilder = theTypeEditor.getMenuBuilder();
-
-                /* Record active item */
-                Point myCell = theTypeEditor.getPoint();
-                Security mySecurity = theSecurities.get(myCell.y);
-
-                /* Build the menu */
-                theActiveAccount.buildSecTypeMenu(myBuilder, mySecurity);
-            }
-
-            /**
-             * Build the popUpMenu for currencies.
-             */
-            private void buildCurrencyMenu() {
-                /* Access details */
-                JScrollMenuBuilder<AssetCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
-
-                /* Record active item */
-                Point myCell = theCurrencyEditor.getPoint();
-                Security mySecurity = theSecurities.get(myCell.y);
-
-                /* Build the menu */
-                theActiveAccount.buildCurrencyMenu(myBuilder, mySecurity);
-            }
+            /* Build the menu */
+            theActiveAccount.buildCurrencyMenu(myBuilder, mySecurity);
         }
     }
 }

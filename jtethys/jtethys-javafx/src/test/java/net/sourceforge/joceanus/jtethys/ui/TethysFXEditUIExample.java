@@ -49,8 +49,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
@@ -338,162 +337,80 @@ public class TethysFXEditUIExample
         Label myLabel = new Label("String:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theStringField.getNode());
-        theStringField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theStringField, pEvent);
-            }
-        });
+        theStringField.getEventRegistrar().addEventListener(e -> processActionEvent(theStringField, e));
 
         /* Create Short field line */
         myLabel = new Label("Short:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theShortField.getNode());
-        theShortField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theShortField, pEvent);
-            }
-        });
+        theShortField.getEventRegistrar().addEventListener(e -> processActionEvent(theShortField, e));
 
         /* Create Integer field line */
         myLabel = new Label("Integer:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theIntegerField.getNode());
-        theIntegerField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theIntegerField, pEvent);
-            }
-        });
+        theIntegerField.getEventRegistrar().addEventListener(e -> processActionEvent(theIntegerField, e));
 
         /* Create Long field line */
         myLabel = new Label("Long:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theLongField.getNode());
-        theLongField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theLongField, pEvent);
-            }
-        });
+        theLongField.getEventRegistrar().addEventListener(e -> processActionEvent(theLongField, e));
 
         /* Create Money field line */
         myLabel = new Label("Money:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theMoneyField.getNode());
-        theMoneyField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theMoneyField, pEvent);
-            }
-        });
+        theMoneyField.getEventRegistrar().addEventListener(e -> processActionEvent(theMoneyField, e));
 
         /* Create Price field line */
         myLabel = new Label("Price:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, thePriceField.getNode());
-        thePriceField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(thePriceField, pEvent);
-            }
-        });
+        thePriceField.getEventRegistrar().addEventListener(e -> processActionEvent(thePriceField, e));
 
         /* Create Units field line */
         myLabel = new Label("Units:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theUnitsField.getNode());
-        theUnitsField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theUnitsField, pEvent);
-            }
-        });
+        theUnitsField.getEventRegistrar().addEventListener(e -> processActionEvent(theUnitsField, e));
 
         /* Create Rate field line */
         myLabel = new Label("Rate:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theRateField.getNode());
-        theRateField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theRateField, pEvent);
-            }
-        });
+        theRateField.getEventRegistrar().addEventListener(e -> processActionEvent(theRateField, e));
 
         /* Create Ratio field line */
         myLabel = new Label("Ratio:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theRatioField.getNode());
-        theRatioField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theRatioField, pEvent);
-            }
-        });
+        theRatioField.getEventRegistrar().addEventListener(e -> processActionEvent(theRatioField, e));
 
         /* Create Dilution field line */
         myLabel = new Label("Dilution:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theDilutionField.getNode());
-        theDilutionField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theDilutionField, pEvent);
-            }
-        });
+        theDilutionField.getEventRegistrar().addEventListener(e -> processActionEvent(theDilutionField, e));
 
         /* Create DilutedPrice field line */
         myLabel = new Label("DilutedPrice:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theDilutedPriceField.getNode());
-        theDilutedPriceField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theDilutedPriceField, pEvent);
-            }
-        });
+        theDilutedPriceField.getEventRegistrar().addEventListener(e -> processActionEvent(theDilutedPriceField, e));
 
         /* Create ScrollButton field line */
         myLabel = new Label("ScrollButton:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theScrollField.getNode());
-        theScrollField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                switch (pEvent.getActionId()) {
-                    case TethysDataEditField.ACTION_NEW_VALUE:
-                        processActionEvent(theScrollField, pEvent);
-                        break;
-                    case TethysDataEditField.ACTION_DIALOG_PREPARE:
-                        theHelper.buildContextMenu(theScrollButtonMgr.getMenu());
-                        break;
-                    case TethysDataEditField.ACTION_DIALOG_CANCELLED:
-                    default:
-                        break;
-                }
-            }
-        });
+        theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theScrollField, e));
+        theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theHelper.buildContextMenu(theScrollButtonMgr.getMenu()));
 
         /* Create DateButton field line */
         myLabel = new Label("DateButton:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theDateField.getNode());
-        theDateField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                switch (pEvent.getActionId()) {
-                    case TethysDataEditField.ACTION_NEW_VALUE:
-                        processActionEvent(theDateField, pEvent);
-                        break;
-                    case TethysDataEditField.ACTION_DIALOG_PREPARE:
-                    case TethysDataEditField.ACTION_DIALOG_CANCELLED:
-                    default:
-                        break;
-                }
-            }
-        });
+        theDateField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theDateField, e));
 
         /* Create IconButton field line */
         myLabel = new Label("IconButton:");
@@ -502,40 +419,17 @@ public class TethysFXEditUIExample
         theHelper.buildSimpleIconState(theIconButtonMgr,
                 TethysFXGuiUtils.resizeImage(OPEN_FALSE_ICON, DEFAULT_ICONWIDTH),
                 TethysFXGuiUtils.resizeImage(OPEN_TRUE_ICON, DEFAULT_ICONWIDTH));
-        theIconField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                switch (pEvent.getActionId()) {
-                    case TethysDataEditField.ACTION_NEW_VALUE:
-                        processActionEvent(theIconField, pEvent);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
+        theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
 
         /* Create ListButton field line */
         myLabel = new Label("ListButton:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theListField.getNode());
         theListButtonMgr.getMenu().setCloseOnToggle(false);
-        theListField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                switch (pEvent.getActionId()) {
-                    case TethysDataEditField.ACTION_ITEM_TOGGLED:
-                        setListValue(pEvent.getDetails(TethysScrollMenuToggleItem.class));
-                        processActionEvent(theListField, pEvent);
-                        break;
-                    case TethysDataEditField.ACTION_DIALOG_PREPARE:
-                        theHelper.buildAvailableItems(theListButtonMgr, theSelectedValues);
-                        break;
-                    case TethysDataEditField.ACTION_DIALOG_CANCELLED:
-                    default:
-                        break;
-                }
-            }
+        theListField.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theHelper.buildAvailableItems(theListButtonMgr, theSelectedValues));
+        theListField.getEventRegistrar().addEventListener(TethysUIEvent.TOGGLEITEM, e -> {
+            setListValue(e.getDetails(TethysScrollMenuToggleItem.class));
+            processActionEvent(theListField, e);
         });
 
         /* Return the pane */
@@ -601,12 +495,7 @@ public class TethysFXEditUIExample
         myMenu.addItem(Currency.getInstance("JPY"), "Yen");
         myCurrencyMgr.setValue(myDefault, "Pounds");
         setCurrency(myDefault);
-        myCurrencyMgr.getEventRegistrar().addFilteredActionListener(TethysFXScrollButtonManager.ACTION_NEW_VALUE, new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                setCurrency(pEvent.getDetails(Currency.class));
-            }
-        });
+        myCurrencyMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setCurrency(e.getDetails(Currency.class)));
 
         /* Create a spacer region */
         Region mySpacer = new Region();
@@ -661,20 +550,20 @@ public class TethysFXEditUIExample
      * @param pEvent the event
      */
     private void processActionEvent(final TethysFXDataTextField<?> pField,
-                                    final TethysActionEvent pEvent) {
+                                    final TethysEvent<TethysUIEvent> pEvent) {
         /* Determine source */
         String mySource = pField.getClass().getSimpleName();
 
         /* Switch on action */
-        switch (pEvent.getActionId()) {
-            case TethysDataEditField.ACTION_NEW_VALUE:
-            case TethysDataEditField.ACTION_ITEM_TOGGLED:
+        switch (pEvent.getEventId()) {
+            case NEWVALUE:
+            case TOGGLEITEM:
                 setResults(mySource, pEvent.getDetails());
                 break;
-            case TethysDataEditField.ACTION_NEW_COMMAND:
+            case NEWCOMMAND:
                 setResults(mySource + "-Cmd", pEvent.getDetails());
                 break;
-            case TethysDataEditField.ACTION_COMMAND_PREPARE:
+            case PREPARECMDDIALOG:
                 pField.getCmdMenu().removeAllItems();
                 pField.getCmdMenu().addItem("TestCmd");
                 break;

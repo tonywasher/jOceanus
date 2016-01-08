@@ -23,12 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
@@ -50,15 +44,13 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBuc
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
@@ -69,7 +61,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class SpotPricesSelect
         extends JPanel
-        implements TethysEventProvider {
+        implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -113,7 +105,7 @@ public class SpotPricesSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The data view.
@@ -151,6 +143,11 @@ public class SpotPricesSelect
     private final JScrollButton<PortfolioBucket> thePortButton;
 
     /**
+     * The portfolio menu builder.
+     */
+    private final JScrollMenuBuilder<PortfolioBucket> thePortMenuBuilder;
+
+    /**
      * The Portfolio list.
      */
     private transient PortfolioBucketList thePortfolios = null;
@@ -184,7 +181,7 @@ public class SpotPricesSelect
         theView = pView;
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create Labels */
         JLabel myDate = new JLabel(NLS_DATE);
@@ -207,7 +204,7 @@ public class SpotPricesSelect
         thePrev.setToolTipText(NLS_PREVTIP);
 
         /* Create the portfolio button */
-        thePortButton = new JScrollButton<PortfolioBucket>();
+        thePortButton = new JScrollButton<>();
 
         /* Create initial state */
         theState = new SpotPricesState();
@@ -242,12 +239,25 @@ public class SpotPricesSelect
         /* Apply the current state */
         theState.applyState();
 
-        /* Add the listener for item changes */
-        new SpotPricesListener();
+        /* Add the listeners */
+        thePortMenuBuilder = thePortButton.getMenuBuilder();
+        thePortMenuBuilder.getEventRegistrar().addEventListener(e -> buildPortfolioMenu());
+        theDownloadButton.addActionListener(e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
+        theDateButton.addPropertyChangeListener(TethysSwingDateButton.PROPERTY_DATEDAY, e -> handleNewDate());
+        thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewPortfolio());
+        theShowClosed.addItemListener(e -> handleNewClosed());
+        theNext.addActionListener(e -> {
+            theState.setNext();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        });
+        thePrev.addActionListener(e -> {
+            theState.setPrev();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        });
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -388,131 +398,63 @@ public class SpotPricesSelect
     }
 
     /**
-     * Listener class.
+     * Build the portfolio menu.
      */
-    private final class SpotPricesListener
-            implements ActionListener, TethysChangeEventListener, PropertyChangeListener, ItemListener {
-        /**
-         * The portfolio menu builder.
-         */
-        private final JScrollMenuBuilder<PortfolioBucket> thePortMenuBuilder;
+    private void buildPortfolioMenu() {
+        /* Reset the popUp menu */
+        thePortMenuBuilder.clearMenu();
 
-        /**
-         * PortfolioMenu Registration.
-         */
-        private final TethysChangeRegistration thePortMenuReg;
+        /* Record active item */
+        JMenuItem myActive = null;
+        PortfolioBucket myCurr = theState.getPortfolio();
 
-        /**
-         * Constructor.
-         */
-        private SpotPricesListener() {
-            /* Access builder */
-            thePortMenuBuilder = thePortButton.getMenuBuilder();
-            thePortMenuReg = thePortMenuBuilder.getEventRegistrar().addChangeListener(this);
+        /* Loop through the available portfolio values */
+        Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
+        while (myIterator.hasNext()) {
+            PortfolioBucket myBucket = myIterator.next();
 
-            /* Add swing listeners */
-            theDateButton.addPropertyChangeListener(TethysSwingDateButton.PROPERTY_DATEDAY, this);
-            theShowClosed.addItemListener(this);
-            theNext.addActionListener(this);
-            thePrev.addActionListener(this);
-            theDownloadButton.addActionListener(this);
-            thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-        }
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = thePortMenuBuilder.addItem(myBucket);
 
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            Object o = evt.getSource();
-
-            /* If this event relates to the Next button */
-            if (theNext.equals(o)) {
-                /* Set next and notify changes */
-                theState.setNext();
-                theEventManager.fireStateChanged();
-
-                /* If this event relates to the previous button */
-            } else if (thePrev.equals(o)) {
-                /* Set previous and notify changes */
-                theState.setPrev();
-                theEventManager.fireStateChanged();
-
-                /* If this event relates to the download button */
-            } else if (theDownloadButton.equals(o)) {
-                /* fire an action event */
-                theEventManager.fireActionEvent();
+            /* If this is the active bucket */
+            if (myBucket.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
 
-        @Override
-        public void propertyChange(final PropertyChangeEvent evt) {
-            Object o = evt.getSource();
+        /* Ensure active item is visible */
+        thePortMenuBuilder.showItem(myActive);
+    }
 
-            /* if event relates to the Date button */
-            if (theDateButton.equals(o)
-                && (theState.setDate(theDateButton))) {
-                theEventManager.fireStateChanged();
-            }
-
-            /* if event relates to the Portfolio button */
-            if (thePortButton.equals(o)
-                && (theState.setPortfolio(thePortButton.getValue()))) {
-                theState.applyState();
-                theEventManager.fireStateChanged();
-            }
+    /**
+     * Handle new Date.
+     */
+    private void handleNewDate() {
+        /* Select the new date */
+        if (theState.setDate(theDateButton)) {
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
+    }
 
-        @Override
-        public void itemStateChanged(final ItemEvent evt) {
-            Object o = evt.getSource();
-
-            /* Ignore selection if refreshing data */
-            if (refreshingData) {
-                return;
-            }
-
-            /* If this event relates to the showClosed box */
-            if (theShowClosed.equals(o)) {
-                /* Note the new criteria and re-build lists */
-                doShowClosed = theShowClosed.isSelected();
-                theEventManager.fireStateChanged();
-            }
+    /**
+     * Handle new Portfolio.
+     */
+    private void handleNewPortfolio() {
+        /* Select the new portfolio */
+        if (theState.setPortfolio(thePortButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
+    }
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the PortfolioMenu */
-            if (thePortMenuReg.isRelevant(pEvent)) {
-                buildPortfolioMenu();
-            }
-        }
-
-        /**
-         * Build the portfolio menu.
-         */
-        private void buildPortfolioMenu() {
-            /* Reset the popUp menu */
-            thePortMenuBuilder.clearMenu();
-
-            /* Record active item */
-            JMenuItem myActive = null;
-            PortfolioBucket myCurr = theState.getPortfolio();
-
-            /* Loop through the available portfolio values */
-            Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
-            while (myIterator.hasNext()) {
-                PortfolioBucket myBucket = myIterator.next();
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = thePortMenuBuilder.addItem(myBucket);
-
-                /* If this is the active bucket */
-                if (myBucket.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            thePortMenuBuilder.showItem(myActive);
+    /**
+     * Handle new Closed.
+     */
+    private void handleNewClosed() {
+        if (!refreshingData) {
+            doShowClosed = theShowClosed.isSelected();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
     }
 
@@ -523,22 +465,22 @@ public class SpotPricesSelect
         /**
          * Portfolio.
          */
-        private PortfolioBucket thePortfolio = null;
+        private PortfolioBucket thePortfolio;
 
         /**
          * Selected date.
          */
-        private TethysDate theDate = null;
+        private TethysDate theDate;
 
         /**
          * Next date.
          */
-        private TethysDate theNextDate = null;
+        private TethysDate theNextDate;
 
         /**
          * Previous date.
          */
-        private TethysDate thePrevDate = null;
+        private TethysDate thePrevDate;
 
         /**
          * Constructor.

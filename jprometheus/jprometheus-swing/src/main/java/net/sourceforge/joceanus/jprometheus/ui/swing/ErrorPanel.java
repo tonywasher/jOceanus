@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.ErrorDisplay;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -52,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  */
 public class ErrorPanel
         extends JPanel
-        implements ErrorDisplay, TethysEventProvider {
+        implements ErrorDisplay, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -76,7 +77,7 @@ public class ErrorPanel
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The error field.
@@ -111,10 +112,10 @@ public class ErrorPanel
         theDataError.hideEntry();
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the error list */
-        theErrors = new DataErrorList<MetisExceptionWrapper>();
+        theErrors = new DataErrorList<>();
         theDataError.setObject(theErrors);
 
         /* Create the error field */
@@ -142,7 +143,7 @@ public class ErrorPanel
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -175,7 +176,7 @@ public class ErrorPanel
         setVisible(true);
 
         /* Notify listeners */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     @Override
@@ -203,7 +204,7 @@ public class ErrorPanel
         }
 
         /* Notify listeners */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
@@ -221,7 +222,7 @@ public class ErrorPanel
         setVisible(false);
 
         /* Notify listeners */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     @Override

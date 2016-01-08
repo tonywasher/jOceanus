@@ -26,33 +26,34 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides control of a set of update-able DataLists.
  * @param <E> the data type enum class
  */
 public class UpdateSet<E extends Enum<E>>
-        implements MetisDataContents, TethysEventProvider, DataListSet<E> {
+        implements MetisDataContents, TethysEventProvider<PrometheusDataEvent>, DataListSet<E> {
     /**
      * Report fields.
      */
@@ -69,29 +70,9 @@ public class UpdateSet<E extends Enum<E>>
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateSet.class);
 
     /**
-     * OK.
-     */
-    public static final int CMD_OK = 0;
-
-    /**
-     * Undo last change.
-     */
-    public static final int CMD_UNDO = 1;
-
-    /**
-     * Rewind to explicit point.
-     */
-    public static final int CMD_REWIND = 2;
-
-    /**
-     * Reset all changes.
-     */
-    public static final int CMD_RESET = 3;
-
-    /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * Report fields.
@@ -129,13 +110,13 @@ public class UpdateSet<E extends Enum<E>>
         theControl = pControl;
 
         /* Create event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create local fields */
         theLocalFields = new MetisFields(FIELD_DEFS.getName(), FIELD_DEFS);
 
         /* Create the map */
-        theMap = new EnumMap<E, UpdateEntry<?, E>>(pClass);
+        theMap = new EnumMap<>(pClass);
     }
 
     @Override
@@ -166,7 +147,7 @@ public class UpdateSet<E extends Enum<E>>
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -208,7 +189,7 @@ public class UpdateSet<E extends Enum<E>>
         UpdateEntry<T, E> myEntry = (UpdateEntry<T, E>) theMap.get(pDataType);
         if (myEntry == null) {
             /* Not found , so add it */
-            myEntry = new UpdateEntry<T, E>(pDataType);
+            myEntry = new UpdateEntry<>(pDataType);
             theMap.put(pDataType, myEntry);
             theLocalFields.declareLocalField(myEntry.getName());
         }
@@ -235,8 +216,8 @@ public class UpdateSet<E extends Enum<E>>
 
         /* Cast correctly */
         return myEntry != null
-                              ? pClass.cast(myEntry.getDataList())
-                              : theControl.getData().getDataList(pDataType, pClass);
+                               ? pClass.cast(myEntry.getDataList())
+                               : theControl.getData().getDataList(pDataType, pClass);
     }
 
     /**
@@ -256,8 +237,8 @@ public class UpdateSet<E extends Enum<E>>
                 /* Return the value */
                 DataList<?, ?> myList = myEntry.getDataList();
                 return (myList == null)
-                                       ? MetisFieldValue.SKIP
-                                       : myList;
+                                        ? MetisFieldValue.SKIP
+                                        : myList;
             }
         }
 
@@ -354,7 +335,7 @@ public class UpdateSet<E extends Enum<E>>
         myTask.startTask("Notify");
 
         /* Fire that we have rewound the updateSet */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.REWINDUPDATES);
 
         /* Complete the task */
         myTask.end();
@@ -409,7 +390,7 @@ public class UpdateSet<E extends Enum<E>>
             myTask.startTask("Notify");
 
             /* Fire that we have rewound the updateSet */
-            theEventManager.fireStateChanged();
+            theEventManager.fireEvent(PrometheusDataEvent.REWINDUPDATES);
 
             /* Complete the task */
             myTask.end();
@@ -620,18 +601,24 @@ public class UpdateSet<E extends Enum<E>>
      * @param pCmd the command.
      * @param pError the error panel
      */
-    public void processCommand(final int pCmd,
+    public void processCommand(final PrometheusUIEvent pCmd,
                                final ErrorDisplay pError) {
         /* Create a new profile */
         MetisProfile myTask = theControl.getNewProfile("EditCommand");
 
         /* Switch on command */
-        if (CMD_OK == pCmd) {
-            applyChanges();
-        } else if (CMD_UNDO == pCmd) {
-            undoLastChange();
-        } else if (CMD_RESET == pCmd) {
-            resetChanges();
+        switch (pCmd) {
+            case OK:
+                applyChanges();
+                break;
+            case UNDO:
+                undoLastChange();
+                break;
+            case RESET:
+                resetChanges();
+                break;
+            default:
+                break;
         }
 
         /* Access any error */
@@ -652,19 +639,25 @@ public class UpdateSet<E extends Enum<E>>
      * @param pVersion the version
      * @param pError the error panel
      */
-    public void processEditCommand(final int pCmd,
+    public void processEditCommand(final PrometheusUIEvent pCmd,
                                    final int pVersion,
                                    final ErrorDisplay pError) {
         /* Create a new profile */
         MetisProfile myTask = theControl.getNewProfile("ItemCommand");
 
         /* Switch on command */
-        if (CMD_OK == pCmd) {
-            condenseHistory(pVersion);
-        } else if (CMD_UNDO == pCmd) {
-            undoLastChange();
-        } else if (CMD_REWIND == pCmd) {
-            rewindToVersion(pVersion);
+        switch (pCmd) {
+            case OK:
+                condenseHistory(pVersion);
+                break;
+            case UNDO:
+                undoLastChange();
+                break;
+            case REWIND:
+                rewindToVersion(pVersion);
+                break;
+            default:
+                break;
         }
 
         /* Access any error */

@@ -56,9 +56,6 @@ import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -112,6 +109,21 @@ public class SecurityPanel
     private final SecurityPriceTable thePrices;
 
     /**
+     * The SecurityType Menu Builder.
+     */
+    private final JScrollMenuBuilder<SecurityType> theSecTypeMenuBuilder;
+
+    /**
+     * The Parent Menu Builder.
+     */
+    private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
+
+    /**
+     * The Currency Menu Builder.
+     */
+    private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
+
+    /**
      * Constructor.
      * @param pView the data view
      * @param pFieldMgr the field manager
@@ -126,12 +138,12 @@ public class SecurityPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the buttons */
-        theTypeButton = new JScrollButton<SecurityType>();
-        theParentButton = new JScrollButton<Payee>();
-        theCurrencyButton = new JScrollButton<AssetCurrency>();
+        theTypeButton = new JScrollButton<>();
+        theParentButton = new JScrollButton<>();
+        theCurrencyButton = new JScrollButton<>();
 
         /* Set closed button */
-        theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
+        theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -160,7 +172,16 @@ public class SecurityPanel
         layoutPanel();
 
         /* Create the listener */
-        new SecurityListener();
+        theSecTypeMenuBuilder = theTypeButton.getMenuBuilder();
+        theSecTypeMenuBuilder.getEventRegistrar().addEventListener(e -> buildSecTypeMenu(theSecTypeMenuBuilder, getItem()));
+        theParentMenuBuilder = theParentButton.getMenuBuilder();
+        theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
+        theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
+        theCurrencyMenuBuilder.getEventRegistrar().addEventListener(e -> buildCurrencyMenu(theCurrencyMenuBuilder, getItem()));
+        thePrices.getEventRegistrar().addEventListener(e -> {
+            updateActions();
+            fireStateChanged();
+        });
     }
 
     /**
@@ -169,7 +190,7 @@ public class SecurityPanel
      */
     private JPanel buildMainPanel() {
         /* Build the closed button state */
-        JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
+        JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
         MoneyWiseIcons.buildLockedButton(theClosedState);
 
         /* Create the text fields */
@@ -516,75 +537,5 @@ public class SecurityPanel
 
         /* Ensure active item is visible */
         pMenuBuilder.showItem(myActive);
-    }
-
-    /**
-     * Security Listener.
-     */
-    private final class SecurityListener
-            implements TethysChangeEventListener {
-        /**
-         * The SecurityType Menu Builder.
-         */
-        private final JScrollMenuBuilder<SecurityType> theSecTypeMenuBuilder;
-
-        /**
-         * The Parent Menu Builder.
-         */
-        private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
-
-        /**
-         * The Currency Menu Builder.
-         */
-        private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
-
-        /**
-         * TypeMenu Registration.
-         */
-        private final TethysChangeRegistration theTypeMenuReg;
-
-        /**
-         * ParentMenu Registration.
-         */
-        private final TethysChangeRegistration theParentMenuReg;
-
-        /**
-         * CurrencyMenu Registration.
-         */
-        private final TethysChangeRegistration theCurrencyMenuReg;
-
-        /**
-         * Prices panel Registration.
-         */
-        private final TethysChangeRegistration thePricesReg;
-
-        /**
-         * Constructor.
-         */
-        private SecurityListener() {
-            /* Access the MenuBuilders */
-            theSecTypeMenuBuilder = theTypeButton.getMenuBuilder();
-            theTypeMenuReg = theSecTypeMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theParentMenuBuilder = theParentButton.getMenuBuilder();
-            theParentMenuReg = theParentMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-            theCurrencyMenuReg = theCurrencyMenuBuilder.getEventRegistrar().addChangeListener(this);
-            thePricesReg = thePrices.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle menu type */
-            if (theTypeMenuReg.isRelevant(pEvent)) {
-                buildSecTypeMenu(theSecTypeMenuBuilder, getItem());
-            } else if (theParentMenuReg.isRelevant(pEvent)) {
-                buildParentMenu(theParentMenuBuilder, getItem());
-            } else if (theCurrencyMenuReg.isRelevant(pEvent)) {
-                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
-            } else if (thePricesReg.isRelevant(pEvent)) {
-                updateActions();
-                fireStateChanged();
-            }
-        }
     }
 }

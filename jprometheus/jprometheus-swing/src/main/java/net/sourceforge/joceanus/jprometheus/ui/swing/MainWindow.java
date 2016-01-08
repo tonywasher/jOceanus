@@ -63,8 +63,6 @@ import net.sourceforge.joceanus.jprometheus.threads.swing.WorkerThread;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpManager;
 
@@ -699,10 +697,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void loadDatabase() {
         /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
 
         /* Create the worker thread */
-        LoadDatabase<T, E> myThread = new LoadDatabase<T, E>(myStatus);
+        LoadDatabase<T, E> myThread = new LoadDatabase<>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -712,10 +710,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void storeDatabase() {
         /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
 
         /* Create the worker thread */
-        StoreDatabase<T, E> myThread = new StoreDatabase<T, E>(myStatus);
+        StoreDatabase<T, E> myThread = new StoreDatabase<>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -725,10 +723,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void createDatabase() {
         /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
 
         /* Create the worker thread */
-        CreateDatabase<T> myThread = new CreateDatabase<T>(myStatus);
+        CreateDatabase<T> myThread = new CreateDatabase<>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -738,10 +736,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void purgeDatabase() {
         /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
 
         /* Create the worker thread */
-        PurgeDatabase<T> myThread = new PurgeDatabase<T>(myStatus);
+        PurgeDatabase<T> myThread = new PurgeDatabase<>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -785,10 +783,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void writeBackup() {
         /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
 
         /* Create the worker thread */
-        CreateBackup<T, E> myThread = new CreateBackup<T, E>(myStatus);
+        CreateBackup<T, E> myThread = new CreateBackup<>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -798,10 +796,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void restoreBackup() {
         /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
 
         /* Create the worker thread */
-        LoadBackup<T, E> myThread = new LoadBackup<T, E>(myStatus);
+        LoadBackup<T, E> myThread = new LoadBackup<>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -811,10 +809,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void createXmlBackup() {
         /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, getStatusBar());
+        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, getStatusBar());
 
         /* Create the worker thread */
-        CreateXmlFile<T, E> myThread = new CreateXmlFile<T, E>(myStatus, true);
+        CreateXmlFile<T, E> myThread = new CreateXmlFile<>(myStatus, true);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -824,10 +822,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void createXmlXtract() {
         /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, getStatusBar());
+        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, getStatusBar());
 
         /* Create the worker thread */
-        CreateXmlFile<T, E> myThread = new CreateXmlFile<T, E>(myStatus, false);
+        CreateXmlFile<T, E> myThread = new CreateXmlFile<>(myStatus, false);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -837,10 +835,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void loadXmlFile() {
         /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, getStatusBar());
+        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, getStatusBar());
 
         /* Create the worker thread */
-        LoadXmlFile<T, E> myThread = new LoadXmlFile<T, E>(myStatus);
+        LoadXmlFile<T, E> myThread = new LoadXmlFile<>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -850,10 +848,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void updatePassword() {
         /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
 
         /* Create the worker thread */
-        UpdatePassword<T, E> myThread = new UpdatePassword<T, E>(myStatus);
+        UpdatePassword<T, E> myThread = new UpdatePassword<>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -863,10 +861,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     private void reNewSecurity() {
         /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
 
         /* Create the worker thread */
-        RenewSecurity<T, E> myThread = new RenewSecurity<T, E>(myStatus);
+        RenewSecurity<T, E> myThread = new RenewSecurity<>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -899,13 +897,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
             theHelpWdw.setModule(getHelpModule());
 
             /* Listen for its closure */
-            theHelpWdw.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-                @Override
-                public void processAction(TethysActionEvent pEvent) {
-                    theHelpMgr.setEnabled(true);
-                    theHelpWdw.hideDialog();
-                    theHelpWdw = null;
-                }
+            theHelpWdw.getEventRegistrar().addEventListener(e -> {
+                theHelpMgr.setEnabled(true);
+                theHelpWdw.hideDialog();
+                theHelpWdw = null;
             });
 
             /* Disable the menu item */

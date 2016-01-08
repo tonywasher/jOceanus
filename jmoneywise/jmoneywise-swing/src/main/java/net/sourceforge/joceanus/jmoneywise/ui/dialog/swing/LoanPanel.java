@@ -56,9 +56,6 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -103,6 +100,21 @@ public class LoanPanel
     private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
+     * The Category Menu Builder.
+     */
+    private final JScrollMenuBuilder<LoanCategory> theCategoryMenuBuilder;
+
+    /**
+     * The Parent Menu Builder.
+     */
+    private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
+
+    /**
+     * The Currency Menu Builder.
+     */
+    private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
@@ -115,12 +127,12 @@ public class LoanPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the buttons */
-        theCategoryButton = new JScrollButton<LoanCategory>();
-        theParentButton = new JScrollButton<Payee>();
-        theCurrencyButton = new JScrollButton<AssetCurrency>();
+        theCategoryButton = new JScrollButton<>();
+        theParentButton = new JScrollButton<>();
+        theCurrencyButton = new JScrollButton<>();
 
         /* Set closed button */
-        theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
+        theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -148,8 +160,13 @@ public class LoanPanel
         /* Layout the panel */
         layoutPanel();
 
-        /* Create the listener */
-        new LoanListener();
+        /* Create the listeners */
+        theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
+        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu(theCategoryMenuBuilder, getItem()));
+        theParentMenuBuilder = theParentButton.getMenuBuilder();
+        theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
+        theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
+        theCurrencyMenuBuilder.getEventRegistrar().addEventListener(e -> buildCurrencyMenu(theCurrencyMenuBuilder, getItem()));
     }
 
     /**
@@ -158,7 +175,7 @@ public class LoanPanel
      */
     private JPanel buildMainPanel() {
         /* Build the closed button state */
-        JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
+        JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
         MoneyWiseIcons.buildLockedButton(theClosedState);
 
         /* Create the text fields */
@@ -408,7 +425,7 @@ public class LoanPanel
         LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+        Map<String, JScrollMenu> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         Iterator<LoanCategory> myIterator = myCategories.iterator();
@@ -531,66 +548,5 @@ public class LoanPanel
 
         /* Ensure active item is visible */
         pMenuBuilder.showItem(myActive);
-    }
-
-    /**
-     * Loan Listener.
-     */
-    private final class LoanListener
-            implements TethysChangeEventListener {
-        /**
-         * The Category Menu Builder.
-         */
-        private final JScrollMenuBuilder<LoanCategory> theCategoryMenuBuilder;
-
-        /**
-         * The Parent Menu Builder.
-         */
-        private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
-
-        /**
-         * The Currency Menu Builder.
-         */
-        private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
-
-        /**
-         * CategoryMenu Registration.
-         */
-        private final TethysChangeRegistration theCategoryMenuReg;
-
-        /**
-         * ParentMenu Registration.
-         */
-        private final TethysChangeRegistration theParentMenuReg;
-
-        /**
-         * CurrencyMenu Registration.
-         */
-        private final TethysChangeRegistration theCurrencyMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private LoanListener() {
-            /* Access the MenuBuilders */
-            theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
-            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theParentMenuBuilder = theParentButton.getMenuBuilder();
-            theParentMenuReg = theParentMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-            theCurrencyMenuReg = theCurrencyMenuBuilder.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle menu type */
-            if (theCategoryMenuReg.isRelevant(pEvent)) {
-                buildCategoryMenu(theCategoryMenuBuilder, getItem());
-            } else if (theParentMenuReg.isRelevant(pEvent)) {
-                buildParentMenu(theParentMenuBuilder, getItem());
-            } else if (theCurrencyMenuReg.isRelevant(pEvent)) {
-                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
-            }
-        }
     }
 }

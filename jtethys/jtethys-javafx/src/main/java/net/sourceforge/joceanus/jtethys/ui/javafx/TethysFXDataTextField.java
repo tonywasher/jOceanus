@@ -24,10 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.Currency;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
@@ -251,39 +248,43 @@ public abstract class TethysFXDataTextField<T>
             theTextField.setAlignment(myAlignment);
 
             /* Add listener to handle change of focus */
-            theTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(final ObservableValue<? extends Boolean> observable,
-                                    final Boolean oldValue,
-                                    final Boolean newValue) {
-                    if (newValue) {
-                        handleFocusGained();
-                    } else {
-                        processValue();
-                        if (theErrorText == null) {
-                            handleFocusLost();
-                        }
-                    }
-                }
-            });
+            theTextField.focusedProperty().addListener((v, o, n) -> handleFocusChange(n));
 
             /* handle enter/escape keys */
-            theTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(final KeyEvent t) {
-                    switch (t.getCode()) {
-                        case ENTER:
-                            processValue();
-                            break;
-                        case ESCAPE:
-                            theTextField.setText(theControl.getEditText());
-                            clearError();
-                            break;
-                        default:
-                            break;
-                    }
+            theTextField.setOnKeyPressed(this::handleKeyPressed);
+        }
+
+        /**
+         * handle focusChange.
+         * @param pFocused is the field focused?
+         */
+        private void handleFocusChange(final boolean pFocused) {
+            if (pFocused) {
+                handleFocusGained();
+            } else {
+                processValue();
+                if (theErrorText == null) {
+                    handleFocusLost();
                 }
-            });
+            }
+        }
+
+        /**
+         * handle keyPressed.
+         * @param pEvent the event
+         */
+        private void handleKeyPressed(final KeyEvent pEvent) {
+            switch (pEvent.getCode()) {
+                case ENTER:
+                    processValue();
+                    break;
+                case ESCAPE:
+                    theTextField.setText(theControl.getEditText());
+                    clearError();
+                    break;
+                default:
+                    break;
+            }
         }
 
         @Override

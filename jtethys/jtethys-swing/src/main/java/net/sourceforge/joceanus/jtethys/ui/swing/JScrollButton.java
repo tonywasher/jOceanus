@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Swing Button which provides a PopUpMenu selection.
@@ -257,11 +258,11 @@ public class JScrollButton<T>
      * @param <T> the object type
      */
     public static final class JScrollMenuBuilder<T>
-            implements ActionListener, TethysEventProvider {
+            implements ActionListener, TethysEventProvider<TethysUIEvent> {
         /**
          * The Event Manager.
          */
-        private final TethysEventManager theEventManager;
+        private final TethysEventManager<TethysUIEvent> theEventManager;
 
         /**
          * The Button.
@@ -289,11 +290,11 @@ public class JScrollButton<T>
             theMenu = new JScrollPopupMenu();
 
             /* Create event manager */
-            theEventManager = new TethysEventManager();
+            theEventManager = new TethysEventManager<>();
         }
 
         @Override
-        public TethysEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -471,7 +472,7 @@ public class JScrollButton<T>
         public void actionPerformed(final ActionEvent e) {
             /* Ask listeners to provide the menu */
             buildingMenu = true;
-            theEventManager.fireStateChanged();
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE);
 
             /* If a menu is provided */
             if ((theMenu != null) && (theMenu.getItemCount() > 0)) {
@@ -489,7 +490,7 @@ public class JScrollButton<T>
         private void notifyClosed() {
             /* Ask listeners to provide the menu */
             buildingMenu = false;
-            theEventManager.fireStateChanged();
+            theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
         }
     }
 

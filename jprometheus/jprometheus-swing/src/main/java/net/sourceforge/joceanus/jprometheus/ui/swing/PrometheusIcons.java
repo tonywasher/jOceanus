@@ -28,8 +28,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 
@@ -183,8 +183,8 @@ public abstract class PrometheusIcons {
      * Obtain goTo icon ScrollButton.
      * @return the scroll button
      */
-    public static JScrollButton<TethysActionEvent> getGotoButton() {
-        JScrollButton<TethysActionEvent> myButton = new JScrollButton<TethysActionEvent>(ICON_GOTO);
+    public static JScrollButton<PrometheusGoToEvent> getGotoButton() {
+        JScrollButton<PrometheusGoToEvent> myButton = new JScrollButton<>(ICON_GOTO);
         myButton.setToolTipText(TIP_GOTO);
         return myButton;
     }

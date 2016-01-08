@@ -35,18 +35,15 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
@@ -57,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  */
 public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends TethysSwingEnablePanel
-        implements TethysEventProvider {
+        implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -86,7 +83,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The DataFormatter.
@@ -162,28 +159,29 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theError = pError;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Access the formatter */
         theFormatter = pFieldMgr.getDataFormatter();
 
         /* Create the New FieldSet */
-        theFieldSet = new MetisFieldSet<T>(pFieldMgr);
+        theFieldSet = new MetisFieldSet<>(pFieldMgr);
 
         /* Create the main panel */
         theMainPanel = new TethysSwingEnablePanel();
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
         /* create the action panels */
-        theItemActions = new ItemActions<E>(this);
-        theEditActions = new ItemEditActions<E>(this);
+        theItemActions = new ItemActions<>(this);
+        theEditActions = new ItemEditActions<>(this);
 
         /* Create listener */
-        new FieldListener();
+        theUpdateSet.getEventRegistrar().addEventListener(e -> refreshAfterUpdate());
+        theFieldSet.getEventRegistrar().addEventListener(e -> updateItem(e.getDetails(MetisFieldUpdate.class)));
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -360,7 +358,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theUpdateSet.setEditing(Boolean.TRUE);
 
         /* Note status has changed */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
@@ -481,11 +479,11 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* If we have any updates */
         if (isNew) {
             /* Rewind any changes to before the new item */
-            theUpdateSet.processEditCommand(UpdateSet.CMD_REWIND, theEditVersion - 1, theError);
+            theUpdateSet.processEditCommand(PrometheusUIEvent.REWIND, theEditVersion - 1, theError);
             theItem = null;
         } else if (hasUpdates()) {
             /* Rewind any changes that have been made */
-            theUpdateSet.processEditCommand(UpdateSet.CMD_REWIND, theEditVersion, theError);
+            theUpdateSet.processEditCommand(PrometheusUIEvent.REWIND, theEditVersion, theError);
         }
 
         /* Stop element being editable */
@@ -493,7 +491,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theUpdateSet.setEditing(Boolean.FALSE);
 
         /* Note status has changed */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
@@ -503,7 +501,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* If we have any updates */
         if (hasUpdates()) {
             /* Rewind any changes that have been made */
-            theUpdateSet.processEditCommand(UpdateSet.CMD_REWIND, theEditVersion, theError);
+            theUpdateSet.processEditCommand(PrometheusUIEvent.REWIND, theEditVersion, theError);
         }
     }
 
@@ -514,7 +512,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* If we have any updates */
         if (hasUpdates()) {
             /* Undo the last change */
-            theUpdateSet.processEditCommand(UpdateSet.CMD_UNDO, VERSION_READONLY, theError);
+            theUpdateSet.processEditCommand(PrometheusUIEvent.UNDO, VERSION_READONLY, theError);
         }
     }
 
@@ -528,9 +526,9 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* If we have any updates */
         if (isNew || hasUpdates()) {
             /* Condense history to a single update */
-            theUpdateSet.processEditCommand(UpdateSet.CMD_OK, isNew
-                                                                    ? theEditVersion
-                                                                    : theEditVersion + 1, theError);
+            theUpdateSet.processEditCommand(PrometheusUIEvent.OK, isNew
+                                                                        ? theEditVersion
+                                                                        : theEditVersion + 1, theError);
         }
 
         /* Stop element being editable */
@@ -538,7 +536,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theSelectedItem = theItem;
 
         /* Note status has changed */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
@@ -551,7 +549,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theSelectedItem = theItem;
 
         /* Note status has changed */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
@@ -565,21 +563,21 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theUpdateSet.incrementVersion();
 
         /* Note status has changed */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
      * Declare the GoTo menu Builder.
      * @param pBuilder the menu builder
      */
-    protected abstract void declareGoToMenuBuilder(final JScrollMenuBuilder<TethysActionEvent> pBuilder);
+    protected abstract void declareGoToMenuBuilder(final JScrollMenuBuilder<PrometheusGoToEvent> pBuilder);
 
     /**
      * Process goTo request.
      * @param pEvent the goTo request event
      */
-    protected void processGoToRequest(final TethysActionEvent pEvent) {
-        theEventManager.cascadeActionEvent(pEvent);
+    protected void processGoToRequest(final PrometheusGoToEvent pEvent) {
+        theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, pEvent);
     }
 
     /**
@@ -588,101 +586,57 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     protected abstract void buildGoToMenu();
 
     /**
-     * Create an action event.
-     * @param pActionId the actionId of the event
+     * Create a GoTo event.
+     * @param pGoToId the Id of the event
      * @param pDetails the details of the event
      * @return the action event
      */
-    protected TethysActionEvent createActionEvent(final int pActionId,
+    protected PrometheusGoToEvent createGoToEvent(final int pGoToId,
                                                   final Object pDetails) {
-        return theEventManager.createActionEvent(pActionId, pDetails);
+        return new PrometheusGoToEvent(pGoToId, pDetails);
     }
 
     /**
      * fire a state changed event.
      */
     protected void fireStateChanged() {
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
-     * FieldListener class.
+     * Update item.
+     * @param pUpdate the update
      */
-    private final class FieldListener
-            implements TethysActionEventListener, TethysChangeEventListener {
-        /**
-         * UpdateSet Registration.
-         */
-        private final TethysChangeRegistration theUpdateSetReg;
+    private void updateItem(final MetisFieldUpdate pUpdate) {
+        /* Push history */
+        theItem.pushHistory();
 
-        /**
-         * FieldSet Registration.
-         */
-        private final TethysActionRegistration theFieldSetReg;
+        /* Protect against exceptions */
+        try {
+            /* Update the field */
+            updateField(pUpdate);
 
-        /**
-         * Constructor.
-         */
-        private FieldListener() {
-            /* Listen to correct events */
-            theFieldSetReg = theFieldSet.getEventRegistrar().addActionListener(this);
-            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
+            /* Handle Exceptions */
+        } catch (OceanusException e) {
+            /* Reset values */
+            theItem.popHistory();
+
+            /* Build the error */
+            OceanusException myError = new JPrometheusDataException("Failed to update field", e);
+
+            /* Show the error */
+            theError.addError(myError);
+            return;
         }
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If we are performing a rewind */
-            if (theUpdateSetReg.isRelevant(pEvent)) {
-                /* Note refresh */
-                refreshAfterUpdate();
-            }
-        }
+        /* Check for changes */
+        if (theItem.checkForHistory()) {
+            /* Increment the update version */
+            theUpdateSet.incrementVersion();
+            refreshAfterUpdate();
 
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            /* If this is a field update */
-            if (theFieldSetReg.isRelevant(pEvent)) {
-                /* Update the item */
-                MetisFieldUpdate myUpdate = pEvent.getDetails(MetisFieldUpdate.class);
-                updateItem(myUpdate);
-            }
-        }
-
-        /**
-         * Update item.
-         * @param pUpdate the update
-         */
-        private void updateItem(final MetisFieldUpdate pUpdate) {
-            /* Push history */
-            theItem.pushHistory();
-
-            /* Protect against exceptions */
-            try {
-                /* Update the field */
-                updateField(pUpdate);
-
-                /* Handle Exceptions */
-            } catch (OceanusException e) {
-                /* Reset values */
-                theItem.popHistory();
-
-                /* Build the error */
-                OceanusException myError = new JPrometheusDataException("Failed to update field", e);
-
-                /* Show the error */
-                theError.addError(myError);
-                return;
-            }
-
-            /* Check for changes */
-            if (theItem.checkForHistory()) {
-                /* Increment the update version */
-                theUpdateSet.incrementVersion();
-                refreshAfterUpdate();
-
-                /* Update according to the details */
-                setEditable(true);
-            }
+            /* Update according to the details */
+            setEditable(true);
         }
     }
 }

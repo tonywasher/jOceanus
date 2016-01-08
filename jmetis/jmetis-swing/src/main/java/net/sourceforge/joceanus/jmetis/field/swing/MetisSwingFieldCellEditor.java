@@ -55,13 +55,12 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateCellEditor;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonState;
@@ -91,7 +90,7 @@ public final class MetisSwingFieldCellEditor {
      */
     public static class StringCellEditor
             extends AbstractCellEditor
-            implements TableCellEditor, TethysEventProvider {
+            implements TableCellEditor, TethysEventProvider<TethysUIEvent> {
         /**
          * Serial Id.
          */
@@ -100,7 +99,7 @@ public final class MetisSwingFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final transient TethysEventManager theEventManager;
+        private final transient TethysEventManager<TethysUIEvent> theEventManager;
 
         /**
          * The text field.
@@ -118,11 +117,11 @@ public final class MetisSwingFieldCellEditor {
         protected StringCellEditor() {
             theField = new JTextField();
             theField.addFocusListener(new StringListener());
-            theEventManager = new TethysEventManager();
+            theEventManager = new TethysEventManager<>();
         }
 
         @Override
-        public TethysEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -146,13 +145,13 @@ public final class MetisSwingFieldCellEditor {
             thePoint = new Point(myCol, myRow);
 
             /* Enable updates to cellEditor */
-            theEventManager.fireStateChanged();
+            theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG);
 
             /* Set the text */
             theField.setText(((pValue == null)
                               || (MetisFieldValue.ERROR.equals(pValue)))
-                                                                     ? STR_EMPTY
-                                                                     : (String) pValue);
+                                                                         ? STR_EMPTY
+                                                                         : (String) pValue);
             return theField;
         }
 
@@ -274,8 +273,8 @@ public final class MetisSwingFieldCellEditor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             theField.setSelected(((pValue == null) || (MetisFieldValue.ERROR.equals(pValue)))
-                                                                                          ? Boolean.FALSE
-                                                                                          : (Boolean) pValue);
+                                                                                              ? Boolean.FALSE
+                                                                                              : (Boolean) pValue);
             theField.addItemListener(theListener);
             return theField;
         }
@@ -387,9 +386,9 @@ public final class MetisSwingFieldCellEditor {
 
             /* Build the button */
             theState = pComplex
-                                ? new ComplexIconButtonState<T, Boolean>(Boolean.FALSE)
-                                : new DefaultIconButtonState<T>();
-            theButton = new JIconButton<T>(theState);
+                                ? new ComplexIconButtonState<>(Boolean.FALSE)
+                                : new DefaultIconButtonState<>();
+            theButton = new JIconButton<>(theState);
             theButton.setFocusPainted(false);
             theButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, theButtonListener);
         }
@@ -526,7 +525,7 @@ public final class MetisSwingFieldCellEditor {
      */
     public static class ScrollButtonCellEditor<T>
             extends AbstractCellEditor
-            implements TableCellEditor, TethysEventProvider {
+            implements TableCellEditor, TethysEventProvider<TethysUIEvent> {
         /**
          * Serial Id.
          */
@@ -550,7 +549,7 @@ public final class MetisSwingFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final transient TethysEventManager theEventManager;
+        private final transient TethysEventManager<TethysUIEvent> theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -591,7 +590,7 @@ public final class MetisSwingFieldCellEditor {
             theClass = pClass;
 
             /* Create button and menu builder */
-            theButton = new JScrollButton<T>();
+            theButton = new JScrollButton<>();
             theMenuBuilder = theButton.getMenuBuilder();
 
             /* Add popupListener */
@@ -601,10 +600,10 @@ public final class MetisSwingFieldCellEditor {
             /* sort out listeners */
             theButton.setFocusPainted(false);
             theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, theButtonListener);
-            theMenuBuilder.getEventRegistrar().addChangeListener(theButtonListener);
+            theMenuBuilder.getEventRegistrar().addEventListener(theButtonListener);
 
             /* Create event manager */
-            theEventManager = new TethysEventManager();
+            theEventManager = new TethysEventManager<>();
         }
 
         /**
@@ -616,7 +615,7 @@ public final class MetisSwingFieldCellEditor {
         }
 
         @Override
-        public TethysEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -675,7 +674,7 @@ public final class MetisSwingFieldCellEditor {
          * Button Listener class.
          */
         private class ButtonListener
-                implements PropertyChangeListener, TethysChangeEventListener {
+                implements PropertyChangeListener, TethysEventListener<TethysUIEvent> {
             @Override
             public void propertyChange(final PropertyChangeEvent pEvent) {
                 /* Store value and stop editing */
@@ -689,9 +688,9 @@ public final class MetisSwingFieldCellEditor {
             }
 
             @Override
-            public void processChange(final TethysChangeEvent pEvent) {
+            public void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
                 if (theMenuBuilder.buildingMenu()) {
-                    theEventManager.fireStateChanged();
+                    theEventManager.fireEvent(TethysUIEvent.NEWVALUE);
                 } else {
                     cancelCellEditing();
                 }
@@ -744,7 +743,7 @@ public final class MetisSwingFieldCellEditor {
      */
     public static class ScrollListButtonCellEditor<T>
             extends AbstractCellEditor
-            implements TableCellEditor, TethysEventProvider {
+            implements TableCellEditor, TethysEventProvider<TethysUIEvent> {
         /**
          * Serial Id.
          */
@@ -763,17 +762,12 @@ public final class MetisSwingFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final transient TethysEventManager theEventManager;
+        private final transient TethysEventManager<TethysUIEvent> theEventManager;
 
         /**
          * The point at which the editor is active.
          */
         private transient Point thePoint;
-
-        /**
-         * The selection Listener.
-         */
-        private final transient ButtonListener theButtonListener = new ButtonListener();
 
         /**
          * The popUp Listener.
@@ -801,14 +795,20 @@ public final class MetisSwingFieldCellEditor {
             /* Add popupListener */
             theMenuBuilder.addPopupMenuListener(thePopUpListener);
 
+            /* Create event manager */
+            theEventManager = new TethysEventManager<>();
+
             /* sort out listeners */
             theButton.setFocusPainted(false);
-            TethysEventRegistrar myRegistrar = theMenuBuilder.getEventRegistrar();
-            myRegistrar.addItemListener(theButtonListener);
-            myRegistrar.addChangeListener(theButtonListener);
-
-            /* Create event manager */
-            theEventManager = new TethysEventManager();
+            TethysEventRegistrar<TethysUIEvent> myRegistrar = theMenuBuilder.getEventRegistrar();
+            myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG));
+            myRegistrar.addEventListener(TethysUIEvent.TOGGLEITEM, e -> {
+                TableModel myModel = theTable.getModel();
+                Object myValue = myModel.getValueAt(thePoint.y, thePoint.x);
+                if (myValue instanceof String) {
+                    theButton.setText((String) myValue);
+                }
+            });
         }
 
         /**
@@ -820,7 +820,7 @@ public final class MetisSwingFieldCellEditor {
         }
 
         @Override
-        public TethysEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -880,32 +880,6 @@ public final class MetisSwingFieldCellEditor {
         }
 
         /**
-         * Button Listener class.
-         */
-        private class ButtonListener
-                implements TethysItemEventListener, TethysChangeEventListener {
-            @Override
-            public void processChange(final TethysChangeEvent pEvent) {
-                theEventManager.fireStateChanged();
-            }
-
-            @Override
-            public void processItem(final TethysItemEvent pEvent) {
-                /* Access the table model */
-                TableModel myModel = theTable.getModel();
-
-                /* Pass the event as a value to set */
-                myModel.setValueAt(pEvent, thePoint.y, thePoint.x);
-
-                /* Obtain new text value */
-                Object myValue = myModel.getValueAt(thePoint.y, thePoint.x);
-                if (myValue instanceof String) {
-                    theButton.setText((String) myValue);
-                }
-            }
-        }
-
-        /**
          * Mouse Adapter class.
          * <p>
          * Required to handle button clicked, dragged, and released in different place
@@ -951,7 +925,7 @@ public final class MetisSwingFieldCellEditor {
      */
     public static class ComboBoxCellEditor<T>
             extends AbstractCellEditor
-            implements TableCellEditor, TethysEventProvider {
+            implements TableCellEditor, TethysEventProvider<TethysUIEvent> {
         /**
          * Serial Id.
          */
@@ -970,7 +944,7 @@ public final class MetisSwingFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final transient TethysEventManager theEventManager;
+        private final transient TethysEventManager<TethysUIEvent> theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -996,10 +970,10 @@ public final class MetisSwingFieldCellEditor {
             theClass = pClass;
 
             /* Create button and menu builder */
-            theCombo = new JComboBox<T>();
+            theCombo = new JComboBox<>();
 
             /* Create event manager */
-            theEventManager = new TethysEventManager();
+            theEventManager = new TethysEventManager<>();
         }
 
         /**
@@ -1011,7 +985,7 @@ public final class MetisSwingFieldCellEditor {
         }
 
         @Override
-        public TethysEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -1035,7 +1009,7 @@ public final class MetisSwingFieldCellEditor {
             thePoint = new Point(myCol, myRow);
 
             /* Enable updates to cellEditor */
-            theEventManager.fireStateChanged();
+            theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG);
 
             /* Store current value */
             T myValue = theClass.cast(pValue);
@@ -1209,7 +1183,7 @@ public final class MetisSwingFieldCellEditor {
      */
     public static class DateDayCellEditor
             extends TethysSwingDateCellEditor
-            implements TethysEventProvider {
+            implements TethysEventProvider<TethysUIEvent> {
         /**
          * Serial Id.
          */
@@ -1218,7 +1192,7 @@ public final class MetisSwingFieldCellEditor {
         /**
          * The Event Manager.
          */
-        private final transient TethysEventManager theEventManager;
+        private final transient TethysEventManager<TethysUIEvent> theEventManager;
 
         /**
          * The point at which the editor is active.
@@ -1234,11 +1208,11 @@ public final class MetisSwingFieldCellEditor {
             super(pFormatter);
 
             /* Create event manager */
-            theEventManager = new TethysEventManager();
+            theEventManager = new TethysEventManager<>();
         }
 
         @Override
-        public TethysEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -1262,7 +1236,7 @@ public final class MetisSwingFieldCellEditor {
             thePoint = new Point(myCol, myRow);
 
             /* Enable updates to cellEditor */
-            theEventManager.fireStateChanged();
+            theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG);
 
             /* Pass call on */
             return super.getTableCellEditorComponent(pTable, pValue, isSelected, pRowIndex, pColIndex);

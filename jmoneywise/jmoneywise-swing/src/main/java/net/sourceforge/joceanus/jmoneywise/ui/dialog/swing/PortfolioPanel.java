@@ -51,9 +51,6 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -97,6 +94,16 @@ public class PortfolioPanel
     private final transient ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
 
     /**
+     * The Parent Menu Builder.
+     */
+    private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
+
+    /**
+     * The Currency Menu Builder.
+     */
+    private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
@@ -109,12 +116,12 @@ public class PortfolioPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the buttons */
-        theParentButton = new JScrollButton<Payee>();
-        theCurrencyButton = new JScrollButton<AssetCurrency>();
+        theParentButton = new JScrollButton<>();
+        theCurrencyButton = new JScrollButton<>();
 
         /* Set button states */
-        theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
-        theTaxFreeState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
+        theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
+        theTaxFreeState = new ComplexIconButtonState<>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -142,8 +149,11 @@ public class PortfolioPanel
         /* Layout the panel */
         layoutPanel();
 
-        /* Create the listener */
-        new PortfolioListener();
+        /* Create the listeners */
+        theParentMenuBuilder = theParentButton.getMenuBuilder();
+        theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
+        theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
+        theCurrencyMenuBuilder.getEventRegistrar().addEventListener(e -> buildCurrencyMenu(theCurrencyMenuBuilder, getItem()));
     }
 
     /**
@@ -152,9 +162,9 @@ public class PortfolioPanel
      */
     private JPanel buildMainPanel() {
         /* Build the button states */
-        JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
+        JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
         MoneyWiseIcons.buildLockedButton(theClosedState);
-        JIconButton<Boolean> myTaxFreeButton = new JIconButton<Boolean>(theTaxFreeState);
+        JIconButton<Boolean> myTaxFreeButton = new JIconButton<>(theTaxFreeState);
         MoneyWiseIcons.buildOptionButton(theTaxFreeState);
 
         /* Create the text fields */
@@ -491,52 +501,5 @@ public class PortfolioPanel
 
         /* Ensure active item is visible */
         pMenuBuilder.showItem(myActive);
-    }
-
-    /**
-     * Portfolio Listener.
-     */
-    private final class PortfolioListener
-            implements TethysChangeEventListener {
-        /**
-         * The Parent Menu Builder.
-         */
-        private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
-
-        /**
-         * The Currency Menu Builder.
-         */
-        private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
-
-        /**
-         * ParentMenu Registration.
-         */
-        private final TethysChangeRegistration theParentMenuReg;
-
-        /**
-         * CurrencyMenu Registration.
-         */
-        private final TethysChangeRegistration theCurrencyMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private PortfolioListener() {
-            /* Access the MenuBuilders */
-            theParentMenuBuilder = theParentButton.getMenuBuilder();
-            theParentMenuReg = theParentMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-            theCurrencyMenuReg = theCurrencyMenuBuilder.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle menu type */
-            if (theParentMenuReg.isRelevant(pEvent)) {
-                buildParentMenu(theParentMenuBuilder, getItem());
-            } else if (theCurrencyMenuReg.isRelevant(pEvent)) {
-                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
-            }
-        }
     }
 }

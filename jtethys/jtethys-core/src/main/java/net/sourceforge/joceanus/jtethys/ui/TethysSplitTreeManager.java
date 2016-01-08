@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -33,11 +33,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <N> the Node type
  */
 public abstract class TethysSplitTreeManager<T, N>
-        implements TethysEventProvider {
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The Tree Manager.
@@ -61,13 +61,13 @@ public abstract class TethysSplitTreeManager<T, N>
         theHTMLManager = pHTMLManager;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Listen to the TreeManager */
-        theTreeManager.getEventRegistrar().addActionListener(theEventManager::cascadeActionEvent);
+        theTreeManager.getEventRegistrar().addEventListener(theEventManager::cascadeEvent);
 
         /* Listen to the HTMLManager */
-        theHTMLManager.getEventRegistrar().addActionListener(this::handleReferenceLookup);
+        theHTMLManager.getEventRegistrar().addEventListener(this::handleReferenceLookup);
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class TethysSplitTreeManager<T, N>
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -101,14 +101,14 @@ public abstract class TethysSplitTreeManager<T, N>
      * Handle HTML reference lookUp.
      * @param pEvent the action event
      */
-    private void handleReferenceLookup(final TethysActionEvent pEvent) {
+    private void handleReferenceLookup(final TethysEvent<TethysUIEvent> pEvent) {
         /* Obtain the reference */
         String myRef = pEvent.getDetails(String.class);
 
         /* Try to lookup as a tree item */
         if (!theTreeManager.lookUpAndSelectItem(myRef)) {
             /* Cascade the event to perform further lookup */
-            theEventManager.cascadeActionEvent(pEvent);
+            theEventManager.cascadeEvent(pEvent);
         }
     }
 }

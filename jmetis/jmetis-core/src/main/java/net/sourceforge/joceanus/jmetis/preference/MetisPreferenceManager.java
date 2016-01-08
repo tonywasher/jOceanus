@@ -26,23 +26,23 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Manager class for preference sets.
  * @author Tony Washer
  */
 public class MetisPreferenceManager
-        implements MetisDataContents, TethysEventProvider {
+        implements MetisDataContents, TethysEventProvider<MetisPreferenceEvent> {
     /**
      * Report fields.
      */
@@ -61,12 +61,12 @@ public class MetisPreferenceManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager = new TethysEventManager();
+    private final TethysEventManager<MetisPreferenceEvent> theEventManager = new TethysEventManager<>();
 
     /**
      * Map of preferenceSets.
      */
-    private Map<String, MetisPreferenceSet> theMap = new HashMap<String, MetisPreferenceSet>();
+    private Map<String, MetisPreferenceSet> theMap = new HashMap<>();
 
     @Override
     public MetisFields getDataFields() {
@@ -85,12 +85,12 @@ public class MetisPreferenceManager
 
         /* Return the value */
         return (mySet == null)
-                              ? MetisFieldValue.UNKNOWN
-                              : mySet;
+                               ? MetisFieldValue.UNKNOWN
+                               : mySet;
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -127,12 +127,10 @@ public class MetisPreferenceManager
                 theFields.declareLocalField(myName);
 
                 /* Fire the action performed */
-                theEventManager.fireActionEvent(mySet);
+                theEventManager.fireEvent(MetisPreferenceEvent.NEWSET, mySet);
 
-            } catch (IllegalAccessException e) {
-                LOGGER.error(ERROR_LOAD, e);
-                mySet = null;
-            } catch (InstantiationException e) {
+            } catch (IllegalAccessException
+                    | InstantiationException e) {
                 LOGGER.error(ERROR_LOAD, e);
                 mySet = null;
             }

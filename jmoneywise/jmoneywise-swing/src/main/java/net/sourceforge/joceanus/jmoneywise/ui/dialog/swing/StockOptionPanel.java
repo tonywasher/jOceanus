@@ -56,9 +56,6 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -113,6 +110,11 @@ public class StockOptionPanel
     private final StockOptionVestTable theVests;
 
     /**
+     * The Holding Menu Builder.
+     */
+    private final JScrollMenuBuilder<SecurityHolding> theHoldingMenuBuilder;
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
@@ -125,7 +127,7 @@ public class StockOptionPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the buttons */
-        theHoldingButton = new JScrollButton<SecurityHolding>();
+        theHoldingButton = new JScrollButton<>();
 
         /* Create date buttons */
         TethysDateFormatter myFormatter = getFormatter().getDateFormatter();
@@ -133,7 +135,7 @@ public class StockOptionPanel
         theExpiryButton = new TethysSwingDateButton(myFormatter);
 
         /* Set closed button */
-        theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
+        theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -161,8 +163,13 @@ public class StockOptionPanel
         /* Layout the panel */
         layoutPanel();
 
-        /* Create the listener */
-        new StockOptionListener();
+        /* Create the listeners */
+        theHoldingMenuBuilder = theHoldingButton.getMenuBuilder();
+        theHoldingMenuBuilder.getEventRegistrar().addEventListener(e -> buildHoldingMenu(theHoldingMenuBuilder, getItem()));
+        theVests.getEventRegistrar().addEventListener(e -> {
+            updateActions();
+            fireStateChanged();
+        });
     }
 
     /**
@@ -171,7 +178,7 @@ public class StockOptionPanel
      */
     private JPanel buildMainPanel() {
         /* Build the closed button state */
-        JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
+        JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
         MoneyWiseIcons.buildLockedButton(theClosedState);
 
         /* Create the text fields */
@@ -459,47 +466,5 @@ public class StockOptionPanel
 
         /* Refresh the vests */
         theVests.refreshAfterUpdate();
-    }
-
-    /**
-     * Options Listener.
-     */
-    private final class StockOptionListener
-            implements TethysChangeEventListener {
-        /**
-         * The Holding Menu Builder.
-         */
-        private final JScrollMenuBuilder<SecurityHolding> theHoldingMenuBuilder;
-
-        /**
-         * HoldingMenu Registration.
-         */
-        private final TethysChangeRegistration theHoldingMenuReg;
-
-        /**
-         * Vests panel Registration.
-         */
-        private final TethysChangeRegistration theVestsReg;
-
-        /**
-         * Constructor.
-         */
-        private StockOptionListener() {
-            /* Access the MenuBuilders */
-            theHoldingMenuBuilder = theHoldingButton.getMenuBuilder();
-            theHoldingMenuReg = theHoldingMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theVestsReg = theVests.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle menu type */
-            if (theHoldingMenuReg.isRelevant(pEvent)) {
-                buildHoldingMenu(theHoldingMenuBuilder, getItem());
-            } else if (theVestsReg.isRelevant(pEvent)) {
-                updateActions();
-                fireStateChanged();
-            }
-        }
     }
 }

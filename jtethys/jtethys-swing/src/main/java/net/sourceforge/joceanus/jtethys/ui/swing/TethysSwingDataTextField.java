@@ -53,6 +53,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Generic class for displaying and editing a data field.
@@ -144,7 +145,7 @@ public abstract class TethysSwingDataTextField<T>
         theCmdButton.addActionListener(e -> handleCmdMenuRequest());
 
         /* Set command menu listener */
-        getCmdMenu().getEventRegistrar().addFilteredActionListener(TethysSwingScrollContextMenu.ACTION_SELECTED,
+        getCmdMenu().getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
                 e -> handleCmdMenuClosed());
     }
 

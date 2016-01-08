@@ -31,16 +31,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <N> the Node type
  */
 public abstract class TethysTabManager<N>
-        implements TethysEventProvider {
-    /**
-     * Value updated.
-     */
-    public static final int ACTION_TAB_SELECTED = TethysScrollButtonManager.ACTION_NEW_VALUE;
-
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The first child item.
@@ -61,12 +56,12 @@ public abstract class TethysTabManager<N>
      * Constructor.
      */
     protected TethysTabManager() {
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
         isEnabled = true;
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -150,7 +145,7 @@ public abstract class TethysTabManager<N>
      * @param pItem the item that has been selected
      */
     protected void notifySelection(final Object pItem) {
-        theEventManager.fireActionEvent(ACTION_TAB_SELECTED, pItem);
+        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, pItem);
     }
 
     /**

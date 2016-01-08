@@ -31,9 +31,6 @@ import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.swing.JFieldPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 
 /**
  * JOceanus Swing Utility Set.
@@ -93,7 +90,7 @@ public class JOceanusSwingUtilitySet
         theViewerManager = new MetisSwingViewerManager(theFieldManager);
 
         /* Create listener */
-        new PreferenceListener();
+        theFieldPreferences.getEventRegistrar().addEventListener(e -> theFieldManager.setConfig(theFieldPreferences.getConfiguration()));
     }
 
     /**
@@ -123,32 +120,5 @@ public class JOceanusSwingUtilitySet
      */
     public MetisFieldManager getFieldManager() {
         return theFieldManager;
-    }
-
-    /**
-     * Preference listener class.
-     */
-    private final class PreferenceListener
-            implements TethysChangeEventListener {
-        /**
-         * UpdateSet Registration.
-         */
-        private final TethysChangeRegistration thePrefReg;
-
-        /**
-         * Constructor.
-         */
-        private PreferenceListener() {
-            thePrefReg = theFieldPreferences.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If we are performing a rewind */
-            if (thePrefReg.isRelevant(pEvent)) {
-                /* Update new configuration */
-                theFieldManager.setConfig(theFieldPreferences.getConfiguration());
-            }
-        }
     }
 }

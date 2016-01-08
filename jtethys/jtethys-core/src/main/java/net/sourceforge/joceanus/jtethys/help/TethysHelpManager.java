@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jtethys.help;
 import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -33,18 +33,14 @@ import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager.TethysTreeItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Help Manager class, responsible for displaying the help.
  * @param <N> the Node type
  */
 public abstract class TethysHelpManager<N>
-        implements TethysEventProvider {
-    /**
-     * Window closed.
-     */
-    public static final int ACTION_WINDOW_CLOSED = 100;
-
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Height of the window.
      */
@@ -58,7 +54,7 @@ public abstract class TethysHelpManager<N>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The split tree.
@@ -81,7 +77,7 @@ public abstract class TethysHelpManager<N>
      */
     public TethysHelpManager(final TethysSplitTreeManager<TethysHelpEntry, N> pSplitManager) {
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the SplitTree */
         theSplitTree = pSplitManager;
@@ -89,11 +85,11 @@ public abstract class TethysHelpManager<N>
         theHtml = theSplitTree.getHTMLManager();
 
         /* Listen to the TreeManager */
-        theSplitTree.getEventRegistrar().addActionListener(this::handleSplitTreeAction);
+        theSplitTree.getEventRegistrar().addEventListener(this::handleSplitTreeAction);
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -123,11 +119,11 @@ public abstract class TethysHelpManager<N>
 
     /**
      * Fire event.
-     * @param pActionId the actionId
+     * @param pEventId the eventId
      * @param pValue the relevant value
      */
-    protected void fireEvent(final int pActionId, final Object pValue) {
-        theEventManager.fireActionEvent(pActionId, pValue);
+    protected void fireEvent(final TethysUIEvent pEventId, final Object pValue) {
+        theEventManager.fireEvent(pEventId, pValue);
     }
 
     /**
@@ -157,12 +153,12 @@ public abstract class TethysHelpManager<N>
      * Handle the split tree action event.
      * @param pEvent the event
      */
-    protected void handleSplitTreeAction(final TethysActionEvent pEvent) {
-        switch (pEvent.getActionId()) {
-            case TethysTreeManager.ACTION_NEW_VALUE:
+    protected void handleSplitTreeAction(final TethysEvent<TethysUIEvent> pEvent) {
+        switch (pEvent.getEventId()) {
+            case NEWVALUE:
                 handleNewTreeItem(pEvent.getDetails(TethysHelpEntry.class));
                 break;
-            case TethysHTMLManager.ACTION_PAGE_BUILD:
+            case BUILDPAGE:
             default:
                 break;
         }

@@ -26,11 +26,7 @@ import java.util.Locale;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -42,7 +38,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import net.sourceforge.jdatebutton.javafx.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDatePeriod;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -213,14 +208,9 @@ public class TethysFXDateRangeSelect
         thePeriodButton = new ChoiceBox<>();
         buildPeriodMenu(thePeriodButton.getItems());
         thePeriodButton.setMaxHeight(Double.MAX_VALUE);
-        thePeriodButton.valueProperty().addListener(new ChangeListener<TethysDatePeriod>() {
-            @Override
-            public void changed(final ObservableValue<? extends TethysDatePeriod> pProperty,
-                                final TethysDatePeriod pOldValue,
-                                final TethysDatePeriod pNewValue) {
-                theState.setPeriod(pNewValue);
-                notifyChangedRange();
-            }
+        thePeriodButton.valueProperty().addListener((v, o, n) -> {
+            theState.setPeriod(n);
+            notifyChangedRange();
         });
 
         /* Create the period box */
@@ -233,60 +223,39 @@ public class TethysFXDateRangeSelect
         /* Create the DateButtons */
         theStartButton = new TethysFXDateButton(theFormatter);
         theStartButton.setMaxHeight(Double.MAX_VALUE);
-        theStartButton.selectedDateDayProperty().addListener(new ChangeListener<TethysDate>() {
-            @Override
-            public void changed(final ObservableValue<? extends TethysDate> pProperty,
-                                final TethysDate pOldValue,
-                                final TethysDate pNewValue) {
-                theState.setStartDate(pNewValue);
-                notifyChangedRange();
-            }
+        theStartButton.selectedDateDayProperty().addListener((v, o, n) -> {
+            theState.setStartDate(n);
+            notifyChangedRange();
         });
         theEndButton = new TethysFXDateButton(theFormatter);
         theEndButton.setMaxHeight(Double.MAX_VALUE);
-        theEndButton.selectedDateDayProperty().addListener(new ChangeListener<TethysDate>() {
-            @Override
-            public void changed(final ObservableValue<? extends TethysDate> pProperty,
-                                final TethysDate pOldValue,
-                                final TethysDate pNewValue) {
-                theState.setEndDate(pNewValue);
-                notifyChangedRange();
-            }
+        theEndButton.selectedDateDayProperty().addListener((v, o, n) -> {
+            theState.setEndDate(n);
+            notifyChangedRange();
         });
         theBaseButton = new TethysFXDateButton(theFormatter);
         theBaseButton.setMaxHeight(Double.MAX_VALUE);
-        theBaseButton.selectedDateDayProperty().addListener(new ChangeListener<TethysDate>() {
-            @Override
-            public void changed(final ObservableValue<? extends TethysDate> pProperty,
-                                final TethysDate pOldValue,
-                                final TethysDate pNewValue) {
-                theState.setBaseDate(pNewValue);
-                notifyChangedRange();
-            }
+        theBaseButton.selectedDateDayProperty().addListener((v, o, n) -> {
+            theState.setBaseDate(n);
+            notifyChangedRange();
         });
 
         /* Create the next button */
         theNextButton = new Button();
         theNextButton.setGraphic(ArrowIcon.RIGHT.getArrow());
         theNextButton.setTooltip(new Tooltip(NLS_NEXTTIP));
-        theNextButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent e) {
-                theState.setNextDate();
-                notifyChangedRange();
-            }
+        theNextButton.setOnAction(e -> {
+            theState.setNextDate();
+            notifyChangedRange();
         });
 
         /* Create the Previous button */
         thePrevButton = new Button();
         thePrevButton.setGraphic(ArrowIcon.LEFT.getArrow());
         thePrevButton.setTooltip(new Tooltip(NLS_PREVTIP));
-        thePrevButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent e) {
-                theState.setPreviousDate();
-                notifyChangedRange();
-            }
+        thePrevButton.setOnAction(e -> {
+            theState.setPreviousDate();
+            notifyChangedRange();
         });
 
         /* Create the Custom HBox */

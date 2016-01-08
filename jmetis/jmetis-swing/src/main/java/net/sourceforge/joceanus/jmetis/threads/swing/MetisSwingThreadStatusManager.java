@@ -231,10 +231,7 @@ public class MetisSwingThreadStatusManager
         return theNode;
     }
 
-    /**
-     * get Thread Manager.
-     * @return the thread manager
-     */
+    @Override
     protected MetisSwingThreadManager getThreadManager() {
         return (MetisSwingThreadManager) super.getThreadManager();
     }

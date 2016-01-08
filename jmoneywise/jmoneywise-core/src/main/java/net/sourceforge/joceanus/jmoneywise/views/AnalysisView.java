@@ -24,11 +24,14 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -39,6 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -47,14 +51,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Analysis Edit View.
  */
 public class AnalysisView
-        implements MetisDataContents, TethysEventProvider {
+        implements MetisDataContents, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Local Report fields.
      */
@@ -83,7 +84,7 @@ public class AnalysisView
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The View.
@@ -146,7 +147,7 @@ public class AnalysisView
         theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTIONINFO);
 
         /* Create event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
     }
 
     @Override
@@ -174,7 +175,7 @@ public class AnalysisView
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -229,7 +230,7 @@ public class AnalysisView
         registerLists();
 
         /* Notify listeners */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
@@ -242,8 +243,8 @@ public class AnalysisView
             /* Obtain the required analysis and reset to it */
             theRange = pRange;
             theBaseAnalysis = theManager != null
-                                                ? theManager.getAnalysis(theRange)
-                                                : null;
+                                                 ? theManager.getAnalysis(theRange)
+                                                 : null;
             theAnalysis = theBaseAnalysis;
 
             /* Create the new transaction list */
@@ -254,7 +255,7 @@ public class AnalysisView
             registerLists();
 
             /* Notify listeners */
-            theEventManager.fireStateChanged();
+            theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
         }
     }
 
@@ -335,7 +336,7 @@ public class AnalysisView
                 theAnalysis = myAnalyser.getAnalysis();
 
                 /* Notify listeners */
-                theEventManager.fireStateChanged();
+                theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
 
                 /* Catch exceptions */
             } catch (OceanusException e) {

@@ -32,26 +32,21 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <N> the Node type
  */
 public abstract class TethysMenuBarManager<T, N>
-        implements TethysEventProvider {
-    /**
-     * Menu Selected.
-     */
-    public static final int ACTION_MENU_SELECTED = TethysScrollButtonManager.ACTION_NEW_VALUE;
-
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Constructor.
      */
     protected TethysMenuBarManager() {
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -73,7 +68,7 @@ public abstract class TethysMenuBarManager<T, N>
      * @param pItem the item that has been selected
      */
     protected void notifySelected(final TethysMenuBarItem pItem) {
-        theEventManager.fireActionEvent(ACTION_MENU_SELECTED, pItem.getItem());
+        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, pItem.getItem());
     }
 
     /**

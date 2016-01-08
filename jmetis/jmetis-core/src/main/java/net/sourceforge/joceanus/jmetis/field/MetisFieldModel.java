@@ -39,7 +39,8 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * JFieldSet data model abstraction.
@@ -555,7 +556,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
          * Process Object value.
          * @param pValue the value
          */
-        public void processValue(final TethysItemEvent pValue) {
+        public void processValue(final TethysEvent<TethysUIEvent> pValue) {
             /* Record new value */
             setValue(pValue);
         }

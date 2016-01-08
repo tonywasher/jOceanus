@@ -25,10 +25,6 @@ package net.sourceforge.joceanus.jmetis.preference.swing;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -48,21 +44,17 @@ import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceResource;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
@@ -73,7 +65,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * @author Tony Washer
  */
 public class MetisPreferencesPanel
-        implements TethysEventProvider {
+        implements TethysEventProvider<MetisPreferenceEvent> {
     /**
      * Strut width.
      */
@@ -117,7 +109,7 @@ public class MetisPreferencesPanel
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<MetisPreferenceEvent> theEventManager;
 
     /**
      * The field manager.
@@ -165,6 +157,11 @@ public class MetisPreferencesPanel
     private final CardLayout theLayout;
 
     /**
+     * Preference menu builder.
+     */
+    private final JScrollMenuBuilder<MetisPreferenceSetPanel> thePrefMenuBuilder;
+
+    /**
      * The active set.
      */
     private MetisPreferenceSetPanel theActive = null;
@@ -173,11 +170,6 @@ public class MetisPreferencesPanel
      * The list of panels.
      */
     private final List<MetisPreferenceSetPanel> thePanels;
-
-    /**
-     * The listener.
-     */
-    private final PropertyListener theListener;
 
     /**
      * Constructor.
@@ -194,7 +186,7 @@ public class MetisPreferencesPanel
         theFieldMgr = pFieldMgr;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the Panel */
         thePanel = new TethysSwingEnablePanel();
@@ -217,7 +209,7 @@ public class MetisPreferencesPanel
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_SET);
-        theSelectButton = new JScrollButton<MetisPreferenceSetPanel>();
+        theSelectButton = new JScrollButton<>();
 
         /* Create the selection panel */
         JPanel mySelection = new TethysSwingEnablePanel();
@@ -236,13 +228,12 @@ public class MetisPreferencesPanel
         theProperties.setLayout(theLayout);
 
         /* Add Listeners */
-        theListener = new PropertyListener();
-        theOKButton.addActionListener(theListener);
-        theResetButton.addActionListener(theListener);
-        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, theListener);
+        theOKButton.addActionListener(e -> saveUpdates());
+        theResetButton.addActionListener(e -> resetUpdates());
+        theSelectButton.addPropertyChangeListener(e -> handlePropertySetSelect());
 
         /* Create the panel list */
-        thePanels = new ArrayList<MetisPreferenceSetPanel>();
+        thePanels = new ArrayList<>();
 
         /* Loop through the existing property sets */
         for (MetisPreferenceSet mySet : pPreferenceMgr.getPreferenceSets()) {
@@ -270,12 +261,47 @@ public class MetisPreferencesPanel
         theDataEntry.addAsChildOf(pSection);
         theDataEntry.setObject(pPreferenceMgr);
 
+        /* Access menu builders */
+        thePrefMenuBuilder = theSelectButton.getMenuBuilder();
+        thePrefMenuBuilder.getEventRegistrar().addEventListener(e -> buildPreferenceMenu());
+
         /* Add a listener for the addition of subsequent propertySets */
-        new PrefSetListener(pPreferenceMgr);
+        getEventRegistrar().addEventListener(this::handleNewPropertySet);
+    }
+
+    /**
+     * handle propertySetSelect event.
+     */
+    private void handlePropertySetSelect() {
+        /* If the panel has changed */
+        MetisPreferenceSetPanel myPanel = theSelectButton.getValue();
+        if (!MetisDifference.isEqual(theActive, myPanel)) {
+            /* Set the Active component */
+            theActive = myPanel;
+
+            /* Move correct card to front */
+            theLayout.show(theProperties, theActive.toString());
+        }
+    }
+
+    /**
+     * handle new propertySet event.
+     * @param pEvent the event
+     */
+    private void handleNewPropertySet(final TethysEvent<MetisPreferenceEvent> pEvent) {
+        /* Details is the property set that has been added */
+        MetisPreferenceSet mySet = pEvent.getDetails(MetisPreferenceSet.class);
+
+        /* Register the set */
+        registerSet(mySet);
+
+        /* Note that the panel should be re-displayed */
+        setVisibility();
+        theProperties.invalidate();
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -299,7 +325,7 @@ public class MetisPreferencesPanel
     }
 
     /**
-     * Set enabled state
+     * Set enabled state.
      * @param pEnabled the state true/false
      */
     public void setEnabled(final boolean pEnabled) {
@@ -321,7 +347,10 @@ public class MetisPreferencesPanel
         thePanels.add(myPanel);
 
         /* Add listener */
-        myPanel.getEventRegistrar().addChangeListener(theListener);
+        myPanel.getEventRegistrar().addEventListener(e -> {
+            setVisibility();
+            theEventManager.fireEvent(MetisPreferenceEvent.PREFCHANGED);
+        });
     }
 
     /**
@@ -355,7 +384,7 @@ public class MetisPreferencesPanel
         setVisibility();
 
         /* Notify that state has changed */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(MetisPreferenceEvent.PREFCHANGED);
     }
 
     /**
@@ -369,7 +398,7 @@ public class MetisPreferencesPanel
         setVisibility();
 
         /* Notify that state has changed */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(MetisPreferenceEvent.PREFCHANGED);
     }
 
     /**
@@ -394,143 +423,31 @@ public class MetisPreferencesPanel
     }
 
     /**
-     * PropertyListener class.
+     * Show Preference menu.
      */
-    private final class PropertyListener
-            implements ActionListener, PropertyChangeListener, TethysChangeEventListener {
-        /**
-         * Preference menu builder.
-         */
-        private final JScrollMenuBuilder<MetisPreferenceSetPanel> thePrefMenuBuilder;
+    private void buildPreferenceMenu() {
+        /* Reset the popUp menu */
+        thePrefMenuBuilder.clearMenu();
 
-        /**
-         * PrefMenu Registration.
-         */
-        private final TethysChangeRegistration thePrefMenuReg;
+        /* Record active item */
+        JMenuItem myActive = null;
 
-        /**
-         * Constructor.
-         */
-        private PropertyListener() {
-            /* Access builders */
-            thePrefMenuBuilder = theSelectButton.getMenuBuilder();
-            thePrefMenuReg = thePrefMenuBuilder.getEventRegistrar().addChangeListener(this);
-        }
+        /* Loop through the panels */
+        Iterator<MetisPreferenceSetPanel> myIterator = thePanels.iterator();
+        while (myIterator.hasNext()) {
+            MetisPreferenceSetPanel myPanel = myIterator.next();
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle menu type */
-            if (thePrefMenuReg.isRelevant(pEvent)) {
-                /* Build the preference menu */
-                buildPreferenceMenu();
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = thePrefMenuBuilder.addItem(myPanel);
 
-                /* else its one of the subPanels */
-            } else {
-                /* Set visibility */
-                setVisibility();
-
-                /* Notify listeners */
-                theEventManager.fireStateChanged();
+            /* If this is the active panel */
+            if (myPanel.equals(theActive)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
 
-        /**
-         * Show Preference menu.
-         */
-        private void buildPreferenceMenu() {
-            /* Reset the popUp menu */
-            thePrefMenuBuilder.clearMenu();
-
-            /* Record active item */
-            JMenuItem myActive = null;
-
-            /* Loop through the panels */
-            Iterator<MetisPreferenceSetPanel> myIterator = thePanels.iterator();
-            while (myIterator.hasNext()) {
-                MetisPreferenceSetPanel myPanel = myIterator.next();
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = thePrefMenuBuilder.addItem(myPanel);
-
-                /* If this is the active panel */
-                if (myPanel.equals(theActive)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            thePrefMenuBuilder.showItem(myActive);
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            Object o = evt.getSource();
-
-            /* If this event relates to the OK button */
-            if (theOKButton.equals(o)) {
-                /* Perform the command */
-                saveUpdates();
-
-                /* If this event relates to the reset button */
-            } else if (theResetButton.equals(o)) {
-                /* Perform the command */
-                resetUpdates();
-            }
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* Access the source */
-            Object o = pEvent.getSource();
-
-            /* If this is the Select button */
-            if (theSelectButton.equals(o)) {
-                /* If the panel has changed */
-                MetisPreferenceSetPanel myPanel = theSelectButton.getValue();
-                if (!MetisDifference.isEqual(theActive, myPanel)) {
-                    /* Set the Active component */
-                    theActive = myPanel;
-
-                    /* Move correct card to front */
-                    theLayout.show(theProperties, theActive.toString());
-                }
-            }
-        }
-    }
-
-    /**
-     * PreferenceSetListener class.
-     */
-    private final class PrefSetListener
-            implements TethysActionEventListener {
-        /**
-         * UpdateSet Registration.
-         */
-        private final TethysActionRegistration thePrefSetReg;
-
-        /**
-         * Constructor.
-         * @param pPreferenceMgr the preference manager
-         */
-        private PrefSetListener(final MetisPreferenceManager pPreferenceMgr) {
-            thePrefSetReg = pPreferenceMgr.getEventRegistrar().addActionListener(this);
-        }
-
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            /* If this is a new preference set */
-            if (thePrefSetReg.isRelevant(pEvent)) {
-                /* Details is the property set that has been added */
-                MetisPreferenceSet mySet = pEvent.getDetails(MetisPreferenceSet.class);
-
-                /* Register the set */
-                registerSet(mySet);
-
-                /* Note that the panel should be re-displayed */
-                setVisibility();
-                theProperties.invalidate();
-            }
-        }
+        /* Ensure active item is visible */
+        thePrefMenuBuilder.showItem(myActive);
     }
 }

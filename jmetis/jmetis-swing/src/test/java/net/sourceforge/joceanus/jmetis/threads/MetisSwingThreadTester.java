@@ -164,7 +164,7 @@ public class MetisSwingThreadTester {
         theStatusPanel.setVisible(false);
 
         /* Create thread status change handler */
-        theThreadMgr.getEventRegistrar().addActionListener(e -> handleThreadChange());
+        theThreadMgr.getEventRegistrar().addEventListener(e -> handleThreadChange());
 
         /* handle launch thread */
         theLaunchButton.addActionListener(e -> launchThread());

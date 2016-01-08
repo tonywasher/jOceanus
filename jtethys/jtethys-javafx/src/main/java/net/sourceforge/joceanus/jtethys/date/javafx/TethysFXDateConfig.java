@@ -26,13 +26,12 @@ import java.time.LocalDate;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import net.sourceforge.jdatebutton.javafx.JDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
 
 /**
  * Class that extends {@link JDateConfig} to handle {@link TethysDate} objects.
@@ -80,7 +79,7 @@ public class TethysFXDateConfig
     public TethysFXDateConfig(final TethysDateFormatter pFormatter) {
         super(pFormatter);
         theSelectedDateDay = new SimpleObjectProperty<>(this, TethysFXDateButton.PROPERTY_DATEDAY);
-        pFormatter.getEventRegistrar().addChangeListener(new LocaleListener(pFormatter));
+        pFormatter.getEventRegistrar().addEventListener(new LocaleListener(pFormatter));
         addDateListener();
     }
 
@@ -90,17 +89,18 @@ public class TethysFXDateConfig
     private void addDateListener() {
         /* Access selected date */
         ObjectProperty<LocalDate> myProperty = selectedDateProperty();
-        myProperty.addListener(new ChangeListener<LocalDate>() {
-            @Override
-            public void changed(final ObservableValue<? extends LocalDate> pProperty,
-                                final LocalDate pOldValue,
-                                final LocalDate pNewValue) {
-                TethysDate myDate = pNewValue == null
-                                                      ? null
-                                                      : new TethysDate(pNewValue, getLocale());
-                theSelectedDateDay.set(myDate);
-            }
-        });
+        myProperty.addListener((v, o, n) -> handleDateChange(n));
+    }
+
+    /**
+     * Add listener.
+     * @param pNewValue the new value
+     */
+    private void handleDateChange(final LocalDate pNewValue) {
+        TethysDate myDate = pNewValue == null
+                                              ? null
+                                              : new TethysDate(pNewValue, getLocale());
+        theSelectedDateDay.set(myDate);
     }
 
     /**
@@ -204,7 +204,7 @@ public class TethysFXDateConfig
      * Locale Listener class.
      */
     private final class LocaleListener
-            implements TethysChangeEventListener {
+            implements TethysEventListener<TethysDateEvent> {
         /**
          * The formatter.
          */
@@ -219,7 +219,7 @@ public class TethysFXDateConfig
         }
 
         @Override
-        public void processChange(final TethysChangeEvent e) {
+        public void handleEvent(final TethysEvent<TethysDateEvent> e) {
             setTheLocale(theFormatter.getLocale());
             refreshText();
         }

@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.event.EventHandler;
-import javafx.stage.WindowEvent;
 import net.sourceforge.jdatebutton.javafx.JDateButton;
 import net.sourceforge.jdatebutton.javafx.JDateConfig;
 import net.sourceforge.jdatebutton.javafx.JDateDialog;
@@ -74,12 +72,9 @@ public class TethysFXDateButtonManager
         myDialog.setOnShowing(e -> handleDialogRequest());
 
         /* Catch the dialog closing */
-        myDialog.setOnHidden(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(final WindowEvent event) {
-                if (myDialog.haveSelected()) {
-                    handleNewValue();
-                }
+        myDialog.setOnHidden(e -> {
+            if (myDialog.haveSelected()) {
+                handleNewValue();
             }
         });
     }

@@ -50,6 +50,7 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceResource;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisBooleanPreference;
@@ -78,7 +79,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGridBagUtilities;
  */
 public class MetisPreferenceSetPanel
         extends JPanel
-        implements TethysEventProvider {
+        implements TethysEventProvider<MetisPreferenceEvent> {
     /**
      * Serial Id.
      */
@@ -122,7 +123,7 @@ public class MetisPreferenceSetPanel
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<MetisPreferenceEvent> theEventManager;
 
     /**
      * The PreferenceSet for this panel.
@@ -166,7 +167,7 @@ public class MetisPreferenceSetPanel
         int myRow = 0;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Record the set and manager */
         thePreferences = pSet;
@@ -177,8 +178,8 @@ public class MetisPreferenceSetPanel
         theName = pSet.getClass().getSimpleName();
 
         /* Create the lists of elements and items */
-        theElList = new ArrayList<PreferenceElement>();
-        theCompList = new ArrayList<Component>();
+        theElList = new ArrayList<>();
+        theCompList = new ArrayList<>();
 
         /* Set a border */
         setBorder(BorderFactory.createTitledBorder(NLS_PREFERENCES));
@@ -258,7 +259,7 @@ public class MetisPreferenceSetPanel
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -317,7 +318,7 @@ public class MetisPreferenceSetPanel
         updateFields();
 
         /* Notify listeners */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(MetisPreferenceEvent.PREFCHANGED);
     }
 
     @Override

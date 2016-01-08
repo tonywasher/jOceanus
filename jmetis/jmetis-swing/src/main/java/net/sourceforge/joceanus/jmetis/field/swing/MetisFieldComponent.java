@@ -59,8 +59,6 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldState;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEventListener;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton;
@@ -914,25 +912,12 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
             theModel = pModel;
 
             /* Create the listener and attach it */
-            ButtonListener myListener = new ButtonListener();
-            theComponent.getMenuBuilder().getEventRegistrar().addItemListener(myListener);
+            theComponent.getMenuBuilder().getEventRegistrar().addEventListener(theModel::processValue);
         }
 
         @Override
         protected void displayField() {
             getReadOnlyLabel().setText(theComponent.getText());
-        }
-
-        /**
-         * ButtonListener class.
-         */
-        private final class ButtonListener
-                implements TethysItemEventListener {
-            @Override
-            public void processItem(final TethysItemEvent pEvent) {
-                /* Record the value */
-                theModel.processValue(pEvent);
-            }
         }
     }
 

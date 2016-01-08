@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @author Tony Washer
  */
 public abstract class MetisPreferenceSet
-        implements MetisFieldSetItem, TethysEventProvider {
+        implements MetisFieldSetItem, TethysEventProvider<MetisPreferenceEvent> {
     /**
      * Unknown preference string.
      */
@@ -61,7 +61,7 @@ public abstract class MetisPreferenceSet
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<MetisPreferenceEvent> theEventManager;
 
     /**
      * Report fields.
@@ -93,10 +93,10 @@ public abstract class MetisPreferenceSet
         theHandle = theHandle.node(this.getClass().getSimpleName());
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Allocate the preference map */
-        theMap = new LinkedHashMap<String, MetisPreferenceItem>();
+        theMap = new LinkedHashMap<>();
 
         /* Access the active key names */
         try {
@@ -118,7 +118,7 @@ public abstract class MetisPreferenceSet
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -267,7 +267,7 @@ public abstract class MetisPreferenceSet
                                                                           final E pDefault,
                                                                           final Class<E> pClass) {
         /* Create the preference */
-        MetisEnumPreference<E> myPref = new MetisEnumPreference<E>(pName, pDefault, pClass);
+        MetisEnumPreference<E> myPref = new MetisEnumPreference<>(pName, pDefault, pClass);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -480,7 +480,7 @@ public abstract class MetisPreferenceSet
             theHandle.flush();
 
             /* Notify listeners */
-            theEventManager.fireStateChanged();
+            theEventManager.fireEvent(MetisPreferenceEvent.PREFCHANGED);
 
         } catch (BackingStoreException e) {
             throw new MetisDataException("Failed to flush preferences to store", e);

@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -57,14 +55,10 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
@@ -212,10 +206,15 @@ public class TransactionTagTable
         theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<TransactionTag, MoneyWiseDataType>(this, theActiveTag);
+        theSelectionModel = new JDataTableSelection<>(this, theActiveTag);
 
         /* Create listener */
-        new TransactionTagListener();
+        theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
+        theActiveTag.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActiveTag.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
+
+        /* Listen to swing events */
+        theNewButton.addActionListener(e -> theModel.addNewItem());
     }
 
     /**
@@ -330,6 +329,34 @@ public class TransactionTagTable
     }
 
     /**
+     * Handle updateSet rewind.
+     */
+    private void handleRewind() {
+        /* Only action if we are not editing */
+        if (!theActiveTag.isEditing()) {
+            /* Handle the reWind */
+            theSelectionModel.handleReWind();
+        }
+
+        /* Adjust for changes */
+        notifyChanges();
+    }
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+        if (!theActiveTag.isEditing()) {
+            /* handle the edit transition */
+            theSelectionModel.handleEditTransition();
+        }
+
+        /* Note changes */
+        notifyChanges();
+    }
+
+    /**
      * JTable Data Model.
      */
     private final class TransactionTagTableModel
@@ -441,77 +468,6 @@ public class TransactionTagTable
 
                 /* Show the error */
                 setError(myError);
-            }
-        }
-    }
-
-    /**
-     * Listener class.
-     */
-    private final class TransactionTagListener
-            implements ActionListener, TethysActionEventListener, TethysChangeEventListener {
-        /**
-         * UpdateSet Registration.
-         */
-        private final TethysChangeRegistration theUpdateSetReg;
-
-        /**
-         * Tag Change Registration.
-         */
-        private final TethysChangeRegistration theTagPanelReg;
-
-        /**
-         * Constructor.
-         */
-        private TransactionTagListener() {
-            /* Register listeners */
-            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
-            theTagPanelReg = theActiveTag.getEventRegistrar().addChangeListener(this);
-            theActiveTag.getEventRegistrar().addActionListener(this);
-
-            /* Listen to swing events */
-            theNewButton.addActionListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If we are performing a rewind */
-            if (theUpdateSetReg.isRelevant(pEvent)) {
-                /* Only action if we are not editing */
-                if (!theActiveTag.isEditing()) {
-                    /* handle the ReWind */
-                    theSelectionModel.handleReWind();
-                }
-
-                /* Adjust for changes */
-                notifyChanges();
-
-                /* If we are handling panel state */
-            } else if (theTagPanelReg.isRelevant(pEvent)) {
-                /* Only action if we are not editing */
-                if (!theActiveTag.isEditing()) {
-                    /* handle the edit transition */
-                    theSelectionModel.handleEditTransition();
-                }
-
-                /* Note changes */
-                notifyChanges();
-            }
-        }
-
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            cascadeActionEvent(pEvent);
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
-
-            /* Handle actions */
-            if (theNewButton.equals(o)) {
-                theModel.addNewItem();
             }
         }
     }

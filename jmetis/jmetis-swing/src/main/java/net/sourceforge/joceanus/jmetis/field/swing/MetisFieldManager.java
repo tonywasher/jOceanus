@@ -30,6 +30,7 @@ import javax.swing.border.Border;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldEvent;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.BooleanCellEditor;
@@ -63,7 +64,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @author Tony Washer
  */
 public class MetisFieldManager
-        implements TethysEventProvider {
+        implements TethysEventProvider<MetisFieldEvent> {
     /**
      * Money accounting format width.
      */
@@ -132,7 +133,7 @@ public class MetisFieldManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<MetisFieldEvent> theEventManager;
 
     /**
      * General formatter.
@@ -158,7 +159,7 @@ public class MetisFieldManager
         theConfig = pConfig;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create data formatter */
         theFormatter = new MetisDataFormatter();
@@ -166,7 +167,7 @@ public class MetisFieldManager
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<MetisFieldEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -197,6 +198,7 @@ public class MetisFieldManager
     /**
      * Populate FieldData interface.
      */
+    @FunctionalInterface
     public interface PopulateFieldData {
         /**
          * Get field data for row.
@@ -217,7 +219,7 @@ public class MetisFieldManager
         theErrorBorder = BorderFactory.createLineBorder(theConfig.getErrorColor());
 
         /* Fire event */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(MetisFieldEvent.FIELDUPDATED);
     }
 
     /**
@@ -275,7 +277,7 @@ public class MetisFieldManager
      */
     public <T> IconButtonCellRenderer<T> allocateIconButtonCellRenderer(final IconButtonCellEditor<T> pEditor) {
         /* Return a new IconRenderer object */
-        return new IconButtonCellRenderer<T>(this, pEditor);
+        return new IconButtonCellRenderer<>(this, pEditor);
     }
 
     /**
@@ -358,7 +360,7 @@ public class MetisFieldManager
      */
     public <T> ComboBoxCellEditor<T> allocateComboBoxCellEditor(final Class<T> pClass) {
         /* Return a new ComboBoxEditor object */
-        return new ComboBoxCellEditor<T>(pClass);
+        return new ComboBoxCellEditor<>(pClass);
     }
 
     /**
@@ -380,7 +382,7 @@ public class MetisFieldManager
     public <T> IconButtonCellEditor<T> allocateIconButtonCellEditor(final Class<T> pClass,
                                                                     final boolean pComplex) {
         /* Return a new IconButtonEditor object */
-        return new IconButtonCellEditor<T>(pClass, pComplex);
+        return new IconButtonCellEditor<>(pClass, pComplex);
     }
 
     /**
@@ -391,7 +393,7 @@ public class MetisFieldManager
      */
     public <T> ScrollButtonCellEditor<T> allocateScrollButtonCellEditor(final Class<T> pClass) {
         /* Return a new ScrollButtonEditor object */
-        return new ScrollButtonCellEditor<T>(pClass);
+        return new ScrollButtonCellEditor<>(pClass);
     }
 
     /**
@@ -401,7 +403,7 @@ public class MetisFieldManager
      */
     public <T> ScrollListButtonCellEditor<T> allocateScrollListButtonCellEditor() {
         /* Return a new ScrollListButtonEditor object */
-        return new ScrollListButtonCellEditor<T>();
+        return new ScrollListButtonCellEditor<>();
     }
 
     /**

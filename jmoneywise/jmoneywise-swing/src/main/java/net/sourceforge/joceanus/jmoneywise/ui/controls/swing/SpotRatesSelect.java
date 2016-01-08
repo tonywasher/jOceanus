@@ -23,10 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -40,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
@@ -54,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
  */
 public class SpotRatesSelect
         extends JPanel
-        implements TethysEventProvider {
+        implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -93,7 +90,7 @@ public class SpotRatesSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The data view.
@@ -144,7 +141,7 @@ public class SpotRatesSelect
         theView = pView;
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create Labels */
         JLabel myCurr = new JLabel(NLS_CURRENCY);
@@ -197,12 +194,21 @@ public class SpotRatesSelect
         /* Apply the current state */
         theState.applyState();
 
-        /* Add the listener for item changes */
-        new SpotRatesListener();
+        /* Add the listeners */
+        theDateButton.addPropertyChangeListener(TethysSwingDateButton.PROPERTY_DATEDAY, e -> handleNewDate());
+        theDownloadButton.addActionListener(e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
+        theNext.addActionListener(e -> {
+            theState.setNext();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        });
+        thePrev.addActionListener(e -> {
+            theState.setPrev();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        });
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -238,11 +244,11 @@ public class SpotRatesSelect
      */
     private void setRange(final TethysDateRange pRange) {
         TethysDate myStart = (pRange == null)
-                                            ? null
-                                            : pRange.getStart();
+                                              ? null
+                                              : pRange.getStart();
         TethysDate myEnd = (pRange == null)
-                                          ? null
-                                          : pRange.getEnd();
+                                            ? null
+                                            : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDateDay(myStart);
@@ -288,53 +294,12 @@ public class SpotRatesSelect
     }
 
     /**
-     * Listener class.
+     * Handle new Date.
      */
-    private final class SpotRatesListener
-            implements ActionListener, PropertyChangeListener {
-        /**
-         * Constructor.
-         */
-        private SpotRatesListener() {
-            /* Declare listener */
-            theDateButton.addPropertyChangeListener(TethysSwingDateButton.PROPERTY_DATEDAY, this);
-            theDownloadButton.addActionListener(this);
-            theNext.addActionListener(this);
-            thePrev.addActionListener(this);
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            Object o = evt.getSource();
-
-            /* If this event relates to the Next button */
-            if (theNext.equals(o)) {
-                /* Set next and notify changes */
-                theState.setNext();
-                theEventManager.fireStateChanged();
-
-                /* If this event relates to the previous button */
-            } else if (thePrev.equals(o)) {
-                /* Set previous and notify changes */
-                theState.setPrev();
-                theEventManager.fireStateChanged();
-
-                /* If this event relates to the download button */
-            } else if (theDownloadButton.equals(o)) {
-                /* fire an action event */
-                theEventManager.fireActionEvent();
-            }
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent evt) {
-            Object o = evt.getSource();
-
-            /* if event relates to the Date button */
-            if (theDateButton.equals(o)
-                && (theState.setDate(theDateButton))) {
-                theEventManager.fireStateChanged();
-            }
+    private void handleNewDate() {
+        /* Select the new date */
+        if (theState.setDate(theDateButton)) {
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
     }
 
@@ -345,17 +310,17 @@ public class SpotRatesSelect
         /**
          * Selected date.
          */
-        private TethysDate theDate = null;
+        private TethysDate theDate;
 
         /**
          * Next date.
          */
-        private TethysDate theNextDate = null;
+        private TethysDate theNextDate;
 
         /**
          * Previous date.
          */
-        private TethysDate thePrevDate = null;
+        private TethysDate thePrevDate;
 
         /**
          * Constructor.

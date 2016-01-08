@@ -27,8 +27,6 @@ import javax.swing.tree.DefaultTreeModel;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 
 /**
  * Data Manager.
@@ -71,7 +69,7 @@ public class MetisSwingViewerManager
         theHTMLFormatter = new MetisViewerHTML(pFieldManager.getConfig(), getDataFormatter());
 
         /* Create the listener */
-        new ViewerListener();
+        theFieldManager.getEventRegistrar().addEventListener(e -> processFieldConfig());
     }
 
     /**
@@ -146,24 +144,6 @@ public class MetisSwingViewerManager
         if (theWindow != null) {
             /* Set the new formatter */
             theWindow.setFormatter(theHTMLFormatter);
-        }
-    }
-
-    /**
-     * Listener class.
-     */
-    private final class ViewerListener
-            implements TethysChangeEventListener {
-        /**
-         * Constructor.
-         */
-        private ViewerListener() {
-            theFieldManager.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            processFieldConfig();
         }
     }
 }

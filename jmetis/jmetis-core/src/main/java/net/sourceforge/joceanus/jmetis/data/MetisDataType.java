@@ -68,6 +68,11 @@ public enum MetisDataType {
     DATE,
 
     /**
+     * Date.
+     */
+    DATEDAY,
+
+    /**
      * CharArray.
      */
     CHARARRAY,
@@ -81,11 +86,6 @@ public enum MetisDataType {
      * BigDecimal.
      */
     BIGDECIMAL,
-
-    /**
-     * DateDay.
-     */
-    DATEDAY,
 
     /**
      * Money.
@@ -126,4 +126,22 @@ public enum MetisDataType {
      * LinkSet.
      */
     LINKSET;
+
+    /**
+     * is the dataType numeric?
+     * @return true/false
+     */
+    public boolean isNumeric() {
+        switch (this) {
+            case STRING:
+            case CHARARRAY:
+            case LINK:
+            case LINKSET:
+            case DATE:
+            case DATEDAY:
+                return false;
+            default:
+                return true;
+        }
+    }
 }

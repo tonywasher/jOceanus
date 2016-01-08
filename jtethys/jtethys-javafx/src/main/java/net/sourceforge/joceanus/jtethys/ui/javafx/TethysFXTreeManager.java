@@ -27,6 +27,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Tree Manager.
@@ -59,7 +60,7 @@ public class TethysFXTreeManager<T>
         theTree.setShowRoot(false);
 
         /* Add listener */
-        theTree.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> fireEvent(ACTION_NEW_VALUE, n.getValue().getItem()));
+        theTree.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> fireEvent(TethysUIEvent.NEWVALUE, n.getValue().getItem()));
     }
 
     @Override

@@ -59,9 +59,6 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -111,6 +108,26 @@ public class CashPanel
     private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
+     * The Category Menu Builder.
+     */
+    private final JScrollMenuBuilder<CashCategory> theCategoryMenuBuilder;
+
+    /**
+     * The Currency Menu Builder.
+     */
+    private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
+
+    /**
+     * The AutoExpense Menu Builder.
+     */
+    private final JScrollMenuBuilder<TransactionCategory> theAutoExpenseMenuBuilder;
+
+    /**
+     * The AutoPayee Menu Builder.
+     */
+    private final JScrollMenuBuilder<Payee> theAutoPayeeMenuBuilder;
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
@@ -123,13 +140,13 @@ public class CashPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the buttons */
-        theCategoryButton = new JScrollButton<CashCategory>();
-        theCurrencyButton = new JScrollButton<AssetCurrency>();
-        theAutoExpenseButton = new JScrollButton<TransactionCategory>();
-        theAutoPayeeButton = new JScrollButton<Payee>();
+        theCategoryButton = new JScrollButton<>();
+        theCurrencyButton = new JScrollButton<>();
+        theAutoExpenseButton = new JScrollButton<>();
+        theAutoPayeeButton = new JScrollButton<>();
 
         /* Set closed button */
-        theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
+        theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -158,7 +175,14 @@ public class CashPanel
         layoutPanel();
 
         /* Create the listener */
-        new CashListener();
+        theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
+        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu(theCategoryMenuBuilder, getItem()));
+        theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
+        theCurrencyMenuBuilder.getEventRegistrar().addEventListener(e -> buildCurrencyMenu(theCurrencyMenuBuilder, getItem()));
+        theAutoExpenseMenuBuilder = theAutoExpenseButton.getMenuBuilder();
+        theAutoExpenseMenuBuilder.getEventRegistrar().addEventListener(e -> buildAutoExpenseMenu(theAutoExpenseMenuBuilder, getItem()));
+        theAutoPayeeMenuBuilder = theAutoPayeeButton.getMenuBuilder();
+        theAutoPayeeMenuBuilder.getEventRegistrar().addEventListener(e -> buildAutoPayeeMenu(theAutoPayeeMenuBuilder, getItem()));
     }
 
     /**
@@ -167,7 +191,7 @@ public class CashPanel
      */
     private JPanel buildMainPanel() {
         /* Set states */
-        JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
+        JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
         MoneyWiseIcons.buildLockedButton(theClosedState);
 
         /* Create the text fields */
@@ -404,7 +428,7 @@ public class CashPanel
         CashCategoryList myCategories = getDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+        Map<String, JScrollMenu> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         Iterator<CashCategory> myIterator = myCategories.iterator();
@@ -461,7 +485,7 @@ public class CashPanel
         TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+        Map<String, JScrollMenu> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         Iterator<TransactionCategory> myIterator = myCategories.iterator();
@@ -583,80 +607,5 @@ public class CashPanel
 
         /* Ensure active item is visible */
         pMenuBuilder.showItem(myActive);
-    }
-
-    /**
-     * Cash Listener.
-     */
-    private final class CashListener
-            implements TethysChangeEventListener {
-        /**
-         * The Category Menu Builder.
-         */
-        private final JScrollMenuBuilder<CashCategory> theCategoryMenuBuilder;
-
-        /**
-         * The Currency Menu Builder.
-         */
-        private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
-
-        /**
-         * The AutoExpense Menu Builder.
-         */
-        private final JScrollMenuBuilder<TransactionCategory> theAutoExpenseMenuBuilder;
-
-        /**
-         * The AutoPayee Menu Builder.
-         */
-        private final JScrollMenuBuilder<Payee> theAutoPayeeMenuBuilder;
-
-        /**
-         * CategoryMenu Registration.
-         */
-        private final TethysChangeRegistration theCategoryMenuReg;
-
-        /**
-         * CurrencyMenu Registration.
-         */
-        private final TethysChangeRegistration theCurrencyMenuReg;
-
-        /**
-         * AutoExpenseMenu Registration.
-         */
-        private final TethysChangeRegistration theAutoExpenseMenuReg;
-
-        /**
-         * AutoPayeeMenu Registration.
-         */
-        private final TethysChangeRegistration theAutoPayeeMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private CashListener() {
-            /* Access the MenuBuilders */
-            theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
-            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-            theCurrencyMenuReg = theCurrencyMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theAutoExpenseMenuBuilder = theAutoExpenseButton.getMenuBuilder();
-            theAutoExpenseMenuReg = theAutoExpenseMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theAutoPayeeMenuBuilder = theAutoPayeeButton.getMenuBuilder();
-            theAutoPayeeMenuReg = theAutoPayeeMenuBuilder.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle menu type */
-            if (theCategoryMenuReg.isRelevant(pEvent)) {
-                buildCategoryMenu(theCategoryMenuBuilder, getItem());
-            } else if (theCurrencyMenuReg.isRelevant(pEvent)) {
-                buildCurrencyMenu(theCurrencyMenuBuilder, getItem());
-            } else if (theAutoExpenseMenuReg.isRelevant(pEvent)) {
-                buildAutoExpenseMenu(theAutoExpenseMenuBuilder, getItem());
-            } else if (theAutoPayeeMenuReg.isRelevant(pEvent)) {
-                buildAutoPayeeMenu(theAutoPayeeMenuBuilder, getItem());
-            }
-        }
     }
 }

@@ -24,21 +24,15 @@ package net.sourceforge.joceanus.jtethys.event;
 
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.RegistrationType;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysItemRegistration;
 
 /**
  * EventManager implementation. This provides means for classes to fire events to registered
  * listeners.
+ * @param <E> The event id type
  */
-public class TethysEventManager
-        implements TethysEventProvider {
+public class TethysEventManager<E extends Enum<E>>
+        implements TethysEventProvider<E> {
     /**
      * Default action Id.
      */
@@ -57,7 +51,7 @@ public class TethysEventManager
     /**
      * The registrar.
      */
-    private final TethysEventRegistrar theRegistrar;
+    private final TethysEventRegistrar<E> theRegistrar;
 
     /**
      * Constructor.
@@ -67,7 +61,7 @@ public class TethysEventManager
         theMgrId = getNextManagerId();
 
         /* Allocate the registrar */
-        theRegistrar = new TethysEventRegistrar(theMgrId);
+        theRegistrar = new TethysEventRegistrar<>(theMgrId);
     }
 
     /**
@@ -90,154 +84,54 @@ public class TethysEventManager
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<E> getEventRegistrar() {
         return theRegistrar;
-    }
-
-    /**
-     * Fire State Changed Event to all registered listeners.
-     */
-    public void fireStateChanged() {
-        /* Lazily create the event */
-        TethysChangeEvent myEvent = null;
-
-        /* Loop backwards through the list to notify most recently registered first */
-        ListIterator<TethysEventRegistration<?>> myIterator = theRegistrar.reverseIterator();
-        while (myIterator.hasPrevious()) {
-            TethysEventRegistration<?> myReg = myIterator.previous();
-
-            /* If this is a change registration */
-            if (myReg.isRegistrationType(RegistrationType.CHANGE)) {
-                /* If we have not yet created the change event */
-                if (myEvent == null) {
-                    /* Create the change event */
-                    myEvent = new TethysChangeEvent(theMgrId);
-                }
-
-                /* Fire the event */
-                TethysChangeRegistration myChange = (TethysChangeRegistration) myReg;
-                myChange.processEvent(myEvent);
-            }
-        }
     }
 
     /**
      * Cascade action event.
      * @param pEvent the event to cascade
      */
-    public void cascadeActionEvent(final TethysActionEvent pEvent) {
-        /* Fire the event */
-        fireActionEvent(pEvent.getActionId(), pEvent.getDetails());
+    public void cascadeEvent(final TethysEvent<E> pEvent) {
+        fireEvent(pEvent.getEventId(), pEvent.getDetails());
     }
 
     /**
-     * Fire Action Performed Event to all registered listeners.
+     * Fire Event to all registered listeners.
+     * @param pEventId the eventId of the event
      */
-    public void fireActionEvent() {
-        fireActionEvent(ACTIONID_ANY, null);
+    public void fireEvent(final E pEventId) {
+        fireEvent(pEventId, null);
     }
 
     /**
-     * Fire Action Event to all registered listeners.
+     * Fire Event to all registered listeners.
+     * @param pEventId the eventId of the event
      * @param pDetails the details of the event
      */
-    public void fireActionEvent(final Object pDetails) {
-        fireActionEvent(ACTIONID_ANY, pDetails);
-    }
-
-    /**
-     * Fire Action Event to all registered listeners.
-     * @param pActionId the actionId of the event
-     */
-    public void fireActionEvent(final int pActionId) {
-        fireActionEvent(pActionId, null);
-    }
-
-    /**
-     * Fire Action Event to all registered listeners.
-     * @param pActionId the actionId of the event
-     * @param pDetails the details of the event
-     */
-    public void fireActionEvent(final int pActionId,
-                                final Object pDetails) {
+    public void fireEvent(final E pEventId,
+                          final Object pDetails) {
         /* Lazily create the event */
-        TethysActionEvent myEvent = null;
+        TethysEvent<E> myEvent = null;
 
         /* Loop backwards through the list to notify most recently registered first */
-        ListIterator<TethysEventRegistration<?>> myIterator = theRegistrar.reverseIterator();
+        ListIterator<TethysEventRegistration<E>> myIterator = theRegistrar.reverseIterator();
         while (myIterator.hasPrevious()) {
-            TethysEventRegistration<?> myReg = myIterator.previous();
+            TethysEventRegistration<E> myReg = myIterator.previous();
 
-            /* If this is an action registration */
-            if (myReg.isRegistrationType(RegistrationType.ACTION)) {
-                /* Check whether the action is filtered */
-                TethysActionRegistration myAction = (TethysActionRegistration) myReg;
-                if (myAction.isFiltered(pActionId)) {
-                    continue;
-                }
-
-                /* If we have not yet created the action event */
-                if (myEvent == null) {
-                    /* Create the action event */
-                    myEvent = new TethysActionEvent(theMgrId, pActionId, pDetails);
-                }
-
-                /* Fire the event */
-                myAction.processEvent(myEvent);
+            /* Check whether the action is filtered */
+            if (myReg.isFiltered(pEventId)) {
+                continue;
             }
-        }
-    }
 
-    /**
-     * Create an action event.
-     * @param pActionId the actionId of the event
-     * @param pDetails the details of the event
-     * @return the action event
-     */
-    public TethysActionEvent createActionEvent(final int pActionId,
-                                               final Object pDetails) {
-        return new TethysActionEvent(theMgrId, pActionId, pDetails);
-    }
-
-    /**
-     * Fire Item Changed Event to all registered listeners.
-     * @param pItem the item that has changed selection
-     * @param pSelected is the item now selected?
-     */
-    public void fireItemStateChanged(final Object pItem,
-                                     final boolean pSelected) {
-        fireItemStateChanged(ACTIONID_ANY, pItem, pSelected);
-    }
-
-    /**
-     * Fire Item Changed Event to all registered listeners.
-     * @param pActionId the actionId of the event
-     * @param pItem the item that has changed selection
-     * @param pSelected is the item now selected?
-     */
-    public void fireItemStateChanged(final int pActionId,
-                                     final Object pItem,
-                                     final boolean pSelected) {
-        /* Lazily create the event */
-        TethysItemEvent myEvent = null;
-
-        /* Loop backwards through the list to notify most recently registered first */
-        ListIterator<TethysEventRegistration<?>> myIterator = theRegistrar.reverseIterator();
-        while (myIterator.hasPrevious()) {
-            TethysEventRegistration<?> myReg = myIterator.previous();
-
-            /* If this is an item registration */
-            if (myReg.isRegistrationType(RegistrationType.ITEM)) {
-                /* If we have not yet created the item event */
-                if (myEvent == null) {
-                    /* Create the item event */
-                    myEvent = new TethysItemEvent(theMgrId, pActionId, pItem, pSelected);
-                }
-
-                /* Fire the event */
-                TethysItemRegistration myChange = (TethysItemRegistration) myReg;
-                myChange.processEvent(myEvent);
+            /* If we have not yet created the action event */
+            if (myEvent == null) {
+                /* Create the action event */
+                myEvent = new TethysEvent<>(theMgrId, pEventId, pDetails);
             }
+
+            /* Process the event */
+            myReg.processEvent(myEvent);
         }
     }
 }

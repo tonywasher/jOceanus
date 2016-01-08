@@ -51,9 +51,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
@@ -95,6 +92,11 @@ public class TaxYearPanel
     private final JScrollButton<TaxRegime> theRegimeButton;
 
     /**
+     * The Regime Menu Builder.
+     */
+    private final JScrollMenuBuilder<TaxRegime> theMenuBuilder;
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
@@ -110,7 +112,7 @@ public class TaxYearPanel
         theYear = new JTextField();
 
         /* Create the buttons */
-        theRegimeButton = new JScrollButton<TaxRegime>();
+        theRegimeButton = new JScrollButton<>();
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -155,7 +157,8 @@ public class TaxYearPanel
         layoutPanel();
 
         /* Create the listener */
-        new TaxYearListener();
+        theMenuBuilder = theRegimeButton.getMenuBuilder();
+        theMenuBuilder.getEventRegistrar().addEventListener(e -> buildRegimeMenu(theMenuBuilder, getItem()));
     }
 
     /**
@@ -603,38 +606,5 @@ public class TaxYearPanel
 
         /* Ensure active item is visible */
         pMenuBuilder.showItem(myActive);
-    }
-
-    /**
-     * TaxYear Listener.
-     */
-    private final class TaxYearListener
-            implements TethysChangeEventListener {
-        /**
-         * The Regime Menu Builder.
-         */
-        private final JScrollMenuBuilder<TaxRegime> theMenuBuilder;
-
-        /**
-         * RegimeMenu Registration.
-         */
-        private final TethysChangeRegistration theRegimeMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private TaxYearListener() {
-            /* Access the MenuBuilders */
-            theMenuBuilder = theRegimeButton.getMenuBuilder();
-            theRegimeMenuReg = theMenuBuilder.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle menu type */
-            if (theRegimeMenuReg.isRelevant(pEvent)) {
-                buildRegimeMenu(theMenuBuilder, getItem());
-            }
-        }
     }
 }

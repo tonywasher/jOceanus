@@ -22,9 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -32,9 +29,7 @@ import javax.swing.JMenuItem;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.threads.swing.LoadArchive;
@@ -43,13 +38,11 @@ import net.sourceforge.joceanus.jmoneywise.threads.swing.WriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.MainWindow;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateRangeSelect;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
@@ -179,11 +172,6 @@ public class MainTab
     private JMenuItem theCreateQIF;
 
     /**
-     * The listener.
-     */
-    private MainListener theListener;
-
-    /**
      * Constructor.
      * @param pProfile the startup profile
      * @throws OceanusException on error
@@ -253,8 +241,16 @@ public class MainTab
         theMaint = new MaintenanceTab(this);
         theTabs.addTabItem(TITLE_MAINT, theMaint.getNode());
 
+        /* Create listeners */
+        theTabs.getEventRegistrar().addEventListener(e -> determineFocus());
+        theView.getEventRegistrar().addEventListener(e -> setVisibility());
+        theReports.getEventRegistrar().addEventListener(e -> setVisibility());
+        theSpotPrices.getEventRegistrar().addEventListener(e -> setVisibility());
+        theSpotRates.getEventRegistrar().addEventListener(e -> setVisibility());
+        setChildListeners(theRegister.getEventRegistrar());
+        setChildListeners(theMaint.getEventRegistrar());
+
         /* Create listener and initialise focus */
-        theListener = new MainListener();
         determineFocus();
 
         /* Set the icon */
@@ -268,6 +264,15 @@ public class MainTab
     }
 
     /**
+     * setChildListeners.
+     * @param pRegistrar the registrar
+     */
+    private void setChildListeners(final TethysEventRegistrar<PrometheusDataEvent> pRegistrar) {
+        pRegistrar.addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> setVisibility());
+        pRegistrar.addEventListener(PrometheusDataEvent.GOTOWINDOW, this::handleGoToEvent);
+    }
+
+    /**
      * Add Data Menu items.
      * @param pMenu the menu
      */
@@ -275,12 +280,12 @@ public class MainTab
     protected void addDataMenuItems(final JMenu pMenu) {
         /* Create the file menu items */
         theLoadSheet = new JMenuItem(MENU_ARCHIVE);
-        theLoadSheet.addActionListener(theListener);
+        theLoadSheet.addActionListener(e -> loadSpreadsheet());
         pMenu.add(theLoadSheet);
 
         /* Create the file menu items */
         theCreateQIF = new JMenuItem(MENU_CREATEQIF);
-        theCreateQIF.addActionListener(theListener);
+        theCreateQIF.addActionListener(e -> createQIF());
         pMenu.add(theCreateQIF);
 
         /* Pass call on */
@@ -364,7 +369,7 @@ public class MainTab
      * Select maintenance.
      * @param pEvent the action request
      */
-    private void selectMaintenance(final TethysActionEvent pEvent) {
+    private void selectMaintenance(final PrometheusGoToEvent pEvent) {
         /* Pass through to the Maintenance view */
         theMaint.selectMaintenance(pEvent);
 
@@ -472,166 +477,31 @@ public class MainTab
     }
 
     /**
-     * The listener class.
+     * handle GoTo Event.
+     * @param pEvent the event
      */
-    private final class MainListener
-            implements ActionListener, TethysActionEventListener, TethysChangeEventListener {
-        /**
-         * Constructor.
-         */
-        private MainListener() {
-            /* Register listeners */
-            theView.getEventRegistrar().addChangeListener(this);
-            theReports.getEventRegistrar().addActionListener(this);
-            theSpotPrices.getEventRegistrar().addChangeListener(this);
-            theSpotRates.getEventRegistrar().addChangeListener(this);
-            TethysEventRegistrar myRegistrar = theRegister.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-            myRegistrar = theMaint.getEventRegistrar();
-            myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
+    private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
+        /* Access details */
+        PrometheusGoToEvent myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
 
-            /* Listen to tab selection events */
-            theTabs.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-                @Override
-                public void processAction(final TethysActionEvent pEvent) {
-                    determineFocus();
-                }
-            });
-        }
+        /* Access event and obtain details */
+        switch (myEvent.getId()) {
+            /* View the requested statement */
+            case ACTION_VIEWSTATEMENT:
+                StatementSelect mySelect = myEvent.getDetails(StatementSelect.class);
+                selectStatement(mySelect);
+                break;
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Set Visibility */
-            setVisibility();
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            Object o = evt.getSource();
-
-            /* If this event relates to the Load spreadsheet item */
-            if (theLoadSheet.equals(o)) {
-                /* Start a write backup operation */
-                loadSpreadsheet();
-
-                /* If this event relates to the Create QIF item */
-            } else if (theCreateQIF.equals(o)) {
-                /* Start a createQIF operation */
-                createQIF();
-            }
-        }
-
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            /* Pass out the request */
-            switch (pEvent.getActionId()) {
-                /* View the requested statement */
-                case ACTION_VIEWSTATEMENT:
-                    StatementSelect mySelect = pEvent.getDetails(StatementSelect.class);
-                    selectStatement(mySelect);
-                    break;
-
-                /* Access maintenance */
-                case ACTION_VIEWACCOUNT:
-                case ACTION_VIEWTAXYEAR:
-                case ACTION_VIEWCATEGORY:
-                case ACTION_VIEWTAG:
-                case ACTION_VIEWSTATIC:
-                    selectMaintenance(pEvent);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Account and period request.
-     */
-    protected static final class ActionRequest {
-        /**
-         * The account.
-         */
-        private final AssetBase<?> theAccount;
-
-        /**
-         * The selected range.
-         */
-        private final TethysSwingDateRangeSelect theRange;
-
-        /**
-         * The base Event.
-         */
-        private final Transaction theTransaction;
-
-        /**
-         * Constructor.
-         * @param pAccount the requested account
-         */
-        protected ActionRequest(final AssetBase<?> pAccount) {
-            theAccount = pAccount;
-            theRange = null;
-            theTransaction = null;
-        }
-
-        /**
-         * Constructor.
-         * @param pRange the requested range
-         */
-        protected ActionRequest(final TethysSwingDateRangeSelect pRange) {
-            theAccount = null;
-            theRange = pRange;
-            theTransaction = null;
-        }
-
-        /**
-         * Constructor.
-         * @param pAccount the requested account
-         * @param pRange the requested range
-         */
-        protected ActionRequest(final AssetBase<?> pAccount,
-                                final TethysSwingDateRangeSelect pRange) {
-            theAccount = pAccount;
-            theRange = pRange;
-            theTransaction = null;
-        }
-
-        /**
-         * Constructor.
-         * @param pAccount the requested account
-         * @param pTrans the base transaction
-         */
-        protected ActionRequest(final AssetBase<?> pAccount,
-                                final Transaction pTrans) {
-            theAccount = pAccount;
-            theRange = null;
-            theTransaction = pTrans;
-        }
-
-        /**
-         * Obtain the selected account.
-         * @return the account
-         */
-        protected AssetBase<?> getAccount() {
-            return theAccount;
-        }
-
-        /**
-         * Obtain the selected range.
-         * @return the range
-         */
-        protected TethysSwingDateRangeSelect getRange() {
-            return theRange;
-        }
-
-        /**
-         * Obtain the selected transaction.
-         * @return the event
-         */
-        protected Transaction getTransaction() {
-            return theTransaction;
+            /* Access maintenance */
+            case ACTION_VIEWACCOUNT:
+            case ACTION_VIEWTAXYEAR:
+            case ACTION_VIEWCATEGORY:
+            case ACTION_VIEWTAG:
+            case ACTION_VIEWSTATIC:
+                selectMaintenance(myEvent);
+                break;
+            default:
+                break;
         }
     }
 }

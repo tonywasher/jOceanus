@@ -57,8 +57,6 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
@@ -487,7 +485,20 @@ public class DepositRateTable
             setColumns();
 
             /* Add listener */
-            new EditorListener();
+            theDateEditor.getEventRegistrar().addEventListener(e -> handleDateEvent());
+        }
+
+        /**
+         * handle Date event.
+         */
+        private void handleDateEvent() {
+            /* Access details */
+            Point myCell = theDateEditor.getPoint();
+
+            /* Determine whether this is the latest entry */
+            int i = convertRowIndexToView(myCell.y);
+            boolean bAllowNull = i == 1;
+            theDateConfig.setAllowNullDateSelection(bAllowNull);
         }
 
         /**
@@ -637,30 +648,6 @@ public class DepositRateTable
                     return DepositRate.FIELD_ENDDATE;
                 default:
                     return null;
-            }
-        }
-
-        /**
-         * EditorListener.
-         */
-        private final class EditorListener
-                implements TethysChangeEventListener {
-            /**
-             * Constructor.
-             */
-            private EditorListener() {
-                theDateEditor.getEventRegistrar().addChangeListener(this);
-            }
-
-            @Override
-            public void processChange(final TethysChangeEvent pEvent) {
-                /* Access details */
-                Point myCell = theDateEditor.getPoint();
-
-                /* Determine whether this is the latest entry */
-                int i = convertRowIndexToView(myCell.y);
-                boolean bAllowNull = i == 1;
-                theDateConfig.setAllowNullDateSelection(bAllowNull);
             }
         }
     }

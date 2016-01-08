@@ -27,42 +27,20 @@ package net.sourceforge.joceanus.jtethys.event;
  * components that do not have these features.
  * <p>
  * Additionally listener interfaces for the events
+ * @param <E> the event id type
  */
-public abstract class TethysEvent {
+public class TethysEvent<E extends Enum<E>> {
     /**
      * Interface for event consumers.
+     * @param <E> Event type
      */
     @FunctionalInterface
-    public interface TethysChangeEventListener {
+    public interface TethysEventListener<E extends Enum<E>> {
         /**
-         * Process a TethysEvent.
-         * @param pEvent the event to process
+         * Handle a TethysEvent.
+         * @param pEvent the event to handle
          */
-        void processChange(final TethysChangeEvent pEvent);
-    }
-
-    /**
-     * Interface for action event consumers.
-     */
-    @FunctionalInterface
-    public interface TethysActionEventListener {
-        /**
-         * Process a TethysActionEvent.
-         * @param pEvent the event to process
-         */
-        void processAction(final TethysActionEvent pEvent);
-    }
-
-    /**
-     * Interface for item event consumers.
-     */
-    @FunctionalInterface
-    public interface TethysItemEventListener {
-        /**
-         * Process a TethysItemEvent.
-         * @param pEvent the event to process
-         */
-        void processItem(final TethysItemEvent pEvent);
+        void handleEvent(final TethysEvent<E> pEvent);
     }
 
     /**
@@ -71,12 +49,39 @@ public abstract class TethysEvent {
     private final int theSourceId;
 
     /**
+     * The Id of the event.
+     */
+    private final E theEventId;
+
+    /**
+     * The details of the event.
+     */
+    private final Object theDetails;
+
+    /**
      * Constructor.
      * @param pSourceId the id of the source of the event
+     * @param pEventId the event id
      */
-    protected TethysEvent(final int pSourceId) {
+    protected TethysEvent(final int pSourceId,
+                          final E pEventId) {
+        /* Set the details */
+        this(pSourceId, pEventId, null);
+    }
+
+    /**
+     * Constructor.
+     * @param pSourceId the id of the source of the event
+     * @param pEventId the event id
+     * @param pDetails the details of the event
+     */
+    protected TethysEvent(final int pSourceId,
+                          final E pEventId,
+                          final Object pDetails) {
         /* Set the details */
         theSourceId = pSourceId;
+        theEventId = pEventId;
+        theDetails = pDetails;
     }
 
     /**
@@ -88,138 +93,28 @@ public abstract class TethysEvent {
     }
 
     /**
-     * A generic action event.
+     * Obtain the eventId.
+     * @return the eventId
      */
-    public static class TethysChangeEvent
-            extends TethysEvent {
-        /**
-         * Constructor.
-         * @param pSourceId the id of the source of the event
-         */
-        protected TethysChangeEvent(final int pSourceId) {
-            /* Set the details */
-            super(pSourceId);
-        }
+    public E getEventId() {
+        return theEventId;
     }
 
     /**
-     * A generic action event.
+     * Obtain the details.
+     * @return the details
      */
-    public static class TethysActionEvent
-            extends TethysEvent {
-        /**
-         * The Id of the event.
-         */
-        private final int theActionId;
-
-        /**
-         * The details of the event.
-         */
-        private final Object theDetails;
-
-        /**
-         * Constructor.
-         * @param pSourceId the id of the source of the event
-         * @param pActionId the id of the event
-         */
-        protected TethysActionEvent(final int pSourceId,
-                                    final int pActionId) {
-            /* Set the details */
-            this(pSourceId, pActionId, null);
-        }
-
-        /**
-         * Constructor.
-         * @param pSourceId the id of the source of the event
-         * @param pActionId the id of the event
-         * @param pDetails the details of the event
-         */
-        protected TethysActionEvent(final int pSourceId,
-                                    final int pActionId,
-                                    final Object pDetails) {
-            /* Set the details */
-            super(pSourceId);
-            theActionId = pActionId;
-            theDetails = pDetails;
-        }
-
-        /**
-         * Obtain the actionId.
-         * @return the actionId
-         */
-        public int getActionId() {
-            return theActionId;
-        }
-
-        /**
-         * Obtain the details.
-         * @return the details
-         */
-        public Object getDetails() {
-            return theDetails;
-        }
-
-        /**
-         * Obtain the details.
-         * @param pClass the class of the details
-         * @param <T> the details class
-         * @return the details
-         */
-        public <T> T getDetails(final Class<T> pClass) {
-            return pClass.cast(theDetails);
-        }
+    public Object getDetails() {
+        return theDetails;
     }
 
     /**
-     * A generic item event.
+     * Obtain the details.
+     * @param pClass the class of the details
+     * @param <T> the details class
+     * @return the details
      */
-    public static class TethysItemEvent
-            extends TethysActionEvent {
-        /**
-         * The Selection state.
-         */
-        private final boolean isSelected;
-
-        /**
-         * Constructor.
-         * @param pSourceId the id of the source of the event
-         * @param pActionId the id of the event
-         * @param pItem the item that has changed selection
-         * @param pSelected is the item now selected?
-         */
-        protected TethysItemEvent(final int pSourceId,
-                                  final int pActionId,
-                                  final Object pItem,
-                                  final boolean pSelected) {
-            /* Set the details */
-            super(pSourceId, pActionId, pItem);
-            isSelected = pSelected;
-        }
-
-        /**
-         * Obtain the selected state.
-         * @return the selected state
-         */
-        public boolean isSelected() {
-            return isSelected;
-        }
-
-        /**
-         * Obtain the item.
-         * @return the item
-         */
-        public Object getItem() {
-            return getDetails();
-        }
-
-        /**
-         * Obtain the item.
-         * @param pClass the class of the item
-         * @param <T> the item class
-         * @return the item
-         */
-        public <T> T getItem(final Class<T> pClass) {
-            return getDetails(pClass);
-        }
+    public <T> T getDetails(final Class<T> pClass) {
+        return pClass.cast(theDetails);
     }
 }

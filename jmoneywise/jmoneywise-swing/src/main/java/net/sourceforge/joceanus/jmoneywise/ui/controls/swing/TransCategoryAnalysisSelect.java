@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -45,12 +43,10 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TransactionCategoryFilter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
@@ -60,7 +56,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
  */
 public class TransCategoryAnalysisSelect
         extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider {
+        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -74,7 +70,7 @@ public class TransCategoryAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The active transaction categories bucket list.
@@ -97,17 +93,22 @@ public class TransCategoryAnalysisSelect
     private final JScrollButton<TransactionCategoryBucket> theButton;
 
     /**
+     * Category menu builder.
+     */
+    private final JScrollMenuBuilder<TransactionCategoryBucket> theCategoryMenuBuilder;
+
+    /**
      * Constructor.
      */
     public TransCategoryAnalysisSelect() {
         /* Create the button */
-        theButton = new JScrollButton<TransactionCategoryBucket>();
+        theButton = new JScrollButton<>();
 
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_CATEGORY + MetisFieldElement.STR_COLON);
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -121,12 +122,14 @@ public class TransCategoryAnalysisSelect
         theState = new EventState();
         theState.applyState();
 
-        /* Create the listener */
-        new CategoryListener();
+        /* Create the listeners */
+        theCategoryMenuBuilder = theButton.getMenuBuilder();
+        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu());
+        theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewCategory());
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -256,106 +259,66 @@ public class TransCategoryAnalysisSelect
     }
 
     /**
-     * Listener class.
+     * Handle new Category.
      */
-    private final class CategoryListener
-            implements PropertyChangeListener, TethysChangeEventListener {
-        /**
-         * Category menu builder.
-         */
-        private final JScrollMenuBuilder<TransactionCategoryBucket> theCategoryMenuBuilder;
-
-        /**
-         * CategoryMenu Registration.
-         */
-        private final TethysChangeRegistration theCategoryMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private CategoryListener() {
-            /* Access builders */
-            theCategoryMenuBuilder = theButton.getMenuBuilder();
-            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
-
-            /* Add swing listener */
-            theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+    private void handleNewCategory() {
+        /* Select the new category */
+        if (theState.setCategory(theButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
+    }
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the CategoryMenu */
-            if (theCategoryMenuReg.isRelevant(pEvent)) {
-                buildCategoryMenu();
+    /**
+     * Build Category menu.
+     */
+    private void buildCategoryMenu() {
+        /* Reset the popUp menu */
+        theCategoryMenuBuilder.clearMenu();
+
+        /* Create a simple map for top-level categories */
+        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+
+        /* Record active item */
+        TransactionCategoryBucket myCurrent = theState.getEventCategory();
+        JMenuItem myActive = null;
+
+        /* Loop through the available category values */
+        Iterator<TransactionCategoryBucket> myIterator = theCategories.iterator();
+        while (myIterator.hasNext()) {
+            TransactionCategoryBucket myBucket = myIterator.next();
+
+            /* Only process low-level items */
+            TransactionCategoryClass myClass = myBucket.getTransactionCategoryType().getCategoryClass();
+            if (myClass.canParentCategory()) {
+                continue;
+            }
+
+            /* Determine menu to add to */
+            TransactionCategory myCategory = myBucket.getTransactionCategory();
+            TransactionCategory myParent = myCategory.getParentCategory();
+            String myParentName = myParent.getName();
+            JScrollMenu myMenu = myMap.get(myParentName);
+
+            /* If this is a new menu */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
+                myMap.put(myParentName, myMenu);
+            }
+
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myBucket, myCategory.getSubCategory());
+
+            /* If this is the active category */
+            if (myBucket.equals(myCurrent)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
 
-        /**
-         * Build Category menu.
-         */
-        private void buildCategoryMenu() {
-            /* Reset the popUp menu */
-            theCategoryMenuBuilder.clearMenu();
-
-            /* Create a simple map for top-level categories */
-            Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
-
-            /* Record active item */
-            TransactionCategoryBucket myCurrent = theState.getEventCategory();
-            JMenuItem myActive = null;
-
-            /* Loop through the available category values */
-            Iterator<TransactionCategoryBucket> myIterator = theCategories.iterator();
-            while (myIterator.hasNext()) {
-                TransactionCategoryBucket myBucket = myIterator.next();
-
-                /* Only process low-level items */
-                TransactionCategoryClass myClass = myBucket.getTransactionCategoryType().getCategoryClass();
-                if (myClass.canParentCategory()) {
-                    continue;
-                }
-
-                /* Determine menu to add to */
-                TransactionCategory myCategory = myBucket.getTransactionCategory();
-                TransactionCategory myParent = myCategory.getParentCategory();
-                String myParentName = myParent.getName();
-                JScrollMenu myMenu = myMap.get(myParentName);
-
-                /* If this is a new menu */
-                if (myMenu == null) {
-                    /* Create a new JMenu and add it to the popUp */
-                    myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
-                    myMap.put(myParentName, myMenu);
-                }
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myBucket, myCategory.getSubCategory());
-
-                /* If this is the active category */
-                if (myBucket.equals(myCurrent)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theCategoryMenuBuilder.showItem(myActive);
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* Access the source */
-            Object o = pEvent.getSource();
-
-            /* If this is the category button */
-            if (theButton.equals(o)) {
-                /* Select the new category */
-                if (theState.setCategory(theButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
-            }
-        }
+        /* Ensure active item is visible */
+        theCategoryMenuBuilder.showItem(myActive);
     }
 
     /**

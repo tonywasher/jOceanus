@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * PopUp menu that displays a list of checkMenu items.
@@ -89,11 +90,11 @@ public class JScrollListButton<T>
      * @param <X> the object type
      */
     public static final class JScrollListMenuBuilder<X>
-            implements ActionListener, TethysEventProvider {
+            implements ActionListener, TethysEventProvider<TethysUIEvent> {
         /**
          * The Event Manager.
          */
-        private final TethysEventManager theEventManager;
+        private final TethysEventManager<TethysUIEvent> theEventManager;
 
         /**
          * The Button.
@@ -116,11 +117,11 @@ public class JScrollListButton<T>
             theButton.addActionListener(this);
 
             /* Create event manager */
-            theEventManager = new TethysEventManager();
+            theEventManager = new TethysEventManager<>();
         }
 
         @Override
-        public TethysEventRegistrar getEventRegistrar() {
+        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -257,7 +258,7 @@ public class JScrollListButton<T>
         @Override
         public void actionPerformed(final ActionEvent e) {
             /* Ask listeners to update selection */
-            theEventManager.fireStateChanged();
+            theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG);
 
             /* If a menu is provided */
             if ((theMenu != null) && (theMenu.getItemCount() > 0)) {
@@ -270,11 +271,54 @@ public class JScrollListButton<T>
         /**
          * fire item state changed.
          * @param pItem the item
-         * @param pSelected the new state
          */
-        private void fireItemStateChanged(final X pItem,
-                                          final boolean pSelected) {
-            theEventManager.fireItemStateChanged(pItem, pSelected);
+        private void fireItemStateChanged(final X pItem) {
+            boolean isSelected = isSelectedItem(pItem);
+            theEventManager.fireEvent(TethysUIEvent.TOGGLEITEM, new ToggleState<X>(pItem, isSelected));
+        }
+    }
+
+    /**
+     * Event details.
+     * @param <X> the item type
+     */
+    public static final class ToggleState<X> {
+        /**
+         * The Item.
+         */
+        private final X theItem;
+
+        /**
+         * Is the item selected?
+         */
+        private final boolean isSelected;
+
+        /**
+         * Constructor.
+         * @param pItem the item
+         * @param pSelected true/false
+         */
+        private ToggleState(final X pItem,
+                            final boolean pSelected) {
+            theItem = pItem;
+            isSelected = pSelected;
+        }
+
+        /**
+         * Obtain the item.
+         * @return the item
+         */
+        public X getItem() {
+            return theItem;
+
+        }
+
+        /**
+         * Is the item selected?
+         * @return true/false
+         */
+        public boolean isSelected() {
+            return isSelected;
         }
     }
 
@@ -466,8 +510,7 @@ public class JScrollListButton<T>
                 /* Let the user know that this item has been selected or not */
                 Object mySource = pEvent.getSource();
                 if (mySource instanceof JCheckBoxMenuItem) {
-                    JCheckBoxMenuItem myMenu = (JCheckBoxMenuItem) mySource;
-                    theBuilder.fireItemStateChanged(theItem, myMenu.isSelected());
+                    theBuilder.fireItemStateChanged(theItem);
                 }
 
                 /* Keep the menu displayed */

@@ -66,6 +66,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
@@ -75,7 +76,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * @param <T> the value type
  */
 public class TethysSwingScrollContextMenu<T>
-        implements TethysScrollMenu<T, Icon>, TethysEventProvider {
+        implements TethysScrollMenu<T, Icon>, TethysEventProvider<TethysUIEvent> {
     /**
      * Default row size.
      */
@@ -135,7 +136,7 @@ public class TethysSwingScrollContextMenu<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The ScrollUp Item.
@@ -246,7 +247,7 @@ public class TethysSwingScrollContextMenu<T>
         closeOnToggle = true;
 
         /* Create event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the scroll items */
         theUpItem = new ScrollControl(TethysSwingArrowIcon.UP, -1);
@@ -265,7 +266,7 @@ public class TethysSwingScrollContextMenu<T>
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -488,11 +489,6 @@ public class TethysSwingScrollContextMenu<T>
         public void focusLost(final FocusEvent e) {
             /* If we've lost focus to other than the active subMenu */
             if (theActiveMenu == null) {
-                /* fire cancellation event */
-                if (theParentMenu == null) {
-                    theEventManager.fireActionEvent(ACTION_MENU_CANCELLED);
-                }
-
                 /* Close the menu hierarchy if we are currently showing */
                 if ((theDialog != null)
                     && theDialog.isShowing()) {
@@ -547,7 +543,7 @@ public class TethysSwingScrollContextMenu<T>
         } else {
             /* We assume that we will close the menu */
             boolean doCloseMenu = true;
-            int myAction = ACTION_SELECTED;
+            TethysUIEvent myEvent = TethysUIEvent.NEWVALUE;
 
             /* record selection */
             theSelectedItem = pItem;
@@ -555,11 +551,11 @@ public class TethysSwingScrollContextMenu<T>
                 TethysScrollMenuToggleItem<?> myItem = (TethysScrollMenuToggleItem<?>) theSelectedItem;
                 myItem.toggleSelected();
                 doCloseMenu = closeOnToggle;
-                myAction = ACTION_TOGGLED;
+                myEvent = TethysUIEvent.TOGGLEITEM;
             }
 
             /* fire selection event */
-            theEventManager.fireActionEvent(myAction, theSelectedItem);
+            theEventManager.fireEvent(myEvent, theSelectedItem);
 
             /* Close the menu if requested */
             if (doCloseMenu) {
@@ -580,9 +576,6 @@ public class TethysSwingScrollContextMenu<T>
 
             /* else we are top-level */
         } else {
-            /* fire cancellation event */
-            theEventManager.fireActionEvent(ACTION_MENU_CANCELLED);
-
             /* Notify the cancel */
             closeMenu();
         }

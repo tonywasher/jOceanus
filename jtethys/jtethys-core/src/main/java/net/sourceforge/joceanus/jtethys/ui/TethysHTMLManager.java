@@ -34,12 +34,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <N> the Node type
  */
 public abstract class TethysHTMLManager<N>
-        implements TethysEventProvider {
-    /**
-     * Build page.
-     */
-    public static final int ACTION_PAGE_BUILD = TethysScrollButtonManager.ACTION_MENU_BUILD;
-
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * The logger.
      */
@@ -53,7 +48,7 @@ public abstract class TethysHTMLManager<N>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The Current reference.
@@ -69,12 +64,12 @@ public abstract class TethysHTMLManager<N>
      * Constructor.
      */
     protected TethysHTMLManager() {
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
         waitingForPage = false;
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -153,6 +148,6 @@ public abstract class TethysHTMLManager<N>
      * @param pPageRef the page reference
      */
     private void loadNewPage(final String pPageRef) {
-        theEventManager.fireActionEvent(ACTION_PAGE_BUILD, pPageRef);
+        theEventManager.fireEvent(TethysUIEvent.BUILDPAGE, pPageRef);
     }
 }

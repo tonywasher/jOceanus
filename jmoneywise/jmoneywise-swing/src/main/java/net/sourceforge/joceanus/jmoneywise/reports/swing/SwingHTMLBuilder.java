@@ -34,8 +34,6 @@ import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 
 /**
  * Build a report document.
@@ -128,7 +126,7 @@ public class SwingHTMLBuilder
         processFieldConfig();
 
         /* Create listener */
-        new ReportListener();
+        theFieldManager.getEventRegistrar().addEventListener(e -> processFieldConfig());
     }
 
     /**
@@ -341,23 +339,5 @@ public class SwingHTMLBuilder
 
         /* Restore the text */
         theEditor.setText(myText);
-    }
-
-    /**
-     * Listener class.
-     */
-    private final class ReportListener
-            implements TethysChangeEventListener {
-        /**
-         * Constructor.
-         */
-        private ReportListener() {
-            theFieldManager.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            processFieldConfig();
-        }
     }
 }

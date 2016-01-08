@@ -43,9 +43,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCat
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
@@ -76,6 +73,16 @@ public class CashCategoryPanel
     private final JScrollButton<CashCategory> theParentButton;
 
     /**
+     * The CategoryType Menu Builder.
+     */
+    private final JScrollMenuBuilder<CashCategoryType> theTypeMenuBuilder;
+
+    /**
+     * The Parent Menu Builder.
+     */
+    private final JScrollMenuBuilder<CashCategory> theParentMenuBuilder;
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
@@ -93,8 +100,8 @@ public class CashCategoryPanel
         JTextField myDesc = new JTextField();
 
         /* Create the buttons */
-        theTypeButton = new JScrollButton<CashCategoryType>();
-        theParentButton = new JScrollButton<CashCategory>();
+        theTypeButton = new JScrollButton<>();
+        theParentButton = new JScrollButton<>();
 
         /* restrict the fields */
         restrictField(myName, CashCategory.NAMELEN);
@@ -125,8 +132,11 @@ public class CashCategoryPanel
         /* Layout the panel */
         layoutPanel();
 
-        /* Create the listener */
-        new CategoryListener();
+        /* Create the listeners */
+        theTypeMenuBuilder = theTypeButton.getMenuBuilder();
+        theTypeMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryTypeMenu(theTypeMenuBuilder, getItem()));
+        theParentMenuBuilder = theParentButton.getMenuBuilder();
+        theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
     }
 
     @Override
@@ -287,52 +297,5 @@ public class CashCategoryPanel
 
         /* Ensure active item is visible */
         pMenuBuilder.showItem(myActive);
-    }
-
-    /**
-     * Category Listener.
-     */
-    private final class CategoryListener
-            implements TethysChangeEventListener {
-        /**
-         * The CategoryType Menu Builder.
-         */
-        private final JScrollMenuBuilder<CashCategoryType> theTypeMenuBuilder;
-
-        /**
-         * The Parent Menu Builder.
-         */
-        private final JScrollMenuBuilder<CashCategory> theParentMenuBuilder;
-
-        /**
-         * ParentMenu Registration.
-         */
-        private final TethysChangeRegistration theParentMenuReg;
-
-        /**
-         * TypeMenu Registration.
-         */
-        private final TethysChangeRegistration theTypeMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private CategoryListener() {
-            /* Access the MenuBuilders */
-            theTypeMenuBuilder = theTypeButton.getMenuBuilder();
-            theTypeMenuReg = theTypeMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theParentMenuBuilder = theParentButton.getMenuBuilder();
-            theParentMenuReg = theParentMenuBuilder.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle menu builders */
-            if (theTypeMenuReg.isRelevant(pEvent)) {
-                buildCategoryTypeMenu(theTypeMenuBuilder, getItem());
-            } else if (theParentMenuReg.isRelevant(pEvent)) {
-                buildParentMenu(theParentMenuBuilder, getItem());
-            }
-        }
     }
 }

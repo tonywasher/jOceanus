@@ -28,12 +28,11 @@ import javax.swing.Icon;
 
 import net.sourceforge.jdatebutton.swing.JDateButton;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingStateIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButton.TethysSwingListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
@@ -45,6 +44,27 @@ public final class TethysSwingDataButtonField {
      * Private constructor.
      */
     private TethysSwingDataButtonField() {
+    }
+
+    /**
+     * IconButtonField class.
+     * @param <T> the data type
+     * @param <S> the state class
+     */
+    public static class TethysSwingStateIconButtonField<T, S>
+            extends TethysSwingIconButtonField<T> {
+        /**
+         * Constructor.
+         */
+        public TethysSwingStateIconButtonField() {
+            super(new TethysSwingStateIconButtonManager<>());
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public TethysSwingStateIconButtonManager<T, S> getIconManager() {
+            return (TethysSwingStateIconButtonManager<T, S>) super.getIconManager();
+        }
     }
 
     /**
@@ -65,6 +85,13 @@ public final class TethysSwingDataButtonField {
 
         /**
          * Constructor.
+         */
+        public TethysSwingIconButtonField() {
+            this(new TethysSwingSimpleIconButtonManager<>());
+        }
+
+        /**
+         * Constructor.
          * @param pManager the manager
          */
         public TethysSwingIconButtonField(final TethysIconButtonManager<T, Icon> pManager) {
@@ -76,12 +103,9 @@ public final class TethysSwingDataButtonField {
             theButton = getEditControl();
 
             /* Set listener on manager */
-            pManager.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-                @Override
-                public void processAction(final TethysActionEvent pEvent) {
-                    setValue(theManager.getValue());
-                    fireEvent(ACTION_NEW_VALUE, pEvent.getDetails());
-                }
+            pManager.getEventRegistrar().addEventListener(e -> {
+                setValue(theManager.getValue());
+                fireEvent(TethysUIEvent.NEWVALUE, e.getDetails());
             });
         }
 
@@ -134,6 +158,13 @@ public final class TethysSwingDataButtonField {
 
         /**
          * Constructor.
+         */
+        public TethysSwingScrollButtonField() {
+            this(new TethysSwingScrollButtonManager<>());
+        }
+
+        /**
+         * Constructor.
          * @param pManager the manager
          */
         public TethysSwingScrollButtonField(final TethysSwingScrollButtonManager<T> pManager) {
@@ -145,23 +176,25 @@ public final class TethysSwingDataButtonField {
             theButton = getEditControl();
 
             /* Set listener on manager */
-            pManager.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-                @Override
-                public void processAction(final TethysActionEvent pEvent) {
-                    switch (pEvent.getActionId()) {
-                        case TethysScrollButtonManager.ACTION_NEW_VALUE:
-                            setValue(theManager.getValue());
-                            fireEvent(ACTION_NEW_VALUE, pEvent.getDetails());
-                            break;
-                        case TethysScrollButtonManager.ACTION_MENU_BUILD:
-                            fireEvent(ACTION_DIALOG_PREPARE, this);
-                            break;
-                        case TethysScrollButtonManager.ACTION_MENU_CANCELLED:
-                        default:
-                            break;
-                    }
-                }
-            });
+            pManager.getEventRegistrar().addEventListener(this::handleEvent);
+        }
+
+        /**
+         * handle Scroll Button event.
+         * @param pEvent the even
+         */
+        private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+            switch (pEvent.getEventId()) {
+                case NEWVALUE:
+                    setValue(theManager.getValue());
+                    fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
+                    break;
+                case PREPAREDIALOG:
+                    fireEvent(TethysUIEvent.PREPAREDIALOG, this);
+                    break;
+                default:
+                    break;
+            }
         }
 
         /**
@@ -212,6 +245,13 @@ public final class TethysSwingDataButtonField {
 
         /**
          * Constructor.
+         */
+        public TethysSwingDateButtonField() {
+            this(new TethysSwingDateButtonManager());
+        }
+
+        /**
+         * Constructor.
          * @param pManager the manager
          */
         public TethysSwingDateButtonField(final TethysSwingDateButtonManager pManager) {
@@ -223,22 +263,25 @@ public final class TethysSwingDataButtonField {
             theButton = getEditControl();
 
             /* Set listener on manager */
-            pManager.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-                @Override
-                public void processAction(final TethysActionEvent pEvent) {
-                    switch (pEvent.getActionId()) {
-                        case TethysDateButtonManager.ACTION_NEW_VALUE:
-                            setValue(theManager.getSelectedDate());
-                            fireEvent(ACTION_NEW_VALUE, pEvent.getDetails());
-                            break;
-                        case TethysDateButtonManager.ACTION_DIALOG_PREPARE:
-                            fireEvent(ACTION_DIALOG_PREPARE, this);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            });
+            pManager.getEventRegistrar().addEventListener(this::handleEvent);
+        }
+
+        /**
+         * handle Date Button event.
+         * @param pEvent the even
+         */
+        private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+            switch (pEvent.getEventId()) {
+                case NEWVALUE:
+                    setValue(theManager.getSelectedDate());
+                    fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
+                    break;
+                case PREPAREDIALOG:
+                    fireEvent(TethysUIEvent.PREPAREDIALOG, this);
+                    break;
+                default:
+                    break;
+            }
         }
 
         /**
@@ -290,6 +333,13 @@ public final class TethysSwingDataButtonField {
 
         /**
          * Constructor.
+         */
+        public TethysSwingListButtonField() {
+            this(new TethysSwingListButtonManager<>());
+        }
+
+        /**
+         * Constructor.
          * @param pManager the manager
          */
         public TethysSwingListButtonField(final TethysSwingListButtonManager<T> pManager) {
@@ -301,23 +351,25 @@ public final class TethysSwingDataButtonField {
             theButton = getEditControl();
 
             /* Set listener on manager */
-            pManager.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-                @Override
-                public void processAction(final TethysActionEvent pEvent) {
-                    switch (pEvent.getActionId()) {
-                        case TethysListButtonManager.ACTION_ITEM_TOGGLED:
-                            updateText();
-                            fireEvent(ACTION_ITEM_TOGGLED, pEvent.getDetails());
-                            break;
-                        case TethysListButtonManager.ACTION_MENU_BUILD:
-                            fireEvent(ACTION_DIALOG_PREPARE, this);
-                            break;
-                        case TethysListButtonManager.ACTION_MENU_CANCELLED:
-                        default:
-                            break;
-                    }
-                }
-            });
+            pManager.getEventRegistrar().addEventListener(this::handleEvent);
+        }
+
+        /**
+         * handle List Button event.
+         * @param pEvent the even
+         */
+        private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+            switch (pEvent.getEventId()) {
+                case TOGGLEITEM:
+                    updateText();
+                    fireEvent(TethysUIEvent.TOGGLEITEM, pEvent.getDetails());
+                    break;
+                case PREPAREDIALOG:
+                    fireEvent(TethysUIEvent.PREPAREDIALOG, this);
+                    break;
+                default:
+                    break;
+            }
         }
 
         /**

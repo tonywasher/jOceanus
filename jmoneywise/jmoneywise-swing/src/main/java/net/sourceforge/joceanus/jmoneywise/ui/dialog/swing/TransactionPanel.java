@@ -81,16 +81,15 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateConfig;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton.JScrollListMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton.ToggleState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
@@ -181,6 +180,26 @@ public class TransactionPanel
     private final transient TransactionBuilder theBuilder;
 
     /**
+     * The Account Menu Builder.
+     */
+    private final JScrollMenuBuilder<TransactionAsset> theAccountMenuBuilder;
+
+    /**
+     * The Partner Menu Builder.
+     */
+    private final JScrollMenuBuilder<TransactionAsset> thePartnerMenuBuilder;
+
+    /**
+     * The Category Menu Builder.
+     */
+    private final JScrollMenuBuilder<TransactionCategory> theCategoryMenuBuilder;
+
+    /**
+     * The ThirdParty Menu Builder.
+     */
+    private final JScrollMenuBuilder<Deposit> theThirdPartyMenuBuilder;
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
@@ -202,18 +221,18 @@ public class TransactionPanel
         theDateButton = new TethysSwingDateButton();
 
         /* Create the buttons */
-        theAccountButton = new JScrollButton<TransactionAsset>();
-        thePartnerButton = new JScrollButton<TransactionAsset>();
-        theCategoryButton = new JScrollButton<TransactionCategory>();
-        theTagButton = new JScrollListButton<TransactionTag>();
-        theThirdPartyButton = new JScrollButton<Deposit>();
+        theAccountButton = new JScrollButton<>();
+        thePartnerButton = new JScrollButton<>();
+        theCategoryButton = new JScrollButton<>();
+        theTagButton = new JScrollListButton<>();
+        theThirdPartyButton = new JScrollButton<>();
 
         /* Access tag menu builder */
         theTagMenuBuilder = theTagButton.getMenuBuilder();
 
         /* Create states */
-        theDirectionState = new ComplexIconButtonState<AssetDirection, Boolean>(Boolean.FALSE);
-        theReconciledState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
+        theDirectionState = new ComplexIconButtonState<>(Boolean.FALSE);
+        theReconciledState = new ComplexIconButtonState<>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -245,8 +264,16 @@ public class TransactionPanel
         /* Layout the panel */
         layoutPanel();
 
-        /* Create the listener */
-        new TransactionListener();
+        /* Create the listeners */
+        theAccountMenuBuilder = theAccountButton.getMenuBuilder();
+        theAccountMenuBuilder.getEventRegistrar().addEventListener(e -> buildAccountMenu(theAccountMenuBuilder, getItem()));
+        thePartnerMenuBuilder = thePartnerButton.getMenuBuilder();
+        thePartnerMenuBuilder.getEventRegistrar().addEventListener(e -> buildPartnerMenu(thePartnerMenuBuilder, getItem()));
+        theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
+        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu(theCategoryMenuBuilder, getItem()));
+        theThirdPartyMenuBuilder = theThirdPartyButton.getMenuBuilder();
+        theThirdPartyMenuBuilder.getEventRegistrar().addEventListener(e -> buildThirdPartyMenu(theThirdPartyMenuBuilder, getItem()));
+        theTagMenuBuilder.getEventRegistrar().addEventListener(e -> buildTagMenu(theTagMenuBuilder, getItem()));
     }
 
     /**
@@ -255,11 +282,11 @@ public class TransactionPanel
      */
     private JPanel buildMainPanel() {
         /* Create direction button */
-        JIconButton<AssetDirection> myDirectionButton = new JIconButton<AssetDirection>(theDirectionState);
+        JIconButton<AssetDirection> myDirectionButton = new JIconButton<>(theDirectionState);
         MoneyWiseIcons.buildDirectionButton(theDirectionState);
 
         /* Create reconciled button */
-        JIconButton<Boolean> myReconciledButton = new JIconButton<Boolean>(theReconciledState);
+        JIconButton<Boolean> myReconciledButton = new JIconButton<>(theReconciledState);
         MoneyWiseIcons.buildReconciledButton(theReconciledState);
 
         /* Allocate fields */
@@ -1004,7 +1031,7 @@ public class TransactionPanel
         JMenuItem myItem;
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+        Map<String, JScrollMenu> myMap = new HashMap<>();
 
         /* Access Categories */
         TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
@@ -1134,104 +1161,20 @@ public class TransactionPanel
      * @throws OceanusException on error
      */
     public void updateTag(final Transaction pTrans,
-                          final TethysItemEvent pEvent) throws OceanusException {
+                          final TethysEvent<TethysUIEvent> pEvent) throws OceanusException {
         /* Determine whether this is a select or not */
-        boolean bSelected = pEvent.isSelected();
+        @SuppressWarnings("unchecked")
+        ToggleState<TransactionTag> myState = (ToggleState<TransactionTag>) pEvent.getDetails(ToggleState.class);
+        boolean bSelected = myState.isSelected();
 
         /* Access the TransactionTag */
-        Object myItem = pEvent.getItem();
-        if (myItem instanceof TransactionTag) {
-            TransactionTag myTag = (TransactionTag) myItem;
+        TransactionTag myTag = myState.getItem();
 
-            /* Update transaction tag status */
-            if (bSelected) {
-                pTrans.setTransactionTag(myTag);
-            } else {
-                pTrans.clearTransactionTag(myTag);
-            }
-        }
-    }
-
-    /**
-     * Transaction Listener.
-     */
-    private final class TransactionListener
-            implements TethysChangeEventListener {
-        /**
-         * The Account Menu Builder.
-         */
-        private final JScrollMenuBuilder<TransactionAsset> theAccountMenuBuilder;
-
-        /**
-         * The Partner Menu Builder.
-         */
-        private final JScrollMenuBuilder<TransactionAsset> thePartnerMenuBuilder;
-
-        /**
-         * The Category Menu Builder.
-         */
-        private final JScrollMenuBuilder<TransactionCategory> theCategoryMenuBuilder;
-
-        /**
-         * The ThirdParty Menu Builder.
-         */
-        private final JScrollMenuBuilder<Deposit> theThirdPartyMenuBuilder;
-
-        /**
-         * AccountMenu Registration.
-         */
-        private final TethysChangeRegistration theAccountMenuReg;
-
-        /**
-         * PartnerMenu Registration.
-         */
-        private final TethysChangeRegistration thePartnerMenuReg;
-
-        /**
-         * CategoryMenu Registration.
-         */
-        private final TethysChangeRegistration theCategoryMenuReg;
-
-        /**
-         * ThirdPartyMenu Registration.
-         */
-        private final TethysChangeRegistration theThirdPartyMenuReg;
-
-        /**
-         * TagMenu Registration.
-         */
-        private final TethysChangeRegistration theTagMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private TransactionListener() {
-            /* Access the MenuBuilders */
-            theAccountMenuBuilder = theAccountButton.getMenuBuilder();
-            theAccountMenuReg = theAccountMenuBuilder.getEventRegistrar().addChangeListener(this);
-            thePartnerMenuBuilder = thePartnerButton.getMenuBuilder();
-            thePartnerMenuReg = thePartnerMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
-            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theThirdPartyMenuBuilder = theThirdPartyButton.getMenuBuilder();
-            theThirdPartyMenuReg = theThirdPartyMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theTagMenuReg = theTagMenuBuilder.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle menu type */
-            if (theAccountMenuReg.isRelevant(pEvent)) {
-                buildAccountMenu(theAccountMenuBuilder, getItem());
-            } else if (thePartnerMenuReg.isRelevant(pEvent)) {
-                buildPartnerMenu(thePartnerMenuBuilder, getItem());
-            } else if (theCategoryMenuReg.isRelevant(pEvent)) {
-                buildCategoryMenu(theCategoryMenuBuilder, getItem());
-            } else if (theThirdPartyMenuReg.isRelevant(pEvent)) {
-                buildThirdPartyMenu(theThirdPartyMenuBuilder, getItem());
-            } else if (theTagMenuReg.isRelevant(pEvent)) {
-                buildTagMenu(theTagMenuBuilder, getItem());
-            }
+        /* Update transaction tag status */
+        if (bSelected) {
+            pTrans.setTransactionTag(myTag);
+        } else {
+            pTrans.clearTransactionTag(myTag);
         }
     }
 }

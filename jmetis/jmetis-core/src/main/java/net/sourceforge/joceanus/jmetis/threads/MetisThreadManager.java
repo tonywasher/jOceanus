@@ -38,12 +38,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <N> the node type
  */
 public abstract class MetisThreadManager<N>
-        implements TethysEventProvider {
-    /**
-     * Thread status changed.
-     */
-    public static final int ACTION_THREAD = 100;
-
+        implements TethysEventProvider<MetisThreadEvent> {
     /**
      * Default Reporting Steps.
      */
@@ -57,7 +52,7 @@ public abstract class MetisThreadManager<N>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<MetisThreadEvent> theEventManager;
 
     /**
      * The StatusManager.
@@ -116,7 +111,7 @@ public abstract class MetisThreadManager<N>
         theStatusManager.setThreadManager(this);
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the executor */
         theExecutor = Executors.newSingleThreadExecutor();
@@ -141,7 +136,7 @@ public abstract class MetisThreadManager<N>
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<MetisThreadEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -200,7 +195,7 @@ public abstract class MetisThreadManager<N>
         theThreadEntry.showPrimeEntry();
 
         /* Note that thread has started */
-        theEventManager.fireActionEvent(ACTION_THREAD);
+        theEventManager.fireEvent(MetisThreadEvent.THREADSTART);
     }
 
     /**
@@ -220,7 +215,7 @@ public abstract class MetisThreadManager<N>
         theThreadEntry.hideEntry();
 
         /* Note that thread has completed */
-        theEventManager.fireActionEvent(ACTION_THREAD);
+        theEventManager.fireEvent(MetisThreadEvent.THREADEND);
     }
 
     /**

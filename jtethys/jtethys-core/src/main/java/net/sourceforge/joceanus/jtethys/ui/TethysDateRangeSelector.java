@@ -40,12 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <N> the node type
  */
 public abstract class TethysDateRangeSelector<N>
-        implements TethysEventProvider {
-    /**
-     * Value updated.
-     */
-    public static final int ACTION_NEW_VALUE = TethysScrollButtonManager.ACTION_NEW_VALUE;
-
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * ToolTip for Next Button.
      */
@@ -84,7 +79,7 @@ public abstract class TethysDateRangeSelector<N>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The formatter.
@@ -137,7 +132,7 @@ public abstract class TethysDateRangeSelector<N>
         theFormatter = pFormatter;
 
         /* Create event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create initial state */
         theState = new TethysDateRangeState(pBaseIsStart);
@@ -150,7 +145,7 @@ public abstract class TethysDateRangeSelector<N>
     public abstract N getNode();
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -160,7 +155,7 @@ public abstract class TethysDateRangeSelector<N>
      */
     protected void declareStartButton(final TethysDateButtonManager<?> pButton) {
         theStartButton = pButton;
-        theStartButton.getEventRegistrar().addActionListener(e -> handleNewStartDate(e.getDetails(TethysDate.class)));
+        theStartButton.getEventRegistrar().addEventListener(e -> handleNewStartDate(e.getDetails(TethysDate.class)));
     }
 
     /**
@@ -169,7 +164,7 @@ public abstract class TethysDateRangeSelector<N>
      */
     protected void declareEndButton(final TethysDateButtonManager<?> pButton) {
         theEndButton = pButton;
-        theEndButton.getEventRegistrar().addActionListener(e -> handleNewEndDate(e.getDetails(TethysDate.class)));
+        theEndButton.getEventRegistrar().addEventListener(e -> handleNewEndDate(e.getDetails(TethysDate.class)));
     }
 
     /**
@@ -178,7 +173,7 @@ public abstract class TethysDateRangeSelector<N>
      */
     protected void declareBaseButton(final TethysDateButtonManager<?> pButton) {
         theBaseButton = pButton;
-        theBaseButton.getEventRegistrar().addActionListener(e -> handleNewBaseDate(e.getDetails(TethysDate.class)));
+        theBaseButton.getEventRegistrar().addEventListener(e -> handleNewBaseDate(e.getDetails(TethysDate.class)));
     }
 
     /**
@@ -188,7 +183,7 @@ public abstract class TethysDateRangeSelector<N>
     protected void declarePeriodButton(final TethysScrollButtonManager<TethysDatePeriod, ?> pButton) {
         thePeriodButton = pButton;
         buildPeriodMenu(thePeriodButton.getMenu());
-        thePeriodButton.getEventRegistrar().addActionListener(e -> setPeriod(e.getDetails(TethysDatePeriod.class)));
+        thePeriodButton.getEventRegistrar().addEventListener(e -> setPeriod(e.getDetails(TethysDatePeriod.class)));
     }
 
     /**
@@ -379,7 +374,7 @@ public abstract class TethysDateRangeSelector<N>
             myNew = new TethysDateRange(myNew);
 
             /* Fire the value change */
-            theEventManager.fireActionEvent(ACTION_NEW_VALUE, myNew);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myNew);
         }
     }
 

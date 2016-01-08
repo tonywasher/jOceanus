@@ -70,6 +70,14 @@ public enum MetisFieldState {
      * @return true/false
      */
     public boolean isChanged() {
-        return this == CHANGED;
+        switch (this) {
+            case CHANGED:
+            case NEW:
+            case RESTORED:
+            case ERROR:
+                return true;
+            default:
+                return false;
+        }
     }
 }

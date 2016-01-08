@@ -27,25 +27,17 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AllFilter;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * All transactions Selection.
  */
 public class AllSelect
         extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider {
+        implements AnalysisFilterSelection {
     /**
      * Serial Id.
      */
     private static final long serialVersionUID = 5007037268615984742L;
-
-    /**
-     * The Event Manager.
-     */
-    private final transient TethysEventManager theEventManager;
 
     /**
      * The filter.
@@ -58,14 +50,6 @@ public class AllSelect
     public AllSelect() {
         /* Create the filter */
         theFilter = AnalysisFilter.FILTER_ALL;
-
-        /* Create Event Manager */
-        theEventManager = new TethysEventManager();
-    }
-
-    @Override
-    public TethysEventRegistrar getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
     }
 
     @Override

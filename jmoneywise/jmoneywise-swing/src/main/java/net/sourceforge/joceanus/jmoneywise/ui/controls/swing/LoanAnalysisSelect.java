@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,12 +46,10 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
@@ -63,7 +59,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
  */
 public class LoanAnalysisSelect
         extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider {
+        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -82,7 +78,7 @@ public class LoanAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The active category bucket list.
@@ -115,17 +111,27 @@ public class LoanAnalysisSelect
     private final JScrollButton<LoanCategory> theCatButton;
 
     /**
+     * Category menu builder.
+     */
+    private final JScrollMenuBuilder<LoanCategory> theCategoryMenuBuilder;
+
+    /**
+     * Loan menu builder.
+     */
+    private final JScrollMenuBuilder<LoanBucket> theLoanMenuBuilder;
+
+    /**
      * Constructor.
      */
     public LoanAnalysisSelect() {
         /* Create the loan button */
-        theLoanButton = new JScrollButton<LoanBucket>();
+        theLoanButton = new JScrollButton<>();
 
         /* Create the category button */
-        theCatButton = new JScrollButton<LoanCategory>();
+        theCatButton = new JScrollButton<>();
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
         JLabel myCatLabel = new JLabel(NLS_CATEGORY + MetisFieldElement.STR_COLON);
@@ -148,11 +154,16 @@ public class LoanAnalysisSelect
         theState.applyState();
 
         /* Create the listener */
-        new LoanListener();
+        theCategoryMenuBuilder = theCatButton.getMenuBuilder();
+        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu());
+        theLoanMenuBuilder = theLoanButton.getMenuBuilder();
+        theLoanMenuBuilder.getEventRegistrar().addEventListener(e -> buildLoanMenu());
+        theLoanButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewLoan());
+        theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewCategory());
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -296,152 +307,100 @@ public class LoanAnalysisSelect
     }
 
     /**
-     * Listener class.
+     * Handle new Category.
      */
-    private final class LoanListener
-            implements PropertyChangeListener, TethysChangeEventListener {
-        /**
-         * Category menu builder.
-         */
-        private final JScrollMenuBuilder<LoanCategory> theCategoryMenuBuilder;
-
-        /**
-         * Loan menu builder.
-         */
-        private final JScrollMenuBuilder<LoanBucket> theLoanMenuBuilder;
-
-        /**
-         * CategoryMenu Registration.
-         */
-        private final TethysChangeRegistration theCategoryMenuReg;
-
-        /**
-         * LoanMenu Registration.
-         */
-        private final TethysChangeRegistration theLoanMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private LoanListener() {
-            /* Access builders */
-            theCategoryMenuBuilder = theCatButton.getMenuBuilder();
-            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theLoanMenuBuilder = theLoanButton.getMenuBuilder();
-            theLoanMenuReg = theLoanMenuBuilder.getEventRegistrar().addChangeListener(this);
-
-            /* Add swing listeners */
-            theLoanButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+    private void handleNewCategory() {
+        /* Select the new category */
+        if (theState.setCategory(theCatButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
+    }
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle buttons */
-            if (theCategoryMenuReg.isRelevant(pEvent)) {
-                buildCategoryMenu();
-            } else if (theLoanMenuReg.isRelevant(pEvent)) {
-                buildLoanMenu();
+    /**
+     * Handle new Loan.
+     */
+    private void handleNewLoan() {
+        /* Select the new loan */
+        if (theState.setLoan(theLoanButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        }
+    }
+
+    /**
+     * Build Category menu.
+     */
+    private void buildCategoryMenu() {
+        /* Reset the popUp menu */
+        theCategoryMenuBuilder.clearMenu();
+
+        /* Create a simple map for top-level categories */
+        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+
+        /* Record active item */
+        LoanCategory myCurrent = theState.getCategory();
+        JMenuItem myActive = null;
+
+        /* Re-Loop through the available category values */
+        Iterator<LoanCategoryBucket> myIterator = theCategories.iterator();
+        while (myIterator.hasNext()) {
+            LoanCategoryBucket myBucket = myIterator.next();
+
+            /* Only process low-level items */
+            if (myBucket.getAccountCategory().isCategoryClass(LoanCategoryClass.PARENT)) {
+                continue;
+            }
+
+            /* Determine menu to add to */
+            LoanCategory myParent = myBucket.getAccountCategory().getParentCategory();
+            String myParentName = myParent.getName();
+            JScrollMenu myMenu = myMap.get(myParent.getName());
+
+            /* If this is a new menu */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
+                myMap.put(myParentName, myMenu);
+            }
+
+            /* Create a new JMenuItem and add it to the popUp */
+            LoanCategory myCategory = myBucket.getAccountCategory();
+            JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+
+            /* If this is the active category */
+            if (myCategory.equals(myCurrent)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
 
-        /**
-         * Build Category menu.
-         */
-        private void buildCategoryMenu() {
-            /* Reset the popUp menu */
-            theCategoryMenuBuilder.clearMenu();
+        /* Ensure active item is visible */
+        theCategoryMenuBuilder.showItem(myActive);
+    }
 
-            /* Create a simple map for top-level categories */
-            Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+    /**
+     * Build Loan menu.
+     */
+    private void buildLoanMenu() {
+        /* Reset the popUp menu */
+        theLoanMenuBuilder.clearMenu();
 
-            /* Record active item */
-            LoanCategory myCurrent = theState.getCategory();
-            JMenuItem myActive = null;
+        /* Access current category and Loan */
+        LoanCategory myCategory = theState.getCategory();
 
-            /* Re-Loop through the available category values */
-            Iterator<LoanCategoryBucket> myIterator = theCategories.iterator();
-            while (myIterator.hasNext()) {
-                LoanCategoryBucket myBucket = myIterator.next();
+        /* Loop through the available account values */
+        Iterator<LoanBucket> myIterator = theLoans.iterator();
+        while (myIterator.hasNext()) {
+            LoanBucket myBucket = myIterator.next();
 
-                /* Only process low-level items */
-                if (myBucket.getAccountCategory().isCategoryClass(LoanCategoryClass.PARENT)) {
-                    continue;
-                }
-
-                /* Determine menu to add to */
-                LoanCategory myParent = myBucket.getAccountCategory().getParentCategory();
-                String myParentName = myParent.getName();
-                JScrollMenu myMenu = myMap.get(myParent.getName());
-
-                /* If this is a new menu */
-                if (myMenu == null) {
-                    /* Create a new JMenu and add it to the popUp */
-                    myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
-                    myMap.put(myParentName, myMenu);
-                }
-
-                /* Create a new JMenuItem and add it to the popUp */
-                LoanCategory myCategory = myBucket.getAccountCategory();
-                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
-
-                /* If this is the active category */
-                if (myCategory.equals(myCurrent)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
+            /* Ignore if not the correct category */
+            if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
+                continue;
             }
 
-            /* Ensure active item is visible */
-            theCategoryMenuBuilder.showItem(myActive);
-        }
-
-        /**
-         * Build Loan menu.
-         */
-        private void buildLoanMenu() {
-            /* Reset the popUp menu */
-            theLoanMenuBuilder.clearMenu();
-
-            /* Access current category and Loan */
-            LoanCategory myCategory = theState.getCategory();
-
-            /* Loop through the available account values */
-            Iterator<LoanBucket> myIterator = theLoans.iterator();
-            while (myIterator.hasNext()) {
-                LoanBucket myBucket = myIterator.next();
-
-                /* Ignore if not the correct category */
-                if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
-                    continue;
-                }
-
-                /* Create a new JMenuItem and add it to the popUp */
-                theLoanMenuBuilder.addItem(myBucket);
-            }
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* Access the source */
-            Object o = pEvent.getSource();
-
-            /* If this is the category button */
-            if (theCatButton.equals(o)) {
-                /* Select the new category */
-                if (theState.setCategory(theCatButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
-
-                /* If this is the loan button */
-            } else if (theLoanButton.equals(o)) {
-                /* Select the new loan */
-                if (theState.setLoan(theLoanButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
-            }
+            /* Create a new JMenuItem and add it to the popUp */
+            theLoanMenuBuilder.addItem(myBucket);
         }
     }
 

@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -52,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * document.
  */
 public abstract class ReportManager
-        implements TethysEventProvider {
+        implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * The id attribute.
      */
@@ -61,7 +62,7 @@ public abstract class ReportManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The Transformer.
@@ -102,10 +103,10 @@ public abstract class ReportManager
         theBuilder = pBuilder;
 
         /* Create event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Allocate the hashMaps */
-        theHiddenMap = new HashMap<String, HiddenElement>();
+        theHiddenMap = new HashMap<>();
 
         /* Protect against exceptions */
         try {
@@ -120,7 +121,7 @@ public abstract class ReportManager
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -155,7 +156,7 @@ public abstract class ReportManager
      * @param pFilter the filter
      */
     protected void fireActionEvent(final AnalysisFilter<?, ?> pFilter) {
-        theEventManager.fireActionEvent(pFilter);
+        theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, pFilter);
     }
 
     /**

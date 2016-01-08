@@ -22,27 +22,27 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.event;
 
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
 
 /**
  * Registration structure for event listeners.
- * @param <T> The event for the registration
+ * @param <E> The event id type
  */
-public abstract class TethysEventRegistration<T extends TethysEvent> {
-    /**
-     * registrationType.
-     */
-    private final RegistrationType theType;
-
+public class TethysEventRegistration<E extends Enum<E>> {
     /**
      * manager id.
      */
     private final Integer theMgrId;
+
+    /**
+     * Event listener.
+     */
+    private final TethysEventListener<E> theListener;
+
+    /**
+     * Action Id.
+     */
+    private final E theEventId;
 
     /**
      * registration id.
@@ -52,12 +52,25 @@ public abstract class TethysEventRegistration<T extends TethysEvent> {
     /**
      * Constructor.
      * @param pMgrId the manager Id
-     * @param pType the registration type
+     * @param pListener the listener
      */
-    private TethysEventRegistration(final Integer pMgrId,
-                                    final RegistrationType pType) {
+    protected TethysEventRegistration(final Integer pMgrId,
+                                      final TethysEventListener<E> pListener) {
+        this(pMgrId, null, pListener);
+    }
+
+    /**
+     * Constructor.
+     * @param pMgrId the manager Id
+     * @param pEventId the eventId to filter on
+     * @param pListener the listener
+     */
+    protected TethysEventRegistration(final Integer pMgrId,
+                                      final E pEventId,
+                                      final TethysEventListener<E> pListener) {
         theMgrId = pMgrId;
-        theType = pType;
+        theEventId = pEventId;
+        theListener = pListener;
     }
 
     /**
@@ -65,7 +78,7 @@ public abstract class TethysEventRegistration<T extends TethysEvent> {
      * @param pEvent the event
      * @return true/false
      */
-    public boolean isRelevant(final TethysEvent pEvent) {
+    public boolean isRelevant(final TethysEvent<E> pEvent) {
         return theMgrId == pEvent.getSourceId();
     }
 
@@ -86,19 +99,22 @@ public abstract class TethysEventRegistration<T extends TethysEvent> {
     }
 
     /**
-     * Is this the required registration type?
-     * @param pType the registrationType
-     * @return true/false
-     */
-    protected boolean isRegistrationType(final RegistrationType pType) {
-        return theType.equals(pType);
-    }
-
-    /**
      * Process the relevant event.
      * @param pEvent the event.
      */
-    protected abstract void processEvent(final T pEvent);
+    protected void processEvent(final TethysEvent<E> pEvent) {
+        theListener.handleEvent(pEvent);
+    }
+
+    /**
+     * Is the event filtered?
+     * @param pEventId the event Id
+     * @return true/false
+     */
+    protected boolean isFiltered(final E pEventId) {
+        return theEventId != null
+               && !theEventId.equals(pEventId);
+    }
 
     @Override
     public boolean equals(final Object o) {
@@ -120,134 +136,5 @@ public abstract class TethysEventRegistration<T extends TethysEvent> {
     @Override
     public int hashCode() {
         return theRegId;
-    }
-
-    /**
-     * ActionRegistration class.
-     */
-    public static class TethysActionRegistration
-            extends TethysEventRegistration<TethysActionEvent> {
-        /**
-         * Action listener.
-         */
-        private final TethysActionEventListener theListener;
-
-        /**
-         * Action Id.
-         */
-        private final int theActionId;
-
-        /**
-         * Constructor.
-         * @param pMgrId the manager Id
-         * @param pListener the listener
-         */
-        protected TethysActionRegistration(final Integer pMgrId,
-                                           final TethysActionEventListener pListener) {
-            this(pMgrId, TethysEventManager.ACTIONID_ANY, pListener);
-        }
-
-        /**
-         * Constructor.
-         * @param pMgrId the manager Id
-         * @param pActionId the actionId to filter on
-         * @param pListener the listener
-         */
-        protected TethysActionRegistration(final Integer pMgrId,
-                                           final int pActionId,
-                                           final TethysActionEventListener pListener) {
-            super(pMgrId, RegistrationType.ACTION);
-            theActionId = pActionId;
-            theListener = pListener;
-        }
-
-        @Override
-        protected void processEvent(final TethysActionEvent pEvent) {
-            theListener.processAction(pEvent);
-        }
-
-        /**
-         * Is the event filtered?
-         * @param pActionId the action Id
-         * @return true/false
-         */
-        protected boolean isFiltered(final int pActionId) {
-            return theActionId != TethysEventManager.ACTIONID_ANY
-                   && theActionId != pActionId;
-        }
-    }
-
-    /**
-     * ChangeRegistration class.
-     */
-    public static class TethysChangeRegistration
-            extends TethysEventRegistration<TethysChangeEvent> {
-        /**
-         * Change listener.
-         */
-        private final TethysChangeEventListener theListener;
-
-        /**
-         * Constructor.
-         * @param pMgrId the manager Id
-         * @param pListener the listener
-         */
-        protected TethysChangeRegistration(final Integer pMgrId,
-                                           final TethysChangeEventListener pListener) {
-            super(pMgrId, RegistrationType.CHANGE);
-            theListener = pListener;
-        }
-
-        @Override
-        protected void processEvent(final TethysChangeEvent pEvent) {
-            theListener.processChange(pEvent);
-        }
-    }
-
-    /**
-     * ItemRegistration class.
-     */
-    public static class TethysItemRegistration
-            extends TethysEventRegistration<TethysItemEvent> {
-        /**
-         * Item listener.
-         */
-        private final TethysItemEventListener theListener;
-
-        /**
-         * Constructor.
-         * @param pMgrId the manager Id
-         * @param pListener the listener
-         */
-        protected TethysItemRegistration(final Integer pMgrId,
-                                         final TethysItemEventListener pListener) {
-            super(pMgrId, RegistrationType.ITEM);
-            theListener = pListener;
-        }
-
-        @Override
-        protected void processEvent(final TethysItemEvent pEvent) {
-            theListener.processItem(pEvent);
-        }
-    }
-
-    /**
-     * Registration Type.
-     */
-    protected enum RegistrationType {
-        /**
-         * Action.
-         */
-        ACTION,
-
-        /**
-         * Change.
-         */
-        CHANGE,
-
-        /**
-         * Item.
-         */
-        ITEM;
     }
 }

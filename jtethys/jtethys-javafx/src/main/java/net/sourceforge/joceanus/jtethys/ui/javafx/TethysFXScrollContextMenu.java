@@ -29,13 +29,11 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import javafx.application.Platform;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
@@ -57,6 +55,7 @@ import javafx.scene.shape.Polygon;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXArrowIcon;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
@@ -93,11 +92,6 @@ public class TethysFXScrollContextMenu<T>
      * The item style.
      */
     private static final String STYLE_ITEM = "-jtethys-context-item";
-
-    /**
-     * Timer.
-     */
-    private Timer theTimer;
 
     /**
      * List of menu items.
@@ -283,14 +277,6 @@ public class TethysFXScrollContextMenu<T>
         return theMaxDisplayItems;
     }
 
-    /**
-     * Obtain the timer.
-     * @return the timer
-     */
-    private Timer getTimer() {
-        return theTimer;
-    }
-
     @Override
     public void setCloseOnToggle(final boolean pCloseOnToggle) {
         /* Set value */
@@ -384,9 +370,6 @@ public class TethysFXScrollContextMenu<T>
      */
     private void showMenu() {
         /* Initialise the values */
-        theTimer = theParentMenu != null
-                                         ? theParentContext.getTimer()
-                                         : new Timer();
         theSelectedItem = null;
         theActiveMenu = null;
         theActiveItem = null;
@@ -404,13 +387,6 @@ public class TethysFXScrollContextMenu<T>
 
         /* Close the menu */
         close();
-
-        /* Clear any timer */
-        if (theParentMenu == null
-            && theTimer != null) {
-            theTimer.cancel();
-        }
-        theTimer = null;
     }
 
     /**
@@ -1143,15 +1119,9 @@ public class TethysFXScrollContextMenu<T>
             myLabel.setContentDisplay(ContentDisplay.RIGHT);
 
             /* Handle show menu */
-            addEventFilter(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(final MouseEvent event) {
-                    /* handle the active menu */
-                    theContext.handleActiveMenu(TethysFXScrollSubMenu.this);
-
-                    /* Show the menu */
-                    theSubMenu.showMenuAtPosition(TethysFXScrollSubMenu.this, Side.RIGHT);
-                }
+            addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
+                theContext.handleActiveMenu(TethysFXScrollSubMenu.this);
+                theSubMenu.showMenuAtPosition(TethysFXScrollSubMenu.this, Side.RIGHT);
             });
         }
 
@@ -1212,9 +1182,14 @@ public class TethysFXScrollContextMenu<T>
         private final int theIncrement;
 
         /**
-         * Timer.
+         * KickStart Timer.
          */
-        private TimerTask theTimerTask;
+        private final Timeline theKickStartTimer;
+
+        /**
+         * Repeat Timer.
+         */
+        private final Timeline theRepeatTimer;
 
         /**
          * Constructor.
@@ -1241,6 +1216,12 @@ public class TethysFXScrollContextMenu<T>
 
             /* Handle mouse exits */
             addEventHandler(MouseEvent.MOUSE_EXITED, e -> processMouseExit());
+
+            /* Create the timers */
+            theKickStartTimer = new Timeline(new KeyFrame(Duration.millis(TethysScrollMenuContent.INITIAL_SCROLLDELAY),
+                    e -> processScroll()));
+            theRepeatTimer = new Timeline(new KeyFrame(Duration.millis(TethysScrollMenuContent.REPEAT_SCROLLDELAY),
+                    e -> processScroll()));
         }
 
         /**
@@ -1249,44 +1230,30 @@ public class TethysFXScrollContextMenu<T>
         private void processScroll() {
             /* Request the scroll */
             requestScroll(theIncrement);
+            theRepeatTimer.play();
         }
 
         /**
          * Process mouseEnter event.
          */
         private void processMouseEnter() {
-            /* cancel any existing task */
-            if (theTimerTask != null) {
-                theTimerTask.cancel();
-            }
-
             /* Close any children */
             closeChildren();
 
             /* Set no active Item */
             theActiveItem = null;
 
-            /* Create new timer task */
-            theTimerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> processScroll());
-                }
-            };
-
             /* Schedule the task */
-            theTimer.schedule(theTimerTask, TethysScrollMenuContent.INITIAL_SCROLLDELAY, TethysScrollMenuContent.REPEAT_SCROLLDELAY);
+            theKickStartTimer.play();
         }
 
         /**
          * Process mouseExit event.
          */
         private void processMouseExit() {
-            /* If the timer is stopped */
-            if (theTimerTask != null) {
-                theTimerTask.cancel();
-                theTimerTask = null;
-            }
+            /* Cancel any timer tasks */
+            theKickStartTimer.stop();
+            theRepeatTimer.stop();
         }
     }
 

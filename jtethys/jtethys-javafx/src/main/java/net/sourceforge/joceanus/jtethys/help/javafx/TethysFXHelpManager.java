@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
@@ -95,7 +96,7 @@ public class TethysFXHelpManager
      */
     private void handleDialogClosing() {
         getTreeManager().setVisible(false);
-        fireEvent(ACTION_WINDOW_CLOSED, null);
+        fireEvent(TethysUIEvent.WINDOWCLOSED, null);
     }
 
     @Override

@@ -27,12 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysItemRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
 
 /**
  * EventRegister implementation. This maintains a list of
@@ -42,18 +37,20 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysItem
  * ChangeEvents and ActionEvents that are fired.
  * <p>
  * This class is used by listeners to register to listen for events.
+ * @param <E> The event id type
  */
-public class TethysEventRegistrar {
+public class TethysEventRegistrar<E extends Enum<E>> {
     /**
      * Interface for event providers.
+     * @param <E> The event id type
      */
     @FunctionalInterface
-    public interface TethysEventProvider {
+    public interface TethysEventProvider<E extends Enum<E>> {
         /**
          * Obtain registration object for listeners.
          * @return the registrar
          */
-        TethysEventRegistrar getEventRegistrar();
+        TethysEventRegistrar<E> getEventRegistrar();
     }
 
     /**
@@ -64,7 +61,7 @@ public class TethysEventRegistrar {
     /**
      * The list of registrations.
      */
-    private volatile List<TethysEventRegistration<?>> theRegistrations = null;
+    private volatile List<TethysEventRegistration<E>> theRegistrations = null;
 
     /**
      * The Next registrationId.
@@ -98,7 +95,7 @@ public class TethysEventRegistrar {
      * Obtain registration iterator.
      * @return the iterator
      */
-    protected Iterator<TethysEventRegistration<?>> iterator() {
+    protected Iterator<TethysEventRegistration<E>> iterator() {
         return theRegistrations.iterator();
     }
 
@@ -106,22 +103,22 @@ public class TethysEventRegistrar {
      * Obtain reverse registration iterator.
      * @return the iterator
      */
-    protected ListIterator<TethysEventRegistration<?>> reverseIterator() {
+    protected ListIterator<TethysEventRegistration<E>> reverseIterator() {
         /* Obtain a reference to the registrations */
-        List<TethysEventRegistration<?>> myList = theRegistrations;
+        List<TethysEventRegistration<E>> myList = theRegistrations;
 
         /* Create an iterator positioned at the end of the list */
         return myList.listIterator(myList.size());
     }
 
     /**
-     * Add change Listener to list.
+     * Add event Listener to list.
      * @param pListener the listener to add
      * @return the registration
      */
-    public TethysChangeRegistration addChangeListener(final TethysChangeEventListener pListener) {
+    public TethysEventRegistration<E> addEventListener(final TethysEventListener<E> pListener) {
         /* Create the registration */
-        TethysChangeRegistration myReg = new TethysChangeRegistration(theMgrId, pListener);
+        TethysEventRegistration<E> myReg = new TethysEventRegistration<>(theMgrId, pListener);
 
         /* Add it to the list */
         addToListenerList(myReg);
@@ -129,13 +126,15 @@ public class TethysEventRegistrar {
     }
 
     /**
-     * Add action Listener to list.
+     * Add filtered event Listener to list.
+     * @param pEventId the explicit event id to listen for
      * @param pListener the listener to add
      * @return the registration
      */
-    public TethysActionRegistration addActionListener(final TethysActionEventListener pListener) {
+    public TethysEventRegistration<E> addEventListener(final E pEventId,
+                                                       final TethysEventListener<E> pListener) {
         /* Create the registration */
-        TethysActionRegistration myReg = new TethysActionRegistration(theMgrId, pListener);
+        TethysEventRegistration<E> myReg = new TethysEventRegistration<>(theMgrId, pEventId, pListener);
 
         /* Add it to the list */
         addToListenerList(myReg);
@@ -143,56 +142,10 @@ public class TethysEventRegistrar {
     }
 
     /**
-     * Add filtered action Listener to list.
-     * @param pActionId the explicit action id to listen for
-     * @param pListener the listener to add
-     * @return the registration
-     */
-    public TethysActionRegistration addFilteredActionListener(final int pActionId,
-                                                              final TethysActionEventListener pListener) {
-        /* Create the registration */
-        TethysActionRegistration myReg = new TethysActionRegistration(theMgrId, pActionId, pListener);
-
-        /* Add it to the list */
-        addToListenerList(myReg);
-        return myReg;
-    }
-
-    /**
-     * Add item Listener to list.
-     * @param pListener the listener to add
-     * @return the registration
-     */
-    public TethysItemRegistration addItemListener(final TethysItemEventListener pListener) {
-        /* Create the registration */
-        TethysItemRegistration myReg = new TethysItemRegistration(theMgrId, pListener);
-
-        /* Add it to the list */
-        addToListenerList(myReg);
-        return myReg;
-    }
-
-    /**
-     * Remove Change Listener.
+     * Remove Event Listener.
      * @param pRegistration the registration to remove
      */
-    public void removeChangeListener(final TethysChangeRegistration pRegistration) {
-        removeFromListenerList(pRegistration);
-    }
-
-    /**
-     * Remove Action Listener.
-     * @param pRegistration the registration to remove
-     */
-    public void removeActionListener(final TethysActionRegistration pRegistration) {
-        removeFromListenerList(pRegistration);
-    }
-
-    /**
-     * Remove Item Listener.
-     * @param pRegistration the registration to remove
-     */
-    public void removeItemListener(final TethysItemRegistration pRegistration) {
+    public void removeEventListener(final TethysEventRegistration<E> pRegistration) {
         removeFromListenerList(pRegistration);
     }
 
@@ -201,9 +154,9 @@ public class TethysEventRegistrar {
      * @param pRegistration the relevant registration
      * @return the id of the new registration
      */
-    private synchronized Integer addToListenerList(final TethysEventRegistration<?> pRegistration) {
+    private synchronized Integer addToListenerList(final TethysEventRegistration<E> pRegistration) {
         /* Create a new list to avoid affecting any currently firing iterations */
-        List<TethysEventRegistration<?>> myNew = new ArrayList<>(theRegistrations);
+        List<TethysEventRegistration<E>> myNew = new ArrayList<>(theRegistrations);
 
         /* Set the new registration Id */
         pRegistration.setRegId(getNextRegistrationId());
@@ -222,14 +175,14 @@ public class TethysEventRegistrar {
      * Remove from listener list.
      * @param pRegistration the registration to remove
      */
-    private synchronized void removeFromListenerList(final TethysEventRegistration<?> pRegistration) {
+    private synchronized void removeFromListenerList(final TethysEventRegistration<E> pRegistration) {
         /* Create a new list to avoid affecting any currently firing iterations */
-        List<TethysEventRegistration<?>> myNew = new ArrayList<>(theRegistrations);
+        List<TethysEventRegistration<E>> myNew = new ArrayList<>(theRegistrations);
 
         /* Iterate through the registrations */
-        Iterator<TethysEventRegistration<?>> myIterator = myNew.iterator();
+        Iterator<TethysEventRegistration<E>> myIterator = myNew.iterator();
         while (myIterator.hasNext()) {
-            TethysEventRegistration<?> myReg = myIterator.next();
+            TethysEventRegistration<E> myReg = myIterator.next();
 
             /* If the registration matches */
             if (myReg.equals(pRegistration)) {

@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,12 +46,10 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
@@ -63,7 +59,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
  */
 public class DepositAnalysisSelect
         extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider {
+        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -82,7 +78,7 @@ public class DepositAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The active category bucket list.
@@ -115,17 +111,27 @@ public class DepositAnalysisSelect
     private final JScrollButton<DepositCategory> theCatButton;
 
     /**
+     * Category menu builder.
+     */
+    private final JScrollMenuBuilder<DepositCategory> theCategoryMenuBuilder;
+
+    /**
+     * Deposit menu builder.
+     */
+    private final JScrollMenuBuilder<DepositBucket> theDepositMenuBuilder;
+
+    /**
      * Constructor.
      */
     public DepositAnalysisSelect() {
         /* Create the deposit button */
-        theDepositButton = new JScrollButton<DepositBucket>();
+        theDepositButton = new JScrollButton<>();
 
         /* Create the category button */
-        theCatButton = new JScrollButton<DepositCategory>();
+        theCatButton = new JScrollButton<>();
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
         JLabel myCatLabel = new JLabel(NLS_CATEGORY + MetisFieldElement.STR_COLON);
@@ -147,12 +153,17 @@ public class DepositAnalysisSelect
         theState = new DepositState();
         theState.applyState();
 
-        /* Create the listener */
-        new DepositListener();
+        /* Create the listeners */
+        theCategoryMenuBuilder = theCatButton.getMenuBuilder();
+        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu());
+        theDepositMenuBuilder = theDepositButton.getMenuBuilder();
+        theDepositMenuBuilder.getEventRegistrar().addEventListener(e -> buildDepositMenu());
+        theDepositButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewDeposit());
+        theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewCategory());
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -296,166 +307,114 @@ public class DepositAnalysisSelect
     }
 
     /**
-     * Listener class.
+     * Handle new Category.
      */
-    private final class DepositListener
-            implements PropertyChangeListener, TethysChangeEventListener {
-        /**
-         * Category menu builder.
-         */
-        private final JScrollMenuBuilder<DepositCategory> theCategoryMenuBuilder;
-
-        /**
-         * Deposit menu builder.
-         */
-        private final JScrollMenuBuilder<DepositBucket> theDepositMenuBuilder;
-
-        /**
-         * CategoryMenu Registration.
-         */
-        private final TethysChangeRegistration theCategoryMenuReg;
-
-        /**
-         * DepositMenu Registration.
-         */
-        private final TethysChangeRegistration theDepositMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private DepositListener() {
-            /* Access builders */
-            theCategoryMenuBuilder = theCatButton.getMenuBuilder();
-            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theDepositMenuBuilder = theDepositButton.getMenuBuilder();
-            theDepositMenuReg = theDepositMenuBuilder.getEventRegistrar().addChangeListener(this);
-
-            /* Add swing listeners */
-            theDepositButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+    private void handleNewCategory() {
+        /* Select the new category */
+        if (theState.setCategory(theCatButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
+    }
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle builders */
-            if (theCategoryMenuReg.isRelevant(pEvent)) {
-                buildCategoryMenu();
-            } else if (theDepositMenuReg.isRelevant(pEvent)) {
-                buildDepositMenu();
+    /**
+     * Handle new Deposit.
+     */
+    private void handleNewDeposit() {
+        /* Select the new deposit */
+        if (theState.setDeposit(theDepositButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        }
+    }
+
+    /**
+     * Build Category menu.
+     */
+    private void buildCategoryMenu() {
+        /* Reset the popUp menu */
+        theCategoryMenuBuilder.clearMenu();
+
+        /* Create a simple map for top-level categories */
+        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+
+        /* Record active item */
+        DepositCategory myCurrent = theState.getCategory();
+        JMenuItem myActive = null;
+
+        /* Re-Loop through the available category values */
+        Iterator<DepositCategoryBucket> myIterator = theCategories.iterator();
+        while (myIterator.hasNext()) {
+            DepositCategoryBucket myBucket = myIterator.next();
+
+            /* Only process low-level items */
+            if (myBucket.getAccountCategory().isCategoryClass(DepositCategoryClass.PARENT)) {
+                continue;
+            }
+
+            /* Determine menu to add to */
+            DepositCategory myParent = myBucket.getAccountCategory().getParentCategory();
+            String myParentName = myParent.getName();
+            JScrollMenu myMenu = myMap.get(myParentName);
+
+            /* If this is a new menu */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
+                myMap.put(myParentName, myMenu);
+            }
+
+            /* Create a new JMenuItem and add it to the popUp */
+            DepositCategory myCategory = myBucket.getAccountCategory();
+            JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+
+            /* If this is the active category */
+            if (myCategory.equals(myCurrent)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
 
-        /**
-         * Build Category menu.
-         */
-        private void buildCategoryMenu() {
-            /* Reset the popUp menu */
-            theCategoryMenuBuilder.clearMenu();
+        /* Ensure active item is visible */
+        theCategoryMenuBuilder.showItem(myActive);
+    }
 
-            /* Create a simple map for top-level categories */
-            Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+    /**
+     * Build Deposit menu.
+     */
+    private void buildDepositMenu() {
+        /* Reset the popUp menu */
+        theDepositMenuBuilder.clearMenu();
 
-            /* Record active item */
-            DepositCategory myCurrent = theState.getCategory();
-            JMenuItem myActive = null;
+        /* Access current category */
+        DepositCategory myCategory = theState.getCategory();
+        DepositBucket myDeposit = theState.getDeposit();
 
-            /* Re-Loop through the available category values */
-            Iterator<DepositCategoryBucket> myIterator = theCategories.iterator();
-            while (myIterator.hasNext()) {
-                DepositCategoryBucket myBucket = myIterator.next();
+        /* Record active item */
+        JMenuItem myActive = null;
 
-                /* Only process low-level items */
-                if (myBucket.getAccountCategory().isCategoryClass(DepositCategoryClass.PARENT)) {
-                    continue;
-                }
+        /* Loop through the available account values */
+        Iterator<DepositBucket> myIterator = theDeposits.iterator();
+        while (myIterator.hasNext()) {
+            DepositBucket myBucket = myIterator.next();
 
-                /* Determine menu to add to */
-                DepositCategory myParent = myBucket.getAccountCategory().getParentCategory();
-                String myParentName = myParent.getName();
-                JScrollMenu myMenu = myMap.get(myParentName);
-
-                /* If this is a new menu */
-                if (myMenu == null) {
-                    /* Create a new JMenu and add it to the popUp */
-                    myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
-                    myMap.put(myParentName, myMenu);
-                }
-
-                /* Create a new JMenuItem and add it to the popUp */
-                DepositCategory myCategory = myBucket.getAccountCategory();
-                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
-
-                /* If this is the active category */
-                if (myCategory.equals(myCurrent)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
+            /* Ignore if not the correct category */
+            if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
+                continue;
             }
 
-            /* Ensure active item is visible */
-            theCategoryMenuBuilder.showItem(myActive);
-        }
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = theDepositMenuBuilder.addItem(myBucket);
 
-        /**
-         * Build Deposit menu.
-         */
-        private void buildDepositMenu() {
-            /* Reset the popUp menu */
-            theDepositMenuBuilder.clearMenu();
-
-            /* Access current category */
-            DepositCategory myCategory = theState.getCategory();
-            DepositBucket myDeposit = theState.getDeposit();
-
-            /* Record active item */
-            JMenuItem myActive = null;
-
-            /* Loop through the available account values */
-            Iterator<DepositBucket> myIterator = theDeposits.iterator();
-            while (myIterator.hasNext()) {
-                DepositBucket myBucket = myIterator.next();
-
-                /* Ignore if not the correct category */
-                if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
-                    continue;
-                }
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theDepositMenuBuilder.addItem(myBucket);
-
-                /* If this is the active deposit */
-                if (myBucket.equals(myDeposit)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theDepositMenuBuilder.showItem(myActive);
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* Access the source */
-            Object o = pEvent.getSource();
-
-            /* If this is the category button */
-            if (theCatButton.equals(o)) {
-                /* Select the new category */
-                if (theState.setCategory(theCatButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
-
-                /* If this is the deposit button */
-            } else if (theDepositButton.equals(o)) {
-                /* Select the new deposit */
-                if (theState.setDeposit(theDepositButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
+            /* If this is the active deposit */
+            if (myBucket.equals(myDeposit)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
+
+        /* Ensure active item is visible */
+        theDepositMenuBuilder.showItem(myActive);
     }
 
     /**

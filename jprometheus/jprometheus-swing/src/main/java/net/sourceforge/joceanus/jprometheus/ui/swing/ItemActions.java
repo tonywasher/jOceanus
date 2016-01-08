@@ -46,16 +46,11 @@ package net.sourceforge.joceanus.jprometheus.ui.swing;
 
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -81,7 +76,7 @@ public class ItemActions<E extends Enum<E>>
     /**
      * The goTo button.
      */
-    private final JScrollButton<TethysActionEvent> theGoToButton;
+    private final JScrollButton<PrometheusGoToEvent> theGoToButton;
 
     /**
      * The edit button.
@@ -107,13 +102,13 @@ public class ItemActions<E extends Enum<E>>
         theParent = pParent;
 
         /* Create the buttons */
-        DefaultIconButtonState<Boolean> myEditState = new DefaultIconButtonState<Boolean>();
-        DefaultIconButtonState<Boolean> myDeleteState = new DefaultIconButtonState<Boolean>();
+        DefaultIconButtonState<Boolean> myEditState = new DefaultIconButtonState<>();
+        DefaultIconButtonState<Boolean> myDeleteState = new DefaultIconButtonState<>();
 
         /* Create the buttons */
         theGoToButton = PrometheusIcons.getGotoButton();
-        theEditButton = new JIconButton<Boolean>(myEditState);
-        theDeleteButton = new JIconButton<Boolean>(myDeleteState);
+        theEditButton = new JIconButton<>(myEditState);
+        theDeleteButton = new JIconButton<>(myDeleteState);
 
         /* Make buttons the size of the icons */
         Insets myInsets = new Insets(0, 0, 0, 0);
@@ -137,10 +132,16 @@ public class ItemActions<E extends Enum<E>>
         add(theDeleteButton);
 
         /* Create the listener */
-        ItemListener myListener = new ItemListener();
-        theGoToButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        theEditButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, myListener);
-        theDeleteButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, myListener);
+        theGoToButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> theParent.processGoToRequest(theGoToButton.getValue()));
+        theEditButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, e -> theParent.requestEdit());
+        theDeleteButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, e -> theParent.requestDelete());
+
+        JScrollMenuBuilder<PrometheusGoToEvent> myMenuBuilder = theGoToButton.getMenuBuilder();
+        theParent.declareGoToMenuBuilder(myMenuBuilder);
+        myMenuBuilder.getEventRegistrar().addEventListener(e -> {
+            myMenuBuilder.clearMenu();
+            theParent.buildGoToMenu();
+        });
     }
 
     /**
@@ -154,53 +155,5 @@ public class ItemActions<E extends Enum<E>>
         /* Set the delete value and enable state */
         theDeleteButton.storeValue(Boolean.TRUE);
         theDeleteButton.setEnabled(theParent.isDeletable());
-    }
-
-    /**
-     * Item Listener.
-     */
-    private final class ItemListener
-            implements PropertyChangeListener, TethysChangeEventListener {
-        /**
-         * MenuBuilder.
-         */
-        private JScrollMenuBuilder<TethysActionEvent> theMenuBuilder;
-
-        /**
-         * MenuBuilder Registration.
-         */
-        private final TethysChangeRegistration theBuilderReg;
-
-        /**
-         * Constructor.
-         */
-        private ItemListener() {
-            theMenuBuilder = theGoToButton.getMenuBuilder();
-            theBuilderReg = theMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theParent.declareGoToMenuBuilder(theMenuBuilder);
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            Object o = pEvent.getSource();
-
-            /* Handle requested actions */
-            if (theEditButton.equals(o)) {
-                theParent.requestEdit();
-            } else if (theDeleteButton.equals(o)) {
-                theParent.requestDelete();
-            } else if (theGoToButton.equals(o)) {
-                theParent.processGoToRequest(theGoToButton.getValue());
-            }
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the Builder Menu */
-            if (theBuilderReg.isRelevant(pEvent)) {
-                theMenuBuilder.clearMenu();
-                theParent.buildGoToMenu();
-            }
-        }
     }
 }

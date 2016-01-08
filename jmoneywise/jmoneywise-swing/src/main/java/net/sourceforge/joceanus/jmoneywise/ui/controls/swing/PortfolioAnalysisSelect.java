@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
 import javax.swing.Box;
@@ -42,12 +40,10 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBuc
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioCashFilter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -56,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class PortfolioAnalysisSelect
         extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider {
+        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -70,7 +66,7 @@ public class PortfolioAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The active portfolio bucket list.
@@ -93,14 +89,19 @@ public class PortfolioAnalysisSelect
     private final JScrollButton<PortfolioBucket> thePortButton;
 
     /**
+     * Portfolio menu builder.
+     */
+    private final JScrollMenuBuilder<PortfolioBucket> thePortfolioMenuBuilder;
+
+    /**
      * Constructor.
      */
     public PortfolioAnalysisSelect() {
         /* Create the portfolio button */
-        thePortButton = new JScrollButton<PortfolioBucket>();
+        thePortButton = new JScrollButton<>();
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
         JLabel myPortLabel = new JLabel(NLS_PORTFOLIO + MetisFieldElement.STR_COLON);
@@ -117,12 +118,14 @@ public class PortfolioAnalysisSelect
         theState = new PortfolioState();
         theState.applyState();
 
-        /* Create the listener */
-        new PortfolioListener();
+        /* Create the listeners */
+        thePortfolioMenuBuilder = thePortButton.getMenuBuilder();
+        thePortfolioMenuBuilder.getEventRegistrar().addEventListener(e -> buildPortfolioMenu());
+        thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewPortfolio());
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -235,84 +238,44 @@ public class PortfolioAnalysisSelect
     }
 
     /**
-     * Listener class.
+     * Handle new Portfolio.
      */
-    private final class PortfolioListener
-            implements PropertyChangeListener, TethysChangeEventListener {
-        /**
-         * Portfolio menu builder.
-         */
-        private final JScrollMenuBuilder<PortfolioBucket> thePortfolioMenuBuilder;
-
-        /**
-         * PortfolioMenu Registration.
-         */
-        private final TethysChangeRegistration thePortfolioMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private PortfolioListener() {
-            /* Access builders */
-            thePortfolioMenuBuilder = thePortButton.getMenuBuilder();
-            thePortfolioMenuReg = thePortfolioMenuBuilder.getEventRegistrar().addChangeListener(this);
-
-            /* Add swing listeners */
-            thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+    private void handleNewPortfolio() {
+        /* Select the new portfolio */
+        if (theState.setPortfolio(thePortButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
+    }
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the PortfolioMenu */
-            if (thePortfolioMenuReg.isRelevant(pEvent)) {
-                buildPortfolioMenu();
+    /**
+     * Build Portfolio menu.
+     */
+    private void buildPortfolioMenu() {
+        /* Reset the popUp menu */
+        thePortfolioMenuBuilder.clearMenu();
+
+        /* Record active item */
+        JMenuItem myActive = null;
+        PortfolioBucket myCurr = theState.getPortfolio();
+
+        /* Loop through the available portfolio values */
+        Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
+        while (myIterator.hasNext()) {
+            PortfolioBucket myBucket = myIterator.next();
+
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = thePortfolioMenuBuilder.addItem(myBucket);
+
+            /* If this is the active bucket */
+            if (myBucket.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
 
-        /**
-         * Build Portfolio menu.
-         */
-        private void buildPortfolioMenu() {
-            /* Reset the popUp menu */
-            thePortfolioMenuBuilder.clearMenu();
-
-            /* Record active item */
-            JMenuItem myActive = null;
-            PortfolioBucket myCurr = theState.getPortfolio();
-
-            /* Loop through the available portfolio values */
-            Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
-            while (myIterator.hasNext()) {
-                PortfolioBucket myBucket = myIterator.next();
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = thePortfolioMenuBuilder.addItem(myBucket);
-
-                /* If this is the active bucket */
-                if (myBucket.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            thePortfolioMenuBuilder.showItem(myActive);
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* Access the source */
-            Object o = pEvent.getSource();
-
-            /* If this is the portfolio button */
-            if (thePortButton.equals(o)) {
-                /* Select the new portfolio */
-                if (theState.setPortfolio(thePortButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
-            }
-        }
+        /* Ensure active item is visible */
+        thePortfolioMenuBuilder.showItem(myActive);
     }
 
     /**

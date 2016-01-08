@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @author Tony Washer
  */
 public class TethysDateFormatter
-        implements JDateFormatter, TethysEventProvider {
+        implements JDateFormatter, TethysEventProvider<TethysDateEvent> {
     /**
      * The default format.
      */
@@ -55,7 +55,7 @@ public class TethysDateFormatter
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysDateEvent> theEventManager;
 
     /**
      * The locale.
@@ -92,12 +92,12 @@ public class TethysDateFormatter
     public TethysDateFormatter(final Locale pLocale) {
         /* Store locale */
         theLocale = pLocale;
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
         setFormat(DEFAULT_FORMAT);
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysDateEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -118,7 +118,7 @@ public class TethysDateFormatter
         theLocalDateFormat = DateTimeFormatter.ofPattern(theFormat, theLocale);
 
         /* Notify of the change */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(TethysDateEvent.FORMATCHANGED);
     }
 
     /**

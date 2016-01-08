@@ -30,6 +30,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Swing Tree Manager.
@@ -69,7 +70,7 @@ public class TethysSwingTreeManager<T>
         theModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         /* Create the listener */
-        theModel.addTreeSelectionListener(e -> fireEvent(ACTION_NEW_VALUE, getSelectedItemFromPath(e.getPath())));
+        theModel.addTreeSelectionListener(e -> fireEvent(TethysUIEvent.NEWVALUE, getSelectedItemFromPath(e.getPath())));
     }
 
     @Override

@@ -37,12 +37,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <N> the Node type
  */
 public abstract class TethysTreeManager<T, N>
-        implements TethysEventProvider {
-    /**
-     * Value updated.
-     */
-    public static final int ACTION_NEW_VALUE = TethysScrollButtonManager.ACTION_NEW_VALUE;
-
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * The map of items.
      */
@@ -51,7 +46,7 @@ public abstract class TethysTreeManager<T, N>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Is the tree visible (i.e. part of the actual tree)?
@@ -73,11 +68,11 @@ public abstract class TethysTreeManager<T, N>
      */
     protected TethysTreeManager() {
         theItemMap = new HashMap<>();
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -100,11 +95,12 @@ public abstract class TethysTreeManager<T, N>
 
     /**
      * Fire event.
-     * @param pActionId the actionId
+     * @param pEventId the actionId
      * @param pValue the relevant value
      */
-    protected void fireEvent(final int pActionId, final Object pValue) {
-        theEventManager.fireActionEvent(pActionId, pValue);
+    protected void fireEvent(final TethysUIEvent pEventId,
+                             final Object pValue) {
+        theEventManager.fireEvent(pEventId, pValue);
     }
 
     /**

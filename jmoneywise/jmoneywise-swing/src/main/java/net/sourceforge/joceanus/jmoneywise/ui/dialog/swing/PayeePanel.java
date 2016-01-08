@@ -50,9 +50,6 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -86,6 +83,11 @@ public class PayeePanel
     private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
+     * The PayeeType Menu Builder.
+     */
+    private final JScrollMenuBuilder<PayeeType> theTypeMenuBuilder;
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
@@ -98,10 +100,10 @@ public class PayeePanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the buttons */
-        theTypeButton = new JScrollButton<PayeeType>();
+        theTypeButton = new JScrollButton<>();
 
         /* Set closed button */
-        theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
+        theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -129,8 +131,9 @@ public class PayeePanel
         /* Layout the panel */
         layoutPanel();
 
-        /* Create the listener */
-        new PayeeListener();
+        /* Create the listeners */
+        theTypeMenuBuilder = theTypeButton.getMenuBuilder();
+        theTypeMenuBuilder.getEventRegistrar().addEventListener(e -> buildPayeeTypeMenu(theTypeMenuBuilder, getItem()));
     }
 
     /**
@@ -139,7 +142,7 @@ public class PayeePanel
      */
     private JPanel buildMainPanel() {
         /* Build the closed button state */
-        JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
+        JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
         MoneyWiseIcons.buildLockedButton(theClosedState);
 
         /* Create the text fields */
@@ -424,38 +427,5 @@ public class PayeePanel
 
         /* Ensure active item is visible */
         pMenuBuilder.showItem(myActive);
-    }
-
-    /**
-     * Payee Listener.
-     */
-    private final class PayeeListener
-            implements TethysChangeEventListener {
-        /**
-         * The PayeeType Menu Builder.
-         */
-        private final JScrollMenuBuilder<PayeeType> theTypeMenuBuilder;
-
-        /**
-         * TypeMenu Registration.
-         */
-        private final TethysChangeRegistration theTypeMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private PayeeListener() {
-            /* Access the MenuBuilders */
-            theTypeMenuBuilder = theTypeButton.getMenuBuilder();
-            theTypeMenuReg = theTypeMenuBuilder.getEventRegistrar().addChangeListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Handle menu type */
-            if (theTypeMenuReg.isRelevant(pEvent)) {
-                buildPayeeTypeMenu(theTypeMenuBuilder, getItem());
-            }
-        }
     }
 }

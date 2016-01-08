@@ -39,10 +39,10 @@ import net.sourceforge.joceanus.jmoneywise.ui.swing.MainTab;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.DataItemPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
 
@@ -65,7 +65,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
     /**
      * The GoToMenuBuilder.
      */
-    private transient JScrollMenuBuilder<TethysActionEvent> theGoToBuilder;
+    private transient JScrollMenuBuilder<PrometheusGoToEvent> theGoToBuilder;
 
     /**
      * The DataItem GoToMenuMap.
@@ -87,12 +87,12 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
                                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                      final ErrorPanel pError) {
         super(pFieldMgr, pUpdateSet, pError);
-        theGoToFilterList = new ArrayList<AnalysisFilter<?, ?>>();
-        theGoToItemList = new ArrayList<DataItem<MoneyWiseDataType>>();
+        theGoToFilterList = new ArrayList<>();
+        theGoToItemList = new ArrayList<>();
     }
 
     @Override
-    protected void declareGoToMenuBuilder(final JScrollMenuBuilder<TethysActionEvent> pBuilder) {
+    protected void declareGoToMenuBuilder(final JScrollMenuBuilder<PrometheusGoToEvent> pBuilder) {
         theGoToBuilder = pBuilder;
     }
 
@@ -161,7 +161,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
         processGoToFilters();
 
         /* Create a simple map for top-level categories */
-        Map<MoneyWiseDataType, JScrollMenu> myMap = new EnumMap<MoneyWiseDataType, JScrollMenu>(MoneyWiseDataType.class);
+        Map<MoneyWiseDataType, JScrollMenu> myMap = new EnumMap<>(MoneyWiseDataType.class);
 
         /* Loop through the items */
         Iterator<DataItem<MoneyWiseDataType>> myIterator = theGoToItemList.iterator();
@@ -207,7 +207,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
             }
 
             /* Build the item */
-            TethysActionEvent myEvent = createActionEvent(myId, myItem);
+            PrometheusGoToEvent myEvent = createGoToEvent(myId, myItem);
             theGoToBuilder.addItem(myMenu, myEvent, myName);
         }
     }
@@ -236,7 +236,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
             int myId = MainTab.ACTION_VIEWSTATEMENT;
 
             /* Build the item */
-            TethysActionEvent myEvent = createActionEvent(myId, myStatement);
+            PrometheusGoToEvent myEvent = createGoToEvent(myId, myStatement);
             theGoToBuilder.addItem(myMenu, myEvent, myFilter.getName());
         }
     }

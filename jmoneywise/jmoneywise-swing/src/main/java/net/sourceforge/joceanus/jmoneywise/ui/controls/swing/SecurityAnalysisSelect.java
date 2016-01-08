@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
 import javax.swing.Box;
@@ -44,12 +42,10 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -58,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class SecurityAnalysisSelect
         extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider {
+        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -77,7 +73,7 @@ public class SecurityAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The active portfolio bucket list.
@@ -105,17 +101,27 @@ public class SecurityAnalysisSelect
     private final JScrollButton<PortfolioBucket> thePortButton;
 
     /**
+     * Portfolio menu builder.
+     */
+    private final JScrollMenuBuilder<PortfolioBucket> thePortfolioMenuBuilder;
+
+    /**
+     * Security menu builder.
+     */
+    private final JScrollMenuBuilder<SecurityBucket> theSecurityMenuBuilder;
+
+    /**
      * Constructor.
      */
     public SecurityAnalysisSelect() {
         /* Create the security button */
-        theSecButton = new JScrollButton<SecurityBucket>();
+        theSecButton = new JScrollButton<>();
 
         /* Create the portfolio button */
-        thePortButton = new JScrollButton<PortfolioBucket>();
+        thePortButton = new JScrollButton<>();
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
         JLabel myPortLabel = new JLabel(NLS_PORTFOLIO + MetisFieldElement.STR_COLON);
@@ -138,11 +144,16 @@ public class SecurityAnalysisSelect
         theState.applyState();
 
         /* Create the listener */
-        new SecurityListener();
+        thePortfolioMenuBuilder = thePortButton.getMenuBuilder();
+        thePortfolioMenuBuilder.getEventRegistrar().addEventListener(e -> buildPortfolioMenu());
+        theSecurityMenuBuilder = theSecButton.getMenuBuilder();
+        theSecurityMenuBuilder.getEventRegistrar().addEventListener(e -> buildSecurityMenu());
+        theSecButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewSecurity());
+        thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewPortfolio());
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -306,138 +317,86 @@ public class SecurityAnalysisSelect
     }
 
     /**
-     * Listener class.
+     * Handle new Portfolio.
      */
-    private final class SecurityListener
-            implements PropertyChangeListener, TethysChangeEventListener {
-        /**
-         * Portfolio menu builder.
-         */
-        private final JScrollMenuBuilder<PortfolioBucket> thePortfolioMenuBuilder;
-
-        /**
-         * Security menu builder.
-         */
-        private final JScrollMenuBuilder<SecurityBucket> theSecurityMenuBuilder;
-
-        /**
-         * PortfolioMenu Registration.
-         */
-        private final TethysChangeRegistration thePortfolioMenuReg;
-
-        /**
-         * SecurityMenu Registration.
-         */
-        private final TethysChangeRegistration theSecurityMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private SecurityListener() {
-            /* Access builders */
-            theSecurityMenuBuilder = theSecButton.getMenuBuilder();
-            theSecurityMenuReg = theSecurityMenuBuilder.getEventRegistrar().addChangeListener(this);
-            thePortfolioMenuBuilder = thePortButton.getMenuBuilder();
-            thePortfolioMenuReg = thePortfolioMenuBuilder.getEventRegistrar().addChangeListener(this);
-
-            /* Add swing listeners */
-            theSecButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+    private void handleNewPortfolio() {
+        /* Select the new portfolio */
+        if (theState.setPortfolio(thePortButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
+    }
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the PortfolioMenu */
-            if (thePortfolioMenuReg.isRelevant(pEvent)) {
-                buildPortfolioMenu();
-            } else if (theSecurityMenuReg.isRelevant(pEvent)) {
-                buildSecurityMenu();
+    /**
+     * Handle new Security.
+     */
+    private void handleNewSecurity() {
+        /* Select the new security */
+        if (theState.setSecurity(theSecButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        }
+    }
+
+    /**
+     * Build Portfolio menu.
+     */
+    private void buildPortfolioMenu() {
+        /* Reset the popUp menu */
+        thePortfolioMenuBuilder.clearMenu();
+
+        /* Record active item */
+        JMenuItem myActive = null;
+        PortfolioBucket myCurr = theState.getPortfolio();
+
+        /* Loop through the available portfolio values */
+        Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
+        while (myIterator.hasNext()) {
+            PortfolioBucket myBucket = myIterator.next();
+
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = thePortfolioMenuBuilder.addItem(myBucket);
+
+            /* If this is the active bucket */
+            if (myBucket.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
 
-        /**
-         * Build Portfolio menu.
-         */
-        private void buildPortfolioMenu() {
-            /* Reset the popUp menu */
-            thePortfolioMenuBuilder.clearMenu();
+        /* Ensure active item is visible */
+        thePortfolioMenuBuilder.showItem(myActive);
+    }
 
-            /* Record active item */
-            JMenuItem myActive = null;
-            PortfolioBucket myCurr = theState.getPortfolio();
+    /**
+     * Build Security menu.
+     */
+    private void buildSecurityMenu() {
+        /* Reset the popUp menu */
+        theSecurityMenuBuilder.clearMenu();
 
-            /* Loop through the available portfolio values */
-            Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
-            while (myIterator.hasNext()) {
-                PortfolioBucket myBucket = myIterator.next();
+        /* Access current portfolio */
+        PortfolioBucket myPortfolio = theState.getPortfolio();
+        SecurityBucket myCurr = theState.getSecurity();
+        JMenuItem myActive = null;
 
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = thePortfolioMenuBuilder.addItem(myBucket);
+        /* Loop through the available security values */
+        Iterator<SecurityBucket> myIterator = myPortfolio.securityIterator();
+        while (myIterator.hasNext()) {
+            SecurityBucket myBucket = myIterator.next();
 
-                /* If this is the active bucket */
-                if (myBucket.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = theSecurityMenuBuilder.addItem(myBucket);
 
-            /* Ensure active item is visible */
-            thePortfolioMenuBuilder.showItem(myActive);
-        }
-
-        /**
-         * Build Security menu.
-         */
-        private void buildSecurityMenu() {
-            /* Reset the popUp menu */
-            theSecurityMenuBuilder.clearMenu();
-
-            /* Access current portfolio */
-            PortfolioBucket myPortfolio = theState.getPortfolio();
-            SecurityBucket myCurr = theState.getSecurity();
-            JMenuItem myActive = null;
-
-            /* Loop through the available security values */
-            Iterator<SecurityBucket> myIterator = myPortfolio.securityIterator();
-            while (myIterator.hasNext()) {
-                SecurityBucket myBucket = myIterator.next();
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theSecurityMenuBuilder.addItem(myBucket);
-
-                /* If this is the active bucket */
-                if (myBucket.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theSecurityMenuBuilder.showItem(myActive);
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* Access the source */
-            Object o = pEvent.getSource();
-
-            /* If this is the portfolio button */
-            if (thePortButton.equals(o)) {
-                /* Select the new portfolio */
-                if (theState.setPortfolio(thePortButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
-
-                /* If this is the security button */
-            } else if (theSecButton.equals(o)) {
-                /* Select the new security */
-                if (theState.setSecurity(theSecButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
+            /* If this is the active bucket */
+            if (myBucket.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
+
+        /* Ensure active item is visible */
+        theSecurityMenuBuilder.showItem(myActive);
     }
 
     /**

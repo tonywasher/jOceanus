@@ -25,10 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -68,14 +64,10 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
@@ -260,10 +252,16 @@ public class PayeeTable
         thePanel.add(theActiveAccount, BorderLayout.PAGE_END);
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<Payee, MoneyWiseDataType>(this, theActiveAccount);
+        theSelectionModel = new JDataTableSelection<>(this, theActiveAccount);
 
         /* Create listener */
-        new PayeeListener();
+        theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
+        theActiveAccount.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActiveAccount.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
+
+        /* Listen to swing events */
+        theNewButton.addActionListener(e -> theModel.addNewItem());
+        theLockedCheckBox.addItemListener(e -> setShowAll(theLockedCheckBox.isSelected()));
     }
 
     /**
@@ -389,6 +387,34 @@ public class PayeeTable
     }
 
     /**
+     * Handle updateSet rewind.
+     */
+    private void handleRewind() {
+        /* Only action if we are not editing */
+        if (!theActiveAccount.isEditing()) {
+            /* Handle the reWind */
+            theSelectionModel.handleReWind();
+        }
+
+        /* Adjust for changes */
+        notifyChanges();
+    }
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+        if (!theActiveAccount.isEditing()) {
+            /* handle the edit transition */
+            theSelectionModel.handleEditTransition();
+        }
+
+        /* Note changes */
+        notifyChanges();
+    }
+
+    /**
      * JTable Data Model.
      */
     private final class PayeeTableModel
@@ -500,90 +526,6 @@ public class PayeeTable
 
                 /* Show the error */
                 setError(myError);
-            }
-        }
-    }
-
-    /**
-     * Listener class.
-     */
-    private final class PayeeListener
-            implements ActionListener, ItemListener, TethysActionEventListener, TethysChangeEventListener {
-        /**
-         * UpdateSet Registration.
-         */
-        private final TethysChangeRegistration theUpdateSetReg;
-
-        /**
-         * Account Change Registration.
-         */
-        private final TethysChangeRegistration theActPanelReg;
-
-        /**
-         * Constructor.
-         */
-        private PayeeListener() {
-            /* Register listeners */
-            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
-            theActPanelReg = theActiveAccount.getEventRegistrar().addChangeListener(this);
-            theActiveAccount.getEventRegistrar().addActionListener(this);
-
-            /* Listen to swing events */
-            theNewButton.addActionListener(this);
-            theLockedCheckBox.addItemListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If we are performing a rewind */
-            if (theUpdateSetReg.isRelevant(pEvent)) {
-                /* Only action if we are not editing */
-                if (!theActiveAccount.isEditing()) {
-                    /* Handle the reWind */
-                    theSelectionModel.handleReWind();
-                }
-
-                /* Adjust for changes */
-                notifyChanges();
-
-                /* If we are handling panel state */
-            } else if (theActPanelReg.isRelevant(pEvent)) {
-                /* Only action if we are not editing */
-                if (!theActiveAccount.isEditing()) {
-                    /* handle the edit transition */
-                    theSelectionModel.handleEditTransition();
-                }
-
-                /* Note changes */
-                notifyChanges();
-            }
-        }
-
-        @Override
-        public void itemStateChanged(final ItemEvent pEvent) {
-            /* Access reporting object and command */
-            Object o = pEvent.getSource();
-
-            /* if this is the locked check box reporting */
-            if (theLockedCheckBox.equals(o)) {
-                /* Adjust the showAll settings */
-                setShowAll(theLockedCheckBox.isSelected());
-            }
-        }
-
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            cascadeActionEvent(pEvent);
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
-
-            /* Handle actions */
-            if (theNewButton.equals(o)) {
-                theModel.addNewItem();
             }
         }
     }
@@ -708,7 +650,7 @@ public class PayeeTable
             setColumns();
 
             /* Add listeners */
-            new EditorListener();
+            theTypeEditor.getEventRegistrar().addEventListener(e -> buildPayeeTypeMenu());
         }
 
         /**
@@ -857,43 +799,18 @@ public class PayeeTable
         }
 
         /**
-         * EditorListener.
+         * Build the popUpMenu for payeeType.
          */
-        private final class EditorListener
-                implements TethysChangeEventListener {
-            /**
-             * Category Registration.
-             */
-            private final TethysChangeRegistration theTypeReg;
+        private void buildPayeeTypeMenu() {
+            /* Access details */
+            JScrollMenuBuilder<PayeeType> myBuilder = theTypeEditor.getMenuBuilder();
 
-            /**
-             * Constructor.
-             */
-            private EditorListener() {
-                theTypeReg = theTypeEditor.getEventRegistrar().addChangeListener(this);
-            }
+            /* Record active item */
+            Point myCell = theTypeEditor.getPoint();
+            Payee myPayee = thePayees.get(myCell.y);
 
-            @Override
-            public void processChange(final TethysChangeEvent pEvent) {
-                if (theTypeReg.isRelevant(pEvent)) {
-                    buildPayeeTypeMenu();
-                }
-            }
-
-            /**
-             * Build the popUpMenu for payeeType.
-             */
-            private void buildPayeeTypeMenu() {
-                /* Access details */
-                JScrollMenuBuilder<PayeeType> myBuilder = theTypeEditor.getMenuBuilder();
-
-                /* Record active item */
-                Point myCell = theTypeEditor.getPoint();
-                Payee myPayee = thePayees.get(myCell.y);
-
-                /* Build the menu */
-                theActiveAccount.buildPayeeTypeMenu(myBuilder, myPayee);
-            }
+            /* Build the menu */
+            theActiveAccount.buildPayeeTypeMenu(myBuilder, myPayee);
         }
     }
 }

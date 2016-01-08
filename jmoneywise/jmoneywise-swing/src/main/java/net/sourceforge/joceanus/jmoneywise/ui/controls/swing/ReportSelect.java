@@ -23,10 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -38,6 +34,7 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDatePeriod;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateRangeSelect;
@@ -53,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class ReportSelect
         extends JPanel
-        implements TethysEventProvider {
+        implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -82,7 +79,7 @@ public class ReportSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * Reports scroll button.
@@ -102,19 +99,24 @@ public class ReportSelect
     /**
      * Current state.
      */
-    private transient ReportState theState = null;
+    private transient ReportState theState;
 
     /**
      * Saved state.
      */
-    private transient ReportState theSavePoint = null;
+    private transient ReportState theSavePoint;
+
+    /**
+     * Active flag.
+     */
+    private boolean isActive;
 
     /**
      * Constructor.
      */
     public ReportSelect() {
         /* Create the report button */
-        theReportButton = new JScrollButton<ReportType>();
+        theReportButton = new JScrollButton<>();
         buildReportMenu();
 
         /* Create the Range Select and disable its border */
@@ -132,7 +134,7 @@ public class ReportSelect
         thePrintButton = new JButton(NLS_PRINT);
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the selection panel */
         setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
@@ -152,12 +154,14 @@ public class ReportSelect
         /* Apply the current state */
         theState.setType(ReportType.NETWORTH);
 
-        /* Add the listener for item changes */
-        new ReportListener();
+        /* Add the listeners */
+        thePrintButton.addActionListener(e -> theEventManager.fireEvent(PrometheusDataEvent.PRINT));
+        theReportButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewReport());
+        theRangeSelect.addPropertyChangeListener(TethysSwingDateRangeSelect.PROPERTY_RANGE, e -> handleNewRange());
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -235,61 +239,31 @@ public class ReportSelect
     }
 
     /**
-     * Report Listener class.
+     * Handle new report.
      */
-    private final class ReportListener
-            implements ActionListener, PropertyChangeListener {
-        /**
-         * Active flag.
-         */
-        private boolean isActive = false;
+    private void handleNewReport() {
+        /* Set active flag */
+        isActive = true;
 
-        /**
-         * Constructor.
-         */
-        private ReportListener() {
-            thePrintButton.addActionListener(this);
-            theReportButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theRangeSelect.addPropertyChangeListener(TethysSwingDateRangeSelect.PROPERTY_RANGE, this);
+        /* Look for a changed report type */
+        if (theState.setType(theReportButton.getValue())) {
+            /* Notify that the state has changed */
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
 
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            Object o = evt.getSource();
+        /* Clear active flag */
+        isActive = false;
+    }
 
-            /* If this event relates to the Print button */
-            if (thePrintButton.equals(o)) {
-                /* Request a print operation */
-                theEventManager.fireActionEvent();
-            }
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent evt) {
-            Object o = evt.getSource();
-
-            /* if this event relates to the report button */
-            if (theReportButton.equals(o)) {
-                /* Set active flag */
-                isActive = true;
-
-                /* Look for a changed report type */
-                if (theState.setType(theReportButton.getValue())) {
-                    /* Notify that the state has changed */
-                    theEventManager.fireStateChanged();
-                }
-
-                /* Clear active flag */
-                isActive = false;
-            }
-
-            /* if this event relates to the Range Select */
-            if (theRangeSelect.equals(o)
-                && theState.setRange(theRangeSelect)
-                && !isActive) {
-                /* Notify that the state has changed */
-                theEventManager.fireStateChanged();
-            }
+    /**
+     * Handle new range.
+     */
+    private void handleNewRange() {
+        /* if we have a changed range and are not changing report */
+        if (theState.setRange(theRangeSelect)
+            && !isActive) {
+            /* Notify that the state has changed */
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
     }
 
@@ -300,12 +274,12 @@ public class ReportSelect
         /**
          * The selected range.
          */
-        private TethysDateRange theRange = null;
+        private TethysDateRange theRange;
 
         /**
          * The selected report type.
          */
-        private ReportType theType = null;
+        private ReportType theType;
 
         /**
          * Constructor.

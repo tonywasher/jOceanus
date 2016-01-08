@@ -25,10 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
 import javax.swing.Box;
@@ -68,14 +64,10 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
@@ -191,14 +183,19 @@ public class CashCategoryTable
     private final transient JDataTableSelection<CashCategory, MoneyWiseDataType> theSelectionModel;
 
     /**
+     * Category menu builder.
+     */
+    private final JScrollMenuBuilder<CashCategory> theCategoryMenuBuilder;
+
+    /**
      * Cash Categories.
      */
-    private transient CashCategoryList theCategories = null;
+    private transient CashCategoryList theCategories;
 
     /**
      * Active parent.
      */
-    private transient CashCategory theParent = null;
+    private transient CashCategory theParent;
 
     /**
      * Constructor.
@@ -237,7 +234,7 @@ public class CashCategoryTable
 
         /* Create the filter components */
         JLabel myPrompt = new JLabel(TITLE_FILTER);
-        theSelectButton = new JScrollButton<CashCategory>();
+        theSelectButton = new JScrollButton<>();
         theSelectButton.setValue(null, FILTER_PARENTS);
 
         /* Create new button */
@@ -267,10 +264,18 @@ public class CashCategoryTable
         theColumns.setColumns();
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<CashCategory, MoneyWiseDataType>(this, theActiveCategory);
+        theSelectionModel = new JDataTableSelection<>(this, theActiveCategory);
 
         /* Create listener */
-        new CategoryListener();
+        theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
+        theActiveCategory.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActiveCategory.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
+        theCategoryMenuBuilder = theSelectButton.getMenuBuilder();
+        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildSelectMenu());
+
+        /* Listen to swing events */
+        theNewButton.addActionListener(e -> theModel.addNewItem());
+        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleCashSelection());
     }
 
     /**
@@ -419,6 +424,99 @@ public class CashCategoryTable
     }
 
     /**
+     * Handle cash selection.
+     */
+    private void handleCashSelection() {
+        CashCategory myCategory = theSelectButton.getValue();
+        if (!MetisDifference.isEqual(myCategory, theParent)) {
+            /* Store new category */
+            selectParent(myCategory);
+        }
+    }
+
+    /**
+     * Handle updateSet rewind.
+     */
+    private void handleRewind() {
+        /* Only action if we are not editing */
+        if (!theActiveCategory.isEditing()) {
+            /* Handle the reWind */
+            theSelectButton.refreshText();
+            theSelectionModel.handleReWind();
+        }
+
+        /* Adjust for changes */
+        notifyChanges();
+    }
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+        if (!theActiveCategory.isEditing()) {
+            /* handle the edit transition */
+            theSelectionModel.handleEditTransition();
+        }
+
+        /* Note changes */
+        notifyChanges();
+    }
+
+    /**
+     * Build Select menu.
+     */
+    private void buildSelectMenu() {
+        /* Clear the menu */
+        theCategoryMenuBuilder.clearMenu();
+
+        /* Cope if we have no categories */
+        if (theCategories == null) {
+            return;
+        }
+
+        /* Record active item */
+        JMenuItem myActive = null;
+
+        /* Create the filter parents JMenuItem and add it to the popUp */
+        JMenuItem myItem = theCategoryMenuBuilder.addItem(null, FILTER_PARENTS);
+
+        /* If this is the active parent */
+        if (theParent == null) {
+            /* Record it */
+            myActive = myItem;
+        }
+
+        /* Loop through the available category values */
+        Iterator<CashCategory> myIterator = theCategories.iterator();
+        while (myIterator.hasNext()) {
+            CashCategory myCurr = myIterator.next();
+            CashCategoryType myType = myCurr.getCategoryType();
+
+            /* Ignore deleted */
+            boolean bIgnore = myCurr.isDeleted();
+
+            /* Ignore category if it is not a parent */
+            bIgnore |= !myType.getCashClass().isParentCategory();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new JMenuItem and add it to the popUp */
+            myItem = theCategoryMenuBuilder.addItem(myCurr);
+
+            /* If this is the active parent */
+            if (myCurr.equals(theParent)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        theCategoryMenuBuilder.showItem(myActive);
+    }
+
+    /**
      * JTable Data Model.
      */
     private final class CategoryTableModel
@@ -537,164 +635,6 @@ public class CashCategoryTable
     }
 
     /**
-     * Listener class.
-     */
-    private final class CategoryListener
-            implements PropertyChangeListener, ActionListener, TethysActionEventListener, TethysChangeEventListener {
-        /**
-         * Category menu builder.
-         */
-        private final JScrollMenuBuilder<CashCategory> theCategoryMenuBuilder;
-
-        /**
-         * UpdateSet Registration.
-         */
-        private final TethysChangeRegistration theUpdateSetReg;
-
-        /**
-         * CategoryMenu Registration.
-         */
-        private final TethysChangeRegistration theCategoryMenuReg;
-
-        /**
-         * Category Change Registration.
-         */
-        private final TethysChangeRegistration theCatPanelReg;
-
-        /**
-         * Constructor.
-         */
-        private CategoryListener() {
-            /* Access builders */
-            theCategoryMenuBuilder = theSelectButton.getMenuBuilder();
-
-            /* Register listeners */
-            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
-            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theCatPanelReg = theActiveCategory.getEventRegistrar().addChangeListener(this);
-            theActiveCategory.getEventRegistrar().addActionListener(this);
-
-            /* Listen to swing events */
-            theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theNewButton.addActionListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If we are performing a rewind */
-            if (theUpdateSetReg.isRelevant(pEvent)) {
-                /* Only action if we are not editing */
-                if (!theActiveCategory.isEditing()) {
-                    /* Handle the reWind */
-                    theSelectButton.refreshText();
-                    theSelectionModel.handleReWind();
-                }
-
-                /* Adjust for changes */
-                notifyChanges();
-
-                /* If we are building selection menu */
-            } else if (theCategoryMenuReg.isRelevant(pEvent)) {
-                /* Reset the popUp menu */
-                theCategoryMenuBuilder.clearMenu();
-
-                /* Build the selection menu */
-                if (theCategories != null) {
-                    buildSelectMenu();
-                }
-
-                /* If we are handling panel state */
-            } else if (theCatPanelReg.isRelevant(pEvent)) {
-                /* Only action if we are not editing */
-                if (!theActiveCategory.isEditing()) {
-                    /* handle the edit transition */
-                    theSelectionModel.handleEditTransition();
-                }
-
-                /* Note changes */
-                notifyChanges();
-            }
-        }
-
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            cascadeActionEvent(pEvent);
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
-
-            /* Handle actions */
-            if (theNewButton.equals(o)) {
-                theModel.addNewItem();
-            }
-        }
-
-        /**
-         * Build Select menu.
-         */
-        private void buildSelectMenu() {
-            /* Record active item */
-            JMenuItem myActive = null;
-
-            /* Create the filter parents JMenuItem and add it to the popUp */
-            JMenuItem myItem = theCategoryMenuBuilder.addItem(null, FILTER_PARENTS);
-
-            /* If this is the active parent */
-            if (theParent == null) {
-                /* Record it */
-                myActive = myItem;
-            }
-
-            /* Loop through the available category values */
-            Iterator<CashCategory> myIterator = theCategories.iterator();
-            while (myIterator.hasNext()) {
-                CashCategory myCurr = myIterator.next();
-                CashCategoryType myType = myCurr.getCategoryType();
-
-                /* Ignore deleted */
-                boolean bIgnore = myCurr.isDeleted();
-
-                /* Ignore category if it is not a parent */
-                bIgnore |= !myType.getCashClass().isParentCategory();
-                if (bIgnore) {
-                    continue;
-                }
-
-                /* Create a new JMenuItem and add it to the popUp */
-                myItem = theCategoryMenuBuilder.addItem(myCurr);
-
-                /* If this is the active parent */
-                if (myCurr.equals(theParent)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theCategoryMenuBuilder.showItem(myActive);
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* Access the source */
-            Object o = pEvent.getSource();
-
-            /* If this is the select button */
-            if (theSelectButton.equals(o)) {
-                /* If this is a different category */
-                CashCategory myCategory = theSelectButton.getValue();
-                if (!MetisDifference.isEqual(myCategory, theParent)) {
-                    /* Store new category */
-                    selectParent(myCategory);
-                }
-            }
-        }
-    }
-
-    /**
      * Column Model class.
      */
     private final class CategoryColumnModel
@@ -792,7 +732,7 @@ public class CashCategoryTable
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
 
             /* Add listener */
-            new EditorListener();
+            theScrollEditor.getEventRegistrar().addEventListener(e -> buildCategoryTypeMenu());
         }
 
         /**
@@ -935,36 +875,18 @@ public class CashCategoryTable
         }
 
         /**
-         * EditorListener.
+         * Build the category type list for the item.
          */
-        private final class EditorListener
-                implements TethysChangeEventListener {
-            /**
-             * Constructor.
-             */
-            private EditorListener() {
-                theScrollEditor.getEventRegistrar().addChangeListener(this);
-            }
+        private void buildCategoryTypeMenu() {
+            /* Access details */
+            JScrollMenuBuilder<CashCategoryType> myBuilder = theScrollEditor.getMenuBuilder();
 
-            @Override
-            public void processChange(final TethysChangeEvent pEvent) {
-                buildCategoryTypeMenu();
-            }
+            /* Record active item */
+            Point myCell = theScrollEditor.getPoint();
+            CashCategory myCategory = theCategories.get(myCell.y);
 
-            /**
-             * Build the category type list for the item.
-             */
-            private void buildCategoryTypeMenu() {
-                /* Access details */
-                JScrollMenuBuilder<CashCategoryType> myBuilder = theScrollEditor.getMenuBuilder();
-
-                /* Record active item */
-                Point myCell = theScrollEditor.getPoint();
-                CashCategory myCategory = theCategories.get(myCell.y);
-
-                /* Build the menu */
-                theActiveCategory.buildCategoryTypeMenu(myBuilder, myCategory);
-            }
+            /* Build the menu */
+            theActiveCategory.buildCategoryTypeMenu(myBuilder, myCategory);
         }
     }
 }

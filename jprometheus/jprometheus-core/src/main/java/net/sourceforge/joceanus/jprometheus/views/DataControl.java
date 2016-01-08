@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <E> the data type enum class
  */
 public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
-        implements TethysEventProvider {
+        implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * Debug View Name.
      */
@@ -94,7 +94,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The DataSet.
@@ -147,7 +147,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         theMap = new HashMap<>();
 
         /* Create event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* initialise the data manager */
         initDataMgr();
@@ -161,7 +161,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -390,7 +390,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         myTask = myTask.startTask("refreshViews");
 
         /* Refresh the Control */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.REFRESHVIEWS);
 
         /* Complete the task */
         myTask.end();

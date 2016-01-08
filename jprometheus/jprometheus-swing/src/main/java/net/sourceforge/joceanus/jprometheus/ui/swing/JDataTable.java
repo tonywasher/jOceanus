@@ -40,9 +40,10 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.RowColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel.RowTableModel;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -57,7 +58,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableFilter;
  */
 public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends JTable
-        implements TethysEventProvider {
+        implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -81,7 +82,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * FieldManager.
@@ -128,17 +129,17 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     public JDataTable() {
         /* Store parameters */
-        theRowHdrModel = new RowTableModel<E>(this);
+        theRowHdrModel = new RowTableModel<>(this);
 
         /* Set the selection mode */
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -146,16 +147,16 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Cascade action event.
      * @param pEvent the event to cascade
      */
-    protected void cascadeActionEvent(final TethysActionEvent pEvent) {
+    protected void cascadeEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
         /* Fire the event */
-        theEventManager.cascadeActionEvent(pEvent);
+        theEventManager.cascadeEvent(pEvent);
     }
 
     /**
      * fire a state changed event.
      */
     protected void fireStateChanged() {
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
@@ -264,7 +265,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     protected void notifyChanges() {
         /* Notify listeners */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
@@ -287,7 +288,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         theModel = pModel;
 
         /* Create the filter and record it */
-        TethysSwingTableFilter<T> myFilter = new TethysSwingTableFilter<T>(theModel, true);
+        TethysSwingTableFilter<T> myFilter = new TethysSwingTableFilter<>(theModel, true);
         theModel.registerFilter(myFilter);
         setRowSorter(myFilter);
 

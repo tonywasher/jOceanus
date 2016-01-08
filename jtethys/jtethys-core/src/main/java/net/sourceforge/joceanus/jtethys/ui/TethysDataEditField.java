@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <I> the Icon type
  */
 public abstract class TethysDataEditField<T, N, C, F, I>
-        implements TethysEventProvider {
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * DataEditConverter interface.
      * @param <T> the data type
@@ -85,36 +85,6 @@ public abstract class TethysDataEditField<T, N, C, F, I>
     }
 
     /**
-     * Value updated.
-     */
-    public static final int ACTION_NEW_VALUE = TethysScrollButtonManager.ACTION_NEW_VALUE;
-
-    /**
-     * Value updated.
-     */
-    public static final int ACTION_ITEM_TOGGLED = TethysListButtonManager.ACTION_ITEM_TOGGLED;
-
-    /**
-     * Dialog prepare.
-     */
-    public static final int ACTION_DIALOG_PREPARE = TethysScrollButtonManager.ACTION_MENU_BUILD;
-
-    /**
-     * Dialog cancelled.
-     */
-    public static final int ACTION_DIALOG_CANCELLED = TethysScrollButtonManager.ACTION_MENU_CANCELLED;
-
-    /**
-     * Command issued.
-     */
-    public static final int ACTION_NEW_COMMAND = ACTION_NEW_VALUE + 200;
-
-    /**
-     * Command Menu build.
-     */
-    public static final int ACTION_COMMAND_PREPARE = ACTION_NEW_COMMAND + 1;
-
-    /**
      * Invalid value text.
      */
     protected static final String TOOLTIP_BAD_VALUE = "Invalid Value";
@@ -122,7 +92,7 @@ public abstract class TethysDataEditField<T, N, C, F, I>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Is the field editable?
@@ -144,7 +114,7 @@ public abstract class TethysDataEditField<T, N, C, F, I>
      */
     protected TethysDataEditField() {
         /* Create event manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
     }
 
     /**
@@ -188,17 +158,17 @@ public abstract class TethysDataEditField<T, N, C, F, I>
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
     /**
      * Fire event.
-     * @param pActionId the actionId
+     * @param pEventId the eventId
      * @param pValue the relevant value
      */
-    public void fireEvent(final int pActionId, final Object pValue) {
-        theEventManager.fireActionEvent(pActionId, pValue);
+    public void fireEvent(final TethysUIEvent pEventId, final Object pValue) {
+        theEventManager.fireEvent(pEventId, pValue);
     }
 
     /**
@@ -206,7 +176,7 @@ public abstract class TethysDataEditField<T, N, C, F, I>
      */
     public void handleCmdMenuRequest() {
         /* fire menuBuild actionEvent */
-        fireEvent(ACTION_COMMAND_PREPARE, theCmdMenu);
+        fireEvent(TethysUIEvent.PREPARECMDDIALOG, theCmdMenu);
 
         /* If a menu is provided */
         if (!theCmdMenu.isEmpty()) {
@@ -222,8 +192,8 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         /* If we selected a value */
         TethysScrollMenuItem<String> mySelected = theCmdMenu.getSelectedItem();
         if (mySelected != null) {
-            /* fire new command actionEvent */
-            theEventManager.fireActionEvent(ACTION_NEW_COMMAND, mySelected.getValue());
+            /* fire new command Event */
+            theEventManager.fireEvent(TethysUIEvent.NEWCOMMAND, mySelected.getValue());
         }
     }
 
@@ -336,7 +306,7 @@ public abstract class TethysDataEditField<T, N, C, F, I>
 
                     /* set the value and fire Event */
                     setValue(myValue);
-                    theField.fireEvent(ACTION_NEW_VALUE, myValue);
+                    theField.fireEvent(TethysUIEvent.NEWVALUE, myValue);
 
                     /* Catch parsing error */
                 } catch (IllegalArgumentException e) {

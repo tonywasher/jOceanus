@@ -24,10 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -47,25 +43,14 @@ import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
 import net.sourceforge.joceanus.jmoneywise.ui.AnalysisColumnSet;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PortfolioCashFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TagFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TransactionCategoryFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateRangeSelect;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
@@ -76,7 +61,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  */
 public class AnalysisSelect
         extends TethysSwingEnablePanel
-        implements TethysEventProvider {
+        implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -135,7 +120,7 @@ public class AnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * View.
@@ -283,6 +268,21 @@ public class AnalysisSelect
     private final transient Map<AnalysisType, AnalysisFilterSelection> theMap;
 
     /**
+     * AnalysisType menu builder.
+     */
+    private final JScrollMenuBuilder<AnalysisType> theTypeMenuBuilder;
+
+    /**
+     * Bucket menu builder.
+     */
+    private final JScrollMenuBuilder<BucketAttribute> theBucketMenuBuilder;
+
+    /**
+     * Column menu builder.
+     */
+    private final JScrollMenuBuilder<AnalysisColumnSet> theColumnMenuBuilder;
+
+    /**
      * Constructor.
      * @param pView the view
      * @param pAnalysisView the analysis view
@@ -296,7 +296,7 @@ public class AnalysisSelect
         theAnalysisView = pAnalysisView;
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the range button */
         theRangeButton = new JButton(TethysSwingArrowIcon.DOWN);
@@ -309,21 +309,21 @@ public class AnalysisSelect
         theFilterButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the filter type button */
-        theFilterTypeButton = new JScrollButton<AnalysisType>();
+        theFilterTypeButton = new JScrollButton<>();
 
         /* Create the columnSet button */
         theColumnLabel = new JLabel(NLS_COLUMNS);
-        theColumnButton = new JScrollButton<AnalysisColumnSet>();
+        theColumnButton = new JScrollButton<>();
 
         /* Create the bucket button */
         theBucketLabel = new JLabel(NLS_BUCKET);
-        theBucketButton = new JScrollButton<BucketAttribute>();
+        theBucketButton = new JScrollButton<>();
 
         /* Create the Range Select panel */
         theRangeSelect = new TethysSwingDateRangeSelect();
 
         /* Create the panel map */
-        theMap = new EnumMap<AnalysisType, AnalysisFilterSelection>(AnalysisType.class);
+        theMap = new EnumMap<>(AnalysisType.class);
 
         /* Create the filter selection panels */
         theDepositSelect = new DepositAnalysisSelect();
@@ -370,12 +370,37 @@ public class AnalysisSelect
         /* set maximum size */
         setMaximumSize(new Dimension(Integer.MAX_VALUE, MAX_HEIGHT));
 
-        /* Create the listener */
-        new AnalysisListener();
+        /* Create the listeners */
+        theTypeMenuBuilder = theFilterTypeButton.getMenuBuilder();
+        theTypeMenuBuilder.getEventRegistrar().addEventListener(e -> buildAnalysisTypeMenu());
+        theBucketMenuBuilder = theBucketButton.getMenuBuilder();
+        theBucketMenuBuilder.getEventRegistrar().addEventListener(e -> buildBucketMenu());
+        theColumnMenuBuilder = theColumnButton.getMenuBuilder();
+        theColumnMenuBuilder.getEventRegistrar().addEventListener(e -> buildColumnsMenu());
+        theAnalysisView.getEventRegistrar().addEventListener(e -> setAnalysisView());
+
+        /* Handle buttons */
+        theRangeButton.addActionListener(e -> handleRangeButton());
+        theRangeSelect.addPropertyChangeListener(TethysSwingDateRangeSelect.PROPERTY_RANGE, e -> handleNewRange());
+        theFilterButton.addActionListener(e -> handleFilterButton());
+        theFilterTypeButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleFilterType());
+        theBucketButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewBucket());
+        theColumnButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewColumns());
+
+        /* handle sub-selections */
+        theDepositSelect.getEventRegistrar().addEventListener(e -> buildDepositFilter());
+        theCashSelect.getEventRegistrar().addEventListener(e -> buildCashFilter());
+        theLoanSelect.getEventRegistrar().addEventListener(e -> buildLoanFilter());
+        theSecuritySelect.getEventRegistrar().addEventListener(e -> buildSecurityFilter());
+        thePortfolioSelect.getEventRegistrar().addEventListener(e -> buildPortfolioFilter());
+        thePayeeSelect.getEventRegistrar().addEventListener(e -> buildPayeeFilter());
+        theCategorySelect.getEventRegistrar().addEventListener(e -> buildCategoryFilter());
+        theTaxBasisSelect.getEventRegistrar().addEventListener(e -> buildTaxBasisFilter());
+        theTagSelect.getEventRegistrar().addEventListener(e -> buildTagFilter());
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -619,7 +644,7 @@ public class AnalysisSelect
         }
 
         /* Notify updated filter */
-        theEventManager.fireStateChanged();
+        theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
     }
 
     /**
@@ -753,425 +778,284 @@ public class AnalysisSelect
     }
 
     /**
-     * Listener.
+     * Build AnalysisType menu.
      */
-    private final class AnalysisListener
-            implements PropertyChangeListener, ActionListener, TethysChangeEventListener {
-        /**
-         * AnalysisType menu builder.
-         */
-        private final JScrollMenuBuilder<AnalysisType> theTypeMenuBuilder;
+    private void buildAnalysisTypeMenu() {
+        /* Reset the popUp menu */
+        theTypeMenuBuilder.clearMenu();
 
-        /**
-         * Bucket menu builder.
-         */
-        private final JScrollMenuBuilder<BucketAttribute> theBucketMenuBuilder;
+        /* Loop through the panels */
+        Iterator<Map.Entry<AnalysisType, AnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
+        while (myIterator.hasNext()) {
+            Map.Entry<AnalysisType, AnalysisFilterSelection> myEntry = myIterator.next();
 
-        /**
-         * Column menu builder.
-         */
-        private final JScrollMenuBuilder<AnalysisColumnSet> theColumnMenuBuilder;
-
-        /**
-         * AnalysisView Registration.
-         */
-        private final TethysChangeRegistration theAnalysisViewReg;
-
-        /**
-         * TypeMenu Registration.
-         */
-        private final TethysChangeRegistration theTypeMenuReg;
-
-        /**
-         * BucketMenu Registration.
-         */
-        private final TethysChangeRegistration theBucketMenuReg;
-
-        /**
-         * ColumnMenu Registration.
-         */
-        private final TethysChangeRegistration theColumnMenuReg;
-
-        /**
-         * Deposit Registration.
-         */
-        private final TethysChangeRegistration theDepositReg;
-
-        /**
-         * Cash Registration.
-         */
-        private final TethysChangeRegistration theLoanReg;
-
-        /**
-         * Loan Registration.
-         */
-        private final TethysChangeRegistration theCashReg;
-
-        /**
-         * Security Registration.
-         */
-        private final TethysChangeRegistration theSecurityReg;
-
-        /**
-         * Portfolio Registration.
-         */
-        private final TethysChangeRegistration thePortfolioReg;
-
-        /**
-         * Payee Registration.
-         */
-        private final TethysChangeRegistration thePayeeReg;
-
-        /**
-         * Category Registration.
-         */
-        private final TethysChangeRegistration theCategoryReg;
-
-        /**
-         * TaxBasis Registration.
-         */
-        private final TethysChangeRegistration theBasisReg;
-
-        /**
-         * Tag Registration.
-         */
-        private final TethysChangeRegistration theTagReg;
-
-        /**
-         * Constructor.
-         */
-        private AnalysisListener() {
-            /* Listen to the objects */
-            theRangeButton.addActionListener(this);
-            theRangeSelect.addPropertyChangeListener(TethysSwingDateRangeSelect.PROPERTY_RANGE, this);
-            theFilterButton.addActionListener(this);
-            theFilterTypeButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theBucketButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theColumnButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theAnalysisViewReg = theAnalysisView.getEventRegistrar().addChangeListener(this);
-
-            /* Access selectors */
-            theDepositReg = theDepositSelect.getEventRegistrar().addChangeListener(this);
-            theCashReg = theCashSelect.getEventRegistrar().addChangeListener(this);
-            theLoanReg = theLoanSelect.getEventRegistrar().addChangeListener(this);
-            theSecurityReg = theSecuritySelect.getEventRegistrar().addChangeListener(this);
-            thePortfolioReg = thePortfolioSelect.getEventRegistrar().addChangeListener(this);
-            thePayeeReg = thePayeeSelect.getEventRegistrar().addChangeListener(this);
-            theCategoryReg = theCategorySelect.getEventRegistrar().addChangeListener(this);
-            theBasisReg = theTaxBasisSelect.getEventRegistrar().addChangeListener(this);
-            theTagReg = theTagSelect.getEventRegistrar().addChangeListener(this);
-
-            /* Access builders */
-            theTypeMenuBuilder = theFilterTypeButton.getMenuBuilder();
-            theTypeMenuReg = theTypeMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theBucketMenuBuilder = theBucketButton.getMenuBuilder();
-            theBucketMenuReg = theBucketMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theColumnMenuBuilder = theColumnButton.getMenuBuilder();
-            theColumnMenuReg = theColumnMenuBuilder.getEventRegistrar().addChangeListener(this);
+            /* If the filter is possible */
+            if (myEntry.getValue().isAvailable()) {
+                /* Create a new JMenuItem and add it to the popUp */
+                theTypeMenuBuilder.addItem(myEntry.getKey());
+            }
         }
+    }
 
-        /**
-         * Build AnalysisType menu.
-         */
-        private void buildAnalysisTypeMenu() {
-            /* Reset the popUp menu */
-            theTypeMenuBuilder.clearMenu();
+    /**
+     * Build Bucket menu.
+     */
+    private void buildBucketMenu() {
+        /* Reset the popUp menu */
+        theBucketMenuBuilder.clearMenu();
 
-            /* Loop through the panels */
-            Iterator<Map.Entry<AnalysisType, AnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
-            while (myIterator.hasNext()) {
-                Map.Entry<AnalysisType, AnalysisFilterSelection> myEntry = myIterator.next();
-
-                /* If the filter is possible */
-                if (myEntry.getValue().isAvailable()) {
-                    /* Create a new JMenuItem and add it to the popUp */
-                    theTypeMenuBuilder.addItem(myEntry.getKey());
-                }
+        /* Loop through the buckets */
+        AnalysisFilter<?, ?> myFilter = theState.getFilter();
+        for (BucketAttribute myAttr : theState.getType().getValues()) {
+            /* If the value is a counter */
+            if (myAttr.isCounter() && myFilter.isRelevantCounter(myAttr)) {
+                /* Create a new JMenuItem and add it to the popUp */
+                theBucketMenuBuilder.addItem(myAttr);
             }
         }
 
-        /**
-         * Build Bucket menu.
-         */
-        private void buildBucketMenu() {
-            /* Reset the popUp menu */
-            theBucketMenuBuilder.clearMenu();
+        /* Add the entry for null bucket */
+        theBucketMenuBuilder.addNullItem(NLS_NONE);
+    }
 
-            /* Loop through the buckets */
+    /**
+     * Build Columns menu.
+     */
+    private void buildColumnsMenu() {
+        /* Reset the popUp menu */
+        theColumnMenuBuilder.clearMenu();
+
+        /* Determine whether we have balances */
+        boolean hasBalances = theState.getType().hasBalances();
+
+        /* Loop through the sets */
+        for (AnalysisColumnSet mySet : AnalysisColumnSet.values()) {
+            /* if we have balances or this is not the balance set */
+            if (hasBalances || !mySet.isBalance()) {
+                /* Add the item */
+                theColumnMenuBuilder.addItem(mySet);
+            }
+        }
+    }
+
+    /**
+     * Build Deposit Filter.
+     */
+    private void buildDepositFilter() {
+        applyFilter(theDepositSelect.getFilter());
+    }
+
+    /**
+     * Build Cash Filter.
+     */
+    private void buildCashFilter() {
+        applyFilter(theCashSelect.getFilter());
+    }
+
+    /**
+     * Build Loan Filter.
+     */
+    private void buildLoanFilter() {
+        applyFilter(theLoanSelect.getFilter());
+    }
+
+    /**
+     * Build Security Filter.
+     */
+    private void buildSecurityFilter() {
+        applyFilter(theSecuritySelect.getFilter());
+    }
+
+    /**
+     * Build Portfolio Filter.
+     */
+    private void buildPortfolioFilter() {
+        applyFilter(thePortfolioSelect.getFilter());
+    }
+
+    /**
+     * Build Payee Filter.
+     */
+    private void buildPayeeFilter() {
+        applyFilter(thePayeeSelect.getFilter());
+    }
+
+    /**
+     * Build Category Filter.
+     */
+    private void buildCategoryFilter() {
+        applyFilter(theCategorySelect.getFilter());
+    }
+
+    /**
+     * Build TaxBasis Filter.
+     */
+    private void buildTaxBasisFilter() {
+        applyFilter(theTaxBasisSelect.getFilter());
+    }
+
+    /**
+     * Build Tag Filter.
+     */
+    private void buildTagFilter() {
+        applyFilter(theTagSelect.getFilter());
+    }
+
+    /**
+     * Apply Filter.
+     * @param pFilter the filter
+     */
+    private void applyFilter(final AnalysisFilter<?, ?> pFilter) {
+        /* Ignore if we are refreshing */
+        if (!isRefreshing) {
+            pFilter.setCurrentAttribute(theState.getBucket());
+            theState.setFilter(pFilter);
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        }
+    }
+
+    /**
+     * Set AnalysisView.
+     */
+    private void setAnalysisView() {
+        /* Ignore if we are refreshing */
+        if (!isRefreshing) {
+            /* Declare the analysis */
+            theAnalysis = theAnalysisView.getAnalysis();
+            setAnalysis();
+
+            /* Validate state and apply */
+            checkType();
+            theState.applyState();
+
+            /* Notify listeners */
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        }
+    }
+
+    /**
+     * Handle New Range.
+     */
+    private void handleNewRange() {
+        /* Ignore if we are refreshing */
+        if (isRefreshing) {
+            return;
+        }
+
+        /* If we have a change to the range */
+        if (theState.setRange(theRangeSelect)) {
+            /* Note that we are refreshing */
+            isRefreshing = true;
+
+            /* Obtain new analysis */
+            theAnalysisView.setRange(getRange());
+            theAnalysis = theAnalysisView.getAnalysis();
+            setAnalysis();
+
+            /* Validate state and apply */
+            checkType();
+            theState.applyState();
+
+            /* Remove refreshing flag and notify listeners */
+            isRefreshing = false;
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        }
+    }
+
+    /**
+     * Handle RangeButton.
+     */
+    private void handleRangeButton() {
+        /* Toggle visibility of range selection */
+        boolean isVisible = theRangeSelect.isVisible();
+        theRangeButton.setIcon(isVisible
+                                         ? TethysSwingArrowIcon.DOWN
+                                         : TethysSwingArrowIcon.UP);
+        theRangeSelect.setVisible(!isVisible);
+    }
+
+    /**
+     * Handle FilterButton.
+     */
+    private void handleFilterButton() {
+        /* Toggle visibility of filter selection */
+        boolean isVisible = theFilterSelect.isVisible();
+        theFilterButton.setIcon(isVisible
+                                          ? TethysSwingArrowIcon.DOWN
+                                          : TethysSwingArrowIcon.UP);
+        theFilterSelect.setVisible(!isVisible);
+    }
+
+    /**
+     * Handle New Bucket.
+     */
+    private void handleNewBucket() {
+        /* Ignore if we are refreshing */
+        if (isRefreshing) {
+            return;
+        }
+
+        BucketAttribute myBucket = theBucketButton.getValue();
+        if (theState.setBucket(myBucket)) {
             AnalysisFilter<?, ?> myFilter = theState.getFilter();
-            for (BucketAttribute myAttr : theState.getType().getValues()) {
-                /* If the value is a counter */
-                if (myAttr.isCounter() && myFilter.isRelevantCounter(myAttr)) {
-                    /* Create a new JMenuItem and add it to the popUp */
-                    theBucketMenuBuilder.addItem(myAttr);
-                }
+            if (myBucket != null) {
+                myFilter.setCurrentAttribute(myBucket);
             }
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        }
+    }
 
-            /* Add the entry for null bucket */
-            theBucketMenuBuilder.addNullItem(NLS_NONE);
+    /**
+     * Handle New Columns.
+     */
+    private void handleNewColumns() {
+        /* Ignore if we are refreshing */
+        if (isRefreshing) {
+            return;
         }
 
-        /**
-         * Build Columns menu.
-         */
-        private void buildColumnsMenu() {
-            /* Reset the popUp menu */
-            theColumnMenuBuilder.clearMenu();
+        /* Record the columns */
+        AnalysisColumnSet mySet = theColumnButton.getValue();
+        if (theState.setColumns(mySet)) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        }
+    }
 
-            /* Determine whether we have balances */
-            boolean hasBalances = theState.getType().hasBalances();
-
-            /* Loop through the sets */
-            for (AnalysisColumnSet mySet : AnalysisColumnSet.values()) {
-                /* if we have balances or this is not the balance set */
-                if (hasBalances || !mySet.isBalance()) {
-                    /* Add the item */
-                    theColumnMenuBuilder.addItem(mySet);
-                }
-            }
+    /**
+     * Handle FilterType.
+     */
+    private void handleFilterType() {
+        /* Ignore if we are refreshing */
+        if (isRefreshing) {
+            return;
         }
 
-        @Override
-        public void actionPerformed(final ActionEvent pEvent) {
-            Object o = pEvent.getSource();
-
-            /* If this event relates to the RangeButton */
-            if (theRangeButton.equals(o)) {
-                /* Toggle visibility of range selection */
-                boolean isVisible = theRangeSelect.isVisible();
-                theRangeButton.setIcon(isVisible
-                                                 ? TethysSwingArrowIcon.DOWN
-                                                 : TethysSwingArrowIcon.UP);
-                theRangeSelect.setVisible(!isVisible);
+        /* If the type has changed */
+        AnalysisType myType = theFilterTypeButton.getValue();
+        if (theState.setAnalysisType(myType)) {
+            /* Determine whether we are showing balances */
+            boolean showingBalances = !theState.showColumns();
+            if (showingBalances && !myType.hasBalances()) {
+                /* Move to columns if we have no balances */
+                theState.showColumns(true);
             }
 
-            /* If this event relates to the FilterButton */
-            if (theFilterButton.equals(o)) {
-                /* Toggle visibility of filter selection */
-                boolean isVisible = theFilterSelect.isVisible();
-                theFilterButton.setIcon(isVisible
-                                                  ? TethysSwingArrowIcon.DOWN
-                                                  : TethysSwingArrowIcon.UP);
-                theFilterSelect.setVisible(!isVisible);
-            }
-        }
+            /* Move correct card to front */
+            theLayout.show(theCardPanel, myType.name());
 
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* Ignore if we are refreshing */
-            if (isRefreshing) {
-                return;
-            }
+            /* Obtain the relevant filter */
+            AnalysisFilterSelection myPanel = theMap.get(myType);
+            AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
+            myFilter.setCurrentAttribute(myType.getDefaultValue());
 
-            /* Access the source */
-            Object o = pEvent.getSource();
-
-            /* If this is the range select panel */
-            if (theRangeSelect.equals(o)) {
-                /* If we have a change to the range */
-                if (theState.setRange(theRangeSelect)) {
-                    /* Note that we are refreshing */
-                    isRefreshing = true;
-
-                    /* Obtain new analysis */
-                    theAnalysisView.setRange(getRange());
-                    theAnalysis = theAnalysisView.getAnalysis();
-                    setAnalysis();
-
-                    /* Validate state and apply */
-                    checkType();
-                    theState.applyState();
-
-                    /* Remove refreshing flag and notify listeners */
-                    isRefreshing = false;
-                    theEventManager.fireStateChanged();
-                }
-
-                /* If this is the filter type button */
-            } else if (theFilterTypeButton.equals(o)) {
-                /* If the type has changed */
-                AnalysisType myType = theFilterTypeButton.getValue();
-                if (theState.setAnalysisType(myType)) {
-                    /* Determine whether we are showing balances */
-                    boolean showingBalances = !theState.showColumns();
-                    if (showingBalances && !myType.hasBalances()) {
-                        /* Move to columns if we have no balances */
-                        theState.showColumns(true);
-                    }
-
-                    /* Move correct card to front */
-                    theLayout.show(theCardPanel, myType.name());
-
-                    /* Obtain the relevant filter */
-                    AnalysisFilterSelection myPanel = theMap.get(myType);
-                    AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
-                    myFilter.setCurrentAttribute(myType.getDefaultValue());
-
-                    /* Set new bucket type and apply state */
-                    theState.setFilter(myFilter);
-                    theState.setBucket(myFilter.getCurrentAttribute());
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
-
-                /* If this is the bucket attribute button */
-            } else if (theBucketButton.equals(o)) {
-                /* Record the bucket */
-                BucketAttribute myBucket = theBucketButton.getValue();
-                if (theState.setBucket(myBucket)) {
-                    AnalysisFilter<?, ?> myFilter = theState.getFilter();
-                    if (myBucket != null) {
-                        myFilter.setCurrentAttribute(myBucket);
-                    }
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
-
-                /* If this is the column set button */
-            } else if (theColumnButton.equals(o)) {
-                /* Record the columns */
-                AnalysisColumnSet mySet = theColumnButton.getValue();
-                if (theState.setColumns(mySet)) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
-            }
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* Ignore if we are refreshing */
-            if (isRefreshing) {
-                return;
-            }
-
-            /* If this is the AnalysisView */
-            if (theAnalysisViewReg.isRelevant(pEvent)) {
-                /* Declare the analysis */
-                theAnalysis = theAnalysisView.getAnalysis();
-                setAnalysis();
-
-                /* Validate state and apply */
-                checkType();
-                theState.applyState();
-
-                /* Notify listeners */
-                theEventManager.fireStateChanged();
-
-                /* If this is the TypeMenu */
-            } else if (theTypeMenuReg.isRelevant(pEvent)) {
-                /* Build the analysis type menu */
-                buildAnalysisTypeMenu();
-
-                /* If this is the BucketMenu */
-            } else if (theBucketMenuReg.isRelevant(pEvent)) {
-                /* Build the bucket type menu */
-                buildBucketMenu();
-
-                /* If this is the ColumnMenu */
-            } else if (theColumnMenuReg.isRelevant(pEvent)) {
-                /* Build the columns menu */
-                buildColumnsMenu();
-
-                /* If this is the DepositSelect */
-            } else if (theDepositReg.isRelevant(pEvent)) {
-                /* Create the new filter */
-                DepositFilter myFilter = theDepositSelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                theEventManager.fireStateChanged();
-
-                /* If this is the CashSelect */
-            } else if (theCashReg.isRelevant(pEvent)) {
-                /* Create the new filter */
-                CashFilter myFilter = theCashSelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                theEventManager.fireStateChanged();
-
-                /* If this is the LoanSelect */
-            } else if (theLoanReg.isRelevant(pEvent)) {
-                /* Create the new filter */
-                LoanFilter myFilter = theLoanSelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                theEventManager.fireStateChanged();
-
-                /* If this is the security select */
-            } else if (theSecurityReg.isRelevant(pEvent)) {
-                /* Create the new filter */
-                SecurityFilter myFilter = theSecuritySelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                theEventManager.fireStateChanged();
-
-                /* If this is the portfolio select */
-            } else if (thePortfolioReg.isRelevant(pEvent)) {
-                /* Create the new filter */
-                PortfolioCashFilter myFilter = thePortfolioSelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                theEventManager.fireStateChanged();
-
-                /* If this is the Payee select */
-            } else if (thePayeeReg.isRelevant(pEvent)) {
-                /* Create the new filter */
-                PayeeFilter myFilter = thePayeeSelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                theEventManager.fireStateChanged();
-
-                /* If this is the category select */
-            } else if (theCategoryReg.isRelevant(pEvent)) {
-                /* Create the new filter */
-                TransactionCategoryFilter myFilter = theCategorySelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                theEventManager.fireStateChanged();
-
-                /* If this is the tax basis select */
-            } else if (theBasisReg.isRelevant(pEvent)) {
-                /* Create the new filter */
-                TaxBasisFilter myFilter = theTaxBasisSelect.getFilter();
-                myFilter.setCurrentAttribute(theState.getBucket());
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                theEventManager.fireStateChanged();
-
-                /* If this is the tag select */
-            } else if (theTagReg.isRelevant(pEvent)) {
-                /* Create the new filter */
-                TagFilter myFilter = theTagSelect.getFilter();
-                myFilter.setCurrentAttribute(null);
-
-                /* Apply filter and notify changes */
-                theState.setFilter(myFilter);
-                theState.applyState();
-                theEventManager.fireStateChanged();
-            }
+            /* Set new bucket type and apply state */
+            theState.setFilter(myFilter);
+            theState.setBucket(myFilter.getCurrentAttribute());
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
     }
 

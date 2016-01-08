@@ -51,6 +51,7 @@ import net.sourceforge.joceanus.jmoneywise.views.SpotExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.views.SpotExchangeRate.SpotExchangeList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.YQLDownloader;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -59,18 +60,13 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
@@ -195,7 +191,7 @@ public class SpotRatesTable
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entry */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView, MoneyWiseDataType.class);
+        theUpdateSet = new UpdateSet<>(theView, MoneyWiseDataType.class);
         theUpdateEntry = theUpdateSet.registerType(MoneyWiseDataType.EXCHANGERATE);
         setUpdateSet(theUpdateSet);
 
@@ -233,7 +229,7 @@ public class SpotRatesTable
         myHeader.setLayout(new BorderLayout());
         myHeader.add(theSelect, BorderLayout.CENTER);
         myHeader.add(theError, BorderLayout.PAGE_START);
-        myHeader.add(theActionButtons, BorderLayout.LINE_END);
+        myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
 
         /* Create the panel */
         thePanel = new TethysSwingEnablePanel();
@@ -247,7 +243,12 @@ public class SpotRatesTable
         theActionButtons.setVisible(false);
 
         /* Create the listener */
-        new SpotViewListener();
+        theUpdateSet.getEventRegistrar().addEventListener(e -> theModel.fireNewDataEvents());
+        theView.getEventRegistrar().addEventListener(e -> refreshData());
+        theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
+        theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
+        theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -> handleNewSelection());
+        theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.DOWNLOAD, e -> downloadRates());
     }
 
     /**
@@ -362,6 +363,9 @@ public class SpotRatesTable
      * Download rates.
      */
     private void downloadRates() {
+        /* Cancel editing */
+        cancelEditing();
+
         /* Protect against exceptions */
         try {
             /* Download Rates */
@@ -380,127 +384,64 @@ public class SpotRatesTable
     }
 
     /**
-     * SpotView listener class.
+     * handleErrorPane.
      */
-    private final class SpotViewListener
-            implements TethysActionEventListener, TethysChangeEventListener {
-        /**
-         * UpdateSet Registration.
-         */
-        private final TethysChangeRegistration theUpdateSetReg;
+    private void handleErrorPane() {
+        /* Determine whether we have an error */
+        boolean isError = theError.hasError();
 
-        /**
-         * View Registration.
-         */
-        private final TethysChangeRegistration theViewReg;
+        /* Hide selection panel on error */
+        theSelect.setVisible(!isError);
 
-        /**
-         * Error Registration.
-         */
-        private final TethysChangeRegistration theErrorReg;
+        /* Lock scroll area */
+        getScrollPane().setEnabled(!isError);
 
-        /**
-         * Selection Registration.
-         */
-        private final TethysChangeRegistration theSelectReg;
+        /* Lock Action Buttons */
+        theActionButtons.setEnabled(!isError);
+    }
 
-        /**
-         * Download Registration.
-         */
-        private final TethysActionRegistration theDownloadReg;
+    /**
+     * handle Action Buttons.
+     * @param pEvent the event
+     */
+    private void handleActionButtons(final TethysEvent<PrometheusUIEvent> pEvent) {
+        /* Cancel editing */
+        cancelEditing();
 
-        /**
-         * Action Registration.
-         */
-        private final TethysActionRegistration theActionReg;
+        /* Perform the command */
+        theUpdateSet.processCommand(pEvent.getEventId(), theError);
 
-        /**
-         * Constructor.
-         */
-        private SpotViewListener() {
-            /* Register listeners */
-            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
-            theViewReg = theView.getEventRegistrar().addChangeListener(this);
-            theErrorReg = theError.getEventRegistrar().addChangeListener(this);
-            theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
-            TethysEventRegistrar myRegistrar = theSelect.getEventRegistrar();
-            theSelectReg = myRegistrar.addChangeListener(this);
-            theDownloadReg = myRegistrar.addActionListener(this);
-        }
+        /* Adjust for changes */
+        notifyChanges();
+    }
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the data view */
-            if (theViewReg.isRelevant(pEvent)) {
-                /* Refresh Data */
-                refreshData();
+    /**
+     * handle new selection.
+     */
+    private void handleNewSelection() {
+        /* Access selection */
+        TethysDate myDate = theSelect.getDate();
 
-                /* If we are performing a rewind */
-            } else if (theUpdateSetReg.isRelevant(pEvent)) {
-                /* Refresh the model */
-                theModel.fireNewDataEvents();
+        /* If the selection differs */
+        if (!MetisDifference.isEqual(theDate, myDate)) {
+            /* Protect against exceptions */
+            try {
+                /* Set selection */
+                setSelection(myDate);
 
-                /* If we are changing selection */
-            } else if (theSelectReg.isRelevant(pEvent)) {
-                /* Access selection */
-                TethysDate myDate = theSelect.getDate();
+                /* Create SavePoint */
+                theSelect.createSavePoint();
 
-                /* If the selection differs */
-                if (!MetisDifference.isEqual(theDate, myDate)) {
-                    /* Protect against exceptions */
-                    try {
-                        /* Set selection */
-                        setSelection(myDate);
+                /* Catch Exceptions */
+            } catch (OceanusException e) {
+                /* Build the error */
+                OceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
 
-                        /* Create SavePoint */
-                        theSelect.createSavePoint();
+                /* Show the error */
+                setError(myError);
 
-                        /* Catch Exceptions */
-                    } catch (OceanusException e) {
-                        /* Build the error */
-                        OceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
-
-                        /* Show the error */
-                        setError(myError);
-
-                        /* Restore SavePoint */
-                        theSelect.restoreSavePoint();
-                    }
-                }
-
-                /* If we are handling errors */
-            } else if (theErrorReg.isRelevant(pEvent)) {
-                /* Determine whether we have an error */
-                boolean isError = theError.hasError();
-
-                /* Hide selection panel on error */
-                theSelect.setVisible(!isError);
-
-                /* Lock scroll area */
-                getScrollPane().setEnabled(!isError);
-
-                /* Lock Action Buttons */
-                theActionButtons.setEnabled(!isError);
-            }
-        }
-
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            /* Cancel Editing */
-            cancelEditing();
-
-            /* If this is the action buttons */
-            if (theActionReg.isRelevant(pEvent)) {
-                /* Perform the command */
-                theUpdateSet.processCommand(pEvent.getActionId(), theError);
-
-                /* Adjust for changes */
-                notifyChanges();
-
-                /* If this is the download request */
-            } else if (theDownloadReg.isRelevant(pEvent)) {
-                /* Download Rates */
-                downloadRates();
+                /* Restore SavePoint */
+                theSelect.restoreSavePoint();
             }
         }
     }

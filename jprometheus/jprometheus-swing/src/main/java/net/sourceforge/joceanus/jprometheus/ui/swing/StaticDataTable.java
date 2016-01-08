@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.ui.swing;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -49,16 +47,12 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
  * Static Data Table.
- * @author Tony Washer
  * @param <L> the list type
  * @param <T> the data type
  * @param <S> the static class
@@ -115,6 +109,11 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      * The new button.
      */
     private final JScrollButton<S> theNewButton;
+
+    /**
+     * MenuBuilder.
+     */
+    private final JScrollMenuBuilder<S> theMenuBuilder;
 
     /**
      * The Data class.
@@ -203,8 +202,11 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
 
-        /* Create the listener */
-        new StaticListener();
+        /* Add listeners */
+        theUpdateSet.getEventRegistrar().addEventListener(e -> theModel.fireNewDataEvents());
+        theMenuBuilder = theNewButton.getMenuBuilder();
+        theMenuBuilder.getEventRegistrar().addEventListener(e -> buildNewMenu());
+        theNewButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewClass());
     }
 
     /**
@@ -226,6 +228,55 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     @Override
     protected void setError(final OceanusException pError) {
         theError.addError(pError);
+    }
+
+    /**
+     * handle new static class.
+     */
+    private void handleNewClass() {
+        /* Access the new class */
+        S myClass = theNewButton.getValue();
+
+        /* Protect the action */
+        try {
+            /* Look to find a deleted value */
+            T myValue = theStatic.findItemByClass(myClass);
+
+            /* If we found a deleted value */
+            if (myValue != null) {
+                /* reinstate it */
+                myValue.setDeleted(false);
+
+                /* else we have no existing value */
+            } else {
+                /* Create the new value */
+                myValue = theStatic.addNewItem(myClass);
+                myValue.setNewVersion();
+            }
+
+            /* Update the table */
+            incrementVersion();
+            theModel.fireNewDataEvents();
+            notifyChanges();
+
+            /* Handle exceptions */
+        } catch (OceanusException e) {
+            setError(e);
+        }
+    }
+
+    /**
+     * Build the menu of available new items.
+     */
+    private void buildNewMenu() {
+        /* Reset the menu popUp */
+        theMenuBuilder.clearMenu();
+
+        /* Loop through the missing classes */
+        for (S myValue : theStatic.getMissingClasses()) {
+            /* Create a new JMenuItem and add it to the popUp */
+            theMenuBuilder.addItem(myValue);
+        }
     }
 
     /**
@@ -285,100 +336,6 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     protected boolean isFull() {
         return theStatic == null
                || theStatic.isFull();
-    }
-
-    /**
-     * The listener class.
-     */
-    private final class StaticListener
-            implements PropertyChangeListener, TethysChangeEventListener {
-        /**
-         * MenuBuilder.
-         */
-        private final JScrollMenuBuilder<S> theMenuBuilder;
-
-        /**
-         * Menu Registration.
-         */
-        private final TethysChangeRegistration theMenuReg;
-        /**
-         * UpdateSet Registration.
-         */
-        private final TethysChangeRegistration theUpdateSetReg;
-
-        /**
-         * Constructor.
-         */
-        private StaticListener() {
-            /* Access the builder */
-            theMenuBuilder = theNewButton.getMenuBuilder();
-
-            /* Register for events */
-            theMenuReg = theMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
-            theNewButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If we are performing a rewind */
-            if (theUpdateSetReg.isRelevant(pEvent)) {
-                /* Refresh the model */
-                theModel.fireNewDataEvents();
-
-                /* If this is the menu builder */
-            } else if (theMenuReg.isRelevant(pEvent)) {
-                /* Create the new menu */
-                buildNewMenu();
-            }
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* Access the new class */
-            S myClass = theNewButton.getValue();
-
-            /* Protect the action */
-            try {
-                /* Look to find a deleted value */
-                T myValue = theStatic.findItemByClass(myClass);
-
-                /* If we found a deleted value */
-                if (myValue != null) {
-                    /* reinstate it */
-                    myValue.setDeleted(false);
-
-                    /* else we have no existing value */
-                } else {
-                    /* Create the new value */
-                    myValue = theStatic.addNewItem(myClass);
-                    myValue.setNewVersion();
-                }
-
-                /* Update the table */
-                incrementVersion();
-                theModel.fireNewDataEvents();
-                notifyChanges();
-
-                /* Handle exceptions */
-            } catch (OceanusException e) {
-                setError(e);
-            }
-        }
-
-        /**
-         * Build the menu of available new items.
-         */
-        protected void buildNewMenu() {
-            /* Reset the menu popUp */
-            theMenuBuilder.clearMenu();
-
-            /* Loop through the missing classes */
-            for (S myValue : theStatic.getMissingClasses()) {
-                /* Create a new JMenuItem and add it to the popUp */
-                theMenuBuilder.addItem(myValue);
-            }
-        }
     }
 
     /**

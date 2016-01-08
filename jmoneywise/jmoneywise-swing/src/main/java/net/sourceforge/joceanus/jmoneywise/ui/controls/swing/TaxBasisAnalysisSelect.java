@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
 import javax.swing.Box;
@@ -45,12 +43,10 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -59,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilde
  */
 public class TaxBasisAnalysisSelect
         extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider {
+        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -83,7 +79,7 @@ public class TaxBasisAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The active tax basis bucket list.
@@ -111,15 +107,25 @@ public class TaxBasisAnalysisSelect
     private final JScrollButton<TaxBasisAccountBucket> theAccountButton;
 
     /**
+     * Tax menu builder.
+     */
+    private final JScrollMenuBuilder<TaxBasisBucket> theTaxMenuBuilder;
+
+    /**
+     * Account menu builder.
+     */
+    private final JScrollMenuBuilder<TaxBasisAccountBucket> theAccountMenuBuilder;
+
+    /**
      * Constructor.
      */
     public TaxBasisAnalysisSelect() {
         /* Create the buttons */
-        theBasisButton = new JScrollButton<TaxBasisBucket>();
-        theAccountButton = new JScrollButton<TaxBasisAccountBucket>();
+        theBasisButton = new JScrollButton<>();
+        theAccountButton = new JScrollButton<>();
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
         JLabel myBasisLabel = new JLabel(NLS_BASIS + MetisFieldElement.STR_COLON);
@@ -142,11 +148,16 @@ public class TaxBasisAnalysisSelect
         theState.applyState();
 
         /* Create the listener */
-        new BasisListener();
+        theTaxMenuBuilder = theBasisButton.getMenuBuilder();
+        theTaxMenuBuilder.getEventRegistrar().addEventListener(e -> buildBasisMenu());
+        theAccountMenuBuilder = theAccountButton.getMenuBuilder();
+        theAccountMenuBuilder.getEventRegistrar().addEventListener(e -> buildAccountMenu());
+        theBasisButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewBasis());
+        theAccountButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewAccount());
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -273,138 +284,88 @@ public class TaxBasisAnalysisSelect
     }
 
     /**
-     * Listener class.
+     * Handle new Basis.
      */
-    private final class BasisListener
-            implements PropertyChangeListener, TethysChangeEventListener {
-        /**
-         * Tax menu builder.
-         */
-        private final JScrollMenuBuilder<TaxBasisBucket> theTaxMenuBuilder;
-
-        /**
-         * Account menu builder.
-         */
-        private final JScrollMenuBuilder<TaxBasisAccountBucket> theAccountMenuBuilder;
-
-        /**
-         * TaxBasisMenu Registration.
-         */
-        private final TethysChangeRegistration theBasisMenuReg;
-
-        /**
-         * AccountMenu Registration.
-         */
-        private final TethysChangeRegistration theAccountMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private BasisListener() {
-            /* Access builders */
-            theTaxMenuBuilder = theBasisButton.getMenuBuilder();
-            theAccountMenuBuilder = theAccountButton.getMenuBuilder();
-            theBasisMenuReg = theTaxMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theAccountMenuReg = theAccountMenuBuilder.getEventRegistrar().addChangeListener(this);
-
-            /* Add swing listeners */
-            theBasisButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theAccountButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+    private void handleNewBasis() {
+        /* Select the new taxBasis */
+        if (theState.setTaxBasis(theBasisButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
+    }
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the TaxBasisMenu */
-            if (theBasisMenuReg.isRelevant(pEvent)) {
-                buildBasisMenu();
-            } else if (theAccountMenuReg.isRelevant(pEvent)) {
-                buildAccountMenu();
+    /**
+     * Handle new Account.
+     */
+    private void handleNewAccount() {
+        /* Select the new account */
+        if (theState.setTaxBasis(theAccountButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        }
+    }
+
+    /**
+     * Build Basis menu.
+     */
+    private void buildBasisMenu() {
+        /* Reset the popUp menu */
+        theTaxMenuBuilder.clearMenu();
+
+        /* Record active item */
+        JMenuItem myActive = null;
+        TaxBasisBucket myCurr = theState.getTaxBasis();
+
+        /* Loop through the available basis values */
+        Iterator<TaxBasisBucket> myIterator = theTaxBases.iterator();
+        while (myIterator.hasNext()) {
+            TaxBasisBucket myBucket = myIterator.next();
+
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = theTaxMenuBuilder.addItem(myBucket);
+
+            /* If this is the active bucket */
+            if (myBucket.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
 
-        /**
-         * Build Basis menu.
-         */
-        private void buildBasisMenu() {
-            /* Reset the popUp menu */
-            theTaxMenuBuilder.clearMenu();
+        /* Ensure active item is visible */
+        theTaxMenuBuilder.showItem(myActive);
+    }
 
-            /* Record active item */
-            JMenuItem myActive = null;
-            TaxBasisBucket myCurr = theState.getTaxBasis();
+    /**
+     * Build Account menu.
+     */
+    private void buildAccountMenu() {
+        /* Reset the popUp menu */
+        theAccountMenuBuilder.clearMenu();
 
-            /* Loop through the available basis values */
-            Iterator<TaxBasisBucket> myIterator = theTaxBases.iterator();
-            while (myIterator.hasNext()) {
-                TaxBasisBucket myBucket = myIterator.next();
+        /* Record active item */
+        TaxBasisBucket myBasis = theState.getTaxBasis();
+        TaxBasisAccountBucket myCurr = theState.getAccount();
 
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theTaxMenuBuilder.addItem(myBucket);
+        /* Add the all item menu */
+        JMenuItem myActive = theAccountMenuBuilder.addItem(null, NLS_ALL);
 
-                /* If this is the active bucket */
-                if (myBucket.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
+        /* Loop through the available account values */
+        Iterator<TaxBasisAccountBucket> myIterator = myBasis.accountIterator();
+        while (myIterator.hasNext()) {
+            TaxBasisAccountBucket myBucket = myIterator.next();
 
-            /* Ensure active item is visible */
-            theTaxMenuBuilder.showItem(myActive);
-        }
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = theAccountMenuBuilder.addItem(myBucket, myBucket.getSimpleName());
 
-        /**
-         * Build Account menu.
-         */
-        private void buildAccountMenu() {
-            /* Reset the popUp menu */
-            theAccountMenuBuilder.clearMenu();
-
-            /* Record active item */
-            TaxBasisBucket myBasis = theState.getTaxBasis();
-            TaxBasisAccountBucket myCurr = theState.getAccount();
-
-            /* Add the all item menu */
-            JMenuItem myActive = theAccountMenuBuilder.addItem(null, NLS_ALL);
-
-            /* Loop through the available account values */
-            Iterator<TaxBasisAccountBucket> myIterator = myBasis.accountIterator();
-            while (myIterator.hasNext()) {
-                TaxBasisAccountBucket myBucket = myIterator.next();
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theAccountMenuBuilder.addItem(myBucket, myBucket.getSimpleName());
-
-                /* If this is the active bucket */
-                if (myBucket.equals(myCurr)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theAccountMenuBuilder.showItem(myActive);
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* Access the source */
-            Object o = pEvent.getSource();
-
-            /* If this is the tax button */
-            if (theBasisButton.equals(o)) {
-                /* Select the new basis */
-                if (theState.setTaxBasis(theBasisButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
-            } else if (theAccountButton.equals(o)) {
-                /* Select the new basis */
-                if (theState.setTaxBasis(theAccountButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
+            /* If this is the active bucket */
+            if (myBucket.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
+
+        /* Ensure active item is visible */
+        theAccountMenuBuilder.showItem(myActive);
     }
 
     /**

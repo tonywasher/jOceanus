@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,12 +46,10 @@ import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
@@ -63,7 +59,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
  */
 public class CashAnalysisSelect
         extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider {
+        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Serial Id.
      */
@@ -82,7 +78,7 @@ public class CashAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager theEventManager;
+    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The active category bucket list.
@@ -115,17 +111,27 @@ public class CashAnalysisSelect
     private final JScrollButton<CashCategory> theCatButton;
 
     /**
+     * Category menu builder.
+     */
+    private final JScrollMenuBuilder<CashCategory> theCategoryMenuBuilder;
+
+    /**
+     * Cash menu builder.
+     */
+    private final JScrollMenuBuilder<CashBucket> theCashMenuBuilder;
+
+    /**
      * Constructor.
      */
     public CashAnalysisSelect() {
         /* Create the cash button */
-        theCashButton = new JScrollButton<CashBucket>();
+        theCashButton = new JScrollButton<>();
 
         /* Create the category button */
-        theCatButton = new JScrollButton<CashCategory>();
+        theCatButton = new JScrollButton<>();
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager();
+        theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
         JLabel myCatLabel = new JLabel(NLS_CATEGORY + MetisFieldElement.STR_COLON);
@@ -147,12 +153,17 @@ public class CashAnalysisSelect
         theState = new CashState();
         theState.applyState();
 
-        /* Create the listener */
-        new CashListener();
+        /* Create the listeners */
+        theCategoryMenuBuilder = theCatButton.getMenuBuilder();
+        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu());
+        theCashMenuBuilder = theCashButton.getMenuBuilder();
+        theCashMenuBuilder.getEventRegistrar().addEventListener(e -> buildCashMenu());
+        theCashButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewCash());
+        theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewCategory());
     }
 
     @Override
-    public TethysEventRegistrar getEventRegistrar() {
+    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -296,170 +307,114 @@ public class CashAnalysisSelect
     }
 
     /**
-     * Listener class.
+     * Handle new Category.
      */
-    private final class CashListener
-            implements PropertyChangeListener, TethysChangeEventListener {
-        /**
-         * Category menu builder.
-         */
-        private final JScrollMenuBuilder<CashCategory> theCategoryMenuBuilder;
-
-        /**
-         * Cash menu builder.
-         */
-        private final JScrollMenuBuilder<CashBucket> theCashMenuBuilder;
-
-        /**
-         * CategoryMenu Registration.
-         */
-        private final TethysChangeRegistration theCategoryMenuReg;
-
-        /**
-         * CashMenu Registration.
-         */
-        private final TethysChangeRegistration theCashMenuReg;
-
-        /**
-         * Constructor.
-         */
-        private CashListener() {
-            /* Access builders */
-            theCategoryMenuBuilder = theCatButton.getMenuBuilder();
-            theCategoryMenuReg = theCategoryMenuBuilder.getEventRegistrar().addChangeListener(this);
-            theCashMenuBuilder = theCashButton.getMenuBuilder();
-            theCashMenuReg = theCashMenuBuilder.getEventRegistrar().addChangeListener(this);
-
-            /* Add swing listeners */
-            theCashButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
-            theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+    private void handleNewCategory() {
+        /* Select the new category */
+        if (theState.setCategory(theCatButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
+    }
 
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the CategoryMenu */
-            if (theCategoryMenuReg.isRelevant(pEvent)) {
-                /* Build the category menu */
-                buildCategoryMenu();
+    /**
+     * Handle new Cash.
+     */
+    private void handleNewCash() {
+        /* Select the new cash */
+        if (theState.setCash(theCashButton.getValue())) {
+            theState.applyState();
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        }
+    }
 
-                /* If this is the CashMenu */
-            } else if (theCashMenuReg.isRelevant(pEvent)) {
-                /* Build the cash menu */
-                buildCashMenu();
+    /**
+     * Build Category menu.
+     */
+    private void buildCategoryMenu() {
+        /* Reset the popUp menu */
+        theCategoryMenuBuilder.clearMenu();
+
+        /* Create a simple map for top-level categories */
+        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+
+        /* Record active item */
+        CashCategory myCurrent = theState.getCategory();
+        JMenuItem myActive = null;
+
+        /* Loop through the available category values */
+        Iterator<CashCategoryBucket> myIterator = theCategories.iterator();
+        while (myIterator.hasNext()) {
+            CashCategoryBucket myBucket = myIterator.next();
+
+            /* Only process low-level items */
+            if (myBucket.getAccountCategory().isCategoryClass(CashCategoryClass.PARENT)) {
+                continue;
+            }
+
+            /* Determine menu to add to */
+            CashCategory myParent = myBucket.getAccountCategory().getParentCategory();
+            String myParentName = myParent.getName();
+            JScrollMenu myMenu = myMap.get(myParentName);
+
+            /* If this is a new menu */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
+                myMap.put(myParentName, myMenu);
+            }
+
+            /* Create a new JMenuItem and add it to the popUp */
+            CashCategory myCategory = myBucket.getAccountCategory();
+            JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+
+            /* If this is the active category */
+            if (myCategory.equals(myCurrent)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
 
-        /**
-         * Build Category menu.
-         */
-        private void buildCategoryMenu() {
-            /* Reset the popUp menu */
-            theCategoryMenuBuilder.clearMenu();
+        /* Ensure active item is visible */
+        theCategoryMenuBuilder.showItem(myActive);
+    }
 
-            /* Create a simple map for top-level categories */
-            Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+    /**
+     * Build Cash menu.
+     */
+    private void buildCashMenu() {
+        /* Reset the popUp menu */
+        theCashMenuBuilder.clearMenu();
 
-            /* Record active item */
-            CashCategory myCurrent = theState.getCategory();
-            JMenuItem myActive = null;
+        /* Access current category and Account */
+        CashCategory myCategory = theState.getCategory();
+        CashBucket myCash = theState.getCash();
 
-            /* Loop through the available category values */
-            Iterator<CashCategoryBucket> myIterator = theCategories.iterator();
-            while (myIterator.hasNext()) {
-                CashCategoryBucket myBucket = myIterator.next();
+        /* Record active item */
+        JMenuItem myActive = null;
 
-                /* Only process low-level items */
-                if (myBucket.getAccountCategory().isCategoryClass(CashCategoryClass.PARENT)) {
-                    continue;
-                }
+        /* Loop through the available account values */
+        Iterator<CashBucket> myIterator = theCash.iterator();
+        while (myIterator.hasNext()) {
+            CashBucket myBucket = myIterator.next();
 
-                /* Determine menu to add to */
-                CashCategory myParent = myBucket.getAccountCategory().getParentCategory();
-                String myParentName = myParent.getName();
-                JScrollMenu myMenu = myMap.get(myParentName);
-
-                /* If this is a new menu */
-                if (myMenu == null) {
-                    /* Create a new JMenu and add it to the popUp */
-                    myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
-                    myMap.put(myParentName, myMenu);
-                }
-
-                /* Create a new JMenuItem and add it to the popUp */
-                CashCategory myCategory = myBucket.getAccountCategory();
-                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
-
-                /* If this is the active category */
-                if (myCategory.equals(myCurrent)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
+            /* Ignore if not the correct category */
+            if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
+                continue;
             }
 
-            /* Ensure active item is visible */
-            theCategoryMenuBuilder.showItem(myActive);
-        }
+            /* Create a new JMenuItem and add it to the popUp */
+            JMenuItem myItem = theCashMenuBuilder.addItem(myBucket);
 
-        /**
-         * Build Cash menu.
-         */
-        private void buildCashMenu() {
-            /* Reset the popUp menu */
-            theCashMenuBuilder.clearMenu();
-
-            /* Access current category and Account */
-            CashCategory myCategory = theState.getCategory();
-            CashBucket myCash = theState.getCash();
-
-            /* Record active item */
-            JMenuItem myActive = null;
-
-            /* Loop through the available account values */
-            Iterator<CashBucket> myIterator = theCash.iterator();
-            while (myIterator.hasNext()) {
-                CashBucket myBucket = myIterator.next();
-
-                /* Ignore if not the correct category */
-                if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
-                    continue;
-                }
-
-                /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theCashMenuBuilder.addItem(myBucket);
-
-                /* If this is the active cash */
-                if (myBucket.equals(myCash)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            theCashMenuBuilder.showItem(myActive);
-        }
-
-        @Override
-        public void propertyChange(final PropertyChangeEvent pEvent) {
-            /* Access the source */
-            Object o = pEvent.getSource();
-
-            /* If this is the category button */
-            if (theCatButton.equals(o)) {
-                /* Select the new category */
-                if (theState.setCategory(theCatButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
-
-                /* If this is the cash button */
-            } else if (theCashButton.equals(o)) {
-                /* Select the new cash */
-                if (theState.setCash(theCashButton.getValue())) {
-                    theState.applyState();
-                    theEventManager.fireStateChanged();
-                }
+            /* If this is the active cash */
+            if (myBucket.equals(myCash)) {
+                /* Record it */
+                myActive = myItem;
             }
         }
+
+        /* Ensure active item is visible */
+        theCashMenuBuilder.showItem(myActive);
     }
 
     /**

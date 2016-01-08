@@ -163,10 +163,7 @@ public class MetisFXThreadStatusManager
         return theNode;
     }
 
-    /**
-     * get Thread Manager.
-     * @return the thread manager
-     */
+    @Override
     protected MetisFXThreadManager getThreadManager() {
         return (MetisFXThreadManager) super.getThreadManager();
     }

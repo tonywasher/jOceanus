@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -72,6 +70,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -81,6 +80,7 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -88,14 +88,8 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysChangeEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysItemEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysActionRegistration;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration.TethysChangeRegistration;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton.JScrollListMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
@@ -356,7 +350,7 @@ public class TransactionTable
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView, MoneyWiseDataType.class);
+        theUpdateSet = new UpdateSet<>(theView, MoneyWiseDataType.class);
         setUpdateSet(theUpdateSet);
         theBuilder = new TransactionBuilder(theUpdateSet);
 
@@ -399,7 +393,7 @@ public class TransactionTable
         myHeader.setLayout(new BorderLayout());
         myHeader.add(theSelect, BorderLayout.CENTER);
         myHeader.add(theError, BorderLayout.PAGE_START);
-        myHeader.add(theActionButtons, BorderLayout.LINE_END);
+        myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
@@ -418,10 +412,19 @@ public class TransactionTable
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<Transaction, MoneyWiseDataType>(this, theActiveTrans);
+        theSelectionModel = new JDataTableSelection<>(this, theActiveTrans);
 
         /* Create listener */
-        new AnalysisListener();
+        theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
+        theView.getEventRegistrar().addEventListener(e -> refreshData());
+        theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
+        theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
+        theSelect.getEventRegistrar().addEventListener(e -> handleFilterSelection());
+        theActiveTrans.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActiveTrans.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
+
+        /* Listen to swing events */
+        theNewButton.addActionListener(e -> theModel.addNewItem());
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
@@ -596,6 +599,91 @@ public class TransactionTable
     }
 
     /**
+     * Handle updateSet rewind.
+     */
+    private void handleRewind() {
+        /* Only action if we are not editing */
+        if (!theActiveTrans.isEditing()) {
+            /* Handle the reWind */
+            theSelectionModel.handleReWind();
+        }
+
+        /* Adjust for changes */
+        notifyChanges();
+    }
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+        if (!theActiveTrans.isEditing()) {
+            /* handle the edit transition */
+            theSelectionModel.handleEditTransition();
+        }
+
+        /* Note changes */
+        notifyChanges();
+    }
+
+    /**
+     * handleErrorPane.
+     */
+    private void handleErrorPane() {
+        /* Determine whether we have an error */
+        boolean isError = theError.hasError();
+
+        /* Hide selection panel on error */
+        theSelect.setVisible(!isError);
+
+        /* Lock scroll area */
+        getScrollPane().setEnabled(!isError);
+
+        /* Lock Action Buttons */
+        theActionButtons.setEnabled(!isError);
+    }
+
+    /**
+     * handle Action Buttons.
+     * @param pEvent the event
+     */
+    private void handleActionButtons(final TethysEvent<PrometheusUIEvent> pEvent) {
+        /* Cancel editing */
+        cancelEditing();
+
+        /* Perform the command */
+        theUpdateSet.processCommand(pEvent.getEventId(), theError);
+
+        /* Adjust for changes */
+        notifyChanges();
+    }
+
+    /**
+     * Handle filter selection.
+     */
+    private void handleFilterSelection() {
+        /* Set the filter */
+        theFilter = theSelect.getFilter();
+
+        /* Ensure that columns are correct */
+        theColumns.adjustColumns(theSelect.showColumns()
+                                                         ? theSelect.getColumns()
+                                                         : AnalysisColumnSet.BALANCE);
+
+        /* Set the selection */
+        TethysDateRange myRange = theSelect.getRange();
+        if (MetisDifference.isEqual(myRange, theRange)) {
+            /* Handle a simple filter change */
+            theModel.fireNewDataEvents();
+            theSelectionModel.handleNewFilter();
+            theDataFilter.setObject(theFilter);
+        } else {
+            /* Update new lists */
+            updateList();
+        }
+    }
+
+    /**
      * JTable Data Model.
      */
     private final class AnalysisTableModel
@@ -704,154 +792,6 @@ public class TransactionTable
                 /* Lock the table */
                 setEnabled(false);
                 theActiveTrans.setNewItem(myTrans);
-            }
-        }
-    }
-
-    /**
-     * Listener class.
-     */
-    private final class AnalysisListener
-            implements ActionListener, TethysActionEventListener, TethysChangeEventListener {
-        /**
-         * UpdateSet Registration.
-         */
-        private final TethysChangeRegistration theUpdateSetReg;
-
-        /**
-         * View Registration.
-         */
-        private final TethysChangeRegistration theViewReg;
-
-        /**
-         * Error Registration.
-         */
-        private final TethysChangeRegistration theErrorReg;
-
-        /**
-         * Action Registration.
-         */
-        private final TethysActionRegistration theActionReg;
-
-        /**
-         * Selection Registration.
-         */
-        private final TethysChangeRegistration theSelectReg;
-
-        /**
-         * TransPanel Change Registration.
-         */
-        private final TethysChangeRegistration theTransPanelReg;
-
-        /**
-         * Constructor.
-         */
-        private AnalysisListener() {
-            /* Register listeners */
-            theUpdateSetReg = theUpdateSet.getEventRegistrar().addChangeListener(this);
-            theViewReg = theView.getEventRegistrar().addChangeListener(this);
-            theActionReg = theActionButtons.getEventRegistrar().addActionListener(this);
-            theErrorReg = theError.getEventRegistrar().addChangeListener(this);
-            theSelectReg = theSelect.getEventRegistrar().addChangeListener(this);
-            TethysEventRegistrar myRegistrar = theActiveTrans.getEventRegistrar();
-            theTransPanelReg = myRegistrar.addChangeListener(this);
-            myRegistrar.addActionListener(this);
-
-            /* Listen to swing events */
-            theNewButton.addActionListener(this);
-        }
-
-        @Override
-        public void processChange(final TethysChangeEvent pEvent) {
-            /* If this is the data view */
-            if (theViewReg.isRelevant(pEvent)) {
-                /* Refresh Data */
-                refreshData();
-
-                /* If we are performing a rewind */
-            } else if (theUpdateSetReg.isRelevant(pEvent)) {
-                /* Only action if we are not editing */
-                if (!theActiveTrans.isEditing()) {
-                    /* Handle the reWind */
-                    theSelectionModel.handleReWind();
-                }
-
-                /* Adjust for changes */
-                notifyChanges();
-
-                /* If we are handling transaction panel state */
-            } else if (theTransPanelReg.isRelevant(pEvent)) {
-                /* Only action if we are not editing */
-                if (!theActiveTrans.isEditing()) {
-                    /* handle the edit transition */
-                    theSelectionModel.handleEditTransition();
-                }
-
-                /* Note changes */
-                notifyChanges();
-
-                /* If we are handling errors */
-            } else if (theErrorReg.isRelevant(pEvent)) {
-                /* Determine whether we have an error */
-                boolean isError = theError.hasError();
-
-                /* Hide selection panel on error */
-                theSelect.setVisible(!isError);
-
-                /* Lock scroll area */
-                getScrollPane().setEnabled(!isError);
-
-                /* Lock Action Buttons */
-                theActionButtons.setEnabled(!isError);
-
-                /* If we are handling selection */
-            } else if (theSelectReg.isRelevant(pEvent)) {
-                /* Set the filter */
-                theFilter = theSelect.getFilter();
-
-                /* Ensure that columns are correct */
-                theColumns.adjustColumns(theSelect.showColumns()
-                                                                 ? theSelect.getColumns()
-                                                                 : AnalysisColumnSet.BALANCE);
-
-                /* Set the selection */
-                TethysDateRange myRange = theSelect.getRange();
-                if (MetisDifference.isEqual(myRange, theRange)) {
-                    /* Handle a simple filter change */
-                    theModel.fireNewDataEvents();
-                    theSelectionModel.handleNewFilter();
-                    theDataFilter.setObject(theFilter);
-                } else {
-                    /* Update new lists */
-                    updateList();
-                }
-            }
-        }
-
-        @Override
-        public void processAction(final TethysActionEvent pEvent) {
-            if (theActionReg.isRelevant(pEvent)) {
-                /* Cancel Editing */
-                cancelEditing();
-
-                /* Perform the command */
-                theUpdateSet.processCommand(pEvent.getActionId(), theError);
-
-                /* Adjust for changes */
-                notifyChanges();
-
-                /* else cascade the event */
-            } else {
-                cascadeActionEvent(pEvent);
-            }
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent pEvent) {
-            Object o = pEvent.getSource();
-
-            if (theNewButton.equals(o)) {
-                theModel.addNewItem();
             }
         }
     }
@@ -1249,7 +1189,10 @@ public class TransactionTable
             declareColumn(theActionColumn);
 
             /* Add listeners */
-            new EditorListener();
+            theCategoryEditor.getEventRegistrar().addEventListener(e -> buildCategoryMenu());
+            theAccountEditor.getEventRegistrar().addEventListener(e -> buildAccountMenu());
+            theDepositEditor.getEventRegistrar().addEventListener(e -> buildThirdPartyMenu());
+            theTagEditor.getEventRegistrar().addEventListener(e -> buildTagMenu());
         }
 
         /**
@@ -1412,6 +1355,7 @@ public class TransactionTable
          * @param pValue the value to set
          * @throws OceanusException on error
          */
+        @SuppressWarnings("unchecked")
         private void setItemValue(final Transaction pItem,
                                   final int pColIndex,
                                   final Object pValue) throws OceanusException {
@@ -1480,7 +1424,7 @@ public class TransactionTable
                     pItem.setDeleted(true);
                     break;
                 case COLUMN_TAGS:
-                    theActiveTrans.updateTag(pItem, (TethysItemEvent) pValue);
+                    theActiveTrans.updateTag(pItem, (TethysEvent<TethysUIEvent>) pValue);
                     break;
                 default:
                     break;
@@ -1690,119 +1634,70 @@ public class TransactionTable
         }
 
         /**
-         * EditorListener.
+         * Build the popUpMenu for accounts.
          */
-        private final class EditorListener
-                implements TethysChangeEventListener {
-            /**
-             * Category Registration.
-             */
-            private final TethysChangeRegistration theCategoryReg;
+        private void buildAccountMenu() {
+            /* Access details */
+            JScrollMenuBuilder<TransactionAsset> myBuilder = theAccountEditor.getMenuBuilder();
 
-            /**
-             * Account Registration.
-             */
-            private final TethysChangeRegistration theAccountReg;
+            /* Record active item */
+            Point myCell = theAccountEditor.getPoint();
+            Transaction myTrans = theModel.getItemAtIndex(myCell.y);
 
-            /**
-             * ThirdParty Registration.
-             */
-            private final TethysChangeRegistration theThirdPartyReg;
-
-            /**
-             * Tag Registration.
-             */
-            private final TethysChangeRegistration theTagReg;
-
-            /**
-             * Constructor.
-             */
-            private EditorListener() {
-                theCategoryReg = theCategoryEditor.getEventRegistrar().addChangeListener(this);
-                theAccountReg = theAccountEditor.getEventRegistrar().addChangeListener(this);
-                theThirdPartyReg = theDepositEditor.getEventRegistrar().addChangeListener(this);
-                theTagReg = theTagEditor.getEventRegistrar().addChangeListener(this);
+            /* Build the menu */
+            switch (myCell.x) {
+                case COLUMN_ACCOUNT:
+                    theActiveTrans.buildAccountMenu(myBuilder, myTrans);
+                    break;
+                default:
+                    theActiveTrans.buildPartnerMenu(myBuilder, myTrans);
+                    break;
             }
+        }
 
-            @Override
-            public void processChange(final TethysChangeEvent pEvent) {
-                if (theCategoryReg.isRelevant(pEvent)) {
-                    buildCategoryMenu();
-                } else if (theAccountReg.isRelevant(pEvent)) {
-                    buildAccountMenu();
-                } else if (theThirdPartyReg.isRelevant(pEvent)) {
-                    buildThirdPartyMenu();
-                } else if (theTagReg.isRelevant(pEvent)) {
-                    buildTagMenu();
-                }
-            }
+        /**
+         * Build the popUpMenu for categories.
+         */
+        private void buildCategoryMenu() {
+            /* Access details */
+            JScrollMenuBuilder<TransactionCategory> myBuilder = theCategoryEditor.getMenuBuilder();
 
-            /**
-             * Build the popUpMenu for accounts.
-             */
-            private void buildAccountMenu() {
-                /* Access details */
-                JScrollMenuBuilder<TransactionAsset> myBuilder = theAccountEditor.getMenuBuilder();
+            /* Record active item */
+            Point myCell = theCategoryEditor.getPoint();
+            Transaction myTrans = theModel.getItemAtIndex(myCell.y);
 
-                /* Record active item */
-                Point myCell = theAccountEditor.getPoint();
-                Transaction myTrans = theModel.getItemAtIndex(myCell.y);
+            /* Build the menu */
+            theActiveTrans.buildCategoryMenu(myBuilder, myTrans);
+        }
 
-                /* Build the menu */
-                switch (myCell.x) {
-                    case COLUMN_ACCOUNT:
-                        theActiveTrans.buildAccountMenu(myBuilder, myTrans);
-                        break;
-                    default:
-                        theActiveTrans.buildPartnerMenu(myBuilder, myTrans);
-                        break;
-                }
-            }
+        /**
+         * Obtain the popUpMenu for thirdParty deposits.
+         */
+        private void buildThirdPartyMenu() {
+            /* Access details */
+            JScrollMenuBuilder<Deposit> myBuilder = theDepositEditor.getMenuBuilder();
 
-            /**
-             * Build the popUpMenu for categories.
-             */
-            private void buildCategoryMenu() {
-                /* Access details */
-                JScrollMenuBuilder<TransactionCategory> myBuilder = theCategoryEditor.getMenuBuilder();
+            /* Record active item */
+            Point myCell = theDepositEditor.getPoint();
+            Transaction myTrans = theModel.getItemAtIndex(myCell.y);
 
-                /* Record active item */
-                Point myCell = theCategoryEditor.getPoint();
-                Transaction myTrans = theModel.getItemAtIndex(myCell.y);
+            /* Build the menu */
+            theActiveTrans.buildThirdPartyMenu(myBuilder, myTrans);
+        }
 
-                /* Build the menu */
-                theActiveTrans.buildCategoryMenu(myBuilder, myTrans);
-            }
+        /**
+         * Build the popUpMenu for tags.
+         */
+        private void buildTagMenu() {
+            /* Access details */
+            JScrollListMenuBuilder<TransactionTag> myBuilder = theTagEditor.getMenuBuilder();
 
-            /**
-             * Obtain the popUpMenu for thirdParty deposits.
-             */
-            private void buildThirdPartyMenu() {
-                /* Access details */
-                JScrollMenuBuilder<Deposit> myBuilder = theDepositEditor.getMenuBuilder();
+            /* Record active item */
+            Point myCell = theTagEditor.getPoint();
+            Transaction myTrans = theModel.getItemAtIndex(myCell.y);
 
-                /* Record active item */
-                Point myCell = theDepositEditor.getPoint();
-                Transaction myTrans = theModel.getItemAtIndex(myCell.y);
-
-                /* Build the menu */
-                theActiveTrans.buildThirdPartyMenu(myBuilder, myTrans);
-            }
-
-            /**
-             * Build the popUpMenu for tags.
-             */
-            private void buildTagMenu() {
-                /* Access details */
-                JScrollListMenuBuilder<TransactionTag> myBuilder = theTagEditor.getMenuBuilder();
-
-                /* Record active item */
-                Point myCell = theTagEditor.getPoint();
-                Transaction myTrans = theModel.getItemAtIndex(myCell.y);
-
-                /* Build the menu */
-                theActiveTrans.buildTagMenu(myBuilder, myTrans);
-            }
+            /* Build the menu */
+            theActiveTrans.buildTagMenu(myBuilder, myTrans);
         }
     }
 

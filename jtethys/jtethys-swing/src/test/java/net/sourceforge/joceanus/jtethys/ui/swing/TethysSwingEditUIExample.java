@@ -49,17 +49,18 @@ import javax.swing.WindowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysActionEventListener;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingScrollButtonField;
@@ -201,6 +202,16 @@ public class TethysSwingEditUIExample
     private final TethysSwingScrollButtonField<String> theScrollField;
 
     /**
+     * The date button manager.
+     */
+    private final TethysSwingDateButtonManager theDateButtonMgr;
+
+    /**
+     * The date button field.
+     */
+    private final TethysSwingDateButtonField theDateField;
+
+    /**
      * The list button manager.
      */
     private final TethysSwingListButtonManager<String> theListButtonMgr;
@@ -267,6 +278,8 @@ public class TethysSwingEditUIExample
         /* Create button fields */
         theScrollButtonMgr = new TethysSwingScrollButtonManager<String>();
         theScrollField = new TethysSwingScrollButtonField<String>(theScrollButtonMgr);
+        theDateButtonMgr = new TethysSwingDateButtonManager();
+        theDateField = new TethysSwingDateButtonField(theDateButtonMgr);
         theIconButtonMgr = new TethysSwingSimpleIconButtonManager<Boolean>();
         theIconField = new TethysSwingIconButtonField<Boolean>(theIconButtonMgr);
         theListButtonMgr = new TethysSwingListButtonManager<String>();
@@ -377,143 +390,80 @@ public class TethysSwingEditUIExample
         JLabel myLabel = new JLabel("String:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theStringField.getNode());
-        theStringField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theStringField, pEvent);
-            }
-        });
+        theStringField.getEventRegistrar().addEventListener(e -> processActionEvent(theStringField, e));
 
         /* Create Short field line */
         myLabel = new JLabel("Short:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theShortField.getNode());
-        theShortField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theShortField, pEvent);
-            }
-        });
+        theShortField.getEventRegistrar().addEventListener(e -> processActionEvent(theShortField, e));
 
         /* Create Integer field line */
         myLabel = new JLabel("Integer:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theIntegerField.getNode());
-        theIntegerField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theIntegerField, pEvent);
-            }
-        });
+        theIntegerField.getEventRegistrar().addEventListener(e -> processActionEvent(theIntegerField, e));
 
         /* Create Long field line */
         myLabel = new JLabel("Long:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theLongField.getNode());
-        theLongField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theLongField, pEvent);
-            }
-        });
+        theLongField.getEventRegistrar().addEventListener(e -> processActionEvent(theLongField, e));
 
         /* Create Money field line */
         myLabel = new JLabel("Money:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theMoneyField.getNode());
-        theMoneyField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theMoneyField, pEvent);
-            }
-        });
+        theMoneyField.getEventRegistrar().addEventListener(e -> processActionEvent(theMoneyField, e));
 
         /* Create Price field line */
         myLabel = new JLabel("Price:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, thePriceField.getNode());
-        thePriceField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(thePriceField, pEvent);
-            }
-        });
+        thePriceField.getEventRegistrar().addEventListener(e -> processActionEvent(thePriceField, e));
 
         /* Create Units field line */
         myLabel = new JLabel("Units:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theUnitsField.getNode());
-        theUnitsField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theUnitsField, pEvent);
-            }
-        });
+        theUnitsField.getEventRegistrar().addEventListener(e -> processActionEvent(theUnitsField, e));
 
         /* Create Rate field line */
         myLabel = new JLabel("Rate:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theRateField.getNode());
-        theRateField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theRateField, pEvent);
-            }
-        });
+        theRateField.getEventRegistrar().addEventListener(e -> processActionEvent(theRateField, e));
 
         /* Create Ratio field line */
         myLabel = new JLabel("Ratio:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theRatioField.getNode());
-        theRatioField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theRatioField, pEvent);
-            }
-        });
+        theRatioField.getEventRegistrar().addEventListener(e -> processActionEvent(theRatioField, e));
 
         /* Create Dilution field line */
         myLabel = new JLabel("Dilution:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theDilutionField.getNode());
-        theDilutionField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theDilutionField, pEvent);
-            }
-        });
+        theDilutionField.getEventRegistrar().addEventListener(e -> processActionEvent(theDilutionField, e));
 
         /* Create DilutedPrice field line */
         myLabel = new JLabel("DilutedPrice:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theDilutedPriceField.getNode());
-        theDilutedPriceField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                processActionEvent(theDilutedPriceField, pEvent);
-            }
-        });
+        theDilutedPriceField.getEventRegistrar().addEventListener(e -> processActionEvent(theDilutedPriceField, e));
 
         /* Create ScrollButton field line */
         myLabel = new JLabel("ScrollButton:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theScrollField.getNode());
-        theScrollField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                switch (pEvent.getActionId()) {
-                    case TethysDataEditField.ACTION_NEW_VALUE:
-                        processActionEvent(theScrollField, pEvent);
-                        break;
-                    case TethysDataEditField.ACTION_DIALOG_PREPARE:
-                        theHelper.buildContextMenu(theScrollButtonMgr.getMenu());
-                        break;
-                    case TethysDataEditField.ACTION_DIALOG_CANCELLED:
-                    default:
-                        break;
-                }
-            }
-        });
+        theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theScrollField, e));
+        theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theHelper.buildContextMenu(theScrollButtonMgr.getMenu()));
+
+        /* Create DateButton field line */
+        myLabel = new JLabel("DateButton:");
+        myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        myGridHelper.addFullLabeledRow(myLabel, theDateField.getNode());
+        theDateField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theDateField, e));
 
         /* Create IconButton field line */
         myLabel = new JLabel("IconButton:");
@@ -522,40 +472,17 @@ public class TethysSwingEditUIExample
         theHelper.buildSimpleIconState(theIconButtonMgr,
                 OPEN_FALSE_ICON,
                 OPEN_TRUE_ICON);
-        theIconField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                switch (pEvent.getActionId()) {
-                    case TethysDataEditField.ACTION_NEW_VALUE:
-                        processActionEvent(theIconField, pEvent);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
+        theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
 
         /* Create ListButton field line */
         myLabel = new JLabel("ListButton:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theListField.getNode());
         theListButtonMgr.getMenu().setCloseOnToggle(false);
-        theListField.getEventRegistrar().addActionListener(new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                switch (pEvent.getActionId()) {
-                    case TethysDataEditField.ACTION_ITEM_TOGGLED:
-                        setListValue(pEvent.getDetails(TethysScrollMenuToggleItem.class));
-                        processActionEvent(theListField, pEvent);
-                        break;
-                    case TethysDataEditField.ACTION_DIALOG_PREPARE:
-                        theHelper.buildAvailableItems(theListButtonMgr, theSelectedValues);
-                        break;
-                    case TethysDataEditField.ACTION_DIALOG_CANCELLED:
-                    default:
-                        break;
-                }
-            }
+        theListField.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theHelper.buildAvailableItems(theListButtonMgr, theSelectedValues));
+        theListField.getEventRegistrar().addEventListener(TethysUIEvent.TOGGLEITEM, e -> {
+            setListValue(e.getDetails(TethysScrollMenuToggleItem.class));
+            processActionEvent(theListField, e);
         });
 
         /* Return the panel */
@@ -616,12 +543,7 @@ public class TethysSwingEditUIExample
         myMenu.addItem(Currency.getInstance("JPY"), "Yen");
         myCurrencyMgr.setValue(myDefault, "Pounds");
         setCurrency(myDefault);
-        myCurrencyMgr.getEventRegistrar().addFilteredActionListener(TethysSwingScrollButtonManager.ACTION_NEW_VALUE, new TethysActionEventListener() {
-            @Override
-            public void processAction(final TethysActionEvent pEvent) {
-                setCurrency(pEvent.getDetails(Currency.class));
-            }
-        });
+        myCurrencyMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setCurrency(e.getDetails(Currency.class)));
 
         /* Create an HBox for buttons */
         JPanel myPanel = new JPanel();
@@ -653,6 +575,7 @@ public class TethysSwingEditUIExample
         theDilutionField.setEditable(pDoEdit);
         theDilutedPriceField.setEditable(pDoEdit);
         theScrollField.setEditable(pDoEdit);
+        theDateField.setEditable(pDoEdit);
         theListField.setEditable(pDoEdit);
         theIconField.setEditable(pDoEdit);
     }
@@ -674,20 +597,20 @@ public class TethysSwingEditUIExample
      * @param pEvent the event
      */
     private void processActionEvent(final TethysSwingDataTextField<?> pField,
-                                    final TethysActionEvent pEvent) {
+                                    final TethysEvent<TethysUIEvent> pEvent) {
         /* Determine source */
         String mySource = pField.getClass().getSimpleName();
 
         /* Switch on action */
-        switch (pEvent.getActionId()) {
-            case TethysDataEditField.ACTION_NEW_VALUE:
-            case TethysDataEditField.ACTION_ITEM_TOGGLED:
+        switch (pEvent.getEventId()) {
+            case NEWVALUE:
+            case TOGGLEITEM:
                 setResults(mySource, pEvent.getDetails());
                 break;
-            case TethysDataEditField.ACTION_NEW_COMMAND:
+            case NEWCOMMAND:
                 setResults(mySource + "-Cmd", pEvent.getDetails());
                 break;
-            case TethysDataEditField.ACTION_COMMAND_PREPARE:
+            case PREPARECMDDIALOG:
                 pField.getCmdMenu().removeAllItems();
                 pField.getCmdMenu().addItem("TestCmd");
                 break;
@@ -738,6 +661,8 @@ public class TethysSwingEditUIExample
             theValue.setText(pResults.toString());
         } else if (pResults instanceof TethysScrollMenuItem) {
             theValue.setText(((TethysScrollMenuItem<?>) pResults).getText());
+        } else if (pResults instanceof TethysDate) {
+            theValue.setText(((TethysDate) pResults).toString());
         } else {
             theValue.setText(null);
         }
