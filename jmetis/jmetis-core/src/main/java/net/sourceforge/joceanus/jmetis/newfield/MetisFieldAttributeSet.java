@@ -22,16 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newfield;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
 
 /**
  * AttributeSet.
- * @param <F> the font type
  * @param <C> the color type
+ * @param <F> the font type
  */
-public abstract class MetisFieldAttributeSet<F, C> {
+public abstract class MetisFieldAttributeSet<C, F> {
     /**
      * Standard Font pitch.
      */
@@ -130,72 +129,60 @@ public abstract class MetisFieldAttributeSet<F, C> {
      * Obtain font for field.
      * @param pItem the item
      * @param pField the field
-     * @param pDataType the dataType
+     * @param pNumeric is the field numeric?
      * @return the font
      */
     public F getFontForField(final MetisFieldSetItem pItem,
                              final MetisField pField,
-                             final MetisDataType pDataType) {
-        return pItem.getFieldState(pField).isChanged()
-                                                       ? pDataType.isNumeric()
-                                                                               ? theFontSet.getNumericChangedFont()
-                                                                               : theFontSet.getStandardChangedFont()
-                                                       : pDataType.isNumeric()
-                                                                               ? theFontSet.getNumericFont()
-                                                                               : theFontSet.getStandardFont();
+                             final boolean pNumeric) {
+        return getFontForField(pNumeric, pItem.getFieldState(pField).isChanged());
     }
 
     /**
      * Obtain bold font for field.
      * @param pItem the item
      * @param pField the field
-     * @param pDataType the dataType
+     * @param pNumeric is the field numeric?
      * @return the font
      */
     public F getBoldFontForField(final MetisFieldSetItem pItem,
                                  final MetisField pField,
-                                 final MetisDataType pDataType) {
-        return pItem.getFieldState(pField).isChanged()
-                                                       ? pDataType.isNumeric()
-                                                                               ? theFontSet.getBoldNumericChangedFont()
-                                                                               : theFontSet.getBoldStandardChangedFont()
-                                                       : pDataType.isNumeric()
-                                                                               ? theFontSet.getBoldNumericFont()
-                                                                               : theFontSet.getBoldStandardFont();
+                                 final boolean pNumeric) {
+        return getFontForField(pNumeric, pItem.getFieldState(pField).isChanged());
     }
 
     /**
      * Obtain font for field.
-     * @param pDataType the dataType
-     * @param pChanged is the field changed
+     * @param pNumeric is the field numeric?
+     * @param pChanged is the field changed?
      * @return the font
      */
-    public F getFontForField(final MetisDataType pDataType,
+    public F getFontForField(final boolean pNumeric,
                              final boolean pChanged) {
-        return pDataType.isNumeric()
-                                     ? pChanged
-                                                ? theFontSet.getNumericChangedFont()
-                                                : theFontSet.getNumericFont()
-                                     : pChanged
-                                                ? theFontSet.getStandardChangedFont()
-                                                : theFontSet.getStandardFont();
+        return pNumeric
+                        ? pChanged
+                                   ? theFontSet.getNumericChangedFont()
+                                   : theFontSet.getNumericFont()
+                        : pChanged
+                                   ? theFontSet.getStandardChangedFont()
+                                   : theFontSet.getStandardFont();
     }
 
     /**
      * Obtain bold font for field.
-     * @param pDataType the dataType
-     * @param pChanged is the field changed
+     * @param pNumeric is the field numeric?
+     * @param pChanged is the field changed?
      * @return the font
      */
-    public F getBoldFontForField(final MetisDataType pDataType,
+    public F getBoldFontForField(final boolean pNumeric,
                                  final boolean pChanged) {
-        return pDataType.isNumeric()
-                                     ? pChanged
-                                                ? theFontSet.getBoldNumericChangedFont()
-                                                : theFontSet.getBoldNumericFont()
-                                     : pChanged
-                                                ? theFontSet.getBoldStandardChangedFont()
-                                                : theFontSet.getBoldStandardFont();
+        return pNumeric
+                        ? pChanged
+                                   ? theFontSet.getBoldNumericChangedFont()
+                                   : theFontSet.getBoldNumericFont()
+                        : pChanged
+                                   ? theFontSet.getBoldStandardChangedFont()
+                                   : theFontSet.getBoldStandardFont();
     }
 
     /**

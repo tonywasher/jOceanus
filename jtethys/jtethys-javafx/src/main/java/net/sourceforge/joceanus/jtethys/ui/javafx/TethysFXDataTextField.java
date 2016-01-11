@@ -163,10 +163,7 @@ public abstract class TethysFXDataTextField<T>
         theEditControl.setStyle("-fx-text-inner-color: " + TethysFXGuiUtils.colorToHexString(pColor));
     }
 
-    /**
-     * Show the command button.
-     * @param pShow true/false
-     */
+    @Override
     public void showCmdButton(final boolean pShow) {
         /* Remove any button that is displaying */
         theNode.setRight(null);

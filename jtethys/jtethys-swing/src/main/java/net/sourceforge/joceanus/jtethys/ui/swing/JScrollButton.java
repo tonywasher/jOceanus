@@ -472,7 +472,7 @@ public class JScrollButton<T>
         public void actionPerformed(final ActionEvent e) {
             /* Ask listeners to provide the menu */
             buildingMenu = true;
-            theEventManager.fireEvent(TethysUIEvent.NEWVALUE);
+            theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG);
 
             /* If a menu is provided */
             if ((theMenu != null) && (theMenu.getItemCount() > 0)) {

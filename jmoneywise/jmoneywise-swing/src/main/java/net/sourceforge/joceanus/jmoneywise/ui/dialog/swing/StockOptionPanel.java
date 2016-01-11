@@ -321,10 +321,10 @@ public class StockOptionPanel
             myOption.setStockHolding(myList.declareStockHolding(myHolding));
         } else if (myField.equals(StockOption.FIELD_GRANTDATE)) {
             /* Update the GrantDate */
-            myOption.setGrantDate(pUpdate.getDateDay());
+            myOption.setGrantDate(pUpdate.getDate());
         } else if (myField.equals(StockOption.FIELD_EXPIREDATE)) {
             /* Update the ExpiryDate */
-            myOption.setExpiryDate(pUpdate.getDateDay());
+            myOption.setExpiryDate(pUpdate.getDate());
         } else if (myField.equals(StockOption.FIELD_PRICE)) {
             /* Update the Price */
             myOption.setPrice(pUpdate.getPrice());

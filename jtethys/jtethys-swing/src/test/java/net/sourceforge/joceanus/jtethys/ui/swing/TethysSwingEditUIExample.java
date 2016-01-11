@@ -259,7 +259,7 @@ public class TethysSwingEditUIExample
 
         /* Create resources */
         theStringField = new TethysSwingStringTextField();
-        theStringField.showButton(true);
+        theStringField.showCmdButton(true);
         theShortField = new TethysSwingShortTextField(theFormatter, myParser);
         theIntegerField = new TethysSwingIntegerTextField(theFormatter, myParser);
         theLongField = new TethysSwingLongTextField(theFormatter, myParser);

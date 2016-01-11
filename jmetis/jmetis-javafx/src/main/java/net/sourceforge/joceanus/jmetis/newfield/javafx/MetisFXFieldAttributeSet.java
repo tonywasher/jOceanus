@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmetis.newfield.MetisFieldAttributeSet;
  * JavaFX AttributeSet.
  */
 public class MetisFXFieldAttributeSet
-        extends MetisFieldAttributeSet<Font, Color> {
+        extends MetisFieldAttributeSet<Color, Font> {
     /**
      * Constructor.
      */

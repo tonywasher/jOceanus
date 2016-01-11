@@ -204,6 +204,12 @@ public abstract class TethysDataEditField<T, N, C, F, I>
     public abstract N getNode();
 
     /**
+     * Show the command button.
+     * @param pShow true/false
+     */
+    public abstract void showCmdButton(final boolean pShow);
+
+    /**
      * Show the command menu.
      */
     protected abstract void showCmdMenu();
@@ -603,11 +609,24 @@ public abstract class TethysDataEditField<T, N, C, F, I>
     }
 
     /**
+     * CurrencyItem.
+     */
+    @FunctionalInterface
+    public interface TethysCurrencyItem {
+        /**
+         * Set the assumed currency.
+         * @param pCurrency the currency
+         */
+        void setDeemedCurrency(final Currency pCurrency);
+    }
+
+    /**
      * MoneyEditConverter class.
      * @param <T> the data type
      */
     public abstract static class TethysMoneyEditConverterBase<T extends TethysMoney>
-            extends TethysNumberEditConverter<T> {
+            extends TethysNumberEditConverter<T>
+            implements TethysCurrencyItem {
         /**
          * Default currency.
          */
@@ -623,16 +642,13 @@ public abstract class TethysDataEditField<T, N, C, F, I>
             super(pFormatter, pParser);
         }
 
-        /**
-         * Set deemed currency.
-         * @param pCurrency the deemed currency
-         */
+        @Override
         public void setDeemedCurrency(final Currency pCurrency) {
             theCurrency = pCurrency;
         }
 
         /**
-         * Set deemed currency.
+         * Obtain deemed currency.
          * @return the deemed currency
          */
         protected Currency getCurrency() {

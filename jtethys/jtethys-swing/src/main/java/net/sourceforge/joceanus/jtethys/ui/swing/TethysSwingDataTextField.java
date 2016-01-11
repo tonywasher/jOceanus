@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <T> the data type
  */
 public abstract class TethysSwingDataTextField<T>
-        extends TethysDataEditField<T, JPanel, Color, Font, Icon> {
+        extends TethysDataEditField<T, JComponent, Color, Font, Icon> {
     /**
      * The label name.
      */
@@ -187,11 +187,8 @@ public abstract class TethysSwingDataTextField<T>
         getCmdMenu().showMenuAtPosition(theCmdButton, SwingConstants.RIGHT);
     }
 
-    /**
-     * Show the button.
-     * @param pShow true/false
-     */
-    public void showButton(final boolean pShow) {
+    @Override
+    public void showCmdButton(final boolean pShow) {
         /* Remove any button that is displaying */
         theEditNode.remove(theCmdButton);
         doShowCmdButton = pShow;

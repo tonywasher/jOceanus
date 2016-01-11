@@ -244,7 +244,7 @@ public class MainTab
         /* Create listeners */
         theTabs.getEventRegistrar().addEventListener(e -> determineFocus());
         theView.getEventRegistrar().addEventListener(e -> setVisibility());
-        theReports.getEventRegistrar().addEventListener(e -> setVisibility());
+        theReports.getEventRegistrar().addEventListener(this::handleGoToEvent);
         theSpotPrices.getEventRegistrar().addEventListener(e -> setVisibility());
         theSpotRates.getEventRegistrar().addEventListener(e -> setVisibility());
         setChildListeners(theRegister.getEventRegistrar());

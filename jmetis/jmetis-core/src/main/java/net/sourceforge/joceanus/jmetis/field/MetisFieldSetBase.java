@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -129,8 +130,8 @@ public abstract class MetisFieldSetBase
          * @param pField the source field
          * @param pNewValue the new Value
          */
-        protected MetisFieldUpdate(final MetisField pField,
-                                   final Object pNewValue) {
+        public MetisFieldUpdate(final MetisField pField,
+                                final Object pNewValue) {
             theField = pField;
             theValue = pNewValue;
         }
@@ -217,7 +218,7 @@ public abstract class MetisFieldSetBase
          * @return the value
          * @throws OceanusException on error
          */
-        public TethysDate getDateDay() throws OceanusException {
+        public TethysDate getDate() throws OceanusException {
             return getValue(TethysDate.class);
         }
 
@@ -267,12 +268,21 @@ public abstract class MetisFieldSetBase
         }
 
         /**
-         * Obtain the value as ItemEvent.
+         * Obtain the value as Ratio.
+         * @return the value
+         * @throws OceanusException on error
+         */
+        public TethysRatio getRatio() throws OceanusException {
+            return getValue(TethysRatio.class);
+        }
+
+        /**
+         * Obtain the value as Event.
          * @return the value
          * @throws OceanusException on error
          */
         @SuppressWarnings("unchecked")
-        public TethysEvent<TethysUIEvent> getItemEvent() throws OceanusException {
+        public TethysEvent<TethysUIEvent> getEvent() throws OceanusException {
             return (TethysEvent<TethysUIEvent>) getValue(TethysEvent.class);
         }
     }

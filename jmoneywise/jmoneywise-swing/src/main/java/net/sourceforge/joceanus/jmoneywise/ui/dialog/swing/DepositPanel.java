@@ -451,7 +451,7 @@ public class DepositPanel
             /* Switch on the field */
             switch (DepositInfoSet.getClassForField(myField)) {
                 case MATURITY:
-                    myDeposit.setMaturity(pUpdate.getDateDay());
+                    myDeposit.setMaturity(pUpdate.getDate());
                     break;
                 case OPENINGBALANCE:
                     myDeposit.setOpeningBalance(pUpdate.getMoney());

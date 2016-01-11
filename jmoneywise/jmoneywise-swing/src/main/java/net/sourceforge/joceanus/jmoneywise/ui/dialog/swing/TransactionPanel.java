@@ -266,14 +266,14 @@ public class TransactionPanel
 
         /* Create the listeners */
         theAccountMenuBuilder = theAccountButton.getMenuBuilder();
-        theAccountMenuBuilder.getEventRegistrar().addEventListener(e -> buildAccountMenu(theAccountMenuBuilder, getItem()));
+        theAccountMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildAccountMenu(theAccountMenuBuilder, getItem()));
         thePartnerMenuBuilder = thePartnerButton.getMenuBuilder();
-        thePartnerMenuBuilder.getEventRegistrar().addEventListener(e -> buildPartnerMenu(thePartnerMenuBuilder, getItem()));
+        thePartnerMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPartnerMenu(thePartnerMenuBuilder, getItem()));
         theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
-        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu(theCategoryMenuBuilder, getItem()));
+        theCategoryMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCategoryMenu(theCategoryMenuBuilder, getItem()));
         theThirdPartyMenuBuilder = theThirdPartyButton.getMenuBuilder();
-        theThirdPartyMenuBuilder.getEventRegistrar().addEventListener(e -> buildThirdPartyMenu(theThirdPartyMenuBuilder, getItem()));
-        theTagMenuBuilder.getEventRegistrar().addEventListener(e -> buildTagMenu(theTagMenuBuilder, getItem()));
+        theThirdPartyMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildThirdPartyMenu(theThirdPartyMenuBuilder, getItem()));
+        theTagMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildTagMenu(theTagMenuBuilder, getItem()));
     }
 
     /**
@@ -665,7 +665,7 @@ public class TransactionPanel
         /* Process updates */
         if (myField.equals(Transaction.FIELD_DATE)) {
             /* Update the Date */
-            myTrans.setDate(pUpdate.getDateDay());
+            myTrans.setDate(pUpdate.getDate());
         } else if (myField.equals(Transaction.FIELD_AMOUNT)) {
             /* Update the Amount */
             myTrans.setAmount(pUpdate.getMoney());
@@ -699,7 +699,7 @@ public class TransactionPanel
                     myTrans.setReference(pUpdate.getString());
                     break;
                 case TRANSTAG:
-                    updateTag(myTrans, pUpdate.getItemEvent());
+                    updateTag(myTrans, pUpdate.getEvent());
                     break;
                 case PARTNERAMOUNT:
                     myTrans.setPartnerAmount(pUpdate.getMoney());

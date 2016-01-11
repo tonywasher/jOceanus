@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newfield.javafx;
 
+import java.util.Currency;
+
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -41,6 +43,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
@@ -65,7 +68,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXListButton.TethysFXLis
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButton.TethysFXScrollButtonManager;
 
 /**
- * FieldSet Panel.
+ * JavaFX FieldSet Panel.
  */
 public class MetisFXFieldSetPanel
         extends MetisFieldSetPanel<Node, Color, Font, Node> {
@@ -81,18 +84,34 @@ public class MetisFXFieldSetPanel
 
     /**
      * Constructor.
+     * @param pParent the parent pair
      */
-    public MetisFXFieldSetPanel() {
-        this(new MetisDataFormatter());
+    protected MetisFXFieldSetPanel(final MetisFXFieldSetPanelPair pParent) {
+        /* Initialise underlying panel */
+        super(pParent);
+
+        /* Create the Node */
+        theNode = new VBox();
+        theChildren = theNode.getChildren();
     }
 
     /**
      * Constructor.
+     * @param pAttributes the attribute set
+     */
+    public MetisFXFieldSetPanel(final MetisFXFieldAttributeSet pAttributes) {
+        this(pAttributes, new MetisDataFormatter());
+    }
+
+    /**
+     * Constructor.
+     * @param pAttributes the attribute set
      * @param pFormatter the formatter
      */
-    public MetisFXFieldSetPanel(final MetisDataFormatter pFormatter) {
+    public MetisFXFieldSetPanel(final MetisFXFieldAttributeSet pAttributes,
+                                final MetisDataFormatter pFormatter) {
         /* Initialise underlying class */
-        super(pFormatter);
+        super(pAttributes, pFormatter);
 
         /* Create the Node */
         theNode = new VBox();
@@ -225,14 +244,16 @@ public class MetisFXFieldSetPanel
          * @param pPanel the panel
          * @param pField the field definition
          * @param pClass the item class
+         * @param pNumeric is the field numeric?
          * @param pEdit the edit field
          */
         protected MetisFXFieldSetPanelItem(final MetisFXFieldSetPanel pPanel,
                                            final MetisField pField,
                                            final Class<T> pClass,
+                                           final boolean pNumeric,
                                            final TethysDataEditField<T, Node, Color, Font, Node> pEdit) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, pEdit);
+            super(pPanel, pField, pClass, pNumeric, pEdit);
 
             /* Create the label */
             theLabel = new Label();
@@ -311,7 +332,7 @@ public class MetisFXFieldSetPanel
                                           final MetisField pField,
                                           final TethysFXDateButtonManager pManager) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysDate.class, new TethysFXDateButtonField(pManager));
+            super(pPanel, pField, TethysDate.class, false, new TethysFXDateButtonField(pManager));
         }
 
         @Override
@@ -357,7 +378,7 @@ public class MetisFXFieldSetPanel
                                             final Class<T> pClass,
                                             final TethysFXScrollButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, new TethysFXScrollButtonField<T>(pManager));
+            super(pPanel, pField, pClass, false, new TethysFXScrollButtonField<T>(pManager));
         }
 
         @Override
@@ -403,7 +424,7 @@ public class MetisFXFieldSetPanel
                                           final Class<T> pClass,
                                           final TethysFXListButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, new TethysFXListButtonField<T>(pManager));
+            super(pPanel, pField, pClass, false, new TethysFXListButtonField<T>(pManager));
         }
 
         @Override
@@ -449,7 +470,7 @@ public class MetisFXFieldSetPanel
                                           final Class<T> pClass,
                                           final TethysIconButtonManager<T, Node> pManager) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, new TethysFXIconButtonField<T>(pManager));
+            super(pPanel, pField, pClass, false, new TethysFXIconButtonField<T>(pManager));
         }
 
         @Override
@@ -476,7 +497,7 @@ public class MetisFXFieldSetPanel
         protected MetisFXFieldSetStringItem(final MetisFXFieldSetPanel pPanel,
                                             final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, String.class, new TethysFXStringTextField());
+            super(pPanel, pField, String.class, false, new TethysFXStringTextField());
         }
 
         @Override
@@ -498,7 +519,7 @@ public class MetisFXFieldSetPanel
         protected MetisFXFieldSetShortItem(final MetisFXFieldSetPanel pPanel,
                                            final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, Short.class, new TethysFXShortTextField(
+            super(pPanel, pField, Short.class, true, new TethysFXShortTextField(
                     pPanel.getFormatter().getDecimalFormatter(),
                     pPanel.getFormatter().getDecimalParser()));
         }
@@ -522,7 +543,7 @@ public class MetisFXFieldSetPanel
         protected MetisFXFieldSetIntegerItem(final MetisFXFieldSetPanel pPanel,
                                              final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, Integer.class, new TethysFXIntegerTextField(
+            super(pPanel, pField, Integer.class, true, new TethysFXIntegerTextField(
                     pPanel.getFormatter().getDecimalFormatter(),
                     pPanel.getFormatter().getDecimalParser()));
         }
@@ -546,7 +567,7 @@ public class MetisFXFieldSetPanel
         protected MetisFXFieldSetLongItem(final MetisFXFieldSetPanel pPanel,
                                           final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, Long.class, new TethysFXLongTextField(
+            super(pPanel, pField, Long.class, true, new TethysFXLongTextField(
                     pPanel.getFormatter().getDecimalFormatter(),
                     pPanel.getFormatter().getDecimalParser()));
         }
@@ -561,7 +582,8 @@ public class MetisFXFieldSetPanel
      * MoneyField.
      */
     public static class MetisFXFieldSetMoneyItem
-            extends MetisFXFieldSetPanelItem<TethysMoney> {
+            extends MetisFXFieldSetPanelItem<TethysMoney>
+            implements TethysCurrencyItem {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -570,7 +592,7 @@ public class MetisFXFieldSetPanel
         protected MetisFXFieldSetMoneyItem(final MetisFXFieldSetPanel pPanel,
                                            final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysMoney.class, new TethysFXMoneyTextField(
+            super(pPanel, pField, TethysMoney.class, true, new TethysFXMoneyTextField(
                     pPanel.getFormatter().getDecimalFormatter(),
                     pPanel.getFormatter().getDecimalParser()));
         }
@@ -579,13 +601,19 @@ public class MetisFXFieldSetPanel
         protected TethysFXMoneyTextField getEditField() {
             return (TethysFXMoneyTextField) super.getEditField();
         }
+
+        @Override
+        public void setDeemedCurrency(final Currency pCurrency) {
+            getEditField().setDeemedCurrency(pCurrency);
+        }
     }
 
     /**
      * PriceField.
      */
     public static class MetisFXFieldSetPriceItem
-            extends MetisFXFieldSetPanelItem<TethysPrice> {
+            extends MetisFXFieldSetPanelItem<TethysPrice>
+            implements TethysCurrencyItem {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -594,7 +622,7 @@ public class MetisFXFieldSetPanel
         protected MetisFXFieldSetPriceItem(final MetisFXFieldSetPanel pPanel,
                                            final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysPrice.class, new TethysFXPriceTextField(
+            super(pPanel, pField, TethysPrice.class, true, new TethysFXPriceTextField(
                     pPanel.getFormatter().getDecimalFormatter(),
                     pPanel.getFormatter().getDecimalParser()));
         }
@@ -602,6 +630,11 @@ public class MetisFXFieldSetPanel
         @Override
         protected TethysFXPriceTextField getEditField() {
             return (TethysFXPriceTextField) super.getEditField();
+        }
+
+        @Override
+        public void setDeemedCurrency(final Currency pCurrency) {
+            getEditField().setDeemedCurrency(pCurrency);
         }
     }
 
@@ -618,7 +651,7 @@ public class MetisFXFieldSetPanel
         protected MetisFXFieldSetRateItem(final MetisFXFieldSetPanel pPanel,
                                           final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysRate.class, new TethysFXRateTextField(
+            super(pPanel, pField, TethysRate.class, true, new TethysFXRateTextField(
                     pPanel.getFormatter().getDecimalFormatter(),
                     pPanel.getFormatter().getDecimalParser()));
         }
@@ -642,7 +675,7 @@ public class MetisFXFieldSetPanel
         protected MetisFXFieldSetUnitsItem(final MetisFXFieldSetPanel pPanel,
                                            final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysUnits.class, new TethysFXUnitsTextField(
+            super(pPanel, pField, TethysUnits.class, true, new TethysFXUnitsTextField(
                     pPanel.getFormatter().getDecimalFormatter(),
                     pPanel.getFormatter().getDecimalParser()));
         }
@@ -666,7 +699,7 @@ public class MetisFXFieldSetPanel
         protected MetisFXFieldSetDilutionItem(final MetisFXFieldSetPanel pPanel,
                                               final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysDilution.class, new TethysFXDilutionTextField(
+            super(pPanel, pField, TethysDilution.class, true, new TethysFXDilutionTextField(
                     pPanel.getFormatter().getDecimalFormatter(),
                     pPanel.getFormatter().getDecimalParser()));
         }
@@ -690,7 +723,7 @@ public class MetisFXFieldSetPanel
         protected MetisFXFieldSetRatioItem(final MetisFXFieldSetPanel pPanel,
                                            final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysRatio.class, new TethysFXRatioTextField(
+            super(pPanel, pField, TethysRatio.class, true, new TethysFXRatioTextField(
                     pPanel.getFormatter().getDecimalFormatter(),
                     pPanel.getFormatter().getDecimalParser()));
         }

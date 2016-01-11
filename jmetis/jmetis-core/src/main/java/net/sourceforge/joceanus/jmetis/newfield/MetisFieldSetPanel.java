@@ -22,8 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newfield;
 
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -31,8 +36,12 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
@@ -46,11 +55,27 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <F> the font type
  * @param <I> the icon type
  */
-public abstract class MetisFieldSetPanel<N, C, F, I> {
+public abstract class MetisFieldSetPanel<N, C, F, I>
+        implements TethysEventProvider<TethysUIEvent> {
+    /**
+     * The event manager.
+     */
+    private final TethysEventManager<TethysUIEvent> theEventManager;
+
+    /**
+     * The fieldSet attributes.
+     */
+    private final MetisFieldAttributeSet<C, F> theAttributes;
+
     /**
      * The formatter.
      */
     private final MetisDataFormatter theFormatter;
+
+    /**
+     * The field map.
+     */
+    private final Map<MetisField, MetisFieldSetPanelItem<?, N, C, F, I>> theFieldMap;
 
     /**
      * The current item.
@@ -74,10 +99,31 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
 
     /**
      * Constructor.
+     * @param pParent the parent pair
+     */
+    protected MetisFieldSetPanel(final MetisFieldSetPanelPair<N, C, F, I> pParent) {
+        theAttributes = pParent.getAttributeSet();
+        theFormatter = pParent.getFormatter();
+        theFieldMap = new HashMap<>();
+        theEventManager = new TethysEventManager<>();
+    }
+
+    /**
+     * Constructor.
+     * @param pAttributes the attribute set
      * @param pFormatter the data formatter
      */
-    protected MetisFieldSetPanel(final MetisDataFormatter pFormatter) {
+    protected MetisFieldSetPanel(final MetisFieldAttributeSet<C, F> pAttributes,
+                                 final MetisDataFormatter pFormatter) {
+        theAttributes = pAttributes;
         theFormatter = pFormatter;
+        theFieldMap = new HashMap<>();
+        theEventManager = new TethysEventManager<>();
+    }
+
+    @Override
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -95,15 +141,20 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
     }
 
     /**
+     * Obtain the attributes.
+     * @return the attributes
+     */
+    public MetisFieldAttributeSet<C, F> getAttributeSet() {
+        return theAttributes;
+    }
+
+    /**
      * Set the item.
      * @param pItem the item to set
      */
     public void setItem(final MetisFieldSetItem pItem) {
         /* Store the item */
         theItem = pItem;
-
-        /* Refresh values */
-        refreshItem();
     }
 
     /**
@@ -123,21 +174,45 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
     }
 
     /**
-     * Refresh item values.
+     * Register field.
+     * @param pField the field
      */
-    public void refreshItem() {
-        /* Loop through the elements */
-        MetisFieldSetPanelItem<?, N, C, F, I> myChild = theFirstChild;
-        while (myChild != null) {
-            /* Obtain the field value */
-            Object myValue = theItem.getFieldValue(myChild.getField());
+    private void registerField(final MetisFieldSetPanelItem<?, N, C, F, I> pField) {
+        theFieldMap.put(pField.getField(), pField);
+    }
 
-            /* Set the value */
-            myChild.setValue(myValue);
+    /**
+     * Refresh item values.
+     * @return has visible fields true/false
+     */
+    public boolean refreshItem() {
+        /* Initialise state */
+        boolean hasVisible = false;
 
-            /* Move to next child */
-            myChild = myChild.theNextSibling;
+        /* If the item is non-null */
+        if (theItem != null) {
+            /* Loop through the elements */
+            MetisFieldSetPanelItem<?, N, C, F, I> myChild = theFirstChild;
+            while (myChild != null) {
+                /* Obtain the field value */
+                Object myValue = theItem.getFieldValue(myChild.getField());
+
+                /* Determine font and colour */
+                MetisField myField = myChild.getField();
+                boolean isChanged = theItem.getFieldState(myField).isChanged();
+                F myFont = theAttributes.getFontForField(myChild.isNumeric(), isChanged);
+                C myColor = theAttributes.getStandardColor(isChanged);
+
+                /* Set the value */
+                hasVisible |= myChild.setValue(myValue, myFont, myColor);
+
+                /* Move to next child */
+                myChild = myChild.theNextSibling;
+            }
         }
+
+        /* return the state */
+        return hasVisible;
     }
 
     /**
@@ -169,18 +244,42 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
      */
     public void setReadOnlyField(final MetisField pField,
                                  final boolean pReadOnly) {
-        /* Loop through the elements */
-        MetisFieldSetPanelItem<?, N, C, F, I> myChild = theFirstChild;
-        while (myChild != null) {
-            /* If we found the field */
-            if (pField.equals(myChild.getField())) {
-                /* Pass the call on */
-                myChild.setReadOnly(pReadOnly);
-                break;
-            }
+        /* Look up the field */
+        MetisFieldSetPanelItem<?, N, C, F, I> myChild = theFieldMap.get(pField);
+        if (myChild != null) {
+            /* Pass the call on */
+            myChild.setReadOnly(pReadOnly);
+        }
+    }
 
-            /* Move to next child */
-            myChild = myChild.theNextSibling;
+    /**
+     * Set deemed currency.
+     * @param pField the field
+     * @param pCurrency the currency
+     */
+    public void setDeemedCurrency(final MetisField pField,
+                                  final Currency pCurrency) {
+        /* Look up the field and check that it is a currency item */
+        MetisFieldSetPanelItem<?, N, C, F, I> myChild = theFieldMap.get(pField);
+        if ((myChild != null)
+            && myChild instanceof TethysCurrencyItem) {
+            /* Set the currency */
+            ((TethysCurrencyItem) myChild).setDeemedCurrency(pCurrency);
+        }
+    }
+
+    /**
+     * Show the command button.
+     * @param pField the field
+     * @param pShow true/false
+     */
+    public void showCmdButton(final MetisField pField,
+                              final boolean pShow) {
+        /* Look up the field */
+        MetisFieldSetPanelItem<?, N, C, F, I> myChild = theFieldMap.get(pField);
+        if (myChild != null) {
+            /* Pass the call on */
+            myChild.showCmdButton(pShow);
         }
     }
 
@@ -337,10 +436,10 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
                                                                        final Class<T> pClass);
 
     /**
-     * Is the panel visible.
+     * Is the panel visible?
      * @return true/false
      */
-    public boolean isVisible() {
+    protected boolean isVisible() {
         /* Loop through the elements */
         MetisFieldSetPanelItem<?, N, C, F, I> myChild = theFirstChild;
         while (myChild != null) {
@@ -360,7 +459,7 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
     /**
      * Adjust label width.
      */
-    protected void adjustLabelWidth() {
+    public void adjustLabelWidth() {
         /* Adjust to widest label */
         setLabelWidth(widestLabel());
     }
@@ -407,6 +506,16 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
     }
 
     /**
+     * Fire event.
+     * @param pEventId the event id
+     * @param pDetails the details
+     */
+    private void fireEvent(final TethysUIEvent pEventId,
+                           final Object pDetails) {
+        theEventManager.fireEvent(pEventId, pDetails);
+    }
+
+    /**
      * Item class.
      * @param <T> the item type
      * @param <N> the node type
@@ -446,6 +555,11 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
         private final MetisField theField;
 
         /**
+         * is the field numeric?
+         */
+        private final boolean isNumeric;
+
+        /**
          * Is the field visible?
          */
         private boolean isVisible;
@@ -460,16 +574,19 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
          * @param pPanel the panel
          * @param pField the field definition
          * @param pClass the item class
+         * @param pNumeric is the field numeric?
          * @param pEdit the edit field
          */
         protected MetisFieldSetPanelItem(final MetisFieldSetPanel<N, C, F, I> pPanel,
                                          final MetisField pField,
                                          final Class<T> pClass,
+                                         final boolean pNumeric,
                                          final TethysDataEditField<T, N, C, F, I> pEdit) {
             /* Set fields */
             thePanel = pPanel;
             theField = pField;
             theClass = pClass;
+            isNumeric = pNumeric;
             theEdit = pEdit;
             isVisible = true;
 
@@ -490,16 +607,14 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
 
             /* Add listeners */
             TethysEventRegistrar<TethysUIEvent> myRegistrar = theEdit.getEventRegistrar();
-            myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> {
-            });
-            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            });
-            myRegistrar.addEventListener(TethysUIEvent.TOGGLEITEM, e -> {
-            });
-            myRegistrar.addEventListener(TethysUIEvent.PREPARECMDDIALOG, e -> {
-            });
-            myRegistrar.addEventListener(TethysUIEvent.NEWCOMMAND, e -> {
-            });
+            myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, this::cascadeEvent);
+            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, this::cascadeEvent);
+            myRegistrar.addEventListener(TethysUIEvent.TOGGLEITEM, this::cascadeEvent);
+            myRegistrar.addEventListener(TethysUIEvent.PREPARECMDDIALOG, this::cascadeEvent);
+            myRegistrar.addEventListener(TethysUIEvent.NEWCOMMAND, this::cascadeEvent);
+
+            /* register the field */
+            thePanel.registerField(this);
         }
 
         /**
@@ -524,6 +639,14 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
          */
         public MetisField getField() {
             return theField;
+        }
+
+        /**
+         * is the field numeric?
+         * @return true/false
+         */
+        public boolean isNumeric() {
+            return isNumeric;
         }
 
         /**
@@ -584,6 +707,14 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
         }
 
         /**
+         * Show/Hide the command button.
+         * @param pShow true/false
+         */
+        public void showCmdButton(final boolean pShow) {
+            theEdit.showCmdButton(pShow);
+        }
+
+        /**
          * Attach as particular child.
          * @param pChildNo the child #
          */
@@ -598,8 +729,13 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
         /**
          * Set the value.
          * @param pValue the value
+         * @param pFont the font
+         * @param pColor the colour
+         * @return is the field visible
          */
-        protected void setValue(final Object pValue) {
+        private boolean setValue(final Object pValue,
+                                 final F pFont,
+                                 final C pColor) {
             /* Determine whether we should show the field */
             boolean showField = pValue == null
                                                ? thePanel.isEditable() && !isReadOnly
@@ -610,7 +746,14 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
             if (showField) {
                 /* Set the value */
                 setTheValue(theClass.cast(pValue));
+
+                /* Set the font and colour */
+                theEdit.setFont(pFont);
+                theEdit.setTextFill(pColor);
             }
+
+            /* return whether the field is visible */
+            return showField;
         }
 
         /**
@@ -653,6 +796,15 @@ public abstract class MetisFieldSetPanel<N, C, F, I> {
          * @param pWidth the label width
          */
         protected abstract void setLabelWidth(final double pWidth);
+
+        /**
+         * Cascade the event.
+         * @param pEvent the event
+         */
+        private void cascadeEvent(final TethysEvent<TethysUIEvent> pEvent) {
+            MetisFieldUpdate myUpdate = new MetisFieldUpdate(theField, pEvent.getDetails());
+            thePanel.fireEvent(pEvent.getEventId(), myUpdate);
+        }
     }
 
     /**

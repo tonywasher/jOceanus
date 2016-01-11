@@ -113,7 +113,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * MenuBuilder.
      */
-    private final JScrollMenuBuilder<S> theMenuBuilder;
+    private final transient JScrollMenuBuilder<S> theMenuBuilder;
 
     /**
      * The Data class.

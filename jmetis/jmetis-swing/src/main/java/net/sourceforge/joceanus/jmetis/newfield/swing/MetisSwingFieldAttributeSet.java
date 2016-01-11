@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.newfield.MetisFieldAttributeSet;
  * Swing AttributeSet.
  */
 public class MetisSwingFieldAttributeSet
-        extends MetisFieldAttributeSet<Font, Color> {
+        extends MetisFieldAttributeSet<Color, Font> {
     /**
      * Constructor.
      */
