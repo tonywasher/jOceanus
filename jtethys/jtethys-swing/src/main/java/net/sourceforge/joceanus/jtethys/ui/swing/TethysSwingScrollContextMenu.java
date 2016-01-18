@@ -489,6 +489,11 @@ public class TethysSwingScrollContextMenu<T>
         public void focusLost(final FocusEvent e) {
             /* If we've lost focus to other than the active subMenu */
             if (theActiveMenu == null) {
+                /* fire cancellation event */
+                if (theParentMenu == null) {
+                    theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
+                }
+
                 /* Close the menu hierarchy if we are currently showing */
                 if ((theDialog != null)
                     && theDialog.isShowing()) {
@@ -551,7 +556,6 @@ public class TethysSwingScrollContextMenu<T>
                 TethysScrollMenuToggleItem<?> myItem = (TethysScrollMenuToggleItem<?>) theSelectedItem;
                 myItem.toggleSelected();
                 doCloseMenu = closeOnToggle;
-                myEvent = TethysUIEvent.TOGGLEITEM;
             }
 
             /* fire selection event */
@@ -576,6 +580,9 @@ public class TethysSwingScrollContextMenu<T>
 
             /* else we are top-level */
         } else {
+            /* fire cancellation event */
+            theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
+
             /* Notify the cancel */
             closeMenu();
         }

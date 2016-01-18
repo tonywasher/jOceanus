@@ -341,7 +341,7 @@ public class TethysSwingScrollUIExample
         theListButtonMgr.getMenu().setCloseOnToggle(false);
 
         /* Add listener */
-        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.TOGGLEITEM,
+        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
                 e -> setListValue(e.getDetails(TethysScrollMenuToggleItem.class)));
         theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG,
                 e -> theHelper.buildAvailableItems(theListButtonMgr, theSelectedValues));

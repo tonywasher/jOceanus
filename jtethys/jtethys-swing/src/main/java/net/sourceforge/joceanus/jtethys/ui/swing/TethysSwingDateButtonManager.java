@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
 import javax.swing.SwingConstants;
@@ -29,7 +30,7 @@ import javax.swing.SwingConstants;
 import net.sourceforge.jdatebutton.swing.JDateButton;
 import net.sourceforge.jdatebutton.swing.JDateConfig;
 import net.sourceforge.jdatebutton.swing.JDateDialog;
-import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 
 /**
@@ -43,27 +44,32 @@ public class TethysSwingDateButtonManager
     private final JDateButton theButton;
 
     /**
+     * The dialog.
+     */
+    private final JDateDialog theDialog;
+
+    /**
      * Constructor.
      */
     public TethysSwingDateButtonManager() {
-        this(new TethysDateFormatter());
+        this(new TethysDataFormatter());
     }
 
     /**
      * Constructor.
-     * @param pFormatter the date formatter
+     * @param pFormatter the data formatter
      */
-    public TethysSwingDateButtonManager(final TethysDateFormatter pFormatter) {
-        this(new JDateConfig(pFormatter), pFormatter);
+    public TethysSwingDateButtonManager(final TethysDataFormatter pFormatter) {
+        this(new JDateConfig(pFormatter.getDateFormatter()), pFormatter);
     }
 
     /**
      * Constructor.
      * @param pConfig the configuration
-     * @param pFormatter the date formatter
+     * @param pFormatter the data formatter
      */
     public TethysSwingDateButtonManager(final JDateConfig pConfig,
-                                        final TethysDateFormatter pFormatter) {
+                                        final TethysDataFormatter pFormatter) {
         /* Initialise the super-class */
         super(pConfig, pFormatter);
 
@@ -74,18 +80,16 @@ public class TethysSwingDateButtonManager
         theButton.setHorizontalTextPosition(SwingConstants.LEFT);
 
         /* Catch the dialog opening/closing */
-        JDateDialog myDialog = theButton.getDialog();
-        myDialog.addWindowFocusListener(new WindowFocusListener() {
+        theDialog = theButton.getDialog();
+        theDialog.addWindowFocusListener(new WindowFocusListener() {
             @Override
-            public void windowGainedFocus(final java.awt.event.WindowEvent e) {
+            public void windowGainedFocus(final WindowEvent e) {
                 handleDialogRequest();
             }
 
             @Override
-            public void windowLostFocus(final java.awt.event.WindowEvent e) {
-                if (myDialog.haveSelected()) {
-                    handleNewValue();
-                }
+            public void windowLostFocus(final WindowEvent e) {
+                handleDialogClosure();
             }
         });
     }
@@ -97,5 +101,16 @@ public class TethysSwingDateButtonManager
     @Override
     public JDateButton getButton() {
         return theButton;
+    }
+
+    /**
+     * Handle dialog closure.
+     */
+    private void handleDialogClosure() {
+        if (theDialog.haveSelected()) {
+            handleNewValue();
+        } else {
+            handleDialogClosed();
+        }
     }
 }

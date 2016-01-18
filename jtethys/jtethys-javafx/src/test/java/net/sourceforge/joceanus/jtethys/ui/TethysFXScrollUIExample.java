@@ -265,7 +265,7 @@ public class TethysFXScrollUIExample
         theListButtonMgr.getMenu().setCloseOnToggle(false);
 
         /* Add listener */
-        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.TOGGLEITEM, e -> {
+        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             setListValue(e.getDetails(TethysScrollMenuToggleItem.class));
             pStage.sizeToScene();
         });

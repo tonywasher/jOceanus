@@ -42,8 +42,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -53,6 +51,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
@@ -242,6 +241,11 @@ public abstract class TethysSwingDataTextField<T>
         private Color theCacheColor;
 
         /**
+         * Are we editing a cell?
+         */
+        private boolean isCellEditing;
+
+        /**
          * Constructor.
          * @param pConverter the text converter
          */
@@ -366,12 +370,13 @@ public abstract class TethysSwingDataTextField<T>
          */
         private void handleFocusLost() {
             theTextField.setText(theControl.getDisplayText());
+            haltCellEditing();
         }
 
         @Override
         public void setValue(final T pValue) {
             /* Store the value */
-            super.setValue(pValue);
+            theControl.setValue(pValue);
 
             /* Update nodes */
             getLabel().setText(theControl.getDisplayText());
@@ -394,11 +399,10 @@ public abstract class TethysSwingDataTextField<T>
             public void keyPressed(final KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_ENTER:
-                        processValue();
+                        handleEnterKey();
                         break;
                     case KeyEvent.VK_ESCAPE:
-                        theTextField.setText(theControl.getEditText());
-                        clearError();
+                        handleEscapeKey();
                         break;
                     default:
                         break;
@@ -409,6 +413,44 @@ public abstract class TethysSwingDataTextField<T>
             public void keyReleased(final KeyEvent e) {
                 /* NoOp */
             }
+        }
+
+        /**
+         * handle enterKey.
+         */
+        private void handleEnterKey() {
+            processValue();
+            haltCellEditing();
+        }
+
+        /**
+         * handle escapeKey.
+         */
+        private void handleEscapeKey() {
+            theTextField.setText(theControl.getEditText());
+            clearError();
+            haltCellEditing();
+        }
+
+        @Override
+        public void startCellEditing() {
+            isCellEditing = true;
+            setEditable(true);
+            theControl.clearNewValue();
+            theTextField.requestFocus();
+        }
+
+        /**
+         * Halt cell editing.
+         */
+        private void haltCellEditing() {
+            if (isCellEditing) {
+                setEditable(false);
+                if (!theControl.parsedNewValue()) {
+                    fireEvent(TethysUIEvent.WINDOWCLOSED);
+                }
+            }
+            isCellEditing = false;
         }
     }
 
@@ -433,11 +475,9 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysSwingShortTextField(final TethysDecimalFormatter pFormatter,
-                                         final TethysDecimalParser pParser) {
-            super(new TethysShortEditConverter(pFormatter, pParser));
+        public TethysSwingShortTextField(final TethysDataFormatter pFormatter) {
+            super(new TethysShortEditConverter(pFormatter));
         }
     }
 
@@ -449,11 +489,9 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysSwingIntegerTextField(final TethysDecimalFormatter pFormatter,
-                                           final TethysDecimalParser pParser) {
-            super(new TethysIntegerEditConverter(pFormatter, pParser));
+        public TethysSwingIntegerTextField(final TethysDataFormatter pFormatter) {
+            super(new TethysIntegerEditConverter(pFormatter));
         }
     }
 
@@ -465,11 +503,9 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysSwingLongTextField(final TethysDecimalFormatter pFormatter,
-                                        final TethysDecimalParser pParser) {
-            super(new TethysLongEditConverter(pFormatter, pParser));
+        public TethysSwingLongTextField(final TethysDataFormatter pFormatter) {
+            super(new TethysLongEditConverter(pFormatter));
         }
     }
 
@@ -478,7 +514,8 @@ public abstract class TethysSwingDataTextField<T>
      * @param <T> the data type
      */
     protected abstract static class TethysSwingMoneyTextFieldBase<T extends TethysMoney>
-            extends TethysSwingTextEditField<T> {
+            extends TethysSwingTextEditField<T>
+            implements TethysCurrencyItem {
         /**
          * Constructor.
          * @param pConverter the converter
@@ -492,10 +529,7 @@ public abstract class TethysSwingDataTextField<T>
             return (TethysMoneyEditConverterBase<T>) super.getConverter();
         }
 
-        /**
-         * Set deemed currency.
-         * @param pCurrency the deemed currency
-         */
+        @Override
         public void setDeemedCurrency(final Currency pCurrency) {
             getConverter().setDeemedCurrency(pCurrency);
         }
@@ -509,11 +543,9 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysSwingMoneyTextField(final TethysDecimalFormatter pFormatter,
-                                         final TethysDecimalParser pParser) {
-            super(new TethysMoneyEditConverter(pFormatter, pParser));
+        public TethysSwingMoneyTextField(final TethysDataFormatter pFormatter) {
+            super(new TethysMoneyEditConverter(pFormatter));
         }
     }
 
@@ -525,11 +557,9 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysSwingPriceTextField(final TethysDecimalFormatter pFormatter,
-                                         final TethysDecimalParser pParser) {
-            super(new TethysPriceEditConverter(pFormatter, pParser));
+        public TethysSwingPriceTextField(final TethysDataFormatter pFormatter) {
+            super(new TethysPriceEditConverter(pFormatter));
         }
     }
 
@@ -541,11 +571,9 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysSwingDilutedPriceTextField(final TethysDecimalFormatter pFormatter,
-                                                final TethysDecimalParser pParser) {
-            super(new TethysDilutedPriceEditConverter(pFormatter, pParser));
+        public TethysSwingDilutedPriceTextField(final TethysDataFormatter pFormatter) {
+            super(new TethysDilutedPriceEditConverter(pFormatter));
         }
     }
 
@@ -557,11 +585,9 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysSwingRateTextField(final TethysDecimalFormatter pFormatter,
-                                        final TethysDecimalParser pParser) {
-            super(new TethysRateEditConverter(pFormatter, pParser));
+        public TethysSwingRateTextField(final TethysDataFormatter pFormatter) {
+            super(new TethysRateEditConverter(pFormatter));
         }
     }
 
@@ -572,12 +598,10 @@ public abstract class TethysSwingDataTextField<T>
             extends TethysSwingTextEditField<TethysUnits> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
-         * @param pParser the parser
+         * @param pFormatter the formatter [
          */
-        public TethysSwingUnitsTextField(final TethysDecimalFormatter pFormatter,
-                                         final TethysDecimalParser pParser) {
-            super(new TethysUnitsEditConverter(pFormatter, pParser));
+        public TethysSwingUnitsTextField(final TethysDataFormatter pFormatter) {
+            super(new TethysUnitsEditConverter(pFormatter));
         }
     }
 
@@ -589,11 +613,9 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysSwingDilutionTextField(final TethysDecimalFormatter pFormatter,
-                                            final TethysDecimalParser pParser) {
-            super(new TethysDilutionEditConverter(pFormatter, pParser));
+        public TethysSwingDilutionTextField(final TethysDataFormatter pFormatter) {
+            super(new TethysDilutionEditConverter(pFormatter));
         }
     }
 
@@ -605,11 +627,9 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysSwingRatioTextField(final TethysDecimalFormatter pFormatter,
-                                         final TethysDecimalParser pParser) {
-            super(new TethysRatioEditConverter(pFormatter, pParser));
+        public TethysSwingRatioTextField(final TethysDataFormatter pFormatter) {
+            super(new TethysRatioEditConverter(pFormatter));
         }
     }
 }

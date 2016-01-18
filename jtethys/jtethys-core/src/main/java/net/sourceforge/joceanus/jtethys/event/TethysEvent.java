@@ -59,6 +59,11 @@ public class TethysEvent<E extends Enum<E>> {
     private final Object theDetails;
 
     /**
+     * Is the event consumed?
+     */
+    private boolean isConsumed;
+
+    /**
      * Constructor.
      * @param pSourceId the id of the source of the event
      * @param pEventId the event id
@@ -116,5 +121,20 @@ public class TethysEvent<E extends Enum<E>> {
      */
     public <T> T getDetails(final Class<T> pClass) {
         return pClass.cast(theDetails);
+    }
+
+    /**
+     * Is the event consumed?
+     * @return true/false
+     */
+    public boolean isConsumed() {
+        return isConsumed;
+    }
+
+    /**
+     * Consume the event.
+     */
+    public void consume() {
+        isConsumed = true;
     }
 }

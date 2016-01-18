@@ -32,11 +32,6 @@ public enum TethysUIEvent {
     NEWVALUE,
 
     /**
-     * Toggle Item.
-     */
-    TOGGLEITEM,
-
-    /**
      * New Command.
      */
     NEWCOMMAND,
@@ -60,4 +55,29 @@ public enum TethysUIEvent {
      * Window Closed.
      */
     WINDOWCLOSED,
+
+    /**
+     * Edit Focus Lost.
+     */
+    EDITFOCUSLOST,
+
+    /**
+     * Cell about to be formatted.
+     */
+    CELLFORMAT,
+
+    /**
+     * Cell about to be edited.
+     */
+    CELLPREEDIT,
+
+    /**
+     * Cell about to be committed.
+     */
+    CELLPRECOMMIT,
+
+    /**
+     * Cell has been committed.
+     */
+    CELLCOMMITTED;
 }

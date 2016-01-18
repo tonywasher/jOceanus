@@ -32,10 +32,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import net.sourceforge.jdatebutton.javafx.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDatePeriod;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRangeState;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButton.TethysFXScrollButtonManager;
 
@@ -103,15 +103,15 @@ public class TethysFXDateRangeSelector
      */
     public TethysFXDateRangeSelector(final boolean pBaseIsStart) {
         /* Call standard constructor */
-        this(new TethysDateFormatter(), pBaseIsStart);
+        this(new TethysDataFormatter(), pBaseIsStart);
     }
 
     /**
      * Constructor.
-     * @param pFormatter the date formatter
+     * @param pFormatter the data formatter
      * @param pBaseIsStart is the baseDate the start of the period? (true/false)
      */
-    public TethysFXDateRangeSelector(final TethysDateFormatter pFormatter,
+    public TethysFXDateRangeSelector(final TethysDataFormatter pFormatter,
                                      final boolean pBaseIsStart) {
         /* Initialise the underlying class */
         super(pFormatter, pBaseIsStart);

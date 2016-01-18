@@ -31,6 +31,13 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * IconButton Manager.
+ * <p>
+ * Provides the following events.
+ * <dl>
+ * <dt>NEWVALUE
+ * <dd>fired when a new value is selected. <br>
+ * Detail is new value
+ * </dl>
  * @param <T> the object type
  * @param <I> the Icon type
  */

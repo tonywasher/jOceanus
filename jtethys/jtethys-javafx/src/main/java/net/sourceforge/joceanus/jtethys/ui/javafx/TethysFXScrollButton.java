@@ -91,6 +91,7 @@ public final class TethysFXScrollButton
 
             /* Set context menu listener */
             getMenu().addEventHandler(TethysFXContextEvent.MENU_SELECT, e -> handleMenuClosed());
+            getMenu().addEventHandler(TethysFXContextEvent.MENU_CANCEL, e -> handleMenuClosed());
         }
 
         @Override

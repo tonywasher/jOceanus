@@ -92,6 +92,7 @@ public final class TethysFXListButton
 
             /* Set context menu listener */
             getMenu().addEventHandler(TethysFXContextEvent.MENU_TOGGLE, e -> handleToggleItem());
+            getMenu().addEventHandler(TethysFXContextEvent.MENU_CANCEL, e -> handleMenuClosed());
         }
 
         @Override

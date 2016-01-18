@@ -37,6 +37,17 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * DateButton Manager.
+ * <p>
+ * Provides the following events.
+ * <dl>
+ * <dt>PREPAREDIALOG
+ * <dd>fired prior to dialog being displayed to allow for configuration of dialog
+ * <dt>NEWVALUE
+ * <dd>fired when a new date value is selected. <br>
+ * Detail is new date value
+ * <dt>EDITFOCUSLOST
+ * <dd>fired when the dialog is cancelled without a value being selected.
+ * </dl>
  * @param <B> the button type
  */
 public abstract class TethysDateButtonManager<B extends JDateBaseButton>
@@ -54,11 +65,11 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
     /**
      * Constructor.
      * @param pConfig the date configuration
-     * @param pFormatter the date formatter
+     * @param pFormatter the data formatter
      * 
      */
     protected TethysDateButtonManager(final JDateBaseConfig<B> pConfig,
-                                      final TethysDateFormatter pFormatter) {
+                                      final TethysDataFormatter pFormatter) {
         /* Store parameters */
         theConfig = pConfig;
 
@@ -66,7 +77,8 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
         theEventManager = new TethysEventManager<>();
 
         /* Add listener for locale changes */
-        pFormatter.getEventRegistrar().addEventListener(new LocaleListener(pFormatter));
+        TethysDateFormatter myFormatter = pFormatter.getDateFormatter();
+        myFormatter.getEventRegistrar().addEventListener(new LocaleListener(myFormatter));
     }
 
     /**
@@ -170,14 +182,21 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
     /**
      * handleDialogRequest.
      */
-    public void handleDialogRequest() {
+    protected void handleDialogRequest() {
         theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theConfig);
+    }
+
+    /**
+     * handleDialogClosed.
+     */
+    protected void handleDialogClosed() {
+        theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST, theConfig);
     }
 
     /**
      * handleNewValue.
      */
-    public void handleNewValue() {
+    protected void handleNewValue() {
         theEventManager.fireEvent(TethysUIEvent.NEWVALUE, getSelectedDate());
     }
 

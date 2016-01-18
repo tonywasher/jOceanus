@@ -913,7 +913,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
             theModel = pModel;
 
             /* Create the listener and attach it */
-            theComponent.getMenuBuilder().getEventRegistrar().addEventListener(TethysUIEvent.TOGGLEITEM, theModel::processValue);
+            theComponent.getMenuBuilder().getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, theModel::processValue);
         }
 
         @Override

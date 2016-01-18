@@ -36,6 +36,17 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 
 /**
  * ListButton Manager.
+ * <p>
+ * Provides the following events.
+ * <dl>
+ * <dt>PREPAREDIALOG
+ * <dd>fired prior to dialog being displayed to allow for configuration of dialog
+ * <dt>NEWVALUE
+ * <dd>fired when a new value is selected. <br>
+ * Detail is menu item that was selected {@link TethysScrollMenuToggleItem}
+ * <dt>EDITFOCUSLOST
+ * <dd>fired when the dialog is cancelled without a value being selected.
+ * </dl>
  * @param <T> the object type
  * @param <I> the Icon type
  */
@@ -216,6 +227,11 @@ public abstract class TethysListButtonManager<T, I>
         if (!theMenu.isEmpty()) {
             /* Show the menu */
             showMenu();
+
+            /* Else no value was selected */
+        } else {
+            /* notify cancellation */
+            notifyCancelled();
         }
     }
 
@@ -233,9 +249,25 @@ public abstract class TethysListButtonManager<T, I>
         if ((mySelected != null)
             && (mySelected instanceof TethysScrollMenuToggleItem)) {
             /* Set the new value */
-            theEventManager.fireEvent(TethysUIEvent.TOGGLEITEM, mySelected);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, mySelected);
             updateText();
         }
+    }
+
+    /**
+     * handleMenuClosed.
+     */
+    protected void handleMenuClosed() {
+        /* notify cancellation */
+        notifyCancelled();
+    }
+
+    /**
+     * notifyCancelled.
+     */
+    private void notifyCancelled() {
+        /* fire menu cancelled event */
+        theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST);
     }
 
     /**

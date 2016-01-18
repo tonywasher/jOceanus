@@ -138,6 +138,14 @@ public abstract class TethysDataEditField<T, N, C, F, I>
      * @param pValue the value
      */
     public void setValue(final T pValue) {
+        setTheValue(pValue);
+    }
+
+    /**
+     * Set the value.
+     * @param pValue the value
+     */
+    protected void setTheValue(final T pValue) {
         theValue = pValue;
     }
 
@@ -165,9 +173,17 @@ public abstract class TethysDataEditField<T, N, C, F, I>
     /**
      * Fire event.
      * @param pEventId the eventId
+     */
+    protected void fireEvent(final TethysUIEvent pEventId) {
+        theEventManager.fireEvent(pEventId);
+    }
+
+    /**
+     * Fire event.
+     * @param pEventId the eventId
      * @param pValue the relevant value
      */
-    public void fireEvent(final TethysUIEvent pEventId, final Object pValue) {
+    protected void fireEvent(final TethysUIEvent pEventId, final Object pValue) {
         theEventManager.fireEvent(pEventId, pValue);
     }
 
@@ -224,6 +240,11 @@ public abstract class TethysDataEditField<T, N, C, F, I>
     }
 
     /**
+     * Start cell editing.
+     */
+    public abstract void startCellEditing();
+
+    /**
      * Set the font.
      * @param pFont the font for the field
      */
@@ -261,6 +282,11 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         private String theEdit;
 
         /**
+         * Did we create a new value?
+         */
+        private boolean parsedNewValue;
+
+        /**
          * Constructor.
          * @param pField the owing field
          * @param pConverter the data converter
@@ -296,11 +322,29 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         }
 
         /**
+         * Did we create a new value?
+         * @return true/false
+         */
+        public boolean parsedNewValue() {
+            return parsedNewValue;
+        }
+
+        /**
+         * Clear the new value indication.
+         */
+        public void clearNewValue() {
+            parsedNewValue = false;
+        }
+
+        /**
          * Process value.
          * @param pNewValue the new value
          * @return is value valid?
          */
         public boolean processValue(final String pNewValue) {
+            /* Clear flag */
+            parsedNewValue = false;
+
             /* NullOp if there are no changes */
             if (!Objects.equals(pNewValue, theEdit)) {
                 /* Protect to catch parsing errors */
@@ -313,6 +357,7 @@ public abstract class TethysDataEditField<T, N, C, F, I>
                     /* set the value and fire Event */
                     setValue(myValue);
                     theField.fireEvent(TethysUIEvent.NEWVALUE, myValue);
+                    parsedNewValue = true;
 
                     /* Catch parsing error */
                 } catch (IllegalArgumentException e) {
@@ -340,7 +385,7 @@ public abstract class TethysDataEditField<T, N, C, F, I>
                                      : theConverter.formatEditValue(pValue);
 
             /* Store the value */
-            theField.setValue(pValue);
+            theField.setTheValue(pValue);
         }
     }
 
@@ -388,13 +433,11 @@ public abstract class TethysDataEditField<T, N, C, F, I>
 
         /**
          * Constructor.
-         * @param pFormatter the formatter
-         * @param pParser the parser
+         * @param pFormatter the data formatter
          */
-        protected TethysNumberEditConverter(final TethysDecimalFormatter pFormatter,
-                                            final TethysDecimalParser pParser) {
-            theFormatter = pFormatter;
-            theParser = pParser;
+        protected TethysNumberEditConverter(final TethysDataFormatter pFormatter) {
+            theFormatter = pFormatter.getDecimalFormatter();
+            theParser = pFormatter.getDecimalParser();
         }
 
         /**
@@ -433,12 +476,10 @@ public abstract class TethysDataEditField<T, N, C, F, I>
             extends TethysNumberEditConverter<Short> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
-         * @param pParser the parser
+         * @param pFormatter the dat formatter
          */
-        public TethysShortEditConverter(final TethysDecimalFormatter pFormatter,
-                                        final TethysDecimalParser pParser) {
-            super(pFormatter, pParser);
+        public TethysShortEditConverter(final TethysDataFormatter pFormatter) {
+            super(pFormatter);
         }
 
         @Override
@@ -459,12 +500,10 @@ public abstract class TethysDataEditField<T, N, C, F, I>
             extends TethysNumberEditConverter<Integer> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
-         * @param pParser the parser
+         * @param pFormatter the data formatter
          */
-        public TethysIntegerEditConverter(final TethysDecimalFormatter pFormatter,
-                                          final TethysDecimalParser pParser) {
-            super(pFormatter, pParser);
+        public TethysIntegerEditConverter(final TethysDataFormatter pFormatter) {
+            super(pFormatter);
         }
 
         @Override
@@ -485,12 +524,10 @@ public abstract class TethysDataEditField<T, N, C, F, I>
             extends TethysNumberEditConverter<Long> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
-         * @param pParser the parser
+         * @param pFormatter the data formatter
          */
-        public TethysLongEditConverter(final TethysDecimalFormatter pFormatter,
-                                       final TethysDecimalParser pParser) {
-            super(pFormatter, pParser);
+        public TethysLongEditConverter(final TethysDataFormatter pFormatter) {
+            super(pFormatter);
         }
 
         @Override
@@ -512,11 +549,9 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysRateEditConverter(final TethysDecimalFormatter pFormatter,
-                                       final TethysDecimalParser pParser) {
-            super(pFormatter, pParser);
+        public TethysRateEditConverter(final TethysDataFormatter pFormatter) {
+            super(pFormatter);
         }
 
         @Override
@@ -538,11 +573,9 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysUnitsEditConverter(final TethysDecimalFormatter pFormatter,
-                                        final TethysDecimalParser pParser) {
-            super(pFormatter, pParser);
+        public TethysUnitsEditConverter(final TethysDataFormatter pFormatter) {
+            super(pFormatter);
         }
 
         @Override
@@ -564,11 +597,9 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysDilutionEditConverter(final TethysDecimalFormatter pFormatter,
-                                           final TethysDecimalParser pParser) {
-            super(pFormatter, pParser);
+        public TethysDilutionEditConverter(final TethysDataFormatter pFormatter) {
+            super(pFormatter);
         }
 
         @Override
@@ -590,11 +621,9 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysRatioEditConverter(final TethysDecimalFormatter pFormatter,
-                                        final TethysDecimalParser pParser) {
-            super(pFormatter, pParser);
+        public TethysRatioEditConverter(final TethysDataFormatter pFormatter) {
+            super(pFormatter);
         }
 
         @Override
@@ -635,11 +664,9 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        protected TethysMoneyEditConverterBase(final TethysDecimalFormatter pFormatter,
-                                               final TethysDecimalParser pParser) {
-            super(pFormatter, pParser);
+        protected TethysMoneyEditConverterBase(final TethysDataFormatter pFormatter) {
+            super(pFormatter);
         }
 
         @Override
@@ -669,11 +696,9 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysMoneyEditConverter(final TethysDecimalFormatter pFormatter,
-                                        final TethysDecimalParser pParser) {
-            super(pFormatter, pParser);
+        public TethysMoneyEditConverter(final TethysDataFormatter pFormatter) {
+            super(pFormatter);
         }
 
         @Override
@@ -690,11 +715,9 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysPriceEditConverter(final TethysDecimalFormatter pFormatter,
-                                        final TethysDecimalParser pParser) {
-            super(pFormatter, pParser);
+        public TethysPriceEditConverter(final TethysDataFormatter pFormatter) {
+            super(pFormatter);
         }
 
         @Override
@@ -711,11 +734,9 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         /**
          * Constructor.
          * @param pFormatter the formatter
-         * @param pParser the parser
          */
-        public TethysDilutedPriceEditConverter(final TethysDecimalFormatter pFormatter,
-                                               final TethysDecimalParser pParser) {
-            super(pFormatter, pParser);
+        public TethysDilutedPriceEditConverter(final TethysDataFormatter pFormatter) {
+            super(pFormatter);
         }
 
         @Override

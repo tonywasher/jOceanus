@@ -126,10 +126,10 @@ public abstract class TethysDateRangeSelector<N>
      * @param pFormatter the date formatter
      * @param pBaseIsStart is the baseDate the start of the period? (true/false)
      */
-    protected TethysDateRangeSelector(final TethysDateFormatter pFormatter,
+    protected TethysDateRangeSelector(final TethysDataFormatter pFormatter,
                                       final boolean pBaseIsStart) {
         /* Store the parameters */
-        theFormatter = pFormatter;
+        theFormatter = pFormatter.getDateFormatter();
 
         /* Create event manager */
         theEventManager = new TethysEventManager<>();

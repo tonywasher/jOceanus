@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 import net.sourceforge.jdatebutton.javafx.JDateButton;
 import net.sourceforge.jdatebutton.javafx.JDateConfig;
 import net.sourceforge.jdatebutton.javafx.JDateDialog;
-import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 
 /**
@@ -39,27 +39,32 @@ public class TethysFXDateButtonManager
     private final JDateButton theButton;
 
     /**
+     * The dialog.
+     */
+    private final JDateDialog theDialog;
+
+    /**
      * Constructor.
      */
     public TethysFXDateButtonManager() {
-        this(new TethysDateFormatter());
+        this(new TethysDataFormatter());
     }
 
     /**
      * Constructor.
-     * @param pFormatter the date formatter
+     * @param pFormatter the data formatter
      */
-    public TethysFXDateButtonManager(final TethysDateFormatter pFormatter) {
-        this(new JDateConfig(pFormatter), pFormatter);
+    public TethysFXDateButtonManager(final TethysDataFormatter pFormatter) {
+        this(new JDateConfig(pFormatter.getDateFormatter()), pFormatter);
     }
 
     /**
      * Constructor.
      * @param pConfig the configuration
-     * @param pFormatter the date formatter
+     * @param pFormatter the data formatter
      */
     public TethysFXDateButtonManager(final JDateConfig pConfig,
-                                     final TethysDateFormatter pFormatter) {
+                                     final TethysDataFormatter pFormatter) {
         /* Initialise the super-class */
         super(pConfig, pFormatter);
 
@@ -67,16 +72,10 @@ public class TethysFXDateButtonManager
         theButton = new JDateButton(pConfig);
         theButton.setMaxWidth(Double.MAX_VALUE);
 
-        /* Catch the dialog opening */
-        JDateDialog myDialog = theButton.getDialog();
-        myDialog.setOnShowing(e -> handleDialogRequest());
-
-        /* Catch the dialog closing */
-        myDialog.setOnHidden(e -> {
-            if (myDialog.haveSelected()) {
-                handleNewValue();
-            }
-        });
+        /* Catch the dialog opening/closing */
+        theDialog = theButton.getDialog();
+        theDialog.setOnShowing(e -> handleDialogRequest());
+        theDialog.setOnHidden(e -> handleDialogClosure());
     }
 
     /**
@@ -86,5 +85,16 @@ public class TethysFXDateButtonManager
     @Override
     public JDateButton getButton() {
         return theButton;
+    }
+
+    /**
+     * Handle dialog closure.
+     */
+    private void handleDialogClosure() {
+        if (theDialog.haveSelected()) {
+            handleNewValue();
+        } else {
+            handleDialogClosed();
+        }
     }
 }

@@ -802,7 +802,7 @@ public final class MetisSwingFieldCellEditor {
             theButton.setFocusPainted(false);
             TethysEventRegistrar<TethysUIEvent> myRegistrar = theMenuBuilder.getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG));
-            myRegistrar.addEventListener(TethysUIEvent.TOGGLEITEM, e -> {
+            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
                 TableModel myModel = theTable.getModel();
                 Object myValue = myModel.getValueAt(thePoint.y, thePoint.x);
                 if (myValue instanceof String) {

@@ -25,10 +25,12 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.awt.Font;
 
 import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 
 import net.sourceforge.jdatebutton.swing.JDateButton;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
@@ -138,6 +140,11 @@ public final class TethysSwingDataButtonField {
             theManager.setValue(pValue);
             getLabel().setIcon(theButton.getIcon());
         }
+
+        @Override
+        public void startCellEditing() {
+            SwingUtilities.invokeLater(() -> theButton.doClick());
+        }
     }
 
     /**
@@ -155,6 +162,11 @@ public final class TethysSwingDataButtonField {
          * The button.
          */
         private final TethysSwingScrollButton theButton;
+
+        /**
+         * Are we editing a cell?
+         */
+        private boolean isCellEditing;
 
         /**
          * Constructor.
@@ -192,6 +204,9 @@ public final class TethysSwingDataButtonField {
                 case PREPAREDIALOG:
                     fireEvent(TethysUIEvent.PREPAREDIALOG, this);
                     break;
+                case EDITFOCUSLOST:
+                    haltCellEditing();
+                    break;
                 default:
                     break;
             }
@@ -226,6 +241,24 @@ public final class TethysSwingDataButtonField {
             theManager.setValue(pValue);
             getLabel().setText(theManager.getButton().getText());
         }
+
+        @Override
+        public void startCellEditing() {
+            isCellEditing = true;
+            setEditable(true);
+            SwingUtilities.invokeLater(() -> theButton.doClick());
+        }
+
+        /**
+         * haltCellEditing.
+         */
+        private void haltCellEditing() {
+            if (isCellEditing) {
+                setEditable(false);
+                fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
+            }
+            isCellEditing = false;
+        }
     }
 
     /**
@@ -244,10 +277,23 @@ public final class TethysSwingDataButtonField {
         private final JDateButton theButton;
 
         /**
+         * Are we editing a cell?
+         */
+        private boolean isCellEditing;
+
+        /**
          * Constructor.
          */
         public TethysSwingDateButtonField() {
-            this(new TethysSwingDateButtonManager());
+            this(new TethysDataFormatter());
+        }
+
+        /**
+         * Constructor.
+         * @param pFormatter the data formatter
+         */
+        public TethysSwingDateButtonField(final TethysDataFormatter pFormatter) {
+            this(new TethysSwingDateButtonManager(pFormatter));
         }
 
         /**
@@ -278,6 +324,9 @@ public final class TethysSwingDataButtonField {
                     break;
                 case PREPAREDIALOG:
                     fireEvent(TethysUIEvent.PREPAREDIALOG, this);
+                    break;
+                case EDITFOCUSLOST:
+                    haltCellEditing();
                     break;
                 default:
                     break;
@@ -313,6 +362,24 @@ public final class TethysSwingDataButtonField {
             theManager.setSelectedDate(pValue);
             getLabel().setText(theManager.getButton().getText());
         }
+
+        @Override
+        public void startCellEditing() {
+            isCellEditing = true;
+            setEditable(true);
+            SwingUtilities.invokeLater(() -> theButton.doClick());
+        }
+
+        /**
+         * haltCellEditing.
+         */
+        private void haltCellEditing() {
+            if (isCellEditing) {
+                setEditable(false);
+                fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
+            }
+            isCellEditing = false;
+        }
     }
 
     /**
@@ -330,6 +397,11 @@ public final class TethysSwingDataButtonField {
          * The button.
          */
         private final TethysSwingListButton theButton;
+
+        /**
+         * Are we editing a cell?
+         */
+        private boolean isCellEditing;
 
         /**
          * Constructor.
@@ -360,12 +432,15 @@ public final class TethysSwingDataButtonField {
          */
         private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
             switch (pEvent.getEventId()) {
-                case TOGGLEITEM:
+                case NEWVALUE:
                     updateText();
-                    fireEvent(TethysUIEvent.TOGGLEITEM, pEvent.getDetails());
+                    fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
                     break;
                 case PREPAREDIALOG:
                     fireEvent(TethysUIEvent.PREPAREDIALOG, this);
+                    break;
+                case EDITFOCUSLOST:
+                    haltCellEditing();
                     break;
                 default:
                     break;
@@ -455,6 +530,24 @@ public final class TethysSwingDataButtonField {
          */
         public boolean isItemSelected(final T pItem) {
             return theManager.isItemSelected(pItem);
+        }
+
+        @Override
+        public void startCellEditing() {
+            isCellEditing = true;
+            setEditable(true);
+            SwingUtilities.invokeLater(() -> theButton.doClick());
+        }
+
+        /**
+         * haltCellEditing.
+         */
+        private void haltCellEditing() {
+            if (isCellEditing) {
+                setEditable(false);
+                fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
+            }
+            isCellEditing = false;
         }
     }
 }

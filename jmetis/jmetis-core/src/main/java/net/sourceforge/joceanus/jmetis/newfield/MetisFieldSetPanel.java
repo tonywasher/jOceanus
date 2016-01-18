@@ -609,7 +609,6 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
             TethysEventRegistrar<TethysUIEvent> myRegistrar = theEdit.getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, this::cascadeEvent);
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, this::cascadeEvent);
-            myRegistrar.addEventListener(TethysUIEvent.TOGGLEITEM, this::cascadeEvent);
             myRegistrar.addEventListener(TethysUIEvent.PREPARECMDDIALOG, this::cascadeEvent);
             myRegistrar.addEventListener(TethysUIEvent.NEWCOMMAND, this::cascadeEvent);
 

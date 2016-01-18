@@ -317,7 +317,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetDateItem(final MetisSwingFieldSetPanel pPanel,
                                              final MetisField pField) {
             /* Create a new dateButton Manager */
-            this(pPanel, pField, new TethysSwingDateButtonManager(pPanel.getFormatter().getDateFormatter()));
+            this(pPanel, pField, new TethysSwingDateButtonManager(pPanel.getFormatter()));
         }
 
         /**
@@ -517,9 +517,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetShortItem(final MetisSwingFieldSetPanel pPanel,
                                               final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, Short.class, true, new TethysSwingShortTextField(
-                    pPanel.getFormatter().getDecimalFormatter(),
-                    pPanel.getFormatter().getDecimalParser()));
+            super(pPanel, pField, Short.class, true, new TethysSwingShortTextField(pPanel.getFormatter()));
         }
 
         @Override
@@ -541,9 +539,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetIntegerItem(final MetisSwingFieldSetPanel pPanel,
                                                 final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, Integer.class, true, new TethysSwingIntegerTextField(
-                    pPanel.getFormatter().getDecimalFormatter(),
-                    pPanel.getFormatter().getDecimalParser()));
+            super(pPanel, pField, Integer.class, true, new TethysSwingIntegerTextField(pPanel.getFormatter()));
         }
 
         @Override
@@ -565,9 +561,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetLongItem(final MetisSwingFieldSetPanel pPanel,
                                              final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, Long.class, true, new TethysSwingLongTextField(
-                    pPanel.getFormatter().getDecimalFormatter(),
-                    pPanel.getFormatter().getDecimalParser()));
+            super(pPanel, pField, Long.class, true, new TethysSwingLongTextField(pPanel.getFormatter()));
         }
 
         @Override
@@ -590,9 +584,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetMoneyItem(final MetisSwingFieldSetPanel pPanel,
                                               final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysMoney.class, true, new TethysSwingMoneyTextField(
-                    pPanel.getFormatter().getDecimalFormatter(),
-                    pPanel.getFormatter().getDecimalParser()));
+            super(pPanel, pField, TethysMoney.class, true, new TethysSwingMoneyTextField(pPanel.getFormatter()));
         }
 
         @Override
@@ -620,9 +612,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetPriceItem(final MetisSwingFieldSetPanel pPanel,
                                               final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysPrice.class, true, new TethysSwingPriceTextField(
-                    pPanel.getFormatter().getDecimalFormatter(),
-                    pPanel.getFormatter().getDecimalParser()));
+            super(pPanel, pField, TethysPrice.class, true, new TethysSwingPriceTextField(pPanel.getFormatter()));
         }
 
         @Override
@@ -649,9 +639,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetRateItem(final MetisSwingFieldSetPanel pPanel,
                                              final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysRate.class, true, new TethysSwingRateTextField(
-                    pPanel.getFormatter().getDecimalFormatter(),
-                    pPanel.getFormatter().getDecimalParser()));
+            super(pPanel, pField, TethysRate.class, true, new TethysSwingRateTextField(pPanel.getFormatter()));
         }
 
         @Override
@@ -673,9 +661,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetUnitsItem(final MetisSwingFieldSetPanel pPanel,
                                               final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysUnits.class, true, new TethysSwingUnitsTextField(
-                    pPanel.getFormatter().getDecimalFormatter(),
-                    pPanel.getFormatter().getDecimalParser()));
+            super(pPanel, pField, TethysUnits.class, true, new TethysSwingUnitsTextField(pPanel.getFormatter()));
         }
 
         @Override
@@ -697,9 +683,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetDilutionItem(final MetisSwingFieldSetPanel pPanel,
                                                  final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysDilution.class, true, new TethysSwingDilutionTextField(
-                    pPanel.getFormatter().getDecimalFormatter(),
-                    pPanel.getFormatter().getDecimalParser()));
+            super(pPanel, pField, TethysDilution.class, true, new TethysSwingDilutionTextField(pPanel.getFormatter()));
         }
 
         @Override
@@ -721,9 +705,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetRatioItem(final MetisSwingFieldSetPanel pPanel,
                                               final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysRatio.class, true, new TethysSwingRatioTextField(
-                    pPanel.getFormatter().getDecimalFormatter(),
-                    pPanel.getFormatter().getDecimalParser()));
+            super(pPanel, pField, TethysRatio.class, true, new TethysSwingRatioTextField(pPanel.getFormatter()));
         }
 
         @Override

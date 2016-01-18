@@ -274,7 +274,7 @@ public class JScrollListButton<T>
          */
         private void fireItemStateChanged(final X pItem) {
             boolean isSelected = isSelectedItem(pItem);
-            theEventManager.fireEvent(TethysUIEvent.TOGGLEITEM, new ToggleState<X>(pItem, isSelected));
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, new ToggleState<X>(pItem, isSelected));
         }
     }
 
