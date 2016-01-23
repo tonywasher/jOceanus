@@ -164,6 +164,12 @@ public abstract class TethysFXDataTextField<T>
     }
 
     @Override
+    public void setBackground(final Color pColor) {
+        /* Apply colour to the label only */
+        theLabel.setStyle("-fx-background-color: " + TethysFXGuiUtils.colorToHexString(pColor));
+    }
+
+    @Override
     public void showCmdButton(final boolean pShow) {
         /* Remove any button that is displaying */
         theNode.setRight(null);

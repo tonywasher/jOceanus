@@ -31,11 +31,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataCellFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableStringColumn;
 
 /**
  * Test JavaFX Table Cells.
@@ -50,7 +50,7 @@ public class TethysFXDataTableExample
     /**
      * The TableView.
      */
-    private final TableView<TestDataItem> theTable;
+    private final TethysFXTableManager<String, TestDataItem> theTable;
 
     /**
      * Constructor.
@@ -61,33 +61,16 @@ public class TethysFXDataTableExample
                 new TestDataItem("Tony"), new TestDataItem("Dave"));
 
         /* Create tableView */
-        theTable = new TableView<>();
+        theTable = new TethysFXTableManager<>();
         theTable.setItems(theData);
-        theTable.setEditable(true);
-
-        /* Access column list */
-        ObservableList<TableColumn<TestDataItem, ?>> myColumns = theTable.getColumns();
-
-        /* Create the cell factory */
-        TethysFXDataCellFactory myFactory = new TethysFXDataCellFactory();
 
         /* Create the name column */
-        TableColumn<TestDataItem, String> myStringCol = new TableColumn<>("Name");
-        myStringCol.setCellValueFactory(p -> p.getValue().nameProperty());
-        myStringCol.setCellFactory(myFactory.stringCellFactory());
-        myStringCol.setSortable(false);
-        myStringCol.setEditable(true);
-        myStringCol.setMinWidth(200);
-        myColumns.add(myStringCol);
+        TethysFXTableStringColumn<String, TestDataItem> myStrColumn = theTable.declareStringColumn("Name");
+        myStrColumn.setCellValueFactory(p -> p.getValue().nameProperty());
 
         /* Create the date column */
-        TableColumn<TestDataItem, TethysDate> myDateCol = new TableColumn<>("Date");
-        myDateCol.setCellValueFactory(p -> p.getValue().dateProperty());
-        myDateCol.setCellFactory(myFactory.dateCellFactory());
-        myDateCol.setSortable(false);
-        myDateCol.setEditable(true);
-        myDateCol.setMinWidth(90);
-        myColumns.add(myDateCol);
+        TethysFXTableDateColumn<String, TestDataItem> myDateColumn = theTable.declareDateColumn("Date");
+        myDateColumn.setCellValueFactory(p -> p.getValue().dateProperty());
     }
 
     /**
@@ -105,7 +88,7 @@ public class TethysFXDataTableExample
 
         /* Create scene */
         Scene myScene = new Scene(new Group());
-        ((Group) myScene.getRoot()).getChildren().addAll(theTable);
+        ((Group) myScene.getRoot()).getChildren().addAll(theTable.getNode());
         pStage.setTitle("JavaFXTable Demo");
         // TethysFXGuiUtils.addStyleSheet(myScene);
         pStage.setScene(myScene);

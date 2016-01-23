@@ -257,6 +257,12 @@ public abstract class TethysDataEditField<T, N, C, F, I>
     public abstract void setTextFill(final C pColor);
 
     /**
+     * Set the background colour.
+     * @param pColor the colour
+     */
+    public abstract void setBackground(final C pColor);
+
+    /**
      * DataEditTextField base class.
      * @param <T> the data type
      */

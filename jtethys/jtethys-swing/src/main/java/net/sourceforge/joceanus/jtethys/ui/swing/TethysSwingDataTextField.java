@@ -177,6 +177,12 @@ public abstract class TethysSwingDataTextField<T>
     }
 
     @Override
+    public void setBackground(final Color pColor) {
+        /* Apply colour to the label only */
+        theLabel.setBackground(pColor);
+    }
+
+    @Override
     public TethysSwingScrollContextMenu<String> getCmdMenu() {
         return (TethysSwingScrollContextMenu<String>) super.getCmdMenu();
     }

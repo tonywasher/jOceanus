@@ -91,10 +91,11 @@ public class TethysEventManager<E extends Enum<E>>
     /**
      * Cascade action event.
      * @param pEvent the event to cascade
-     * @return was the event consumed?
      */
-    public boolean cascadeEvent(final TethysEvent<E> pEvent) {
-        return fireEvent(pEvent.getEventId(), pEvent.getDetails());
+    public void cascadeEvent(final TethysEvent<E> pEvent) {
+        if (!fireEvent(pEvent.getEventId(), pEvent.getDetails())) {
+            pEvent.consume();
+        }
     }
 
     /**
@@ -110,7 +111,7 @@ public class TethysEventManager<E extends Enum<E>>
      * Fire Event to all registered listeners.
      * @param pEventId the eventId of the event
      * @param pDetails the details of the event
-     * @return was the event consumed?
+     * @return was the event left unconsumed? true/false
      */
     public boolean fireEvent(final E pEventId,
                              final Object pDetails) {
@@ -136,11 +137,11 @@ public class TethysEventManager<E extends Enum<E>>
             /* Process the event */
             myReg.processEvent(myEvent);
             if (myEvent.isConsumed()) {
-                return true;
+                return false;
             }
         }
 
         /* Event was not consumed */
-        return false;
+        return true;
     }
 }
