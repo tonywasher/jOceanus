@@ -25,11 +25,14 @@ package net.sourceforge.joceanus.jtethys.date.swing;
 import net.sourceforge.jdatebutton.swing.JDateCellRenderer;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableDateCell;
 
 /**
  * Cell renderer for a {@link TethysDate} object extending {@link JDateCellRenderer}.
  * @author Tony Washer
+ * @deprecated as of 1.5.0 use {@link TethysSwingTableDateCell}
  */
+@Deprecated
 public class TethysSwingDateCellRenderer
         extends JDateCellRenderer {
     /**
@@ -66,8 +69,8 @@ public class TethysSwingDateCellRenderer
     }
 
     /**
-     * Set value for the renderer. This will convert a Date into the required string format before passing it on. If the object is already a string or is null
-     * it is passed directly on.
+     * Set value for the renderer. This will convert a Date into the required string format before
+     * passing it on. If the object is already a string or is null it is passed directly on.
      * @param value the value to display (String, Calendar or null)
      */
     @Override

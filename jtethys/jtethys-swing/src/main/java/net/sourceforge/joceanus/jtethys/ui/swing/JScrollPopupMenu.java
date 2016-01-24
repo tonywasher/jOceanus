@@ -52,7 +52,9 @@ import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 
 /**
  * Scroll-able extension to JPopUpMenu.
+ * @deprecated as of 1.5.0 use {@link TethysSwingScrollContextMenu}
  */
+@Deprecated
 public class JScrollPopupMenu
         extends JPopupMenu {
     /**
@@ -445,6 +447,7 @@ public class JScrollPopupMenu
     /**
      * Listener class.
      */
+    @Deprecated
     private class ScrollListener
             implements PopupMenuListener, MouseWheelListener {
         @Override
@@ -476,6 +479,7 @@ public class JScrollPopupMenu
     /**
      * Listener class.
      */
+    @Deprecated
     private class ScrollKeyListener
             implements MenuKeyListener {
         @Override
@@ -521,6 +525,7 @@ public class JScrollPopupMenu
     /**
      * Scroll action class.
      */
+    @Deprecated
     private final class ScrollItem
             extends JMenuItem
             implements ActionListener, ChangeListener {

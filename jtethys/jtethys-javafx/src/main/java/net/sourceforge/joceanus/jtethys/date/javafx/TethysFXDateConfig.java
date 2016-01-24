@@ -32,11 +32,14 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateButtonManager;
 
 /**
  * Class that extends {@link JDateConfig} to handle {@link TethysDate} objects.
  * @author Tony Washer
+ * @deprecated as of 1.5.0 use {@link TethysFXDateButtonManager}
  */
+@Deprecated
 public class TethysFXDateConfig
         extends JDateConfig {
     /**

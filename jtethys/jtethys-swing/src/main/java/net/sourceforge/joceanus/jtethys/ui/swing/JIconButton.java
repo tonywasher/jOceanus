@@ -33,7 +33,9 @@ import javax.swing.JButton;
 /**
  * Simple button that displays icon.
  * @param <T> the object type
+ * @deprecated as of 1.5.0 use {@link TethysSwingIconButton}
  */
+@Deprecated
 public class JIconButton<T>
         extends JButton {
     /**
@@ -148,6 +150,7 @@ public class JIconButton<T>
      * State Machine class.
      * @param <T> the object type
      */
+    @Deprecated
     public abstract static class IconButtonState<T> {
         /**
          * The icon button.
@@ -209,6 +212,7 @@ public class JIconButton<T>
      * Default State Machine class.
      * @param <T> the object type
      */
+    @Deprecated
     public static class DefaultIconButtonState<T>
             extends IconButtonState<T> {
         /**
@@ -300,6 +304,7 @@ public class JIconButton<T>
      * @param <T> the object type
      * @param <S> the state
      */
+    @Deprecated
     public static class ComplexIconButtonState<T, S>
             extends DefaultIconButtonState<T> {
         /**
@@ -399,6 +404,7 @@ public class JIconButton<T>
      * MapSet.
      * @param <T> the object type
      */
+    @Deprecated
     private static final class IconMapSet<T> {
         /**
          * Value Map.

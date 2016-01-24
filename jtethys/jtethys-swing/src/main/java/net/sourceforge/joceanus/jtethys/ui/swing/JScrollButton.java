@@ -43,7 +43,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 /**
  * Swing Button which provides a PopUpMenu selection.
  * @param <T> the object type
+ * @deprecated as of 1.5.0 use {@link TethysSwingScrollButton}
  */
+@Deprecated
 public class JScrollButton<T>
         extends JButton {
     /**
@@ -257,6 +259,7 @@ public class JScrollButton<T>
      * MenuBuilder class.
      * @param <T> the object type
      */
+    @Deprecated
     public static final class JScrollMenuBuilder<T>
             implements ActionListener, TethysEventProvider<TethysUIEvent> {
         /**
@@ -498,6 +501,7 @@ public class JScrollButton<T>
      * Item action class.
      * @param <T> the object type
      */
+    @Deprecated
     private static final class ItemAction<T>
             extends AbstractAction {
         /**

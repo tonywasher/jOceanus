@@ -36,7 +36,9 @@ import javax.swing.event.ChangeListener;
 
 /**
  * Scroll-able extension to JMenu.
+ * @deprecated as of 1.5.0 use {@link TethysSwingScrollContextMenu}
  */
+@Deprecated
 public class JScrollMenu
         extends JMenu
         implements ChangeListener {

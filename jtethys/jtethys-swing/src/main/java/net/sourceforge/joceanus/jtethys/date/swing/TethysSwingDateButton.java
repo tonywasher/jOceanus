@@ -27,11 +27,14 @@ import java.time.LocalDate;
 import net.sourceforge.jdatebutton.swing.JDateButton;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 
 /**
  * Extension class for a {@link JDateButton} to handle {@link TethysDate} objects.
  * @author Tony Washer
+ * @deprecated as of 1.5.0 use {@link TethysSwingDateButtonManager}
  */
+@Deprecated
 public class TethysSwingDateButton
         extends JDateButton {
     /**

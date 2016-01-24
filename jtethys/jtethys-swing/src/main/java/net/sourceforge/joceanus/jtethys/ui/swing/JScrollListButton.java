@@ -51,7 +51,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * PopUp menu that displays a list of checkMenu items.
  * @author Tony Washer
  * @param <T> the item type
+ * @deprecated as of 1.5.0 use {@link TethysSwingListButton}
  */
+@Deprecated
 public class JScrollListButton<T>
         extends JButton {
     /**
@@ -89,6 +91,7 @@ public class JScrollListButton<T>
      * MenuBuilder class.
      * @param <X> the object type
      */
+    @Deprecated
     public static final class JScrollListMenuBuilder<X>
             implements ActionListener, TethysEventProvider<TethysUIEvent> {
         /**
@@ -282,6 +285,7 @@ public class JScrollListButton<T>
      * Event details.
      * @param <X> the item type
      */
+    @Deprecated
     public static final class ToggleState<X> {
         /**
          * The Item.
@@ -326,6 +330,7 @@ public class JScrollListButton<T>
      * ScrollList Menu.
      * @param <X> the object type
      */
+    @Deprecated
     private static final class JScrollListMenu<X>
             extends JScrollPopupMenu {
         /**
@@ -484,6 +489,7 @@ public class JScrollListButton<T>
         /**
          * Item action class.
          */
+        @Deprecated
         private final class CheckAction
                 extends AbstractAction {
             /**
