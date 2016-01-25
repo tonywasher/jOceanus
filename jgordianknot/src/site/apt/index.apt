@@ -8,8 +8,10 @@ additionally download this library from the {{{http://www.bouncycastle.org/java.
   Encryption is performed using a set of keys called a <<KeySet>> (one key for each supported algorithm). A subset of
 the keys is selected at random (using a SecureRandom instance) from the KeySet, and the plaintext is encrypted 
 by each key in turn. The types of the keys used are encoded into output ciphertext along with the randomly chosen
-initialisation vector (which is shifted differently for each key). The cipher mode is CBC then CFB and then SIC to ensure 
-maximal protectionfrom attacks.
+initialisation vector (which is shifted differently for each key). 
+
+  The chosen cipher mode is generally SIC. If there are two or more keys used then the first step uses CBC, and if three or
+more keys are used then the second step uses CFB. 
 
   A KeySet may be defined by a <<KeySetHash>>. This KeySetHash is built from a password and a randomly selected set of three
 HMac algorithms using a simple variant of PBKDF2. One of the MACs (the secret MAC) is also fed the intermediate results of

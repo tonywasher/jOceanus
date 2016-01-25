@@ -165,7 +165,6 @@
             <!-- Checks for common coding problems               -->
             <!-- See http://checkstyle.sf.net/config_coding.html -->
             <!--<module name="AvoidInlineConditionals"/>-->
-            <!--<module name="DoubleCheckedLocking"/>    MY FAVOURITE -->
             <module name="EmptyStatement"/>
             <module name="EqualsHashCode"/>
             <module name="HiddenField"/>
@@ -173,7 +172,6 @@
             <module name="InnerAssignment"/>
             <module name="MagicNumber"/>
             <module name="MissingSwitchDefault"/>
-            <!--<module name="RedundantThrows"/>-->
             <module name="SimplifyBooleanExpression"/>
             <module name="SimplifyBooleanReturn"/>
     
