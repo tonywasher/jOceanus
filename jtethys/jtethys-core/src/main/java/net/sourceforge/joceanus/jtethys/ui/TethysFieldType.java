@@ -107,6 +107,36 @@ public enum TethysFieldType {
     LIST;
 
     /**
+     * Date column standard width.
+     */
+    private static final int WIDTH_DATE = 100;
+
+    /**
+     * Money column standard width.
+     */
+    private static final int WIDTH_MONEY = 100;
+
+    /**
+     * Decimal column standard width.
+     */
+    private static final int WIDTH_DECIMAL = 90;
+
+    /**
+     * Description column standard width.
+     */
+    private static final int WIDTH_DESC = 200;
+
+    /**
+     * Icon column width.
+     */
+    private static final int WIDTH_ICON = 20;
+
+    /**
+     * Integer column width.
+     */
+    private static final int WIDTH_INT = 50;
+
+    /**
      * Obtain default width.
      * @return the default width
      */
@@ -115,81 +145,26 @@ public enum TethysFieldType {
             case STRING:
             case SCROLL:
             case LIST:
-                return 200;
+                return WIDTH_DESC;
             case DATE:
+                return WIDTH_DATE;
             case MONEY:
-                return 100;
+                return WIDTH_MONEY;
             case PRICE:
             case RATE:
             case UNITS:
             case DILUTION:
             case DILUTEDPRICE:
             case RATIO:
-                return 90;
+                return WIDTH_DECIMAL;
             case INTEGER:
             case SHORT:
             case LONG:
-                return 50;
+                return WIDTH_INT;
             case ICON:
             case STATEICON:
             default:
-                return 20;
+                return WIDTH_ICON;
         }
     }
-
-    /**
-     * Date column standard width.
-     */
-    protected static final int WIDTH_DATE = 100;
-
-    /**
-     * Money column standard width.
-     */
-    protected static final int WIDTH_MONEY = 100;
-
-    /**
-     * Rate column standard width.
-     */
-    protected static final int WIDTH_RATE = 90;
-
-    /**
-     * Price column standard width.
-     */
-    protected static final int WIDTH_PRICE = 90;
-
-    /**
-     * Units column standard width.
-     */
-    protected static final int WIDTH_UNITS = 90;
-
-    /**
-     * Dilution column standard width.
-     */
-    protected static final int WIDTH_DILUTION = 90;
-
-    /**
-     * Name column standard width.
-     */
-    protected static final int WIDTH_NAME = 130;
-
-    /**
-     * Description column standard width.
-     */
-    protected static final int WIDTH_DESC = 200;
-
-    /**
-     * Icon column width.
-     */
-    protected static final int WIDTH_ICON = 20;
-
-    /**
-     * Integer column width.
-     */
-    protected static final int WIDTH_INT = 30;
-
-    /**
-     * Currency column width.
-     */
-    protected static final int WIDTH_CURR = 50;
-
 }

@@ -272,8 +272,8 @@ public class TethysSwingTableManager<I, R>
         }
 
         @Override
-        public Object getValueAt(int pRowIndex,
-                                 int pColIndex) {
+        public Object getValueAt(final int pRowIndex,
+                                 final int pColIndex) {
             return getIndexedColumn(pColIndex).getCellValue(pRowIndex);
         }
     }
@@ -302,7 +302,7 @@ public class TethysSwingTableManager<I, R>
         private Function<TethysSwingTableCell<I, R, C>, C> theValueFactory;
 
         /**
-         * Constructor
+         * Constructor.
          * @param pTable the owning table
          * @param pId the column id
          * @param pType the type of the column
@@ -392,7 +392,7 @@ public class TethysSwingTableManager<I, R>
         }
 
         /**
-         * Obtain the row for the index
+         * Obtain the row for the index.
          * @param pIndex the row index
          * @return true/false
          */

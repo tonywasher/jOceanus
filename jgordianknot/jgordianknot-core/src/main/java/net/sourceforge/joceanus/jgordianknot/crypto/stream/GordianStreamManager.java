@@ -150,30 +150,28 @@ public final class GordianStreamManager {
         /* Generate a list of encryption types */
         List<GordianKey<GordianSymKeyType>> mySymKeys = myFactory.generateRandomSymKeyList();
         int myEncryption = mySymKeys.size();
-        boolean doCBC = myEncryption > 1;
-        boolean doCFB = myEncryption > 2;
+        GordianCipherMode myMode = GordianCipherMode.SIC;
+        boolean isPadded = false;
+        boolean doInit = myEncryption > 1;
 
         /* For each encryption key */
         Iterator<GordianKey<GordianSymKeyType>> myIterator = mySymKeys.iterator();
         while (myIterator.hasNext()) {
             GordianKey<GordianSymKeyType> myKey = myIterator.next();
 
-            /* Determine Mode */
+            /* Determine Padding Mode */
             myEncryption--;
-            GordianCipherMode myMode = GordianCipherMode.SIC;
-            if (doCBC && myEncryption == 0) {
-                myMode = GordianCipherMode.CBC;
-            } else if (doCFB && myEncryption == 1) {
-                myMode = GordianCipherMode.CFB;
+            if (doInit && myEncryption == 0) {
+                isPadded = true;
             }
-
-            /* Determine padding */
-            boolean isPadded = myMode.equals(GordianCipherMode.CBC);
 
             /* Build the cipher stream */
             GordianCipher<GordianSymKeyType> mySymCipher = myFactory.createSymKeyCipher(myKey.getKeyType(), myMode, isPadded);
             mySymCipher.initCipher(myKey);
             myCurrent = new GordianCipherOutputStream<GordianSymKeyType>(mySymCipher, myCurrent);
+
+            /* Switch to CBC mode */
+            myMode = GordianCipherMode.CBC;
         }
 
         /* Create the encryption stream for a stream key */

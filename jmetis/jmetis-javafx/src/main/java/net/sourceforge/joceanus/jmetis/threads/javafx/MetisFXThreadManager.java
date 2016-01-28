@@ -24,17 +24,24 @@ package net.sourceforge.joceanus.jmetis.threads.javafx;
 
 import javafx.concurrent.Worker.State;
 import javafx.scene.Node;
+import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatus;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXFileSelector;
 
 /**
  * javaFX Thread manager.
  */
 public class MetisFXThreadManager
         extends MetisThreadManager<Node> {
+    /**
+     * The Stage.
+     */
+    private Stage theStage;
+
     /**
      * The Active worker.
      */
@@ -47,6 +54,18 @@ public class MetisFXThreadManager
 
     /**
      * Constructor.
+     * @param pStage the stage
+     * @param pViewerManager the viewer manager
+     */
+    public MetisFXThreadManager(final Stage pStage,
+                                final MetisViewerManager pViewerManager) {
+        this(pViewerManager);
+        setStage(pStage);
+    }
+
+    /**
+     * Constructor.
+     * @param pStage the stage
      * @param pViewerManager the viewer manager
      */
     public MetisFXThreadManager(final MetisViewerManager pViewerManager) {
@@ -56,6 +75,14 @@ public class MetisFXThreadManager
     @Override
     protected MetisFXThreadStatusManager getStatusManager() {
         return (MetisFXThreadStatusManager) super.getStatusManager();
+    }
+
+    /**
+     * Set the stage.
+     * @param pStage the stage
+     */
+    public void setStage(final Stage pStage) {
+        theStage = pStage;
     }
 
     @Override
@@ -177,5 +204,10 @@ public class MetisFXThreadManager
         /* cancel the thread */
         theWorker.cancel(true);
         theWorker.interruptForCancel();
+    }
+
+    @Override
+    public TethysFXFileSelector getFileSelector() {
+        return new TethysFXFileSelector(theStage);
     }
 }

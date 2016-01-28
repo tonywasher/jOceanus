@@ -408,18 +408,18 @@ public final class GordianMultiCipher {
         /* Obtain the ciphers */
         KeyCiphers myCiphers = getKeyCiphers(pKeyType);
 
-        /* Return CBC cipher if required */
-        if ((pIndex == 0) && (theNumSteps > 1)) {
-            return myCiphers.getCBCCipher();
+        /* Return Final cipher if required */
+        if (pIndex == theNumSteps - 1) {
+            return myCiphers.getFinalCipher();
         }
 
-        /* Return CFB cipher if required */
-        if ((pIndex == 1) && (theNumSteps > 2)) {
-            return myCiphers.getCFBCipher();
+        /* Return Initial cipher if required */
+        if (pIndex == 0) {
+            return myCiphers.getInitCipher();
         }
 
-        /* Return the ciphers */
-        return myCiphers.getSICCipher();
+        /* Return the Middle cipher */
+        return myCiphers.getMidCipher();
     }
 
     /**
@@ -547,19 +547,19 @@ public final class GordianMultiCipher {
         private final GordianKey<GordianSymKeyType> theKey;
 
         /**
-         * CBC Cipher.
+         * CBC Cipher (padding).
          */
-        private final GordianCipher<GordianSymKeyType> theCBCCipher;
+        private final GordianCipher<GordianSymKeyType> theInitCipher;
+
+        /**
+         * CBC Cipher (noPadding).
+         */
+        private final GordianCipher<GordianSymKeyType> theMidCipher;
 
         /**
          * SIC Cipher.
          */
-        private final GordianCipher<GordianSymKeyType> theSICCipher;
-
-        /**
-         * CFB Cipher.
-         */
-        private final GordianCipher<GordianSymKeyType> theCFBCipher;
+        private final GordianCipher<GordianSymKeyType> theFinalCipher;
 
         /**
          * Wrap Cipher.
@@ -577,9 +577,9 @@ public final class GordianMultiCipher {
             GordianSymKeyType myKeyType = theKey.getKeyType();
 
             /* Create the standard ciphers */
-            theCBCCipher = theFactory.createSymKeyCipher(myKeyType, GordianCipherMode.CBC, true);
-            theSICCipher = theFactory.createSymKeyCipher(myKeyType, GordianCipherMode.SIC, false);
-            theCFBCipher = theFactory.createSymKeyCipher(myKeyType, GordianCipherMode.CFB, false);
+            theInitCipher = theFactory.createSymKeyCipher(myKeyType, GordianCipherMode.CBC, true);
+            theFinalCipher = theFactory.createSymKeyCipher(myKeyType, GordianCipherMode.SIC, false);
+            theMidCipher = theFactory.createSymKeyCipher(myKeyType, GordianCipherMode.CBC, false);
 
             /* Create the wrap cipher */
             theWrapCipher = theFactory.createWrapCipher(myKeyType);
@@ -594,27 +594,27 @@ public final class GordianMultiCipher {
         }
 
         /**
-         * Obtain the CBC cipher.
-         * @return the CBCCipher
+         * Obtain the Initial cipher.
+         * @return the Initial Cipher
          */
-        private GordianCipher<GordianSymKeyType> getCBCCipher() {
-            return theCBCCipher;
+        private GordianCipher<GordianSymKeyType> getInitCipher() {
+            return theInitCipher;
         }
 
         /**
-         * Obtain the SIC cipher.
-         * @return the SICCipher
+         * Obtain the Final cipher.
+         * @return the Final Cipher
          */
-        private GordianCipher<GordianSymKeyType> getSICCipher() {
-            return theSICCipher;
+        private GordianCipher<GordianSymKeyType> getFinalCipher() {
+            return theFinalCipher;
         }
 
         /**
-         * Obtain the CBC cipher.
-         * @return the CBCCipher
+         * Obtain the Mid cipher.
+         * @return the Middle Cipher
          */
-        private GordianCipher<GordianSymKeyType> getCFBCipher() {
-            return theCFBCipher;
+        private GordianCipher<GordianSymKeyType> getMidCipher() {
+            return theMidCipher;
         }
 
         /**

@@ -448,7 +448,7 @@ public class TethysSwingTableCellFactory<I, R>
             @Override
             public Component getTableCellEditorComponent(final JTable pTable,
                                                          final Object pValue,
-                                                         final boolean isSelected,
+                                                         final boolean pSelected,
                                                          final int pRow,
                                                          final int pCol) {
                 /* Determine the active row */

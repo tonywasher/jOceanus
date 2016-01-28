@@ -63,6 +63,11 @@ public class MetisSwingThreadTester {
     private static final Logger LOGGER = LoggerFactory.getLogger(MetisSwingThreadTester.class);
 
     /**
+     * Frame.
+     */
+    private final JFrame theFrame;
+
+    /**
      * ViewerManager.
      */
     private final MetisSwingViewerManager theViewerMgr;
@@ -96,9 +101,10 @@ public class MetisSwingThreadTester {
         theDebugButton = new JButton("Debug");
 
         /* Create the Managers */
+        theFrame = new JFrame("MetisSwingThread Demo");
         MetisFieldManager myFieldMgr = new MetisFieldManager(new MetisFieldConfig());
         theViewerMgr = new MetisSwingViewerManager(myFieldMgr);
-        theThreadMgr = new MetisSwingThreadManager(theViewerMgr);
+        theThreadMgr = new MetisSwingThreadManager(theFrame, theViewerMgr);
         theStatusPanel = theThreadMgr.getNode();
     }
 
@@ -120,11 +126,9 @@ public class MetisSwingThreadTester {
      */
     private static void createAndShowGUI() {
         try {
-            /* Create the frame */
-            JFrame myFrame = new JFrame("MetisSwingThread Demo");
-
             /* Create the UI */
             MetisSwingThreadTester myThread = new MetisSwingThreadTester();
+            JFrame myFrame = myThread.theFrame;
 
             /* Build the panel */
             JPanel myPanel = myThread.buildPanel();

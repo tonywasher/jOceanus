@@ -111,11 +111,9 @@ public class MetisFXThreadTester
 
     @Override
     public void start(final Stage pStage) {
-        /* Create the UI */
-        MetisFXThreadTester myThread = new MetisFXThreadTester();
-
         /* Build the panel */
-        myThread.buildPanel();
+        theThreadMgr.setStage(pStage);
+        buildPanel();
 
         /* Create scene */
         Scene myScene = new Scene(new Group());

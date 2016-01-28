@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableDateCell;
 
 /**
- * Cell editor for a {@link TethysDate} object extending {@link JDateCellEditor}.
+ * Cell editor for a {@link TethysDate} object.
  * @author Tony Washer
  * @param <T> the table data type
  * @deprecated as of 1.5.0 use {@link TethysFXTableDateCell}

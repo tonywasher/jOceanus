@@ -10,8 +10,8 @@ the keys is selected at random (using a SecureRandom instance) from the KeySet, 
 by each key in turn. The types of the keys used are encoded into output ciphertext along with the randomly chosen
 initialisation vector (which is shifted differently for each key). 
 
-  The chosen cipher mode is generally SIC. If there are two or more keys used then the first step uses CBC, and if three or
-more keys are used then the second step uses CFB. 
+  The last cipher mode is set to SIC mode. All prior modes are set to CBC mode. The first CBC mode is set to use ISO7816-4 padding,
+all others use no padding. 
 
   A KeySet may be defined by a <<KeySetHash>>. This KeySetHash is built from a password and a randomly selected set of three
 HMac algorithms using a simple variant of PBKDF2. One of the MACs (the secret MAC) is also fed the intermediate results of
@@ -22,6 +22,8 @@ keys for the KeySet via another variant of the PBKDF2 algorithm.
   On resolving a KeySetHash with a password to obtain the KeySet the algorithm is repeated and the resulting external hash is 
 compared with the expected hash. If it matches, the password is assumed correct and the keySet will be generated. In the unlikely
 event of a collision on the hash, it is virtually impossible for the same keySet to be generated.  
+
+  KeyWrapping is also supported using a variant of the AES-KW algorithm that uses CBC mode rather than ECB mode.
 
 * Supported Algorithms
 
@@ -66,7 +68,7 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * XSalsa20 (unrestricted keys)
 
-    * HC256(HC128)
+    * HC256(HC128 for restricted keys)
 
     * VMPC 
 

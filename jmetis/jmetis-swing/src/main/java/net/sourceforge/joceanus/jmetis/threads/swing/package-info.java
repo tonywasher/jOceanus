@@ -20,8 +20,7 @@
  * $Author: Tony $
  * $Date: 2014-10-13 12:12:02 +0100 (Mon, 13 Oct 2014) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.threads.swing;
-
 /**
  * Package to abstract Swing workers.
  */
+package net.sourceforge.joceanus.jmetis.threads.swing;

@@ -47,7 +47,6 @@ public class TethysFXTreeManager<T>
 
     /**
      * Constructor.
-     * @throws OceanusException on error
      */
     public TethysFXTreeManager() {
         /* Create the tree */

@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 
 /**
  * Thread Manager.
@@ -392,4 +393,10 @@ public abstract class MetisThreadManager<N>
                                   ? null
                                   : theProfile.getActiveTask();
     }
+
+    /**
+     * Obtain a file selector.
+     * @return the selector.
+     */
+    public abstract TethysFileSelector getFileSelector();
 }

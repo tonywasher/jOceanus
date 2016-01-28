@@ -22,12 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads.swing;
 
+import java.awt.Component;
+
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatus;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingFileSelector;
 
 /**
  * Swing Thread manager.
@@ -35,16 +38,24 @@ import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
 public class MetisSwingThreadManager
         extends MetisThreadManager<JComponent> {
     /**
+     * The Parent.
+     */
+    private final Component theParent;
+
+    /**
      * The Active worker.
      */
     private MetisSwingThread<?> theWorker;
 
     /**
      * Constructor.
+     * @param pParent the parent
      * @param pViewerManager the viewer manager
      */
-    public MetisSwingThreadManager(final MetisSwingViewerManager pViewerManager) {
+    public MetisSwingThreadManager(final Component pParent,
+                                   final MetisSwingViewerManager pViewerManager) {
         super(pViewerManager, new MetisSwingThreadStatusManager());
+        theParent = pParent;
     }
 
     @Override
@@ -121,5 +132,10 @@ public class MetisSwingThreadManager
         /* cancel the thread */
         theWorker.cancel(true);
         theWorker.interruptForCancel();
+    }
+
+    @Override
+    public TethysSwingFileSelector getFileSelector() {
+        return new TethysSwingFileSelector(theParent);
     }
 }

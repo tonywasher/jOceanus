@@ -260,7 +260,7 @@ public class TethysFXTableManager<I, R>
         private final TableColumn<R, C> theColumn;
 
         /**
-         * Constructor
+         * Constructor.
          * @param pTable the owning table
          * @param pId the column id
          * @param pType the type of the column
