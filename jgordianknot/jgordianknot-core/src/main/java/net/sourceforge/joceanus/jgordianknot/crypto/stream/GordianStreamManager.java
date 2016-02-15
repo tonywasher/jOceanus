@@ -149,21 +149,13 @@ public final class GordianStreamManager {
 
         /* Generate a list of encryption types */
         List<GordianKey<GordianSymKeyType>> mySymKeys = myFactory.generateRandomSymKeyList();
-        int myEncryption = mySymKeys.size();
         GordianCipherMode myMode = GordianCipherMode.SIC;
         boolean isPadded = false;
-        boolean doInit = myEncryption > 1;
 
         /* For each encryption key */
         Iterator<GordianKey<GordianSymKeyType>> myIterator = mySymKeys.iterator();
         while (myIterator.hasNext()) {
             GordianKey<GordianSymKeyType> myKey = myIterator.next();
-
-            /* Determine Padding Mode */
-            myEncryption--;
-            if (doInit && myEncryption == 0) {
-                isPadded = true;
-            }
 
             /* Build the cipher stream */
             GordianCipher<GordianSymKeyType> mySymCipher = myFactory.createSymKeyCipher(myKey.getKeyType(), myMode, isPadded);
@@ -172,6 +164,7 @@ public final class GordianStreamManager {
 
             /* Switch to CBC mode */
             myMode = GordianCipherMode.CBC;
+            isPadded = true;
         }
 
         /* Create the encryption stream for a stream key */

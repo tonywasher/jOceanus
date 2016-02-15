@@ -129,8 +129,12 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
         fireNewDataEvents();
     }
 
-    @Override
-    public boolean includeRow(final T pRow) {
+    /**
+     * Should we include the row?
+     * @param pRow the row
+     * @return true/false
+     */
+    protected boolean includeRow(final T pRow) {
         /* Return visibility of row */
         return showAll || !pRow.isDeleted();
     }
@@ -253,6 +257,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
      */
     public void registerFilter(final TethysSwingTableFilter<T> pFilter) {
         theFilter = pFilter;
+        theFilter.setFilter(this::includeRow);
     }
 
     /**

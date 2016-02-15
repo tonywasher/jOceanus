@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
@@ -35,33 +36,40 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIc
  * Simple button that displays icon.
  */
 public class TethysSwingIconButton
-        extends JButton
-        implements TethysIconButton<Icon> {
+        implements TethysIconButton<JComponent, Icon> {
     /**
-     * Serial Id.
+     * Button.
      */
-    private static final long serialVersionUID = -2570568843335400762L;
+    private final JButton theButton;
 
     /**
      * Constructor.
      * @param pManager the button manager
      */
-    protected TethysSwingIconButton(final TethysIconButtonManager<?, Icon> pManager) {
+    protected TethysSwingIconButton(final TethysIconButtonManager<?, JComponent, Icon> pManager) {
+        /* Create the button */
+        theButton = new JButton();
+
         /* Create style of button */
-        setHorizontalAlignment(SwingConstants.CENTER);
+        theButton.setHorizontalAlignment(SwingConstants.CENTER);
 
         /* Handle action */
-        addActionListener(e -> pManager.progressToNextState());
+        theButton.addActionListener(e -> pManager.progressToNextState());
+    }
+
+    @Override
+    public JButton getButton() {
+        return theButton;
     }
 
     @Override
     public void setButtonState(final Icon pIcon,
                                final String pToolTip) {
         /* Set the icon */
-        setIcon(pIcon);
+        theButton.setIcon(pIcon);
 
         /* Set the ToolTip */
-        setToolTipText(pToolTip);
+        theButton.setToolTipText(pToolTip);
     }
 
     /**
@@ -69,7 +77,7 @@ public class TethysSwingIconButton
      * @param <T> the object type
      */
     public static class TethysSwingSimpleIconButtonManager<T>
-            extends TethysSimpleIconButtonManager<T, Icon> {
+            extends TethysSimpleIconButtonManager<T, JComponent, Icon> {
         /**
          * Constructor.
          */
@@ -82,6 +90,11 @@ public class TethysSwingIconButton
         public TethysSwingIconButton getButton() {
             return (TethysSwingIconButton) super.getButton();
         }
+
+        @Override
+        public JButton getNode() {
+            return (JButton) super.getNode();
+        }
     }
 
     /**
@@ -90,7 +103,7 @@ public class TethysSwingIconButton
      * @param <S> the state
      */
     public static class TethysSwingStateIconButtonManager<T, S>
-            extends TethysStateIconButtonManager<T, S, Icon> {
+            extends TethysStateIconButtonManager<T, S, JComponent, Icon> {
         /**
          * Constructor.
          */

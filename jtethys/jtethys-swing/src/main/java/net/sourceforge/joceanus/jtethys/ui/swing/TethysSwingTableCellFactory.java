@@ -892,7 +892,7 @@ public class TethysSwingTableCellFactory<I, R>
          * Obtain the manager.
          * @return the manager
          */
-        public TethysIconButtonManager<C, Icon> getIconManager() {
+        public TethysIconButtonManager<C, JComponent, Icon> getIconManager() {
             return getControl().getIconManager();
         }
     }

@@ -38,6 +38,7 @@ import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JApplet;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -131,7 +132,7 @@ public class TethysSwingEditUIExample
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper<Icon> theHelper;
+    private final TethysScrollUITestHelper<JComponent, Icon> theHelper;
 
     /**
      * The string edit field.
@@ -263,7 +264,7 @@ public class TethysSwingEditUIExample
      */
     public TethysSwingEditUIExample() {
         /* Create helper */
-        theHelper = new TethysScrollUITestHelper<Icon>();
+        theHelper = new TethysScrollUITestHelper<>();
 
         /* Create formatter */
         TethysDataFormatter myFormatter = new TethysDataFormatter();
@@ -578,7 +579,7 @@ public class TethysSwingEditUIExample
         myPanel.setBorder(BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING));
         myPanel.add(myEditButton);
         myPanel.add(Box.createHorizontalGlue());
-        myPanel.add(myCurrencyMgr.getButton());
+        myPanel.add(myCurrencyMgr.getNode());
 
         /* Return the panel */
         return myPanel;

@@ -314,17 +314,17 @@ public class TethysSwingDemoFilter
         /**
          * Should we show all items.
          */
-        private boolean showAll = false;
+        private boolean showAll;
 
         /**
          * Should we sort items.
          */
-        private boolean sortItems = false;
+        private boolean sortItems;
 
         /**
          * The table filter.
          */
-        private transient TethysSwingTableFilter<RowData> theFilter = null;
+        private transient TethysSwingTableFilter<RowData> theFilter;
 
         /**
          * Constructor.
@@ -356,6 +356,7 @@ public class TethysSwingDemoFilter
          */
         public void registerFilter(final TethysSwingTableFilter<RowData> pFilter) {
             theFilter = pFilter;
+            theFilter.setFilter(this::includeRow);
         }
 
         /**
@@ -408,7 +409,9 @@ public class TethysSwingDemoFilter
          */
         public void setSortItems(final boolean doSort) {
             /* Set the sort details */
-            theFilter.setSortMode(doSort);
+            theFilter.setComparator(doSort
+                                           ? (l, r) -> l.compareTo(r)
+                                           : null);
             sortItems = doSort;
         }
 
@@ -433,8 +436,12 @@ public class TethysSwingDemoFilter
             return theList.get(pRowIndex);
         }
 
-        @Override
-        public boolean includeRow(final RowData pRow) {
+        /**
+         * include the row
+         * @param pRow the row
+         * @return true/false
+         */
+        private boolean includeRow(final RowData pRow) {
             /* Return visibility */
             return showAll
                    || pRow.isVisible();

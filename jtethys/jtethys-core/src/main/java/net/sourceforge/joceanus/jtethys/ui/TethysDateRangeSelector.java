@@ -104,7 +104,7 @@ public abstract class TethysDateRangeSelector<N>
     /**
      * The Period Button.
      */
-    private TethysScrollButtonManager<TethysDatePeriod, ?> thePeriodButton;
+    private TethysScrollButtonManager<TethysDatePeriod, N, ?> thePeriodButton;
 
     /**
      * The Published DateRange.
@@ -180,7 +180,7 @@ public abstract class TethysDateRangeSelector<N>
      * Declare periodButton.
      * @param pButton the periodButton
      */
-    protected void declarePeriodButton(final TethysScrollButtonManager<TethysDatePeriod, ?> pButton) {
+    protected void declarePeriodButton(final TethysScrollButtonManager<TethysDatePeriod, N, ?> pButton) {
         thePeriodButton = pButton;
         buildPeriodMenu(thePeriodButton.getMenu());
         thePeriodButton.getEventRegistrar().addEventListener(e -> setPeriod(e.getDetails(TethysDatePeriod.class)));

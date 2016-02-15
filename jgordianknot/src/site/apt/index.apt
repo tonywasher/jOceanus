@@ -11,7 +11,7 @@ by each key in turn. The types of the keys used are encoded into output cipherte
 initialisation vector (which is shifted differently for each key). 
 
   The last cipher mode is set to SIC mode. All prior modes are set to CBC mode. The first CBC mode is set to use ISO7816-4 padding,
-all others use no padding. 
+all others use no padding. The number of encryption steps is configurable.
 
   A KeySet may be defined by a <<KeySetHash>>. This KeySetHash is built from a password and a randomly selected set of three
 HMac algorithms using a simple variant of PBKDF2. One of the MACs (the secret MAC) is also fed the intermediate results of
@@ -115,6 +115,15 @@ This is built on top of the Java ZipFile support and utilises the encryption fac
 decrypt each file entry. LZMA compression is also provided (based on the 7-Zip LZMA SDK), which provides significantly
 improved compression over the Deflation standard Java method.
 
+  Encryption is performed in a similar fashion to <<KeySet>> encryption, as follows (N = number of configured encryption steps)
+
+     [[1]] Digest is calculated on the plain text
+     [[2]] LZMA compression is performed
+     [[3]] StreamKey encryption is performed
+     [[4]] (N-1)*SymKey CBC encryption (all with ISO7816-4 padding)
+     [[5]] SymKey SIC encryption 
+     [[6]] HMac calculated on encrypted data
+	
   The ZipFile directory is additionally encrypted, so as to restrict information leakage.
 
   Note that updating of ZipFiles is not supported, only creation and extraction.

@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
-import java.awt.Color;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -67,7 +66,6 @@ import net.sourceforge.joceanus.jmetis.MetisLogicException;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.sheet.MetisOasisCellAddress.OasisCellRange;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * The Oasis WorkBook.
@@ -92,6 +90,11 @@ public class MetisOasisWorkBook {
      * Hidden Table style name.
      */
     protected static final String STYLE_HIDDENTABLE = "snHiddenTable";
+
+    /**
+     * negative color (red).
+     */
+    private static final String COLOR_NEG = "#ff0000";
 
     /**
      * left align value.
@@ -705,7 +708,7 @@ public class MetisOasisWorkBook {
                         myNeg = new OdfNumberStyle(theContentDom, myParts[0], myNegName);
                         myPos.setMapNegative(myNegName);
                         myNegStyle = new StyleTextPropertiesElement(theContentDom);
-                        myNegStyle.setFoColorAttribute(TethysDataConverter.colorToHexString(Color.red));
+                        myNegStyle.setFoColorAttribute(COLOR_NEG);
                         myNeg.insertBefore(myNegStyle, myNeg.getFirstChild());
                         theStyles.appendChild(myNeg);
                         theStyles.appendChild(myPos);
@@ -724,7 +727,7 @@ public class MetisOasisWorkBook {
                         myZero.setMapNegative(myNegName);
                         myZero.setMapPositive(myPosName);
                         myNegStyle = new StyleTextPropertiesElement(theContentDom);
-                        myNegStyle.setFoColorAttribute(TethysDataConverter.colorToHexString(Color.red));
+                        myNegStyle.setFoColorAttribute(COLOR_NEG);
                         myNeg.insertBefore(myNegStyle, myNeg.getFirstChild());
                         theStyles.appendChild(myNeg);
                         theStyles.appendChild(myPos);

@@ -36,33 +36,45 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIc
  * Simple button that displays icon.
  */
 public class TethysFXIconButton
-        extends Button
-        implements TethysIconButton<Node> {
+        implements TethysIconButton<Node, Node> {
+    /**
+     * Button.
+     */
+    private final Button theButton;
+
     /**
      * Constructor.
      * @param pManager the button manager
      */
-    protected TethysFXIconButton(final TethysIconButtonManager<?, Node> pManager) {
+    protected TethysFXIconButton(final TethysIconButtonManager<?, Node, Node> pManager) {
+        /* Create the button */
+        theButton = new Button();
+
         /* Create style of button */
-        setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-        setAlignment(Pos.CENTER);
-        setMaxWidth(Double.MAX_VALUE);
+        theButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        theButton.setAlignment(Pos.CENTER);
+        theButton.setMaxWidth(Double.MAX_VALUE);
 
         /* Handle action */
-        setOnAction(e -> pManager.progressToNextState());
+        theButton.setOnAction(e -> pManager.progressToNextState());
+    }
+
+    @Override
+    public Button getButton() {
+        return theButton;
     }
 
     @Override
     public void setButtonState(final Node pIcon,
                                final String pToolTip) {
         /* Set the icon */
-        setGraphic(pIcon);
+        theButton.setGraphic(pIcon);
 
         /* Set the ToolTip */
         Tooltip myToolTip = pToolTip == null
                                              ? null
                                              : new Tooltip(pToolTip);
-        setTooltip(myToolTip);
+        theButton.setTooltip(myToolTip);
     }
 
     /**
@@ -70,7 +82,7 @@ public class TethysFXIconButton
      * @param <T> the object type
      */
     public static class TethysFXSimpleIconButtonManager<T>
-            extends TethysSimpleIconButtonManager<T, Node> {
+            extends TethysSimpleIconButtonManager<T, Node, Node> {
         /**
          * Constructor.
          */
@@ -83,6 +95,11 @@ public class TethysFXIconButton
         public TethysFXIconButton getButton() {
             return (TethysFXIconButton) super.getButton();
         }
+
+        @Override
+        public Button getNode() {
+            return (Button) super.getNode();
+        }
     }
 
     /**
@@ -91,7 +108,7 @@ public class TethysFXIconButton
      * @param <S> the state
      */
     public static class TethysFXStateIconButtonManager<T, S>
-            extends TethysStateIconButtonManager<T, S, Node> {
+            extends TethysStateIconButtonManager<T, S, Node, Node> {
         /**
          * Constructor.
          */

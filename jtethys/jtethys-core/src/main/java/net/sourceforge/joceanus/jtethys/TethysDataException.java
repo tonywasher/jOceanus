@@ -49,4 +49,14 @@ public class TethysDataException
                                final Throwable c) {
         super(s, c);
     }
+
+    /**
+     * Create a new Exception object based on a string and an object.
+     * @param o the associated object
+     * @param s the description of the exception
+     */
+    public TethysDataException(final Object o,
+                               final String s) {
+        super(o, s);
+    }
 }

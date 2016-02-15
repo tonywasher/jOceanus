@@ -288,7 +288,8 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         theModel = pModel;
 
         /* Create the filter and record it */
-        TethysSwingTableFilter<T> myFilter = new TethysSwingTableFilter<>(theModel, true);
+        TethysSwingTableFilter<T> myFilter = new TethysSwingTableFilter<>(theModel);
+        myFilter.setComparator((l, r) -> l.compareTo(r));
         theModel.registerFilter(myFilter);
         setRowSorter(myFilter);
 

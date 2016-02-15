@@ -93,7 +93,7 @@ public class TethysFXScrollUIExample
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper<Node> theHelper;
+    private final TethysScrollUITestHelper<Node, Node> theHelper;
 
     /**
      * The context menu.
@@ -170,7 +170,7 @@ public class TethysFXScrollUIExample
      */
     public TethysFXScrollUIExample() {
         /* Create helper */
-        theHelper = new TethysScrollUITestHelper<Node>();
+        theHelper = new TethysScrollUITestHelper<>();
 
         /* Create resources */
         theContextMenu = new TethysFXScrollContextMenu<String>();
@@ -235,7 +235,7 @@ public class TethysFXScrollUIExample
 
         /* Create scroll button line */
         TethysFXScrollButton myScrollButton = theScrollButtonMgr.getButton();
-        StackPane myControl = TethysFXGuiUtils.getTitledPane("ScrollButton", myScrollButton);
+        StackPane myControl = TethysFXGuiUtils.getTitledPane("ScrollButton", myScrollButton.getButton());
         myControl.setAlignment(Pos.CENTER);
         myControl.setMaxWidth(Double.MAX_VALUE);
         myResult = TethysFXGuiUtils.getTitledPane("ScrollValue", theScrollValue);
@@ -253,7 +253,7 @@ public class TethysFXScrollUIExample
 
         /* Create list button line */
         TethysFXListButton myListButton = theListButtonMgr.getButton();
-        myControl = TethysFXGuiUtils.getTitledPane("ListButton", myListButton);
+        myControl = TethysFXGuiUtils.getTitledPane("ListButton", myListButton.getButton());
         myControl.setAlignment(Pos.CENTER);
         myControl.setMaxWidth(Double.MAX_VALUE);
         myResult = TethysFXGuiUtils.getTitledPane("ListValues", theListValues);
@@ -289,7 +289,7 @@ public class TethysFXScrollUIExample
 
         /* Create simple icon button line */
         TethysFXIconButton myIconButton = theSimpleIconButtonMgr.getButton();
-        myControl = TethysFXGuiUtils.getTitledPane("SimpleIconButton", myIconButton);
+        myControl = TethysFXGuiUtils.getTitledPane("SimpleIconButton", myIconButton.getButton());
         myControl.setAlignment(Pos.CENTER);
         myControl.setMaxWidth(Double.MAX_VALUE);
         myResult = TethysFXGuiUtils.getTitledPane("IconValue", theSimpleIconValue);
@@ -308,7 +308,7 @@ public class TethysFXScrollUIExample
         /* Create state icon button line */
         myIconButton = theStateIconButtonMgr.getButton();
         HBox myBox = new HBox();
-        myBox.getChildren().addAll(theStateButtonMgr.getButton(), myIconButton);
+        myBox.getChildren().addAll(theStateButtonMgr.getNode(), myIconButton.getButton());
         myControl = TethysFXGuiUtils.getTitledPane("StateIconButton", myBox);
         myControl.setAlignment(Pos.CENTER);
         myControl.setMaxWidth(Double.MAX_VALUE);

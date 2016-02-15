@@ -28,19 +28,19 @@ import java.util.Map;
 
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
 
 /**
  * Data object formatting in HTML.
@@ -218,7 +218,7 @@ public final class MetisViewerHTML {
      * @param pFormatter the data formatter
      */
     protected MetisViewerHTML(final MetisFieldConfig pFieldConfig,
-                         final MetisDataFormatter pFormatter) {
+                              final MetisDataFormatter pFormatter) {
         /* Record the formatter */
         theFormatter = pFormatter;
 
@@ -247,7 +247,7 @@ public final class MetisViewerHTML {
 
         /* Define standard font for body and table contents */
         myBuilder.append("body { font-family: Verdana, sans-serif; font-size: 1em; color: ");
-        myBuilder.append(TethysDataConverter.colorToHexString(theColorStandard));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(theColorStandard));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -281,7 +281,7 @@ public final class MetisViewerHTML {
         myBuilder.append(".");
         myBuilder.append(CLASS_CHANGED);
         myBuilder.append(CSS_ITALIC);
-        myBuilder.append(TethysDataConverter.colorToHexString(theColorChanged));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(theColorChanged));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -290,21 +290,21 @@ public final class MetisViewerHTML {
         myBuilder.append(".");
         myBuilder.append(CLASS_SECCHANGED);
         myBuilder.append(" { color: ");
-        myBuilder.append(TethysDataConverter.colorToHexString(theColorChanged));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(theColorChanged));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Set standard link definition */
         myBuilder.append("a { text-decoration: none; color: ");
-        myBuilder.append(TethysDataConverter.colorToHexString(theColorLink));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(theColorLink));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Set hover colour for standard link */
         myBuilder.append("a:hover { color: ");
-        myBuilder.append(TethysDataConverter.colorToHexString(theColorLink.brighter()));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(theColorLink.brighter()));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -313,7 +313,7 @@ public final class MetisViewerHTML {
         myBuilder.append("a.");
         myBuilder.append(CLASS_CHANGED);
         myBuilder.append(CSS_ITALIC);
-        myBuilder.append(TethysDataConverter.colorToHexString(theColorChgLink));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(theColorChgLink));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -322,7 +322,7 @@ public final class MetisViewerHTML {
         myBuilder.append("a.");
         myBuilder.append(CLASS_CHANGED);
         myBuilder.append(":hover { font-style: italic; color: ");
-        myBuilder.append(TethysDataConverter.colorToHexString(theColorChgLink.brighter()));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(theColorChgLink.brighter()));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);

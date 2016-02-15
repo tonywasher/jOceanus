@@ -48,15 +48,17 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * <dd>fired when the dialog is cancelled without a value being selected.
  * </dl>
  * @param <T> the object type
+ * @param <B> the button type
  * @param <I> the Icon type
  */
-public abstract class TethysListButtonManager<T, I>
+public abstract class TethysListButtonManager<T, B, I>
         implements TethysEventProvider<TethysUIEvent> {
     /**
      * List Button.
+     * @param <B> the button type
      * @param <I> the Icon type
      */
-    public interface TethysListButton<I> {
+    public interface TethysListButton<B, I> {
         /**
          * Set the button text.
          * @param pText the button text to set.
@@ -74,6 +76,12 @@ public abstract class TethysListButtonManager<T, I>
          * @param pToolTip the toolTip to set.
          */
         void setButtonToolTip(final String pToolTip);
+
+        /**
+         * Obtain the node.
+         * @return the node.
+         */
+        B getButton();
     }
 
     /**
@@ -89,7 +97,7 @@ public abstract class TethysListButtonManager<T, I>
     /**
      * The Button.
      */
-    private TethysListButton<I> theButton;
+    private TethysListButton<B, I> theButton;
 
     /**
      * The ScrollListMenu.
@@ -106,10 +114,18 @@ public abstract class TethysListButtonManager<T, I>
     }
 
     /**
+     * Obtain Node.
+     * @return the node
+     */
+    public B getNode() {
+        return theButton.getButton();
+    }
+
+    /**
      * Obtain button.
      * @return the button
      */
-    public TethysListButton<I> getButton() {
+    public TethysListButton<B, I> getButton() {
         return theButton;
     }
 
@@ -130,8 +146,7 @@ public abstract class TethysListButtonManager<T, I>
      * Declare button.
      * @param pButton the button
      */
-    protected void declareButton(final TethysListButton<I> pButton) {
-        /* Store the button */
+    protected void declareButton(final TethysListButton<B, I> pButton) {
         theButton = pButton;
     }
 

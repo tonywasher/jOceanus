@@ -38,33 +38,38 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.Teth
  * @author Tony Washer
  */
 public final class TethysFXListButton
-        extends Button
-        implements TethysListButton<Node> {
+        implements TethysListButton<Node, Node> {
+    /**
+     * Button.
+     */
+    private final Button theButton;
+
     /**
      * Constructor.
      * @param pManager the button manager
      */
-    private TethysFXListButton(final TethysListButtonManager<?, Node> pManager) {
+    private TethysFXListButton(final TethysListButtonManager<?, Node, Node> pManager) {
+        /* Create the button */
+        theButton = new Button();
+
         /* Set standard setup */
-        setGraphic(TethysFXArrowIcon.DOWN.getArrow());
-        setAlignment(Pos.CENTER);
-        setContentDisplay(ContentDisplay.RIGHT);
-        setMaxWidth(Double.MAX_VALUE);
+        theButton.setGraphic(TethysFXArrowIcon.DOWN.getArrow());
+        theButton.setAlignment(Pos.CENTER);
+        theButton.setContentDisplay(ContentDisplay.RIGHT);
+        theButton.setMaxWidth(Double.MAX_VALUE);
 
         /* Set action handler */
-        setOnAction(e -> pManager.handleMenuRequest());
+        theButton.setOnAction(e -> pManager.handleMenuRequest());
     }
 
     @Override
     public void setButtonText(final String pText) {
-        /* Set the text */
-        setText(pText);
+        theButton.setText(pText);
     }
 
     @Override
     public void setButtonIcon(final Node pIcon) {
-        /* Set the icon */
-        setGraphic(pIcon);
+        theButton.setGraphic(pIcon);
     }
 
     @Override
@@ -73,7 +78,12 @@ public final class TethysFXListButton
         Tooltip myToolTip = pToolTip == null
                                              ? null
                                              : new Tooltip(pToolTip);
-        setTooltip(myToolTip);
+        theButton.setTooltip(myToolTip);
+    }
+
+    @Override
+    public Button getButton() {
+        return theButton;
     }
 
     /**
@@ -81,7 +91,7 @@ public final class TethysFXListButton
      * @param <T> the object type
      */
     public static final class TethysFXListButtonManager<T>
-            extends TethysListButtonManager<T, Node> {
+            extends TethysListButtonManager<T, Node, Node> {
         /**
          * Constructor.
          */
@@ -101,13 +111,18 @@ public final class TethysFXListButton
         }
 
         @Override
+        public Button getNode() {
+            return (Button) super.getNode();
+        }
+
+        @Override
         public TethysFXScrollContextMenu<T> getMenu() {
             return (TethysFXScrollContextMenu<T>) super.getMenu();
         }
 
         @Override
         protected void showMenu() {
-            getMenu().showMenuAtPosition(getButton(), Side.BOTTOM);
+            getMenu().showMenuAtPosition(getNode(), Side.BOTTOM);
         }
     }
 }

@@ -149,6 +149,7 @@ public abstract class TethysTreeManager<T, N>
             if (isVisible) {
                 /* Attach the root and visible children to the tree */
                 theRoot.attachToTree();
+                applyFocus();
             } else {
                 /* Detach the root and children from the tree */
                 theRoot.detachFromTree();
@@ -191,7 +192,7 @@ public abstract class TethysTreeManager<T, N>
 
         /* If this name already exists */
         if (theItemMap.get(myName) != null) {
-            throw new TethysDataException("Name not unique");
+            throw new TethysDataException(myName, "Name not unique");
         }
 
         /* register item */
@@ -209,6 +210,11 @@ public abstract class TethysTreeManager<T, N>
         /* Remove the name if it exists */
         theItemMap.remove(myName);
     }
+
+    /**
+     * Apply the focus.
+     */
+    protected abstract void applyFocus();
 
     /**
      * Add item to root.
@@ -512,6 +518,11 @@ public abstract class TethysTreeManager<T, N>
             /* Clear the last child */
             theLastChild = null;
         }
+
+        /**
+         * Set focus to this item.
+         */
+        public abstract void setFocus();
 
         @Override
         public String toString() {

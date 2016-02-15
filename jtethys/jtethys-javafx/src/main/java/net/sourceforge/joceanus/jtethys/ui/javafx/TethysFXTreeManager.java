@@ -46,6 +46,11 @@ public class TethysFXTreeManager<T>
     private final TethysFXTreeItem<T> theRoot;
 
     /**
+     * The focused item.
+     */
+    private TethysFXTreeItem<T> theFocusedItem;
+
+    /**
      * Constructor.
      */
     public TethysFXTreeManager() {
@@ -96,26 +101,49 @@ public class TethysFXTreeManager<T>
     public boolean lookUpAndSelectItem(final String pName) {
         /* Look up the item */
         TethysFXTreeItem<T> myItem = lookUpItem(pName);
-        boolean bFound = false;
 
         /* If we found the item */
         if (myItem != null) {
+            /* Set focus on the item */
+            setFocusedItem(myItem);
+        }
+
+        /* Return result */
+        return myItem != null;
+    }
+
+    @Override
+    protected void applyFocus() {
+        if (theFocusedItem != null) {
+            setFocusedItem(theFocusedItem);
+        }
+    }
+
+    /**
+     * Set focused item.
+     * @param pItem the item
+     */
+    private void setFocusedItem(final TethysFXTreeItem<T> pItem) {
+        /* Record the item */
+        theFocusedItem = pItem;
+
+        /* Ensure the visibility */
+        pItem.setVisible(true);
+
+        /* If the tree is visible */
+        if (isVisible()) {
             /* Access parent and ensure that it is expanded */
-            TethysFXTreeNode<T> myParent = myItem.getParent().getNode();
+            TethysFXTreeNode<T> myParent = pItem.getParent().getNode();
             myParent.setExpanded(true);
 
             /* Scroll to the item */
-            TethysFXTreeNode<T> myNode = myItem.getNode();
+            TethysFXTreeNode<T> myNode = pItem.getNode();
             int myIndex = theTree.getRow(myNode);
             theTree.scrollTo(myIndex);
 
             /* Select this item */
             theTree.getSelectionModel().select(myNode);
-            bFound = true;
         }
-
-        /* Return result */
-        return bFound;
     }
 
     @Override
@@ -211,8 +239,13 @@ public class TethysFXTreeManager<T>
             /* handle children */
             super.detachFromTree();
 
+            /* Obtain the parent */
+            TethysFXTreeItem<X> myParent = getParent();
+
             /* Delete reference if we are not root */
-            if (getParent() != null) {
+            if (myParent != null) {
+                /* remove from list of children */
+                myParent.getNode().getChildren().remove(theNode);
                 theNode = null;
             }
         }
@@ -233,6 +266,11 @@ public class TethysFXTreeManager<T>
 
             /* attach all visible children */
             super.attachToTree();
+        }
+
+        @Override
+        public void setFocus() {
+            getTree().setFocusedItem(this);
         }
     }
 

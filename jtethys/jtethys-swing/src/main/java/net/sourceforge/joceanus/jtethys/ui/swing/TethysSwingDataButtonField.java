@@ -25,6 +25,8 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.awt.Font;
 
 import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.jdatebutton.swing.JDateButton;
@@ -78,12 +80,12 @@ public final class TethysSwingDataButtonField {
         /**
          * The icon manager.
          */
-        private final TethysIconButtonManager<T, Icon> theManager;
+        private final TethysIconButtonManager<T, JComponent, Icon> theManager;
 
         /**
          * The button.
          */
-        private final TethysSwingIconButton theButton;
+        private final JButton theButton;
 
         /**
          * Constructor.
@@ -96,9 +98,9 @@ public final class TethysSwingDataButtonField {
          * Constructor.
          * @param pManager the manager
          */
-        public TethysSwingIconButtonField(final TethysIconButtonManager<T, Icon> pManager) {
+        public TethysSwingIconButtonField(final TethysIconButtonManager<T, JComponent, Icon> pManager) {
             /* Initialise underlying class */
-            super((TethysSwingIconButton) pManager.getButton());
+            super(pManager.getNode());
 
             /* Store the manager and button */
             theManager = pManager;
@@ -115,13 +117,13 @@ public final class TethysSwingDataButtonField {
          * Obtain the manager.
          * @return the manager
          */
-        public TethysIconButtonManager<T, Icon> getIconManager() {
+        public TethysIconButtonManager<T, JComponent, Icon> getIconManager() {
             return theManager;
         }
 
         @Override
-        protected TethysSwingIconButton getEditControl() {
-            return (TethysSwingIconButton) super.getEditControl();
+        protected JButton getEditControl() {
+            return (JButton) super.getEditControl();
         }
 
         @Override
@@ -161,7 +163,7 @@ public final class TethysSwingDataButtonField {
         /**
          * The button.
          */
-        private final TethysSwingScrollButton theButton;
+        private final JButton theButton;
 
         /**
          * Are we editing a cell?
@@ -181,11 +183,11 @@ public final class TethysSwingDataButtonField {
          */
         public TethysSwingScrollButtonField(final TethysSwingScrollButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super((TethysSwingScrollButton) pManager.getButton());
+            super(pManager.getNode());
 
             /* Store the manager and button */
             theManager = pManager;
-            theButton = getEditControl();
+            theButton = pManager.getNode();
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(this::handleEvent);
@@ -221,8 +223,8 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        protected TethysSwingScrollButton getEditControl() {
-            return (TethysSwingScrollButton) super.getEditControl();
+        protected JButton getEditControl() {
+            return (JButton) super.getEditControl();
         }
 
         @Override
@@ -239,7 +241,7 @@ public final class TethysSwingDataButtonField {
 
             /* Declare value to the manager */
             theManager.setValue(pValue);
-            getLabel().setText(theManager.getButton().getText());
+            getLabel().setText(theButton.getText());
         }
 
         @Override
@@ -396,7 +398,7 @@ public final class TethysSwingDataButtonField {
         /**
          * The button.
          */
-        private final TethysSwingListButton theButton;
+        private final JButton theButton;
 
         /**
          * Are we editing a cell?
@@ -416,7 +418,7 @@ public final class TethysSwingDataButtonField {
          */
         public TethysSwingListButtonField(final TethysSwingListButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super((TethysSwingListButton) pManager.getButton());
+            super(pManager.getNode());
 
             /* Store the manager and button */
             theManager = pManager;
@@ -456,8 +458,8 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        protected TethysSwingListButton getEditControl() {
-            return (TethysSwingListButton) super.getEditControl();
+        protected JButton getEditControl() {
+            return (JButton) super.getEditControl();
         }
 
         @Override

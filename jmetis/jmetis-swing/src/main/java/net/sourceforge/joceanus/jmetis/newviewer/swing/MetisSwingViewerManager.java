@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jTethys: Java Utilities
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,12 +15,12 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-swing/src/main/java/net/sourceforge/joceanus/jtethys/help/swing/TethysSwingHelpWindow.java $
- * $Revision: 652 $
+ * $URL: http://localhost/svn/Finance/jOceanus/trunk/jmetis/jmetis-core/src/main/java/net/sourceforge/joceanus/jmetis/viewer/MetisViewerManager.java $
+ * $Revision: 655 $
  * $Author: Tony $
- * $Date: 2015-11-24 10:46:21 +0000 (Tue, 24 Nov 2015) $
+ * $Date: 2015-12-02 14:34:04 +0000 (Wed, 02 Dec 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help.swing;
+package net.sourceforge.joceanus.jmetis.newviewer.swing;
 
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -30,18 +30,20 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager.TethysSwingTreeItem;
 
 /**
- * Help Window class, responsible for displaying the help.
+ * JavaSwing Data Viewer Manager.
  */
-public class TethysSwingHelpManager
-        extends TethysHelpManager<JComponent> {
+public class MetisSwingViewerManager
+        extends MetisViewerManager<MetisSwingViewerEntry, JComponent> {
     /**
      * The frame.
      */
@@ -50,24 +52,24 @@ public class TethysSwingHelpManager
     /**
      * The help dialog.
      */
-    private HelpDialog theDialog;
+    private ViewerDialog theDialog;
 
     /**
      * Constructor.
      */
-    public TethysSwingHelpManager() {
+    public MetisSwingViewerManager() {
         /* Initialise underlying class */
         super(new TethysSwingSplitTreeManager<>());
     }
 
     @Override
-    public TethysSwingSplitTreeManager<TethysHelpEntry> getSplitTreeManager() {
-        return (TethysSwingSplitTreeManager<TethysHelpEntry>) super.getSplitTreeManager();
+    public TethysSwingSplitTreeManager<MetisSwingViewerEntry> getSplitTreeManager() {
+        return (TethysSwingSplitTreeManager<MetisSwingViewerEntry>) super.getSplitTreeManager();
     }
 
     @Override
-    public TethysSwingTreeManager<TethysHelpEntry> getTreeManager() {
-        return (TethysSwingTreeManager<TethysHelpEntry>) super.getTreeManager();
+    public TethysSwingTreeManager<MetisSwingViewerEntry> getTreeManager() {
+        return (TethysSwingTreeManager<MetisSwingViewerEntry>) super.getTreeManager();
     }
 
     @Override
@@ -80,7 +82,7 @@ public class TethysSwingHelpManager
         /* If the dialog does not exist */
         if (theDialog == null) {
             /* Create a new dialog */
-            theDialog = new HelpDialog();
+            theDialog = new ViewerDialog();
         }
 
         /* Make sure that the dialog is showing */
@@ -104,10 +106,48 @@ public class TethysSwingHelpManager
         theBaseFrame = pFrame;
     }
 
+    @Override
+    public MetisSwingViewerEntry newEntry(final String pName) throws OceanusException {
+        /* Create the entry */
+        MetisSwingViewerEntry myEntry = new MetisSwingViewerEntry(this, pName);
+
+        /* Define and set the tree entry */
+        TethysSwingTreeManager<MetisSwingViewerEntry> myManager = getTreeManager();
+        TethysSwingTreeItem<MetisSwingViewerEntry> myTreeItem = new TethysSwingTreeItem<>(myManager,
+                myManager.getRoot(), pName, myEntry);
+        myEntry.setTreeItem(myTreeItem);
+
+        /* Return the new entry */
+        return myEntry;
+    }
+
+    @Override
+    public MetisSwingViewerEntry newEntry(final MetisViewerEntry<MetisSwingViewerEntry, JComponent> pParent,
+                                          final String pName) throws OceanusException {
+        /* Access parent and create the entry */
+        MetisSwingViewerEntry myParent = MetisSwingViewerEntry.class.cast(pParent);
+        MetisSwingViewerEntry myEntry = new MetisSwingViewerEntry(this, pName);
+
+        /* Build the new name */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(myParent.getName());
+        myBuilder.append('.');
+        myBuilder.append(pName);
+        String myName = myBuilder.toString();
+
+        /* Define and set the tree entry */
+        TethysSwingTreeItem<MetisSwingViewerEntry> myTreeItem = new TethysSwingTreeItem<>(getTreeManager(),
+                myParent.getTreeItem(), myName, myEntry);
+        myEntry.setTreeItem(myTreeItem);
+
+        /* Return the new entry */
+        return myEntry;
+    }
+
     /**
      * Dialog class.
      */
-    private final class HelpDialog {
+    private final class ViewerDialog {
         /**
          * The frame.
          */
@@ -116,12 +156,12 @@ public class TethysSwingHelpManager
         /**
          * Constructor.
          */
-        private HelpDialog() {
+        private ViewerDialog() {
             /* Create the frame */
             theFrame = new JFrame();
 
             /* Set the title */
-            theFrame.setTitle("Help Manager");
+            theFrame.setTitle("Data Manager");
 
             /* Create the help panel */
             JPanel myPanel = new JPanel();
@@ -134,11 +174,11 @@ public class TethysSwingHelpManager
             theFrame.pack();
 
             /* Change visibility of tree when hiding */
-            theFrame.addWindowListener(new HelpWindowAdapter());
+            theFrame.addWindowListener(new ViewerWindowAdapter());
         }
 
         /**
-         * show the dialog.
+         * Show the dialog.
          */
         private void showDialog() {
             /* If the dialog is not currently showing */
@@ -177,7 +217,7 @@ public class TethysSwingHelpManager
         /**
          * Window adapter class.
          */
-        private class HelpWindowAdapter
+        private class ViewerWindowAdapter
                 extends WindowAdapter {
             @Override
             public void windowClosing(final WindowEvent e) {

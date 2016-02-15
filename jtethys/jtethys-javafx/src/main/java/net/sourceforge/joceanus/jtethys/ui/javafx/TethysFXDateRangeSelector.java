@@ -121,7 +121,7 @@ public class TethysFXDateRangeSelector
 
         /* Create the period button */
         TethysFXScrollButtonManager<TethysDatePeriod> myPeriodButton = new TethysFXScrollButtonManager<>();
-        myPeriodButton.getButton().setMaxHeight(Double.MAX_VALUE);
+        myPeriodButton.getNode().setMaxHeight(Double.MAX_VALUE);
         declarePeriodButton(myPeriodButton);
 
         /* Create the period box */
@@ -129,7 +129,7 @@ public class TethysFXDateRangeSelector
         thePeriodBox = new HBox();
         thePeriodBox.setAlignment(Pos.CENTER);
         thePeriodBox.setSpacing(STRUT_WIDTH);
-        thePeriodBox.getChildren().addAll(myPeriodLabel, myPeriodButton.getButton());
+        thePeriodBox.getChildren().addAll(myPeriodLabel, myPeriodButton.getNode());
 
         /* Create the DateButtons */
         TethysFXDateButtonManager myStartButton = new TethysFXDateButtonManager(pFormatter);

@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
@@ -35,44 +36,48 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * JavaFX Button which provides a PopUpMenu selection.
  */
 public final class TethysSwingScrollButton
-        extends JButton
-        implements TethysScrollButton<Icon> {
+        implements TethysScrollButton<JComponent, Icon> {
     /**
-     * Serial Id.
+     * Button.
      */
-    private static final long serialVersionUID = -483012677041020491L;
+    private final JButton theButton;
 
     /**
      * Constructor.
      * @param pManager the button manager
      */
-    private TethysSwingScrollButton(final TethysScrollButtonManager<?, Icon> pManager) {
+    private TethysSwingScrollButton(final TethysScrollButtonManager<?, JComponent, Icon> pManager) {
+        /* Create the button */
+        theButton = new JButton();
+
         /* Create style of button */
-        setIcon(TethysSwingArrowIcon.DOWN);
-        setHorizontalAlignment(SwingConstants.CENTER);
-        setVerticalAlignment(SwingConstants.CENTER);
-        setHorizontalTextPosition(SwingConstants.LEFT);
+        theButton.setIcon(TethysSwingArrowIcon.DOWN);
+        theButton.setHorizontalAlignment(SwingConstants.CENTER);
+        theButton.setVerticalAlignment(SwingConstants.CENTER);
+        theButton.setHorizontalTextPosition(SwingConstants.LEFT);
 
         /* Set action handler */
-        addActionListener(e -> pManager.handleMenuRequest());
+        theButton.addActionListener(e -> pManager.handleMenuRequest());
     }
 
     @Override
     public void setButtonText(final String pText) {
-        /* Set the text */
-        setText(pText);
+        theButton.setText(pText);
     }
 
     @Override
     public void setButtonIcon(final Icon pIcon) {
-        /* Set the icon */
-        setIcon(pIcon);
+        theButton.setIcon(pIcon);
     }
 
     @Override
     public void setButtonToolTip(final String pToolTip) {
-        /* Set the ToolTip */
-        setToolTipText(pToolTip);
+        theButton.setToolTipText(pToolTip);
+    }
+
+    @Override
+    public JButton getButton() {
+        return theButton;
     }
 
     /**
@@ -80,7 +85,7 @@ public final class TethysSwingScrollButton
      * @param <T> the object type
      */
     public static final class TethysSwingScrollButtonManager<T>
-            extends TethysScrollButtonManager<T, Icon> {
+            extends TethysScrollButtonManager<T, JComponent, Icon> {
         /**
          * Constructor.
          */
@@ -100,13 +105,18 @@ public final class TethysSwingScrollButton
         }
 
         @Override
+        public JButton getNode() {
+            return (JButton) super.getNode();
+        }
+
+        @Override
         public TethysSwingScrollContextMenu<T> getMenu() {
             return (TethysSwingScrollContextMenu<T>) super.getMenu();
         }
 
         @Override
         protected void showMenu() {
-            getMenu().showMenuAtPosition(getButton(), SwingConstants.BOTTOM);
+            getMenu().showMenuAtPosition(getNode(), SwingConstants.BOTTOM);
         }
     }
 }

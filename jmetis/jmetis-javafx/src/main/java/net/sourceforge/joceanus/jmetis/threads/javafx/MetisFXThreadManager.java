@@ -65,7 +65,6 @@ public class MetisFXThreadManager
 
     /**
      * Constructor.
-     * @param pStage the stage
      * @param pViewerManager the viewer manager
      */
     public MetisFXThreadManager(final MetisViewerManager pViewerManager) {

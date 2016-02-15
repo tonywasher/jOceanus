@@ -117,7 +117,7 @@ public abstract class MetisViewerManager {
     }
 
     /**
-     * Create a new entry.
+     * Create a new root entry.
      * @param pName the name of the new entry
      * @return the new entry
      */

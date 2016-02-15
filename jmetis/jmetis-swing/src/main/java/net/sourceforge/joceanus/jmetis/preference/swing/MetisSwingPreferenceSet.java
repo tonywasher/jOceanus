@@ -27,8 +27,8 @@ import java.awt.Font;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceType;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
 
 /**
  * Wrapper class for java preferences.
@@ -197,7 +197,7 @@ public abstract class MetisSwingPreferenceSet
         @Override
         protected void storeThePreference(final Object pNewValue) {
             /* Store the value */
-            storeTheValue(TethysDataConverter.colorToHexString((Color) pNewValue));
+            storeTheValue(TethysSwingGuiUtils.colorToHexString((Color) pNewValue));
         }
     }
 

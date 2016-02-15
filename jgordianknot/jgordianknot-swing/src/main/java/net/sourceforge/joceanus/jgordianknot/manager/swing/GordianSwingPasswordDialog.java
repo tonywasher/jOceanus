@@ -53,12 +53,11 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
  * Dialog to request a password. Will also ask for password confirmation if required.
  */
 public class GordianSwingPasswordDialog
-        extends JDialog
         implements ActionListener {
     /**
-     * Serial version ID.
+     * Dialog.
      */
-    private static final long serialVersionUID = 5867685302365849587L;
+    private final JDialog theDialog;
 
     /**
      * Minimum password length.
@@ -128,12 +127,12 @@ public class GordianSwingPasswordDialog
     /**
      * Obtained password.
      */
-    private transient char[] thePassword = null;
+    private char[] thePassword = null;
 
     /**
      * Confirmation password.
      */
-    private transient char[] theConfirm = null;
+    private char[] theConfirm = null;
 
     /**
      * OK Button.
@@ -185,7 +184,7 @@ public class GordianSwingPasswordDialog
                                       final String pTitle,
                                       final boolean pNeedConfirm) {
         /* Initialise the dialog (this calls dialogInit) */
-        super(pParent, pTitle, true);
+        theDialog = new JDialog(pParent, pTitle, true);
 
         /* Store the parameters */
         needConfirm = pNeedConfirm;
@@ -244,11 +243,11 @@ public class GordianSwingPasswordDialog
         }
 
         /* Set this to be the main panel */
-        getContentPane().add(myPanel);
-        pack();
+        theDialog.add(myPanel);
+        theDialog.pack();
 
         /* Set the relative location */
-        setLocationRelativeTo(pParent);
+        theDialog.setLocationRelativeTo(pParent);
     }
 
     /**
@@ -318,7 +317,7 @@ public class GordianSwingPasswordDialog
             isPasswordSet = true;
 
             /* Close the dialog */
-            setVisible(false);
+            theDialog.setVisible(false);
 
             /* else if this event relates to the Cancel button */
         } else if (theCancelButton.equals(o)) {
@@ -326,7 +325,7 @@ public class GordianSwingPasswordDialog
             isPasswordSet = false;
 
             /* Close the dialog */
-            setVisible(false);
+            theDialog.setVisible(false);
         }
     }
 
@@ -343,7 +342,7 @@ public class GordianSwingPasswordDialog
 
         /* Set the error panel to visible */
         theError.setVisible(true);
-        pack();
+        theDialog.pack();
     }
 
     /**
@@ -351,7 +350,7 @@ public class GordianSwingPasswordDialog
      */
     public void showDialog() {
         /* Show the dialog */
-        setVisible(true);
+        theDialog.setVisible(true);
     }
 
     /**

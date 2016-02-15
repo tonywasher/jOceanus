@@ -42,15 +42,17 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * <dd>fired when the dialog is cancelled without a value being selected.
  * </dl>
  * @param <T> the object type
+ * @param <B> the button type
  * @param <I> the Icon type
  */
-public abstract class TethysScrollButtonManager<T, I>
+public abstract class TethysScrollButtonManager<T, B, I>
         implements TethysEventProvider<TethysUIEvent> {
     /**
      * Scroll Button.
+     * @param <B> the button type
      * @param <I> the Icon type
      */
-    public interface TethysScrollButton<I> {
+    public interface TethysScrollButton<B, I> {
         /**
          * Set the button text.
          * @param pText the button text to set.
@@ -68,6 +70,12 @@ public abstract class TethysScrollButtonManager<T, I>
          * @param pToolTip the toolTip to set.
          */
         void setButtonToolTip(final String pToolTip);
+
+        /**
+         * Obtain the node.
+         * @return the node.
+         */
+        B getButton();
     }
 
     /**
@@ -88,7 +96,7 @@ public abstract class TethysScrollButtonManager<T, I>
     /**
      * The Button.
      */
-    private TethysScrollButton<I> theButton;
+    private TethysScrollButton<B, I> theButton;
 
     /**
      * The ScrollMenu.
@@ -113,10 +121,18 @@ public abstract class TethysScrollButtonManager<T, I>
     }
 
     /**
+     * Obtain Node.
+     * @return the node
+     */
+    public B getNode() {
+        return theButton.getButton();
+    }
+
+    /**
      * Obtain button.
      * @return the button
      */
-    public TethysScrollButton<I> getButton() {
+    public TethysScrollButton<B, I> getButton() {
         return theButton;
     }
 
@@ -137,7 +153,7 @@ public abstract class TethysScrollButtonManager<T, I>
      * Declare button.
      * @param pButton the button
      */
-    protected void declareButton(final TethysScrollButton<I> pButton) {
+    protected void declareButton(final TethysScrollButton<B, I> pButton) {
         /* Store the button */
         theButton = pButton;
     }

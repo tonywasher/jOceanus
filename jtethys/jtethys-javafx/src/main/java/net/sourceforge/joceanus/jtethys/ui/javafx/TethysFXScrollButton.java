@@ -37,33 +37,38 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.Teth
  * JavaFX Button which provides a PopUpMenu selection.
  */
 public final class TethysFXScrollButton
-        extends Button
-        implements TethysScrollButton<Node> {
+        implements TethysScrollButton<Node, Node> {
+    /**
+     * Button.
+     */
+    private final Button theButton;
+
     /**
      * Constructor.
      * @param pManager the button manager
      */
-    private TethysFXScrollButton(final TethysScrollButtonManager<?, Node> pManager) {
+    private TethysFXScrollButton(final TethysScrollButtonManager<?, Node, Node> pManager) {
+        /* Create the button */
+        theButton = new Button();
+
         /* Create style of button */
-        setGraphic(TethysFXArrowIcon.DOWN.getArrow());
-        setAlignment(Pos.CENTER);
-        setContentDisplay(ContentDisplay.RIGHT);
-        setMaxWidth(Double.MAX_VALUE);
+        theButton.setGraphic(TethysFXArrowIcon.DOWN.getArrow());
+        theButton.setAlignment(Pos.CENTER);
+        theButton.setContentDisplay(ContentDisplay.RIGHT);
+        theButton.setMaxWidth(Double.MAX_VALUE);
 
         /* Set action handler */
-        setOnAction(e -> pManager.handleMenuRequest());
+        theButton.setOnAction(e -> pManager.handleMenuRequest());
     }
 
     @Override
     public void setButtonText(final String pText) {
-        /* Set the text */
-        setText(pText);
+        theButton.setText(pText);
     }
 
     @Override
     public void setButtonIcon(final Node pIcon) {
-        /* Set the icon */
-        setGraphic(pIcon);
+        theButton.setGraphic(pIcon);
     }
 
     @Override
@@ -72,7 +77,12 @@ public final class TethysFXScrollButton
         Tooltip myToolTip = pToolTip == null
                                              ? null
                                              : new Tooltip(pToolTip);
-        setTooltip(myToolTip);
+        theButton.setTooltip(myToolTip);
+    }
+
+    @Override
+    public Button getButton() {
+        return theButton;
     }
 
     /**
@@ -80,7 +90,7 @@ public final class TethysFXScrollButton
      * @param <T> the object type
      */
     public static final class TethysFXScrollButtonManager<T>
-            extends TethysScrollButtonManager<T, Node> {
+            extends TethysScrollButtonManager<T, Node, Node> {
         /**
          * Constructor.
          */
@@ -100,13 +110,18 @@ public final class TethysFXScrollButton
         }
 
         @Override
+        public Button getNode() {
+            return (Button) super.getNode();
+        }
+
+        @Override
         public TethysFXScrollContextMenu<T> getMenu() {
             return (TethysFXScrollContextMenu<T>) super.getMenu();
         }
 
         @Override
         protected void showMenu() {
-            getMenu().showMenuAtPosition(getButton(), Side.BOTTOM);
+            getMenu().showMenuAtPosition(getNode(), Side.BOTTOM);
         }
     }
 }

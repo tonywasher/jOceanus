@@ -376,8 +376,8 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
      * @param pClass the item class
      * @return the field
      */
-    public abstract <T> MetisFieldSetScrollItem<T, I> addScrollButtonField(final MetisField pField,
-                                                                           final Class<T> pClass);
+    public abstract <T> MetisFieldSetScrollItem<T, N, I> addScrollButtonField(final MetisField pField,
+                                                                              final Class<T> pClass);
 
     /**
      * Add scrollButton field.
@@ -387,9 +387,9 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
      * @param pClass the item class
      * @return the field
      */
-    public abstract <T> MetisFieldSetScrollItem<T, I> addScrollButtonField(final MetisField pField,
-                                                                           final TethysScrollButtonManager<T, I> pManager,
-                                                                           final Class<T> pClass);
+    public abstract <T> MetisFieldSetScrollItem<T, N, I> addScrollButtonField(final MetisField pField,
+                                                                              final TethysScrollButtonManager<T, N, I> pManager,
+                                                                              final Class<T> pClass);
 
     /**
      * Add listButton field.
@@ -398,8 +398,8 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
      * @param pClass the item class
      * @return the list field
      */
-    public abstract <T> MetisFieldSetListItem<T, I> addListButtonField(final MetisField pField,
-                                                                       final Class<T> pClass);
+    public abstract <T> MetisFieldSetListItem<T, N, I> addListButtonField(final MetisField pField,
+                                                                          final Class<T> pClass);
 
     /**
      * Add listButton field.
@@ -409,9 +409,9 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
      * @param pClass the item class
      * @return the list field
      */
-    public abstract <T> MetisFieldSetListItem<T, I> addListButtonField(final MetisField pField,
-                                                                       final TethysListButtonManager<T, I> pManager,
-                                                                       final Class<T> pClass);
+    public abstract <T> MetisFieldSetListItem<T, N, I> addListButtonField(final MetisField pField,
+                                                                          final TethysListButtonManager<T, N, I> pManager,
+                                                                          final Class<T> pClass);
 
     /**
      * Add iconButton field.
@@ -420,8 +420,8 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
      * @param pClass the item class
      * @return the icon field
      */
-    public abstract <T> MetisFieldSetIconItem<T, I> addIconButtonField(final MetisField pField,
-                                                                       final Class<T> pClass);
+    public abstract <T> MetisFieldSetIconItem<T, N, I> addIconButtonField(final MetisField pField,
+                                                                          final Class<T> pClass);
 
     /**
      * Add iconButton field.
@@ -431,9 +431,9 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
      * @param pClass the item class
      * @return the icon field
      */
-    public abstract <T> MetisFieldSetIconItem<T, I> addIconButtonField(final MetisField pField,
-                                                                       final TethysIconButtonManager<T, I> pManager,
-                                                                       final Class<T> pClass);
+    public abstract <T> MetisFieldSetIconItem<T, N, I> addIconButtonField(final MetisField pField,
+                                                                          final TethysIconButtonManager<T, N, I> pManager,
+                                                                          final Class<T> pClass);
 
     /**
      * Is the panel visible?
@@ -821,42 +821,45 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
     /**
      * ScrollButtonField.
      * @param <T> the item type
+     * @param <N> the node type
      * @param <I> the icon type
      */
     @FunctionalInterface
-    public interface MetisFieldSetScrollItem<T, I> {
+    public interface MetisFieldSetScrollItem<T, N, I> {
         /**
          * Obtain the scroll manager.
          * @return the manager
          */
-        TethysScrollButtonManager<T, I> getManager();
+        TethysScrollButtonManager<T, N, I> getManager();
     }
 
     /**
      * ListButtonField.
      * @param <T> the item type
+     * @param <N> the node type
      * @param <I> the icon type
      */
     @FunctionalInterface
-    public interface MetisFieldSetListItem<T, I> {
+    public interface MetisFieldSetListItem<T, N, I> {
         /**
          * Obtain the list manager.
          * @return the manager
          */
-        TethysListButtonManager<T, I> getManager();
+        TethysListButtonManager<T, N, I> getManager();
     }
 
     /**
      * IconButtonField.
      * @param <T> the item type
+     * @param <N> the node type
      * @param <I> the icon type
      */
     @FunctionalInterface
-    public interface MetisFieldSetIconItem<T, I> {
+    public interface MetisFieldSetIconItem<T, N, I> {
         /**
          * Obtain the icon manager.
          * @return the manager
          */
-        TethysIconButtonManager<T, I> getManager();
+        TethysIconButtonManager<T, N, I> getManager();
     }
 }

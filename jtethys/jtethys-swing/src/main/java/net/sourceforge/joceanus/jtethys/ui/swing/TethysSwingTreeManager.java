@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -51,7 +52,12 @@ public class TethysSwingTreeManager<T>
     /**
      * The treeModel.
      */
-    private final TreeSelectionModel theModel;
+    private final DefaultTreeModel theTreeModel;
+
+    /**
+     * The focused item.
+     */
+    private TethysSwingTreeItem<T> theFocusedItem;
 
     /**
      * Constructor.
@@ -59,18 +65,19 @@ public class TethysSwingTreeManager<T>
     public TethysSwingTreeManager() {
         /* Create the tree */
         theRoot = new TethysSwingTreeItem<>(this);
-        theTree = new JTree(theRoot.getNode());
-        theModel = theTree.getSelectionModel();
+        theTreeModel = new DefaultTreeModel(theRoot.getNode());
+        theTree = new JTree(theTreeModel);
+        TreeSelectionModel mySelectionModel = theTree.getSelectionModel();
         setRoot(theRoot);
 
         /* Configure the tree */
         theTree.setEditable(false);
         theTree.setRootVisible(false);
         theTree.setExpandsSelectedPaths(true);
-        theModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        mySelectionModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         /* Create the listener */
-        theModel.addTreeSelectionListener(e -> fireEvent(TethysUIEvent.NEWVALUE, getSelectedItemFromPath(e.getPath())));
+        mySelectionModel.addTreeSelectionListener(e -> fireEvent(TethysUIEvent.NEWVALUE, getSelectedItemFromPath(e.getPath())));
     }
 
     @Override
@@ -118,19 +125,15 @@ public class TethysSwingTreeManager<T>
     public boolean lookUpAndSelectItem(final String pName) {
         /* Look up the item */
         TethysSwingTreeItem<T> myItem = lookUpItem(pName);
-        boolean bFound = false;
 
         /* If we found the item */
         if (myItem != null) {
-            /* Select this item */
-            TreePath myPath = new TreePath(myItem.getNode().getPath());
-            theTree.setSelectionPath(myPath);
-            theTree.scrollPathToVisible(myPath);
-            bFound = true;
+            /* Set focus on the item */
+            setFocusedItem(myItem);
         }
 
         /* Return result */
-        return bFound;
+        return myItem != null;
     }
 
     @Override
@@ -144,6 +147,33 @@ public class TethysSwingTreeManager<T>
                                                final String pName,
                                                final T pItem) throws OceanusException {
         return new TethysSwingTreeItem<>(this, (TethysSwingTreeItem<T>) pParent, pName, pItem);
+    }
+
+    @Override
+    protected void applyFocus() {
+        if (theFocusedItem != null) {
+            setFocusedItem(theFocusedItem);
+        }
+    }
+
+    /**
+     * Set focused item.
+     * @param pItem the item
+     */
+    private void setFocusedItem(final TethysSwingTreeItem<T> pItem) {
+        /* Record the item */
+        theFocusedItem = pItem;
+
+        /* Ensure the visibility */
+        pItem.setVisible(true);
+
+        /* If the tree is visible */
+        if (isVisible()) {
+            /* Select this item */
+            TreePath myPath = new TreePath(pItem.getNode().getPath());
+            theTree.setSelectionPath(myPath);
+            theTree.scrollPathToVisible(myPath);
+        }
     }
 
     /**
@@ -208,13 +238,17 @@ public class TethysSwingTreeManager<T>
             /* Obtain the parent */
             TethysSwingTreeItem<X> myParent = getParent();
 
+            /* Access the model */
+            DefaultTreeModel myModel = getTree().theTreeModel;
+
             /* If we are not the root */
             if (myParent != null) {
                 /* Create the node */
                 theNode = new TethysSwingTreeNode<>(this);
 
                 /* add to list of children */
-                myParent.getNode().add(theNode);
+                int myNumChildren = myModel.getChildCount(myParent.getNode());
+                myModel.insertNodeInto(theNode, myParent.getNode(), myNumChildren);
             }
 
             /* handle children */
@@ -238,6 +272,8 @@ public class TethysSwingTreeManager<T>
 
             /* Delete reference if we are not root */
             if (getParent() != null) {
+                /* Remove reference */
+                getTree().theTreeModel.removeNodeFromParent(theNode);
                 theNode = null;
             }
         }
@@ -252,12 +288,20 @@ public class TethysSwingTreeManager<T>
 
             /* Ignore if we are the root */
             if (myParent != null) {
+                /* Access the model */
+                DefaultTreeModel myModel = getTree().theTreeModel;
+
                 /* Add at index in list */
-                myParent.getNode().insert(theNode, pChildNo);
+                myModel.insertNodeInto(theNode, myParent.getNode(), pChildNo);
             }
 
             /* attach all visible children */
             super.attachToTree();
+        }
+
+        @Override
+        public void setFocus() {
+            getTree().setFocusedItem(this);
         }
     }
 

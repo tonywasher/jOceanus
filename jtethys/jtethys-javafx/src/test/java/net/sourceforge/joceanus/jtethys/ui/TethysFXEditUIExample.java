@@ -114,7 +114,7 @@ public class TethysFXEditUIExample
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper<Node> theHelper;
+    private final TethysScrollUITestHelper<Node, Node> theHelper;
 
     /**
      * The string edit field.
@@ -246,7 +246,7 @@ public class TethysFXEditUIExample
      */
     public TethysFXEditUIExample() {
         /* Create helper */
-        theHelper = new TethysScrollUITestHelper<Node>();
+        theHelper = new TethysScrollUITestHelper<>();
 
         /* Create formatter */
         TethysDataFormatter myFormatter = new TethysDataFormatter();
@@ -530,7 +530,7 @@ public class TethysFXEditUIExample
         /* Create an HBox for buttons */
         HBox myBox = new HBox();
         myBox.setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
-        myBox.getChildren().addAll(myEditButton, mySpacer, myCurrencyMgr.getButton());
+        myBox.getChildren().addAll(myEditButton, mySpacer, myCurrencyMgr.getNode());
 
         /* Return the pane */
         return myBox;

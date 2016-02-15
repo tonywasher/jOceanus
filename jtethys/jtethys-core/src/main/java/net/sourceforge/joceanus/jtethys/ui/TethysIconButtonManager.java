@@ -39,16 +39,17 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Detail is new value
  * </dl>
  * @param <T> the object type
+ * @param <B> the button type
  * @param <I> the Icon type
  */
-public abstract class TethysIconButtonManager<T, I>
+public abstract class TethysIconButtonManager<T, B, I>
         implements TethysEventProvider<TethysUIEvent> {
     /**
      * Icon Button.
+     * @param <B> the button type
      * @param <I> the Icon type
      */
-    @FunctionalInterface
-    public interface TethysIconButton<I> {
+    public interface TethysIconButton<B, I> {
         /**
          * Set the state.
          * @param pIcon the value to set.
@@ -56,6 +57,12 @@ public abstract class TethysIconButtonManager<T, I>
          */
         void setButtonState(final I pIcon,
                             final String pToolTip);
+
+        /**
+         * Obtain the node.
+         * @return the node.
+         */
+        B getButton();
     }
 
     /**
@@ -71,7 +78,7 @@ public abstract class TethysIconButtonManager<T, I>
     /**
      * The icon button.
      */
-    private TethysIconButton<I> theButton;
+    private TethysIconButton<B, I> theButton;
 
     /**
      * Constructor.
@@ -90,10 +97,18 @@ public abstract class TethysIconButtonManager<T, I>
     }
 
     /**
+     * Obtain Node.
+     * @return the node
+     */
+    public B getNode() {
+        return theButton.getButton();
+    }
+
+    /**
      * Obtain button.
      * @return the button
      */
-    public TethysIconButton<I> getButton() {
+    public TethysIconButton<B, I> getButton() {
         return theButton;
     }
 
@@ -144,7 +159,7 @@ public abstract class TethysIconButtonManager<T, I>
      * Declare button.
      * @param pButton the button
      */
-    protected void declareButton(final TethysIconButton<I> pButton) {
+    protected void declareButton(final TethysIconButton<B, I> pButton) {
         /* Store the button */
         theButton = pButton;
     }
@@ -173,10 +188,11 @@ public abstract class TethysIconButtonManager<T, I>
     /**
      * Simple IconButton Manager.
      * @param <T> the object type
+     * @param <B> the button type
      * @param <I> the Icon type
      */
-    public abstract static class TethysSimpleIconButtonManager<T, I>
-            extends TethysIconButtonManager<T, I> {
+    public abstract static class TethysSimpleIconButtonManager<T, B, I>
+            extends TethysIconButtonManager<T, B, I> {
         /**
          * Active Map Set.
          */
@@ -265,10 +281,11 @@ public abstract class TethysIconButtonManager<T, I>
      * State-based IconButton Manager.
      * @param <T> the object type
      * @param <S> the state
+     * @param <B> the button type
      * @param <I> the Icon type
      */
-    public abstract static class TethysStateIconButtonManager<T, S, I>
-            extends TethysSimpleIconButtonManager<T, I> {
+    public abstract static class TethysStateIconButtonManager<T, S, B, I>
+            extends TethysSimpleIconButtonManager<T, B, I> {
         /**
          * Current state.
          */

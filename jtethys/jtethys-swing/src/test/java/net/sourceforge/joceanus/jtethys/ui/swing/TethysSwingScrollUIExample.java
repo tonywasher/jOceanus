@@ -36,6 +36,7 @@ import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JApplet;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -111,7 +112,7 @@ public class TethysSwingScrollUIExample
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper<Icon> theHelper;
+    private final TethysScrollUITestHelper<JComponent, Icon> theHelper;
 
     /**
      * The popUp menu.
@@ -188,7 +189,7 @@ public class TethysSwingScrollUIExample
      */
     public TethysSwingScrollUIExample() {
         /* Create helper */
-        theHelper = new TethysScrollUITestHelper<Icon>();
+        theHelper = new TethysScrollUITestHelper<>();
 
         /* Create resources */
         theScrollMenu = new TethysSwingScrollContextMenu<String>();
@@ -317,7 +318,7 @@ public class TethysSwingScrollUIExample
         JPanel myScrollArea = new JPanel();
         myScrollArea.setLayout(new BorderLayout());
         myScrollArea.setBorder(BorderFactory.createTitledBorder("ScrollButton"));
-        myScrollArea.add(myScrollButton, BorderLayout.CENTER);
+        myScrollArea.add(myScrollButton.getButton(), BorderLayout.CENTER);
         buildResultLabel(theScrollValue, "ScrollValue");
         myHelper.addFullLabeledRow(myScrollArea, theScrollValue);
         setScrollValue(null);
@@ -333,7 +334,7 @@ public class TethysSwingScrollUIExample
         JPanel myListArea = new JPanel();
         myListArea.setLayout(new BorderLayout());
         myListArea.setBorder(BorderFactory.createTitledBorder("ListButton"));
-        myListArea.add(myListButton, BorderLayout.CENTER);
+        myListArea.add(myListButton.getButton(), BorderLayout.CENTER);
         buildResultLabel(theListValues, "ListValues");
         myHelper.addFullLabeledRow(myListArea, theListValues);
         setListValue(null);
@@ -364,7 +365,7 @@ public class TethysSwingScrollUIExample
         JPanel myIconArea = new JPanel();
         myIconArea.setLayout(new BorderLayout());
         myIconArea.setBorder(BorderFactory.createTitledBorder("SimpleIconButton"));
-        myIconArea.add(myIconButton, BorderLayout.CENTER);
+        myIconArea.add(myIconButton.getButton(), BorderLayout.CENTER);
         buildResultLabel(theSimpleIconValue, "IconValue");
         myHelper.addFullLabeledRow(myIconArea, theSimpleIconValue);
         theHelper.buildSimpleIconState(theSimpleIconButtonMgr,
@@ -380,8 +381,8 @@ public class TethysSwingScrollUIExample
         myIconArea = new JPanel();
         myIconArea.setLayout(new BoxLayout(myIconArea, BoxLayout.X_AXIS));
         myIconArea.setBorder(BorderFactory.createTitledBorder("StateIconButton"));
-        myIconArea.add(theStateButtonMgr.getButton());
-        myIconArea.add(myIconButton);
+        myIconArea.add(theStateButtonMgr.getNode());
+        myIconArea.add(myIconButton.getButton());
         buildResultLabel(theStateIconValue, "StateIconValue");
         myHelper.addFullLabeledRow(myIconArea, theStateIconValue);
         theHelper.buildStateButton(theStateButtonMgr);

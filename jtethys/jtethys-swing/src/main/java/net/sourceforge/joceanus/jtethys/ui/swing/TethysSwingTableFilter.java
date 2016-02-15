@@ -24,10 +24,12 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
@@ -38,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableFilter.TethysSw
  * RowSorter to provide filtering capabilities with natural sorting.
  * @param <T> row data type
  */
-public class TethysSwingTableFilter<T extends Comparable<? super T>>
+public class TethysSwingTableFilter<T>
         extends RowSorter<TethysSwingTableFilterModel<T>> {
     /**
      * Invalid Range error text.
@@ -54,7 +56,7 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
      * Interface for Model.
      * @param <T> the row type
      */
-    public interface TethysSwingTableFilterModel<T extends Comparable<? super T>>
+    public interface TethysSwingTableFilterModel<T>
             extends TableModel {
         /**
          * Obtain the item at the model index.
@@ -62,13 +64,6 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
          * @return the item
          */
         T getItemAtIndex(final int pRowIndex);
-
-        /**
-         * Do we include row in view.
-         * @param pRow the row
-         * @return true/false
-         */
-        boolean includeRow(final T pRow);
     }
 
     /**
@@ -78,13 +73,13 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
 
     /**
      * Row class for data structures.
-     * @param <X> the row type
+     * @param <T> row data type
      */
-    private static final class RowEntry<X extends Comparable<? super X>> {
+    private static final class RowEntry<T> {
         /**
          * The actual Row.
          */
-        private X theRow;
+        private T theRow;
 
         /**
          * The reference index.
@@ -95,7 +90,7 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
          * Constructor.
          * @param pRow the row
          */
-        private RowEntry(final X pRow) {
+        private RowEntry(final T pRow) {
             /* Store parameters */
             theRow = pRow;
             theReference = ROW_FILTERED;
@@ -105,7 +100,7 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
          * Constructor.
          * @param pEntry the entry
          */
-        private RowEntry(final RowEntry<X> pEntry) {
+        private RowEntry(final RowEntry<T> pEntry) {
             /* Store parameters */
             theRow = pEntry.theRow;
             theReference = pEntry.theReference;
@@ -116,7 +111,7 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
          * @param pRow the row
          * @param pReference the reference
          */
-        private RowEntry(final X pRow,
+        private RowEntry(final T pRow,
                          final int pReference) {
             /* Store parameters */
             theRow = pRow;
@@ -124,20 +119,11 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
         }
 
         /**
-         * Compare row using natural order.
-         * @param pThat the row to compare to
-         * @return -1,0,1 as per the order
-         */
-        public int compareRow(final RowEntry<X> pThat) {
-            return theRow.compareTo(pThat.theRow);
-        }
-
-        /**
          * Compare reference.
          * @param pThat the row to compare to
          * @return negative,0,positive as per the order
          */
-        public int compareReference(final RowEntry<X> pThat) {
+        public int compareReference(final RowEntry<T> pThat) {
             return theReference - pThat.theReference;
         }
     }
@@ -148,9 +134,14 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
     private final TethysSwingTableFilterModel<T> theModel;
 
     /**
-     * Are we sorting?
+     * The comparator.
      */
-    private boolean doSort = false;
+    private Comparator<T> theComparator;
+
+    /**
+     * The filter.
+     */
+    private Predicate<T> theFilter;
 
     /**
      * Mapping from View to Model.
@@ -177,29 +168,17 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
      * @param pModel the model
      */
     public TethysSwingTableFilter(final TethysSwingTableFilterModel<T> pModel) {
-        this(pModel, false);
-    }
-
-    /**
-     * Constructor.
-     * @param pModel the model
-     * @param sortEntries do we sort entries? true/false
-     */
-    public TethysSwingTableFilter(final TethysSwingTableFilterModel<T> pModel,
-                                  final boolean sortEntries) {
         theModel = pModel;
-        doSort = sortEntries;
         allRowsChanged();
         theSortList = new ArrayList<>();
     }
 
     /**
      * Obtain reference array from mapping array.
-     * @param <X> the rowType
      * @param pSource the mapping array
      * @return the reference array
      */
-    private static <X extends Comparable<? super X>> int[] getReferenceArray(final RowEntry<X>[] pSource) {
+    private int[] getReferenceArray(final RowEntry<T>[] pSource) {
         /* Allocate new array */
         int iNumRows = pSource.length;
         int[] myArray = new int[iNumRows];
@@ -215,21 +194,20 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
 
     /**
      * Deep clone the array.
-     * @param <X> the rowType
      * @param pSource the mapping array
      * @param pNewLen the new length of the array
      * @return the reference array
      */
-    private static <X extends Comparable<? super X>> RowEntry<X>[] cloneArray(final RowEntry<X>[] pSource,
-                                                                              final int pNewLen) {
+    private RowEntry<T>[] cloneArray(final RowEntry<T>[] pSource,
+                                     final int pNewLen) {
         /* Allocate new array */
         @SuppressWarnings("unchecked")
-        RowEntry<X>[] myArray = (RowEntry<X>[]) new RowEntry[pNewLen];
+        RowEntry<T>[] myArray = (RowEntry<T>[]) new RowEntry[pNewLen];
         int iSrcLen = pSource.length;
 
         /* Loop through the rows copying reference */
         for (int i = 0; i < iSrcLen; i++) {
-            RowEntry<X> myEntry = pSource[i];
+            RowEntry<T> myEntry = pSource[i];
             if (myEntry != null) {
                 myArray[i] = new RowEntry<>(myEntry);
             }
@@ -255,7 +233,7 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
             RowEntry<T> myEntry = new RowEntry<>(myRow);
 
             /* If the row is visible */
-            if (theModel.includeRow(myRow)) {
+            if (includeRow(myRow)) {
                 /* Update view and link arrays */
                 theViewToModel[iView] = new RowEntry<>(myRow, i);
                 myEntry.theReference = iView++;
@@ -276,31 +254,62 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
         }
 
         /* If we are sorting */
-        if (doSort) {
+        if (doSort()) {
             /* Sort the view mapping */
             sortViewToModel(theViewToModel);
         }
     }
 
     /**
-     * Set Sort mode.
-     * @param sortEntries do we sort entries? true/false
+     * Do we include row in view.
+     * @param pRow the row
+     * @return true/false
      */
-    public void setSortMode(final boolean sortEntries) {
-        /* If the mode is changing */
-        if (doSort != sortEntries) {
-            /* Record the mode */
-            doSort = sortEntries;
+    private boolean includeRow(final T pRow) {
+        return theFilter == null
+               || theFilter.test(pRow);
+    }
 
-            /* Record the old reference mapping */
-            theIndexViewToModel = getReferenceArray(theViewToModel);
+    /**
+     * Set Filter.
+     * @param pFilter the filter
+     */
+    public void setFilter(final Predicate<T> pFilter) {
+        /* Record the filter */
+        theFilter = pFilter;
+        newCriteria();
+    }
 
-            /* Rebuild the mappings */
-            allRowsChanged();
+    /**
+     * Are we sorting?
+     * @return true/false
+     */
+    private boolean doSort() {
+        return theComparator != null;
+    }
 
-            /* Report the mapping change */
-            reportMappingChanged();
-        }
+    /**
+     * Set Comparator.
+     * @param pComparator the comparator
+     */
+    public void setComparator(final Comparator<T> pComparator) {
+        /* Record the comparator */
+        theComparator = pComparator;
+        newCriteria();
+    }
+
+    /**
+     * Adjust for new criteria.
+     */
+    private void newCriteria() {
+        /* Record the old reference mapping */
+        theIndexViewToModel = getReferenceArray(theViewToModel);
+
+        /* Rebuild the mappings */
+        allRowsChanged();
+
+        /* Report the mapping change */
+        reportMappingChanged();
     }
 
     @Override
@@ -457,7 +466,7 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
             RowEntry<T> myEntry = new RowEntry<>(myRow);
 
             /* If the row is visible */
-            if (theModel.includeRow(myRow)) {
+            if (includeRow(myRow)) {
                 /* Update view and link arrays */
                 newViewToModel[iView] = new RowEntry<>(myRow, i);
                 myEntry.theReference = iView++;
@@ -512,7 +521,7 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
             T myRow = theModelToView[i].theRow;
 
             /* Determine whether we are now visible */
-            boolean isNowVisible = theModel.includeRow(myRow);
+            boolean isNowVisible = includeRow(myRow);
 
             /* Skip if there is no change */
             if (isCurrVisible == isNowVisible) {
@@ -634,9 +643,9 @@ public class TethysSwingTableFilter<T extends Comparable<? super T>>
      */
     private boolean isCorrectOrder(final RowEntry<T> pFirst,
                                    final RowEntry<T> pSecond) {
-        int iResult = doSort
-                             ? pFirst.compareRow(pSecond)
-                             : pFirst.compareReference(pSecond);
+        int iResult = doSort()
+                               ? theComparator.compare(pFirst.theRow, pSecond.theRow)
+                               : pFirst.compareReference(pSecond);
         return iResult <= 0;
     }
 

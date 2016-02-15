@@ -126,7 +126,7 @@ public class TethysSwingDateRangeSelector
         thePeriodPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         thePeriodPane.add(myPeriodLabel);
         thePeriodPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        thePeriodPane.add(myPeriodButton.getButton());
+        thePeriodPane.add(myPeriodButton.getNode());
         thePeriodPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Create the DateButtons */

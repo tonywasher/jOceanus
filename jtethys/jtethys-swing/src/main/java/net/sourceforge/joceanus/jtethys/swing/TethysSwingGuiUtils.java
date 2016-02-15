@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.swing;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -37,6 +38,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
+
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Simple UI Utilities for Swing.
@@ -328,5 +331,39 @@ public final class TethysSwingGuiUtils {
                                                                                    pSource.height)
                                                                            : pSource;
         return adjustDisplayLocation(myArea, pScreen);
+    }
+
+    /**
+     * format a colour as a hexadecimal string.
+     * @param pValue the long value
+     * @return the string
+     */
+    public static String colorToHexString(final Color pValue) {
+        /* Access the RGB value */
+        int myValue = pValue.getRGB();
+        myValue &= TethysDataConverter.COLOR_MASK;
+
+        /* Allocate the string builder */
+        StringBuilder myBuilder = new StringBuilder();
+
+        /* While we have digits to format */
+        while (myValue > 0) {
+            /* Access the digit and move to next one */
+            int myDigit = myValue & TethysDataConverter.NYBBLE_MASK;
+            char myChar = Character.forDigit(myDigit, TethysDataConverter.HEX_RADIX);
+            myBuilder.insert(0, myChar);
+            myValue >>>= TethysDataConverter.NYBBLE_SHIFT;
+        }
+
+        /* Add zeros to front if less than 6 digits */
+        while (myBuilder.length() < TethysDataConverter.RGB_LENGTH) {
+            myBuilder.insert(0, '0');
+        }
+
+        /* Insert a # sign */
+        myBuilder.insert(0, '#');
+
+        /* Return the string */
+        return myBuilder.toString();
     }
 }

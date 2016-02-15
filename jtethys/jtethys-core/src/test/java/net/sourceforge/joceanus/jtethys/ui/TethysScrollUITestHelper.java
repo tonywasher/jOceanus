@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollS
  * Helper functions for Scroll Examples.
  * @param <I> the icon type
  */
-public class TethysScrollUITestHelper<I> {
+public class TethysScrollUITestHelper<N, I> {
     /**
      * The max items.
      */
@@ -107,7 +107,7 @@ public class TethysScrollUITestHelper<I> {
      * @param pManager the list manager
      * @param pSelected the list of selected items
      */
-    public void buildAvailableItems(final TethysListButtonManager<String, I> pManager,
+    public void buildAvailableItems(final TethysListButtonManager<String, N, I> pManager,
                                     final List<String> pSelected) {
         /* Set the display count */
         pManager.getMenu().setMaxDisplayItems(MAX_ITEMS);
@@ -160,7 +160,7 @@ public class TethysScrollUITestHelper<I> {
      * @param pFalseIcon the icon for the false state
      * @param pTrueIcon the icon for the true state
      */
-    public void buildSimpleIconState(final TethysSimpleIconButtonManager<Boolean, I> pIconManager,
+    public void buildSimpleIconState(final TethysSimpleIconButtonManager<Boolean, N, I> pIconManager,
                                      final I pFalseIcon,
                                      final I pTrueIcon) {
         /* Set the state */
@@ -180,7 +180,7 @@ public class TethysScrollUITestHelper<I> {
      * @param pTrueIcon the icon for the true state
      * @param pAltTrueIcon the icon for the true closed state
      */
-    public void buildStateIconState(final TethysStateIconButtonManager<Boolean, IconState, I> pIconManager,
+    public void buildStateIconState(final TethysStateIconButtonManager<Boolean, IconState, N, I> pIconManager,
                                     final I pFalseIcon,
                                     final I pTrueIcon,
                                     final I pAltTrueIcon) {
@@ -208,7 +208,7 @@ public class TethysScrollUITestHelper<I> {
      * build State button.
      * @param pManager the button manager
      */
-    public void buildStateButton(final TethysScrollButtonManager<IconState, I> pManager) {
+    public void buildStateButton(final TethysScrollButtonManager<IconState, N, I> pManager) {
         TethysScrollMenu<IconState, I> myMenu = pManager.getMenu();
         myMenu.addItem(IconState.OPEN);
         myMenu.addItem(IconState.CLOSED);

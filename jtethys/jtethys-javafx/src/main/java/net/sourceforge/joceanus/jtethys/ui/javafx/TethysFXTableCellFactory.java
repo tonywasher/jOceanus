@@ -836,7 +836,7 @@ public class TethysFXTableCellFactory<I, R>
          * Obtain the manager.
          * @return the manager
          */
-        public TethysIconButtonManager<C, Node> getIconManager() {
+        public TethysIconButtonManager<C, Node, Node> getIconManager() {
             return getField().getIconManager();
         }
     }

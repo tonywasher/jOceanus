@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
 
 /**
  * Build a report document.
@@ -137,7 +137,7 @@ public class SwingHTMLBuilder
         /* Create builder and access zebra colour */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         Color myZebra = theFieldManager.getZebraColor();
-        String myZebraText = TethysDataConverter.colorToHexString(myZebra);
+        String myZebraText = TethysSwingGuiUtils.colorToHexString(myZebra);
 
         /* Define standard font for body and table contents */
         myBuilder.append(ELEMENT_BODY);
@@ -210,7 +210,7 @@ public class SwingHTMLBuilder
         myBuilder.append(CLASS_ALTSUMMROW);
         myBuilder.append(SEP_STARTRULE);
         myBuilder.append(CSS_BACKCOLOR);
-        myBuilder.append(TethysDataConverter.colorToHexString(Color.white));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(Color.white));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -232,7 +232,7 @@ public class SwingHTMLBuilder
         myBuilder.append(CLASS_ALTDTLSUMMROW);
         myBuilder.append(SEP_STARTRULE);
         myBuilder.append(CSS_BACKCOLOR);
-        myBuilder.append(TethysDataConverter.colorToHexString(Color.white));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(Color.white));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -254,7 +254,7 @@ public class SwingHTMLBuilder
         myBuilder.append(CLASS_ALTDTLROW);
         myBuilder.append(SEP_STARTRULE);
         myBuilder.append(CSS_BACKCOLOR);
-        myBuilder.append(TethysDataConverter.colorToHexString(Color.white));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(Color.white));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -275,7 +275,7 @@ public class SwingHTMLBuilder
         myBuilder.append(SEP_STARTRULE);
         myBuilder.append(CSS_ALIGNRIGHT);
         myBuilder.append(CSS_COLOR);
-        myBuilder.append(TethysDataConverter.colorToHexString(Color.blue));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(Color.blue));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -287,7 +287,7 @@ public class SwingHTMLBuilder
         myBuilder.append(SEP_STARTRULE);
         myBuilder.append(CSS_ALIGNRIGHT);
         myBuilder.append(CSS_COLOR);
-        myBuilder.append(TethysDataConverter.colorToHexString(Color.red));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(Color.red));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -299,7 +299,7 @@ public class SwingHTMLBuilder
         myBuilder.append(SEP_STARTRULE);
         myBuilder.append(CSS_ALIGNCENTRE);
         myBuilder.append(CSS_COLOR);
-        myBuilder.append(TethysDataConverter.colorToHexString(Color.black));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(Color.black));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());
@@ -311,7 +311,7 @@ public class SwingHTMLBuilder
         myBuilder.append(CSS_FONTBOLD);
         myBuilder.append(" text-decoration: none;");
         myBuilder.append(CSS_COLOR);
-        myBuilder.append(TethysDataConverter.colorToHexString(Color.blue));
+        myBuilder.append(TethysSwingGuiUtils.colorToHexString(Color.blue));
         myBuilder.append(SEP_ENDATTR);
         myBuilder.append(SEP_ENDRULE);
         pSheet.addRule(myBuilder.toString());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jTethys: Java Utilities
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,14 +15,12 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-swing/src/main/java/net/sourceforge/joceanus/jtethys/help/swing/TethysSwingHelpWindow.java $
- * $Revision: 652 $
+ * $URL: http://localhost/svn/Finance/jOceanus/trunk/jmetis/jmetis-core/src/main/java/net/sourceforge/joceanus/jmetis/viewer/MetisViewerEntry.java $
+ * $Revision: 655 $
  * $Author: Tony $
- * $Date: 2015-11-24 10:46:21 +0000 (Tue, 24 Nov 2015) $
+ * $Date: 2015-12-02 14:34:04 +0000 (Wed, 02 Dec 2015) $
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help;
-
-import java.util.List;
+package net.sourceforge.joceanus.jmetis.newviewer;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
@@ -32,14 +30,14 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager.TethysTreeItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
- * Help Manager class, responsible for displaying the help.
+ * Data Viewer Manager.
+ * @param <T> the item type
  * @param <N> the Node type
  */
-public abstract class TethysHelpManager<N>
+public abstract class MetisViewerManager<T extends MetisViewerEntry<T, N>, N>
         implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Height of the window.
@@ -59,12 +57,12 @@ public abstract class TethysHelpManager<N>
     /**
      * The split tree.
      */
-    private final TethysSplitTreeManager<TethysHelpEntry, N> theSplitTree;
+    private final TethysSplitTreeManager<T, N> theSplitTree;
 
     /**
      * The tree manager.
      */
-    private final TethysTreeManager<TethysHelpEntry, N> theTree;
+    private final TethysTreeManager<T, N> theTree;
 
     /**
      * The HTML manager.
@@ -75,7 +73,7 @@ public abstract class TethysHelpManager<N>
      * Constructor.
      * @param pSplitManager the split tree manager
      */
-    protected TethysHelpManager(final TethysSplitTreeManager<TethysHelpEntry, N> pSplitManager) {
+    protected MetisViewerManager(final TethysSplitTreeManager<T, N> pSplitManager) {
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
@@ -97,7 +95,7 @@ public abstract class TethysHelpManager<N>
      * Obtain the SplitTree Manager.
      * @return the tree manager
      */
-    public TethysSplitTreeManager<TethysHelpEntry, N> getSplitTreeManager() {
+    public TethysSplitTreeManager<T, N> getSplitTreeManager() {
         return theSplitTree;
     }
 
@@ -105,7 +103,7 @@ public abstract class TethysHelpManager<N>
      * Obtain the Tree Manager.
      * @return the tree manager
      */
-    public TethysTreeManager<TethysHelpEntry, N> getTreeManager() {
+    public TethysTreeManager<T, N> getTreeManager() {
         return theTree;
     }
 
@@ -138,26 +136,13 @@ public abstract class TethysHelpManager<N>
     public abstract void hideDialog();
 
     /**
-     * Set the help module.
-     * @param pModule the helpModule
-     * @throws OceanusException on error
-     */
-    public void setModule(final TethysHelpModule pModule) throws OceanusException {
-        /* Access the Help entries and list */
-        List<TethysHelpEntry> myEntries = pModule.getHelpEntries();
-
-        /* Create the tree */
-        createTree(pModule.getTitle(), myEntries);
-    }
-
-    /**
      * Handle the split tree action event.
      * @param pEvent the event
      */
     protected void handleSplitTreeAction(final TethysEvent<TethysUIEvent> pEvent) {
         switch (pEvent.getEventId()) {
             case NEWVALUE:
-                handleNewTreeItem(pEvent.getDetails(TethysHelpEntry.class));
+                // handleNewTreeItem(pEvent.getDetails(TethysHelpEntry.class));
                 break;
             case BUILDPAGE:
             default:
@@ -166,61 +151,20 @@ public abstract class TethysHelpManager<N>
     }
 
     /**
-     * Handle the new tree item.
-     * @param pEntry the new entry
-     */
-    private void handleNewTreeItem(final TethysHelpEntry pEntry) {
-        if (pEntry != null) {
-            String myHtml = pEntry.getHtml();
-            if (myHtml != null) {
-                theHtml.setHTMLContent(myHtml, pEntry.getName());
-            }
-        }
-    }
-
-    /**
-     * Construct a top level Tree Node from a set of help entries.
-     * @param pTitle the title for the tree
-     * @param pEntries the help entries
-     * @return the Tree node
+     * Create a new root entry.
+     * @param pName the name of the new entry
+     * @return the new entry
      * @throws OceanusException on error
      */
-    private TethysTreeItem<TethysHelpEntry, N> createTree(final String pTitle,
-                                                          final List<TethysHelpEntry> pEntries) throws OceanusException {
-        /* Obtain the root node */
-        TethysTreeItem<TethysHelpEntry, N> myRoot = theTree.getRoot();
-        theTree.setRootName(pTitle);
-        theTree.setRootVisible();
-
-        /* Clear existing children */
-        myRoot.removeChildren();
-
-        /* Add the entries into the node */
-        addHelpEntries(myRoot, pEntries);
-
-        /* Return the root */
-        return myRoot;
-    }
+    public abstract T newEntry(final String pName) throws OceanusException;
 
     /**
-     * Add array of Help entries.
-     * @param pParent the parent to add to
-     * @param pEntries the entries to add
+     * Create a new entry under parent.
+     * @param pParent the parent entry
+     * @param pName the name of the new entry
+     * @return the new entry
      * @throws OceanusException on error
      */
-    private void addHelpEntries(final TethysTreeItem<TethysHelpEntry, N> pParent,
-                                final List<TethysHelpEntry> pEntries) throws OceanusException {
-        /* Loop through the entries */
-        for (TethysHelpEntry myEntry : pEntries) {
-            /* Create the entry */
-            TethysTreeItem<TethysHelpEntry, N> myItem = theTree.addChildItem(pParent, myEntry.getName(), myEntry);
-
-            /* If we have children */
-            List<TethysHelpEntry> myChildren = myEntry.getChildren();
-            if (myChildren != null) {
-                /* Add the children into the tree */
-                addHelpEntries(myItem, myChildren);
-            }
-        }
-    }
+    public abstract T newEntry(final MetisViewerEntry<T, N> pParent,
+                               final String pName) throws OceanusException;
 }

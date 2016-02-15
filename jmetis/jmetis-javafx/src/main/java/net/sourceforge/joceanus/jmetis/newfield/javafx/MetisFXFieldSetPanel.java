@@ -185,41 +185,41 @@ public class MetisFXFieldSetPanel
     }
 
     @Override
-    public <T> MetisFXFieldSetScrollItem<T> addScrollButtonField(final MetisField pField,
-                                                                 final Class<T> pClass) {
+    public <X> MetisFXFieldSetScrollItem<X> addScrollButtonField(final MetisField pField,
+                                                                 final Class<X> pClass) {
         return new MetisFXFieldSetScrollItem<>(this, pField, pClass);
     }
 
     @Override
-    public <T> MetisFXFieldSetScrollItem<T> addScrollButtonField(final MetisField pField,
-                                                                 final TethysScrollButtonManager<T, Node> pManager,
-                                                                 final Class<T> pClass) {
-        return new MetisFXFieldSetScrollItem<>(this, pField, pClass, (TethysFXScrollButtonManager<T>) pManager);
+    public <X> MetisFXFieldSetScrollItem<X> addScrollButtonField(final MetisField pField,
+                                                                 final TethysScrollButtonManager<X, Node, Node> pManager,
+                                                                 final Class<X> pClass) {
+        return new MetisFXFieldSetScrollItem<>(this, pField, pClass, (TethysFXScrollButtonManager<X>) pManager);
     }
 
     @Override
-    public <T> MetisFXFieldSetListItem<T> addListButtonField(final MetisField pField,
-                                                             final Class<T> pClass) {
+    public <X> MetisFXFieldSetListItem<X> addListButtonField(final MetisField pField,
+                                                             final Class<X> pClass) {
         return new MetisFXFieldSetListItem<>(this, pField, pClass);
     }
 
     @Override
-    public <T> MetisFXFieldSetListItem<T> addListButtonField(final MetisField pField,
-                                                             final TethysListButtonManager<T, Node> pManager,
-                                                             final Class<T> pClass) {
-        return new MetisFXFieldSetListItem<>(this, pField, pClass, (TethysFXListButtonManager<T>) pManager);
+    public <X> MetisFXFieldSetListItem<X> addListButtonField(final MetisField pField,
+                                                             final TethysListButtonManager<X, Node, Node> pManager,
+                                                             final Class<X> pClass) {
+        return new MetisFXFieldSetListItem<>(this, pField, pClass, (TethysFXListButtonManager<X>) pManager);
     }
 
     @Override
-    public <T> MetisFXFieldSetIconItem<T> addIconButtonField(final MetisField pField,
-                                                             final Class<T> pClass) {
+    public <X> MetisFXFieldSetIconItem<X> addIconButtonField(final MetisField pField,
+                                                             final Class<X> pClass) {
         return new MetisFXFieldSetIconItem<>(this, pField, pClass);
     }
 
     @Override
-    public <T> MetisFXFieldSetIconItem<T> addIconButtonField(final MetisField pField,
-                                                             final TethysIconButtonManager<T, Node> pManager,
-                                                             final Class<T> pClass) {
+    public <X> MetisFXFieldSetIconItem<X> addIconButtonField(final MetisField pField,
+                                                             final TethysIconButtonManager<X, Node, Node> pManager,
+                                                             final Class<X> pClass) {
         return new MetisFXFieldSetIconItem<>(this, pField, pClass, pManager);
     }
 
@@ -352,7 +352,7 @@ public class MetisFXFieldSetPanel
      */
     public static class MetisFXFieldSetScrollItem<T>
             extends MetisFXFieldSetPanelItem<T>
-            implements MetisFieldSetScrollItem<T, Node> {
+            implements MetisFieldSetScrollItem<T, Node, Node> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -398,7 +398,7 @@ public class MetisFXFieldSetPanel
      */
     public static class MetisFXFieldSetListItem<T>
             extends MetisFXFieldSetPanelItem<T>
-            implements MetisFieldSetListItem<T, Node> {
+            implements MetisFieldSetListItem<T, Node, Node> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -444,7 +444,7 @@ public class MetisFXFieldSetPanel
      */
     public static class MetisFXFieldSetIconItem<T>
             extends MetisFXFieldSetPanelItem<T>
-            implements MetisFieldSetIconItem<T, Node> {
+            implements MetisFieldSetIconItem<T, Node, Node> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -468,7 +468,7 @@ public class MetisFXFieldSetPanel
         protected MetisFXFieldSetIconItem(final MetisFXFieldSetPanel pPanel,
                                           final MetisField pField,
                                           final Class<T> pClass,
-                                          final TethysIconButtonManager<T, Node> pManager) {
+                                          final TethysIconButtonManager<T, Node, Node> pManager) {
             /* Initialise underlying class */
             super(pPanel, pField, pClass, false, new TethysFXIconButtonField<T>(pManager));
         }
@@ -479,7 +479,7 @@ public class MetisFXFieldSetPanel
         }
 
         @Override
-        public TethysIconButtonManager<T, Node> getManager() {
+        public TethysIconButtonManager<T, Node, Node> getManager() {
             return getEditField().getIconManager();
         }
     }

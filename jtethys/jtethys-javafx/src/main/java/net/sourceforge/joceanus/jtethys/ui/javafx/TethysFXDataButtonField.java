@@ -25,6 +25,8 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.text.Font;
 import net.sourceforge.jdatebutton.javafx.JDateButton;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -77,12 +79,12 @@ public final class TethysFXDataButtonField {
         /**
          * The icon manager.
          */
-        private final TethysIconButtonManager<T, Node> theManager;
+        private final TethysIconButtonManager<T, Node, Node> theManager;
 
         /**
          * The button.
          */
-        private final TethysFXIconButton theButton;
+        private final Button theButton;
 
         /**
          * The icon.
@@ -100,9 +102,9 @@ public final class TethysFXDataButtonField {
          * Constructor.
          * @param pManager the manager
          */
-        public TethysFXIconButtonField(final TethysIconButtonManager<T, Node> pManager) {
+        public TethysFXIconButtonField(final TethysIconButtonManager<T, Node, Node> pManager) {
             /* Initialise underlying class */
-            super((TethysFXIconButton) pManager.getButton());
+            super((Control) pManager.getNode());
 
             /* Store the manager and button */
             theManager = pManager;
@@ -122,13 +124,13 @@ public final class TethysFXDataButtonField {
          * Obtain the manager.
          * @return the manager
          */
-        public TethysIconButtonManager<T, Node> getIconManager() {
+        public TethysIconButtonManager<T, Node, Node> getIconManager() {
             return theManager;
         }
 
         @Override
-        protected TethysFXIconButton getEditControl() {
-            return (TethysFXIconButton) super.getEditControl();
+        protected Button getEditControl() {
+            return (Button) super.getEditControl();
         }
 
         @Override
@@ -198,7 +200,7 @@ public final class TethysFXDataButtonField {
         /**
          * The button.
          */
-        private final TethysFXScrollButton theButton;
+        private final Button theButton;
 
         /**
          * Are we editing a cell?
@@ -218,7 +220,7 @@ public final class TethysFXDataButtonField {
          */
         public TethysFXScrollButtonField(final TethysFXScrollButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super((TethysFXScrollButton) pManager.getButton());
+            super(pManager.getNode());
 
             /* Store the manager and button */
             theManager = pManager;
@@ -261,8 +263,8 @@ public final class TethysFXDataButtonField {
         }
 
         @Override
-        protected TethysFXScrollButton getEditControl() {
-            return (TethysFXScrollButton) super.getEditControl();
+        protected Button getEditControl() {
+            return (Button) super.getEditControl();
         }
 
         @Override
@@ -279,7 +281,7 @@ public final class TethysFXDataButtonField {
 
             /* Declare value to the manager */
             theManager.setValue(pValue);
-            getLabel().setText(theManager.getButton().getText());
+            getLabel().setText(theButton.getText());
         }
 
         @Override
@@ -439,7 +441,7 @@ public final class TethysFXDataButtonField {
         /**
          * The button.
          */
-        private final TethysFXListButton theButton;
+        private final Button theButton;
 
         /**
          * Are we editing a cell?
@@ -459,7 +461,7 @@ public final class TethysFXDataButtonField {
          */
         public TethysFXListButtonField(final TethysFXListButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super((TethysFXListButton) pManager.getButton());
+            super(pManager.getNode());
 
             /* Store the manager and button */
             theManager = pManager;
@@ -502,8 +504,8 @@ public final class TethysFXDataButtonField {
         }
 
         @Override
-        protected TethysFXListButton getEditControl() {
-            return (TethysFXListButton) super.getEditControl();
+        protected Button getEditControl() {
+            return (Button) super.getEditControl();
         }
 
         @Override

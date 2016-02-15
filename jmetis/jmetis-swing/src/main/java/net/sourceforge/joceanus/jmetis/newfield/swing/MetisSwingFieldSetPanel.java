@@ -183,41 +183,41 @@ public class MetisSwingFieldSetPanel
     }
 
     @Override
-    public <T> MetisSwingFieldSetScrollItem<T> addScrollButtonField(final MetisField pField,
-                                                                    final Class<T> pClass) {
+    public <X> MetisSwingFieldSetScrollItem<X> addScrollButtonField(final MetisField pField,
+                                                                    final Class<X> pClass) {
         return new MetisSwingFieldSetScrollItem<>(this, pField, pClass);
     }
 
     @Override
-    public <T> MetisSwingFieldSetScrollItem<T> addScrollButtonField(final MetisField pField,
-                                                                    final TethysScrollButtonManager<T, Icon> pManager,
-                                                                    final Class<T> pClass) {
-        return new MetisSwingFieldSetScrollItem<>(this, pField, pClass, (TethysSwingScrollButtonManager<T>) pManager);
+    public <X> MetisSwingFieldSetScrollItem<X> addScrollButtonField(final MetisField pField,
+                                                                    final TethysScrollButtonManager<X, JComponent, Icon> pManager,
+                                                                    final Class<X> pClass) {
+        return new MetisSwingFieldSetScrollItem<>(this, pField, pClass, (TethysSwingScrollButtonManager<X>) pManager);
     }
 
     @Override
-    public <T> MetisSwingFieldSetListItem<T> addListButtonField(final MetisField pField,
-                                                                final Class<T> pClass) {
+    public <X> MetisSwingFieldSetListItem<X> addListButtonField(final MetisField pField,
+                                                                final Class<X> pClass) {
         return new MetisSwingFieldSetListItem<>(this, pField, pClass);
     }
 
     @Override
-    public <T> MetisSwingFieldSetListItem<T> addListButtonField(final MetisField pField,
-                                                                final TethysListButtonManager<T, Icon> pManager,
-                                                                final Class<T> pClass) {
-        return new MetisSwingFieldSetListItem<>(this, pField, pClass, (TethysSwingListButtonManager<T>) pManager);
+    public <X> MetisSwingFieldSetListItem<X> addListButtonField(final MetisField pField,
+                                                                final TethysListButtonManager<X, JComponent, Icon> pManager,
+                                                                final Class<X> pClass) {
+        return new MetisSwingFieldSetListItem<>(this, pField, pClass, (TethysSwingListButtonManager<X>) pManager);
     }
 
     @Override
-    public <T> MetisSwingFieldSetIconItem<T> addIconButtonField(final MetisField pField,
-                                                                final Class<T> pClass) {
+    public <X> MetisSwingFieldSetIconItem<X> addIconButtonField(final MetisField pField,
+                                                                final Class<X> pClass) {
         return new MetisSwingFieldSetIconItem<>(this, pField, pClass);
     }
 
     @Override
-    public <T> MetisSwingFieldSetIconItem<T> addIconButtonField(final MetisField pField,
-                                                                final TethysIconButtonManager<T, Icon> pManager,
-                                                                final Class<T> pClass) {
+    public <X> MetisSwingFieldSetIconItem<X> addIconButtonField(final MetisField pField,
+                                                                final TethysIconButtonManager<X, JComponent, Icon> pManager,
+                                                                final Class<X> pClass) {
         return new MetisSwingFieldSetIconItem<>(this, pField, pClass, pManager);
     }
 
@@ -350,7 +350,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetScrollItem<T>
             extends MetisSwingFieldSetPanelItem<T>
-            implements MetisFieldSetScrollItem<T, Icon> {
+            implements MetisFieldSetScrollItem<T, JComponent, Icon> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -396,7 +396,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetListItem<T>
             extends MetisSwingFieldSetPanelItem<T>
-            implements MetisFieldSetListItem<T, Icon> {
+            implements MetisFieldSetListItem<T, JComponent, Icon> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -442,7 +442,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetIconItem<T>
             extends MetisSwingFieldSetPanelItem<T>
-            implements MetisFieldSetIconItem<T, Icon> {
+            implements MetisFieldSetIconItem<T, JComponent, Icon> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -466,7 +466,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetIconItem(final MetisSwingFieldSetPanel pPanel,
                                              final MetisField pField,
                                              final Class<T> pClass,
-                                             final TethysIconButtonManager<T, Icon> pManager) {
+                                             final TethysIconButtonManager<T, JComponent, Icon> pManager) {
             /* Initialise underlying class */
             super(pPanel, pField, pClass, false, new TethysSwingIconButtonField<T>(pManager));
         }
@@ -477,7 +477,7 @@ public class MetisSwingFieldSetPanel
         }
 
         @Override
-        public TethysIconButtonManager<T, Icon> getManager() {
+        public TethysIconButtonManager<T, JComponent, Icon> getManager() {
             return getEditField().getIconManager();
         }
     }

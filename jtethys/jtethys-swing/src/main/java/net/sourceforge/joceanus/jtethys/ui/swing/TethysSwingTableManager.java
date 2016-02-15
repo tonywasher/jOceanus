@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableCell;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableFilter.TethysSwingTableFilterModel;
 
 /**
  * JavaSwing Table manager.
@@ -75,6 +76,16 @@ public class TethysSwingTableManager<I, R>
     private final TethysSwingTableCellFactory<I, R> theCellFactory;
 
     /**
+     * The model.
+     */
+    private final TethysSwingTableModel theModel;
+
+    /**
+     * The sorter.
+     */
+    private final TethysSwingTableFilter<R> theSorter;
+
+    /**
      * The item list.
      */
     private List<R> theItems;
@@ -92,10 +103,12 @@ public class TethysSwingTableManager<I, R>
      */
     public TethysSwingTableManager(final TethysDataFormatter pFormatter) {
         /* Create fields */
-        theTable = new JTable(new TethysSwingTableModel());
+        theModel = new TethysSwingTableModel();
+        theTable = new JTable(theModel);
         theColumns = theTable.getColumnModel();
         theColumnList = new ArrayList<>();
         theCellFactory = new TethysSwingTableCellFactory<>(pFormatter);
+        theSorter = new TethysSwingTableFilter<>(theModel);
 
         /* Listen to factory */
         theCellFactory.getEventRegistrar().addEventListener(this::cascadeEvent);
@@ -108,10 +121,12 @@ public class TethysSwingTableManager<I, R>
 
     @Override
     public void setFilter(final Predicate<R> pFilter) {
+        theSorter.setFilter(pFilter);
     }
 
     @Override
     public void setComparator(final Comparator<R> pComparator) {
+        theSorter.setComparator(pComparator);
     }
 
     @SuppressWarnings("unchecked")
@@ -242,7 +257,8 @@ public class TethysSwingTableManager<I, R>
      * Table Model.
      */
     private class TethysSwingTableModel
-            extends AbstractTableModel {
+            extends AbstractTableModel
+            implements TethysSwingTableFilterModel<R> {
         /**
          * Serial Id.
          */
@@ -275,6 +291,11 @@ public class TethysSwingTableManager<I, R>
         public Object getValueAt(final int pRowIndex,
                                  final int pColIndex) {
             return getIndexedColumn(pColIndex).getCellValue(pRowIndex);
+        }
+
+        @Override
+        public R getItemAtIndex(final int pRowIndex) {
+            return getIndexedRow(pRowIndex);
         }
     }
 
