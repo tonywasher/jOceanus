@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGeneratorCache;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
@@ -52,6 +53,11 @@ public class BouncyKeyGeneratorCache
         throw new IllegalArgumentException();
     }
 
+    @Override
+    protected BouncyKeyPairGenerator getCachedKeyPairGenerator(final GordianAsymKeyType pKeyType) {
+        return (BouncyKeyPairGenerator) super.getCachedKeyPairGenerator(pKeyType);
+    }
+
     /**
      * Cache KeyGenerator.
      * @param <T> the keyType class
@@ -67,5 +73,13 @@ public class BouncyKeyGeneratorCache
         } else if (myKeyType instanceof GordianMacSpec) {
             addToMacKeyCache((BouncyKeyGenerator<GordianMacSpec>) pGenerator);
         }
+    }
+
+    /**
+     * Cache KeyPairGenerator.
+     * @param pGenerator the generator
+     */
+    protected void cacheKeyPairGenerator(final BouncyKeyPairGenerator pGenerator) {
+        addToKeyPairCache(pGenerator);
     }
 }

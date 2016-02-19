@@ -22,53 +22,69 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import java.security.SecureRandom;
 
 /**
- * GordianKnot interface for Message Digests.
+ * GordianKnot interface for KeyPair Generators.
  */
-public interface GordianDigest
-        extends GordianConsumer {
+public abstract class GordianKeyPairGenerator {
     /**
-     * Obtain DigestType.
-     * @return the digest type
+     * The Key Type.
      */
-    GordianDigestType getDigestType();
+    private final GordianAsymKeyType theKeyType;
 
     /**
-     * Obtain the digest size.
-     * @return the digest size
+     * The Security Factory.
      */
-    int getDigestSize();
+    private final GordianFactory theFactory;
 
     /**
-     * Reset the digest.
+     * The Random Generator.
      */
-    void reset();
+    private final SecureRandom theRandom;
 
     /**
-     * Calculate the digest.
-     * @return the digest
+     * Constructor.
+     * @param pFactory the Security Factory
+     * @param pKeyType the keyType
      */
-    byte[] finish();
+    protected GordianKeyPairGenerator(final GordianFactory pFactory,
+                                      final GordianAsymKeyType pKeyType) {
+        /* Store parameters */
+        theKeyType = pKeyType;
+        theFactory = pFactory;
 
-    /**
-     * Calculate the Digest, and return it in the buffer provided.
-     * @param pBuffer the buffer to return the digest in.
-     * @param pOffset the offset in the buffer to store the digest.
-     * @return the number of bytes placed into buffer
-     * @throws OceanusException on error
-     */
-    int finish(final byte[] pBuffer,
-               final int pOffset) throws OceanusException;
-
-    /**
-     * Update the digest, calculate and reset it.
-     * @param pBytes the bytes to update with.
-     * @return the digest
-     */
-    default byte[] finish(final byte[] pBytes) {
-        update(pBytes);
-        return finish();
+        /* Cache some values */
+        theRandom = pFactory.getRandom();
     }
+
+    /**
+     * Obtain keyType.
+     * @return the keyType
+     */
+    public GordianAsymKeyType getKeyType() {
+        return theKeyType;
+    }
+
+    /**
+     * Obtain random generator.
+     * @return the generator
+     */
+    protected SecureRandom getRandom() {
+        return theRandom;
+    }
+
+    /**
+     * Obtain factory.
+     * @return the factory
+     */
+    protected GordianFactory getFactory() {
+        return theFactory;
+    }
+
+    /**
+     * Generate a new KeyPair.
+     * @return the new KeyPair
+     */
+    public abstract GordianKeyPair generateKeyPair();
 }

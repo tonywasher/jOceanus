@@ -40,7 +40,7 @@ public class GordianIOException
      * @param e the underlying exception
      */
     public GordianIOException(final String s,
-                               final Throwable e) {
+                              final Throwable e) {
         super(s, e);
     }
 }

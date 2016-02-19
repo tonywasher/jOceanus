@@ -337,6 +337,14 @@ public abstract class GordianFactory {
     public abstract <T> GordianKeyGenerator<T> getKeyGenerator(final T pKeyType) throws OceanusException;
 
     /**
+     * Obtain keyPair generator.
+     * @param pKeyType the key type
+     * @return the generator
+     * @throws OceanusException on error
+     */
+    public abstract GordianKeyPairGenerator getKeyPairGenerator(final GordianAsymKeyType pKeyType) throws OceanusException;
+
+    /**
      * generate random SymKey.
      * @return the new key
      * @throws OceanusException on error

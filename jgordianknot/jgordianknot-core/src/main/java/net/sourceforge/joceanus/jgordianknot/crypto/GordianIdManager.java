@@ -27,8 +27,8 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Security Id Manager.
@@ -547,7 +547,7 @@ public class GordianIdManager {
      * @param <E> the data type
      * @param pTypes the source types.
      * @param pCount the count of types to be returned
-     * @param pSeed the seed for the digest type
+     * @param pSeed the seed for the types
      * @param pPredicate the predicate to determine whether a type is valid
      * @return the subSet of types
      */

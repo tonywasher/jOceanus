@@ -30,7 +30,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * GordianKnot interface for Message Authentication Codes.
  */
-public abstract class GordianMac {
+public abstract class GordianMac
+        implements GordianConsumer {
     /**
      * MacSpec.
      */
@@ -175,28 +176,6 @@ public abstract class GordianMac {
      */
     public abstract void initMac(final GordianKey<GordianMacSpec> pKey,
                                  final byte[] pIV) throws OceanusException;
-
-    /**
-     * Update the MAC with a portion of a byte array.
-     * @param pBytes the bytes to update with.
-     * @param pOffset the offset of the data within the byte array
-     * @param pLength the length of the data to use
-     */
-    public abstract void update(final byte[] pBytes,
-                                final int pOffset,
-                                final int pLength);
-
-    /**
-     * Update the MAC with a single byte.
-     * @param pByte the byte to update with.
-     */
-    public abstract void update(final byte pByte);
-
-    /**
-     * Update the MAC with a byte array.
-     * @param pBytes the bytes to update with.
-     */
-    public abstract void update(final byte[] pBytes);
 
     /**
      * Reset the MAC.

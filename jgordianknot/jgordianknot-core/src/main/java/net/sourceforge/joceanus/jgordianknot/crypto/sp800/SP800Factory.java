@@ -44,6 +44,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto.sp800;
 
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
@@ -52,8 +53,10 @@ import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropySourceProvider;
 import org.bouncycastle.crypto.prng.drbg.SP80090DRBG;
 
+import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Builder class for SP800 DRBG SecureRandom instances, based on the BouncyCastle Code.
@@ -106,10 +109,10 @@ public final class SP800Factory {
      * Any SecureRandom created from a builder constructed like this will make use of input passed
      * to SecureRandom.setSeed() if the default SecureRandom does for its generateSeed() call.
      * </p>
+     * @throws OceanusException on error
      */
-    public SP800Factory() {
-        /* Use the default Secure Random and no prediction resistance */
-        this(new SecureRandom(), false);
+    public SP800Factory() throws OceanusException {
+        this(getStrongRandom(), false);
     }
 
     /**
@@ -149,6 +152,20 @@ public final class SP800Factory {
      */
     protected SecureRandom getRandom() {
         return theRandom;
+    }
+
+    /**
+     * Access the strong Secure Random.
+     * @return the secure random
+     * @throws OceanusException on error
+     */
+    private static SecureRandom getStrongRandom() throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            return SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            throw new GordianCryptoException("No strong random", e);
+        }
     }
 
     /**

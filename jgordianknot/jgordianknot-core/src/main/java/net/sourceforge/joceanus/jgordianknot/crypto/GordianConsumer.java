@@ -22,53 +22,29 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
-
 /**
- * GordianKnot interface for Message Digests.
+ * GordianKnot interface for Consumers such as Message Digests, Macs and Signatures.
  */
-public interface GordianDigest
-        extends GordianConsumer {
+public interface GordianConsumer {
     /**
-     * Obtain DigestType.
-     * @return the digest type
-     */
-    GordianDigestType getDigestType();
-
-    /**
-     * Obtain the digest size.
-     * @return the digest size
-     */
-    int getDigestSize();
-
-    /**
-     * Reset the digest.
-     */
-    void reset();
-
-    /**
-     * Calculate the digest.
-     * @return the digest
-     */
-    byte[] finish();
-
-    /**
-     * Calculate the Digest, and return it in the buffer provided.
-     * @param pBuffer the buffer to return the digest in.
-     * @param pOffset the offset in the buffer to store the digest.
-     * @return the number of bytes placed into buffer
-     * @throws OceanusException on error
-     */
-    int finish(final byte[] pBuffer,
-               final int pOffset) throws OceanusException;
-
-    /**
-     * Update the digest, calculate and reset it.
+     * Update the consumer with a portion of a byte array.
      * @param pBytes the bytes to update with.
-     * @return the digest
+     * @param pOffset the offset of the data within the byte array
+     * @param pLength the length of the data to use
      */
-    default byte[] finish(final byte[] pBytes) {
-        update(pBytes);
-        return finish();
-    }
+    void update(final byte[] pBytes,
+                final int pOffset,
+                final int pLength);
+
+    /**
+     * Update the consumer with a single byte.
+     * @param pByte the byte to update with.
+     */
+    void update(final byte pByte);
+
+    /**
+     * Update the consumer with a byte array.
+     * @param pBytes the bytes to update with.
+     */
+    void update(final byte[] pBytes);
 }

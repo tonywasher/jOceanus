@@ -38,15 +38,28 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSP800Type;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPublicKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaECDSASigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaECDSAValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRSASigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRSAValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.sp800.SP800Factory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -198,6 +211,20 @@ public final class JcaFactory
     }
 
     @Override
+    public JcaKeyPairGenerator getKeyPairGenerator(final GordianAsymKeyType pKeyType) throws OceanusException {
+        /* Look up in the cache */
+        JcaKeyPairGenerator myGenerator = theGeneratorCache.getCachedKeyPairGenerator(pKeyType);
+        if (myGenerator == null) {
+            /* Create the new generator */
+            myGenerator = getJcaKeyPairGenerator(pKeyType);
+
+            /* Add to cache */
+            theGeneratorCache.cacheKeyPairGenerator(myGenerator);
+        }
+        return myGenerator;
+    }
+
+    @Override
     public JcaCipher<GordianSymKeyType> createSymKeyCipher(final GordianSymKeyType pKeyType,
                                                            final GordianCipherMode pMode,
                                                            final boolean pPadding) throws OceanusException {
@@ -238,6 +265,28 @@ public final class JcaFactory
         /* Create the cipher */
         JcaCipher<GordianSymKeyType> myJcaCipher = createSymKeyCipher(pKeyType, GordianCipherMode.CBC, false);
         return new JcaWrapCipher(this, myJcaCipher);
+    }
+
+    /**
+     * Create signer.
+     * @param pPrivateKey the privateKey
+     * @return the signer
+     * @throws OceanusException on error
+     */
+    public GordianSigner createSigner(final GordianPrivateKey pPrivateKey) throws OceanusException {
+        /* Create the signer */
+        return getJcaSigner((JcaPrivateKey) pPrivateKey);
+    }
+
+    /**
+     * Create validator.
+     * @param pPublicKey the publicKey
+     * @return the validator
+     * @throws OceanusException on error
+     */
+    public GordianValidator createValidator(final GordianPublicKey pPublicKey) throws OceanusException {
+        /* Create the validator */
+        return getJcaValidator((JcaPublicKey) pPublicKey);
     }
 
     /**
@@ -567,6 +616,49 @@ public final class JcaFactory
                 return pKeyType.name();
             default:
                 throw new GordianDataException(getInvalidText(pKeyType));
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyPairGenerator.
+     * @param pKeyType the keyType
+     * @return the KeyGenerator
+     * @throws OceanusException on error
+     */
+    private JcaKeyPairGenerator getJcaKeyPairGenerator(final GordianAsymKeyType pKeyType) throws OceanusException {
+        if (GordianAsymKeyType.RSA.equals(pKeyType)) {
+            return new JcaRSAKeyPairGenerator(this);
+        } else {
+            return new JcaECKeyPairGenerator(this, pKeyType);
+        }
+    }
+
+    /**
+     * Create the BouncyCastle Signer.
+     * @param pPrivateKey the privateKey
+     * @return the Signer
+     * @throws OceanusException on error
+     */
+    private GordianSigner getJcaSigner(final JcaPrivateKey pPrivateKey) throws OceanusException {
+        if (GordianAsymKeyType.RSA.equals(pPrivateKey.getKeyType())) {
+            return new JcaRSASigner(pPrivateKey, getRandom());
+        } else {
+            return new JcaECDSASigner(pPrivateKey, getRandom());
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KEM Sender.
+     * @param pPublicKey the publicKey
+     * @param pDigest the digest
+     * @return the Validator
+     * @throws OceanusException on error
+     */
+    private GordianValidator getJcaValidator(final JcaPublicKey pPublicKey) throws OceanusException {
+        if (GordianAsymKeyType.RSA.equals(pPublicKey.getKeyType())) {
+            return new JcaRSAValidator(pPublicKey);
+        } else {
+            return new JcaECDSAValidator(pPublicKey);
         }
     }
 }
