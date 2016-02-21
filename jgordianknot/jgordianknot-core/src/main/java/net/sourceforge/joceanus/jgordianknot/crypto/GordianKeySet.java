@@ -222,6 +222,42 @@ public final class GordianKeySet {
     }
 
     /**
+     * secure Key.
+     * @param pKey the key to wrap
+     * @return the wrapped key
+     * @throws OceanusException on error
+     */
+    public byte[] secureKey(final GordianPrivateKey pKey) throws OceanusException {
+        /* Generate set of keys */
+        GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, false);
+        GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
+
+        /* Wrap the key */
+        byte[] myBytes = theCipher.wrapKey(myKeyTypes, pKey);
+
+        /* Package and return the encrypted bytes */
+        return myRecipe.buildExternal(theFactory, myBytes);
+    }
+
+    /**
+     * derive Key.
+     * @param pKeySpec the wrapped key
+     * @param pKeyType the key type
+     * @return the key
+     * @throws OceanusException on error
+     */
+    public GordianPrivateKey deriveKey(final byte[] pKeySpec,
+                                       final GordianAsymKeyType pKeyType) throws OceanusException {
+        /* Parse the bytes into the separate parts */
+        GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pKeySpec);
+        GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
+        byte[] myBytes = myRecipe.getBytes();
+
+        /* Unwrap the key and return it */
+        return theCipher.unwrapKey(myKeyTypes, myBytes, pKeyType);
+    }
+
+    /**
      * derive externalId from type.
      * @param <T> the Type class
      * @param pType the type

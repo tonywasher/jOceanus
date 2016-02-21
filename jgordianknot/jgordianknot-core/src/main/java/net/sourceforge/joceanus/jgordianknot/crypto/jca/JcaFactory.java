@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto.jca;
 
+import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
@@ -450,6 +452,44 @@ public final class JcaFactory
         } catch (NoSuchAlgorithmException e) {
             /* Throw the exception */
             throw new GordianCryptoException("Failed to create KeyGenerator", e);
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyPairGenerator via JCA.
+     * @param pAlgorithm the Algorithm
+     * @return the KeyPairGenerator
+     * @throws OceanusException on error
+     */
+    protected static KeyPairGenerator getJavaKeyPairGenerator(final String pAlgorithm) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Return a KeyPairGenerator for the algorithm */
+            return KeyPairGenerator.getInstance(pAlgorithm, BCPROV);
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException e) {
+            /* Throw the exception */
+            throw new GordianCryptoException("Failed to create KeyPairGenerator", e);
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyFactory via JCA.
+     * @param pAlgorithm the Algorithm
+     * @return the KeyFactory
+     * @throws OceanusException on error
+     */
+    protected static KeyFactory getJavaKeyFactory(final String pAlgorithm) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Return a KeyFactory for the algorithm */
+            return KeyFactory.getInstance(pAlgorithm, BCPROV);
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException e) {
+            /* Throw the exception */
+            throw new GordianCryptoException("Failed to create KeyFactory", e);
         }
     }
 

@@ -28,6 +28,7 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPublicKey;
@@ -111,6 +112,34 @@ public class BouncyKeyPair
         protected RSAKeyParameters getPublicKey() {
             return theKey;
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is the same class */
+            if (!(pThat instanceof BouncyRSAPublicKey)) {
+                return false;
+            }
+
+            /* Access the target field */
+            BouncyRSAPublicKey myThat = (BouncyRSAPublicKey) pThat;
+
+            /* Check differences */
+            return theKey.equals(myThat.getPublicKey());
+        }
+
+        @Override
+        public int hashCode() {
+            return GordianFactory.HASH_PRIME * getKeyType().hashCode()
+                   + theKey.hashCode();
+        }
     }
 
     /**
@@ -138,6 +167,34 @@ public class BouncyKeyPair
          */
         protected RSAPrivateCrtKeyParameters getPrivateKey() {
             return theKey;
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is the same class */
+            if (!(pThat instanceof BouncyRSAPrivateKey)) {
+                return false;
+            }
+
+            /* Access the target field */
+            BouncyRSAPrivateKey myThat = (BouncyRSAPrivateKey) pThat;
+
+            /* Check differences */
+            return theKey.equals(myThat.getPrivateKey());
+        }
+
+        @Override
+        public int hashCode() {
+            return GordianFactory.HASH_PRIME * getKeyType().hashCode()
+                   + theKey.hashCode();
         }
     }
 
@@ -169,6 +226,34 @@ public class BouncyKeyPair
         protected ECPublicKeyParameters getPublicKey() {
             return theKey;
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is the same class */
+            if (!(pThat instanceof BouncyECPublicKey)) {
+                return false;
+            }
+
+            /* Access the target field */
+            BouncyECPublicKey myThat = (BouncyECPublicKey) pThat;
+
+            /* Check differences */
+            return theKey.equals(myThat.getPublicKey());
+        }
+
+        @Override
+        public int hashCode() {
+            return GordianFactory.HASH_PRIME * getKeyType().hashCode()
+                   + theKey.hashCode();
+        }
     }
 
     /**
@@ -198,6 +283,34 @@ public class BouncyKeyPair
          */
         protected ECPrivateKeyParameters getPrivateKey() {
             return theKey;
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is the same class */
+            if (!(pThat instanceof BouncyECPrivateKey)) {
+                return false;
+            }
+
+            /* Access the target field */
+            BouncyECPrivateKey myThat = (BouncyECPrivateKey) pThat;
+
+            /* Check differences */
+            return theKey.equals(myThat.getPrivateKey());
+        }
+
+        @Override
+        public int hashCode() {
+            return GordianFactory.HASH_PRIME * getKeyType().hashCode()
+                   + theKey.hashCode();
         }
     }
 }

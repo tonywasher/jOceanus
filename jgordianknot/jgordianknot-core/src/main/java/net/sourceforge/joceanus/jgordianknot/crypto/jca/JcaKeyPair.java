@@ -26,6 +26,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPublicKey;
@@ -83,6 +84,34 @@ public class JcaKeyPair
         protected PublicKey getPublicKey() {
             return theKey;
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is the same class */
+            if (!(pThat instanceof JcaPublicKey)) {
+                return false;
+            }
+
+            /* Access the target field */
+            JcaPublicKey myThat = (JcaPublicKey) pThat;
+
+            /* Check differences */
+            return theKey.equals(myThat.getPublicKey());
+        }
+
+        @Override
+        public int hashCode() {
+            return GordianFactory.HASH_PRIME * getKeyType().hashCode()
+                   + theKey.hashCode();
+        }
     }
 
     /**
@@ -112,6 +141,34 @@ public class JcaKeyPair
          */
         protected PrivateKey getPrivateKey() {
             return theKey;
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is the same class */
+            if (!(pThat instanceof JcaPrivateKey)) {
+                return false;
+            }
+
+            /* Access the target field */
+            JcaPrivateKey myThat = (JcaPrivateKey) pThat;
+
+            /* Check differences */
+            return theKey.equals(myThat.getPrivateKey());
+        }
+
+        @Override
+        public int hashCode() {
+            return GordianFactory.HASH_PRIME * getKeyType().hashCode()
+                   + theKey.hashCode();
         }
     }
 }

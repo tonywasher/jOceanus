@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.security.spec.PKCS8EncodedKeySpec;
+
 import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
@@ -109,6 +111,38 @@ public abstract class GordianWrapCipher {
     public abstract <T> GordianKey<T> unwrapKey(final GordianKey<GordianSymKeyType> pKey,
                                                 final byte[] pBytes,
                                                 final T pKeyType) throws OceanusException;
+
+    /**
+     * Wrap private key.
+     * @param pKey the key to use to wrap the key
+     * @param pKeyToWrap the key to wrap
+     * @return the wrapped bytes
+     * @throws OceanusException on error
+     */
+    public byte[] wrapKey(final GordianKey<GordianSymKeyType> pKey,
+                          final GordianPrivateKey pKeyToWrap) throws OceanusException {
+        /* Access the KeyPair Generator */
+        GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyToWrap.getKeyType());
+        PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyToWrap);
+        return wrapBytes(pKey, myPKCS8Key.getEncoded());
+    }
+
+    /**
+     * unWrap private key.
+     * @param pKey the key to use to unwrap the key
+     * @param pBytes the bytes to unwrap
+     * @param pKeyType the type of key to be unwrapped
+     * @return the unwrapped key
+     * @throws OceanusException on error
+     */
+    public GordianPrivateKey unwrapKey(final GordianKey<GordianSymKeyType> pKey,
+                                       final byte[] pBytes,
+                                       final GordianAsymKeyType pKeyType) throws OceanusException {
+        /* Access the KeyPair Generator */
+        GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyType);
+        byte[] myBytes = unwrapBytes(pKey, pBytes);
+        return myGenerator.derivePrivateKey(new PKCS8EncodedKeySpec(myBytes));
+    }
 
     /**
      * Wrap bytes (based on AESKW).

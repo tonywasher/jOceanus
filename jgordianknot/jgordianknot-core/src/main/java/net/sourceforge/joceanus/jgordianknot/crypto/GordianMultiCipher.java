@@ -538,6 +538,63 @@ public final class GordianMultiCipher {
     }
 
     /**
+     * Wrap key.
+     * @param pKeyTypes the keyTypes
+     * @param pKeyToWrap the key to wrap
+     * @return the wrapped bytes
+     * @throws OceanusException on error
+     */
+    public byte[] wrapKey(final GordianSymKeyType[] pKeyTypes,
+                          final GordianPrivateKey pKeyToWrap) throws OceanusException {
+        /* Check the keys */
+        checkSymKeys(pKeyTypes);
+
+        /* Wrap using first cipher */
+        KeyCiphers myCiphers = getKeyCiphers(pKeyTypes[0]);
+        GordianWrapCipher myCipher = myCiphers.getWrapCipher();
+        byte[] myBytes = myCipher.wrapKey(myCiphers.getKey(), pKeyToWrap);
+
+        /* Loop through the remaining keys */
+        for (int i = 1; i < theNumSteps; i++) {
+            /* Wrap using subsequent cipher */
+            myCiphers = getKeyCiphers(pKeyTypes[i]);
+            myCipher = myCiphers.getWrapCipher();
+            myBytes = myCipher.wrapBytes(myCiphers.getKey(), myBytes);
+        }
+
+        /* return the wrapped key */
+        return myBytes;
+    }
+
+    /**
+     * unWrap key.
+     * @param pKeyTypes the keyTypes
+     * @param pBytes the bytes to unwrap
+     * @param pKeyType the type of key to be unwrapped
+     * @return the unwrapped key
+     * @throws OceanusException on error
+     */
+    public GordianPrivateKey unwrapKey(final GordianSymKeyType[] pKeyTypes,
+                                       final byte[] pBytes,
+                                       final GordianAsymKeyType pKeyType) throws OceanusException {
+        /* Check the keys */
+        checkSymKeys(pKeyTypes);
+
+        /* Loop through the remaining keys */
+        byte[] myBytes = pBytes;
+        for (int i = theNumSteps - 1; i > 0; i--) {
+            KeyCiphers myCiphers = getKeyCiphers(pKeyTypes[i]);
+            GordianWrapCipher myCipher = myCiphers.getWrapCipher();
+            myBytes = myCipher.unwrapBytes(myCiphers.getKey(), myBytes);
+        }
+
+        /* Finally unwrap the key with the first cipher */
+        KeyCiphers myCiphers = getKeyCiphers(pKeyTypes[0]);
+        GordianWrapCipher myCipher = myCiphers.getWrapCipher();
+        return myCipher.unwrapKey(myCiphers.getKey(), myBytes, pKeyType);
+    }
+
+    /**
      * Class to contain the key ciphers.
      */
     private final class KeyCiphers {
