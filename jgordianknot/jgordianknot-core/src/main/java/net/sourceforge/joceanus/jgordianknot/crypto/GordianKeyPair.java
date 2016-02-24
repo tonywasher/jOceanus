@@ -59,7 +59,8 @@ public class GordianKeyPair {
 
         /* Obtain and check keyType */
         theKeyType = pPublic.getKeyType();
-        if (!theKeyType.equals(pPrivate.getKeyType())) {
+        if ((pPrivate != null)
+            && !theKeyType.equals(pPrivate.getKeyType())) {
             throw new IllegalArgumentException("MisMatch on keyTypes");
         }
     }
@@ -70,6 +71,14 @@ public class GordianKeyPair {
      */
     public GordianAsymKeyType getKeyType() {
         return theKeyType;
+    }
+
+    /**
+     * Is only the public key known?
+     * @return the keyType
+     */
+    public boolean isPublicOnly() {
+        return thePrivateKey == null;
     }
 
     /**
@@ -86,5 +95,45 @@ public class GordianKeyPair {
      */
     public GordianPrivateKey getPrivateKey() {
         return thePrivateKey;
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (pThat == this) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is the same class */
+        if (!(pThat instanceof GordianKeyPair)) {
+            return false;
+        }
+
+        /* Access the target field */
+        GordianKeyPair myThat = (GordianKeyPair) pThat;
+
+        /* Check public key */
+        if (!thePublicKey.equals(myThat.getPublicKey())) {
+            return false;
+        }
+
+        /* Check private key */
+        return isPublicOnly()
+                              ? myThat.isPublicOnly()
+                              : thePrivateKey.equals(myThat.getPrivateKey());
+    }
+
+    @Override
+    public int hashCode() {
+        int myHash = isPublicOnly()
+                                    ? 1
+                                    : thePrivateKey.hashCode();
+        myHash *= GordianFactory.HASH_PRIME;
+        myHash += getKeyType().hashCode();
+        myHash *= GordianFactory.HASH_PRIME;
+        return myHash + thePublicKey.hashCode();
     }
 }

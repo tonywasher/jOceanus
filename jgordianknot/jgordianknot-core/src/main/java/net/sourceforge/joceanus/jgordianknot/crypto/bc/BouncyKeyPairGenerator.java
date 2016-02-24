@@ -29,6 +29,7 @@ import java.security.spec.X509EncodedKeySpec;
 
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
@@ -141,7 +142,7 @@ public abstract class BouncyKeyPairGenerator
         @Override
         protected BouncyRSAPrivateKey derivePrivateKey(final PKCS8EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
-                PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncodedKey);
+                PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncodedKey.getEncoded());
                 RSAPrivateKey myKey;
                 myKey = RSAPrivateKey.getInstance(myInfo.parsePrivateKey());
                 RSAPrivateCrtKeyParameters myParms = new RSAPrivateCrtKeyParameters(myKey.getModulus(), myKey.getPublicExponent(), myKey.getPrivateExponent(),
@@ -169,7 +170,7 @@ public abstract class BouncyKeyPairGenerator
         @Override
         public BouncyRSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
-                SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey);
+                SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 RSAPublicKey myKey = RSAPublicKey.getInstance(myInfo.parsePublicKey());
                 RSAKeyParameters myParms = new RSAKeyParameters(false, myKey.getModulus(), myKey.getPublicExponent());
                 return new BouncyRSAPublicKey(myParms);
@@ -235,7 +236,7 @@ public abstract class BouncyKeyPairGenerator
         @Override
         protected BouncyECPrivateKey derivePrivateKey(final PKCS8EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
-                PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncodedKey);
+                PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncodedKey.getEncoded());
                 ECPrivateKey myKey = ECPrivateKey.getInstance(myInfo.parsePrivateKey());
                 ECPrivateKeyParameters myParms = new ECPrivateKeyParameters(myKey.getKey(), theDomain);
                 return new BouncyECPrivateKey(getKeyType(), myParms);
@@ -259,14 +260,10 @@ public abstract class BouncyKeyPairGenerator
 
         @Override
         public BouncyECPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
-            try {
-                SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey);
-                X9ECPoint myKey = new X9ECPoint(theDomain.getCurve(), (ASN1OctetString) myInfo.parsePublicKey());
-                ECPublicKeyParameters myParms = new ECPublicKeyParameters(myKey.getPoint(), theDomain);
-                return new BouncyECPublicKey(getKeyType(), myParms);
-            } catch (IOException e) {
-                throw new GordianCryptoException("Failed to parse encoding", e);
-            }
+            SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
+            X9ECPoint myKey = new X9ECPoint(theDomain.getCurve(), new DEROctetString(myInfo.getPublicKeyData().getBytes()));
+            ECPublicKeyParameters myParms = new ECPublicKeyParameters(myKey.getPoint(), theDomain);
+            return new BouncyECPublicKey(getKeyType(), myParms);
         }
     }
 }

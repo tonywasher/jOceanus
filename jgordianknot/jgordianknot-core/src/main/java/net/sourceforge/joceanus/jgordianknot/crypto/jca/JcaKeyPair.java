@@ -39,6 +39,14 @@ public class JcaKeyPair
     /**
      * Constructor.
      * @param pPublic the public key
+     */
+    protected JcaKeyPair(final JcaPublicKey pPublic) {
+        this(pPublic, null);
+    }
+
+    /**
+     * Constructor.
+     * @param pPublic the public key
      * @param pPrivate the private key
      */
     protected JcaKeyPair(final JcaPublicKey pPublic,

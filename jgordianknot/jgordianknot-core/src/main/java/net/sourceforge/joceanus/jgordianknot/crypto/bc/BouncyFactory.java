@@ -308,26 +308,14 @@ public final class BouncyFactory
         return new BouncyWrapCipher(this, myBCCipher);
     }
 
-    /**
-     * Create signer.
-     * @param pPrivateKey the privateKey
-     * @param pDigestType the digest type
-     * @return the signer
-     * @throws OceanusException on error
-     */
+    @Override
     public GordianSigner createSigner(final GordianPrivateKey pPrivateKey,
                                       final GordianDigestType pDigestType) throws OceanusException {
         /* Create the signer */
         return getBCSigner((BouncyPrivateKey) pPrivateKey, createDigest(pDigestType));
     }
 
-    /**
-     * Create validator.
-     * @param pPublicKey the publicKey
-     * @param pDigestType the digest type
-     * @return the validator
-     * @throws OceanusException on error
-     */
+    @Override
     public GordianValidator createValidator(final GordianPublicKey pPublicKey,
                                             final GordianDigestType pDigestType) throws OceanusException {
         /* Create the validator */

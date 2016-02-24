@@ -269,24 +269,16 @@ public final class JcaFactory
         return new JcaWrapCipher(this, myJcaCipher);
     }
 
-    /**
-     * Create signer.
-     * @param pPrivateKey the privateKey
-     * @return the signer
-     * @throws OceanusException on error
-     */
-    public GordianSigner createSigner(final GordianPrivateKey pPrivateKey) throws OceanusException {
+    @Override
+    public GordianSigner createSigner(final GordianPrivateKey pPrivateKey,
+                                      final GordianDigestType pDigestType) throws OceanusException {
         /* Create the signer */
         return getJcaSigner((JcaPrivateKey) pPrivateKey);
     }
 
-    /**
-     * Create validator.
-     * @param pPublicKey the publicKey
-     * @return the validator
-     * @throws OceanusException on error
-     */
-    public GordianValidator createValidator(final GordianPublicKey pPublicKey) throws OceanusException {
+    @Override
+    public GordianValidator createValidator(final GordianPublicKey pPublicKey,
+                                            final GordianDigestType pDigestType) throws OceanusException {
         /* Create the validator */
         return getJcaValidator((JcaPublicKey) pPublicKey);
     }

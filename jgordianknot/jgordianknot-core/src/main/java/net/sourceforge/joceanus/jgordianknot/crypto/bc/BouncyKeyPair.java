@@ -41,6 +41,14 @@ public class BouncyKeyPair
     /**
      * Constructor.
      * @param pPublic the public key
+     */
+    protected BouncyKeyPair(final BouncyPublicKey pPublic) {
+        this(pPublic, null);
+    }
+
+    /**
+     * Constructor.
+     * @param pPublic the public key
      * @param pPrivate the private key
      */
     protected BouncyKeyPair(final BouncyPublicKey pPublic,
@@ -132,13 +140,25 @@ public class BouncyKeyPair
             BouncyRSAPublicKey myThat = (BouncyRSAPublicKey) pThat;
 
             /* Check differences */
-            return theKey.equals(myThat.getPublicKey());
+            return compareKeys(theKey, myThat.getPublicKey());
         }
 
         @Override
         public int hashCode() {
             return GordianFactory.HASH_PRIME * getKeyType().hashCode()
                    + theKey.hashCode();
+        }
+
+        /**
+         * CompareKeys
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final RSAKeyParameters pFirst,
+                                           final RSAKeyParameters pSecond) {
+            return pFirst.getExponent().equals(pSecond.getExponent())
+                   && pFirst.getModulus().equals(pSecond.getModulus());
         }
     }
 
@@ -188,13 +208,40 @@ public class BouncyKeyPair
             BouncyRSAPrivateKey myThat = (BouncyRSAPrivateKey) pThat;
 
             /* Check differences */
-            return theKey.equals(myThat.getPrivateKey());
+            return compareKeys(theKey, myThat.getPrivateKey());
         }
 
         @Override
         public int hashCode() {
             return GordianFactory.HASH_PRIME * getKeyType().hashCode()
                    + theKey.hashCode();
+        }
+
+        /**
+         * CompareKeys
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final RSAPrivateCrtKeyParameters pFirst,
+                                           final RSAPrivateCrtKeyParameters pSecond) {
+            if (!pFirst.getExponent().equals(pSecond.getExponent())
+                || !pFirst.getModulus().equals(pSecond.getModulus())) {
+                return false;
+            }
+
+            if (!pFirst.getP().equals(pSecond.getP())
+                || !pFirst.getQ().equals(pSecond.getQ())) {
+                return false;
+            }
+
+            if (!pFirst.getDP().equals(pSecond.getDP())
+                || !pFirst.getDQ().equals(pSecond.getDQ())) {
+                return false;
+            }
+
+            return pFirst.getPublicExponent().equals(pSecond.getPublicExponent())
+                   && pFirst.getQInv().equals(pSecond.getQInv());
         }
     }
 
@@ -246,13 +293,25 @@ public class BouncyKeyPair
             BouncyECPublicKey myThat = (BouncyECPublicKey) pThat;
 
             /* Check differences */
-            return theKey.equals(myThat.getPublicKey());
+            return getKeyType().equals(myThat.getKeyType())
+                   && compareKeys(theKey, myThat.getPublicKey());
         }
 
         @Override
         public int hashCode() {
             return GordianFactory.HASH_PRIME * getKeyType().hashCode()
                    + theKey.hashCode();
+        }
+
+        /**
+         * CompareKeys
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final ECPublicKeyParameters pFirst,
+                                           final ECPublicKeyParameters pSecond) {
+            return pFirst.getQ().equals(pSecond.getQ());
         }
     }
 
@@ -304,13 +363,25 @@ public class BouncyKeyPair
             BouncyECPrivateKey myThat = (BouncyECPrivateKey) pThat;
 
             /* Check differences */
-            return theKey.equals(myThat.getPrivateKey());
+            return getKeyType().equals(myThat.getKeyType())
+                   && compareKeys(theKey, myThat.getPrivateKey());
         }
 
         @Override
         public int hashCode() {
             return GordianFactory.HASH_PRIME * getKeyType().hashCode()
                    + theKey.hashCode();
+        }
+
+        /**
+         * CompareKeys
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final ECPrivateKeyParameters pFirst,
+                                           final ECPrivateKeyParameters pSecond) {
+            return pFirst.getD().equals(pSecond.getD());
         }
     }
 }

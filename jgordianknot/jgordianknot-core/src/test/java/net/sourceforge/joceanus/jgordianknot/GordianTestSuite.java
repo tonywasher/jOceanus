@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Provider;
 import java.security.Security;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -39,6 +40,7 @@ import java.util.function.Predicate;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
@@ -47,21 +49,27 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPublicKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Security Test suite.
@@ -276,13 +284,19 @@ public class GordianTestSuite {
         GordianKeySet myKeySet = myHash.getKeySet();
         GordianFactory myFactory = myKeySet.getFactory();
 
-        /* Create new symmetric key and asymmetric Key */
+        /* Create new Asymmetric KeyPair */
+        GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(GordianAsymKeyType.RSA);
+        GordianKeyPair myPair = myGenerator.generateKeyPair();
+
+        /* Create new symmetric key and stream Key */
         GordianKey<GordianSymKeyType> mySym = myFactory.generateRandomSymKey();
         GordianKey<GordianStreamKeyType> myStream = myFactory.generateRandomStreamKey();
 
         /* Secure the keys */
         byte[] mySymSafe = myKeySet.secureKey(mySym);
         byte[] myStreamSafe = myKeySet.secureKey(myStream);
+        byte[] myPrivateSafe = myKeySet.secureKey(myPair.getPrivateKey());
+        X509EncodedKeySpec myPublicSpec = myGenerator.getX509Encoding(myPair.getPublicKey());
 
         /* Encrypt some bytes */
         String myTest = "TestString";
@@ -305,6 +319,12 @@ public class GordianTestSuite {
         byte[] myMacSafe = myKeySet.secureKey(myMac.getKey());
         byte[] myIV = myMac.getInitVector();
         int myMacId = myKeySet.deriveExternalIdForType(myMac.getMacSpec());
+
+        /* Create a signature */
+        GordianSigner mySigner = myFactory.createSigner(myPair.getPrivateKey(), GordianDigestType.SHA2);
+        mySigner.update(mySymSafe);
+        mySigner.update(myStreamSafe);
+        byte[] mySignerBytes = mySigner.sign();
 
         /* Start a new session */
         myManager = theCreator.newSecureManager(myParams);
@@ -343,6 +363,9 @@ public class GordianTestSuite {
         /* Derive the keys */
         GordianKey<GordianSymKeyType> mySym1 = myKeySet1.deriveKey(mySymSafe, mySym.getKeyType());
         GordianKey<GordianStreamKeyType> myStm1 = myKeySet1.deriveKey(myStreamSafe, myStream.getKeyType());
+        myGenerator = myFactory.getKeyPairGenerator(myPair.getKeyType());
+        GordianPrivateKey myPrivate = myKeySet1.deriveKey(myPrivateSafe, myPair.getKeyType());
+        GordianPublicKey myPublic = myGenerator.derivePublicKey(myPublicSpec);
 
         /* Check the keys are the same */
         if (!mySym1.equals(mySym)) {
@@ -350,6 +373,20 @@ public class GordianTestSuite {
         }
         if (!myStm1.equals(myStream)) {
             System.out.println("Failed to decrypt StreamKey");
+        }
+        if (!myPrivate.equals(myPair.getPrivateKey())) {
+            System.out.println("Failed to decrypt PrivateKey");
+        }
+        if (!myPublic.equals(myPair.getPublicKey())) {
+            System.out.println("Failed to decrypt PublicKey");
+        }
+
+        /* Verify a signature */
+        GordianValidator myValidator = myFactory.createValidator(myPair.getPublicKey(), GordianDigestType.SHA2);
+        myValidator.update(mySymSafe);
+        myValidator.update(myStreamSafe);
+        if (!myValidator.verify(mySignerBytes)) {
+            System.out.println("Failed to validate signature");
         }
 
         /* Decrypt the bytes */
@@ -362,7 +399,6 @@ public class GordianTestSuite {
 
     /**
      * List the supported algorithms.
-     * @param pProvider the provider
      */
     protected static void listAlgorithms() {
         Set<String> ciphers = new HashSet<String>();

@@ -450,6 +450,26 @@ public abstract class GordianFactory {
     public abstract GordianWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException;
 
     /**
+     * Create signer.
+     * @param pPrivateKey the privateKey
+     * @param pDigestType the digest type
+     * @return the signer
+     * @throws OceanusException on error
+     */
+    public abstract GordianSigner createSigner(final GordianPrivateKey pPrivateKey,
+                                               final GordianDigestType pDigestType) throws OceanusException;
+
+    /**
+     * Create validator.
+     * @param pPublicKey the publicKey
+     * @param pDigestType the digest type
+     * @return the validator
+     * @throws OceanusException on error
+     */
+    public abstract GordianValidator createValidator(final GordianPublicKey pPublicKey,
+                                                     final GordianDigestType pDigestType) throws OceanusException;
+
+    /**
      * Build Invalid text string.
      * @param pValue the parameter
      * @return the text
