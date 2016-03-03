@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jgordianknot/jgordianknot-swing/src/test/java/net/sourceforge/joceanus/jgordianknot/SecurityTest.java $
- * $Revision: 640 $
- * $Author: Tony $
- * $Date: 2015-08-03 12:06:53 +0100 (Mon, 03 Aug 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 

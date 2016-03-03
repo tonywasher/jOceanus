@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jmoneywise/jmoneywise-core/src/main/java/net/sourceforge/joceanus/jmoneywise/data/Cash.java $
- * $Revision: 607 $
- * $Author: Tony $
- * $Date: 2015-05-07 06:50:36 +0100 (Thu, 07 May 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 

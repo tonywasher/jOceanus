@@ -15,15 +15,12 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-swing/src/test/java/net/sourceforge/joceanus/jtethys/dateday/JDateDayExample.java $
- * $Revision: 580 $
- * $Author: Tony $
- * $Date: 2015-03-25 14:52:24 +0000 (Wed, 25 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -42,7 +39,6 @@ import net.sourceforge.jdatebutton.javafx.JDateButton;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton;
@@ -161,11 +157,6 @@ public class TethysFXScrollUIExample
     private final Label theListValues;
 
     /**
-     * The selected list values.
-     */
-    private final List<String> theSelectedValues;
-
-    /**
      * Constructor.
      */
     public TethysFXScrollUIExample() {
@@ -186,7 +177,6 @@ public class TethysFXScrollUIExample
         theSimpleIconValue = new Label();
         theStateIconValue = new Label();
         theListValues = new Label();
-        theSelectedValues = new ArrayList<String>();
     }
 
     /**
@@ -260,17 +250,14 @@ public class TethysFXScrollUIExample
         theListValues.setAlignment(Pos.CENTER);
         myPane.addRow(myRowNo++, myControl, myResult);
 
-        setListValue(null);
+        theListButtonMgr.setValue(theHelper.buildToggleList(theListButtonMgr));
         theListButtonMgr.getButton().setButtonText("Tag");
-        theListButtonMgr.getMenu().setCloseOnToggle(false);
 
         /* Add listener */
         theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            setListValue(e.getDetails(TethysScrollMenuToggleItem.class));
+            setListValue();
             pStage.sizeToScene();
         });
-        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG,
-                e -> theHelper.buildAvailableItems(theListButtonMgr, theSelectedValues));
 
         /* Create date button line */
         JDateButton myDateButton = theDateButtonMgr.getButton();
@@ -374,15 +361,10 @@ public class TethysFXScrollUIExample
 
     /**
      * Set the list value.
-     * @param pValue the value to set
      */
-    private void setListValue(final TethysScrollMenuToggleItem<?> pValue) {
+    private void setListValue() {
         /* Record the value */
-        if (pValue != null) {
-            String myValue = (String) pValue.getValue();
-            theHelper.adjustSelected(myValue, theSelectedValues);
-        }
-        theListValues.setText(theHelper.formatSelected(theSelectedValues));
+        theListValues.setText(theListButtonMgr.getText());
     }
 
     /**

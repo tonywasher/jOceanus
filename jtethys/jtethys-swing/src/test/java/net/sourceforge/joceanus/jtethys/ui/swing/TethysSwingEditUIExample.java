@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-swing/src/test/java/net/sourceforge/joceanus/jtethys/dateday/JDateDayExample.java $
- * $Revision: 580 $
- * $Author: Tony $
- * $Date: 2015-03-25 14:52:24 +0000 (Wed, 25 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
@@ -63,9 +63,8 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
@@ -505,13 +504,8 @@ public class TethysSwingEditUIExample
         myLabel = new JLabel("ListButton:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theListField.getNode());
-        theListButtonMgr.getMenu().setCloseOnToggle(false);
-        theListField.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theHelper.buildAvailableItems(theListButtonMgr, theSelectedValues));
-        theListField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            setListValue(e.getDetails(TethysScrollMenuToggleItem.class));
-            processActionEvent(theListField, e);
-        });
-        theHelper.adjustSelected("Work", theSelectedValues);
+        theListField.setValue(theHelper.buildToggleList(theListButtonMgr));
+        theListField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theListField, e));
 
         /* Return the panel */
         return myPanel;
@@ -647,18 +641,6 @@ public class TethysSwingEditUIExample
     }
 
     /**
-     * Set the list value.
-     * @param pValue the value to set
-     */
-    private void setListValue(final TethysScrollMenuToggleItem<?> pValue) {
-        /* Record the value */
-        if (pValue != null) {
-            String myValue = (String) pValue.getValue();
-            theHelper.adjustSelected(myValue, theSelectedValues);
-        }
-    }
-
-    /**
      * Set the results.
      * @param pSource the source of the results
      * @param pResults the results
@@ -686,8 +668,8 @@ public class TethysSwingEditUIExample
             theValue.setText(theDecimalFormatter.formatDecimal((TethysDecimal) pResults));
         } else if (pResults instanceof Boolean) {
             theValue.setText(pResults.toString());
-        } else if (pResults instanceof TethysScrollMenuItem) {
-            theValue.setText(((TethysScrollMenuItem<?>) pResults).getText());
+        } else if (pResults instanceof TethysItemList) {
+            theValue.setText(((TethysItemList<?>) pResults).toString());
         } else if (pResults instanceof TethysDate) {
             theValue.setText(theDateFormatter.formatDateDay((TethysDate) pResults));
         } else {

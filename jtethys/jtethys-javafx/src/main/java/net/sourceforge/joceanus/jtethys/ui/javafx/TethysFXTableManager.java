@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/JDateButton/trunk/jdatebutton-javafx/src/main/java/net/sourceforge/jdatebutton/javafx/ArrowIcon.java $
- * $Revision: 573 $
- * $Author: Tony $
- * $Date: 2015-03-03 17:54:12 +0000 (Tue, 03 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 
 /**
@@ -578,7 +579,7 @@ public class TethysFXTableManager<I, R>
      * @param <C> the column type
      */
     public static class TethysFXTableListColumn<I, R, C>
-            extends TethysFXTableColumn<I, R, C> {
+            extends TethysFXTableColumn<I, R, TethysItemList<C>> {
         /**
          * Constructor.
          * @param pTable the table

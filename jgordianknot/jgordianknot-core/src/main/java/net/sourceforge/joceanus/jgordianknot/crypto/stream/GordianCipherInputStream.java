@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jgordianknot/src/main/java/net/sourceforge/joceanus/jgordianknot/zip/EncryptionOutputStream.java $
- * $Revision: 570 $
- * $Author: Tony $
- * $Date: 2015-02-14 06:54:38 +0000 (Sat, 14 Feb 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto.stream;
 

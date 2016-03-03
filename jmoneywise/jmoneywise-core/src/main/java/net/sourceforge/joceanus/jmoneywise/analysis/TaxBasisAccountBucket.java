@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jmoneywise/jmoneywise-core/src/main/java/net/sourceforge/joceanus/jmoneywise/analysis/TaxBasisBucket.java $
- * $Revision: 595 $
- * $Author: Tony $
- * $Date: 2015-04-14 13:17:38 +0100 (Tue, 14 Apr 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 

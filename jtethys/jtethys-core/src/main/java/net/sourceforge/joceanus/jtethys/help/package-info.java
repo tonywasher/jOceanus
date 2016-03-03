@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-swing/src/main/java/net/sourceforge/joceanus/jtethys/help/swing/package-info.java $
- * $Revision: 578 $
- * $Author: Tony $
- * $Date: 2015-03-23 20:51:40 +0000 (Mon, 23 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 
 /**

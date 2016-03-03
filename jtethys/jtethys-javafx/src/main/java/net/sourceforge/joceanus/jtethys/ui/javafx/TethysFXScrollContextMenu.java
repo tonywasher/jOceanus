@@ -19,10 +19,10 @@
  * under the Apache 2.0 license
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/src/main/java/net/sourceforge/joceanus/jtethys/swing/JScrollPopupMenu.java $
- * $Revision: 570 $
- * $Author: Tony $
- * $Date: 2015-02-14 06:54:38 +0000 (Sat, 14 Feb 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 

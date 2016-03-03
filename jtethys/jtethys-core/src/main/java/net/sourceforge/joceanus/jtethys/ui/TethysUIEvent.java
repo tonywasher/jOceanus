@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-core/src/main/java/net/sourceforge/joceanus/jtethys/event/TethysEventRegistration.java $
- * $Revision: 654 $
- * $Author: Tony $
- * $Date: 2015-12-01 15:49:07 +0000 (Tue, 01 Dec 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 

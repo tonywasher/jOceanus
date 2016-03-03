@@ -15,16 +15,14 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-swing/src/test/java/net/sourceforge/joceanus/jtethys/dateday/JDateDayExample.java $
- * $Revision: 580 $
- * $Author: Tony $
- * $Date: 2015-03-25 14:52:24 +0000 (Wed, 25 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
-import java.util.ArrayList;
 import java.util.Currency;
-import java.util.List;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -57,8 +55,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXListButtonField;
@@ -237,11 +233,6 @@ public class TethysFXEditUIExample
     private final TethysDecimalFormatter theDecimalFormatter;
 
     /**
-     * The selected list values.
-     */
-    private final List<String> theSelectedValues;
-
-    /**
      * Constructor.
      */
     public TethysFXEditUIExample() {
@@ -269,7 +260,6 @@ public class TethysFXEditUIExample
         theSource = new Label();
         theClass = new Label();
         theValue = new Label();
-        theSelectedValues = new ArrayList<String>();
 
         /* Create button fields */
         theScrollButtonMgr = new TethysFXScrollButtonManager<String>();
@@ -450,13 +440,8 @@ public class TethysFXEditUIExample
         myLabel = new Label("ListButton:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theListField.getNode());
-        theListButtonMgr.getMenu().setCloseOnToggle(false);
-        theListField.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theHelper.buildAvailableItems(theListButtonMgr, theSelectedValues));
-        theListField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            setListValue(e.getDetails(TethysScrollMenuToggleItem.class));
-            processActionEvent(theListField, e);
-        });
-        theHelper.adjustSelected("Work", theSelectedValues);
+        theListField.setValue(theHelper.buildToggleList(theListButtonMgr));
+        theListField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theListField, e));
 
         /* Return the pane */
         return myPane;
@@ -598,18 +583,6 @@ public class TethysFXEditUIExample
     }
 
     /**
-     * Set the list value.
-     * @param pValue the value to set
-     */
-    private void setListValue(final TethysScrollMenuToggleItem<?> pValue) {
-        /* Record the value */
-        if (pValue != null) {
-            String myValue = (String) pValue.getValue();
-            theHelper.adjustSelected(myValue, theSelectedValues);
-        }
-    }
-
-    /**
      * Set the results.
      * @param pSource the source of the results
      * @param pResults the results
@@ -639,8 +612,8 @@ public class TethysFXEditUIExample
             theValue.setText(pResults.toString());
         } else if (pResults instanceof Boolean) {
             theValue.setText(pResults.toString());
-        } else if (pResults instanceof TethysScrollMenuItem) {
-            theValue.setText(((TethysScrollMenuItem<?>) pResults).getText());
+        } else if (pResults instanceof TethysItemList) {
+            theValue.setText(((TethysItemList<?>) pResults).toString());
         } else if (pResults instanceof TethysDate) {
             theValue.setText(theDateFormatter.formatDateDay((TethysDate) pResults));
         } else {

@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/JDateButton/trunk/jdatebutton-javafx/src/main/java/net/sourceforge/jdatebutton/javafx/ArrowIcon.java $
- * $Revision: 573 $
- * $Author: Tony $
- * $Date: 2015-03-03 17:54:12 +0000 (Tue, 03 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXIconButtonField;
@@ -221,7 +222,7 @@ public class TethysFXTableCellFactory<I, R>
      * @param pClass the class of the item
      * @return the scroll cell factory
      */
-    protected <C> Callback<TableColumn<R, C>, TableCell<R, C>> listCellFactory(final TethysFXTableColumn<I, R, C> pColumn, final Class<C> pClass) {
+    protected <C> Callback<TableColumn<R, TethysItemList<C>>, TableCell<R, TethysItemList<C>>> listCellFactory(final TethysFXTableColumn<I, R, TethysItemList<C>> pColumn, final Class<C> pClass) {
         return e -> listenToCell(new TethysFXTableListCell<>(pColumn, pClass));
     }
 
@@ -302,6 +303,17 @@ public class TethysFXTableCellFactory<I, R>
          * The new value.
          */
         private C theNewValue;
+
+        /**
+         * Constructor.
+         * @param pColumn the column
+         * @param pField the edit field
+         */
+        protected TethysFXTableCell(final TethysFXTableColumn<I, R, C> pColumn,
+                                    final TethysFXDataTextField<C> pField) {
+            /* Record the parameters */
+            this(pColumn, pField, null);
+        }
 
         /**
          * Constructor.
@@ -451,7 +463,7 @@ public class TethysFXTableCellFactory<I, R>
          * handle Commit.
          * @param pEvent the event
          */
-        private void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
+        protected void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
             commitEdit(pEvent.getDetails(theClass));
         }
 
@@ -784,15 +796,15 @@ public class TethysFXTableCellFactory<I, R>
      * @param <C> the column item class
      */
     public static class TethysFXTableListCell<I, R, C>
-            extends TethysFXTableCell<I, R, C> {
+            extends TethysFXTableCell<I, R, TethysItemList<C>> {
         /**
          * Constructor.
          * @param pColumn the column
          * @param pClass the field class
          */
-        protected TethysFXTableListCell(final TethysFXTableColumn<I, R, C> pColumn,
+        protected TethysFXTableListCell(final TethysFXTableColumn<I, R, TethysItemList<C>> pColumn,
                                         final Class<C> pClass) {
-            super(pColumn, new TethysFXListButtonField<>(), pClass);
+            super(pColumn, new TethysFXListButtonField<C>());
         }
 
         @Override
@@ -806,6 +818,12 @@ public class TethysFXTableCellFactory<I, R>
          */
         public TethysFXListButtonManager<C> getListManager() {
             return getField().getListManager();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
+            commitEdit(pEvent.getDetails(TethysItemList.class));
         }
     }
 

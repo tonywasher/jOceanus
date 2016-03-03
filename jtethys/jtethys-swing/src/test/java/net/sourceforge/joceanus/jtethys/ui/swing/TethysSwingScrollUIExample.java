@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-swing/src/test/java/net/sourceforge/joceanus/jtethys/swing/DemoFilter.java $
- * $Revision: 579 $
- * $Author: Tony $
- * $Date: 2015-03-24 15:06:09 +0000 (Tue, 24 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
@@ -337,15 +337,13 @@ public class TethysSwingScrollUIExample
         myListArea.add(myListButton.getButton(), BorderLayout.CENTER);
         buildResultLabel(theListValues, "ListValues");
         myHelper.addFullLabeledRow(myListArea, theListValues);
-        setListValue(null);
+
+        theListButtonMgr.setValue(theHelper.buildToggleList(theListButtonMgr));
         theListButtonMgr.getButton().setButtonText("Tag");
-        theListButtonMgr.getMenu().setCloseOnToggle(false);
 
         /* Add listener */
         theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
                 e -> setListValue(e.getDetails(TethysScrollMenuToggleItem.class)));
-        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG,
-                e -> theHelper.buildAvailableItems(theListButtonMgr, theSelectedValues));
 
         /* Create date button line */
         JDateButton myDateButton = theDateButtonMgr.getButton();
@@ -452,11 +450,7 @@ public class TethysSwingScrollUIExample
      */
     private void setListValue(final TethysScrollMenuToggleItem<?> pValue) {
         /* Record the value */
-        if (pValue != null) {
-            String myValue = (String) pValue.getValue();
-            theHelper.adjustSelected(myValue, theSelectedValues);
-        }
-        theListValues.setText(theHelper.formatSelected(theSelectedValues));
+        theListValues.setText(theListButtonMgr.getText());
     }
 
     /**

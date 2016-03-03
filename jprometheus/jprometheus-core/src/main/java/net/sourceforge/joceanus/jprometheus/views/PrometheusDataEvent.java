@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jprometheus/jprometheus-core/src/main/java/net/sourceforge/joceanus/jprometheus/views/DataControl.java $
- * $Revision: 663 $
- * $Author: Tony $
- * $Date: 2015-12-28 14:55:10 +0000 (Mon, 28 Dec 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.views;
 

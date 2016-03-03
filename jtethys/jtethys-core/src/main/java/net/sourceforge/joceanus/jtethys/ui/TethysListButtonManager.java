@@ -15,21 +15,19 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/src/main/java/net/sourceforge/joceanus/jtethys/swing/JIconButton.java $
- * $Revision: 570 $
- * $Author: Tony $
- * $Date: 2015-02-14 06:54:38 +0000 (Sat, 14 Feb 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList.TethysItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
@@ -39,11 +37,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * <p>
  * Provides the following events.
  * <dl>
- * <dt>PREPAREDIALOG
- * <dd>fired prior to dialog being displayed to allow for configuration of dialog
  * <dt>NEWVALUE
- * <dd>fired when a new value is selected. <br>
- * Detail is menu item that was selected {@link TethysScrollMenuToggleItem}
+ * <dd>fired when the dialog is closed with new values selected. <br>
+ * Detail is the new set of values.
  * <dt>EDITFOCUSLOST
  * <dd>fired when the dialog is cancelled without a value being selected.
  * </dl>
@@ -90,11 +86,6 @@ public abstract class TethysListButtonManager<T, B, I>
     private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
-     * Map of items.
-     */
-    private final Map<T, TethysScrollMenuToggleItem<T>> theItemMap;
-
-    /**
      * The Button.
      */
     private TethysListButton<B, I> theButton;
@@ -105,12 +96,21 @@ public abstract class TethysListButtonManager<T, B, I>
     private TethysScrollMenu<T, I> theMenu;
 
     /**
+     * The Value.
+     */
+    private TethysItemList<T> theValue;
+
+    /**
+     * The ActiveValue.
+     */
+    private TethysItemList<T> theActiveValue;
+
+    /**
      * Constructor.
      */
     protected TethysListButtonManager() {
         /* Create event manager */
         theEventManager = new TethysEventManager<>();
-        theItemMap = new LinkedHashMap<>();
     }
 
     /**
@@ -157,93 +157,52 @@ public abstract class TethysListButtonManager<T, B, I>
     protected void declareMenu(final TethysScrollMenu<T, I> pMenu) {
         /* Store the menu */
         theMenu = pMenu;
+        theMenu.setCloseOnToggle(false);
     }
 
     /**
-     * Clear available items.
+     * Set the value.
+     * @param pValue the value
      */
-    public void clearAvailableItems() {
-        /* reset the list of available items */
-        theMenu.removeAllItems();
-        theItemMap.clear();
-        theButton.setButtonText(null);
+    public void setValue(final TethysItemList<T> pValue) {
+        theValue = pValue;
+        updateText();
     }
 
     /**
-     * Set available item.
-     * @param pItem the available item
+     * Obtain the value.
+     * @return the value
      */
-    public void setAvailableItem(final T pItem) {
-        /* If the item is not already in the map */
-        if (theItemMap.get(pItem) == null) {
-            /* Create the item and place into map */
-            TethysScrollMenuToggleItem<T> myItem = theMenu.addToggleItem(pItem);
-            theItemMap.put(pItem, myItem);
-        }
-    }
-
-    /**
-     * clear all selected items.
-     */
-    public void clearAllSelected() {
-        /* Loop through the menu items */
-        for (TethysScrollMenuToggleItem<T> myItem : theItemMap.values()) {
-            /* Clear the item */
-            myItem.setSelected(false);
-        }
-        theButton.setButtonText(null);
-    }
-
-    /**
-     * Set selected item.
-     * @param pItem the item to select
-     */
-    public void setSelectedItem(final T pItem) {
-        /* Access and select the item */
-        TethysScrollMenuToggleItem<T> myItem = theItemMap.get(pItem);
-        if (myItem != null) {
-            myItem.setSelected(true);
-            updateText();
-        }
-    }
-
-    /**
-     * Clear selected item.
-     * @param pItem the item to clear
-     */
-    public void clearSelectedItem(final T pItem) {
-        /* Access and select the item */
-        TethysScrollMenuToggleItem<T> myItem = theItemMap.get(pItem);
-        if (myItem != null) {
-            myItem.setSelected(false);
-            updateText();
-        }
-    }
-
-    /**
-     * Is item selected?
-     * @param pItem the item to check
-     * @return true/false
-     */
-    public boolean isItemSelected(final T pItem) {
-        /* Access and determine status of the item */
-        TethysScrollMenuToggleItem<T> myItem = theItemMap.get(pItem);
-        return (myItem != null) && myItem.isSelected();
+    public TethysItemList<T> getValue() {
+        return theValue;
     }
 
     /**
      * handleMenuRequest.
      */
     public void handleMenuRequest() {
-        /* fire menuBuild Event */
-        theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theMenu);
+        /* Clear any existing elements from the menu */
+        theMenu.removeAllItems();
 
-        /* If a menu is provided */
-        if (!theMenu.isEmpty()) {
+        /* If we have any values */
+        if ((theValue != null)
+            && (theValue.size() > 0)) {
+            /* Create a clone of the list */
+            theActiveValue = new TethysItemList<>(theValue);
+
+            /* Iterate through the list */
+            Iterator<TethysItem<T>> myIterator = theActiveValue.iterator();
+            while (myIterator.hasNext()) {
+                /* Create the menu item */
+                TethysItem<T> myItem = myIterator.next();
+                TethysScrollMenuToggleItem<T> myMenuItem = theMenu.addToggleItem(myItem.getItem());
+                myMenuItem.setSelected(myItem.isSelected());
+            }
+
             /* Show the menu */
             showMenu();
 
-            /* Else no value was selected */
+            /* Else nothing to display */
         } else {
             /* notify cancellation */
             notifyCancelled();
@@ -263,9 +222,8 @@ public abstract class TethysListButtonManager<T, B, I>
         TethysScrollMenuItem<T> mySelected = theMenu.getSelectedItem();
         if ((mySelected != null)
             && (mySelected instanceof TethysScrollMenuToggleItem)) {
-            /* Set the new value */
-            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, mySelected);
-            updateText();
+            /* Toggle the item */
+            theActiveValue.toggleItem(mySelected.getValue());
         }
     }
 
@@ -273,8 +231,17 @@ public abstract class TethysListButtonManager<T, B, I>
      * handleMenuClosed.
      */
     protected void handleMenuClosed() {
-        /* notify cancellation */
-        notifyCancelled();
+        /* If there has been a change */
+        if (!theActiveValue.equals(theValue)) {
+            /* Record the new value */
+            setValue(theActiveValue);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theValue);
+
+            /* else no change */
+        } else {
+            /* notify cancellation */
+            notifyCancelled();
+        }
     }
 
     /**
@@ -293,35 +260,12 @@ public abstract class TethysListButtonManager<T, B, I>
     }
 
     /**
-     * Obtain the list of selected values.
-     * @return the selected values
-     */
-    public List<T> getSelected() {
-        /* Build list */
-        List<T> myList = new ArrayList<>();
-        for (TethysScrollMenuToggleItem<T> myItem : theItemMap.values()) {
-            if (myItem.isSelected()) {
-                myList.add(myItem.getValue());
-            }
-        }
-        return myList;
-    }
-
-    /**
      * Obtain the text value.
      * @return the formatted values
      */
     public String getText() {
-        /* Build text */
-        StringBuilder myBuilder = new StringBuilder();
-        for (TethysScrollMenuToggleItem<T> myItem : theItemMap.values()) {
-            if (myItem.isSelected()) {
-                if (myBuilder.length() > 0) {
-                    myBuilder.append(',');
-                }
-                myBuilder.append(myItem.getText());
-            }
-        }
-        return myBuilder.toString();
+        return theValue == null
+                                ? null
+                                : theValue.toString();
     }
 }

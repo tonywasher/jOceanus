@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-swing/src/main/java/net/sourceforge/joceanus/jtethys/ui/swing/GridBagUtilities.java $
- * $Revision: 642 $
- * $Author: Tony $
- * $Date: 2015-08-20 05:56:10 +0100 (Thu, 20 Aug 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.swing;
 

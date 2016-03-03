@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jmoneywise/jmoneywise-swing/src/main/java/net/sourceforge/joceanus/jmoneywise/swing/package-info.java $
- * $Revision: 590 $
- * $Author: Tony $
- * $Date: 2015-04-04 12:04:39 +0100 (Sat, 04 Apr 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.swing;
 

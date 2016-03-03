@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-swing/src/test/java/net/sourceforge/joceanus/jtethys/dateday/JDateDayExample.java $
- * $Revision: 580 $
- * $Author: Tony $
- * $Date: 2015-03-25 14:52:24 +0000 (Wed, 25 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingIconButtonField;
@@ -222,8 +223,8 @@ public class TethysSwingTableCellFactory<I, R>
      * @param pClass the class of the item
      * @return the list cell
      */
-    protected <C> TethysSwingTableCell<I, R, C> listCell(final TethysSwingTableColumn<I, R, C> pColumn,
-                                                         final Class<C> pClass) {
+    protected <C> TethysSwingTableCell<I, R, TethysItemList<C>> listCell(final TethysSwingTableColumn<I, R, TethysItemList<C>> pColumn,
+                                                                         final Class<C> pClass) {
         return listenToCell(new TethysSwingTableListCell<>(pColumn, pClass));
     }
 
@@ -323,6 +324,17 @@ public class TethysSwingTableCellFactory<I, R>
          * Constructor.
          * @param pColumn the column
          * @param pControl the edit control
+         */
+        protected TethysSwingTableCell(final TethysSwingTableColumn<I, R, C> pColumn,
+                                       final TethysSwingDataTextField<C> pControl) {
+            /* Record the parameters */
+            this(pColumn, pControl, null);
+        }
+
+        /**
+         * Constructor.
+         * @param pColumn the column
+         * @param pControl the edit control
          * @param pClass the field class
          */
         protected TethysSwingTableCell(final TethysSwingTableColumn<I, R, C> pColumn,
@@ -413,6 +425,15 @@ public class TethysSwingTableCellFactory<I, R>
         }
 
         /**
+         * Obtain the cast value.
+         * @param the value
+         * @return the cast value
+         */
+        protected C getCastValue(final Object pValue) {
+            return theClass.cast(pValue);
+        }
+
+        /**
          * Set the active row.
          * @param pIndex the row index
          */
@@ -456,7 +477,7 @@ public class TethysSwingTableCellFactory<I, R>
                 setActiveRow(myRow);
 
                 /* Set field value and start edit */
-                theControl.setValue(theClass.cast(pValue));
+                theControl.setValue(getCastValue(pValue));
                 theControl.startCellEditing();
 
                 /* Return the field */
@@ -507,7 +528,7 @@ public class TethysSwingTableCellFactory<I, R>
                 isSelected = pSelected;
 
                 /* Set details and stop editing */
-                theControl.setValue(theClass.cast(pValue));
+                theControl.setValue(getCastValue(pValue));
                 theControl.setEditable(false);
 
                 /* Format the cell */
@@ -840,15 +861,15 @@ public class TethysSwingTableCellFactory<I, R>
      * @param <C> the column item class
      */
     public static class TethysSwingTableListCell<I, R, C>
-            extends TethysSwingTableCell<I, R, C> {
+            extends TethysSwingTableCell<I, R, TethysItemList<C>> {
         /**
          * Constructor.
          * @param pColumn the column
          * @param pClass the field class
          */
-        protected TethysSwingTableListCell(final TethysSwingTableColumn<I, R, C> pColumn,
+        protected TethysSwingTableListCell(final TethysSwingTableColumn<I, R, TethysItemList<C>> pColumn,
                                            final Class<C> pClass) {
-            super(pColumn, new TethysSwingListButtonField<>(), pClass);
+            super(pColumn, new TethysSwingListButtonField<>());
         }
 
         @Override
@@ -862,6 +883,12 @@ public class TethysSwingTableCellFactory<I, R>
          */
         public TethysSwingListButtonManager<C> getListManager() {
             return getControl().getListManager();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected TethysItemList<C> getCastValue(final Object pValue) {
+            return (TethysItemList<C>) pValue;
         }
     }
 

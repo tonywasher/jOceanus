@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
@@ -456,8 +456,8 @@ public class TransactionAnalyser
 
                     /* True debit account is the parent */
                     myChild = myDebit.equals(myCredit)
-                                                      ? null
-                                                      : myDebit;
+                                                       ? null
+                                                       : myDebit;
                     myDebit = myDebit.getParent();
                     break;
                 case LOANINTERESTEARNED:
@@ -469,8 +469,8 @@ public class TransactionAnalyser
                 case ROOMRENTALINCOME:
                     /* True debit account is the parent of the security */
                     myChild = myDebit.equals(myCredit)
-                                                      ? null
-                                                      : myDebit;
+                                                       ? null
+                                                       : myDebit;
                     myDebit = myCredit.getParent();
                     break;
                 case WRITEOFF:
@@ -587,7 +587,7 @@ public class TransactionAnalyser
         /* Switch on the category */
         TransactionCategory myCat = theHelper.getCategory();
         switch (myCat.getCategoryTypeClass()) {
-        /* Process a stock right waived */
+            /* Process a stock right waived */
             case STOCKRIGHTSISSUE:
                 processStockRightWaived(pDebit, (AssetBase<?>) pCredit);
                 break;
@@ -627,7 +627,7 @@ public class TransactionAnalyser
         /* Switch on the category */
         TransactionCategory myCat = theHelper.getCategory();
         switch (myCat.getCategoryTypeClass()) {
-        /* Process a stock split */
+            /* Process a stock split */
             case STOCKSPLIT:
             case UNITSADJUST:
                 processUnitsAdjust(pDebit);
@@ -677,7 +677,7 @@ public class TransactionAnalyser
         /* Switch on the category */
         TransactionCategory myCat = theHelper.getCategory();
         switch (myCat.getCategoryTypeClass()) {
-        /* Process standard transfer in/out */
+            /* Process standard transfer in/out */
             case STOCKRIGHTSISSUE:
             case TRANSFER:
             case EXPENSE:
@@ -741,7 +741,6 @@ public class TransactionAnalyser
                                       final SecurityBucket pTarget) {
         /* Access source details */
         SecurityValues mySourceValues = pSource.getValues();
-        SecurityValues myTargetValues = pTarget.getValues();
         TethysUnits myUnits = mySourceValues.getUnitsValue(SecurityAttribute.UNITS);
         TethysMoney myCost = mySourceValues.getMoneyValue(SecurityAttribute.COST);
         TethysMoney myInvested = mySourceValues.getMoneyValue(SecurityAttribute.INVESTED);
@@ -762,7 +761,7 @@ public class TransactionAnalyser
         pTarget.adjustCounter(SecurityAttribute.UNITS, myUnits);
         pTarget.adjustCounter(SecurityAttribute.COST, myCost);
         pTarget.adjustCounter(SecurityAttribute.INVESTED, myInvested);
-        myTargetValues = pTarget.registerTransaction(theHelper);
+        SecurityValues myTargetValues = pTarget.registerTransaction(theHelper);
         myTargetValues.setValue(SecurityAttribute.PRICE, myPrice);
         myTargetValues.setValue(SecurityAttribute.VALUATION, myStockValue);
 
@@ -1384,7 +1383,6 @@ public class TransactionAnalyser
         SecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
         SecurityValues myDebitValues = myDebitAsset.getValues();
         SecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
-        SecurityValues myCreditValues = myCreditAsset.getValues();
         TethysDate myDate = theHelper.getDate();
 
         /* Get the appropriate prices for the stock */
@@ -1415,7 +1413,7 @@ public class TransactionAnalyser
         myCreditAsset.adjustCounter(SecurityAttribute.INVESTED, myInvested);
 
         /* Register the transaction */
-        myCreditValues = myCreditAsset.registerTransaction(theHelper);
+        SecurityValues myCreditValues = myCreditAsset.registerTransaction(theHelper);
         myCreditValues.setValue(SecurityAttribute.PRICE, myCreditPrice);
         myCreditValues.setValue(SecurityAttribute.VALUATION, myCreditValue);
 
@@ -1461,7 +1459,6 @@ public class TransactionAnalyser
         SecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
         SecurityValues myDebitValues = myDebitAsset.getValues();
         SecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
-        SecurityValues myCreditValues = myCreditAsset.getValues();
 
         /* Get the appropriate prices for the assets */
         TethysPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
@@ -1479,12 +1476,13 @@ public class TransactionAnalyser
         TethysMoney myCost = myDebitValues.getMoneyValue(SecurityAttribute.COST);
         TethysMoney myCostXfer;
 
-        /* Calculate the portion of the value that creates a large transaction */
+        /* Determine condition as to whether this is a large cash transaction */
         TethysMoney myPortion = myDebitValue.valueAtRate(LIMIT_RATE);
+        boolean isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
+                              && (myAmount.compareTo(myPortion) > 0);
 
-        /* If this is a large cash takeOver portion (> both valueLimit and rateLimit of value) */
-        if ((myAmount.compareTo(LIMIT_VALUE) > 0)
-            && (myAmount.compareTo(myPortion) > 0)) {
+        /* If there is a capital gain */
+        if (isLargeCash || myAmount.compareTo(myCost) > 0) {
             /* Calculate the total cost of the takeOver */
             TethysMoney myTotalCost = new TethysMoney(myAmount);
             myTotalCost.addAmount(myCreditValue);
@@ -1492,38 +1490,26 @@ public class TransactionAnalyser
             /* Determine the transferable cost */
             myCostXfer = myCost.valueAtWeight(myCreditValue, myTotalCost);
 
-            /* else this is viewed as small and is taken out of the cost */
-        } else {
-            /* If the cash amount is greater than the total cost */
-            if (myAmount.compareTo(myCost) > 0) {
-                /* No Cost is transferred to the credit asset */
-                myCostXfer = new TethysMoney();
-            } else {
-                /* Transferred cost is cost minus the cash amount */
-                myCostXfer = new TethysMoney(myCost);
-                myCostXfer.subtractAmount(myAmount);
-            }
-        }
+            /* Determine the gain */
+            TethysMoney myGain = new TethysMoney(myAmount);
+            myGain.subtractAmount(myCostXfer);
 
-        /* Calculate the gains */
-        TethysMoney myDeltaGains = new TethysMoney(myAmount);
-        myDeltaGains.subtractAmount(myCost);
-        myDeltaGains.addAmount(myCostXfer);
-
-        /* If we have some gains */
-        if (myDeltaGains.isNonZero()) {
             /* Record the delta gains */
-            myDebitAsset.adjustCounter(SecurityAttribute.GAINS, myDeltaGains);
+            myDebitAsset.adjustCounter(SecurityAttribute.GAINS, myGain);
 
             /* Adjust the capitalGains category bucket */
-            theCategoryBuckets.adjustStandardGain(theHelper, pDebit, myDeltaGains);
+            theCategoryBuckets.adjustStandardGain(theHelper, pDebit, myGain);
+
+            /* else this is viewed as small and is taken out of the cost */
+        } else {
+            /* Transferred cost is cost minus the cash amount */
+            myCostXfer = new TethysMoney(myCost);
+            myCostXfer.subtractAmount(myAmount);
         }
 
         /* Allocate current profit between the two stocks */
-        TethysMoney myProfit = new TethysMoney(myDebitValue);
-        myProfit.subtractAmount(myAmount);
-        myProfit.subtractAmount(myCost);
-        myProfit.addAmount(myCostXfer);
+        TethysMoney myProfit = new TethysMoney(myCreditValue);
+        myProfit.subtractAmount(myCostXfer);
         myDebitAsset.adjustCounter(SecurityAttribute.GROWTHADJUST, myProfit);
         myProfit = new TethysMoney(myProfit);
         myProfit.negate();
@@ -1535,7 +1521,7 @@ public class TransactionAnalyser
         myCreditAsset.adjustCounter(SecurityAttribute.INVESTED, myCostXfer);
 
         /* Register the transaction */
-        myCreditValues = myCreditAsset.registerTransaction(theHelper);
+        SecurityValues myCreditValues = myCreditAsset.registerTransaction(theHelper);
         myCreditValues.setValue(SecurityAttribute.PRICE, myCreditPrice);
         myCreditValues.setValue(SecurityAttribute.VALUATION, myCreditValue);
 
@@ -1552,9 +1538,9 @@ public class TransactionAnalyser
         /* Adjust debit Invested amount */
         TethysMoney myInvested = myDebitValues.getMoneyValue(SecurityAttribute.INVESTED);
         myInvested = new TethysMoney(myInvested);
-        myInvested.negate();
+        myInvested.setZero();
         myInvested.subtractAmount(myAmount);
-        myInvested.addAmount(myCostXfer);
+        myInvested.subtractAmount(myCostXfer);
         myDebitAsset.adjustCounter(SecurityAttribute.INVESTED, myInvested);
 
         /* Register the transaction */

@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jmetis/jmetis-core/src/main/java/net/sourceforge/joceanus/jmetis/field/package-info.java $
- * $Revision: 587 $
- * $Author: Tony $
- * $Date: 2015-03-31 14:44:28 +0100 (Tue, 31 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newfield.javafx;
 
@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
@@ -249,6 +250,22 @@ public class MetisFXFieldSetPanel
          */
         protected MetisFXFieldSetPanelItem(final MetisFXFieldSetPanel pPanel,
                                            final MetisField pField,
+                                           final boolean pNumeric,
+                                           final TethysDataEditField<T, Node, Color, Font, Node> pEdit) {
+            /* Set fields */
+            this(pPanel, pField, null, pNumeric, pEdit);
+        }
+
+        /**
+         * Constructor.
+         * @param pPanel the panel
+         * @param pField the field definition
+         * @param pClass the item class
+         * @param pNumeric is the field numeric?
+         * @param pEdit the edit field
+         */
+        protected MetisFXFieldSetPanelItem(final MetisFXFieldSetPanel pPanel,
+                                           final MetisField pField,
                                            final Class<T> pClass,
                                            final boolean pNumeric,
                                            final TethysDataEditField<T, Node, Color, Font, Node> pEdit) {
@@ -397,7 +414,7 @@ public class MetisFXFieldSetPanel
      * @param <T> the item class
      */
     public static class MetisFXFieldSetListItem<T>
-            extends MetisFXFieldSetPanelItem<T>
+            extends MetisFXFieldSetPanelItem<TethysItemList<T>>
             implements MetisFieldSetListItem<T, Node, Node> {
         /**
          * Constructor.
@@ -424,7 +441,7 @@ public class MetisFXFieldSetPanel
                                           final Class<T> pClass,
                                           final TethysFXListButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, false, new TethysFXListButtonField<T>(pManager));
+            super(pPanel, pField, false, new TethysFXListButtonField<T>(pManager));
         }
 
         @Override
@@ -435,6 +452,17 @@ public class MetisFXFieldSetPanel
         @Override
         public TethysFXListButtonManager<T> getManager() {
             return getEditField().getListManager();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected TethysItemList<T> getCastValue(final Object pValue) {
+            return (TethysItemList<T>) pValue;
+        }
+
+        @Override
+        protected boolean isInstance(final Object pValue) {
+            return TethysItemList.class.isInstance(pValue);
         }
     }
 

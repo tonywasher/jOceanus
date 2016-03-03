@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jmetis/jmetis-core/src/main/java/net/sourceforge/joceanus/jmetis/field/package-info.java $
- * $Revision: 587 $
- * $Author: Tony $
- * $Date: 2015-03-31 14:44:28 +0100 (Tue, 31 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newfield.swing;
 
@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
@@ -247,6 +248,22 @@ public class MetisSwingFieldSetPanel
          */
         protected MetisSwingFieldSetPanelItem(final MetisSwingFieldSetPanel pPanel,
                                               final MetisField pField,
+                                              final boolean pNumeric,
+                                              final TethysDataEditField<T, JComponent, Color, Font, Icon> pEdit) {
+            /* Set fields */
+            this(pPanel, pField, null, pNumeric, pEdit);
+        }
+
+        /**
+         * Constructor.
+         * @param pPanel the panel
+         * @param pField the field definition
+         * @param pClass the item class
+         * @param pNumeric is the field numeric?
+         * @param pEdit the edit field
+         */
+        protected MetisSwingFieldSetPanelItem(final MetisSwingFieldSetPanel pPanel,
+                                              final MetisField pField,
                                               final Class<T> pClass,
                                               final boolean pNumeric,
                                               final TethysDataEditField<T, JComponent, Color, Font, Icon> pEdit) {
@@ -395,7 +412,7 @@ public class MetisSwingFieldSetPanel
      * @param <T> the item class
      */
     public static class MetisSwingFieldSetListItem<T>
-            extends MetisSwingFieldSetPanelItem<T>
+            extends MetisSwingFieldSetPanelItem<TethysItemList<T>>
             implements MetisFieldSetListItem<T, JComponent, Icon> {
         /**
          * Constructor.
@@ -422,7 +439,7 @@ public class MetisSwingFieldSetPanel
                                              final Class<T> pClass,
                                              final TethysSwingListButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, false, new TethysSwingListButtonField<T>(pManager));
+            super(pPanel, pField, false, new TethysSwingListButtonField<T>(pManager));
         }
 
         @Override
@@ -433,6 +450,17 @@ public class MetisSwingFieldSetPanel
         @Override
         public TethysSwingListButtonManager<T> getManager() {
             return getEditField().getListManager();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected TethysItemList<T> getCastValue(final Object pValue) {
+            return (TethysItemList<T>) pValue;
+        }
+
+        @Override
+        protected boolean isInstance(final Object pValue) {
+            return TethysItemList.class.isInstance(pValue);
         }
     }
 

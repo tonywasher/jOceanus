@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jgordianknot/src/main/java/net/sourceforge/joceanus/jgordianknot/crypto/package-info.java $
- * $Revision: 543 $
- * $Author: Tony $
- * $Date: 2014-10-13 12:12:02 +0100 (Mon, 13 Oct 2014) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 /**
  * Provides SP800 SecureRandom implementations.

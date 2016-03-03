@@ -143,6 +143,11 @@ public class ArchiveLoader {
     private ParentCache theParentCache;
 
     /**
+     * Have we hit the lastEvent limit.
+     */
+    private boolean hitEventLimit;
+
+    /**
      * Constructor.
      */
     public ArchiveLoader() {
@@ -226,6 +231,12 @@ public class ArchiveLoader {
 
             /* Load the data from the stream */
             MoneyWiseData myData = loadArchiveStream(pTask, myStream, myType);
+
+            /* If we hit the lastEvent limit */
+            if (hitEventLimit) {
+                /* Note the fact in the data */
+                myData.hitEventLimit();
+            }
 
             /* Close the Stream to force out errors */
             myStream.close();
@@ -811,6 +822,7 @@ public class ArchiveLoader {
             /* If the date is too late */
             if (!checkDate(pDate)) {
                 /* reject the transaction */
+                hitEventLimit = true;
                 return false;
             }
 
@@ -858,11 +870,11 @@ public class ArchiveLoader {
 
             /* Resolve the debit and credit */
             Object myDebit = (pDebit == null)
-                                             ? theLastDebit
-                                             : theNameMap.get(pDebit);
+                                              ? theLastDebit
+                                              : theNameMap.get(pDebit);
             Object myCredit = (pCredit == null)
-                                               ? theLastCredit
-                                               : theNameMap.get(pCredit);
+                                                ? theLastCredit
+                                                : theNameMap.get(pCredit);
 
             /* Store last credit and debit */
             theLastDebit = myDebit;

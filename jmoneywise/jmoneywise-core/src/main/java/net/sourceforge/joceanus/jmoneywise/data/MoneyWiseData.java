@@ -584,6 +584,13 @@ public class MoneyWiseData
     }
 
     /**
+     * Note that we hit the last event limit.
+     */
+    public void hitEventLimit() {
+        doCheckClosedAccounts = false;
+    }
+
+    /**
      * Create new list of required type.
      * @param pListType the list type
      * @return the new list

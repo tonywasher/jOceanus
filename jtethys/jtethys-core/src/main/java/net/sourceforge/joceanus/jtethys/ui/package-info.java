@@ -12,7 +12,7 @@
  * the License. ------------------------------------------------------------ SubVersion Revision
  * Information: $URL:
  * http://localhost/svn/Finance/jOceanus/trunk/jtethys/src/main/java/net/sourceforge/joceanus/
- * jtethys/package-info.java $ $Revision: 543 $ $Author: Tony $ $Date: 2014-10-13 12:12:02 +0100
+ * jtethys/package-info.java $ $Revision$ $Author$ $Date: 2014-10-13 12:12:02 +0100
  * (Mon, 13 Oct 2014) $
  ******************************************************************************/
 /**

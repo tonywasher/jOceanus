@@ -266,7 +266,7 @@ public class MetisPreferencesPanel
         thePrefMenuBuilder.getEventRegistrar().addEventListener(e -> buildPreferenceMenu());
 
         /* Add a listener for the addition of subsequent propertySets */
-        getEventRegistrar().addEventListener(this::handleNewPropertySet);
+        pPreferenceMgr.getEventRegistrar().addEventListener(this::handleNewPropertySet);
     }
 
     /**

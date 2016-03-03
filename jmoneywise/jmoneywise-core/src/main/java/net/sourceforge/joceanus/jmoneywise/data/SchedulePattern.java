@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jmoneywise/src/main/java/net/sourceforge/joceanus/jmoneywise/data/Schedule.java $
- * $Revision: 581 $
- * $Author: Tony $
- * $Date: 2015-03-27 08:30:46 +0000 (Fri, 27 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 

@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jgordianknot/jgordianknot-core/src/main/java/net/sourceforge/joceanus/jgordianknot/crypto/GordianBadCredentialsException.java $
- * $Revision: 648 $
- * $Author: Tony $
- * $Date: 2015-11-21 15:20:03 +0000 (Sat, 21 Nov 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 

@@ -15,14 +15,12 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-swing/src/test/java/net/sourceforge/joceanus/jtethys/dateday/JDateDayExample.java $
- * $Revision: 580 $
- * $Author: Tony $
- * $Date: 2015-03-25 14:52:24 +0000 (Wed, 25 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
-
-import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
@@ -31,6 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollS
 
 /**
  * Helper functions for Scroll Examples.
+ * @param <N> the node type
  * @param <I> the icon type
  */
 public class TethysScrollUITestHelper<N, I> {
@@ -103,55 +102,27 @@ public class TethysScrollUITestHelper<N, I> {
     }
 
     /**
-     * Build the available items.
+     * Create list.
      * @param pManager the list manager
-     * @param pSelected the list of selected items
+     * @return the list
      */
-    public void buildAvailableItems(final TethysListButtonManager<String, N, I> pManager,
-                                    final List<String> pSelected) {
+    public TethysItemList<String> buildToggleList(final TethysListButtonManager<String, N, I> pManager) {
         /* Set the display count */
         pManager.getMenu().setMaxDisplayItems(MAX_ITEMS);
-        pManager.clearAvailableItems();
+
+        /* Create the list */
+        TethysItemList<String> myValues = new TethysItemList<>();
 
         /* Loop through the items */
         for (String myValue : AVAILABLE_ITEMS) {
-            pManager.setAvailableItem(myValue);
-            if (pSelected.contains(myValue)) {
-                pManager.setSelectedItem(myValue);
-            }
+            myValues.setSelectableItem(myValue);
         }
-    }
 
-    /**
-     * Adjust selected values.
-     * @param pValue the item that has been toggled
-     * @param pSelected the list of selected items
-     */
-    public void adjustSelected(final String pValue,
-                               final List<String> pSelected) {
-        /* Toggle membership */
-        if (pSelected.contains(pValue)) {
-            pSelected.remove(pValue);
-        } else {
-            pSelected.add(pValue);
-        }
-    }
+        /* Select the work value */
+        myValues.selectItem("Work");
 
-    /**
-     * Format selected values.
-     * @param pSelected the list of selected items
-     * @return the formatted values
-     */
-    public String formatSelected(final List<String> pSelected) {
-        /* Toggle membership */
-        StringBuilder myBuilder = new StringBuilder();
-        for (String myValue : pSelected) {
-            if (myBuilder.length() > 0) {
-                myBuilder.append(',');
-            }
-            myBuilder.append(myValue);
-        }
-        return myBuilder.toString();
+        /* Set the value */
+        return myValues;
     }
 
     /**

@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jmetis/jmetis-core/src/main/java/net/sourceforge/joceanus/jmetis/field/package-info.java $
- * $Revision: 587 $
- * $Author: Tony $
- * $Date: 2015-03-31 14:44:28 +0100 (Tue, 31 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newfield;
 
@@ -738,13 +738,13 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
             /* Determine whether we should show the field */
             boolean showField = pValue == null
                                                ? thePanel.isEditable() && !isReadOnly
-                                               : theClass.isInstance(pValue);
+                                               : isInstance(pValue);
             setVisible(showField);
 
             /* If we are showing the field */
             if (showField) {
                 /* Set the value */
-                setTheValue(theClass.cast(pValue));
+                setTheValue(getCastValue(pValue));
 
                 /* Set the font and colour */
                 theEdit.setFont(pFont);
@@ -753,6 +753,24 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
 
             /* return whether the field is visible */
             return showField;
+        }
+
+        /**
+         * Obtain the cast value.
+         * @param the value
+         * @return the cast value
+         */
+        protected T getCastValue(final Object pValue) {
+            return theClass.cast(pValue);
+        }
+
+        /**
+         * Obtain the cast value.
+         * @param the value
+         * @return the cast value
+         */
+        protected boolean isInstance(final Object pValue) {
+            return theClass.isInstance(pValue);
         }
 
         /**

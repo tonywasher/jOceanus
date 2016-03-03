@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/JDateButton/trunk/jdatebutton-javafx/src/main/java/net/sourceforge/jdatebutton/javafx/ArrowIcon.java $
- * $Revision: 573 $
- * $Author: Tony $
- * $Date: 2015-03-03 17:54:12 +0000 (Tue, 03 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingStateIconButtonManager;
@@ -389,7 +390,7 @@ public final class TethysSwingDataButtonField {
      * @param <T> the data type
      */
     public static class TethysSwingListButtonField<T>
-            extends TethysSwingDataTextField<T> {
+            extends TethysSwingDataTextField<TethysItemList<T>> {
         /**
          * The icon manager.
          */
@@ -438,9 +439,6 @@ public final class TethysSwingDataButtonField {
                     updateText();
                     fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
                     break;
-                case PREPAREDIALOG:
-                    fireEvent(TethysUIEvent.PREPAREDIALOG, this);
-                    break;
                 case EDITFOCUSLOST:
                     haltCellEditing();
                     break;
@@ -470,51 +468,9 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        public void setValue(final T pValue) {
-            /* Reject the call */
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * Clear available items.
-         */
-        public void clearAvailableItems() {
-            theManager.clearAvailableItems();
-            updateText();
-        }
-
-        /**
-         * Set available item.
-         * @param pItem the available item
-         */
-        public void setAvailableItem(final T pItem) {
-            theManager.setAvailableItem(pItem);
-            updateText();
-        }
-
-        /**
-         * clear all selected items.
-         */
-        public void clearAllSelected() {
-            theManager.clearAllSelected();
-            updateText();
-        }
-
-        /**
-         * Set selected item.
-         * @param pItem the item to select
-         */
-        public void setSelectedItem(final T pItem) {
-            theManager.setSelectedItem(pItem);
-            updateText();
-        }
-
-        /**
-         * Clear selected item.
-         * @param pItem the item to clear
-         */
-        public void clearSelectedItem(final T pItem) {
-            theManager.clearSelectedItem(pItem);
+        public void setValue(final TethysItemList<T> pValue) {
+            super.setValue(pValue);
+            theManager.setValue(pValue);
             updateText();
         }
 
@@ -523,15 +479,6 @@ public final class TethysSwingDataButtonField {
          */
         private void updateText() {
             getLabel().setText(theManager.getText());
-        }
-
-        /**
-         * Is item selected?
-         * @param pItem the item to check
-         * @return true/false
-         */
-        public boolean isItemSelected(final T pItem) {
-            return theManager.isItemSelected(pItem);
         }
 
         @Override

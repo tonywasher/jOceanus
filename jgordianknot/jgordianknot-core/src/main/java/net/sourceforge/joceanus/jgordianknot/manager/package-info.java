@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jgordianknot/jgordianknot-swing/src/main/java/net/sourceforge/joceanus/jgordianknot/swing/PasswordDialog.java $
- * $Revision: 582 $
- * $Author: Tony $
- * $Date: 2015-03-27 12:36:47 +0000 (Fri, 27 Mar 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.manager;
 

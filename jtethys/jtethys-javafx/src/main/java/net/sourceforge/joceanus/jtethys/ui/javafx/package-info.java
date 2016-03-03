@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-swing/src/main/java/net/sourceforge/joceanus/jtethys/help/swing/TethysSwingHelpWindow.java $
- * $Revision: 652 $
- * $Author: Tony $
- * $Date: 2015-11-24 10:46:21 +0000 (Tue, 24 Nov 2015) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 /**
  * JavaFX UI utilities.
