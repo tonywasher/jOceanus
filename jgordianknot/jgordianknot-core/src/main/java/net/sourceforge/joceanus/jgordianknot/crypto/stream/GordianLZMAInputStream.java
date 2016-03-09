@@ -123,7 +123,7 @@ public final class GordianLZMAInputStream
         try {
             theService.join();
         } catch (InterruptedException e) {
-            throw new IOException(e.getMessage(), e);
+            Thread.currentThread().interrupt();
         }
     }
 

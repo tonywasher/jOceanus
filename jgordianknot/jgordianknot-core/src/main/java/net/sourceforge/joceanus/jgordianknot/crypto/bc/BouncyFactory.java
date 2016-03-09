@@ -641,8 +641,8 @@ public final class BouncyFactory
      * @param pDigest the digest
      * @return the Validator
      */
-    private GordianValidator getBCValidator(final BouncyPublicKey pPublicKey,
-                                            final BouncyDigest pDigest) {
+    private static GordianValidator getBCValidator(final BouncyPublicKey pPublicKey,
+                                                   final BouncyDigest pDigest) {
         if (GordianAsymKeyType.RSA.equals(pPublicKey.getKeyType())) {
             return new BouncyRSAValidator((BouncyRSAPublicKey) pPublicKey, pDigest);
         } else {

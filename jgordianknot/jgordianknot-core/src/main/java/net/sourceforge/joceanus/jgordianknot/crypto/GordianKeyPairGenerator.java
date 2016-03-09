@@ -93,7 +93,7 @@ public abstract class GordianKeyPairGenerator {
     public abstract GordianKeyPair generateKeyPair();
 
     /**
-     * Obtain PKCS8EncodedKeySpec
+     * Obtain PKCS8EncodedKeySpec.
      * @param pPrivateKey the privateKey
      * @return the EncodedKeySpec
      * @throws OceanusException on error
@@ -101,7 +101,7 @@ public abstract class GordianKeyPairGenerator {
     protected abstract PKCS8EncodedKeySpec getPKCS8Encoding(final GordianPrivateKey pPrivateKey) throws OceanusException;
 
     /**
-     * Create the private key from the PKCS8 encoding
+     * Create the private key from the PKCS8 encoding.
      * @param pEncodedKey the encoded private key
      * @return the private key
      * @throws OceanusException on error
@@ -109,7 +109,7 @@ public abstract class GordianKeyPairGenerator {
     protected abstract GordianPrivateKey derivePrivateKey(final PKCS8EncodedKeySpec pEncodedKey) throws OceanusException;
 
     /**
-     * Extract the X509 encoding for the public key
+     * Extract the X509 encoding for the public key.
      * @param pPublicKey the public key
      * @return the X509 encoding
      * @throws OceanusException on error
@@ -117,7 +117,7 @@ public abstract class GordianKeyPairGenerator {
     public abstract X509EncodedKeySpec getX509Encoding(final GordianPublicKey pPublicKey) throws OceanusException;
 
     /**
-     * Create the public key from the X509 encoding
+     * Create the public key from the X509 encoding.
      * @param pEncodedKey the encoded public key
      * @return the public key
      * @throws OceanusException on error

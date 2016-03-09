@@ -73,6 +73,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public abstract class BouncyKeyPairGenerator
         extends GordianKeyPairGenerator {
     /**
+     * Parsing error.
+     */
+    private static final String ERROR_PARSE = "Failed to parse encoding";
+
+    /**
      * Constructor.
      * @param pFactory the Security Factory
      * @param pKeyType the keyType
@@ -149,16 +154,11 @@ public abstract class BouncyKeyPairGenerator
                         myKey.getPrime1(), myKey.getPrime2(), myKey.getExponent1(), myKey.getExponent2(), myKey.getCoefficient());
                 return new BouncyRSAPrivateKey(myParms);
             } catch (IOException e) {
-                throw new GordianCryptoException("Failed to parse encoding", e);
+                throw new GordianCryptoException(ERROR_PARSE, e);
             }
         }
 
-        /**
-         * Extract the X509 encoding for the public key
-         * @param pPublicKey the public key
-         * @return the X509 encoding
-         * @throws OceanusException on error
-         */
+        @Override
         public X509EncodedKeySpec getX509Encoding(final GordianPublicKey pPublicKey) throws OceanusException {
             BouncyRSAPublicKey myPublicKey = BouncyRSAPublicKey.class.cast(pPublicKey);
             RSAKeyParameters myParms = myPublicKey.getPublicKey();
@@ -175,7 +175,7 @@ public abstract class BouncyKeyPairGenerator
                 RSAKeyParameters myParms = new RSAKeyParameters(false, myKey.getModulus(), myKey.getPublicExponent());
                 return new BouncyRSAPublicKey(myParms);
             } catch (IOException e) {
-                throw new GordianCryptoException("Failed to parse encoding", e);
+                throw new GordianCryptoException(ERROR_PARSE, e);
             }
         }
     }
@@ -241,7 +241,7 @@ public abstract class BouncyKeyPairGenerator
                 ECPrivateKeyParameters myParms = new ECPrivateKeyParameters(myKey.getKey(), theDomain);
                 return new BouncyECPrivateKey(getKeyType(), myParms);
             } catch (IOException e) {
-                throw new GordianCryptoException("Failed to parse encoding", e);
+                throw new GordianCryptoException(ERROR_PARSE, e);
             }
         }
 

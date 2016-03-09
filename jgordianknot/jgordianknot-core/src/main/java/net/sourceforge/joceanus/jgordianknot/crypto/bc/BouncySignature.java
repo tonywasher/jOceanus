@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * BouncyCastle implementation of signature.
  */
-public abstract class BouncySignature {
+public final class BouncySignature {
     /**
      * Private constructor.
      */
@@ -270,6 +270,23 @@ public abstract class BouncySignature {
                 throw new GordianCryptoException("Failed to generate signature", e);
             }
         }
+
+        /**
+         * BouncyCastle DSA Encoder. Copied from SignatureSpi.java
+         * @param r first integer
+         * @param s second integer
+         * @return encoded set
+         * @throws IOException on error
+         */
+        private static byte[] dsaEncode(final BigInteger r,
+                                        final BigInteger s) throws IOException {
+            ASN1EncodableVector v = new ASN1EncodableVector();
+
+            v.add(new ASN1Integer(r));
+            v.add(new ASN1Integer(s));
+
+            return new DERSequence(v).getEncoded(ASN1Encoding.DER);
+        }
     }
 
     /**
@@ -307,38 +324,21 @@ public abstract class BouncySignature {
                 throw new GordianCryptoException("Failed to parse signature", e);
             }
         }
-    }
 
-    /**
-     * BouncyCastle DSA Encoder. Copied from SignatureSpi.java
-     * @param r first integer
-     * @param s second integer
-     * @return encoded set
-     * @throws IOException on error
-     */
-    private static byte[] dsaEncode(final BigInteger r,
-                                    final BigInteger s) throws IOException {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+        /**
+         * BouncyCastle DSA Decoder. Copied from SignatureSpi.java
+         * @param pEncoded the encode set
+         * @return array of integers
+         * @throws IOException on error
+         */
+        private static BigInteger[] dsaDecode(final byte[] pEncoded) throws IOException {
+            ASN1Sequence s = (ASN1Sequence) ASN1Primitive.fromByteArray(pEncoded);
+            BigInteger[] sig = new BigInteger[2];
 
-        v.add(new ASN1Integer(r));
-        v.add(new ASN1Integer(s));
+            sig[0] = ASN1Integer.getInstance(s.getObjectAt(0)).getValue();
+            sig[1] = ASN1Integer.getInstance(s.getObjectAt(1)).getValue();
 
-        return new DERSequence(v).getEncoded(ASN1Encoding.DER);
-    }
-
-    /**
-     * BouncyCastle DSA Decoder. Copied from SignatureSpi.java
-     * @param pEncoded the encode set
-     * @return array of integers
-     * @throws IOException on error
-     */
-    private static BigInteger[] dsaDecode(final byte[] pEncoded) throws IOException {
-        ASN1Sequence s = (ASN1Sequence) ASN1Primitive.fromByteArray(pEncoded);
-        BigInteger[] sig = new BigInteger[2];
-
-        sig[0] = ASN1Integer.getInstance(s.getObjectAt(0)).getValue();
-        sig[1] = ASN1Integer.getInstance(s.getObjectAt(1)).getValue();
-
-        return sig;
+            return sig;
+        }
     }
 }

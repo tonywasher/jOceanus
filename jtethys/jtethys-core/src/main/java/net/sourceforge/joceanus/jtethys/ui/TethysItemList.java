@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Selectable item list
+ * Selectable item list.
  * @param <T> the item type.
  */
 public class TethysItemList<T> {
@@ -219,7 +219,7 @@ public class TethysItemList<T> {
      * Item class.
      * @param <T> the item type.
      */
-    public static class TethysItem<T> {
+    public static final class TethysItem<T> {
         /**
          * The Item.
          */
@@ -303,8 +303,8 @@ public class TethysItemList<T> {
 
             /* Check for equality */
             TethysItem<?> myThat = (TethysItem<?>) pThat;
-            return theItem.equals(myThat.getItem()) &&
-                   isSelected == myThat.isSelected();
+            return theItem.equals(myThat.getItem())
+                   && isSelected == myThat.isSelected();
         }
 
         @Override

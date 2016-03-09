@@ -242,7 +242,6 @@ public class MetisSwingFieldSetPanel
          * Constructor.
          * @param pPanel the panel
          * @param pField the field definition
-         * @param pClass the item class
          * @param pNumeric is the field numeric?
          * @param pEdit the edit field
          */

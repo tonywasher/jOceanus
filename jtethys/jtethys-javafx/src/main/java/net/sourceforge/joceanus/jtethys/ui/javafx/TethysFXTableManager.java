@@ -148,14 +148,14 @@ public class TethysFXTableManager<I, R>
 
         /* If we have any items */
         if (myItems != null) {
-            /* Apply filter if specified */
-            if (theFilter != null) {
-                myItems = myItems.filtered(theFilter);
-            }
-
             /* Apply sort if specified */
             if (theComparator != null) {
                 myItems = myItems.sorted(theComparator);
+            }
+
+            /* Apply filter if specified */
+            if (theFilter != null) {
+                myItems = myItems.filtered(theFilter);
             }
         }
 

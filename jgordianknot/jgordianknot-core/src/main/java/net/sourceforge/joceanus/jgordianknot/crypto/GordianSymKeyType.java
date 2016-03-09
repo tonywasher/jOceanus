@@ -119,12 +119,7 @@ public enum GordianSymKeyType {
      * @return true/false
      */
     public boolean isStdBlock() {
-        switch (this) {
-            case THREEFISH:
-                return false;
-            default:
-                return true;
-        }
+        return !this.equals(THREEFISH);
     }
 
     /**

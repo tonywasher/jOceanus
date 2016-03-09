@@ -108,7 +108,7 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
 
             /* Switch on the state */
             switch (myCurr.getState()) {
-            /* Ignore the item if it is clean or DELNEW */
+                /* Ignore the item if it is clean or DELNEW */
                 case CLEAN:
                 case DELNEW:
                     break;
@@ -125,9 +125,8 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
                     myBase.resolveDataSetLinks();
                     break;
 
-                /* If this is a deleted or deleted-changed item */
+                /* If this is a deleted item */
                 case DELETED:
-                case DELCHG:
                     /* Access the underlying item and mark as deleted */
                     myBase = myCurr.getBase();
                     myBase.setDeleted(true);
@@ -177,7 +176,7 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
 
             /* Switch on the state */
             switch (myCurr.getState()) {
-            /* Ignore the item if it is clean or DelNew */
+                /* Ignore the item if it is clean or DelNew */
                 case CLEAN:
                 case DELNEW:
                     break;
@@ -191,7 +190,6 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
 
                 /* If we made changes to the underlying item */
                 case DELETED:
-                case DELCHG:
                 case RECOVERED:
                 case CHANGED:
                     /* Access underlying item */
@@ -227,7 +225,7 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
 
             /* Switch on the state */
             switch (myCurr.getState()) {
-            /* Ignore the item if it is clean */
+                /* Ignore the item if it is clean */
                 case CLEAN:
                     break;
 
@@ -239,7 +237,6 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
                 /* All other states clear history and, convert it to Clean */
                 case NEW:
                 case DELETED:
-                case DELCHG:
                 case RECOVERED:
                 case CHANGED:
                     /* Clear history and set as a clean item */

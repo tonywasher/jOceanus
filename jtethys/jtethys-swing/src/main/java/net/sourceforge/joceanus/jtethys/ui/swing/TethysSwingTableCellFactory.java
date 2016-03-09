@@ -426,7 +426,7 @@ public class TethysSwingTableCellFactory<I, R>
 
         /**
          * Obtain the cast value.
-         * @param the value
+         * @param pValue the value
          * @return the cast value
          */
         protected C getCastValue(final Object pValue) {

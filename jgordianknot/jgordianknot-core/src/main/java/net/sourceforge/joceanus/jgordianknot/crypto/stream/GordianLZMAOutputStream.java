@@ -125,7 +125,7 @@ public final class GordianLZMAOutputStream
         try {
             theService.join();
         } catch (InterruptedException e) {
-            throw new IOException(e.getMessage(), e);
+            Thread.currentThread().interrupt();
         }
 
         /* Check for error */

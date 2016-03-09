@@ -757,7 +757,7 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
 
         /**
          * Obtain the cast value.
-         * @param the value
+         * @param pValue the value
          * @return the cast value
          */
         protected T getCastValue(final Object pValue) {
@@ -765,8 +765,8 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
         }
 
         /**
-         * Obtain the cast value.
-         * @param the value
+         * Is the object an instance of the class.
+         * @param pValue the value
          * @return the cast value
          */
         protected boolean isInstance(final Object pValue) {

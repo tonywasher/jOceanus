@@ -78,7 +78,7 @@
     <ApacheMavenVersion>3.3.9</ApacheMavenVersion>
     <MySQLVersion>5.1.38</MySQLVersion>
     <PostGreSQLVersion>9.4.1208.jre7</PostGreSQLVersion>
-    <ApachePOIVersion>3.13</ApachePOIVersion>
+    <ApachePOIVersion>3.14</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <XercesVersion>2.11.0</XercesVersion>
     <SLF4JVersion>1.7.18</SLF4JVersion>
@@ -114,7 +114,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>1.3</version>
+        <version>1.4</version>
         <executions>
           <execution>
             <phase>validate</phase>
@@ -134,9 +134,9 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
+          <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
-          <version>2.7.1</version>
+          <version>3.0.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

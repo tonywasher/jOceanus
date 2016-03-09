@@ -57,11 +57,6 @@ public enum MetisDataState {
     DELNEW,
 
     /**
-     * Deleted Changed object.
-     */
-    DELCHG,
-
-    /**
      * Recovered deleted object.
      */
     RECOVERED;

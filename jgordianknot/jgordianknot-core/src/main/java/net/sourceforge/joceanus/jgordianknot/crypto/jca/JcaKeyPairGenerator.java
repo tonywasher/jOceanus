@@ -68,12 +68,6 @@ public abstract class JcaKeyPairGenerator
         theFactory = pFactory;
     }
 
-    /**
-     * Extract the PKCS8 encoding for the private key
-     * @param pPrivateKey the private key
-     * @return the PKCS8 encoding
-     * @throws OceanusException on error
-     */
     @Override
     protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianPrivateKey pPrivateKey) throws OceanusException {
         try {

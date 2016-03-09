@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Class for assembling/disassembling data encrypted by a KeySet.
@@ -291,7 +291,8 @@ public final class GordianKeySetRecipe {
                                 & TethysDataConverter.NYBBLE_MASK;
 
             /* Allocate the key types */
-            int i = 0, j = 0;
+            int i = 0;
+            int j = 0;
             theSymKeyTypes = new GordianSymKeyType[myCipherSteps];
             int myId = pRecipe[j++]
                        & TethysDataConverter.NYBBLE_MASK;
@@ -329,7 +330,8 @@ public final class GordianKeySetRecipe {
 
             /* Build the key bytes */
             int myNumCiphers = theSymKeyTypes.length;
-            int i = 0, j = 0;
+            int i = 0;
+            int j = 0;
             pRecipe[i++] = (byte) ((myNumCiphers << TethysDataConverter.NYBBLE_SHIFT) + myManager.deriveExternalIdFromSymKeyType(theSymKeyTypes[j++]));
             while (j < myNumCiphers) {
                 int myByte = myManager.deriveExternalIdFromSymKeyType(theSymKeyTypes[j++]);

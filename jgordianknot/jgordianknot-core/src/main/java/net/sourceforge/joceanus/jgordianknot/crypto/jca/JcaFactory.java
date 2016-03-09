@@ -512,13 +512,9 @@ public final class JcaFactory
      * @throws OceanusException on error
      */
     private static String getHMacAlgorithm(final GordianDigestType pDigestType) throws OceanusException {
-        switch (pDigestType) {
-            case KECCAK:
-                return "HMacKECCAK512";
-            default:
-                return "HMac"
-                       + JcaDigest.getAlgorithm(pDigestType);
-        }
+        return GordianDigestType.KECCAK.equals(pDigestType)
+                                                            ? "HMacKECCAK512"
+                                                            : JcaDigest.getAlgorithm(pDigestType);
     }
 
     /**
@@ -682,11 +678,10 @@ public final class JcaFactory
     /**
      * Create the BouncyCastle KEM Sender.
      * @param pPublicKey the publicKey
-     * @param pDigest the digest
      * @return the Validator
      * @throws OceanusException on error
      */
-    private GordianValidator getJcaValidator(final JcaPublicKey pPublicKey) throws OceanusException {
+    private static GordianValidator getJcaValidator(final JcaPublicKey pPublicKey) throws OceanusException {
         if (GordianAsymKeyType.RSA.equals(pPublicKey.getKeyType())) {
             return new JcaRSAValidator(pPublicKey);
         } else {

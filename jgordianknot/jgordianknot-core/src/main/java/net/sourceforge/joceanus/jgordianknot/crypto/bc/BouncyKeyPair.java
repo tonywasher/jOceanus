@@ -150,7 +150,7 @@ public class BouncyKeyPair
         }
 
         /**
-         * CompareKeys
+         * CompareKeys.
          * @param pFirst the first key
          * @param pSecond the second key
          * @return true/false
@@ -218,7 +218,7 @@ public class BouncyKeyPair
         }
 
         /**
-         * CompareKeys
+         * CompareKeys.
          * @param pFirst the first key
          * @param pSecond the second key
          * @return true/false
@@ -304,7 +304,7 @@ public class BouncyKeyPair
         }
 
         /**
-         * CompareKeys
+         * CompareKeys.
          * @param pFirst the first key
          * @param pSecond the second key
          * @return true/false
@@ -374,7 +374,7 @@ public class BouncyKeyPair
         }
 
         /**
-         * CompareKeys
+         * CompareKeys.
          * @param pFirst the first key
          * @param pSecond the second key
          * @return true/false

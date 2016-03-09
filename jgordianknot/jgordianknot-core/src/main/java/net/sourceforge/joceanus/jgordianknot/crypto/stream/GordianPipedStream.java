@@ -167,6 +167,7 @@ public class GordianPipedStream {
                 try {
                     theElement = theQueue.take();
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     throw new IOException(e.getMessage(), e);
                 }
 
@@ -255,6 +256,7 @@ public class GordianPipedStream {
             try {
                 theQueue.put(myBuffer);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 throw new IOException(e.getMessage(), e);
             }
         }
@@ -290,6 +292,7 @@ public class GordianPipedStream {
             try {
                 theQueue.put(new byte[0]);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 throw new IOException(e);
             }
 
