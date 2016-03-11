@@ -84,6 +84,11 @@ public class TethysFXTableManager<I, R>
     private ObservableList<R> theItems;
 
     /**
+     * The Sorted Items.
+     */
+    private ObservableList<R> theSorted;
+
+    /**
      * Constructor.
      */
     public TethysFXTableManager() {
@@ -145,12 +150,14 @@ public class TethysFXTableManager<I, R>
     private void setTheItems() {
         /* Access the underlying copy */
         ObservableList<R> myItems = theItems;
+        theSorted = myItems;
 
         /* If we have any items */
         if (myItems != null) {
             /* Apply sort if specified */
             if (theComparator != null) {
                 myItems = myItems.sorted(theComparator);
+                theSorted = myItems;
             }
 
             /* Apply filter if specified */

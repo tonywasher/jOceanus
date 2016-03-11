@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableCell;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableFilter.TethysSwingTableFilterModel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSwingTableSorterModel;
 
 /**
  * JavaSwing Table manager.
@@ -84,7 +84,7 @@ public class TethysSwingTableManager<I, R>
     /**
      * The sorter.
      */
-    private final TethysSwingTableFilter<R> theSorter;
+    private final TethysSwingTableSorter<R> theSorter;
 
     /**
      * The item list.
@@ -109,7 +109,7 @@ public class TethysSwingTableManager<I, R>
         theColumns = theTable.getColumnModel();
         theColumnList = new ArrayList<>();
         theCellFactory = new TethysSwingTableCellFactory<>(pFormatter);
-        theSorter = new TethysSwingTableFilter<>(theModel);
+        theSorter = new TethysSwingTableSorter<>(theModel);
 
         /* Listen to factory */
         theCellFactory.getEventRegistrar().addEventListener(this::cascadeEvent);
@@ -168,6 +168,7 @@ public class TethysSwingTableManager<I, R>
      */
     public void setItems(final List<R> pItems) {
         theItems = pItems;
+        theModel.fireTableDataChanged();
     }
 
     @Override
@@ -259,7 +260,7 @@ public class TethysSwingTableManager<I, R>
      */
     private class TethysSwingTableModel
             extends AbstractTableModel
-            implements TethysSwingTableFilterModel<R> {
+            implements TethysSwingTableSorterModel<R> {
         /**
          * Serial Id.
          */
@@ -297,6 +298,13 @@ public class TethysSwingTableManager<I, R>
         @Override
         public R getItemAtIndex(final int pRowIndex) {
             return getIndexedRow(pRowIndex);
+        }
+
+        @Override
+        public void fireTableCellUpdated(final int pRowIndex,
+                                         final int pColIndex) {
+            super.fireTableCellUpdated(pRowIndex, pColIndex);
+            theSorter.reportMappingChanged();
         }
     }
 

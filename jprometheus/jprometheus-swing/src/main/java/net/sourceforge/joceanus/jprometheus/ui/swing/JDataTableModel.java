@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.ui.swing;
 
 import java.util.Iterator;
-import java.util.ListIterator;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
@@ -37,8 +36,8 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableFilter;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableFilter.TethysSwingTableFilterModel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSwingTableSorterModel;
 
 /**
  * Data Table model class.
@@ -47,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableFilter.TethysSw
  */
 public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends AbstractTableModel
-        implements PopulateFieldData, TethysSwingTableFilterModel<T> {
+        implements PopulateFieldData, TethysSwingTableSorterModel<T> {
     /**
      * Serial Id.
      */
@@ -74,9 +73,9 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     private boolean showAll = false;
 
     /**
-     * The table filter.
+     * The table sorter.
      */
-    private transient TethysSwingTableFilter<T> theFilter = null;
+    private transient TethysSwingTableSorter<T> theSorter = null;
 
     /**
      * Constructor.
@@ -89,11 +88,11 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     }
 
     /**
-     * Obtain the table filter.
+     * Obtain the table sorter.
      * @return the filter
      */
-    public TethysSwingTableFilter<T> getFilter() {
-        return theFilter;
+    public TethysSwingTableSorter<T> getSorter() {
+        return theSorter;
     }
 
     /**
@@ -101,9 +100,9 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
      * @return the row count
      */
     public int getViewRowCount() {
-        return theFilter == null
+        return theSorter == null
                                  ? getRowCount()
-                                 : theFilter.getViewRowCount();
+                                 : theSorter.getViewRowCount();
     }
 
     /**
@@ -252,12 +251,12 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     }
 
     /**
-     * Register the data filter.
-     * @param pFilter the filter
+     * Register the data sorter.
+     * @param pSorter the sorter
      */
-    public void registerFilter(final TethysSwingTableFilter<T> pFilter) {
-        theFilter = pFilter;
-        theFilter.setFilter(this::includeRow);
+    public void registerSorter(final TethysSwingTableSorter<T> pSorter) {
+        theSorter = pSorter;
+        theSorter.setFilter(this::includeRow);
     }
 
     /**
@@ -291,7 +290,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     protected void fireUpdateRowEvents(final int pRowIndex) {
         /* Note that the data for this row and header has changed */
         fireTableRowsUpdated(pRowIndex, pRowIndex);
-        theFilter.reportMappingChanged();
+        theSorter.reportMappingChanged();
 
         /* Update the row table */
         theRowHdrModel.fireTableDataChanged();
@@ -313,7 +312,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
 
         /* Note that the data for this row and header has changed */
         fireTableChanged(myEvent);
-        theFilter.reportMappingChanged();
+        theSorter.reportMappingChanged();
     }
 
     /**
@@ -323,7 +322,6 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
         /* Note that the data for table and row header has changed */
         fireTableDataChanged();
         theRowHdrModel.fireTableDataChanged();
-        theFilter.reportMappingChanged();
     }
 
     @Override
@@ -351,34 +349,23 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     }
 
     /**
-     * Obtain an iterator over Model rows. Note that this iterator is for a self-contained snapshot
-     * of the table mapping. It will not be affected or invalidated by subsequent changes.
-     * @return the iterator
-     */
-    public Iterator<T> modelIterator() {
-        /* Allocate iterator */
-        return theFilter.modelIterator();
-    }
-
-    /**
      * Obtain an iterator over View rows. Note that this iterator is for a self-contained snapshot
      * of the table mapping. It will not be affected or invalidated by subsequent changes.
      * @return the iterator
      */
     public Iterator<T> viewIterator() {
         /* Allocate iterator */
-        return theFilter.viewIterator();
+        return theSorter.viewIterator();
     }
 
     /**
-     * Obtain an iterator over View rows starting at the end of the list. Note that this iterator is
-     * for a self-contained snapshot of the table mapping. It will not be affected or invalidated by
-     * subsequent changes.
+     * Obtain an iterator over sorted rows. Note that this iterator is for a self-contained snapshot
+     * of the table mapping. It will not be affected or invalidated by subsequent changes.
      * @return the iterator
      */
-    public ListIterator<T> viewEndIterator() {
+    public Iterator<T> sortIterator() {
         /* Allocate iterator */
-        return theFilter.viewEndIterator();
+        return theSorter.sortIterator();
     }
 
     /**

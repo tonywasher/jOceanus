@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableScroll;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableFilter;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
 
 /**
  * Template class to provide a table to handle a data type.
@@ -287,11 +287,11 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         /* Record the model */
         theModel = pModel;
 
-        /* Create the filter and record it */
-        TethysSwingTableFilter<T> myFilter = new TethysSwingTableFilter<>(theModel);
-        myFilter.setComparator((l, r) -> l.compareTo(r));
-        theModel.registerFilter(myFilter);
-        setRowSorter(myFilter);
+        /* Create the sorter and record it */
+        TethysSwingTableSorter<T> mySorter = new TethysSwingTableSorter<>(theModel);
+        mySorter.setComparator((l, r) -> l.compareTo(r));
+        theModel.registerSorter(mySorter);
+        setRowSorter(mySorter);
 
         /* Set up for zebra stripes */
         setRowMargin(0);

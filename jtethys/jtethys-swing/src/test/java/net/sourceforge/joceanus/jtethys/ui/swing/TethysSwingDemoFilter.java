@@ -47,7 +47,7 @@ import javax.swing.table.AbstractTableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableFilter.TethysSwingTableFilterModel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSwingTableSorterModel;
 
 /**
  * Demo application for JTableFilter.
@@ -172,7 +172,7 @@ public class TethysSwingDemoFilter
             setModel(theModel);
 
             /* Create the filter and record it */
-            TethysSwingTableFilter<RowData> myFilter = new TethysSwingTableFilter<RowData>(theModel);
+            TethysSwingTableSorter<RowData> myFilter = new TethysSwingTableSorter<RowData>(theModel);
             theModel.registerFilter(myFilter);
             setRowSorter(myFilter);
 
@@ -285,7 +285,7 @@ public class TethysSwingDemoFilter
      */
     protected static class TestTableModel
             extends AbstractTableModel
-            implements TethysSwingTableFilterModel<RowData> {
+            implements TethysSwingTableSorterModel<RowData> {
         /**
          * The Serial Id.
          */
@@ -324,7 +324,7 @@ public class TethysSwingDemoFilter
         /**
          * The table filter.
          */
-        private transient TethysSwingTableFilter<RowData> theFilter;
+        private transient TethysSwingTableSorter<RowData> theFilter;
 
         /**
          * Constructor.
@@ -354,7 +354,7 @@ public class TethysSwingDemoFilter
          * Register the data filter.
          * @param pFilter the filter
          */
-        public void registerFilter(final TethysSwingTableFilter<RowData> pFilter) {
+        public void registerFilter(final TethysSwingTableSorter<RowData> pFilter) {
             theFilter = pFilter;
             theFilter.setFilter(this::includeRow);
         }
@@ -373,7 +373,6 @@ public class TethysSwingDemoFilter
 
             /* Say that we have added the row */
             fireTableRowsInserted(iIndex, iIndex);
-            theFilter.reportMappingChanged();
         }
 
         /**
@@ -525,12 +524,6 @@ public class TethysSwingDemoFilter
 
             /* Say that we have changed the row */
             fireTableCellUpdated(pRowIndex, pColIndex);
-        }
-
-        @Override
-        public void fireTableCellUpdated(final int pRowIndex,
-                                         final int pColIndex) {
-            super.fireTableCellUpdated(pRowIndex, pColIndex);
             theFilter.reportMappingChanged();
         }
     }
