@@ -22,11 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Tooltip;
+import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
@@ -77,6 +80,16 @@ public class TethysFXIconButton
         theButton.setTooltip(myToolTip);
     }
 
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theButton.setDisable(!pEnabled);
+    }
+
+    @Override
+    public void setNullMargins() {
+        theButton.setPadding(Insets.EMPTY);
+    }
+
     /**
      * Simple FX IconButton Manager.
      * @param <T> the object type
@@ -100,6 +113,16 @@ public class TethysFXIconButton
         public Button getNode() {
             return (Button) super.getNode();
         }
+
+        @Override
+        public <K extends Enum<K> & TethysIconId> void setDetailsForValue(final T pValue,
+                                                                          final T pNext,
+                                                                          final K pId,
+                                                                          final String pToolTip) {
+            setNewValueForValue(pValue, pNext);
+            setIconForValue(pValue, TethysFXGuiUtils.getIconAtSize(pId, getWidth()));
+            setTooltipForValue(pValue, pToolTip);
+        }
     }
 
     /**
@@ -120,6 +143,16 @@ public class TethysFXIconButton
         @Override
         public TethysFXIconButton getButton() {
             return (TethysFXIconButton) super.getButton();
+        }
+
+        @Override
+        public <K extends Enum<K> & TethysIconId> void setDetailsForValue(final T pValue,
+                                                                          final T pNext,
+                                                                          final K pId,
+                                                                          final String pToolTip) {
+            setNewValueForValue(pValue, pNext);
+            setIconForValue(pValue, TethysFXGuiUtils.getIconAtSize(pId, getWidth()));
+            setTooltipForValue(pValue, pToolTip);
         }
     }
 }

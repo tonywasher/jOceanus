@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
@@ -43,7 +44,7 @@ public final class MetisFields {
     /**
      * The Next anchorId.
      */
-    private static Integer theNextAnchorId = 1;
+    private static AtomicInteger theNextAnchorId = new AtomicInteger(1);
 
     /**
      * Id of this anchor.
@@ -102,18 +103,7 @@ public final class MetisFields {
         theFields = new ArrayList<>();
 
         /* Store the anchorId */
-        theAnchorId = getNextAnchorId();
-    }
-
-    /**
-     * Obtain next anchor id.
-     * @return the id of the new anchor
-     */
-    private static synchronized Integer getNextAnchorId() {
-        /* return the new anchor id */
-        Integer myId = theNextAnchorId;
-        theNextAnchorId = theNextAnchorId + 1;
-        return myId;
+        theAnchorId = theNextAnchorId.getAndIncrement();
     }
 
     /**

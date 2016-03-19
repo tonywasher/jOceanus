@@ -78,6 +78,12 @@ public abstract class TethysListButtonManager<T, B, I>
          * @return the node.
          */
         B getButton();
+
+        /**
+         * Set Enabled.
+         * @param pEnabled the enabled flag
+         */
+        void setEnabled(final boolean pEnabled);
     }
 
     /**
@@ -175,6 +181,14 @@ public abstract class TethysListButtonManager<T, B, I>
      */
     public TethysItemList<T> getValue() {
         return theValue;
+    }
+
+    /**
+     * Set Enabled.
+     * @param pEnabled the enabled flag
+     */
+    void setEnabled(final boolean pEnabled) {
+        theButton.setEnabled(pEnabled);
     }
 
     /**

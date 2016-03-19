@@ -42,6 +42,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Window;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
 /**
  * Simple UI Utilities for javaFX.
@@ -131,23 +133,6 @@ public final class TethysFXGuiUtils {
      */
     public static void addStyleSheet(final Scene pScene) {
         pScene.getStylesheets().add(CSS_STYLE);
-    }
-
-    /**
-     * Resize an icon to the width.
-     * @param pSource the source icon
-     * @param pWidth the width
-     * @return the resized icon
-     */
-    public static ImageView resizeImage(final Image pSource,
-                                        final int pWidth) {
-        ImageView myNewImage = new ImageView();
-        myNewImage.setImage(pSource);
-        myNewImage.setFitWidth(pWidth);
-        myNewImage.setPreserveRatio(true);
-        myNewImage.setSmooth(true);
-        myNewImage.setCache(true);
-        return myNewImage;
     }
 
     /**
@@ -410,5 +395,24 @@ public final class TethysFXGuiUtils {
                                                                                      pSource.getHeight())
                                                                              : pSource;
         return adjustDisplayLocation(myArea, pScreen);
+    }
+
+    /**
+     * Obtain the reSized icon.
+     * @param <K> the keyId type
+     * @param pId the icon Id
+     * @param pWidth the new width for the icon
+     * @return the icon
+     */
+    public static <K extends Enum<K> & TethysIconId> ImageView getIconAtSize(final K pId,
+                                                                             final int pWidth) {
+        Image myImage = new Image(TethysIconBuilder.getResourceAsStream(pId));
+        ImageView myNewImage = new ImageView();
+        myNewImage.setImage(myImage);
+        myNewImage.setFitWidth(pWidth);
+        myNewImage.setPreserveRatio(true);
+        myNewImage.setSmooth(true);
+        myNewImage.setCache(true);
+        return myNewImage;
     }
 }

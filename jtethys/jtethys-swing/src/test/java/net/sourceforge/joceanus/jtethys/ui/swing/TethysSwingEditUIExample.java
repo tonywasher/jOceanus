@@ -36,7 +36,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -63,8 +62,9 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
@@ -100,18 +100,6 @@ public class TethysSwingEditUIExample
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(TethysSwingEditUIExample.class);
-
-    /**
-     * Open True icon.
-     */
-    private static final Icon OPEN_TRUE_ICON = TethysSwingGuiUtils.resizeImage(new ImageIcon(TethysScrollUITestHelper.class.getResource("GreenJellyOpenTrue.png")),
-            TethysScrollMenuContent.DEFAULT_ICONWIDTH);
-
-    /**
-     * Open False icon.
-     */
-    private static final Icon OPEN_FALSE_ICON = TethysSwingGuiUtils.resizeImage(new ImageIcon(TethysScrollUITestHelper.class.getResource("GreenJellyOpenFalse.png")),
-            TethysScrollMenuContent.DEFAULT_ICONWIDTH);
 
     /**
      * The padding.
@@ -495,8 +483,8 @@ public class TethysSwingEditUIExample
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theIconField.getNode());
         theHelper.buildSimpleIconState(theIconButtonMgr,
-                OPEN_FALSE_ICON,
-                OPEN_TRUE_ICON);
+                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.OPENFALSE, TethysIconButtonManager.DEFAULT_ICONWIDTH),
+                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.OPENTRUE, TethysIconButtonManager.DEFAULT_ICONWIDTH));
         theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
         theIconField.setValue(false);
 

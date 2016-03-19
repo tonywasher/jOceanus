@@ -177,7 +177,7 @@ public final class MoneyWiseIcons
      * @return the program Image
      */
     public static List<Image> getProgramImages() {
-        List<Image> myList = new ArrayList<Image>();
+        List<Image> myList = new ArrayList<>();
         myList.add(ICON_PROGRAM.getImage());
         myList.add(ICON_SPLASH.getImage());
         return myList;

@@ -48,7 +48,6 @@ import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -61,6 +60,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -81,12 +82,6 @@ public class TethysSwingScrollContextMenu<T>
      * Default row size.
      */
     private static final int DEFAULT_ROWHEIGHT = 16;
-
-    /**
-     * CheckMark icon.
-     */
-    private static final Icon CHECK_ICON = TethysSwingGuiUtils.resizeImage(new ImageIcon(TethysScrollMenuContent.class.getResource("BlueJellyCheckMark.png")),
-            TethysScrollMenuContent.DEFAULT_ICONWIDTH);
 
     /**
      * Background active colour.
@@ -1070,7 +1065,7 @@ public class TethysSwingScrollContextMenu<T>
             /* Create a Label for the graphic */
             theIcon = new JLabel();
             theIcon.setIcon(pGraphic);
-            Dimension myDim = new Dimension(TethysScrollMenuContent.DEFAULT_ICONWIDTH, DEFAULT_ROWHEIGHT);
+            Dimension myDim = new Dimension(TethysIconButtonManager.DEFAULT_ICONWIDTH, DEFAULT_ROWHEIGHT);
             theIcon.setMinimumSize(myDim);
             theIcon.setPreferredSize(myDim);
             theIcon.setMaximumSize(myDim);
@@ -1259,7 +1254,7 @@ public class TethysSwingScrollContextMenu<T>
         public void setSelected(final boolean pSelected) {
             isSelected = pSelected;
             setIcon(isSelected
-                               ? CHECK_ICON
+                               ? TethysSwingGuiUtils.getIconAtSize(TethysScrollIcon.CHECKMARK, TethysIconButtonManager.DEFAULT_ICONWIDTH)
                                : null);
         }
 

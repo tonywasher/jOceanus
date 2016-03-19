@@ -22,12 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.Insets;
+
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager.TethysScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -80,6 +86,16 @@ public final class TethysSwingScrollButton
         return theButton;
     }
 
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theButton.setEnabled(pEnabled);
+    }
+
+    @Override
+    public void setNullMargins() {
+        theButton.setMargin(new Insets(0, 0, 0, 0));
+    }
+
     /**
      * Swing ScrollButton Manager.
      * @param <T> the object type
@@ -95,8 +111,9 @@ public final class TethysSwingScrollButton
             declareMenu(new TethysSwingScrollContextMenu<T>());
 
             /* Set context menu listener */
-            getMenu().getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleMenuClosed());
-            getMenu().getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
+            TethysEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
+            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleMenuClosed());
+            myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
         }
 
         @Override
@@ -117,6 +134,11 @@ public final class TethysSwingScrollButton
         @Override
         protected void showMenu() {
             getMenu().showMenuAtPosition(getNode(), SwingConstants.BOTTOM);
+        }
+
+        @Override
+        public <K extends Enum<K> & TethysIconId> void setIcon(final K pId) {
+            getButton().setButtonIcon(TethysSwingGuiUtils.getIconAtSize(pId, TethysIconButtonManager.DEFAULT_ICONWIDTH));
         }
     }
 }

@@ -27,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager.TethysListButton;
@@ -80,6 +81,11 @@ public final class TethysSwingListButton
         return theButton;
     }
 
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theButton.setEnabled(pEnabled);
+    }
+
     /**
      * SwingButtonManager.
      * @param <T> the object type
@@ -95,8 +101,9 @@ public final class TethysSwingListButton
             declareMenu(new TethysSwingScrollContextMenu<T>());
 
             /* Set context menu listener */
-            getMenu().getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleToggleItem());
-            getMenu().getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
+            TethysEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
+            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleToggleItem());
+            myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
         }
 
         @Override

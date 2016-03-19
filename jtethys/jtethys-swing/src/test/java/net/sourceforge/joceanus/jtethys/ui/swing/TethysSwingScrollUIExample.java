@@ -34,7 +34,6 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -50,7 +49,8 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.jdatebutton.swing.JDateButton;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
+import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
@@ -70,24 +70,6 @@ public class TethysSwingScrollUIExample
      * Serial Id.
      */
     private static final long serialVersionUID = 1335897095869650737L;
-
-    /**
-     * Open True icon.
-     */
-    private static final Icon OPEN_TRUE_ICON = TethysSwingGuiUtils.resizeImage(new ImageIcon(TethysScrollUITestHelper.class.getResource("GreenJellyOpenTrue.png")),
-            TethysScrollMenuContent.DEFAULT_ICONWIDTH);
-
-    /**
-     * Open False icon.
-     */
-    private static final Icon OPEN_FALSE_ICON = TethysSwingGuiUtils.resizeImage(new ImageIcon(TethysScrollUITestHelper.class.getResource("GreenJellyOpenFalse.png")),
-            TethysScrollMenuContent.DEFAULT_ICONWIDTH);
-
-    /**
-     * Closed True icon.
-     */
-    private static final Icon CLOSED_TRUE_ICON = TethysSwingGuiUtils.resizeImage(new ImageIcon(TethysScrollUITestHelper.class.getResource("BlueJellyClosedTrue.png")),
-            TethysScrollMenuContent.DEFAULT_ICONWIDTH);
 
     /**
      * The padding.
@@ -367,8 +349,8 @@ public class TethysSwingScrollUIExample
         buildResultLabel(theSimpleIconValue, "IconValue");
         myHelper.addFullLabeledRow(myIconArea, theSimpleIconValue);
         theHelper.buildSimpleIconState(theSimpleIconButtonMgr,
-                OPEN_FALSE_ICON,
-                OPEN_TRUE_ICON);
+                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.OPENFALSE, TethysIconButtonManager.DEFAULT_ICONWIDTH),
+                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.OPENTRUE, TethysIconButtonManager.DEFAULT_ICONWIDTH));
 
         /* Add listener */
         theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
@@ -385,7 +367,9 @@ public class TethysSwingScrollUIExample
         myHelper.addFullLabeledRow(myIconArea, theStateIconValue);
         theHelper.buildStateButton(theStateButtonMgr);
         theHelper.buildStateIconState(theStateIconButtonMgr,
-                OPEN_FALSE_ICON, OPEN_TRUE_ICON, CLOSED_TRUE_ICON);
+                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.OPENFALSE, TethysIconButtonManager.DEFAULT_ICONWIDTH),
+                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.OPENTRUE, TethysIconButtonManager.DEFAULT_ICONWIDTH),
+                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.CLOSEDTRUE, TethysIconButtonManager.DEFAULT_ICONWIDTH));
 
         /* Add listener */
         theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setStateIconValue(e.getDetails(Boolean.class)));

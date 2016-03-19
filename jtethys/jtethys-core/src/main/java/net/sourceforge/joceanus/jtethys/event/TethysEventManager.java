@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jtethys.event;
 
 import java.util.ListIterator;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
@@ -41,7 +42,7 @@ public class TethysEventManager<E extends Enum<E>>
     /**
      * The Next managerId.
      */
-    private static Integer theNextMgrId = 1;
+    private static AtomicInteger theNextMgrId = new AtomicInteger(1);
 
     /**
      * The Id of this manager.
@@ -58,21 +59,10 @@ public class TethysEventManager<E extends Enum<E>>
      */
     public TethysEventManager() {
         /* Store the owner */
-        theMgrId = getNextManagerId();
+        theMgrId = theNextMgrId.getAndIncrement();
 
         /* Allocate the registrar */
         theRegistrar = new TethysEventRegistrar<>(theMgrId);
-    }
-
-    /**
-     * Obtain next owner id.
-     * @return the id of the new owner
-     */
-    private static synchronized Integer getNextManagerId() {
-        /* return the new manager id */
-        Integer myId = theNextMgrId;
-        theNextMgrId = theNextMgrId + 1;
-        return myId;
     }
 
     /**

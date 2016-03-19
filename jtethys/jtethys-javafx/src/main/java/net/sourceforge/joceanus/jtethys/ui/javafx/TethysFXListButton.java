@@ -86,6 +86,11 @@ public final class TethysFXListButton
         return theButton;
     }
 
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theButton.setDisable(!pEnabled);
+    }
+
     /**
      * FXButtonManager.
      * @param <T> the object type

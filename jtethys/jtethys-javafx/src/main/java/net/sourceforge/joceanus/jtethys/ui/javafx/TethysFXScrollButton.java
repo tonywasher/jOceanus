@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -29,6 +30,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Tooltip;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXArrowIcon;
+import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager.TethysScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.TethysFXContextEvent;
@@ -85,6 +89,16 @@ public final class TethysFXScrollButton
         return theButton;
     }
 
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theButton.setDisable(!pEnabled);
+    }
+
+    @Override
+    public void setNullMargins() {
+        theButton.setPadding(Insets.EMPTY);
+    }
+
     /**
      * FX ScrollButton Manager.
      * @param <T> the object type
@@ -100,8 +114,9 @@ public final class TethysFXScrollButton
             declareMenu(new TethysFXScrollContextMenu<T>());
 
             /* Set context menu listener */
-            getMenu().addEventHandler(TethysFXContextEvent.MENU_SELECT, e -> handleMenuClosed());
-            getMenu().addEventHandler(TethysFXContextEvent.MENU_CANCEL, e -> handleMenuClosed());
+            TethysFXScrollContextMenu<T> myMenu = getMenu();
+            myMenu.addEventHandler(TethysFXContextEvent.MENU_SELECT, e -> handleMenuClosed());
+            myMenu.addEventHandler(TethysFXContextEvent.MENU_CANCEL, e -> handleMenuClosed());
         }
 
         @Override
@@ -122,6 +137,11 @@ public final class TethysFXScrollButton
         @Override
         protected void showMenu() {
             getMenu().showMenuAtPosition(getNode(), Side.BOTTOM);
+        }
+
+        @Override
+        public <K extends Enum<K> & TethysIconId> void setIcon(final K pId) {
+            getButton().setButtonIcon(TethysFXGuiUtils.getIconAtSize(pId, TethysIconButtonManager.DEFAULT_ICONWIDTH));
         }
     }
 }

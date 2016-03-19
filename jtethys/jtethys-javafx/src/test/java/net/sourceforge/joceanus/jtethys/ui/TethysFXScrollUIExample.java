@@ -29,7 +29,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -56,21 +55,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.Teth
  */
 public class TethysFXScrollUIExample
         extends Application {
-    /**
-     * Open True icon.
-     */
-    private static final Image OPEN_TRUE_ICON = new Image(TethysScrollUITestHelper.class.getResourceAsStream("GreenJellyOpenTrue.png"));
-
-    /**
-     * Open False icon.
-     */
-    private static final Image OPEN_FALSE_ICON = new Image(TethysScrollUITestHelper.class.getResourceAsStream("GreenJellyOpenFalse.png"));
-
-    /**
-     * Closed True icon.
-     */
-    private static final Image CLOSED_TRUE_ICON = new Image(TethysScrollUITestHelper.class.getResourceAsStream("BlueJellyClosedTrue.png"));
-
     /**
      * The padding.
      */
@@ -283,8 +267,8 @@ public class TethysFXScrollUIExample
         theSimpleIconValue.setAlignment(Pos.CENTER);
         myPane.addRow(myRowNo++, myControl, myResult);
         theHelper.buildSimpleIconState(theSimpleIconButtonMgr,
-                TethysFXGuiUtils.resizeImage(OPEN_FALSE_ICON, DEFAULT_ICONWIDTH),
-                TethysFXGuiUtils.resizeImage(OPEN_TRUE_ICON, DEFAULT_ICONWIDTH));
+                TethysFXGuiUtils.getIconAtSize(TethysHelperIcon.OPENFALSE, DEFAULT_ICONWIDTH),
+                TethysFXGuiUtils.getIconAtSize(TethysHelperIcon.OPENTRUE, DEFAULT_ICONWIDTH));
 
         /* Add listener */
         theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
@@ -304,9 +288,9 @@ public class TethysFXScrollUIExample
         myPane.addRow(myRowNo++, myControl, myResult);
         theHelper.buildStateButton(theStateButtonMgr);
         theHelper.buildStateIconState(theStateIconButtonMgr,
-                TethysFXGuiUtils.resizeImage(OPEN_FALSE_ICON, DEFAULT_ICONWIDTH),
-                TethysFXGuiUtils.resizeImage(OPEN_TRUE_ICON, DEFAULT_ICONWIDTH),
-                TethysFXGuiUtils.resizeImage(CLOSED_TRUE_ICON, DEFAULT_ICONWIDTH));
+                TethysFXGuiUtils.getIconAtSize(TethysHelperIcon.OPENFALSE, DEFAULT_ICONWIDTH),
+                TethysFXGuiUtils.getIconAtSize(TethysHelperIcon.OPENTRUE, DEFAULT_ICONWIDTH),
+                TethysFXGuiUtils.getIconAtSize(TethysHelperIcon.CLOSEDTRUE, DEFAULT_ICONWIDTH));
 
         /* Add listener */
         theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {

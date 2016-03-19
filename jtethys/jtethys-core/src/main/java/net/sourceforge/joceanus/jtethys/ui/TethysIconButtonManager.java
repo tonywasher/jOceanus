@@ -28,6 +28,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
 /**
  * IconButton Manager.
@@ -44,6 +45,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  */
 public abstract class TethysIconButtonManager<T, B, I>
         implements TethysEventProvider<TethysUIEvent> {
+    /**
+     * Default icon width.
+     */
+    public static final int DEFAULT_ICONWIDTH = 16;
+
     /**
      * Icon Button.
      * @param <B> the button type
@@ -63,12 +69,28 @@ public abstract class TethysIconButtonManager<T, B, I>
          * @return the node.
          */
         B getButton();
+
+        /**
+         * Set Enabled.
+         * @param pEnabled the enabled flag
+         */
+        void setEnabled(final boolean pEnabled);
+
+        /**
+         * Set Null Margins.
+         */
+        void setNullMargins();
     }
 
     /**
      * The Event Manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
+
+    /**
+     * The icon Width.
+     */
+    private int theWidth;
 
     /**
      * The value.
@@ -86,6 +108,7 @@ public abstract class TethysIconButtonManager<T, B, I>
     protected TethysIconButtonManager() {
         /* Create event manager */
         theEventManager = new TethysEventManager<>();
+        theWidth = DEFAULT_ICONWIDTH;
     }
 
     /**
@@ -112,9 +135,26 @@ public abstract class TethysIconButtonManager<T, B, I>
         return theButton;
     }
 
+    /**
+     * Obtain width.
+     * @return the width
+     */
+    public int getWidth() {
+        return theWidth;
+    }
+
     @Override
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Set the width.
+     * @param pWidth the width to set
+     */
+    public void setWidth(final int pWidth) {
+        /* Store the width */
+        theWidth = pWidth;
     }
 
     /**
@@ -127,6 +167,21 @@ public abstract class TethysIconButtonManager<T, B, I>
 
         /* Apply the button state */
         applyButtonState();
+    }
+
+    /**
+     * Set Enabled.
+     * @param pEnabled the enabled flag
+     */
+    void setEnabled(final boolean pEnabled) {
+        theButton.setEnabled(pEnabled);
+    }
+
+    /**
+     * Set Null Margins.
+     */
+    public void setNullMargins() {
+        theButton.setNullMargins();
     }
 
     /**
@@ -251,6 +306,57 @@ public abstract class TethysIconButtonManager<T, B, I>
             Map<T, I> myMap = theMapSet.getIconMap();
             myMap.put(pValue, pIcon);
         }
+
+        /**
+         * Map simple details.
+         * @param <K> the keyId type
+         * @param pValue the value
+         * @param pId the mapped IconId
+         * @param pToolTip the toolTip for value
+         */
+        public <K extends Enum<K> & TethysIconId> void setSimpleDetailsForValue(final T pValue,
+                                                                                final K pId,
+                                                                                final String pToolTip) {
+            setDetailsForValue(pValue, pValue, pId, pToolTip);
+        }
+
+        /**
+         * Map details.
+         * @param pValue the value
+         * @param pNext the next value for value
+         * @param pToolTip the toolTip for value
+         */
+        public void setDetailsForValue(final T pValue,
+                                       final T pNext,
+                                       final String pToolTip) {
+            setDetailsForValue(pValue, pNext, null, pToolTip);
+        }
+
+        /**
+         * Map details.
+         * @param <K> the keyId type
+         * @param pValue the value
+         * @param pNext the next value for value
+         * @param pId the mapped IconId
+         */
+        public <K extends Enum<K> & TethysIconId> void setDetailsForValue(final T pValue,
+                                                                          final T pNext,
+                                                                          final K pId) {
+            setDetailsForValue(pValue, pNext, pId, null);
+        }
+
+        /**
+         * Map details.
+         * @param <K> the keyId type
+         * @param pValue the value
+         * @param pNext the next value for value
+         * @param pId the mapped IconId
+         * @param pToolTip the toolTip for value
+         */
+        public abstract <K extends Enum<K> & TethysIconId> void setDetailsForValue(final T pValue,
+                                                                                   final T pNext,
+                                                                                   final K pId,
+                                                                                   final String pToolTip);
 
         /**
          * Map ToolTip.

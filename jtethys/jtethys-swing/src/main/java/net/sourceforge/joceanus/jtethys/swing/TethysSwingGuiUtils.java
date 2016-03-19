@@ -34,12 +34,13 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
 /**
  * Simple UI Utilities for Swing.
@@ -78,21 +79,6 @@ public final class TethysSwingGuiUtils {
         pComponent.setPreferredSize(myPrefDims);
         pComponent.setMaximumSize(myMaxDims);
         pComponent.setMinimumSize(myMinDims);
-    }
-
-    /**
-     * Resize an icon to the width.
-     * @param pSource the source icon
-     * @param pWidth the width
-     * @return the resized icon
-     */
-    public static Icon resizeImage(final ImageIcon pSource,
-                                   final int pWidth) {
-        Image myImage = pSource.getImage();
-        Image myNewImage = myImage.getScaledInstance(pWidth,
-                pWidth,
-                Image.SCALE_SMOOTH);
-        return new ImageIcon(myNewImage);
     }
 
     /**
@@ -365,5 +351,22 @@ public final class TethysSwingGuiUtils {
 
         /* Return the string */
         return myBuilder.toString();
+    }
+
+    /**
+     * Obtain the reSized icon.
+     * @param <K> the keyId type
+     * @param pId the icon Id
+     * @param pWidth the new width for the icon
+     * @return the icon
+     */
+    public static <K extends Enum<K> & TethysIconId> ImageIcon getIconAtSize(final K pId,
+                                                                             final int pWidth) {
+        ImageIcon mySource = new ImageIcon(TethysIconBuilder.getResource(pId));
+        Image myImage = mySource.getImage();
+        Image myNewImage = myImage.getScaledInstance(pWidth,
+                pWidth,
+                Image.SCALE_SMOOTH);
+        return new ImageIcon(myNewImage);
     }
 }

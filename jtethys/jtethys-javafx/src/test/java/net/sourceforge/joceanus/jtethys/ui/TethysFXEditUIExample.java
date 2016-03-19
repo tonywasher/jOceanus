@@ -34,7 +34,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -96,16 +95,6 @@ public class TethysFXEditUIExample
      * Default icon width.
      */
     private static final int DEFAULT_ICONWIDTH = 24;
-
-    /**
-     * Open True icon.
-     */
-    private static final Image OPEN_TRUE_ICON = new Image(TethysScrollUITestHelper.class.getResourceAsStream("GreenJellyOpenTrue.png"));
-
-    /**
-     * Open False icon.
-     */
-    private static final Image OPEN_FALSE_ICON = new Image(TethysScrollUITestHelper.class.getResourceAsStream("GreenJellyOpenFalse.png"));
 
     /**
      * The Test helper.
@@ -431,8 +420,8 @@ public class TethysFXEditUIExample
         GridPane.setHalignment(myLabel, HPos.RIGHT);
         myPane.addRow(myRowNo++, myLabel, theIconField.getNode());
         theHelper.buildSimpleIconState(theIconButtonMgr,
-                TethysFXGuiUtils.resizeImage(OPEN_FALSE_ICON, DEFAULT_ICONWIDTH),
-                TethysFXGuiUtils.resizeImage(OPEN_TRUE_ICON, DEFAULT_ICONWIDTH));
+                TethysFXGuiUtils.getIconAtSize(TethysHelperIcon.OPENFALSE, DEFAULT_ICONWIDTH),
+                TethysFXGuiUtils.getIconAtSize(TethysHelperIcon.OPENTRUE, DEFAULT_ICONWIDTH));
         theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
         theIconField.setValue(false);
 

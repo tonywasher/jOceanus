@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jtethys.ui;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 
@@ -76,6 +77,17 @@ public abstract class TethysScrollButtonManager<T, B, I>
          * @return the node.
          */
         B getButton();
+
+        /**
+         * Set Enabled.
+         * @param pEnabled the enabled flag
+         */
+        void setEnabled(final boolean pEnabled);
+
+        /**
+         * Set Null Margins.
+         */
+        void setNullMargins();
     }
 
     /**
@@ -201,6 +213,44 @@ public abstract class TethysScrollButtonManager<T, B, I>
         if (!isFixedText) {
             theButton.setButtonText(pName);
         }
+    }
+
+    /**
+     * Set simple details.
+     * @param <K> the keyId type
+     * @param pValue the value
+     * @param pId the mapped IconId
+     * @param pToolTip the toolTip for value
+     */
+    public <K extends Enum<K> & TethysIconId> void setSimpleDetails(final T pValue,
+                                                                    final K pId,
+                                                                    final String pToolTip) {
+        setFixedText(null);
+        setValue(pValue);
+        setIcon(pId);
+        theButton.setButtonToolTip(pToolTip);
+    }
+
+    /**
+     * Set Icon.
+     * @param <K> the keyId type
+     * @param pId the IconId
+     */
+    protected abstract <K extends Enum<K> & TethysIconId> void setIcon(final K pId);
+
+    /**
+     * Set Enabled.
+     * @param pEnabled the enabled flag
+     */
+    void setEnabled(final boolean pEnabled) {
+        theButton.setEnabled(pEnabled);
+    }
+
+    /**
+     * Set Null Margins.
+     */
+    public void setNullMargins() {
+        theButton.setNullMargins();
     }
 
     /**

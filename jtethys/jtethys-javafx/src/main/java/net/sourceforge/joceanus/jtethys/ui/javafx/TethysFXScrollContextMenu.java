@@ -44,7 +44,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -58,6 +57,8 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXArrowIcon;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -77,11 +78,6 @@ public class TethysFXScrollContextMenu<T>
      * StyleSheet.
      */
     private static final String CSS_STYLE = TethysFXScrollContextMenu.class.getResource("jtethys-javafx-contextmenu.css").toExternalForm();
-
-    /**
-     * CheckMark icon.
-     */
-    private static final Image CHECK_ICON = new Image(TethysScrollMenuContent.class.getResourceAsStream("BlueJellyCheckMark.png"));
 
     /**
      * The menu style.
@@ -931,7 +927,7 @@ public class TethysFXScrollContextMenu<T>
             /* Create a Label for the graphic */
             theIcon = new Label();
             theIcon.setGraphic(pGraphic);
-            theIcon.setMinWidth(TethysScrollMenuContent.DEFAULT_ICONWIDTH);
+            theIcon.setMinWidth(TethysIconButtonManager.DEFAULT_ICONWIDTH);
 
             /* Add the children */
             getChildren().addAll(theIcon, theLabel);
@@ -1060,7 +1056,7 @@ public class TethysFXScrollContextMenu<T>
         public void setSelected(final boolean pSelected) {
             isSelected = pSelected;
             setIcon(isSelected
-                               ? TethysFXGuiUtils.resizeImage(CHECK_ICON, TethysScrollMenuContent.DEFAULT_ICONWIDTH)
+                               ? TethysFXGuiUtils.getIconAtSize(TethysScrollIcon.CHECKMARK, TethysIconButtonManager.DEFAULT_ICONWIDTH)
                                : null);
         }
 

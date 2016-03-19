@@ -32,11 +32,6 @@ public abstract class TethysScrollMenuContent {
     public static final int DEFAULT_ITEMCOUNT = 15;
 
     /**
-     * Default icon width.
-     */
-    public static final int DEFAULT_ICONWIDTH = 16;
-
-    /**
      * Initial scroll delay when hovering over icon.
      */
     public static final int INITIAL_SCROLLDELAY = 1000;
@@ -50,6 +45,11 @@ public abstract class TethysScrollMenuContent {
      * MaxDisplayItems error.
      */
     public static final String ERROR_MAXITEMS = "Maximum Display items must be greater than 0";
+
+    /**
+     * The URL for the CheckMark Icon.
+     */
+    public static final String ICONNAME_CHECKMARK = "BlueJellyCheckMark.png";
 
     /**
      * Private constructor.

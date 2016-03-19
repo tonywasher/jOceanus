@@ -22,11 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.Insets;
+
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
@@ -72,6 +76,16 @@ public class TethysSwingIconButton
         theButton.setToolTipText(pToolTip);
     }
 
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theButton.setEnabled(pEnabled);
+    }
+
+    @Override
+    public void setNullMargins() {
+        theButton.setMargin(new Insets(0, 0, 0, 0));
+    }
+
     /**
      * Simple Swing IconButton Manager.
      * @param <T> the object type
@@ -95,6 +109,16 @@ public class TethysSwingIconButton
         public JButton getNode() {
             return (JButton) super.getNode();
         }
+
+        @Override
+        public <K extends Enum<K> & TethysIconId> void setDetailsForValue(final T pValue,
+                                                                          final T pNext,
+                                                                          final K pId,
+                                                                          final String pToolTip) {
+            setNewValueForValue(pValue, pNext);
+            setIconForValue(pValue, TethysSwingGuiUtils.getIconAtSize(pId, getWidth()));
+            setTooltipForValue(pValue, pToolTip);
+        }
     }
 
     /**
@@ -115,6 +139,16 @@ public class TethysSwingIconButton
         @Override
         public TethysSwingIconButton getButton() {
             return (TethysSwingIconButton) super.getButton();
+        }
+
+        @Override
+        public <K extends Enum<K> & TethysIconId> void setDetailsForValue(final T pValue,
+                                                                          final T pNext,
+                                                                          final K pId,
+                                                                          final String pToolTip) {
+            setNewValueForValue(pValue, pNext);
+            setIconForValue(pValue, TethysSwingGuiUtils.getIconAtSize(pId, getWidth()));
+            setTooltipForValue(pValue, pToolTip);
         }
     }
 }

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
 
@@ -66,7 +67,7 @@ public class TethysEventRegistrar<E extends Enum<E>> {
     /**
      * The Next registrationId.
      */
-    private Integer theNextRegId = 1;
+    private AtomicInteger theNextRegId = new AtomicInteger();
 
     /**
      * Constructor.
@@ -78,17 +79,6 @@ public class TethysEventRegistrar<E extends Enum<E>> {
 
         /* Allocate the list */
         theRegistrations = new ArrayList<>();
-    }
-
-    /**
-     * Obtain next owner id.
-     * @return the id of the new owner
-     */
-    private synchronized int getNextRegistrationId() {
-        /* return the new registration id */
-        Integer myId = theNextRegId;
-        theNextRegId = theNextRegId + 1;
-        return myId;
     }
 
     /**
@@ -159,7 +149,7 @@ public class TethysEventRegistrar<E extends Enum<E>> {
         List<TethysEventRegistration<E>> myNew = new ArrayList<>(theRegistrations);
 
         /* Set the new registration Id */
-        pRegistration.setRegId(getNextRegistrationId());
+        pRegistration.setRegId(theNextRegId.getAndIncrement());
 
         /* Adjust the list */
         myNew.add(pRegistration);
