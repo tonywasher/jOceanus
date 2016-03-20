@@ -51,14 +51,14 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TaxYearPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingActionButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
@@ -126,12 +126,12 @@ public class TaxYearTable
     /**
      * The error panel.
      */
-    private final ErrorPanel theError;
+    private final PrometheusSwingErrorPanel theError;
 
     /**
      * Action Buttons.
      */
-    private final ActionButtons theActionButtons;
+    private final PrometheusSwingActionButtons theActionButtons;
 
     /**
      * The data entry.
@@ -187,10 +187,10 @@ public class TaxYearTable
         theDataEntry.setObject(theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, theDataEntry);
+        theError = new PrometheusSwingErrorPanel(myDataMgr, theDataEntry);
 
         /* Create the action buttons */
-        theActionButtons = new ActionButtons(theUpdateSet, false);
+        theActionButtons = new PrometheusSwingActionButtons(theUpdateSet, false);
 
         /* Create the table model */
         TaxYearTableModel myModel = new TaxYearTableModel(this);
@@ -216,12 +216,12 @@ public class TaxYearTable
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(theError, BorderLayout.PAGE_START);
+        thePanel.add(theError.getNode(), BorderLayout.PAGE_START);
         thePanel.add(myMain, BorderLayout.CENTER);
 
         /* Create a TaxYear panel */
         theActiveYear = new TaxYearPanel(theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveYear, BorderLayout.PAGE_END);
+        thePanel.add(theActiveYear.getNode(), BorderLayout.PAGE_END);
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);

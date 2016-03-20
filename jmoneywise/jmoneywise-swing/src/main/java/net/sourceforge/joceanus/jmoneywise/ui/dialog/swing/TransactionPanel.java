@@ -75,7 +75,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.TransactionFilters;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -99,11 +99,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
  */
 public class TransactionPanel
         extends MoneyWiseDataItemPanel<Transaction> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -5109090549472976745L;
-
     /**
      * The Field Set.
      */
@@ -162,22 +157,22 @@ public class TransactionPanel
     /**
      * The Tag Menu Builder.
      */
-    private final transient JScrollListMenuBuilder<TransactionTag> theTagMenuBuilder;
+    private final JScrollListMenuBuilder<TransactionTag> theTagMenuBuilder;
 
     /**
      * Direction Button Field.
      */
-    private final transient ComplexIconButtonState<AssetDirection, Boolean> theDirectionState;
+    private final ComplexIconButtonState<AssetDirection, Boolean> theDirectionState;
 
     /**
      * Reconciled Button Field.
      */
-    private final transient ComplexIconButtonState<Boolean, Boolean> theReconciledState;
+    private final ComplexIconButtonState<Boolean, Boolean> theReconciledState;
 
     /**
      * TransactionBuilder.
      */
-    private final transient TransactionBuilder theBuilder;
+    private final TransactionBuilder theBuilder;
 
     /**
      * The Account Menu Builder.
@@ -211,7 +206,7 @@ public class TransactionPanel
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final TransactionBuilder pBuilder,
                             final AnalysisSelect pAnalysisSelect,
-                            final ErrorPanel pError) {
+                            final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
         theAnalysisSelect = pAnalysisSelect;
@@ -505,7 +500,7 @@ public class TransactionPanel
     }
 
     @Override
-    protected boolean isDeletable() {
+    public boolean isDeletable() {
         return !getItem().isReconciled();
     }
 

@@ -56,13 +56,13 @@ import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice.SpotSecurityL
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.YQLDownloader;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingActionButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
@@ -172,7 +172,7 @@ public class SpotPricesTable
     /**
      * The action buttons.
      */
-    private final ActionButtons theActionButtons;
+    private final PrometheusSwingActionButtons theActionButtons;
 
     /**
      * The data entry.
@@ -182,7 +182,7 @@ public class SpotPricesTable
     /**
      * The error panel.
      */
-    private final ErrorPanel theError;
+    private final PrometheusSwingErrorPanel theError;
 
     /**
      * Constructor.
@@ -223,16 +223,16 @@ public class SpotPricesTable
 
         /* Create the sub panels */
         theSelect = new SpotPricesSelect(theView);
-        theActionButtons = new ActionButtons(theUpdateSet);
+        theActionButtons = new PrometheusSwingActionButtons(theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, theDataPrice);
+        theError = new PrometheusSwingErrorPanel(myDataMgr, theDataPrice);
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
         myHeader.add(theSelect, BorderLayout.CENTER);
-        myHeader.add(theError, BorderLayout.PAGE_START);
+        myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
         myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
 
         /* Create the panel */

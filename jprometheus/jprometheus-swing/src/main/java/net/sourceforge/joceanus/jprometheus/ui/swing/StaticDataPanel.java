@@ -157,12 +157,12 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     /**
      * The error panel.
      */
-    private final ErrorPanel theError;
+    private final PrometheusSwingErrorPanel theError;
 
     /**
      * The action buttons panel.
      */
-    private final ActionButtons theActionButtons;
+    private final PrometheusSwingActionButtons theActionButtons;
 
     /**
      * The UpdateSet.
@@ -209,10 +209,10 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theDataEntry.setObject(theUpdateSet);
 
         /* Create the error panel */
-        theError = new ErrorPanel(myDataMgr, theDataEntry);
+        theError = new PrometheusSwingErrorPanel(myDataMgr, theDataEntry);
 
         /* Create the action buttons panel */
-        theActionButtons = new ActionButtons(theUpdateSet);
+        theActionButtons = new PrometheusSwingActionButtons(theUpdateSet);
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
@@ -250,7 +250,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
         myHeader.add(mySelect, BorderLayout.CENTER);
-        myHeader.add(theError, BorderLayout.PAGE_START);
+        myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
         myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
 
         /* Create the table card panel */

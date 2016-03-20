@@ -32,7 +32,6 @@ import javafx.scene.control.Tooltip;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXArrowIcon;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager.TethysScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.TethysFXContextEvent;
@@ -140,8 +139,9 @@ public final class TethysFXScrollButton
         }
 
         @Override
-        public <K extends Enum<K> & TethysIconId> void setIcon(final K pId) {
-            getButton().setButtonIcon(TethysFXGuiUtils.getIconAtSize(pId, TethysIconButtonManager.DEFAULT_ICONWIDTH));
+        public <K extends Enum<K> & TethysIconId> void setIcon(final K pId,
+                                                               final int pWidth) {
+            getButton().setButtonIcon(TethysFXGuiUtils.getIconAtSize(pId, pWidth));
         }
     }
 }

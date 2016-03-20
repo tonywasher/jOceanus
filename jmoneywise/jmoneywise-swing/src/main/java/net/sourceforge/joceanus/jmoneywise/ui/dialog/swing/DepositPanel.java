@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurre
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
@@ -72,11 +72,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 public class DepositPanel
         extends MoneyWiseDataItemPanel<Deposit> {
     /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -5458693709039462001L;
-
-    /**
      * Rates Tab Title.
      */
     private static final String TAB_RATES = MoneyWiseUIResource.DEPOSITPANEL_TAB_RATES.getValue();
@@ -84,7 +79,7 @@ public class DepositPanel
     /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<Deposit> theFieldSet;
+    private final MetisFieldSet<Deposit> theFieldSet;
 
     /**
      * DepositCategory Button Field.
@@ -104,17 +99,17 @@ public class DepositPanel
     /**
      * Closed Button Field.
      */
-    private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
+    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
      * TaxFree Button Field.
      */
-    private final transient ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
+    private final ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
 
     /**
      * Gross Button Field.
      */
-    private final transient ComplexIconButtonState<Boolean, Boolean> theGrossState;
+    private final ComplexIconButtonState<Boolean, Boolean> theGrossState;
 
     /**
      * The Category Menu Builder.
@@ -144,7 +139,7 @@ public class DepositPanel
      */
     public DepositPanel(final MetisFieldManager pFieldMgr,
                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                        final ErrorPanel pError) {
+                        final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
 

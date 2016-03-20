@@ -1054,7 +1054,7 @@ public class TethysSwingScrollContextMenu<T>
             thePanel = new TethysSwingEnablePanel();
 
             /* Set border layout */
-            thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
+            thePanel.setLayout(new BorderLayout());
 
             /* Create a Label for the name */
             theLabel = new JLabel();
@@ -1071,8 +1071,8 @@ public class TethysSwingScrollContextMenu<T>
             theIcon.setMaximumSize(myDim);
 
             /* Add the children */
-            thePanel.add(theIcon);
-            thePanel.add(theLabel);
+            thePanel.add(theIcon, BorderLayout.LINE_START);
+            thePanel.add(theLabel, BorderLayout.CENTER);
         }
 
         /**
@@ -1101,14 +1101,6 @@ public class TethysSwingScrollContextMenu<T>
          */
         protected JPanel getPanel() {
             return thePanel;
-        }
-
-        /**
-         * Obtain the label.
-         * @return the label
-         */
-        protected JLabel getLabel() {
-            return theLabel;
         }
 
         /**
@@ -1143,6 +1135,14 @@ public class TethysSwingScrollContextMenu<T>
                     theBaseColor = null;
                 }
             }
+        }
+
+        /**
+         * Add Menu icon.
+         */
+        protected void addMenuIcon() {
+            JLabel myLabel = new JLabel(TethysSwingArrowIcon.RIGHT);
+            thePanel.add(myLabel, BorderLayout.LINE_END);
         }
     }
 
@@ -1307,10 +1307,8 @@ public class TethysSwingScrollContextMenu<T>
             /* Determine the index */
             theIndex = theContext.getItemCount();
 
-            /* Set text */
-            JLabel myLabel = getLabel();
-            myLabel.setIcon(TethysSwingArrowIcon.RIGHT);
-            myLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+            /* Set menu icon */
+            addMenuIcon();
 
             /* Handle show menu */
             getPanel().addMouseListener(new MouseAdapter() {

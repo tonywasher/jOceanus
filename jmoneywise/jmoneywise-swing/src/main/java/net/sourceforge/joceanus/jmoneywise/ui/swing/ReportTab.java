@@ -55,7 +55,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect.Stat
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.ReportSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -121,7 +121,7 @@ public class ReportTab
     /**
      * The Error Panel.
      */
-    private final ErrorPanel theError;
+    private final PrometheusSwingErrorPanel theError;
 
     /**
      * The Report Manager.
@@ -175,13 +175,13 @@ public class ReportTab
         theSelect = new ReportSelect();
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, myDataReport);
+        theError = new PrometheusSwingErrorPanel(myDataMgr, myDataReport);
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
         myHeader.add(theSelect, BorderLayout.CENTER);
-        myHeader.add(theError, BorderLayout.PAGE_START);
+        myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
 
         /* Now define the panel */
         thePanel.setLayout(new BorderLayout());

@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager.TethysScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -137,8 +136,9 @@ public final class TethysSwingScrollButton
         }
 
         @Override
-        public <K extends Enum<K> & TethysIconId> void setIcon(final K pId) {
-            getButton().setButtonIcon(TethysSwingGuiUtils.getIconAtSize(pId, TethysIconButtonManager.DEFAULT_ICONWIDTH));
+        public <K extends Enum<K> & TethysIconId> void setIcon(final K pId,
+                                                               final int pWidth) {
+            getButton().setButtonIcon(TethysSwingGuiUtils.getIconAtSize(pId, pWidth));
         }
     }
 }

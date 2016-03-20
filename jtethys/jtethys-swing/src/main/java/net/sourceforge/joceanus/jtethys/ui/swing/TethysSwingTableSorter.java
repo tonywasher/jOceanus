@@ -32,7 +32,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import javax.swing.RowSorter;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSwingTableSorterModel;
@@ -145,9 +144,10 @@ public class TethysSwingTableSorter<T>
     /**
      * Report mapping changed.
      * <p>
-     * This should be called immediately after {@link AbstractTableModel#fireTableCellUpdated}, to
-     * complete the call. Ideally this would be called as part of fireTableRowsUpdated, but the call
-     * to {@link RowSorter#fireRowSorterChanged} is ignored when called from
+     * This should be called immediately after
+     * {@link javax.swing.table.AbstractTableModel#fireTableCellUpdated}, to complete the call.
+     * Ideally this would be called as part of fireTableRowsUpdated, but the call to
+     * {@link RowSorter#fireRowSorterChanged} is ignored when called from
      * {@link #rowsUpdated(int, int, int)}, probably due to the fact that the column is not
      * contained in the sort keys
      */
@@ -184,7 +184,7 @@ public class TethysSwingTableSorter<T>
         /* Allocate the data maps */
         theViewMap = new int[iNumRows];
         theSortedMap = new int[iNumRows];
-        theDataControl = (TableRowEntry<T>[]) new TableRowEntry[iNumRows];
+        theDataControl = new TableRowEntry[iNumRows];
 
         /* Loop through the model elements */
         for (int i = 0; i < iNumRows; i++) {

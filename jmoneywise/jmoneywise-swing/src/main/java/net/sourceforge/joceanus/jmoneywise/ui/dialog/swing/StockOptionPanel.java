@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -70,11 +70,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 public class StockOptionPanel
         extends MoneyWiseDataItemPanel<StockOption> {
     /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 7816774872067208354L;
-
-    /**
      * Vests Tab Title.
      */
     private static final String TAB_VESTS = MoneyWiseUIResource.OPTIONPANEL_TAB_VESTS.getValue();
@@ -82,7 +77,7 @@ public class StockOptionPanel
     /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<StockOption> theFieldSet;
+    private final MetisFieldSet<StockOption> theFieldSet;
 
     /**
      * StockHolding Button Field.
@@ -102,7 +97,7 @@ public class StockOptionPanel
     /**
      * Closed Button Field.
      */
-    private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
+    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
      * StockOptionVest Table.
@@ -122,7 +117,7 @@ public class StockOptionPanel
      */
     public StockOptionPanel(final MetisFieldManager pFieldMgr,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                            final ErrorPanel pError) {
+                            final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
 

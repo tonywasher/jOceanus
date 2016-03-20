@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice.ViewSecurityPriceList;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -113,7 +113,7 @@ public class SecurityPriceTable
     /**
      * The error panel.
      */
-    private final ErrorPanel theError;
+    private final PrometheusSwingErrorPanel theError;
 
     /**
      * The panel.
@@ -165,7 +165,7 @@ public class SecurityPriceTable
     protected SecurityPriceTable(final View pView,
                                  final MetisFieldManager pFieldMgr,
                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                 final ErrorPanel pError) {
+                                 final PrometheusSwingErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
         theError = pError;

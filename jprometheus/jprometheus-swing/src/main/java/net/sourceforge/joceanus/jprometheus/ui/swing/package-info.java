@@ -21,8 +21,7 @@
  * $Date$
  ******************************************************************************/
 /**
- * User interface classes for JDataModels.
+ * User interface classes for jPrometheus.
  * @author Tony Washer
  */
 package net.sourceforge.joceanus.jprometheus.ui.swing;
-

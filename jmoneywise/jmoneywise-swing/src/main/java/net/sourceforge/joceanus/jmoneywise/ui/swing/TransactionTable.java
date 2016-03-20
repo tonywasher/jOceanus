@@ -71,14 +71,14 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingActionButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -277,12 +277,12 @@ public class TransactionTable
     /**
      * The action buttons.
      */
-    private final ActionButtons theActionButtons;
+    private final PrometheusSwingActionButtons theActionButtons;
 
     /**
      * The error panel.
      */
-    private final ErrorPanel theError;
+    private final PrometheusSwingErrorPanel theError;
 
     /**
      * The table model.
@@ -375,10 +375,10 @@ public class TransactionTable
         theSelect = new AnalysisSelect(theView, theAnalysisView, theNewButton);
 
         /* Create the action buttons */
-        theActionButtons = new ActionButtons(theUpdateSet);
+        theActionButtons = new PrometheusSwingActionButtons(theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, myDataRegister);
+        theError = new PrometheusSwingErrorPanel(myDataMgr, myDataRegister);
 
         /* Create the table model */
         theModel = new AnalysisTableModel(this);
@@ -392,7 +392,7 @@ public class TransactionTable
         JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
         myHeader.add(theSelect, BorderLayout.CENTER);
-        myHeader.add(theError, BorderLayout.PAGE_START);
+        myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
         myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
 
         /* Create the layout for the panel */
@@ -403,7 +403,7 @@ public class TransactionTable
 
         /* Create a transaction panel */
         theActiveTrans = new TransactionPanel(theFieldMgr, theUpdateSet, theBuilder, theSelect, theError);
-        thePanel.add(theActiveTrans, BorderLayout.PAGE_END);
+        thePanel.add(theActiveTrans.getNode(), BorderLayout.PAGE_END);
 
         /* Prevent reordering of columns and auto-resizing */
         getTableHeader().setReorderingAllowed(false);

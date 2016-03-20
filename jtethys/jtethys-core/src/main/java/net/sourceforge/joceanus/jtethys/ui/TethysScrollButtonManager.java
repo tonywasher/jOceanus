@@ -218,16 +218,16 @@ public abstract class TethysScrollButtonManager<T, B, I>
     /**
      * Set simple details.
      * @param <K> the keyId type
-     * @param pValue the value
      * @param pId the mapped IconId
+     * @param pWidth the icon width
      * @param pToolTip the toolTip for value
      */
-    public <K extends Enum<K> & TethysIconId> void setSimpleDetails(final T pValue,
-                                                                    final K pId,
+    public <K extends Enum<K> & TethysIconId> void setSimpleDetails(final K pId,
+                                                                    final int pWidth,
                                                                     final String pToolTip) {
         setFixedText(null);
-        setValue(pValue);
-        setIcon(pId);
+        setValue(null);
+        setIcon(pId, pWidth);
         theButton.setButtonToolTip(pToolTip);
     }
 
@@ -235,14 +235,16 @@ public abstract class TethysScrollButtonManager<T, B, I>
      * Set Icon.
      * @param <K> the keyId type
      * @param pId the IconId
+     * @param pWidth the icon width
      */
-    protected abstract <K extends Enum<K> & TethysIconId> void setIcon(final K pId);
+    protected abstract <K extends Enum<K> & TethysIconId> void setIcon(final K pId,
+                                                                       final int pWidth);
 
     /**
      * Set Enabled.
      * @param pEnabled the enabled flag
      */
-    void setEnabled(final boolean pEnabled) {
+    public void setEnabled(final boolean pEnabled) {
         theButton.setEnabled(pEnabled);
     }
 

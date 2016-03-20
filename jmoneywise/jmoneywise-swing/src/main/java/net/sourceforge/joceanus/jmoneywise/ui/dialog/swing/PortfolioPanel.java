@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
@@ -64,14 +64,9 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 public class PortfolioPanel
         extends MoneyWiseDataItemPanel<Portfolio> {
     /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 8504264018922234415L;
-
-    /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<Portfolio> theFieldSet;
+    private final MetisFieldSet<Portfolio> theFieldSet;
 
     /**
      * Parent Button Field.
@@ -86,12 +81,12 @@ public class PortfolioPanel
     /**
      * Closed Button Field.
      */
-    private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
+    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
      * TaxFree Button Field.
      */
-    private final transient ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
+    private final ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
 
     /**
      * The Parent Menu Builder.
@@ -111,7 +106,7 @@ public class PortfolioPanel
      */
     public PortfolioPanel(final MetisFieldManager pFieldMgr,
                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                          final ErrorPanel pError) {
+                          final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
 

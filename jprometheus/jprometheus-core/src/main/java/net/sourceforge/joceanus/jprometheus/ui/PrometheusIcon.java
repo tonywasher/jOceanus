@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jprometheus.ui;
 
 import net.sourceforge.joceanus.jprometheus.data.PrometheusAction;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 
@@ -166,7 +167,6 @@ public enum PrometheusIcon implements TethysIconId {
     private static void configureSimpleIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
         pButton.setWidth(ICON_SIZE);
         pButton.setNullMargins();
-        pButton.setValue(Boolean.TRUE);
     }
 
     /**
@@ -174,7 +174,7 @@ public enum PrometheusIcon implements TethysIconId {
      * @param pButton the button manager
      */
     public static void configureNewScrollButton(final TethysScrollButtonManager<?, ?, ?> pButton) {
-        pButton.setSimpleDetails(null, NEW, TIP_NEW);
+        pButton.setSimpleDetails(NEW, TethysIconButtonManager.DEFAULT_ICONWIDTH, TIP_NEW);
     }
 
     /**
@@ -182,7 +182,8 @@ public enum PrometheusIcon implements TethysIconId {
      * @param pButton the button manager
      */
     public static void configureGoToScrollButton(final TethysScrollButtonManager<?, ?, ?> pButton) {
-        pButton.setSimpleDetails(null, GOTO, TIP_GOTO);
+        pButton.setNullMargins();
+        pButton.setSimpleDetails(GOTO, ICON_SIZE, TIP_GOTO);
     }
 
     /**
@@ -201,6 +202,7 @@ public enum PrometheusIcon implements TethysIconId {
     public static void configureEditIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
         configureSimpleIconButton(pButton);
         pButton.setSimpleDetailsForValue(Boolean.TRUE, EDIT, TIP_EDIT);
+        pButton.setValue(Boolean.TRUE);
     }
 
     /**
@@ -210,6 +212,7 @@ public enum PrometheusIcon implements TethysIconId {
     public static void configureDeleteIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
         configureSimpleIconButton(pButton);
         pButton.setSimpleDetailsForValue(Boolean.TRUE, DELETE, TIP_DELETE);
+        pButton.setValue(Boolean.TRUE);
     }
 
     /**
@@ -219,6 +222,7 @@ public enum PrometheusIcon implements TethysIconId {
     public static void configureCommitIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
         configureSimpleIconButton(pButton);
         pButton.setSimpleDetailsForValue(Boolean.TRUE, COMMIT, TIP_COMMIT);
+        pButton.setValue(Boolean.TRUE);
     }
 
     /**
@@ -228,6 +232,7 @@ public enum PrometheusIcon implements TethysIconId {
     public static void configureUndoIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
         configureSimpleIconButton(pButton);
         pButton.setSimpleDetailsForValue(Boolean.TRUE, UNDO, TIP_UNDO);
+        pButton.setValue(Boolean.TRUE);
     }
 
     /**
@@ -237,6 +242,7 @@ public enum PrometheusIcon implements TethysIconId {
     public static void configureResetIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
         configureSimpleIconButton(pButton);
         pButton.setSimpleDetailsForValue(Boolean.TRUE, RESET, TIP_RESET);
+        pButton.setValue(Boolean.TRUE);
     }
 
     /**
@@ -246,6 +252,7 @@ public enum PrometheusIcon implements TethysIconId {
     public static void configureCancelIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
         configureSimpleIconButton(pButton);
         pButton.setSimpleDetailsForValue(Boolean.TRUE, CANCEL, TIP_CANCEL);
+        pButton.setValue(Boolean.TRUE);
     }
 
     /**

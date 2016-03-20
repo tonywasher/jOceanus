@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
@@ -69,11 +69,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 public class SecurityPanel
         extends MoneyWiseDataItemPanel<Security> {
     /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 7711868258621672746L;
-
-    /**
      * Prices Tab Title.
      */
     private static final String TAB_PRICES = MoneyWiseUIResource.SECURITYPANEL_TAB_PRICES.getValue();
@@ -81,7 +76,7 @@ public class SecurityPanel
     /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<Security> theFieldSet;
+    private final MetisFieldSet<Security> theFieldSet;
 
     /**
      * Security Type Button Field.
@@ -101,7 +96,7 @@ public class SecurityPanel
     /**
      * Closed Button Field.
      */
-    private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
+    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
      * SecurityPrice Table.
@@ -133,7 +128,7 @@ public class SecurityPanel
     public SecurityPanel(final View pView,
                          final MetisFieldManager pFieldMgr,
                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                         final ErrorPanel pError) {
+                         final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
 

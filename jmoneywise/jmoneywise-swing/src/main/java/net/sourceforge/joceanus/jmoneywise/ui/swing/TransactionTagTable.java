@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TransactionTagPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -109,7 +109,7 @@ public class TransactionTagTable
     /**
      * The error panel.
      */
-    private final ErrorPanel theError;
+    private final PrometheusSwingErrorPanel theError;
 
     /**
      * The Table Model.
@@ -159,7 +159,7 @@ public class TransactionTagTable
      */
     public TransactionTagTable(final SwingView pView,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                               final ErrorPanel pError) {
+                               final PrometheusSwingErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
         theError = pError;
@@ -193,7 +193,7 @@ public class TransactionTagTable
 
         /* Create a Tag panel */
         theActiveTag = new TransactionTagPanel(theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveTag, BorderLayout.PAGE_END);
+        thePanel.add(theActiveTag.getNode(), BorderLayout.PAGE_END);
 
         /* Create new button */
         theNewButton = MoneyWiseIcons.getNewButton();

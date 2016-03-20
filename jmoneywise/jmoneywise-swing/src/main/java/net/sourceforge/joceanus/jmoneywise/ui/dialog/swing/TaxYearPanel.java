@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -62,11 +62,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 public class TaxYearPanel
         extends MoneyWiseDataItemPanel<TaxYear> {
     /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -3376054362500655788L;
-
-    /**
      * Field Height.
      */
     private static final int FIELD_HEIGHT = 20;
@@ -79,7 +74,7 @@ public class TaxYearPanel
     /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<TaxYear> theFieldSet;
+    private final MetisFieldSet<TaxYear> theFieldSet;
 
     /**
      * The tax year field.
@@ -104,7 +99,7 @@ public class TaxYearPanel
      */
     public TaxYearPanel(final MetisFieldManager pFieldMgr,
                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                        final ErrorPanel pError) {
+                        final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
 
@@ -562,7 +557,7 @@ public class TaxYearPanel
     }
 
     @Override
-    protected boolean isDeletable() {
+    public boolean isDeletable() {
         return super.isDeletable()
                && isEdgeOfList();
     }

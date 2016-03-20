@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -53,14 +53,9 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 public class CashCategoryPanel
         extends MoneyWiseDataItemPanel<CashCategory> {
     /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -2519622794507877466L;
-
-    /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<CashCategory> theFieldSet;
+    private final MetisFieldSet<CashCategory> theFieldSet;
 
     /**
      * Category Type Button Field.
@@ -90,7 +85,7 @@ public class CashCategoryPanel
      */
     public CashCategoryPanel(final MetisFieldManager pFieldMgr,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                             final ErrorPanel pError) {
+                             final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
 

@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurre
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
@@ -73,14 +73,9 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 public class CashPanel
         extends MoneyWiseDataItemPanel<Cash> {
     /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -1242762723020329985L;
-
-    /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<Cash> theFieldSet;
+    private final MetisFieldSet<Cash> theFieldSet;
 
     /**
      * CashCategory Button Field.
@@ -105,7 +100,7 @@ public class CashPanel
     /**
      * Closed Button Field.
      */
-    private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
+    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
      * The Category Menu Builder.
@@ -135,7 +130,7 @@ public class CashPanel
      */
     public CashPanel(final MetisFieldManager pFieldMgr,
                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                     final ErrorPanel pError) {
+                     final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
 

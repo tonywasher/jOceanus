@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.StockOptionPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -144,7 +144,7 @@ public class StockOptionTable
     /**
      * The error panel.
      */
-    private final ErrorPanel theError;
+    private final PrometheusSwingErrorPanel theError;
 
     /**
      * The Table Model.
@@ -199,7 +199,7 @@ public class StockOptionTable
      */
     public StockOptionTable(final SwingView pView,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                            final ErrorPanel pError) {
+                            final PrometheusSwingErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
         theError = pError;
@@ -250,7 +250,7 @@ public class StockOptionTable
 
         /* Create an account panel */
         theActiveAccount = new StockOptionPanel(theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveAccount, BorderLayout.PAGE_END);
+        thePanel.add(theActiveAccount.getNode(), BorderLayout.PAGE_END);
 
         /* Create the selection model */
         theSelectionModel = new JDataTableSelection<>(this, theActiveAccount);

@@ -59,7 +59,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.SecurityPanel;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice.ViewSecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -161,7 +161,7 @@ public class SecurityTable
     /**
      * The error panel.
      */
-    private final ErrorPanel theError;
+    private final PrometheusSwingErrorPanel theError;
 
     /**
      * The Table Model.
@@ -216,7 +216,7 @@ public class SecurityTable
      */
     public SecurityTable(final SwingView pView,
                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                         final ErrorPanel pError) {
+                         final PrometheusSwingErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
         theError = pError;
@@ -267,7 +267,7 @@ public class SecurityTable
 
         /* Create an account panel */
         theActiveAccount = new SecurityPanel(theView, theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveAccount, BorderLayout.PAGE_END);
+        thePanel.add(theActiveAccount.getNode(), BorderLayout.PAGE_END);
 
         /* Create the selection model */
         theSelectionModel = new JDataTableSelection<>(this, theActiveAccount);

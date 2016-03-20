@@ -44,12 +44,12 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRangeState;
 import net.sourceforge.joceanus.jtethys.date.TethysDateResource;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateRangeSelector;
 
 /**
  * Selection panel to select a standard DatePeriod from within a range of dates.
  * @author Tony Washer
- * @deprecated as of 1.5.0 use {@link TethysFXDateRangeSelector}
+ * @deprecated as of 1.5.0 use
+ * {@link net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateRangeSelector}
  */
 @Deprecated
 public class TethysFXDateRangeSelect

@@ -187,7 +187,7 @@ public abstract class TethysListButtonManager<T, B, I>
      * Set Enabled.
      * @param pEnabled the enabled flag
      */
-    void setEnabled(final boolean pEnabled) {
+    public void setEnabled(final boolean pEnabled) {
         theButton.setEnabled(pEnabled);
     }
 

@@ -148,7 +148,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * The Error panel.
      */
-    private final ErrorPanel theError;
+    private final PrometheusSwingErrorPanel theError;
 
     /**
      * Constructor.
@@ -162,7 +162,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     public StaticDataTable(final DataControl<?, E> pControl,
                            final UpdateSet<E> pUpdateSet,
                            final JOceanusSwingUtilitySet pUtilitySet,
-                           final ErrorPanel pError,
+                           final PrometheusSwingErrorPanel pError,
                            final E pItemType,
                            final Class<L> pListClass) {
         /* Record the passed details */

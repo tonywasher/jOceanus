@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionC
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -53,14 +53,9 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 public class TransactionCategoryPanel
         extends MoneyWiseDataItemPanel<TransactionCategory> {
     /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -9025803624405965777L;
-
-    /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<TransactionCategory> theFieldSet;
+    private final MetisFieldSet<TransactionCategory> theFieldSet;
 
     /**
      * Category Type Button Field.
@@ -90,7 +85,7 @@ public class TransactionCategoryPanel
      */
     public TransactionCategoryPanel(final MetisFieldManager pFieldMgr,
                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                    final ErrorPanel pError) {
+                                    final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
 

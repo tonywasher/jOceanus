@@ -25,12 +25,12 @@ package net.sourceforge.joceanus.jtethys.date.swing;
 import net.sourceforge.jdatebutton.swing.JDateCellRenderer;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableDateCell;
 
 /**
  * Cell renderer for a {@link TethysDate} object extending {@link JDateCellRenderer}.
  * @author Tony Washer
- * @deprecated as of 1.5.0 use {@link TethysSwingTableDateCell}
+ * @deprecated as of 1.5.0 use
+ * {@link net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableDateCell}
  */
 @Deprecated
 public class TethysSwingDateCellRenderer

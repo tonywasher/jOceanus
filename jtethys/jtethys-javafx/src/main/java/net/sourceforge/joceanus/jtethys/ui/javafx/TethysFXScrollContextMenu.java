@@ -48,7 +48,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Modality;
@@ -901,7 +900,7 @@ public class TethysFXScrollContextMenu<T>
      * Scroll item.
      */
     public abstract static class TethysFXScrollElement
-            extends HBox {
+            extends BorderPane {
         /**
          * The label.
          */
@@ -930,18 +929,11 @@ public class TethysFXScrollContextMenu<T>
             theIcon.setMinWidth(TethysIconButtonManager.DEFAULT_ICONWIDTH);
 
             /* Add the children */
-            getChildren().addAll(theIcon, theLabel);
+            setLeft(theIcon);
+            setCenter(theLabel);
 
             /* Set style of item */
             getStyleClass().add(STYLE_ITEM);
-        }
-
-        /**
-         * Obtain the label.
-         * @return the label
-         */
-        protected Label getLabel() {
-            return theLabel;
         }
 
         /**
@@ -958,6 +950,15 @@ public class TethysFXScrollContextMenu<T>
          */
         protected void setIcon(final Node pGraphic) {
             theIcon.setGraphic(pGraphic);
+        }
+
+        /**
+         * Add Menu icon.
+         */
+        protected void addMenuIcon() {
+            Label myLabel = new Label();
+            myLabel.setGraphic(TethysFXArrowIcon.RIGHT.getArrow());
+            setRight(myLabel);
         }
     }
 
@@ -1109,10 +1110,8 @@ public class TethysFXScrollContextMenu<T>
             /* Determine the index */
             theIndex = theContext.getItemCount();
 
-            /* Set text */
-            Label myLabel = getLabel();
-            myLabel.setGraphic(TethysFXArrowIcon.RIGHT.getArrow());
-            myLabel.setContentDisplay(ContentDisplay.RIGHT);
+            /* Set menu icon */
+            addMenuIcon();
 
             /* Handle show menu */
             addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {

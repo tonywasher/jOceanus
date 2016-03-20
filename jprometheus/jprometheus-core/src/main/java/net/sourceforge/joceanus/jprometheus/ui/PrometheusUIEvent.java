@@ -45,4 +45,29 @@ public enum PrometheusUIEvent {
      * Reset.
      */
     RESET,
+
+    /**
+     * Cancel.
+     */
+    CANCEL,
+
+    /**
+     * BuildGoToMenu.
+     */
+    BUILDGOTO,
+
+    /**
+     * GoTo.
+     */
+    GOTO,
+
+    /**
+     * Edit.
+     */
+    EDIT,
+
+    /**
+     * Delete.
+     */
+    DELETE,
 }

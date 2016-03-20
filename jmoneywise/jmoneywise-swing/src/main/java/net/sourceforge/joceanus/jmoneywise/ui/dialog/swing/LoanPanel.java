@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
@@ -70,14 +70,9 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 public class LoanPanel
         extends MoneyWiseDataItemPanel<Loan> {
     /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 3298368283270989964L;
-
-    /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<Loan> theFieldSet;
+    private final MetisFieldSet<Loan> theFieldSet;
 
     /**
      * LoanCategory Button Field.
@@ -97,7 +92,7 @@ public class LoanPanel
     /**
      * Closed Button Field.
      */
-    private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
+    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
      * The Category Menu Builder.
@@ -122,7 +117,7 @@ public class LoanPanel
      */
     public LoanPanel(final MetisFieldManager pFieldMgr,
                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                     final ErrorPanel pError) {
+                     final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
 

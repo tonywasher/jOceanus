@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
@@ -44,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
@@ -53,13 +54,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * @param <E> the data type enum class
  */
 public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends TethysSwingEnablePanel
-        implements TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 7514751065536367674L;
-
+        implements TethysEventProvider<PrometheusDataEvent>, PrometheusItemEditParent {
     /**
      * Details Tab Title.
      */
@@ -83,27 +78,32 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
+     * The Panel.
+     */
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The DataFormatter.
      */
-    private final transient MetisDataFormatter theFormatter;
+    private final MetisDataFormatter theFormatter;
 
     /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<T> theFieldSet;
+    private final MetisFieldSet<T> theFieldSet;
 
     /**
      * The Update Set.
      */
-    private final transient UpdateSet<E> theUpdateSet;
+    private final UpdateSet<E> theUpdateSet;
 
     /**
      * The ErrorPanel.
      */
-    private final ErrorPanel theError;
+    private final PrometheusSwingErrorPanel theError;
 
     /**
      * The MainPanel.
@@ -113,37 +113,37 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * The Item Actions.
      */
-    private final ItemActions<E> theItemActions;
+    private final PrometheusSwingItemActions theItemActions;
 
     /**
      * The Item Actions.
      */
-    private final ItemEditActions<E> theEditActions;
+    private final PrometheusSwingItemEditActions theEditActions;
 
     /**
      * The Item.
      */
-    private transient T theItem;
+    private T theItem;
 
     /**
      * The New Item.
      */
-    private transient T theSelectedItem;
+    private T theSelectedItem;
 
     /**
      * The EditVersion.
      */
-    private transient int theEditVersion = VERSION_READONLY;
+    private int theEditVersion = VERSION_READONLY;
 
     /**
      * Is this a new item.
      */
-    private transient boolean isNew = false;
+    private boolean isNew = false;
 
     /**
      * Is this item on the edge of the list.
      */
-    private transient boolean isEdgeOfList = false;
+    private boolean isEdgeOfList = false;
 
     /**
      * Constructor.
@@ -151,9 +151,10 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
+    @SuppressWarnings("unchecked")
     protected DataItemPanel(final MetisFieldManager pFieldMgr,
                             final UpdateSet<E> pUpdateSet,
-                            final ErrorPanel pError) {
+                            final PrometheusSwingErrorPanel pError) {
         /* Store parameters */
         theUpdateSet = pUpdateSet;
         theError = pError;
@@ -168,21 +169,45 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         theFieldSet = new MetisFieldSet<>(pFieldMgr);
 
         /* Create the main panel */
+        thePanel = new TethysSwingEnablePanel();
         theMainPanel = new TethysSwingEnablePanel();
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
 
         /* create the action panels */
-        theItemActions = new ItemActions<>(this);
-        theEditActions = new ItemEditActions<>(this);
+        theItemActions = new PrometheusSwingItemActions(this);
+        theEditActions = new PrometheusSwingItemEditActions(this);
 
         /* Create listener */
         theUpdateSet.getEventRegistrar().addEventListener(e -> refreshAfterUpdate());
         theFieldSet.getEventRegistrar().addEventListener(e -> updateItem(e.getDetails(MetisFieldUpdate.class)));
+
+        /* Listen to the EditActions */
+        TethysEventRegistrar<PrometheusUIEvent> myRegistrar = theEditActions.getEventRegistrar();
+        myRegistrar.addEventListener(PrometheusUIEvent.OK, e -> requestCommit());
+        myRegistrar.addEventListener(PrometheusUIEvent.UNDO, e -> requestUndo());
+        myRegistrar.addEventListener(PrometheusUIEvent.RESET, e -> requestReset());
+        myRegistrar.addEventListener(PrometheusUIEvent.CANCEL, e -> requestCancel());
+
+        /* Listen to the Actions */
+        myRegistrar = theItemActions.getEventRegistrar();
+        myRegistrar.addEventListener(PrometheusUIEvent.BUILDGOTO,
+                e -> buildGoToMenu((TethysScrollMenu<PrometheusGoToEvent, ?>) e.getDetails(TethysScrollMenu.class)));
+        myRegistrar.addEventListener(PrometheusUIEvent.GOTO, e -> processGoToRequest(e.getDetails(PrometheusGoToEvent.class)));
+        myRegistrar.addEventListener(PrometheusUIEvent.EDIT, e -> requestEdit());
+        myRegistrar.addEventListener(PrometheusUIEvent.DELETE, e -> requestDelete());
     }
 
     @Override
     public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
+    public JPanel getNode() {
+        return thePanel;
     }
 
     /**
@@ -271,12 +296,12 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      */
     protected void layoutPanel() {
         /* Layout the panel */
-        add(theItemActions);
-        add(theMainPanel);
-        add(theEditActions);
+        thePanel.add(theItemActions.getNode());
+        thePanel.add(theMainPanel);
+        thePanel.add(theEditActions.getNode());
 
         /* Set visibility */
-        setVisible(false);
+        thePanel.setVisible(false);
     }
 
     /**
@@ -294,7 +319,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
                                         : VERSION_READONLY;
 
             /* adjust fields */
-            setVisible(true);
+            thePanel.setVisible(true);
             theFieldSet.setEditable(isEditable);
             adjustFields(isEditable);
 
@@ -314,7 +339,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
             isNew = false;
 
             /* Set visibility */
-            setVisible(false);
+            thePanel.setVisible(false);
         }
     }
 
@@ -322,8 +347,8 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * update the actions.
      */
     protected void updateActions() {
-        theEditActions.updateState();
-        theItemActions.updateState();
+        theEditActions.setEnabled(true);
+        theItemActions.setEnabled(true);
     }
 
     /**
@@ -368,19 +393,13 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         isEdgeOfList = true;
     }
 
-    /**
-     * Is the item edit-able?
-     * @return true/false
-     */
-    protected boolean isEditable() {
+    @Override
+    public boolean isEditable() {
         return true;
     }
 
-    /**
-     * Is the item delete-able?
-     * @return true/false
-     */
-    protected boolean isDeletable() {
+    @Override
+    public boolean isDeletable() {
         return theItem != null
                && !theItem.isActive();
     }
@@ -475,7 +494,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * Request cancel.
      */
-    protected void requestCancel() {
+    private void requestCancel() {
         /* If we have any updates */
         if (isNew) {
             /* Rewind any changes to before the new item */
@@ -497,7 +516,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * Request reset.
      */
-    protected void requestReset() {
+    private void requestReset() {
         /* If we have any updates */
         if (hasUpdates()) {
             /* Rewind any changes that have been made */
@@ -508,7 +527,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * Request cancel.
      */
-    protected void requestUndo() {
+    private void requestUndo() {
         /* If we have any updates */
         if (hasUpdates()) {
             /* Undo the last change */
@@ -519,7 +538,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * Request commit.
      */
-    protected void requestCommit() {
+    private void requestCommit() {
         /* Allow analysis */
         theUpdateSet.setEditing(Boolean.FALSE);
 
@@ -542,7 +561,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * Request edit.
      */
-    protected void requestEdit() {
+    private void requestEdit() {
         /* Start editing */
         setEditable(true);
         theUpdateSet.setEditing(Boolean.TRUE);
@@ -555,7 +574,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * Request delete.
      */
-    protected void requestDelete() {
+    private void requestDelete() {
         /* Mark the item as deleted */
         theItem.setDeleted(true);
 
@@ -567,23 +586,18 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     }
 
     /**
-     * Declare the GoTo menu Builder.
-     * @param pBuilder the menu builder
-     */
-    protected abstract void declareGoToMenuBuilder(final JScrollMenuBuilder<PrometheusGoToEvent> pBuilder);
-
-    /**
      * Process goTo request.
      * @param pEvent the goTo request event
      */
-    protected void processGoToRequest(final PrometheusGoToEvent pEvent) {
+    private void processGoToRequest(final PrometheusGoToEvent pEvent) {
         theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, pEvent);
     }
 
     /**
      * Build goTo menu.
+     * @param pMenu the menu to build
      */
-    protected abstract void buildGoToMenu();
+    protected abstract void buildGoToMenu(final TethysScrollMenu<PrometheusGoToEvent, ?> pMenu);
 
     /**
      * Create a GoTo event.

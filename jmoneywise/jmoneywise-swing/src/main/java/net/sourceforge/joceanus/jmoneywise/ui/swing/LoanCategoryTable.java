@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.LoanCategoryPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -140,7 +140,7 @@ public class LoanCategoryTable
     /**
      * The error panel.
      */
-    private final ErrorPanel theError;
+    private final PrometheusSwingErrorPanel theError;
 
     /**
      * The table model.
@@ -205,7 +205,7 @@ public class LoanCategoryTable
      */
     public LoanCategoryTable(final SwingView pView,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                             final ErrorPanel pError) {
+                             final PrometheusSwingErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
         theError = pError;
@@ -258,7 +258,7 @@ public class LoanCategoryTable
 
         /* Create a Category panel */
         theActiveCategory = new LoanCategoryPanel(theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveCategory, BorderLayout.PAGE_END);
+        thePanel.add(theActiveCategory.getNode(), BorderLayout.PAGE_END);
 
         /* Initialise the columns */
         theColumns.setColumns();

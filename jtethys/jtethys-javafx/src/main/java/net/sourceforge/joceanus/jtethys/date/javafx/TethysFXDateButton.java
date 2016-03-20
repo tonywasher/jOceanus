@@ -26,12 +26,12 @@ import javafx.beans.property.ObjectProperty;
 import net.sourceforge.jdatebutton.javafx.JDateButton;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateButtonManager;
 
 /**
  * Extension class for a {@link JDateButton} to handle {@link TethysDate} objects.
  * @author Tony Washer
- * @deprecated as of 1.5.0 use {@link TethysFXDateButtonManager}
+ * @deprecated as of 1.5.0 use
+ * {@link net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateButtonManager}
  */
 @Deprecated
 public class TethysFXDateButton

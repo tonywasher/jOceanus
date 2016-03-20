@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
-import net.sourceforge.joceanus.jprometheus.ui.swing.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
@@ -45,14 +45,9 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 public class TransactionTagPanel
         extends MoneyWiseDataItemPanel<TransactionTag> {
     /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 5535355076826373500L;
-
-    /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<TransactionTag> theFieldSet;
+    private final MetisFieldSet<TransactionTag> theFieldSet;
 
     /**
      * Constructor.
@@ -62,7 +57,7 @@ public class TransactionTagPanel
      */
     public TransactionTagPanel(final MetisFieldManager pFieldMgr,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                               final ErrorPanel pError) {
+                               final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
         super(pFieldMgr, pUpdateSet, pError);
 
