@@ -26,11 +26,11 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
@@ -294,8 +294,8 @@ public final class SecurityHolding
     private static String getPortfolioName(final String pName) {
         int iIndex = pName.indexOf(SECURITYHOLDING_SEP);
         return (iIndex == -1)
-                             ? pName
-                             : pName.substring(0, iIndex);
+                              ? pName
+                              : pName.substring(0, iIndex);
     }
 
     /**
@@ -306,8 +306,8 @@ public final class SecurityHolding
     private static String getSecurityName(final String pName) {
         int iIndex = pName.indexOf(SECURITYHOLDING_SEP);
         return (iIndex == -1)
-                             ? ""
-                             : pName.substring(iIndex + 1);
+                              ? ""
+                              : pName.substring(iIndex + 1);
     }
 
     /**
@@ -488,8 +488,8 @@ public final class SecurityHolding
             /* Look up security map for portfolio */
             PortfolioHoldingsMap myMap = getMapForPortfolio(myPortId);
             return myMap == null
-                                ? null
-                                : myMap.getHoldingForSecurity(mySecId);
+                                 ? null
+                                 : myMap.getHoldingForSecurity(mySecId);
         }
 
         /**
@@ -505,8 +505,8 @@ public final class SecurityHolding
             /* Look up security map for portfolio */
             PortfolioHoldingsMap myMap = getMapForPortfolio(myPortName);
             return myMap == null
-                                ? null
-                                : myMap.getHoldingForSecurity(mySecName);
+                                 ? null
+                                 : myMap.getHoldingForSecurity(mySecName);
         }
 
         /**
@@ -648,8 +648,8 @@ public final class SecurityHolding
 
             /* return the iterator */
             return myMap == null
-                                ? null
-                                : myMap.existingIterator();
+                                 ? null
+                                 : myMap.existingIterator();
         }
 
         /**
@@ -674,8 +674,8 @@ public final class SecurityHolding
 
             /* return the iterator */
             return myMap == null
-                                ? fullIterator(pPortfolio, pClass)
-                                : myMap.newIterator(pClass);
+                                 ? fullIterator(pPortfolio, pClass)
+                                 : myMap.newIterator(pClass);
         }
 
         /**
@@ -694,7 +694,7 @@ public final class SecurityHolding
 
             /* Create an empty list */
             Currency myCurrency = pPortfolio.getCurrency();
-            MetisOrderedList<SecurityHolding> myList = new MetisOrderedList<SecurityHolding>(SecurityHolding.class);
+            MetisOrderedList<SecurityHolding> myList = new MetisOrderedList<>(SecurityHolding.class);
 
             /* Loop through the securities */
             Iterator<Security> myIterator = theSecurities.iterator();
@@ -723,8 +723,8 @@ public final class SecurityHolding
 
             /* return iterator */
             return myList == null
-                                 ? null
-                                 : myList.iterator();
+                                  ? null
+                                  : myList.iterator();
         }
     }
 
@@ -861,7 +861,7 @@ public final class SecurityHolding
             }
 
             /* Create an empty list */
-            MetisOrderedList<SecurityHolding> myList = new MetisOrderedList<SecurityHolding>(SecurityHolding.class);
+            MetisOrderedList<SecurityHolding> myList = new MetisOrderedList<>(SecurityHolding.class);
 
             /* Loop through the holdings */
             Iterator<SecurityHolding> myIterator = values().iterator();
@@ -885,8 +885,8 @@ public final class SecurityHolding
 
             /* return iterator */
             return myList == null
-                                 ? null
-                                 : myList.iterator();
+                                  ? null
+                                  : myList.iterator();
         }
 
         /**
@@ -903,7 +903,7 @@ public final class SecurityHolding
 
             /* Create an empty list */
             Currency myCurrency = thePortfolio.getCurrency();
-            MetisOrderedList<SecurityHolding> myList = new MetisOrderedList<SecurityHolding>(SecurityHolding.class);
+            MetisOrderedList<SecurityHolding> myList = new MetisOrderedList<>(SecurityHolding.class);
 
             /* Loop through the securities */
             Iterator<Security> myIterator = theSecurities.iterator();
@@ -935,8 +935,8 @@ public final class SecurityHolding
 
             /* return iterator */
             return myList == null
-                                 ? null
-                                 : myList.iterator();
+                                  ? null
+                                  : myList.iterator();
         }
     }
 }

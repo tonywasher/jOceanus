@@ -30,6 +30,7 @@ import java.util.concurrent.Executors;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -37,6 +38,8 @@ import javax.swing.JTextArea;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ScmStatus;
 import net.sourceforge.joceanus.jthemis.threads.swing.ScmThread;
@@ -46,13 +49,7 @@ import net.sourceforge.joceanus.jthemis.threads.swing.ScmThread;
  * @author Tony Washer
  */
 public class JSvnStatusWindow
-        extends JPanel
-        implements ReportTask {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -97846502218500569L;
-
+        implements ReportTask, TethysNode<JComponent> {
     /**
      * Window Height.
      */
@@ -64,9 +61,14 @@ public class JSvnStatusWindow
     private static final int WINDOW_WIDTH = 600;
 
     /**
+     * Panel.
+     */
+    private final JPanel thePanel;
+
+    /**
      * SvnManager.
      */
-    private final transient JSvnManager theManager;
+    private final JSvnManager theManager;
 
     /**
      * The TextArea.
@@ -96,17 +98,17 @@ public class JSvnStatusWindow
     /**
      * The Thread executor.
      */
-    private final transient ExecutorService theExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService theExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * The active thread.
      */
-    private transient ScmThread theThread = null;
+    private ScmThread theThread = null;
 
     /**
      * The current status.
      */
-    private transient ScmStatus theStatus = new ScmStatus();
+    private ScmStatus theStatus = new ScmStatus();
 
     /**
      * Constructor.
@@ -140,9 +142,26 @@ public class JSvnStatusWindow
         myButtonPanel.add(theCancelButton);
 
         /* Add the components */
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(myScroll);
-        add(myButtonPanel);
+        thePanel = new TethysSwingEnablePanel();
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(myScroll);
+        thePanel.add(myButtonPanel);
+        thePanel.setOpaque(true);
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        thePanel.setEnabled(pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     @Override

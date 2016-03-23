@@ -51,9 +51,9 @@ import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
@@ -328,7 +328,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             }
 
             /* Create DataValues for item */
-            DataValues<E> myValues = new DataValues<E>(myItem);
+            DataValues<E> myValues = new DataValues<>(myItem);
 
             /* Add the child to the list */
             Element myChild = myValues.createXML(pDocument, myFormatter, pStoreIds);
@@ -521,7 +521,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             Element myItem = (Element) myChild;
 
             /* Create DataArguments for item */
-            DataValues<E> myValues = new DataValues<E>(myItem, myFields);
+            DataValues<E> myValues = new DataValues<>(myItem, myFields);
 
             /* Add the child to the list */
             pList.addValuesItem(myValues);

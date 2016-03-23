@@ -28,6 +28,7 @@ import java.awt.Point;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -56,13 +57,13 @@ import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice.SpotSecurityL
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.YQLDownloader;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingActionButtons;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
@@ -79,11 +80,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  */
 public class SpotPricesTable
         extends JDataTable<SpotSecurityPrice, MoneyWiseDataType> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 5826211763056873599L;
-
     /**
      * Text for DataEntry Title.
      */
@@ -117,27 +113,27 @@ public class SpotPricesTable
     /**
      * The data view.
      */
-    private final transient View theView;
+    private final View theView;
 
     /**
      * The field manager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
      */
-    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The update entry.
      */
-    private final transient UpdateEntry<SpotSecurityPrice, MoneyWiseDataType> theUpdateEntry;
+    private final UpdateEntry<SpotSecurityPrice, MoneyWiseDataType> theUpdateEntry;
 
     /**
      * The account price list.
      */
-    private transient SpotSecurityList thePrices = null;
+    private SpotSecurityList thePrices;
 
     /**
      * Table Model.
@@ -157,12 +153,12 @@ public class SpotPricesTable
     /**
      * The selected date.
      */
-    private transient TethysDate theDate = null;
+    private TethysDate theDate;
 
     /**
      * The Portfolio.
      */
-    private transient Portfolio thePortfolio = null;
+    private Portfolio thePortfolio;
 
     /**
      * The SpotPrices selection panel.
@@ -177,7 +173,7 @@ public class SpotPricesTable
     /**
      * The data entry.
      */
-    private final transient MetisViewerEntry theDataPrice;
+    private final MetisViewerEntry theDataPrice;
 
     /**
      * The error panel.
@@ -212,14 +208,15 @@ public class SpotPricesTable
 
         /* Create the data column model and declare it */
         theColumns = new SpotViewColumnModel();
-        setColumnModel(theColumns);
+        JTable myTable = getTable();
+        myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
-        getTableHeader().setReorderingAllowed(false);
-        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+        myTable.getTableHeader().setReorderingAllowed(false);
+        myTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
+        myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the sub panels */
         theSelect = new SpotPricesSelect(theView);
@@ -231,7 +228,7 @@ public class SpotPricesTable
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
-        myHeader.add(theSelect, BorderLayout.CENTER);
+        myHeader.add(theSelect.getNode(), BorderLayout.CENTER);
         myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
         myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
 
@@ -241,7 +238,7 @@ public class SpotPricesTable
         /* Create the layout for the panel */
         thePanel.setLayout(new BorderLayout());
         thePanel.add(myHeader, BorderLayout.PAGE_START);
-        thePanel.add(getScrollPane(), BorderLayout.CENTER);
+        thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
@@ -255,10 +252,7 @@ public class SpotPricesTable
         theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.DOWNLOAD, e -> downloadPrices());
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
+    @Override
     public JComponent getNode() {
         return thePanel;
     }
@@ -273,7 +267,7 @@ public class SpotPricesTable
      */
     protected void determineFocus() {
         /* Request the focus */
-        requestFocusInWindow();
+        getTable().requestFocusInWindow();
 
         /* Focus on the Data entry */
         theDataPrice.setFocus();
@@ -401,7 +395,7 @@ public class SpotPricesTable
         theSelect.setVisible(!isError);
 
         /* Lock scroll area */
-        getScrollPane().setEnabled(!isError);
+        super.getNode().setEnabled(!isError);
 
         /* Lock Action Buttons */
         theActionButtons.setEnabled(!isError);

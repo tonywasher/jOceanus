@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jprometheus.ui.swing;
 
 import java.util.Iterator;
 
+import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
@@ -58,9 +59,14 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     private static final String TITLE_ROW = PrometheusUIResource.TABLE_TITLE_ROW.getValue();
 
     /**
+     * The Data Table.
+     */
+    private final transient JDataTable<T, E> theDataTable;
+
+    /**
      * The Table.
      */
-    private final JDataTable<T, E> theTable;
+    private final JTable theTable;
 
     /**
      * The RowHdrModel.
@@ -83,7 +89,8 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
      */
     protected JDataTableModel(final JDataTable<T, E> pTable) {
         /* Access rowHdrModel */
-        theTable = pTable;
+        theDataTable = pTable;
+        theTable = pTable.getTable();
         theRowHdrModel = pTable.getRowTableModel();
     }
 
@@ -223,18 +230,18 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
             OceanusException myError = new JPrometheusDataException("Failed to update field at (" + pRowIndex + "," + pColIndex + ")", e);
 
             /* Show the error */
-            theTable.setError(myError);
+            theDataTable.setError(myError);
             return;
         }
 
         /* Check for changes */
         if (myItem.checkForHistory()) {
             /* Increment data version */
-            theTable.incrementVersion();
+            theDataTable.incrementVersion();
 
             /* Update components to reflect changes */
             fireNewDataEvents();
-            theTable.notifyChanges();
+            theDataTable.notifyChanges();
         }
     }
 
@@ -383,15 +390,20 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
         /**
          * The DataTable.
          */
-        private JDataTable<?, E> theTable = null;
+        private final transient JDataTable<?, E> theDataTable;
+
+        /**
+         * The Table.
+         */
+        private final JTable theTable;
 
         /**
          * Constructor.
          * @param pTable the table with which this model is associated
          */
         protected RowTableModel(final JDataTable<?, E> pTable) {
-            /* Access rowHdrModel */
-            theTable = pTable;
+            theDataTable = pTable;
+            theTable = pTable.getTable();
         }
 
         @Override
@@ -432,7 +444,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
             /* If this is a data row */
             if (iRow >= 0) {
                 /* Access the row */
-                JDataTableModel<?, E> myModel = theTable.getTableModel();
+                JDataTableModel<?, E> myModel = theDataTable.getTableModel();
                 DataItem<E> myRow = myModel.getItemAtIndex(iRow);
                 @SuppressWarnings("unchecked")
                 JDataTableColumnModel<E> myColModel = (JDataTableColumnModel<E>) theTable.getColumnModel();

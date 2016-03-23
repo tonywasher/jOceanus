@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
@@ -88,8 +88,8 @@ public final class CashCategoryBucket
     @Override
     public String getName() {
         return (theCategory == null)
-                                    ? NAME_TOTALS
-                                    : theCategory.getName();
+                                     ? NAME_TOTALS
+                                     : theCategory.getName();
     }
 
     @Override
@@ -319,7 +319,7 @@ public final class CashCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
-            MetisOrderedIdList<Integer, CashCategoryBucket> myTotals = new MetisOrderedIdList<Integer, CashCategoryBucket>(CashCategoryBucket.class);
+            MetisOrderedIdList<Integer, CashCategoryBucket> myTotals = new MetisOrderedIdList<>(CashCategoryBucket.class);
 
             /* Loop through the buckets */
             Iterator<CashCategoryBucket> myIterator = iterator();

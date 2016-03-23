@@ -64,17 +64,18 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabManager.TethysTabItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager.TethysSwingTabItem;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.TethysSwingTabItem;
 
 /**
  * Maintenance Tab panel.
  * @author Tony Washer
  */
 public class MaintenanceTab
-        implements TethysEventProvider<PrometheusDataEvent> {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
     /**
      * TaxYears tab title.
      */
@@ -123,7 +124,7 @@ public class MaintenanceTab
     /**
      * The Tabs.
      */
-    private final TethysSwingTabManager theTabs;
+    private final TethysSwingTabPaneManager theTabs;
 
     /**
      * The TaxYear Panel.
@@ -171,23 +172,23 @@ public class MaintenanceTab
         thePanel = new TethysSwingEnablePanel();
 
         /* Create the Tabbed Pane */
-        theTabs = new TethysSwingTabManager();
+        theTabs = new TethysSwingTabPaneManager();
 
         /* Create the account Tab and add it */
         theAccountTab = new AccountPanel(theView);
-        theTabs.addTabItem(TITLE_ACCOUNT, theAccountTab.getNode());
+        theTabs.addTabItem(TITLE_ACCOUNT, theAccountTab);
 
         /* Create the category Tab and add it */
         theCategoryTab = new CategoryPanel(theView);
-        theTabs.addTabItem(TITLE_CATEGORY, theCategoryTab.getNode());
+        theTabs.addTabItem(TITLE_CATEGORY, theCategoryTab);
 
         /* Create the TaxYears Tab */
         theTaxYearTab = new TaxYearTable(theView);
-        theTabs.addTabItem(TITLE_TAXYEARS, theTaxYearTab.getNode());
+        theTabs.addTabItem(TITLE_TAXYEARS, theTaxYearTab);
 
         /* Create the Static Tab */
         theStatic = new StaticDataPanel<>(theView, theView.getUtilitySet(), MoneyWiseDataType.class);
-        theTabs.addTabItem(TITLE_STATIC, theStatic.getNode());
+        theTabs.addTabItem(TITLE_STATIC, theStatic);
 
         /* Add the static elements */
         theStatic.addStatic(MoneyWiseDataType.DEPOSITTYPE, DepositCategoryTypeList.class);
@@ -208,7 +209,7 @@ public class MaintenanceTab
         /* Create the Preferences Tab */
         MetisPreferenceManager myPrefs = theView.getPreferenceManager();
         thePreferences = new MetisPreferencesPanel(myPrefs, theView.getFieldManager(), theView.getViewerManager(), theView.getDataEntry(DataControl.DATA_MAINT));
-        theTabs.addTabItem(TITLE_PREFERENCES, thePreferences.getNode());
+        theTabs.addTabItem(TITLE_PREFERENCES, thePreferences);
 
         /* Add interesting preferences */
         myPrefs.getPreferenceSet(DatabasePreferences.class);
@@ -258,12 +259,14 @@ public class MaintenanceTab
         pRegistrar.addEventListener(PrometheusDataEvent.GOTOWINDOW, this::handleGoToEvent);
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
+    @Override
     public JComponent getNode() {
         return thePanel;
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -290,10 +293,7 @@ public class MaintenanceTab
         return theView.getViewerManager();
     }
 
-    /**
-     * Set enabled state.
-     * @param pEnabled the state true/false
-     */
+    @Override
     public void setEnabled(final boolean pEnabled) {
         /* Pass on to important elements */
         theTabs.setEnabled(pEnabled);

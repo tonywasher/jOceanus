@@ -28,10 +28,9 @@ import java.awt.Point;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
@@ -58,31 +57,29 @@ import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.LoanPanel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Loan Table.
  */
 public class LoanTable
         extends JDataTable<Loan, MoneyWiseDataType> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 7033868298272052342L;
-
     /**
      * Name Column Title.
      */
@@ -130,27 +127,27 @@ public class LoanTable
     /**
      * The data view.
      */
-    private final transient SwingView theView;
+    private final SwingView theView;
 
     /**
      * The field manager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
      */
-    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The data entry.
      */
-    private final transient UpdateEntry<Loan, MoneyWiseDataType> theLoanEntry;
+    private final UpdateEntry<Loan, MoneyWiseDataType> theLoanEntry;
 
     /**
      * LoanInfo Update Entry.
      */
-    private final transient UpdateEntry<LoanInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<LoanInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
      * The error panel.
@@ -185,7 +182,7 @@ public class LoanTable
     /**
      * The new button.
      */
-    private final JButton theNewButton;
+    private final TethysSwingScrollButtonManager<String> theNewButton;
 
     /**
      * The Loan dialog.
@@ -195,12 +192,12 @@ public class LoanTable
     /**
      * The List Selection Model.
      */
-    private final transient JDataTableSelection<Loan, MoneyWiseDataType> theSelectionModel;
+    private final JDataTableSelection<Loan, MoneyWiseDataType> theSelectionModel;
 
     /**
      * Loans.
      */
-    private transient LoanList theLoans = null;
+    private LoanList theLoans;
 
     /**
      * Constructor.
@@ -229,20 +226,22 @@ public class LoanTable
 
         /* Create the data column model and declare it */
         theColumns = new LoanColumnModel(this);
-        setColumnModel(theColumns);
+        JTable myTable = getTable();
+        myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
-        getTableHeader().setReorderingAllowed(false);
-        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+        myTable.getTableHeader().setReorderingAllowed(false);
+        myTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
+        myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the CheckBox */
         theLockedCheckBox = new JCheckBox(PROMPT_CLOSED);
 
         /* Create new button */
-        theNewButton = MoneyWiseIcons.getNewButton();
+        theNewButton = new TethysSwingScrollButtonManager<>();
+        PrometheusIcon.configureNewScrollButton(theNewButton);
 
         /* Create the filter panel */
         theFilterPanel = new TethysSwingEnablePanel();
@@ -250,13 +249,13 @@ public class LoanTable
         theFilterPanel.add(Box.createHorizontalGlue());
         theFilterPanel.add(theLockedCheckBox);
         theFilterPanel.add(Box.createHorizontalGlue());
-        theFilterPanel.add(theNewButton);
+        theFilterPanel.add(theNewButton.getNode());
         theFilterPanel.add(Box.createRigidArea(new Dimension(AccountPanel.STRUT_WIDTH, 0)));
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(getScrollPane(), BorderLayout.CENTER);
+        thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Create an account panel */
         theActiveAccount = new LoanPanel(theFieldMgr, theUpdateSet, theError);
@@ -271,14 +270,11 @@ public class LoanTable
         theActiveAccount.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
 
         /* Listen to swing events */
-        theNewButton.addActionListener(e -> theModel.addNewItem());
+        theNewButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.addNewItem());
         theLockedCheckBox.addItemListener(e -> setShowAll(theLockedCheckBox.isSelected()));
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
+    @Override
     public JComponent getNode() {
         return thePanel;
     }
@@ -287,7 +283,7 @@ public class LoanTable
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected JPanel getFilterPanel() {
+    protected TethysSwingEnablePanel getFilterPanel() {
         return theFilterPanel;
     }
 
@@ -305,7 +301,7 @@ public class LoanTable
      */
     protected void determineFocus(final MetisViewerEntry pEntry) {
         /* Request the focus */
-        requestFocusInWindow();
+        getTable().requestFocusInWindow();
 
         /* Set the required focus */
         pEntry.setFocus(theLoanEntry.getName());
@@ -382,7 +378,7 @@ public class LoanTable
     protected void selectLoan(final Loan pLoan) {
         /* Find the item in the list */
         int myIndex = theLoans.indexOf(pLoan);
-        myIndex = convertRowIndexToView(myIndex);
+        myIndex = getTable().convertRowIndexToView(myIndex);
         if (myIndex != -1) {
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);

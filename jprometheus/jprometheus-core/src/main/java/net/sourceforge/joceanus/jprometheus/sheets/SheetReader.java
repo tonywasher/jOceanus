@@ -233,7 +233,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
         theData = newDataSet();
 
         /* Initialise the list */
-        theSheets = new ArrayList<SheetDataItem<?, ?>>();
+        theSheets = new ArrayList<>();
 
         /* Add security details */
         theSheets.add(new SheetControlKey(this));

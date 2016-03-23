@@ -54,7 +54,7 @@ public abstract class PrimaryTransaction<T extends PrimaryTransaction<T, S>, S e
     /**
      * List of secondary transactions.
      */
-    private final List<S> theSubTransactions = new ArrayList<S>();
+    private final List<S> theSubTransactions = new ArrayList<>();
 
     /**
      * Copy Constructor.

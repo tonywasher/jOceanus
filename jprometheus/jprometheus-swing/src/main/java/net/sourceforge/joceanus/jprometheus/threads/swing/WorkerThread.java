@@ -70,7 +70,7 @@ public abstract class WorkerThread<T>
         /* Record the parameters */
         theTask = pTask;
         theStatusBar = pStatus.getStatusBar();
-        theErrors = new DataErrorList<MetisExceptionWrapper>();
+        theErrors = new DataErrorList<>();
 
         /* Create a new profiler */
         pStatus.getNewProfile(pTask);

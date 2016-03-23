@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jthemis.scm.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent.ScmComponentList;
@@ -106,8 +106,8 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
         thePreferenceMgr = pPreferenceMgr;
 
         /* Allocate the maps */
-        theBranchMap = new HashMap<MvnProjectId, ScmBranch<?, ?, R>>();
-        theTagMap = new HashMap<MvnProjectId, ScmTag<?, ?, ?, R>>();
+        theBranchMap = new HashMap<>();
+        theTagMap = new HashMap<>();
     }
 
     @Override

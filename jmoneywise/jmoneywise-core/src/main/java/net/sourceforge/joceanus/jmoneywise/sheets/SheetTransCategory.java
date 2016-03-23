@@ -182,7 +182,7 @@ public class SheetTransCategory
                 }
 
                 /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(TransactionCategory.OBJECT_NAME);
+                DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionCategory.OBJECT_NAME);
                 myValues.addValue(TransactionCategory.FIELD_CATTYPE, myType);
                 myValues.addValue(TransactionCategory.FIELD_PARENT, myParent);
                 myValues.addValue(TransactionCategory.FIELD_NAME, myName);

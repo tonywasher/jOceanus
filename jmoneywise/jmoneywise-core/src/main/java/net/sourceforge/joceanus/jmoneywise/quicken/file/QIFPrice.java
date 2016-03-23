@@ -133,7 +133,7 @@ public class QIFPrice
                        final MetisDataFormatter pFormatter,
                        final List<String> pLines) {
         /* Build the price list */
-        thePrices = new ArrayList<QIFPrice>();
+        thePrices = new ArrayList<>();
 
         /* Loop through the lines */
         QIFSecurity mySecurity = null;

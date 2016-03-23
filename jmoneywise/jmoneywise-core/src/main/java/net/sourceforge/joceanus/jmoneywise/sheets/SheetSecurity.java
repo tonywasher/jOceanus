@@ -213,7 +213,7 @@ public class SheetSecurity
         String mySymbol = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Security.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = new DataValues<>(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_NAME, myName);
         myValues.addValue(Security.FIELD_SECTYPE, mySecType);
         myValues.addValue(Security.FIELD_CURRENCY, pData.getDefaultCurrency());

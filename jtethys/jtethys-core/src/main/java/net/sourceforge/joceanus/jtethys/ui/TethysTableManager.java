@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <N> the table node
  */
 public abstract class TethysTableManager<I, R, N>
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The event manager.
      */
@@ -62,12 +62,6 @@ public abstract class TethysTableManager<I, R, N>
         theEventManager = new TethysEventManager<>();
         theColumnMap = new HashMap<>();
     }
-
-    /**
-     * Obtain the table.
-     * @return the table node
-     */
-    public abstract N getNode();
 
     @Override
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {

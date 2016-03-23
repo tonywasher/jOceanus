@@ -826,7 +826,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          */
         public List<S> getMissingClasses() {
             /* Allocate the list */
-            List<S> myList = new ArrayList<S>();
+            List<S> myList = new ArrayList<>();
 
             /* Loop through all elements */
             for (S myClass : getEnumClass().getEnumConstants()) {
@@ -894,7 +894,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
         @Override
         protected DataMapItem<T, E> allocateDataMap() {
-            return new StaticDataMap<T, S, E>();
+            return new StaticDataMap<>();
         }
 
         @Override
@@ -931,7 +931,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          */
         public StaticDataMap() {
             /* Create the maps */
-            theOrderCountMap = new HashMap<Integer, Integer>();
+            theOrderCountMap = new HashMap<>();
         }
 
         @Override

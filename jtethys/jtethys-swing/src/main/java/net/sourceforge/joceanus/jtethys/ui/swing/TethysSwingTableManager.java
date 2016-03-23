@@ -29,6 +29,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
@@ -56,6 +57,11 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSw
  */
 public class TethysSwingTableManager<I, R>
         extends TethysTableManager<I, R, JComponent> {
+    /**
+     * The Scroll Pane.
+     */
+    private final JScrollPane theScroll;
+
     /**
      * The TableView.
      */
@@ -113,11 +119,26 @@ public class TethysSwingTableManager<I, R>
 
         /* Listen to factory */
         theCellFactory.getEventRegistrar().addEventListener(this::cascadeEvent);
+
+        /* Create the scrollPane */
+        theScroll = new JScrollPane();
+        theScroll.setViewportView(theTable);
     }
 
     @Override
     public JComponent getNode() {
-        return theTable;
+        return theScroll;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theScroll.setEnabled(pEnabled);
+        theTable.setEnabled(pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theScroll.setVisible(pVisible);
     }
 
     @Override

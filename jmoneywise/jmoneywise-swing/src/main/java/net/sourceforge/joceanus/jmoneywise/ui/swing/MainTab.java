@@ -46,9 +46,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabManager.TethysTabItem;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager.TethysSwingTabItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.TethysSwingTabItem;
 
 /**
  * Main Window for jMoneyWise.
@@ -134,7 +134,7 @@ public class MainTab
     /**
      * The tabs.
      */
-    private TethysSwingTabManager theTabs;
+    private TethysSwingTabPaneManager theTabs;
 
     /**
      * The register panel.
@@ -214,32 +214,32 @@ public class MainTab
         myTask = myTask.startTask("buildMain");
 
         /* Create the Tabbed Pane */
-        theTabs = new TethysSwingTabManager();
+        theTabs = new TethysSwingTabPaneManager();
 
         /* Create the Report Tab */
         myTask.startTask("Report");
         theReports = new ReportTab(theView);
-        theTabs.addTabItem(TITLE_REPORT, theReports.getNode());
+        theTabs.addTabItem(TITLE_REPORT, theReports);
 
         /* Create the Register Tab */
         myTask.startTask("Register");
         theRegister = new TransactionTable(theView);
-        theTabs.addTabItem(TITLE_REGISTER, theRegister.getNode());
+        theTabs.addTabItem(TITLE_REGISTER, theRegister);
 
         /* Create the SpotPrices Tab */
         myTask.startTask("SpotPrices");
         theSpotPrices = new SpotPricesTable(theView);
-        theTabs.addTabItem(TITLE_SPOTPRICES, theSpotPrices.getNode());
+        theTabs.addTabItem(TITLE_SPOTPRICES, theSpotPrices);
 
         /* Create the SpotRates Tab */
         myTask.startTask("SpotRates");
         theSpotRates = new SpotRatesTable(theView);
-        theTabs.addTabItem(TITLE_SPOTRATES, theSpotRates.getNode());
+        theTabs.addTabItem(TITLE_SPOTRATES, theSpotRates);
 
         /* Create the Maintenance Tab */
         myTask.startTask("Maintenance");
         theMaint = new MaintenanceTab(this);
-        theTabs.addTabItem(TITLE_MAINT, theMaint.getNode());
+        theTabs.addTabItem(TITLE_MAINT, theMaint);
 
         /* Create listeners */
         theTabs.getEventRegistrar().addEventListener(e -> determineFocus());

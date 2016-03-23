@@ -56,7 +56,7 @@ public class QIFParentCategory
         theSelf = new QIFEventCategory(pFile, pParent);
 
         /* Create child list */
-        theChildren = new MetisOrderedList<QIFEventCategory>(QIFEventCategory.class);
+        theChildren = new MetisOrderedList<>(QIFEventCategory.class);
     }
 
     /**
@@ -68,7 +68,7 @@ public class QIFParentCategory
         theSelf = pParent;
 
         /* Create child list */
-        theChildren = new MetisOrderedList<QIFEventCategory>(QIFEventCategory.class);
+        theChildren = new MetisOrderedList<>(QIFEventCategory.class);
     }
 
     @Override

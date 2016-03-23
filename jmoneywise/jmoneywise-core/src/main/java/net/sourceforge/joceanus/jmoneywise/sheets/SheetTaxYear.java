@@ -229,7 +229,7 @@ public class SheetTaxYear
                 }
 
                 /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(TaxYear.OBJECT_NAME);
+                DataValues<MoneyWiseDataType> myValues = new DataValues<>(TaxYear.OBJECT_NAME);
                 myValues.addValue(TaxYear.FIELD_TAXYEAR, myDate);
                 myValues.addValue(TaxYear.FIELD_REGIME, myTaxRegime);
 

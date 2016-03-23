@@ -188,7 +188,7 @@ public class SheetDepositRate
                 }
 
                 /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(DepositRate.OBJECT_NAME);
+                DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositRate.OBJECT_NAME);
                 myValues.addValue(DepositRate.FIELD_DEPOSIT, myDeposit);
                 myValues.addValue(DepositRate.FIELD_RATE, myRate);
                 myValues.addValue(DepositRate.FIELD_BONUS, myBonus);

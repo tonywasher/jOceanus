@@ -157,6 +157,19 @@ public abstract class TethysFXDataTextField<T>
     }
 
     @Override
+    public void setEnabled(final boolean pEnabled) {
+        /* Apply to the nodes */
+        theLabel.setDisable(!pEnabled);
+        theEditControl.setDisable(!pEnabled);
+        theCmdButton.setDisable(!pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
+    }
+
+    @Override
     public void setTextFill(final Color pColor) {
         /* Apply font to the two nodes */
         theLabel.setTextFill(pColor);

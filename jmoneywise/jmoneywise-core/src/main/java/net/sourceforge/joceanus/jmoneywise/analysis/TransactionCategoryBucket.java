@@ -26,10 +26,10 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -139,16 +139,16 @@ public final class TransactionCategoryBucket
         theAnalysis = pAnalysis;
         theCategory = pCategory;
         theType = (pCategory == null)
-                                     ? null
-                                     : pCategory.getCategoryType();
+                                      ? null
+                                      : pCategory.getCategoryType();
 
         /* Create the history map */
         AssetCurrency myDefault = theAnalysis.getCurrency();
         Currency myCurrency = myDefault == null
-                                               ? AccountBucket.DEFAULT_CURRENCY
-                                               : myDefault.getCurrency();
+                                                ? AccountBucket.DEFAULT_CURRENCY
+                                                : myDefault.getCurrency();
         CategoryValues myValues = new CategoryValues(myCurrency);
-        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(myValues);
+        theHistory = new BucketHistory<>(myValues);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -170,7 +170,7 @@ public final class TransactionCategoryBucket
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(pBase.getHistoryMap(), pDate);
+        theHistory = new BucketHistory<>(pBase.getHistoryMap(), pDate);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -192,7 +192,7 @@ public final class TransactionCategoryBucket
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<CategoryValues, TransactionAttribute>(pBase.getHistoryMap(), pRange);
+        theHistory = new BucketHistory<>(pBase.getHistoryMap(), pRange);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -220,8 +220,8 @@ public final class TransactionCategoryBucket
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBaseValues != null)
-                                          ? theBaseValues
-                                          : MetisFieldValue.SKIP;
+                                           ? theBaseValues
+                                           : MetisFieldValue.SKIP;
         }
 
         /* Handle Attribute fields */
@@ -230,8 +230,8 @@ public final class TransactionCategoryBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
-                                                       ? myValue
-                                                       : MetisFieldValue.SKIP;
+                                                             ? myValue
+                                                             : MetisFieldValue.SKIP;
             }
             return myValue;
         }
@@ -255,8 +255,8 @@ public final class TransactionCategoryBucket
      */
     public String getName() {
         return (theCategory == null)
-                                    ? NAME_TOTALS
-                                    : theCategory.getName();
+                                     ? NAME_TOTALS
+                                     : theCategory.getName();
     }
 
     @Override
@@ -321,7 +321,7 @@ public final class TransactionCategoryBucket
      * @return the delta (or null)
      */
     public TethysDecimal getDeltaForTransaction(final Transaction pTrans,
-                                           final TransactionAttribute pAttr) {
+                                                final TransactionAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaValue(pTrans, pAttr);
     }
@@ -372,8 +372,8 @@ public final class TransactionCategoryBucket
 
         /* Return the value */
         return (myValue != null)
-                                ? myValue
-                                : MetisFieldValue.SKIP;
+                                 ? myValue
+                                 : MetisFieldValue.SKIP;
     }
 
     /**
@@ -1116,11 +1116,11 @@ public final class TransactionCategoryBucket
             boolean bTaxFreeGains = myPortfolio.isTaxFree()
                                     || !mySecurity.getSecurityTypeClass().isCapitalGains();
             TransactionCategoryBucket myCategory = bTaxFreeGains
-                                                                ? theTaxFreeGains
-                                                                : theCapitalGains;
+                                                                 ? theTaxFreeGains
+                                                                 : theCapitalGains;
             TaxBasisClass myTaxBasis = bTaxFreeGains
-                                                    ? TaxBasisClass.TAXFREE
-                                                    : TaxBasisClass.CAPITALGAINS;
+                                                     ? TaxBasisClass.TAXFREE
+                                                     : TaxBasisClass.CAPITALGAINS;
 
             /* Add to Capital Gains income/expense */
             if (pGains.isPositive()) {

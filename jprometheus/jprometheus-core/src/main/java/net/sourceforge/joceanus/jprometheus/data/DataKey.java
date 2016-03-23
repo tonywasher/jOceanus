@@ -634,7 +634,7 @@ public class DataKey
         public DataKey cloneDataKey(final DataKeySet pKeySet,
                                     final DataKey pDataKey) throws OceanusException {
             /* Build data values */
-            DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(DataKey.OBJECT_NAME);
+            DataValues<CryptographyDataType> myValues = new DataValues<>(DataKey.OBJECT_NAME);
             myValues.addValue(DataKey.FIELD_ID, pDataKey.getId());
             myValues.addValue(DataKey.FIELD_KEYSET, pKeySet);
             myValues.addValue(DataKey.FIELD_HASHPRIME, pDataKey.isHashPrime());

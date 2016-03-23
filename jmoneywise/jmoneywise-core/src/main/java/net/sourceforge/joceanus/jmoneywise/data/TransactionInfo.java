@@ -173,8 +173,8 @@ public class TransactionInfo
      */
     public static Deposit getDeposit(final MetisValueSet pValueSet) {
         return pValueSet.isDeletion()
-                                     ? null
-                                     : pValueSet.getValue(FIELD_LINK, Deposit.class);
+                                      ? null
+                                      : pValueSet.getValue(FIELD_LINK, Deposit.class);
     }
 
     /**
@@ -184,8 +184,8 @@ public class TransactionInfo
      */
     public static TransactionTag getTransactionTag(final MetisValueSet pValueSet) {
         return pValueSet.isDeletion()
-                                     ? null
-                                     : pValueSet.getValue(FIELD_LINK, TransactionTag.class);
+                                      ? null
+                                      : pValueSet.getValue(FIELD_LINK, TransactionTag.class);
     }
 
     @Override
@@ -228,7 +228,8 @@ public class TransactionInfo
     /**
      * Compare this data to another to establish sort order.
      * @param pThat The EventInfo to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
+     * object in the sort order
      */
     @Override
     public int compareTo(final DataInfo<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> pThat) {
@@ -476,7 +477,7 @@ public class TransactionInfo
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(TransactionInfo.OBJECT_NAME);
+            DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pTransaction);

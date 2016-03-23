@@ -107,6 +107,16 @@ public class TethysFXHTMLManager
     }
 
     @Override
+    public void setEnabled(final boolean pEnabled) {
+        theWebView.setDisable(!pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theWebView.setVisible(pVisible);
+    }
+
+    @Override
     public void setHTMLContent(final String pHTMLString,
                                final String pReference) {
         /* Pass call on to store the reference */

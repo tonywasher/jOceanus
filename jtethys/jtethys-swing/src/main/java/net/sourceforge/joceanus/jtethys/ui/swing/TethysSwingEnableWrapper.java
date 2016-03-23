@@ -26,10 +26,10 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
+
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Wrappers for simple Swing objects that enable/disable child elements.
@@ -45,7 +45,8 @@ public final class TethysSwingEnableWrapper {
      * Panel Enabler Wrapper.
      */
     public static class TethysSwingEnablePanel
-            extends JPanel {
+            extends JPanel
+            implements TethysNode<JComponent> {
         /**
          * Serial Id.
          */
@@ -87,79 +88,10 @@ public final class TethysSwingEnableWrapper {
                 myComp.setEnabled(bEnabled);
             }
         }
-    }
-
-    /**
-     * ScrollPane Enabler Wrapper.
-     */
-    public static class TethysSwingEnableScroll
-            extends JScrollPane {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 5270503063000294565L;
-
-        /**
-         * List of components.
-         */
-        private final transient List<Component> theList = new ArrayList<>();
 
         @Override
-        public void setViewportView(final Component pComponent) {
-            /* Add to list */
-            theList.add(pComponent);
-            super.setViewportView(pComponent);
-        }
-
-        @Override
-        public void setEnabled(final boolean bEnabled) {
-            /* Pass on call to the scrollBars */
-            JScrollBar myScrollBar = getVerticalScrollBar();
-            myScrollBar.setEnabled(bEnabled);
-            myScrollBar = getHorizontalScrollBar();
-            myScrollBar.setEnabled(bEnabled);
-
-            /* Loop through the registered components */
-            for (Component myComp : theList) {
-                /* Pass call on */
-                myComp.setEnabled(bEnabled);
-            }
-        }
-    }
-
-    /**
-     * TabbedPane Enabler Wrapper.
-     */
-    public static class TethysSwingEnableTabbed
-            extends JTabbedPane {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 1024034140852100367L;
-
-        /**
-         * List of components.
-         */
-        private final transient List<Component> theList = new ArrayList<>();
-
-        @Override
-        public void addTab(final String pName,
-                           final Component pComponent) {
-            /* Add to list */
-            theList.add(pComponent);
-            super.addTab(pName, pComponent);
-        }
-
-        @Override
-        public void setEnabled(final boolean bEnabled) {
-            /* Loop through the registered components */
-            for (Component myComp : theList) {
-                /* Pass call on */
-                myComp.setEnabled(bEnabled);
-            }
-
-            /* Pass on the call */
-            super.setEnabled(bEnabled);
+        public JComponent getNode() {
+            return this;
         }
     }
 }

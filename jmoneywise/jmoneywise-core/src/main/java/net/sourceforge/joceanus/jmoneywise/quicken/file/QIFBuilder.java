@@ -770,8 +770,8 @@ public class QIFBuilder {
 
             /* Record basic details */
             myEvent.recordAmount(isRecursive
-                                            ? myAmount
-                                            : new TethysMoney());
+                                             ? myAmount
+                                             : new TethysMoney());
             myEvent.recordPayee(myPayee);
 
             /* Add Split event */
@@ -1093,7 +1093,7 @@ public class QIFBuilder {
         /* If we have tags */
         if (myIterator != null) {
             /* Allocate the list */
-            myList = new ArrayList<QIFClass>();
+            myList = new ArrayList<>();
 
             /* Loop through the classes */
             while (myIterator.hasNext()) {

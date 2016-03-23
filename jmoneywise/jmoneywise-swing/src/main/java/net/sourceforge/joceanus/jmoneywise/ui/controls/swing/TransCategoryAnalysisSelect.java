@@ -29,8 +29,8 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -47,21 +47,17 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * EventCategory Analysis Selection.
  */
 public class TransCategoryAnalysisSelect
-        extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -5828172857155415661L;
-
+        implements AnalysisFilterSelection<JComponent>, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for TransCategory Label.
      */
@@ -70,39 +66,44 @@ public class TransCategoryAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The active transaction categories bucket list.
      */
-    private transient TransactionCategoryBucketList theCategories;
+    private TransactionCategoryBucketList theCategories;
 
     /**
      * The state.
      */
-    private transient EventState theState;
+    private EventState theState;
 
     /**
      * The savePoint.
      */
-    private transient EventState theSavePoint;
+    private EventState theSavePoint;
 
     /**
      * The select button.
      */
-    private final JScrollButton<TransactionCategoryBucket> theButton;
+    private final TethysSwingScrollButtonManager<TransactionCategoryBucket> theButton;
 
     /**
-     * Category menu builder.
+     * Category menu.
      */
-    private final JScrollMenuBuilder<TransactionCategoryBucket> theCategoryMenuBuilder;
+    private final TethysScrollMenu<TransactionCategoryBucket, ?> theCategoryMenu;
 
     /**
      * Constructor.
      */
     public TransCategoryAnalysisSelect() {
         /* Create the button */
-        theButton = new JScrollButton<>();
+        theButton = new TethysSwingScrollButtonManager<>();
 
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_CATEGORY + MetisFieldElement.STR_COLON);
@@ -111,21 +112,30 @@ public class TransCategoryAnalysisSelect
         theEventManager = new TethysEventManager<>();
 
         /* Define the layout */
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(Box.createHorizontalGlue());
-        add(myLabel);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(theButton);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel = new JPanel();
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
+        thePanel.add(Box.createHorizontalGlue());
+        thePanel.add(myLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel.add(theButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
 
         /* Create initial state */
         theState = new EventState();
         theState.applyState();
 
+        /* Access the menus */
+        theCategoryMenu = theButton.getMenu();
+
         /* Create the listeners */
-        theCategoryMenuBuilder = theButton.getMenuBuilder();
-        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu());
-        theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewCategory());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCategoryMenu());
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
     }
 
     @Override
@@ -169,6 +179,11 @@ public class TransCategoryAnalysisSelect
     public void setEnabled(final boolean bEnabled) {
         /* Pass call on to button */
         theButton.setEnabled(bEnabled && isAvailable());
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -274,14 +289,14 @@ public class TransCategoryAnalysisSelect
      */
     private void buildCategoryMenu() {
         /* Reset the popUp menu */
-        theCategoryMenuBuilder.clearMenu();
+        theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+        Map<String, TethysScrollSubMenu<TransactionCategoryBucket, ?>> myMap = new HashMap<>();
 
         /* Record active item */
         TransactionCategoryBucket myCurrent = theState.getEventCategory();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<TransactionCategoryBucket> myActive = null;
 
         /* Loop through the available category values */
         Iterator<TransactionCategoryBucket> myIterator = theCategories.iterator();
@@ -298,17 +313,17 @@ public class TransCategoryAnalysisSelect
             TransactionCategory myCategory = myBucket.getTransactionCategory();
             TransactionCategory myParent = myCategory.getParentCategory();
             String myParentName = myParent.getName();
-            JScrollMenu myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<TransactionCategoryBucket, ?> myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
             if (myMenu == null) {
                 /* Create a new JMenu and add it to the popUp */
-                myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
+                myMenu = theCategoryMenu.addSubMenu(myParentName);
                 myMap.put(myParentName, myMenu);
             }
 
-            /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myBucket, myCategory.getSubCategory());
+            /* Create a new MenuItem and add it to the popUp */
+            TethysScrollMenuItem<TransactionCategoryBucket> myItem = myMenu.getSubMenu().addItem(myBucket, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myBucket.equals(myCurrent)) {
@@ -318,7 +333,9 @@ public class TransCategoryAnalysisSelect
         }
 
         /* Ensure active item is visible */
-        theCategoryMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**

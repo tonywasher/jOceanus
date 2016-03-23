@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+ * jTethys: Java Utilities
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,37 +20,39 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
+package net.sourceforge.joceanus.jtethys.ui.swing;
+
+import java.awt.CardLayout;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AllFilter;
+import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
- * All transactions Selection.
+ * Tethys Swing Card panel manager.
+ * @param <C> the card item type
  */
-public class AllSelect
-        implements AnalysisFilterSelection<JComponent> {
+public class TethysSwingCardPaneManager<C extends TethysNode<JComponent>>
+        extends TethysCardPaneManager<JComponent, C> {
     /**
      * The panel.
      */
     private final JPanel thePanel;
 
     /**
-     * The filter.
+     * The layout.
      */
-    private final transient AllFilter theFilter;
+    private final CardLayout theLayout;
 
     /**
      * Constructor.
      */
-    public AllSelect() {
-        /* Create the filter */
+    public TethysSwingCardPaneManager() {
         thePanel = new JPanel();
-        theFilter = AnalysisFilter.FILTER_ALL;
+        theLayout = new CardLayout();
+        thePanel.setLayout(theLayout);
     }
 
     @Override
@@ -59,18 +61,12 @@ public class AllSelect
     }
 
     @Override
-    public AllFilter getFilter() {
-        return theFilter;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return true;
-    }
-
-    @Override
     public void setEnabled(final boolean pEnabled) {
         thePanel.setEnabled(pEnabled);
+        C myCard = getActiveCard();
+        if (myCard != null) {
+            myCard.setEnabled(pEnabled);
+        }
     }
 
     @Override
@@ -78,30 +74,21 @@ public class AllSelect
         thePanel.setVisible(pVisible);
     }
 
-    /**
-     * Create SavePoint.
-     */
-    protected void createSavePoint() {
-        /* Nothing to do */
-    }
-
-    /**
-     * Restore SavePoint.
-     */
-    protected void restoreSavePoint() {
-        /* Nothing to do */
-    }
-
-    /**
-     * Set analysis.
-     * @param pAnalysis the analysis.
-     */
-    public void setAnalysis(final Analysis pAnalysis) {
-        /* Nothing to do */
+    @Override
+    public void addCard(final String pName,
+                        final C pCard) {
+        super.addCard(pName, pCard);
+        thePanel.add(pCard.getNode(), pName);
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?, ?> pFilter) {
-        /* Nothing to do */
+    public boolean selectCard(final String pName) {
+        /* Determine the card to select */
+        boolean isSelected = super.selectCard(pName);
+        if (isSelected) {
+            /* Show selected card */
+            theLayout.show(thePanel, pName);
+        }
+        return isSelected;
     }
 }

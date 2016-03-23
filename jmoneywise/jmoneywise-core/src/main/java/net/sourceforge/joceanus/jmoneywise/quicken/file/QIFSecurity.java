@@ -164,7 +164,7 @@ public class QIFSecurity
      */
     private static Map<SecurityTypeClass, String> createClassMap() {
         /* Create the map */
-        Map<SecurityTypeClass, String> myMap = new EnumMap<SecurityTypeClass, String>(SecurityTypeClass.class);
+        Map<SecurityTypeClass, String> myMap = new EnumMap<>(SecurityTypeClass.class);
 
         /* Add the entries */
         myMap.put(SecurityTypeClass.SHARES, "Share");

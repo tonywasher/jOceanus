@@ -37,8 +37,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabManager.TethysTabItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
@@ -49,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <I> the icon type
  */
 public abstract class MetisFieldSetPanelPair<N, C, F, I>
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The event manager.
      */
@@ -78,7 +79,7 @@ public abstract class MetisFieldSetPanelPair<N, C, F, I>
     /**
      * The tab manager.
      */
-    private TethysTabManager<N> theTabManager;
+    private TethysTabPaneManager<N> theTabManager;
 
     /**
      * The list of subPanels.
@@ -111,12 +112,6 @@ public abstract class MetisFieldSetPanelPair<N, C, F, I>
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
-
-    /**
-     * Obtain the node.
-     * @return the node
-     */
-    public abstract N getNode();
 
     /**
      * Add a subPanel.
@@ -170,7 +165,7 @@ public abstract class MetisFieldSetPanelPair<N, C, F, I>
      * Obtain the main panel.
      * @return the main panel
      */
-    protected TethysTabManager<N> getTabManager() {
+    protected TethysTabPaneManager<N> getTabManager() {
         return theTabManager;
     }
 
@@ -178,7 +173,7 @@ public abstract class MetisFieldSetPanelPair<N, C, F, I>
      * Declare the tab manager.
      * @param pManager the tab manager
      */
-    protected void declareTabManager(final TethysTabManager<N> pManager) {
+    protected void declareTabManager(final TethysTabPaneManager<N> pManager) {
         theTabManager = pManager;
     }
 
@@ -270,6 +265,12 @@ public abstract class MetisFieldSetPanelPair<N, C, F, I>
                 myReg.thePanel.setEditable(pEditable);
             }
         }
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theMainPanel.setEnabled(pEnabled);
+        theTabManager.setEnabled(pEnabled);
     }
 
     /**

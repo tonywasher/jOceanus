@@ -27,11 +27,11 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
@@ -142,8 +142,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         /* Determine currency */
         AssetCurrency myReportingCurrency = pAnalysis.getCurrency();
         AssetCurrency myAccountCurrency = (pAccount == null)
-                                                            ? myReportingCurrency
-                                                            : pAccount.getAssetCurrency();
+                                                             ? myReportingCurrency
+                                                             : pAccount.getAssetCurrency();
 
         /* Determine whether we are a foreign currency */
         isForeignCurrency = !MetisDifference.isEqual(myReportingCurrency, myAccountCurrency);
@@ -152,9 +152,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
         /* Create the history map */
         AccountValues myValues = isForeignCurrency
-                                                  ? allocateForeignValues(myCurrency, myRepCurrency)
-                                                  : allocateStandardValues(myCurrency);
-        theHistory = new BucketHistory<AccountValues, AccountAttribute>(myValues);
+                                                   ? allocateForeignValues(myCurrency, myRepCurrency)
+                                                   : allocateStandardValues(myCurrency);
+        theHistory = new BucketHistory<>(myValues);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -175,7 +175,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap());
+        theHistory = new BucketHistory<>(pBase.getHistoryMap());
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -198,7 +198,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap(), pDate);
+        theHistory = new BucketHistory<>(pBase.getHistoryMap(), pDate);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -221,7 +221,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap(), pRange);
+        theHistory = new BucketHistory<>(pBase.getHistoryMap(), pRange);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -249,8 +249,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
-                                                       ? myValue
-                                                       : MetisFieldValue.SKIP;
+                                                             ? myValue
+                                                             : MetisFieldValue.SKIP;
             }
             return myValue;
         }
@@ -275,8 +275,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     protected static Currency deriveCurrency(final AssetCurrency pAssetCurrency) {
         return pAssetCurrency == null
-                                     ? DEFAULT_CURRENCY
-                                     : pAssetCurrency.getCurrency();
+                                      ? DEFAULT_CURRENCY
+                                      : pAssetCurrency.getCurrency();
     }
 
     /**
@@ -305,8 +305,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     public String getName() {
         return theAccount == null
-                                 ? NAME_TOTALS
-                                 : theAccount.getName();
+                                  ? NAME_TOTALS
+                                  : theAccount.getName();
     }
 
     /**
@@ -395,7 +395,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @return the delta (or null)
      */
     public TethysDecimal getDeltaForTransaction(final Transaction pTrans,
-                                           final AccountAttribute pAttr) {
+                                                final AccountAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaValue(pTrans, pAttr);
     }
@@ -407,7 +407,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @return the delta (or null)
      */
     public TethysMoney getMoneyDeltaForTransaction(final Transaction pTrans,
-                                              final AccountAttribute pAttr) {
+                                                   final AccountAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaMoneyValue(pTrans, pAttr);
     }
@@ -442,8 +442,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
         /* Return the value */
         return (myValue != null)
-                                ? myValue
-                                : MetisFieldValue.SKIP;
+                                 ? myValue
+                                 : MetisFieldValue.SKIP;
     }
 
     /**

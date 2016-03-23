@@ -76,7 +76,7 @@ public class BatchControl {
      */
     protected BatchControl(final Integer pBatchSize) {
         /* Create the batch table list */
-        theList = new ArrayList<BatchTable>();
+        theList = new ArrayList<>();
 
         /* Store batchSize and capacity */
         theBatchSize = pBatchSize;

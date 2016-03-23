@@ -188,7 +188,7 @@ public class SheetSecurityPrice
                         String myPrice = myCell.getStringValue();
 
                         /* Build data values */
-                        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(SecurityPrice.OBJECT_NAME);
+                        DataValues<MoneyWiseDataType> myValues = new DataValues<>(SecurityPrice.OBJECT_NAME);
                         myValues.addValue(SecurityPrice.FIELD_SECURITY, mySecurity);
                         myValues.addValue(SecurityPrice.FIELD_DATE, myDate);
                         myValues.addValue(SecurityPrice.FIELD_PRICE, myPrice);

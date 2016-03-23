@@ -265,7 +265,7 @@ public class QIFAccount
      */
     private static Map<Enum<?>, String> createClassMap() {
         /* Create the map */
-        Map<Enum<?>, String> myMap = new HashMap<Enum<?>, String>();
+        Map<Enum<?>, String> myMap = new HashMap<>();
 
         /* Add the entries */
         myMap.put(DepositCategoryClass.CHECKING, QIFACT_BANK);

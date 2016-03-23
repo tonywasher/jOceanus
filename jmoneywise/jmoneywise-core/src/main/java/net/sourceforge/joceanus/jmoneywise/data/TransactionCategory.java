@@ -613,8 +613,8 @@ public final class TransactionCategory
          */
         public TransCategoryDataMap() {
             /* Create the maps */
-            theCategoryCountMap = new HashMap<Integer, Integer>();
-            theCategoryMap = new HashMap<Integer, TransactionCategory>();
+            theCategoryCountMap = new HashMap<>();
+            theCategoryMap = new HashMap<>();
         }
 
         @Override

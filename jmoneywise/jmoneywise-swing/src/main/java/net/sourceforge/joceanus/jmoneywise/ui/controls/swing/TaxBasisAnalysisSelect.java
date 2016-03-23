@@ -27,8 +27,8 @@ import java.util.Iterator;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -47,20 +47,16 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * TaxBasisAnalysis Selection.
  */
 public class TaxBasisAnalysisSelect
-        extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 2653125674925955281L;
-
+        implements AnalysisFilterSelection<JComponent>, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for TaxBasis Label.
      */
@@ -79,50 +75,55 @@ public class TaxBasisAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The active tax basis bucket list.
      */
-    private transient TaxBasisBucketList theTaxBases;
+    private TaxBasisBucketList theTaxBases;
 
     /**
      * The state.
      */
-    private transient TaxBasisState theState;
+    private TaxBasisState theState;
 
     /**
      * The savePoint.
      */
-    private transient TaxBasisState theSavePoint;
+    private TaxBasisState theSavePoint;
 
     /**
      * The basis button.
      */
-    private final JScrollButton<TaxBasisBucket> theBasisButton;
+    private final TethysSwingScrollButtonManager<TaxBasisBucket> theBasisButton;
 
     /**
      * The account button.
      */
-    private final JScrollButton<TaxBasisAccountBucket> theAccountButton;
+    private final TethysSwingScrollButtonManager<TaxBasisAccountBucket> theAccountButton;
 
     /**
-     * Tax menu builder.
+     * Tax menu.
      */
-    private final JScrollMenuBuilder<TaxBasisBucket> theTaxMenuBuilder;
+    private final TethysScrollMenu<TaxBasisBucket, ?> theTaxMenu;
 
     /**
-     * Account menu builder.
+     * Account menu.
      */
-    private final JScrollMenuBuilder<TaxBasisAccountBucket> theAccountMenuBuilder;
+    private final TethysScrollMenu<TaxBasisAccountBucket, ?> theAccountMenu;
 
     /**
      * Constructor.
      */
     public TaxBasisAnalysisSelect() {
         /* Create the buttons */
-        theBasisButton = new JScrollButton<>();
-        theAccountButton = new JScrollButton<>();
+        theBasisButton = new TethysSwingScrollButtonManager<>();
+        theAccountButton = new TethysSwingScrollButtonManager<>();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -132,28 +133,38 @@ public class TaxBasisAnalysisSelect
         JLabel myAccountLabel = new JLabel(NLS_ACCOUNT + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(Box.createHorizontalGlue());
-        add(myBasisLabel);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(theBasisButton);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE << 2, 0)));
-        add(myAccountLabel);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(theAccountButton);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel = new JPanel();
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
+        thePanel.add(Box.createHorizontalGlue());
+        thePanel.add(myBasisLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel.add(theBasisButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE << 2, 0)));
+        thePanel.add(myAccountLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel.add(theAccountButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
 
         /* Create initial state */
         theState = new TaxBasisState();
         theState.applyState();
 
+        /* Access the menus */
+        theTaxMenu = theBasisButton.getMenu();
+        theAccountMenu = theAccountButton.getMenu();
+
         /* Create the listener */
-        theTaxMenuBuilder = theBasisButton.getMenuBuilder();
-        theTaxMenuBuilder.getEventRegistrar().addEventListener(e -> buildBasisMenu());
-        theAccountMenuBuilder = theAccountButton.getMenuBuilder();
-        theAccountMenuBuilder.getEventRegistrar().addEventListener(e -> buildAccountMenu());
-        theBasisButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewBasis());
-        theAccountButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewAccount());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theBasisButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBasis());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildBasisMenu());
+        myRegistrar = theAccountButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewAccount());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildAccountMenu());
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
     }
 
     @Override
@@ -201,6 +212,11 @@ public class TaxBasisAnalysisSelect
     public void setEnabled(final boolean bEnabled) {
         /* Pass call on to basis button */
         theBasisButton.setEnabled(bEnabled && isAvailable());
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -310,10 +326,10 @@ public class TaxBasisAnalysisSelect
      */
     private void buildBasisMenu() {
         /* Reset the popUp menu */
-        theTaxMenuBuilder.clearMenu();
+        theTaxMenu.removeAllItems();
 
         /* Record active item */
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<TaxBasisBucket> myActive = null;
         TaxBasisBucket myCurr = theState.getTaxBasis();
 
         /* Loop through the available basis values */
@@ -321,8 +337,8 @@ public class TaxBasisAnalysisSelect
         while (myIterator.hasNext()) {
             TaxBasisBucket myBucket = myIterator.next();
 
-            /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = theTaxMenuBuilder.addItem(myBucket);
+            /* Create a new MenuItem and add it to the popUp */
+            TethysScrollMenuItem<TaxBasisBucket> myItem = theTaxMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -332,7 +348,9 @@ public class TaxBasisAnalysisSelect
         }
 
         /* Ensure active item is visible */
-        theTaxMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
@@ -340,22 +358,22 @@ public class TaxBasisAnalysisSelect
      */
     private void buildAccountMenu() {
         /* Reset the popUp menu */
-        theAccountMenuBuilder.clearMenu();
+        theAccountMenu.removeAllItems();
 
         /* Record active item */
         TaxBasisBucket myBasis = theState.getTaxBasis();
         TaxBasisAccountBucket myCurr = theState.getAccount();
 
         /* Add the all item menu */
-        JMenuItem myActive = theAccountMenuBuilder.addItem(null, NLS_ALL);
+        TethysScrollMenuItem<TaxBasisAccountBucket> myActive = theAccountMenu.addItem(null, NLS_ALL);
 
         /* Loop through the available account values */
         Iterator<TaxBasisAccountBucket> myIterator = myBasis.accountIterator();
         while (myIterator.hasNext()) {
             TaxBasisAccountBucket myBucket = myIterator.next();
 
-            /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = theAccountMenuBuilder.addItem(myBucket, myBucket.getSimpleName());
+            /* Create a new MenuItem and add it to the popUp */
+            TethysScrollMenuItem<TaxBasisAccountBucket> myItem = theAccountMenu.addItem(myBucket, myBucket.getSimpleName());
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -365,7 +383,9 @@ public class TaxBasisAnalysisSelect
         }
 
         /* Ensure active item is visible */
-        theAccountMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**

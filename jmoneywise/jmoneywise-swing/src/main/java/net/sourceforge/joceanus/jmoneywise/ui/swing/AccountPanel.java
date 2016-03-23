@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
@@ -49,9 +48,9 @@ import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingActionButtons;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -60,15 +59,18 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Top-level panel for Accounts.
  */
 public class AccountPanel
-        implements TethysEventProvider<PrometheusDataEvent> {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
     /**
      * Strut width.
      */
@@ -107,27 +109,22 @@ public class AccountPanel
     /**
      * The select button.
      */
-    private final JScrollButton<PanelName> theSelectButton;
+    private final TethysSwingScrollButtonManager<PanelName> theSelectButton;
 
     /**
      * The card panel.
      */
-    private final JPanel theCardPanel;
+    private final TethysSwingCardPaneManager<TethysNode<JComponent>> theCardPanel;
 
     /**
-     * The card layout.
+     * The select panel.
      */
-    private final CardLayout theLayout;
+    private final JPanel theSelectPanel;
 
     /**
      * The filter card panel.
      */
-    private final TethysSwingEnablePanel theFilterCardPanel;
-
-    /**
-     * The card layout for the filter button.
-     */
-    private final CardLayout theFilterLayout;
+    private final TethysSwingCardPaneManager<TethysNode<JComponent>> theFilterCardPanel;
 
     /**
      * The active panel.
@@ -235,77 +232,70 @@ public class AccountPanel
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
-        theSelectButton = new JScrollButton<>();
+        theSelectButton = new TethysSwingScrollButtonManager<>();
         buildSelectMenu();
 
         /* Create the card panel */
-        theCardPanel = new TethysSwingEnablePanel();
-        theLayout = new CardLayout();
-        theCardPanel.setLayout(theLayout);
+        theCardPanel = new TethysSwingCardPaneManager<>();
 
         /* Add to the card panels */
-        theCardPanel.add(theDepositTable.getNode(), PanelName.DEPOSITS.toString());
-        theCardPanel.add(theCashTable.getNode(), PanelName.CASH.toString());
-        theCardPanel.add(theLoanTable.getNode(), PanelName.LOANS.toString());
-        theCardPanel.add(thePortfolioTable.getNode(), PanelName.PORTFOLIOS.toString());
-        theCardPanel.add(theSecurityTable.getNode(), PanelName.SECURITIES.toString());
-        theCardPanel.add(thePayeeTable.getNode(), PanelName.PAYEES.toString());
-        theCardPanel.add(theOptionTable.getNode(), PanelName.OPTIONS.toString());
+        theCardPanel.addCard(PanelName.DEPOSITS.toString(), theDepositTable);
+        theCardPanel.addCard(PanelName.CASH.toString(), theCashTable);
+        theCardPanel.addCard(PanelName.LOANS.toString(), theLoanTable);
+        theCardPanel.addCard(PanelName.PORTFOLIOS.toString(), thePortfolioTable);
+        theCardPanel.addCard(PanelName.SECURITIES.toString(), theSecurityTable);
+        theCardPanel.addCard(PanelName.PAYEES.toString(), thePayeeTable);
+        theCardPanel.addCard(PanelName.OPTIONS.toString(), theOptionTable);
         theActive = PanelName.DEPOSITS;
-        theSelectButton.setText(theActive.toString());
+        theSelectButton.setFixedText(theActive.toString());
 
         /* Create the new card panel */
-        theFilterCardPanel = new TethysSwingEnablePanel();
-        theFilterLayout = new CardLayout();
-        theFilterCardPanel.setLayout(theFilterLayout);
+        theFilterCardPanel = new TethysSwingCardPaneManager<>();
 
         /* Build the new card panel */
-        theFilterCardPanel.add(theDepositTable.getFilterPanel(), PanelName.DEPOSITS.toString());
-        theFilterCardPanel.add(theCashTable.getFilterPanel(), PanelName.CASH.toString());
-        theFilterCardPanel.add(theLoanTable.getFilterPanel(), PanelName.LOANS.toString());
-        theFilterCardPanel.add(thePortfolioTable.getFilterPanel(), PanelName.PORTFOLIOS.toString());
-        theFilterCardPanel.add(theSecurityTable.getFilterPanel(), PanelName.SECURITIES.toString());
-        theFilterCardPanel.add(thePayeeTable.getFilterPanel(), PanelName.PAYEES.toString());
-        theFilterCardPanel.add(theOptionTable.getFilterPanel(), PanelName.OPTIONS.toString());
+        theFilterCardPanel.addCard(PanelName.DEPOSITS.toString(), theDepositTable.getFilterPanel());
+        theFilterCardPanel.addCard(PanelName.CASH.toString(), theCashTable.getFilterPanel());
+        theFilterCardPanel.addCard(PanelName.LOANS.toString(), theLoanTable.getFilterPanel());
+        theFilterCardPanel.addCard(PanelName.PORTFOLIOS.toString(), thePortfolioTable.getFilterPanel());
+        theFilterCardPanel.addCard(PanelName.SECURITIES.toString(), theSecurityTable.getFilterPanel());
+        theFilterCardPanel.addCard(PanelName.PAYEES.toString(), thePayeeTable.getFilterPanel());
+        theFilterCardPanel.addCard(PanelName.OPTIONS.toString(), theOptionTable.getFilterPanel());
 
         /* Create the selection panel */
-        JPanel mySelect = new TethysSwingEnablePanel();
-        mySelect.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
+        theSelectPanel = new TethysSwingEnablePanel();
+        theSelectPanel.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
 
         /* Create the layout for the selection panel */
-        mySelect.setLayout(new BoxLayout(mySelect, BoxLayout.X_AXIS));
-        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        mySelect.add(myLabel);
-        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        mySelect.add(theSelectButton);
-        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        mySelect.add(Box.createHorizontalGlue());
-        mySelect.add(theFilterCardPanel);
-        mySelect.add(Box.createHorizontalGlue());
-        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        mySelect.setPreferredSize(new Dimension(JDataTable.WIDTH_PANEL, CategoryPanel.PANEL_PAD));
-        mySelect.setMaximumSize(new Dimension(Integer.MAX_VALUE, CategoryPanel.PANEL_PAD));
+        theSelectPanel.setLayout(new BoxLayout(theSelectPanel, BoxLayout.X_AXIS));
+        theSelectPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theSelectPanel.add(myLabel);
+        theSelectPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theSelectPanel.add(theSelectButton.getNode());
+        theSelectPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theSelectPanel.add(Box.createHorizontalGlue());
+        theSelectPanel.add(theFilterCardPanel.getNode());
+        theSelectPanel.add(Box.createHorizontalGlue());
+        theSelectPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theSelectPanel.setPreferredSize(new Dimension(JDataTable.WIDTH_PANEL, CategoryPanel.PANEL_PAD));
+        theSelectPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, CategoryPanel.PANEL_PAD));
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
-        myHeader.add(mySelect, BorderLayout.CENTER);
+        myHeader.add(theSelectPanel, BorderLayout.CENTER);
         myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
         myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
 
         /* Now define the panel */
         thePanel.setLayout(new BorderLayout());
         thePanel.add(myHeader, BorderLayout.PAGE_START);
-        thePanel.add(theCardPanel, BorderLayout.CENTER);
+        thePanel.add(theCardPanel.getNode(), BorderLayout.CENTER);
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
 
         /* Create the listeners */
-        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> {
-            cancelEditing();
-            showPanel(theSelectButton.getValue());
-        });
+        theSelectButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleSelection());
         theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
         theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
         setChildListeners(theDepositTable.getEventRegistrar());
@@ -335,12 +325,21 @@ public class AccountPanel
         pRegistrar.addEventListener(PrometheusDataEvent.GOTOWINDOW, this::handleGoToEvent);
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
+    @Override
     public JComponent getNode() {
         return thePanel;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theSelectButton.setEnabled(pEnabled);
+        theCardPanel.setEnabled(pEnabled);
+        theFilterCardPanel.setEnabled(pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -348,12 +347,12 @@ public class AccountPanel
      */
     private void buildSelectMenu() {
         /* Create builder */
-        JScrollMenuBuilder<PanelName> myBuilder = theSelectButton.getMenuBuilder();
+        TethysScrollMenu<PanelName, ?> myMenu = theSelectButton.getMenu();
 
         /* Loop through the panels */
         for (PanelName myPanel : PanelName.values()) {
             /* Create a new JMenuItem for the panel */
-            myBuilder.addItem(myPanel);
+            myMenu.addItem(myPanel);
         }
     }
 
@@ -609,12 +608,12 @@ public class AccountPanel
         String myName = pName.toString();
 
         /* Move correct card to front */
-        theLayout.show(theCardPanel, myName);
-        theFilterLayout.show(theFilterCardPanel, myName);
+        theCardPanel.selectCard(myName);
+        theFilterCardPanel.selectCard(myName);
 
         /* Note the active panel */
         theActive = pName;
-        theSelectButton.setText(myName);
+        theSelectButton.setFixedText(myName);
 
         /* Determine the focus */
         determineFocus();
@@ -647,14 +646,25 @@ public class AccountPanel
         /* Determine whether we have an error */
         boolean isError = theError.hasError();
 
-        /* Hide selection button on error */
-        theSelectButton.setVisible(!isError);
+        /* Hide selection panel on error */
+        theSelectPanel.setVisible(!isError);
 
         /* Lock card panel */
         theCardPanel.setEnabled(!isError);
 
         /* Lock Action Buttons */
         theActionButtons.setEnabled(!isError);
+    }
+
+    /**
+     * handleSelection.
+     */
+    private void handleSelection() {
+        /* Cancel any editing */
+        cancelEditing();
+
+        /* Show selected panel */
+        showPanel(theSelectButton.getValue());
     }
 
     /**

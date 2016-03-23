@@ -134,8 +134,8 @@ public final class SheetAccountCategory {
         /* Access parent */
         MetisDataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
         String myParent = (myCell == null)
-                                          ? null
-                                          : myCell.getStringValue();
+                                           ? null
+                                           : myCell.getStringValue();
 
         /* Access category class and ignore if doesn't exist */
         myCell = pView.getRowCellByIndex(pRow, iAdjust++);
@@ -155,7 +155,7 @@ public final class SheetAccountCategory {
         /* If this is a Deposit Category */
         if (myClass.equals(MoneyWiseDataType.DEPOSIT.toString())) {
             /* Build data values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(DepositCategory.OBJECT_NAME);
+            DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositCategory.OBJECT_NAME);
             myValues.addValue(DepositCategory.FIELD_CATTYPE, myCat);
             myValues.addValue(DepositCategory.FIELD_PARENT, myParent);
             myValues.addValue(DepositCategory.FIELD_NAME, myName);
@@ -167,7 +167,7 @@ public final class SheetAccountCategory {
             /* If this is a cash category */
         } else if (myClass.equals(MoneyWiseDataType.CASH.toString())) {
             /* Build data values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(CashCategory.OBJECT_NAME);
+            DataValues<MoneyWiseDataType> myValues = new DataValues<>(CashCategory.OBJECT_NAME);
             myValues.addValue(CashCategory.FIELD_CATTYPE, myCat);
             myValues.addValue(CashCategory.FIELD_PARENT, myParent);
             myValues.addValue(CashCategory.FIELD_NAME, myName);
@@ -179,7 +179,7 @@ public final class SheetAccountCategory {
             /* If this is a loan category */
         } else if (myClass.equals(MoneyWiseDataType.LOAN.toString())) {
             /* Build data values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(LoanCategory.OBJECT_NAME);
+            DataValues<MoneyWiseDataType> myValues = new DataValues<>(LoanCategory.OBJECT_NAME);
             myValues.addValue(LoanCategory.FIELD_CATTYPE, myCat);
             myValues.addValue(LoanCategory.FIELD_PARENT, myParent);
             myValues.addValue(LoanCategory.FIELD_NAME, myName);

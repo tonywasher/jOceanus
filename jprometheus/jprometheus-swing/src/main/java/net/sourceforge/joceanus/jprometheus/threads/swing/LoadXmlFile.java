@@ -105,7 +105,7 @@ public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
         }
 
         /* Create a new formatter */
-        DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<T, E>(theStatus);
+        DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(theStatus);
 
         /* Load data */
         T myNewData = theControl.getNewData();

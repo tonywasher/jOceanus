@@ -67,7 +67,7 @@ public final class YQLDownloader {
             /* Protect against exceptions */
             try (MetisHTTPYQLClient myClient = new MetisHTTPYQLClient(myData.getDataFormatter())) {
                 /* Build the symbols list */
-                List<String> mySymbols = new ArrayList<String>();
+                List<String> mySymbols = new ArrayList<>();
                 Iterator<SpotSecurityPrice> myIterator = pPrices.iterator();
                 while (myIterator.hasNext()) {
                     SpotSecurityPrice mySpot = myIterator.next();
@@ -107,7 +107,8 @@ public final class YQLDownloader {
                 }
 
                 /* Catch exceptions */
-            } catch (OceanusException | IOException e) {
+            } catch (OceanusException
+                    | IOException e) {
                 throw new JMoneyWiseIOException("Failed to download prices", e);
             }
         }
@@ -133,7 +134,7 @@ public final class YQLDownloader {
             /* Protect against exceptions */
             try (MetisHTTPYQLClient myClient = new MetisHTTPYQLClient(myData.getDataFormatter())) {
                 /* Build the currency list */
-                List<Currency> myCurrencies = new ArrayList<Currency>();
+                List<Currency> myCurrencies = new ArrayList<>();
                 Iterator<SpotExchangeRate> myIterator = pRates.iterator();
                 while (myIterator.hasNext()) {
                     SpotExchangeRate mySpot = myIterator.next();

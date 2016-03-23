@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
@@ -40,9 +43,6 @@ import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.preference.DatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.preference.JDBCDriver;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class that encapsulates a database connection.
@@ -136,7 +136,7 @@ public abstract class Database<T extends DataSet<T, ?>> {
         }
 
         /* Create table list and add the tables to the list */
-        theTables = new ArrayList<DatabaseTable<?, ?>>();
+        theTables = new ArrayList<>();
         theTables.add(new TableControlKeys(this));
         theTables.add(new TableDataKeySet(this));
         theTables.add(new TableDataKeys(this));

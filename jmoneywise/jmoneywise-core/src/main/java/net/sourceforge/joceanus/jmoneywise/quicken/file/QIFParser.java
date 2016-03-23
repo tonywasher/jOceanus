@@ -87,14 +87,11 @@ public class QIFParser {
      * @throws IOException on error
      */
     public boolean loadFile(final BufferedReader pStream) throws IOException {
-        /* Continue flag */
-        boolean bContinue = true;
-
         /* List of lines */
-        List<String> myLines = new ArrayList<String>();
+        List<String> myLines = new ArrayList<>();
 
         /* Loop through the file */
-        while (bContinue) {
+        for (;;) {
             /* Read the next line and break on EOF */
             String myLine = pStream.readLine();
             if (myLine == null) {
@@ -123,7 +120,7 @@ public class QIFParser {
         theFile.sortLists();
 
         /* Return to the caller */
-        return bContinue;
+        return true;
     }
 
     /**

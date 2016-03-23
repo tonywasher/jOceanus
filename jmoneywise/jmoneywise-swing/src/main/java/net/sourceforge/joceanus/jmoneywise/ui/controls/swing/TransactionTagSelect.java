@@ -27,8 +27,8 @@ import java.util.Iterator;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -44,20 +44,16 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * TransactionTag Selection.
  */
 public class TransactionTagSelect
-        extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 1982086108264042602L;
-
+        implements AnalysisFilterSelection<JComponent>, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for TransactionTag Label.
      */
@@ -66,39 +62,44 @@ public class TransactionTagSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The active transaction tag list.
      */
-    private transient TransactionTagBucketList theTags;
+    private TransactionTagBucketList theTags;
 
     /**
      * The state.
      */
-    private transient TagState theState;
+    private TagState theState;
 
     /**
      * The savePoint.
      */
-    private transient TagState theSavePoint;
+    private TagState theSavePoint;
 
     /**
      * The tag button.
      */
-    private final JScrollButton<TransactionTagBucket> theTagButton;
+    private final TethysSwingScrollButtonManager<TransactionTagBucket> theTagButton;
 
     /**
-     * Tag menu builder.
+     * Tag menu.
      */
-    private final JScrollMenuBuilder<TransactionTagBucket> theTagMenuBuilder;
+    private final TethysScrollMenu<TransactionTagBucket, ?> theTagMenu;
 
     /**
      * Constructor.
      */
     public TransactionTagSelect() {
         /* Create the tags button */
-        theTagButton = new JScrollButton<>();
+        theTagButton = new TethysSwingScrollButtonManager<>();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -107,21 +108,28 @@ public class TransactionTagSelect
         JLabel myTagLabel = new JLabel(NLS_TAG + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(Box.createHorizontalGlue());
-        add(myTagLabel);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(theTagButton);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel = new JPanel();
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
+        thePanel.add(Box.createHorizontalGlue());
+        thePanel.add(myTagLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel.add(theTagButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
 
         /* Create initial state */
         theState = new TagState();
         theState.applyState();
 
         /* Create the listener */
-        theTagMenuBuilder = theTagButton.getMenuBuilder();
-        theTagMenuBuilder.getEventRegistrar().addEventListener(e -> buildTagMenu());
-        theTagButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewTag());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theTagButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTag());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildTagMenu());
+        theTagMenu = theTagButton.getMenu();
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
     }
 
     @Override
@@ -168,6 +176,11 @@ public class TransactionTagSelect
 
         /* Pass call on to buttons */
         theTagButton.setEnabled(csAvailable);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -242,11 +255,11 @@ public class TransactionTagSelect
      */
     private void buildTagMenu() {
         /* Reset the popUp menu */
-        theTagMenuBuilder.clearMenu();
+        theTagMenu.removeAllItems();
 
         /* Record active item */
         TransactionTagBucket myCurrent = theState.getTag();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<TransactionTagBucket> myActive = null;
 
         /* Loop through the available tag values */
         Iterator<TransactionTagBucket> myIterator = theTags.iterator();
@@ -254,7 +267,7 @@ public class TransactionTagSelect
             TransactionTagBucket myTag = myIterator.next();
 
             /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = theTagMenuBuilder.addItem(myTag);
+            TethysScrollMenuItem<TransactionTagBucket> myItem = theTagMenu.addItem(myTag);
 
             /* If this is the active category */
             if (myTag.equals(myCurrent)) {
@@ -264,7 +277,9 @@ public class TransactionTagSelect
         }
 
         /* Ensure active item is visible */
-        theTagMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**

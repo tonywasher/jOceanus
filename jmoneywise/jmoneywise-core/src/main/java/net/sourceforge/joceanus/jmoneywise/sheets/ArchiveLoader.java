@@ -152,11 +152,11 @@ public class ArchiveLoader {
      */
     public ArchiveLoader() {
         /* Create the Years Array */
-        theYears = new ArrayList<ArchiveYear>();
+        theYears = new ArrayList<>();
 
         /* Create the maps */
-        theNameMap = new HashMap<String, Object>();
-        theCategoryMap = new HashMap<String, TransactionCategory>();
+        theNameMap = new HashMap<>();
+        theCategoryMap = new HashMap<>();
     }
 
     /**
@@ -777,7 +777,7 @@ public class ArchiveLoader {
         protected Transaction buildTransaction(final String pAmount,
                                                final boolean pReconciled) throws OceanusException {
             /* Build data values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Transaction.OBJECT_NAME);
+            DataValues<MoneyWiseDataType> myValues = new DataValues<>(Transaction.OBJECT_NAME);
             myValues.addValue(Transaction.FIELD_DATE, theDate);
             myValues.addValue(Transaction.FIELD_CATEGORY, theCategory);
             myValues.addValue(Transaction.FIELD_PAIR, thePair);

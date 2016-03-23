@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 
 /**
  * Template for a Data Instance Map.
@@ -74,8 +74,8 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
      */
     protected DataInstanceMap() {
         /* Create the maps */
-        theKeyMap = new HashMap<K, T>();
-        theKeyCountMap = new HashMap<K, Integer>();
+        theKeyMap = new HashMap<>();
+        theKeyCountMap = new HashMap<>();
     }
 
     @Override
@@ -118,8 +118,8 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
         /* Adjust key count */
         Integer myCount = theKeyCountMap.get(pKey);
         theKeyCountMap.put(pKey, myCount == null
-                                                ? ONE
-                                                : myCount + 1);
+                                                 ? ONE
+                                                 : myCount + 1);
 
         /* Adjust key map */
         theKeyMap.put(pKey, pItem);

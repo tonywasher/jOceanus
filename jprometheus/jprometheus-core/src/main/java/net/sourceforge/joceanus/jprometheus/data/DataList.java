@@ -25,12 +25,12 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedListIterator;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
@@ -265,13 +265,13 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBase == null)
-                                    ? MetisFieldValue.SKIP
-                                    : theBase;
+                                     ? MetisFieldValue.SKIP
+                                     : theBase;
         }
         if (FIELD_MAPS.equals(pField)) {
             return (theDataMap == null)
-                                       ? MetisFieldValue.SKIP
-                                       : theDataMap;
+                                        ? MetisFieldValue.SKIP
+                                        : theDataMap;
         }
         if (FIELD_ERRORS.equals(pField)) {
             return MetisFieldValue.SKIP;
@@ -554,9 +554,10 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     /**
-     * Construct a difference extract between two DataLists. The difference extract will only have items that differ between the two lists. Items that are in
-     * the new list, but not in the old list will be viewed as inserted. Items that are in the old list but not in the new list will be viewed as deleted. Items
-     * that are in both list but differ will be viewed as changed
+     * Construct a difference extract between two DataLists. The difference extract will only have
+     * items that differ between the two lists. Items that are in the new list, but not in the old
+     * list will be viewed as inserted. Items that are in the old list but not in the new list will
+     * be viewed as deleted. Items that are in both list but differ will be viewed as changed
      * @param pDataSet the difference DataSet
      * @param pOld The old list to compare to
      * @return the difference list
@@ -615,9 +616,10 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     /**
-     * Re-base the list against a database image. This method is used to re-synchronise between two sources. Items that are in this list, but not in the base
-     * list will be viewed as inserted. Items that are in the base list but not in this list list will be viewed as deleted. Items that are in both list but
-     * differ will be viewed as changed
+     * Re-base the list against a database image. This method is used to re-synchronise between two
+     * sources. Items that are in this list, but not in the base list will be viewed as inserted.
+     * Items that are in the base list but not in this list list will be viewed as deleted. Items
+     * that are in both list but differ will be viewed as changed
      * @param pBase The base list to re-base on
      * @return are there any changes
      */
@@ -767,7 +769,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
                 /* If this is the first error */
                 if (myErrors == null) {
                     /* Allocate error list */
-                    myErrors = new DataErrorList<DataItem<E>>();
+                    myErrors = new DataErrorList<>();
                 }
 
                 /* Add to the error list */
@@ -1043,7 +1045,8 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         CLONE,
 
         /**
-         * Shallow Copy list for comparison purposes. Only references to other items can be added to the list
+         * Shallow Copy list for comparison purposes. Only references to other items can be added to
+         * the list
          */
         COPY,
 

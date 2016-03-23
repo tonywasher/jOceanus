@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Tab Manager.
  * @param <N> the Node type
  */
-public abstract class TethysTabManager<N>
-        implements TethysEventProvider<TethysUIEvent> {
+public abstract class TethysTabPaneManager<N>
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The Event Manager.
      */
@@ -55,7 +55,7 @@ public abstract class TethysTabManager<N>
     /**
      * Constructor.
      */
-    protected TethysTabManager() {
+    protected TethysTabPaneManager() {
         theEventManager = new TethysEventManager<>();
         isEnabled = true;
     }
@@ -64,12 +64,6 @@ public abstract class TethysTabManager<N>
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
-
-    /**
-     * Obtain the node.
-     * @return the node.
-     */
-    public abstract N getNode();
 
     /**
      * Obtain selected tab.
@@ -155,12 +149,9 @@ public abstract class TethysTabManager<N>
      * @return the new tab item
      */
     public abstract TethysTabItem<N> addTabItem(final String pName,
-                                                final N pItem);
+                                                final TethysNode<N> pItem);
 
-    /**
-     * Set the enabled state of the item.
-     * @param pEnabled true/false
-     */
+    @Override
     public void setEnabled(final boolean pEnabled) {
         /* If we are changing enabled state */
         if (pEnabled != isEnabled) {
@@ -197,11 +188,12 @@ public abstract class TethysTabManager<N>
      * TabItem class.
      * @param <C> the component type
      */
-    public abstract static class TethysTabItem<C> {
+    public abstract static class TethysTabItem<C>
+            implements TethysNode<C> {
         /**
          * The pane to which this item belongs.
          */
-        private final TethysTabManager<C> thePane;
+        private final TethysTabPaneManager<C> thePane;
 
         /**
          * The name of this item.
@@ -233,7 +225,7 @@ public abstract class TethysTabManager<N>
          * @param pPane the containing pane
          * @param pName the name of the tab
          */
-        protected TethysTabItem(final TethysTabManager<C> pPane,
+        protected TethysTabItem(final TethysTabPaneManager<C> pPane,
                                 final String pName) {
             /* Store parameters */
             thePane = pPane;
@@ -266,16 +258,10 @@ public abstract class TethysTabManager<N>
         }
 
         /**
-         * Obtain the node.
-         * @return the node.
-         */
-        public abstract C getNode();
-
-        /**
          * Obtain the tree.
          * @return the tree
          */
-        public TethysTabManager<C> getPane() {
+        public TethysTabPaneManager<C> getPane() {
             return thePane;
         }
 
@@ -320,10 +306,7 @@ public abstract class TethysTabManager<N>
             }
         }
 
-        /**
-         * Set the enabled state of the item.
-         * @param pEnabled true/false
-         */
+        @Override
         public void setEnabled(final boolean pEnabled) {
             /* If we are changing enabled state */
             if (pEnabled != isEnabled) {

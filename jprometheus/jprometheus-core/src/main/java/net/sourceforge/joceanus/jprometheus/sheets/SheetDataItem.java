@@ -506,8 +506,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
         /* Return the value */
         return (myCell != null)
-                               ? myCell.getIntegerValue()
-                               : null;
+                                ? myCell.getIntegerValue()
+                                : null;
     }
 
     /**
@@ -521,8 +521,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
         /* Return the value */
         return (myCell != null)
-                               ? myCell.getBooleanValue()
-                               : null;
+                                ? myCell.getBooleanValue()
+                                : null;
     }
 
     /**
@@ -537,8 +537,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
         /* Return the value */
         return (myCell != null)
-                               ? myCell.getDateValue()
-                               : null;
+                                ? myCell.getDateValue()
+                                : null;
     }
 
     /**
@@ -553,8 +553,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
         /* Return the value */
         return (myCell != null)
-                               ? myCell.getMoneyValue()
-                               : null;
+                                ? myCell.getMoneyValue()
+                                : null;
     }
 
     /**
@@ -569,8 +569,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
         /* Return the value */
         return (myCell != null)
-                               ? myCell.getPriceValue()
-                               : null;
+                                ? myCell.getPriceValue()
+                                : null;
     }
 
     /**
@@ -585,8 +585,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
         /* Return the value */
         return (myCell != null)
-                               ? myCell.getRateValue()
-                               : null;
+                                ? myCell.getRateValue()
+                                : null;
     }
 
     /**
@@ -601,8 +601,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
         /* Return the value */
         return (myCell != null)
-                               ? myCell.getUnitsValue()
-                               : null;
+                                ? myCell.getUnitsValue()
+                                : null;
     }
 
     /**
@@ -617,8 +617,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
         /* Return the value */
         return (myCell != null)
-                               ? myCell.getDilutionValue()
-                               : null;
+                                ? myCell.getDilutionValue()
+                                : null;
     }
 
     /**
@@ -633,8 +633,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
         /* Return the value */
         return (myCell != null)
-                               ? myCell.getRatioValue()
-                               : null;
+                                ? myCell.getRatioValue()
+                                : null;
     }
 
     /**
@@ -648,8 +648,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
         /* Return the value */
         return (myCell != null)
-                               ? myCell.getStringValue()
-                               : null;
+                                ? myCell.getStringValue()
+                                : null;
     }
 
     /**
@@ -664,8 +664,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
         /* Return the value */
         return (myCell != null)
-                               ? myCell.getBytesValue()
-                               : null;
+                                ? myCell.getBytesValue()
+                                : null;
     }
 
     /**
@@ -680,8 +680,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
         /* Return the value */
         return (myCell != null)
-                               ? myCell.getCharArrayValue()
-                               : null;
+                                ? myCell.getCharArrayValue()
+                                : null;
     }
 
     /**
@@ -820,7 +820,7 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      */
     protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
-        DataValues<E> myValues = new DataValues<E>(pName);
+        DataValues<E> myValues = new DataValues<>(pName);
 
         /* Add the id and return the new values */
         myValues.addValue(DataItem.FIELD_ID, loadInteger(COL_ID));

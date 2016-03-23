@@ -133,13 +133,13 @@ public class TethysFXDateRangeSelector
 
         /* Create the DateButtons */
         TethysFXDateButtonManager myStartButton = new TethysFXDateButtonManager(pFormatter);
-        myStartButton.getButton().setMaxHeight(Double.MAX_VALUE);
+        myStartButton.getNode().setMaxHeight(Double.MAX_VALUE);
         declareStartButton(myStartButton);
         TethysFXDateButtonManager myEndButton = new TethysFXDateButtonManager(pFormatter);
-        myEndButton.getButton().setMaxHeight(Double.MAX_VALUE);
+        myEndButton.getNode().setMaxHeight(Double.MAX_VALUE);
         declareEndButton(myEndButton);
         TethysFXDateButtonManager myBaseButton = new TethysFXDateButtonManager(pFormatter);
-        myBaseButton.getButton().setMaxHeight(Double.MAX_VALUE);
+        myBaseButton.getNode().setMaxHeight(Double.MAX_VALUE);
         declareBaseButton(myBaseButton);
 
         /* Create the next button */
@@ -160,14 +160,14 @@ public class TethysFXDateRangeSelector
         theCustomBox.setSpacing(STRUT_WIDTH);
         Label myStartLabel = new Label(NLS_START);
         Label myEndLabel = new Label(NLS_END);
-        theCustomBox.getChildren().addAll(myStartLabel, myStartButton.getButton(), myEndLabel, myEndButton.getButton());
+        theCustomBox.getChildren().addAll(myStartLabel, myStartButton.getNode(), myEndLabel, myEndButton.getNode());
 
         /* Create the Standard HBox */
         theStandardBox = new HBox();
         theStandardBox.setAlignment(Pos.CENTER);
         theStandardBox.setSpacing(STRUT_WIDTH);
         theStandardLabel = new Label();
-        theStandardBox.getChildren().addAll(theStandardLabel, thePrevButton, myBaseButton.getButton(), theNextButton);
+        theStandardBox.getChildren().addAll(theStandardLabel, thePrevButton, myBaseButton.getNode(), theNextButton);
 
         /* Create a small region for the centre */
         theSpacer = new Region();
@@ -181,6 +181,16 @@ public class TethysFXDateRangeSelector
     @Override
     public Node getNode() {
         return theNode;
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
+    }
+
+    @Override
+    public boolean isVisible() {
+        return theNode.isVisible();
     }
 
     /**

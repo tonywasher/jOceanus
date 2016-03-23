@@ -56,7 +56,7 @@ public class ExchangeRateCursor {
         theDataMap = pData.getExchangeRates().getDataMap();
 
         /* Create the cursor map */
-        theCursorMap = new HashMap<AssetCurrency, CurrencyCursor>();
+        theCursorMap = new HashMap<>();
     }
 
     /**
@@ -66,7 +66,7 @@ public class ExchangeRateCursor {
      * @return the exchange rate
      */
     public TethysRatio getExchangeRate(final AssetCurrency pCurrency,
-                                  final TethysDate pDate) {
+                                       final TethysDate pDate) {
         /* Access cursor and return rate */
         CurrencyCursor myCursor = getCursor(pCurrency);
         return myCursor.getExchangeRate(pDate);

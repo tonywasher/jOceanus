@@ -23,11 +23,14 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Analysis Filter Selection.
+ * @param <N> The node type
  */
-public interface AnalysisFilterSelection {
+public interface AnalysisFilterSelection<N>
+        extends TethysNode<N> {
     /**
      * Is selection available?
      * @return true/false

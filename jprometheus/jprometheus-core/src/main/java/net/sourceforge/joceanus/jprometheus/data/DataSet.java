@@ -29,11 +29,11 @@ import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
@@ -195,7 +195,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData = new ControlDataList(this);
 
         /* Create the map of additional DataLists */
-        theListMap = new EnumMap<E, DataList<?, E>>(pEnumClass);
+        theListMap = new EnumMap<>(pEnumClass);
 
         /* record formatter */
         theFormatter = pUtilitySet.getDataFormatter();
@@ -219,7 +219,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theSecurity = pSource.getSecurity();
 
         /* Create the map of additional DataLists */
-        theListMap = new EnumMap<E, DataList<?, E>>(theEnumClass);
+        theListMap = new EnumMap<>(theEnumClass);
 
         /* Copy formatter */
         theFormatter = pSource.getDataFormatter();

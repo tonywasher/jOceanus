@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <I> the Icon type
  */
 public abstract class TethysListButtonManager<T, B, I>
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<B> {
     /**
      * List Button.
      * @param <B> the button type
@@ -119,10 +119,7 @@ public abstract class TethysListButtonManager<T, B, I>
         theEventManager = new TethysEventManager<>();
     }
 
-    /**
-     * Obtain Node.
-     * @return the node
-     */
+    @Override
     public B getNode() {
         return theButton.getButton();
     }
@@ -183,10 +180,7 @@ public abstract class TethysListButtonManager<T, B, I>
         return theValue;
     }
 
-    /**
-     * Set Enabled.
-     * @param pEnabled the enabled flag
-     */
+    @Override
     public void setEnabled(final boolean pEnabled) {
         theButton.setEnabled(pEnabled);
     }

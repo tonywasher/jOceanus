@@ -149,7 +149,7 @@ public class SheetPayee
         }
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = new DataValues<>(Payee.OBJECT_NAME);
         myValues.addValue(Payee.FIELD_NAME, myName);
         myValues.addValue(Payee.FIELD_PAYEETYPE, myType);
         myValues.addValue(Payee.FIELD_CLOSED, isClosed);

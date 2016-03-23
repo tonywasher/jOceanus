@@ -81,6 +81,16 @@ public class TethysSwingHTMLManager
     }
 
     @Override
+    public void setVisible(final boolean pVisible) {
+        theEditor.setVisible(pVisible);
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theEditor.setEnabled(pEnabled);
+    }
+
+    @Override
     public void setHTMLContent(final String pHTMLString,
                                final String pReference) {
         /* Pass call on to store the reference */

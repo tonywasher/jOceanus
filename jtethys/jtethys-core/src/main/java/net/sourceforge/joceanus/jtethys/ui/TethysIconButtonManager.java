@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
  * @param <I> the Icon type
  */
 public abstract class TethysIconButtonManager<T, B, I>
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<B> {
     /**
      * Default icon width.
      */
@@ -119,10 +119,7 @@ public abstract class TethysIconButtonManager<T, B, I>
         return theValue;
     }
 
-    /**
-     * Obtain Node.
-     * @return the node
-     */
+    @Override
     public B getNode() {
         return theButton.getButton();
     }
@@ -169,10 +166,7 @@ public abstract class TethysIconButtonManager<T, B, I>
         applyButtonState();
     }
 
-    /**
-     * Set Enabled.
-     * @param pEnabled the enabled flag
-     */
+    @Override
     public void setEnabled(final boolean pEnabled) {
         theButton.setEnabled(pEnabled);
     }

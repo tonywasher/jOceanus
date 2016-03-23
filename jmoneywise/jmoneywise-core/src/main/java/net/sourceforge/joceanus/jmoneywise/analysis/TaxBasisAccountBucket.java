@@ -26,10 +26,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
@@ -266,7 +266,7 @@ public final class TaxBasisAccountBucket
             super(TaxBasisAccountBucket.class);
             theAnalysis = pAnalysis;
             theParent = pParent;
-            theMap = new HashMap<Long, TaxBasisAccountBucket>();
+            theMap = new HashMap<>();
         }
 
         /**
@@ -284,7 +284,7 @@ public final class TaxBasisAccountBucket
             super(TaxBasisAccountBucket.class);
             theAnalysis = pAnalysis;
             theParent = pParent;
-            theMap = new HashMap<Long, TaxBasisAccountBucket>();
+            theMap = new HashMap<>();
 
             /* Loop through the buckets */
             Iterator<TaxBasisAccountBucket> myIterator = pBase.listIterator();
@@ -320,7 +320,7 @@ public final class TaxBasisAccountBucket
             super(TaxBasisAccountBucket.class);
             theAnalysis = pAnalysis;
             theParent = pParent;
-            theMap = new HashMap<Long, TaxBasisAccountBucket>();
+            theMap = new HashMap<>();
 
             /* Loop through the buckets */
             Iterator<TaxBasisAccountBucket> myIterator = pBase.listIterator();

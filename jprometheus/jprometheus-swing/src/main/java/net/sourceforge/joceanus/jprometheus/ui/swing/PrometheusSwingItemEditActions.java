@@ -30,6 +30,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
 
 /**
@@ -63,7 +64,7 @@ public class PrometheusSwingItemEditActions
         Dimension myStrutSize = new Dimension(0, STRUT_HEIGHT);
 
         /* Create the panel */
-        thePanel = new JPanel();
+        thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
 
         /* Create the layout */

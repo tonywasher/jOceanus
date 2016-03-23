@@ -27,8 +27,8 @@ import java.util.Iterator;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -44,20 +44,16 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Payee Analysis Selection.
  */
 public class PayeeAnalysisSelect
-        extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -8172530196737018124L;
-
+        implements AnalysisFilterSelection<JComponent>, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Payee Label.
      */
@@ -66,39 +62,44 @@ public class PayeeAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The active payee bucket list.
      */
-    private transient PayeeBucketList thePayees;
+    private PayeeBucketList thePayees;
 
     /**
      * The state.
      */
-    private transient PayeeState theState;
+    private PayeeState theState;
 
     /**
      * The savePoint.
      */
-    private transient PayeeState theSavePoint;
+    private PayeeState theSavePoint;
 
     /**
      * The select button.
      */
-    private final JScrollButton<PayeeBucket> theButton;
+    private final TethysSwingScrollButtonManager<PayeeBucket> theButton;
 
     /**
-     * Payee menu builder.
+     * Payee menu.
      */
-    private final JScrollMenuBuilder<PayeeBucket> thePayeeMenuBuilder;
+    private final TethysScrollMenu<PayeeBucket, ?> thePayeeMenu;
 
     /**
      * Constructor.
      */
     public PayeeAnalysisSelect() {
         /* Create the button */
-        theButton = new JScrollButton<>();
+        theButton = new TethysSwingScrollButtonManager<>();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -107,21 +108,30 @@ public class PayeeAnalysisSelect
         JLabel myLabel = new JLabel(NLS_PAYEE + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(Box.createHorizontalGlue());
-        add(myLabel);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(theButton);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel = new JPanel();
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
+        thePanel.add(Box.createHorizontalGlue());
+        thePanel.add(myLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel.add(theButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
 
         /* Create initial state */
         theState = new PayeeState();
         theState.applyState();
 
+        /* Access the menus */
+        thePayeeMenu = theButton.getMenu();
+
         /* Create the listeners */
-        thePayeeMenuBuilder = theButton.getMenuBuilder();
-        thePayeeMenuBuilder.getEventRegistrar().addEventListener(e -> buildPayeeMenu());
-        theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewPayee());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPayee());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPayeeMenu());
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
     }
 
     @Override
@@ -165,6 +175,11 @@ public class PayeeAnalysisSelect
     public void setEnabled(final boolean bEnabled) {
         /* Pass call on to button */
         theButton.setEnabled(bEnabled && isAvailable());
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -250,10 +265,10 @@ public class PayeeAnalysisSelect
      */
     private void buildPayeeMenu() {
         /* Reset the popUp menu */
-        thePayeeMenuBuilder.clearMenu();
+        thePayeeMenu.removeAllItems();
 
         /* Record active item */
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<PayeeBucket> myActive = null;
         PayeeBucket myCurr = theState.getPayee();
 
         /* Loop through the available payee values */
@@ -261,8 +276,8 @@ public class PayeeAnalysisSelect
         while (myIterator.hasNext()) {
             PayeeBucket myBucket = myIterator.next();
 
-            /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = thePayeeMenuBuilder.addItem(myBucket);
+            /* Create a new MenuItem and add it to the popUp */
+            TethysScrollMenuItem<PayeeBucket> myItem = thePayeeMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -272,7 +287,9 @@ public class PayeeAnalysisSelect
         }
 
         /* Ensure active item is visible */
-        thePayeeMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**

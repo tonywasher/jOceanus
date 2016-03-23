@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <B> the button type
  */
 public abstract class TethysDateButtonManager<B extends JDateBaseButton>
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<B> {
     /**
      * The Event Manager.
      */
@@ -79,12 +79,6 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
         TethysDateFormatter myFormatter = pFormatter.getDateFormatter();
         myFormatter.getEventRegistrar().addEventListener(new LocaleListener(myFormatter));
     }
-
-    /**
-     * Obtain button.
-     * @return the button
-     */
-    public abstract B getButton();
 
     @Override
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
@@ -220,7 +214,7 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
         @Override
         public void handleEvent(final TethysEvent<TethysDateEvent> e) {
             theConfig.setTheLocale(theFormatter.getLocale());
-            getButton().refreshText();
+            getNode().refreshText();
         }
     }
 }

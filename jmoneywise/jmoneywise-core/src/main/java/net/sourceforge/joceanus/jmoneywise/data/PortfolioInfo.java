@@ -170,7 +170,8 @@ public class PortfolioInfo
     /**
      * Compare this data to another to establish sort order.
      * @param pThat The AccountInfo to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
+     * object in the sort order
      */
     @Override
     public int compareTo(final DataInfo<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass, MoneyWiseDataType> pThat) {
@@ -351,7 +352,7 @@ public class PortfolioInfo
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(PortfolioInfo.OBJECT_NAME);
+            DataValues<MoneyWiseDataType> myValues = new DataValues<>(PortfolioInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pPortfolio);

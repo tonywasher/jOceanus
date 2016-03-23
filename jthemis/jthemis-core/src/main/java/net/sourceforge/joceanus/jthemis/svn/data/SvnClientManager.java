@@ -60,7 +60,7 @@ public class SvnClientManager {
      */
     public SvnClientManager(final SubVersionPreferences pPreferences) {
         /* Allocate the pool */
-        thePool = new ArrayList<SVNClientManager>();
+        thePool = new ArrayList<>();
 
         /* Access UserId and password */
         String myUser = pPreferences.getStringValue(SubVersionPreferences.NAME_SVN_USER);

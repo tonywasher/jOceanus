@@ -275,10 +275,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
                && theItem.isDeleted();
     }
 
-    /**
-     * Is the item new?
-     * @return true/false
-     */
+    @Override
     public boolean isNew() {
         return isNew;
     }
@@ -467,19 +464,13 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         return theEditVersion != VERSION_READONLY;
     }
 
-    /**
-     * Do we have any updates?
-     * @return true/false
-     */
+    @Override
     public boolean hasUpdates() {
         return isEditing()
                && theEditVersion < theUpdateSet.getVersion();
     }
 
-    /**
-     * Do we have any errors?
-     * @return true/false
-     */
+    @Override
     public boolean hasErrors() {
         return theUpdateSet.hasErrors();
     }

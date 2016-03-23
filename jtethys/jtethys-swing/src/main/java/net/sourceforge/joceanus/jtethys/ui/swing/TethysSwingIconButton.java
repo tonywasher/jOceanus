@@ -111,6 +111,11 @@ public class TethysSwingIconButton
         }
 
         @Override
+        public void setVisible(final boolean pVisible) {
+            getNode().setVisible(pVisible);
+        }
+
+        @Override
         public <K extends Enum<K> & TethysIconId> void setDetailsForValue(final T pValue,
                                                                           final T pNext,
                                                                           final K pId,
@@ -139,6 +144,11 @@ public class TethysSwingIconButton
         @Override
         public TethysSwingIconButton getButton() {
             return (TethysSwingIconButton) super.getButton();
+        }
+
+        @Override
+        public void setVisible(final boolean pVisible) {
+            getNode().setVisible(pVisible);
         }
 
         @Override

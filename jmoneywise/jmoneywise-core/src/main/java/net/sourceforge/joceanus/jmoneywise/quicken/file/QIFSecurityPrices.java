@@ -63,7 +63,7 @@ public class QIFSecurityPrices
         theSecurity = new QIFSecurity(pFile, pSecurity);
 
         /* Create the list */
-        thePrices = new MetisOrderedList<QIFPrice>(QIFPrice.class);
+        thePrices = new MetisOrderedList<>(QIFPrice.class);
     }
 
     /**
@@ -78,7 +78,7 @@ public class QIFSecurityPrices
         theSecurity = pSecurity;
 
         /* Create the list */
-        thePrices = new MetisOrderedList<QIFPrice>(QIFPrice.class);
+        thePrices = new MetisOrderedList<>(QIFPrice.class);
     }
 
     /**

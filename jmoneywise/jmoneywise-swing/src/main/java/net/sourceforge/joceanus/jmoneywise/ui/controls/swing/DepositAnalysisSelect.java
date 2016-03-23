@@ -29,8 +29,8 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -50,21 +50,17 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Deposit Analysis Selection.
  */
 public class DepositAnalysisSelect
-        extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 4447175135483840139L;
-
+        implements AnalysisFilterSelection<JComponent>, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Category Label.
      */
@@ -78,57 +74,62 @@ public class DepositAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The active category bucket list.
      */
-    private transient DepositCategoryBucketList theCategories;
+    private DepositCategoryBucketList theCategories;
 
     /**
      * The active deposit bucket list.
      */
-    private transient DepositBucketList theDeposits;
+    private DepositBucketList theDeposits;
 
     /**
      * The state.
      */
-    private transient DepositState theState;
+    private DepositState theState;
 
     /**
      * The savePoint.
      */
-    private transient DepositState theSavePoint;
+    private DepositState theSavePoint;
 
     /**
      * The deposit button.
      */
-    private final JScrollButton<DepositBucket> theDepositButton;
+    private final TethysSwingScrollButtonManager<DepositBucket> theDepositButton;
 
     /**
      * The category button.
      */
-    private final JScrollButton<DepositCategory> theCatButton;
+    private final TethysSwingScrollButtonManager<DepositCategory> theCatButton;
 
     /**
-     * Category menu builder.
+     * Category menu.
      */
-    private final JScrollMenuBuilder<DepositCategory> theCategoryMenuBuilder;
+    private final TethysScrollMenu<DepositCategory, ?> theCategoryMenu;
 
     /**
-     * Deposit menu builder.
+     * Deposit menu.
      */
-    private final JScrollMenuBuilder<DepositBucket> theDepositMenuBuilder;
+    private final TethysScrollMenu<DepositBucket, ?> theDepositMenu;
 
     /**
      * Constructor.
      */
     public DepositAnalysisSelect() {
         /* Create the deposit button */
-        theDepositButton = new JScrollButton<>();
+        theDepositButton = new TethysSwingScrollButtonManager<>();
 
         /* Create the category button */
-        theCatButton = new JScrollButton<>();
+        theCatButton = new TethysSwingScrollButtonManager<>();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -138,28 +139,38 @@ public class DepositAnalysisSelect
         JLabel myDepLabel = new JLabel(NLS_DEPOSIT + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(Box.createHorizontalGlue());
-        add(myCatLabel);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(theCatButton);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE << 2, 0)));
-        add(myDepLabel);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(theDepositButton);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel = new JPanel();
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
+        thePanel.add(Box.createHorizontalGlue());
+        thePanel.add(myCatLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel.add(theCatButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE << 2, 0)));
+        thePanel.add(myDepLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel.add(theDepositButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
 
         /* Create initial state */
         theState = new DepositState();
         theState.applyState();
 
+        /* Access the menus */
+        theCategoryMenu = theCatButton.getMenu();
+        theDepositMenu = theDepositButton.getMenu();
+
         /* Create the listeners */
-        theCategoryMenuBuilder = theCatButton.getMenuBuilder();
-        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu());
-        theDepositMenuBuilder = theDepositButton.getMenuBuilder();
-        theDepositMenuBuilder.getEventRegistrar().addEventListener(e -> buildDepositMenu());
-        theDepositButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewDeposit());
-        theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewCategory());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theCatButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCategoryMenu());
+        myRegistrar = theDepositButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDeposit());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildDepositMenu());
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
     }
 
     @Override
@@ -207,6 +218,11 @@ public class DepositAnalysisSelect
         /* Pass call on to buttons */
         theDepositButton.setEnabled(dpAvailable);
         theCatButton.setEnabled(dpAvailable);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -333,14 +349,14 @@ public class DepositAnalysisSelect
      */
     private void buildCategoryMenu() {
         /* Reset the popUp menu */
-        theCategoryMenuBuilder.clearMenu();
+        theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+        Map<String, TethysScrollSubMenu<DepositCategory, ?>> myMap = new HashMap<>();
 
         /* Record active item */
         DepositCategory myCurrent = theState.getCategory();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<DepositCategory> myActive = null;
 
         /* Re-Loop through the available category values */
         Iterator<DepositCategoryBucket> myIterator = theCategories.iterator();
@@ -355,18 +371,18 @@ public class DepositAnalysisSelect
             /* Determine menu to add to */
             DepositCategory myParent = myBucket.getAccountCategory().getParentCategory();
             String myParentName = myParent.getName();
-            JScrollMenu myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<DepositCategory, ?> myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
             if (myMenu == null) {
                 /* Create a new JMenu and add it to the popUp */
-                myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
+                myMenu = theCategoryMenu.addSubMenu(myParentName);
                 myMap.put(myParentName, myMenu);
             }
 
             /* Create a new JMenuItem and add it to the popUp */
             DepositCategory myCategory = myBucket.getAccountCategory();
-            JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+            TethysScrollMenuItem<DepositCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myCategory.equals(myCurrent)) {
@@ -376,7 +392,9 @@ public class DepositAnalysisSelect
         }
 
         /* Ensure active item is visible */
-        theCategoryMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
@@ -384,14 +402,14 @@ public class DepositAnalysisSelect
      */
     private void buildDepositMenu() {
         /* Reset the popUp menu */
-        theDepositMenuBuilder.clearMenu();
+        theDepositMenu.removeAllItems();
 
         /* Access current category */
         DepositCategory myCategory = theState.getCategory();
         DepositBucket myDeposit = theState.getDeposit();
 
         /* Record active item */
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<DepositBucket> myActive = null;
 
         /* Loop through the available account values */
         Iterator<DepositBucket> myIterator = theDeposits.iterator();
@@ -404,7 +422,7 @@ public class DepositAnalysisSelect
             }
 
             /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = theDepositMenuBuilder.addItem(myBucket);
+            TethysScrollMenuItem<DepositBucket> myItem = theDepositMenu.addItem(myBucket);
 
             /* If this is the active deposit */
             if (myBucket.equals(myDeposit)) {
@@ -414,7 +432,9 @@ public class DepositAnalysisSelect
         }
 
         /* Ensure active item is visible */
-        theDepositMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**

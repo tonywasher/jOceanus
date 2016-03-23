@@ -78,13 +78,19 @@ public class TethysFXDateButtonManager
         theDialog.setOnHidden(e -> handleDialogClosure());
     }
 
-    /**
-     * Obtain button.
-     * @return the button
-     */
     @Override
-    public JDateButton getButton() {
+    public JDateButton getNode() {
         return theButton;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnable) {
+        theButton.setDisable(!pEnable);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theButton.setVisible(pVisible);
     }
 
     /**

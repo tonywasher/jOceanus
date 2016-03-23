@@ -27,6 +27,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.lang.reflect.Array;
 
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -47,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableScroll;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
 
 /**
@@ -57,13 +58,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
  * @param <E> the data type enum class
  */
 public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends JTable
-        implements TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 1258025191244933784L;
-
+        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
     /**
      * Panel height.
      */
@@ -82,42 +77,47 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * FieldManager.
      */
-    private transient MetisFieldManager theFieldMgr = null;
+    private MetisFieldManager theFieldMgr;
 
     /**
      * Data Table Model.
      */
-    private JDataTableModel<T, E> theModel = null;
+    private JDataTableModel<T, E> theModel;
 
     /**
      * The Row Header Model.
      */
-    private RowTableModel<E> theRowHdrModel = null;
+    private RowTableModel<E> theRowHdrModel;
 
     /**
      * The Data List associated with the table.
      */
-    private transient DataList<T, E> theList = null;
+    private DataList<T, E> theList;
 
     /**
      * The UpdateSet associated with the table.
      */
-    private transient UpdateSet<E> theUpdateSet = null;
+    private UpdateSet<E> theUpdateSet;
 
     /**
      * The Class associated with the table.
      */
-    private Class<T> theClass = null;
+    private Class<T> theClass;
 
     /**
      * The Scroll Pane.
      */
-    private TethysSwingEnableScroll theScroll = null;
+    private JScrollPane theScroll;
+
+    /**
+     * The Table.
+     */
+    private final JTable theTable;
 
     /**
      * Is Enabled?
@@ -129,10 +129,11 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     public JDataTable() {
         /* Store parameters */
+        theTable = new JTable();
         theRowHdrModel = new RowTableModel<>(this);
 
         /* Set the selection mode */
-        setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        theTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -231,12 +232,28 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         return theClass;
     }
 
-    /**
-     * Get the scroll pane.
-     * @return the scroll pane
-     */
-    public JScrollPane getScrollPane() {
+    @Override
+    public JComponent getNode() {
         return theScroll;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theScroll.setEnabled(pEnabled);
+        theTable.setEnabled(pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theScroll.setVisible(pVisible);
+    }
+
+    /**
+     * Obtain the table.
+     * @return the table
+     */
+    protected JTable getTable() {
+        return theTable;
     }
 
     /**
@@ -282,7 +299,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     public void setModel(final JDataTableModel<T, E> pModel) {
         /* Declare to the super class */
-        super.setModel(pModel);
+        theTable.setModel(pModel);
 
         /* Record the model */
         theModel = pModel;
@@ -291,27 +308,27 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         TethysSwingTableSorter<T> mySorter = new TethysSwingTableSorter<>(theModel);
         mySorter.setComparator((l, r) -> l.compareTo(r));
         theModel.registerSorter(mySorter);
-        setRowSorter(mySorter);
+        theTable.setRowSorter(mySorter);
 
         /* Set up for zebra stripes */
-        setRowMargin(0);
-        setShowGrid(false);
+        theTable.setRowMargin(0);
+        theTable.setShowGrid(false);
 
         /* Set the row height */
-        setRowHeight(ROW_HEIGHT);
+        theTable.setRowHeight(ROW_HEIGHT);
 
         /* Create a row Header table */
         JTable myRowHdrTable = new JTable(theRowHdrModel, new RowColumnModel<E>(this));
-        myRowHdrTable.setBackground(getTableHeader().getBackground());
+        myRowHdrTable.setBackground(theTable.getTableHeader().getBackground());
         myRowHdrTable.setColumnSelectionAllowed(false);
         myRowHdrTable.setCellSelectionEnabled(false);
 
         /* Set the selection model */
-        myRowHdrTable.setSelectionModel(getSelectionModel());
+        myRowHdrTable.setSelectionModel(theTable.getSelectionModel());
 
         /* Create a new Scroll Pane and add this table to it */
-        theScroll = new TethysSwingEnableScroll();
-        theScroll.setViewportView(this);
+        theScroll = new JScrollPane();
+        theScroll.setViewportView(theTable);
 
         /* Add as the row header */
         theScroll.setRowHeaderView(myRowHdrTable);
@@ -364,7 +381,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         theModel.fireNewDataEvents();
 
         /* If we have elements then set the selection to the first item */
-        clearSelection();
+        theTable.clearSelection();
         if (theModel.getRowCount() > myZeroRow) {
             selectRowWithScroll(myZeroRow);
         }
@@ -384,8 +401,8 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     public void cancelEditing() {
         /* Cancel any editing */
-        if (isEditing()) {
-            cellEditor.cancelCellEditing();
+        if (theTable.isEditing()) {
+            theTable.getCellEditor().cancelCellEditing();
         }
     }
 
@@ -395,8 +412,8 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     protected void scrollRowToView(final int row) {
         /* Shift display to row */
-        Rectangle rect = getCellRect(row, 0, true);
-        JViewport viewport = (JViewport) getParent();
+        Rectangle rect = theTable.getCellRect(row, 0, true);
+        JViewport viewport = (JViewport) theTable.getParent();
         Point pt = viewport.getViewPosition();
         rect.setLocation(rect.x - pt.x, rect.y - pt.y);
         viewport.scrollRectToVisible(rect);
@@ -420,9 +437,9 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     protected void selectRow(final int row) {
         /* clear existing selection and select the row */
-        clearSelection();
-        changeSelection(row, 0, false, false);
-        requestFocusInWindow();
+        theTable.clearSelection();
+        theTable.changeSelection(row, 0, false, false);
+        theTable.requestFocusInWindow();
     }
 
     /**
@@ -431,7 +448,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      */
     protected T[] cacheSelectedRows() {
         /* Determine the selected rows */
-        int[] mySelected = getSelectedRows();
+        int[] mySelected = theTable.getSelectedRows();
 
         /* Create a row array relating to the selections */
         @SuppressWarnings("unchecked")
@@ -440,7 +457,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         /* Loop through the selection indices */
         for (int i = 0; i < mySelected.length; i++) {
             /* Access the index and adjust for header */
-            int myIndex = convertRowIndexToModel(mySelected[i]);
+            int myIndex = theTable.convertRowIndexToModel(mySelected[i]);
 
             /* Store the row */
             myRows[i] = theList.get(myIndex);
@@ -472,13 +489,13 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         /* If we are changing the value */
         if (theModel.showAll() != pShowAll) {
             /* Cancel any editing */
-            if (isEditing()) {
-                cellEditor.cancelCellEditing();
+            if (theTable.isEditing()) {
+                theTable.getCellEditor().cancelCellEditing();
             }
 
             /* Access a cache of the selected rows */
             T[] myRows = cacheSelectedRows();
-            clearSelection();
+            theTable.clearSelection();
 
             /* Store the new status */
             theModel.setShowAll(pShowAll);
@@ -491,10 +508,10 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
                 }
 
                 /* Access the row # and adjust for view */
-                int myRowNo = convertRowIndexToView(myRow.indexOf());
+                int myRowNo = theTable.convertRowIndexToView(myRow.indexOf());
 
                 /* Select the row */
-                addRowSelectionInterval(myRowNo, myRowNo);
+                theTable.addRowSelectionInterval(myRowNo, myRowNo);
             }
         }
     }
@@ -519,19 +536,19 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         int myIndex = theList.indexOf(pItem);
 
         /* Obtain the view index and return null if invalid */
-        int myViewIndex = convertRowIndexToView(myIndex);
+        int myViewIndex = theTable.convertRowIndexToView(myIndex);
         if (myViewIndex == -1) {
             return null;
         }
 
         /* Increment the value and check within range */
-        int myCount = getRowCount();
+        int myCount = theTable.getRowCount();
         if (++myViewIndex >= myCount) {
             return null;
         }
 
         /* Convert back to model index and return the item */
-        myIndex = convertRowIndexToModel(myViewIndex);
+        myIndex = theTable.convertRowIndexToModel(myViewIndex);
         return theList.get(myIndex);
     }
 
@@ -545,7 +562,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         int myIndex = theList.indexOf(pItem);
 
         /* Obtain the view index and return null if invalid or first item */
-        int myViewIndex = convertRowIndexToView(myIndex);
+        int myViewIndex = theTable.convertRowIndexToView(myIndex);
         if (myViewIndex <= 0) {
             return null;
         }
@@ -554,7 +571,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         myViewIndex--;
 
         /* Convert back to model index and return the item */
-        myIndex = convertRowIndexToModel(myViewIndex);
+        myIndex = theTable.convertRowIndexToModel(myViewIndex);
         return theList.get(myIndex);
     }
 }

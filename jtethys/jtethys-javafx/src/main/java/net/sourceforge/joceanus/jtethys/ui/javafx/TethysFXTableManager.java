@@ -1,4 +1,9 @@
 /*******************************************************************************
+        @Override
+        public void setVisible(final boolean pVisible) {
+            getNode().setVisible(pVisible);
+        }
+
  * jTethys: Java Utilities
  * Copyright 2012,2014 Tony Washer
  *
@@ -115,6 +120,16 @@ public class TethysFXTableManager<I, R>
     @Override
     public Node getNode() {
         return theTable;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theTable.setDisable(!pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theTable.setVisible(pVisible);
     }
 
     @SuppressWarnings("unchecked")

@@ -29,12 +29,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.SVNUpdateClient;
+
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisDataException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
@@ -42,13 +49,6 @@ import net.sourceforge.joceanus.jthemis.scm.tasks.Directory2;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistory.SvnRevisionKey;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistory.SvnSourceDir;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistoryMap.SvnRevisionPath;
-
-import org.tmatesoft.svn.core.SVNDepth;
-import org.tmatesoft.svn.core.SVNException;
-import org.tmatesoft.svn.core.SVNURL;
-import org.tmatesoft.svn.core.wc.SVNClientManager;
-import org.tmatesoft.svn.core.wc.SVNRevision;
-import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
 /**
  * Extract plan for path.
@@ -664,7 +664,7 @@ public class SvnExtract
          */
         protected void buildView(final SvnRevisionPath pPath) throws OceanusException {
             /* Create a sourceDirs list */
-            List<SvnRevisionHistory> mySourceDirs = new ArrayList<SvnRevisionHistory>();
+            List<SvnRevisionHistory> mySourceDirs = new ArrayList<>();
 
             /* Access first entry */
             SvnRevisionHistory myEntry = pPath.getBasedOn();
@@ -744,7 +744,7 @@ public class SvnExtract
             adjustView(pStartRev, myComp, mySource, pEntry);
 
             /* Create a sourceDirs list */
-            List<SvnRevisionHistory> mySourceDirs = new ArrayList<SvnRevisionHistory>();
+            List<SvnRevisionHistory> mySourceDirs = new ArrayList<>();
 
             /* Obtain the initial revision (which we have already handled) */
             SvnRevisionHistory myEntry = pDir.getBasedOn();
@@ -1339,8 +1339,8 @@ public class SvnExtract
          */
         private File getTarget(final File pBase) {
             return theTarget == null
-                                    ? pBase
-                                    : new File(pBase, theTarget);
+                                     ? pBase
+                                     : new File(pBase, theTarget);
         }
 
         @Override

@@ -29,12 +29,12 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -254,8 +254,8 @@ public class ExchangeRate
     public Integer getFromCurrencyId() {
         AssetCurrency myCurr = getFromCurrency();
         return (myCurr == null)
-                               ? null
-                               : myCurr.getId();
+                                ? null
+                                : myCurr.getId();
     }
 
     /**
@@ -265,8 +265,8 @@ public class ExchangeRate
     public String getFromCurrencyName() {
         AssetCurrency myCurr = getFromCurrency();
         return (myCurr == null)
-                               ? null
-                               : myCurr.getName();
+                                ? null
+                                : myCurr.getName();
     }
 
     /**
@@ -284,8 +284,8 @@ public class ExchangeRate
     public Integer getToCurrencyId() {
         AssetCurrency myCurr = getToCurrency();
         return (myCurr == null)
-                               ? null
-                               : myCurr.getId();
+                                ? null
+                                : myCurr.getId();
     }
 
     /**
@@ -295,8 +295,8 @@ public class ExchangeRate
     public String getToCurrencyName() {
         AssetCurrency myCurr = getToCurrency();
         return (myCurr == null)
-                               ? null
-                               : myCurr.getName();
+                                ? null
+                                : myCurr.getName();
     }
 
     /**
@@ -314,8 +314,8 @@ public class ExchangeRate
     public TethysRatio getInverseRate() {
         TethysRatio myRate = getExchangeRate();
         return (myRate == null)
-                               ? null
-                               : myRate.getInverseRatio();
+                                ? null
+                                : myRate.getInverseRatio();
     }
 
     /**
@@ -670,7 +670,7 @@ public class ExchangeRate
 
         @Override
         protected ExchangeRateDataMap<T> allocateDataMap() {
-            return new ExchangeRateDataMap<T>();
+            return new ExchangeRateDataMap<>();
         }
     }
 
@@ -812,8 +812,8 @@ public class ExchangeRate
          * @return the converted value
          */
         public TethysMoney convertCurrency(final TethysMoney pValue,
-                                      final AssetCurrency pCurrency,
-                                      final TethysDate pDate) {
+                                           final AssetCurrency pCurrency,
+                                           final TethysDate pDate) {
             /* Obtain the existing currency */
             TethysMoney myValue = pValue;
             AssetCurrencyList myCurrencies = getDataSet().getAccountCurrencies();
@@ -976,8 +976,8 @@ public class ExchangeRate
          */
         public ExchangeRateDataMap() {
             /* Create the maps */
-            theMapOfMaps = new HashMap<AssetCurrency, Map<TethysDate, Integer>>();
-            theMapOfRates = new HashMap<AssetCurrency, RateList>();
+            theMapOfMaps = new HashMap<>();
+            theMapOfRates = new HashMap<>();
         }
 
         @Override
@@ -1021,7 +1021,7 @@ public class ExchangeRate
             /* Access the map */
             Map<TethysDate, Integer> myMap = theMapOfMaps.get(myCurrency);
             if (myMap == null) {
-                myMap = new HashMap<TethysDate, Integer>();
+                myMap = new HashMap<>();
                 theMapOfMaps.put(myCurrency, myMap);
             }
 
@@ -1075,8 +1075,8 @@ public class ExchangeRate
             /* Access the map */
             Map<TethysDate, Integer> myMap = theMapOfMaps.get(pCurrency);
             return myMap != null
-                                ? myMap.get(pDate) == null
-                                : true;
+                                 ? myMap.get(pDate) == null
+                                 : true;
         }
 
         /**
@@ -1118,8 +1118,8 @@ public class ExchangeRate
             /* Access list for currency */
             RateList myList = theMapOfRates.get(pCurrency);
             return (myList != null)
-                                   ? myList.listIterator()
-                                   : null;
+                                    ? myList.listIterator()
+                                    : null;
         }
 
         /**

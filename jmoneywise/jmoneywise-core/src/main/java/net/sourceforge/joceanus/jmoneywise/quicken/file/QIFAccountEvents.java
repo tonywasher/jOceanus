@@ -55,7 +55,7 @@ public class QIFAccountEvents
         theAccount = new QIFAccount(pFile, pAccount);
 
         /* Create the list */
-        theEvents = new ArrayList<QIFEventRecord<?>>();
+        theEvents = new ArrayList<>();
     }
 
     /**
@@ -69,7 +69,7 @@ public class QIFAccountEvents
         theAccount = new QIFAccount(pFile, pAccount);
 
         /* Create the list */
-        theEvents = new ArrayList<QIFEventRecord<?>>();
+        theEvents = new ArrayList<>();
     }
 
     /**
@@ -81,7 +81,7 @@ public class QIFAccountEvents
         theAccount = pAccount;
 
         /* Create the list */
-        theEvents = new ArrayList<QIFEventRecord<?>>();
+        theEvents = new ArrayList<>();
     }
 
     /**

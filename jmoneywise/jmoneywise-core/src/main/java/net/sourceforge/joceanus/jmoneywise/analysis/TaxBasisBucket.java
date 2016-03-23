@@ -26,10 +26,10 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -150,18 +150,18 @@ public class TaxBasisBucket
         /* Create the history map */
         AssetCurrency myDefault = theAnalysis.getCurrency();
         Currency myCurrency = myDefault == null
-                                               ? AccountBucket.DEFAULT_CURRENCY
-                                               : myDefault.getCurrency();
+                                                ? AccountBucket.DEFAULT_CURRENCY
+                                                : myDefault.getCurrency();
         TaxBasisValues myValues = new TaxBasisValues(myCurrency);
-        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(myValues);
+        theHistory = new BucketHistory<>(myValues);
 
         /* Create the account list */
         hasAccounts = theTaxBasis != null
                       && !(this instanceof TaxBasisAccountBucket)
                       && theTaxBasis.getTaxClass().analyseAccounts();
         theAccounts = hasAccounts
-                                 ? new TaxBasisAccountBucketList(theAnalysis, this)
-                                 : null;
+                                  ? new TaxBasisAccountBucketList(theAnalysis, this)
+                                  : null;
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -183,13 +183,13 @@ public class TaxBasisBucket
         isExpense = pBase.isExpense();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(pBase.getHistoryMap(), pDate);
+        theHistory = new BucketHistory<>(pBase.getHistoryMap(), pDate);
 
         /* Create the account list */
         hasAccounts = pBase.hasAccounts();
         theAccounts = hasAccounts
-                                 ? new TaxBasisAccountBucketList(theAnalysis, this, pBase.getAccounts(), pDate)
-                                 : null;
+                                  ? new TaxBasisAccountBucketList(theAnalysis, this, pBase.getAccounts(), pDate)
+                                  : null;
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -211,13 +211,13 @@ public class TaxBasisBucket
         isExpense = pBase.isExpense();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(pBase.getHistoryMap(), pRange);
+        theHistory = new BucketHistory<>(pBase.getHistoryMap(), pRange);
 
         /* Create the account list */
         hasAccounts = pBase.hasAccounts();
         theAccounts = hasAccounts
-                                 ? new TaxBasisAccountBucketList(theAnalysis, this, pBase.getAccounts(), pRange)
-                                 : null;
+                                  ? new TaxBasisAccountBucketList(theAnalysis, this, pBase.getAccounts(), pRange)
+                                  : null;
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -242,8 +242,8 @@ public class TaxBasisBucket
         }
         if (FIELD_ACCOUNTS.equals(pField)) {
             return hasAccounts
-                              ? theAccounts
-                              : MetisFieldValue.SKIP;
+                               ? theAccounts
+                               : MetisFieldValue.SKIP;
         }
         if (FIELD_BASE.equals(pField)) {
             return theBaseValues;
@@ -255,8 +255,8 @@ public class TaxBasisBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
-                                                       ? myValue
-                                                       : MetisFieldValue.SKIP;
+                                                             ? myValue
+                                                             : MetisFieldValue.SKIP;
             }
             return myValue;
         }
@@ -285,8 +285,8 @@ public class TaxBasisBucket
      */
     public String getName() {
         return (theTaxBasis == null)
-                                    ? NAME_TOTALS
-                                    : theTaxBasis.getName();
+                                     ? NAME_TOTALS
+                                     : theTaxBasis.getName();
     }
 
     /**
@@ -327,8 +327,8 @@ public class TaxBasisBucket
      */
     public Iterator<TaxBasisAccountBucket> accountIterator() {
         return hasAccounts
-                          ? theAccounts.iterator()
-                          : null;
+                           ? theAccounts.iterator()
+                           : null;
     }
 
     /**
@@ -338,8 +338,8 @@ public class TaxBasisBucket
      */
     public TaxBasisAccountBucket findAccountBucket(final TransactionAsset pAccount) {
         return hasAccounts
-                          ? theAccounts.findBucket(pAccount)
-                          : null;
+                           ? theAccounts.findBucket(pAccount)
+                           : null;
     }
 
     /**
@@ -350,8 +350,8 @@ public class TaxBasisBucket
     public TaxBasisAccountBucket getOrphanAccountBucket(final TransactionAsset pAccount) {
         /* Allocate an orphan bucket */
         return hasAccounts
-                          ? theAccounts.getOrphanBucket(pAccount)
-                          : null;
+                           ? theAccounts.getOrphanBucket(pAccount)
+                           : null;
     }
 
     /**
@@ -404,7 +404,7 @@ public class TaxBasisBucket
      * @return the delta (or null)
      */
     public TethysDecimal getDeltaForTransaction(final Transaction pTrans,
-                                           final TaxBasisAttribute pAttr) {
+                                                final TaxBasisAttribute pAttr) {
         /* Obtain delta for event */
         return theHistory.getDeltaValue(pTrans, pAttr);
     }
@@ -455,8 +455,8 @@ public class TaxBasisBucket
 
         /* Return the value */
         return (myValue != null)
-                                ? myValue
-                                : MetisFieldValue.SKIP;
+                                 ? myValue
+                                 : MetisFieldValue.SKIP;
     }
 
     /**

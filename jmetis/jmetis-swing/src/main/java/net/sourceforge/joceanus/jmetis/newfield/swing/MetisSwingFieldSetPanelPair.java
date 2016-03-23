@@ -32,8 +32,8 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelPair;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager.TethysSwingTabItem;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.TethysSwingTabItem;
 
 /**
  * Swing FieldSet Panel Pair.
@@ -57,7 +57,7 @@ public class MetisSwingFieldSetPanelPair
 
         /* Declare the main panel and tab manager */
         declareMainPanel(new MetisSwingFieldSetPanel(this));
-        declareTabManager(new TethysSwingTabManager());
+        declareTabManager(new TethysSwingTabPaneManager());
 
         /* Create the new node */
         theNode = new JPanel();
@@ -72,6 +72,11 @@ public class MetisSwingFieldSetPanelPair
     }
 
     @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
+    }
+
+    @Override
     public MetisSwingFieldAttributeSet getAttributeSet() {
         return (MetisSwingFieldAttributeSet) super.getAttributeSet();
     }
@@ -82,15 +87,15 @@ public class MetisSwingFieldSetPanelPair
     }
 
     @Override
-    protected TethysSwingTabManager getTabManager() {
-        return (TethysSwingTabManager) super.getTabManager();
+    protected TethysSwingTabPaneManager getTabManager() {
+        return (TethysSwingTabPaneManager) super.getTabManager();
     }
 
     @Override
     public MetisSwingFieldSetPanel addSubPanel(final String pName) {
         /* Create a new subPanel and add to tab manager */
         MetisSwingFieldSetPanel myPanel = new MetisSwingFieldSetPanel(this);
-        TethysSwingTabItem myItem = getTabManager().addTabItem(pName, myPanel.getNode());
+        TethysSwingTabItem myItem = getTabManager().addTabItem(pName, myPanel);
 
         /* Declare the sub panel */
         declareSubPanel(myItem, myPanel);

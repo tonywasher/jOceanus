@@ -123,6 +123,11 @@ public class MetisSwingFieldSetPanel
     }
 
     @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
+    }
+
+    @Override
     public MetisSwingFieldSetStringItem addStringField(final MetisField pField) {
         return new MetisSwingFieldSetStringItem(this, pField);
     }

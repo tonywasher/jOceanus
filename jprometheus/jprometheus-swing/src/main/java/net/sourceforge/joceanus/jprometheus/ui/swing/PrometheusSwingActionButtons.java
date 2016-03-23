@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
 
 /**
@@ -73,7 +74,7 @@ public class PrometheusSwingActionButtons
         declareButtons(myCommitButton, myUndoButton, myResetButton);
 
         /* Create the panel */
-        thePanel = new JPanel();
+        thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, pHorizontal
                                                                ? BoxLayout.X_AXIS
                                                                : BoxLayout.Y_AXIS));

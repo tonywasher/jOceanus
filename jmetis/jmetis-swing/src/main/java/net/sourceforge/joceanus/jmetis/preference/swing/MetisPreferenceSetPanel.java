@@ -68,6 +68,7 @@ import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
@@ -78,13 +79,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGridBagUtilities;
  * @author Tony Washer
  */
 public class MetisPreferenceSetPanel
-        extends JPanel
-        implements TethysEventProvider<MetisPreferenceEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -713132970269487546L;
-
+        implements TethysEventProvider<MetisPreferenceEvent>, TethysNode<JComponent> {
     /**
      * String width.
      */
@@ -123,37 +118,42 @@ public class MetisPreferenceSetPanel
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<MetisPreferenceEvent> theEventManager;
+    private final TethysEventManager<MetisPreferenceEvent> theEventManager;
+
+    /**
+     * The Panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The PreferenceSet for this panel.
      */
-    private final transient MetisPreferenceSet thePreferences;
+    private final MetisPreferenceSet thePreferences;
 
     /**
      * The individual preference elements.
      */
-    private final transient List<PreferenceElement> theElList;
+    private final List<PreferenceElement> theElList;
 
     /**
      * The list of components to enable.
      */
-    private transient List<Component> theCompList;
+    private List<Component> theCompList;
 
     /**
      * The FieldManager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * General formatter.
      */
-    private final transient MetisDataFormatter theFormatter;
+    private final MetisDataFormatter theFormatter;
 
     /**
      * The Set name.
      */
-    private String theName = null;
+    private String theName;
 
     /**
      * Constructor.
@@ -182,10 +182,11 @@ public class MetisPreferenceSetPanel
         theCompList = new ArrayList<>();
 
         /* Set a border */
-        setBorder(BorderFactory.createTitledBorder(NLS_PREFERENCES));
+        thePanel = new JPanel();
+        thePanel.setBorder(BorderFactory.createTitledBorder(NLS_PREFERENCES));
 
         /* Set the layout for this panel */
-        setLayout(new GridBagLayout());
+        thePanel.setLayout(new GridBagLayout());
         GridBagConstraints myConstraints = new GridBagConstraints();
 
         /* Loop through the preferences */
@@ -214,38 +215,38 @@ public class MetisPreferenceSetPanel
                 case STRING:
                     /* Add the Label into the first slot */
                     TethysSwingGridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.NONE);
-                    add(myItem.getLabel(), myConstraints);
+                    thePanel.add(myItem.getLabel(), myConstraints);
 
                     /* Add the Component into the second slot */
                     TethysSwingGridBagUtilities.setPanelField(myConstraints, myRow++, 1, GridBagConstraints.REMAINDER);
-                    add(myItem.getComponent(), myConstraints);
+                    thePanel.add(myItem.getComponent(), myConstraints);
                     theCompList.add(myItem.getComponent());
                     break;
                 case DIRECTORY:
                 case FILE:
                     /* Add the Label into the first slot */
                     TethysSwingGridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.HORIZONTAL);
-                    add(myItem.getLabel(), myConstraints);
+                    thePanel.add(myItem.getLabel(), myConstraints);
                     theCompList.add(myItem.getLabel());
 
                     /* Add the Component into the second slot */
                     TethysSwingGridBagUtilities.setPanelField(myConstraints, myRow++, 1, GridBagConstraints.REMAINDER);
-                    add(myItem.getComponent(), myConstraints);
+                    thePanel.add(myItem.getComponent(), myConstraints);
                     theCompList.add(myItem.getComponent());
                     break;
                 default:
                     /* Add the Label into the first slot */
                     TethysSwingGridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.NONE);
-                    add(myItem.getLabel(), myConstraints);
+                    thePanel.add(myItem.getLabel(), myConstraints);
 
                     /* Add the Component into the second slot */
                     TethysSwingGridBagUtilities.setPanelField(myConstraints, myRow, 1, 1);
-                    add(myItem.getComponent(), myConstraints);
+                    thePanel.add(myItem.getComponent(), myConstraints);
                     theCompList.add(myItem.getComponent());
 
                     /* Add padding to the remainder */
                     TethysSwingGridBagUtilities.setPanelField(myConstraints, myRow++, 2, GridBagConstraints.REMAINDER);
-                    add(new JLabel(), myConstraints);
+                    thePanel.add(new JLabel(), myConstraints);
                     break;
             }
         }
@@ -254,8 +255,18 @@ public class MetisPreferenceSetPanel
         if (myOptions != null) {
             /* Add the Label into the first slot */
             TethysSwingGridBagUtilities.setPanelRow(myConstraints, myRow);
-            add(myOptions, myConstraints);
+            thePanel.add(myOptions, myConstraints);
         }
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     @Override
@@ -551,9 +562,9 @@ public class MetisPreferenceSetPanel
                             /* If we are a directory preference */
                             case DIRECTORY:
                                 /* Create and show the dialog */
-                                MetisFileSelector myDialog = new MetisFileSelector(MetisPreferenceSetPanel.this, NLS_SELECT
-                                                                                                                 + " "
-                                                                                                                 + theString.getDisplay(), new File(theString.getValue()));
+                                MetisFileSelector myDialog = new MetisFileSelector(thePanel, NLS_SELECT
+                                                                                             + " "
+                                                                                             + theString.getDisplay(), new File(theString.getValue()));
                                 myDialog.showDialog();
 
                                 /* Handle selection */
@@ -570,9 +581,9 @@ public class MetisPreferenceSetPanel
                             /* If we are a file preference */
                             case FILE:
                                 /* Create and show the dialog */
-                                MetisFileSelector myFileDialog = new MetisFileSelector(MetisPreferenceSetPanel.this, NLS_SELECT
-                                                                                                                     + " "
-                                                                                                                     + theString.getDisplay(), new File(theString.getValue()),
+                                MetisFileSelector myFileDialog = new MetisFileSelector(thePanel, NLS_SELECT
+                                                                                                 + " "
+                                                                                                 + theString.getDisplay(), new File(theString.getValue()),
                                         null, null);
                                 myFileDialog.showDialog();
 
@@ -864,7 +875,7 @@ public class MetisPreferenceSetPanel
                     /* If this is the button */
                     if (theField.equals(o)) {
                         /* Position the dialog just right of the button */
-                        Point myPanelLoc = getLocationOnScreen();
+                        Point myPanelLoc = thePanel.getLocationOnScreen();
                         Point myButtonLoc = theField.getLocationOnScreen();
                         theDialog.setLocation(myButtonLoc.x
                                               + theField.getWidth(), myPanelLoc.y);

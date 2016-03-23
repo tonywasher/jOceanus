@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase.AssetBaseList;
@@ -319,7 +319,7 @@ public final class AssetPair
          */
         private static Map<Integer, AssetPair> generatePairMap() {
             /* Create the new map */
-            Map<Integer, AssetPair> myMap = new HashMap<Integer, AssetPair>();
+            Map<Integer, AssetPair> myMap = new HashMap<>();
 
             /* Loop through the Account AssetTypes */
             for (AssetType myAccount : AssetType.values()) {

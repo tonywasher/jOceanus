@@ -28,14 +28,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import net.sourceforge.joceanus.jmetis.http.MetisHTTPJiraClient;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedObject;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Handles security for a jira server.
@@ -67,8 +67,8 @@ public class JiraSecurity {
         theClient = pServer.getClient();
 
         /* Allocate the lists */
-        theUsers = new HashMap<String, JiraUser>();
-        theGroups = new HashMap<String, JiraGroup>();
+        theUsers = new HashMap<>();
+        theGroups = new HashMap<>();
     }
 
     /**
@@ -155,7 +155,7 @@ public class JiraSecurity {
 
             /* Initialise the group list */
             isResolved = false;
-            theGroups = new ArrayList<JiraGroup>();
+            theGroups = new ArrayList<>();
 
             /* Protect against exceptions */
             try {
@@ -247,7 +247,7 @@ public class JiraSecurity {
 
             /* Initialise the member list */
             isResolved = false;
-            theMembers = new ArrayList<JiraUser>();
+            theMembers = new ArrayList<>();
         }
 
         /**

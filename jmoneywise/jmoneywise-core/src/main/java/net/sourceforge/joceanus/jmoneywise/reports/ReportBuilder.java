@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 import java.util.EnumMap;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-
-import org.w3c.dom.Document;
 
 /**
  * Report Classes.
@@ -76,7 +76,7 @@ public class ReportBuilder {
         theManager = pManager;
 
         /* Allocate map */
-        theReportMap = new EnumMap<ReportType, BasicReport>(ReportType.class);
+        theReportMap = new EnumMap<>(ReportType.class);
     }
 
     /**

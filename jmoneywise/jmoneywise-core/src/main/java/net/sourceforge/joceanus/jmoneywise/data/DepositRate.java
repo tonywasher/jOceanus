@@ -28,14 +28,14 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedRate;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -318,8 +318,8 @@ public class DepositRate
     public Integer getDepositId() {
         Deposit myDeposit = getDeposit();
         return (myDeposit == null)
-                                  ? null
-                                  : myDeposit.getId();
+                                   ? null
+                                   : myDeposit.getId();
     }
 
     /**
@@ -329,8 +329,8 @@ public class DepositRate
     public String getDepositName() {
         Deposit myDeposit = getDeposit();
         return (myDeposit == null)
-                                  ? null
-                                  : myDeposit.getName();
+                                   ? null
+                                   : myDeposit.getName();
     }
 
     /**
@@ -523,7 +523,8 @@ public class DepositRate
     /**
      * Compare this rate to another to establish sort order.
      * @param pThat The Rate to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
+     * object in the sort order
      */
     @Override
     public int compareTo(final DepositRate pThat) {
@@ -538,8 +539,8 @@ public class DepositRate
         /* If header settings differ */
         if (isHeader() != pThat.isHeader()) {
             return isHeader()
-                             ? -1
-                             : 1;
+                              ? -1
+                              : 1;
         }
 
         /* If the date differs */
@@ -595,8 +596,8 @@ public class DepositRate
         if (!myMap.validRateCount(this)) {
             /* Each date must be unique for deposit (even null) */
             addError(myDate == null
-                                   ? ERROR_NULLDATE
-                                   : ERROR_DUPLICATE, FIELD_ENDDATE);
+                                    ? ERROR_NULLDATE
+                                    : ERROR_DUPLICATE, FIELD_ENDDATE);
         }
 
         /* The Rate must be non-zero and greater than zero */
@@ -608,9 +609,9 @@ public class DepositRate
 
         /* The bonus rate must be non-zero if it exists */
         if (myBonus != null) {
-            if (myRate.isZero()) {
+            if (myBonus.isZero()) {
                 addError(ERROR_ZERO, FIELD_BONUS);
-            } else if (!myRate.isPositive()) {
+            } else if (!myBonus.isPositive()) {
                 addError(ERROR_NEGATIVE, FIELD_BONUS);
             }
         }
@@ -653,8 +654,8 @@ public class DepositRate
      */
     public void setEndDate(final TethysDate pDate) {
         setValueEndDate(pDate == null
-                                     ? null
-                                     : new TethysDate(pDate));
+                                      ? null
+                                      : new TethysDate(pDate));
     }
 
     @Override
@@ -886,8 +887,8 @@ public class DepositRate
          */
         public DepositRateDataMap() {
             /* Create the maps */
-            theMapOfMaps = new HashMap<Deposit, Map<TethysDate, Integer>>();
-            theMapOfRates = new HashMap<Deposit, RateList>();
+            theMapOfMaps = new HashMap<>();
+            theMapOfRates = new HashMap<>();
         }
 
         @Override
@@ -931,7 +932,7 @@ public class DepositRate
             /* Access the map */
             Map<TethysDate, Integer> myMap = theMapOfMaps.get(myDeposit);
             if (myMap == null) {
-                myMap = new HashMap<TethysDate, Integer>();
+                myMap = new HashMap<>();
                 theMapOfMaps.put(myDeposit, myMap);
             }
 
@@ -985,8 +986,8 @@ public class DepositRate
             /* Access the map */
             Map<TethysDate, Integer> myMap = theMapOfMaps.get(pDeposit);
             return myMap != null
-                                ? myMap.get(pDate) == null
-                                : true;
+                                 ? myMap.get(pDate) == null
+                                 : true;
         }
 
         /**

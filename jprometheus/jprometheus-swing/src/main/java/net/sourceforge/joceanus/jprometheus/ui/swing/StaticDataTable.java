@@ -26,6 +26,7 @@ import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
+import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
@@ -40,6 +41,7 @@ import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
@@ -47,9 +49,11 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Static Data Table.
@@ -60,11 +64,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  */
 public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
         extends JDataTable<T, E> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -8747707037700378702L;
-
     /**
      * Class column title.
      */
@@ -93,12 +92,12 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * The Data view.
      */
-    private final transient DataControl<?, E> theControl;
+    private final DataControl<?, E> theControl;
 
     /**
      * The field manager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The Panel.
@@ -108,12 +107,17 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * The new button.
      */
-    private final JScrollButton<S> theNewButton;
+    private final TethysSwingScrollButtonManager<S> theNewButton;
 
     /**
      * MenuBuilder.
      */
-    private final transient JScrollMenuBuilder<S> theMenuBuilder;
+    private final TethysScrollMenu<S, ?> theMenu;
+
+    /**
+     * The ItemType.
+     */
+    private final E theItemType;
 
     /**
      * The Data class.
@@ -123,7 +127,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * The List.
      */
-    private transient L theStatic = null;
+    private L theStatic;
 
     /**
      * The Table Model.
@@ -138,12 +142,12 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * The UpdateSet.
      */
-    private final transient UpdateSet<E> theUpdateSet;
+    private final UpdateSet<E> theUpdateSet;
 
     /**
      * The UpdateEntry.
      */
-    private final transient UpdateEntry<T, E> theUpdateEntry;
+    private final UpdateEntry<T, E> theUpdateEntry;
 
     /**
      * The Error panel.
@@ -167,6 +171,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
                            final Class<L> pListClass) {
         /* Record the passed details */
         theError = pError;
+        theItemType = pItemType;
         theClass = pListClass;
         theControl = pControl;
         theFieldMgr = pUtilitySet.getFieldManager();
@@ -182,46 +187,54 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         setModel(theModel);
 
         /* Create the data column model and declare it */
+        JTable myTable = getTable();
         theColumns = new StaticColumnModel();
-        setColumnModel(theColumns);
+        myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
-        getTableHeader().setReorderingAllowed(false);
-        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+        myTable.getTableHeader().setReorderingAllowed(false);
+        myTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
+        myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create new button */
-        theNewButton = PrometheusIcons.getNewScrollButton();
+        theNewButton = new TethysSwingScrollButtonManager<>();
+        PrometheusIcon.configureNewScrollButton(theNewButton);
 
         /* Create the panel */
         thePanel = new TethysSwingEnablePanel();
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(getScrollPane());
+        thePanel.add(super.getNode());
 
         /* Add listeners */
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theNewButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewClass());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildNewMenu());
         theUpdateSet.getEventRegistrar().addEventListener(e -> theModel.fireNewDataEvents());
-        theMenuBuilder = theNewButton.getMenuBuilder();
-        theMenuBuilder.getEventRegistrar().addEventListener(e -> buildNewMenu());
-        theNewButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewClass());
+        theMenu = theNewButton.getMenu();
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
     }
 
     /**
-     * Obtain the node.
-     * @return the node
+     * Obtain the item type.
+     * @return the item type
      */
-    public JComponent getNode() {
-        return thePanel;
+    protected E getItemType() {
+        return theItemType;
     }
 
     /**
      * Obtain the new button.
      * @return the new Button
      */
-    public JScrollButton<S> getNewButton() {
+    public TethysSwingScrollButtonManager<S> getNewButton() {
         return theNewButton;
     }
 
@@ -270,12 +283,12 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      */
     private void buildNewMenu() {
         /* Reset the menu popUp */
-        theMenuBuilder.clearMenu();
+        theMenu.removeAllItems();
 
         /* Loop through the missing classes */
         for (S myValue : theStatic.getMissingClasses()) {
-            /* Create a new JMenuItem and add it to the popUp */
-            theMenuBuilder.addItem(myValue);
+            /* Create a new MenuItem and add it to the popUp */
+            theMenu.addItem(myValue);
         }
     }
 
@@ -285,7 +298,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      */
     protected void determineFocus(final MetisViewerEntry pEntry) {
         /* Request the focus */
-        requestFocusInWindow();
+        getTable().requestFocusInWindow();
 
         /* Set the required focus */
         pEntry.setFocus(theUpdateEntry.getName());
@@ -316,7 +329,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     protected void selectStatic(final StaticData<?, ?, E> pStatic) {
         /* Find the item in the list */
         int myIndex = theStatic.indexOf(pStatic);
-        myIndex = convertRowIndexToView(myIndex);
+        myIndex = getTable().convertRowIndexToView(myIndex);
         if (myIndex != -1) {
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);

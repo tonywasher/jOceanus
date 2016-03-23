@@ -28,14 +28,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 
 /**
  * Arguments class for DataItem.
@@ -134,7 +134,7 @@ public class DataValues<E extends Enum<E>> {
         theItemType = pItemName;
 
         /* Create the map and list */
-        theFields = new LinkedHashMap<MetisField, Object>();
+        theFields = new LinkedHashMap<>();
 
         /* Store the id */
         theFields.put(DataItem.FIELD_ID, pItem.getId());
@@ -171,7 +171,7 @@ public class DataValues<E extends Enum<E>> {
                 theInfoItems = null;
             } else {
                 /* Allocate infoItems list */
-                theInfoItems = new ArrayList<InfoItem<E>>();
+                theInfoItems = new ArrayList<>();
 
                 /* Iterator over the values */
                 Iterator<?> myInfoIterator = myInfoSet.iterator();
@@ -207,14 +207,14 @@ public class DataValues<E extends Enum<E>> {
                 theChildren = null;
             } else {
                 /* Allocate child list */
-                theChildren = new ArrayList<DataValues<E>>();
+                theChildren = new ArrayList<>();
 
                 /* Iterator over the values */
                 while (myChildIterator.hasNext()) {
                     DataItem<?> myCurr = myChildIterator.next();
 
                     /* Add child to the list */
-                    DataValues<E> myChild = new DataValues<E>(myCurr, TAG_CHILD);
+                    DataValues<E> myChild = new DataValues<>(myCurr, TAG_CHILD);
                     theChildren.add(myChild);
                 }
             }
@@ -236,7 +236,7 @@ public class DataValues<E extends Enum<E>> {
         theItemType = "";
 
         /* Create the map and list */
-        theFields = new LinkedHashMap<MetisField, Object>();
+        theFields = new LinkedHashMap<>();
 
         /* Store the id if available */
         Integer myId = pInfo.getId();
@@ -281,7 +281,7 @@ public class DataValues<E extends Enum<E>> {
         theItemType = pItemName;
 
         /* Create the map */
-        theFields = new LinkedHashMap<MetisField, Object>();
+        theFields = new LinkedHashMap<>();
 
         /* Declare the id if it exists */
         Integer myId = getId(pElement);
@@ -309,7 +309,7 @@ public class DataValues<E extends Enum<E>> {
         Element myInfoSet = getChild(pElement, TAG_INFOSET);
         if (myInfoSet != null) {
             /* Allocate infoItems list */
-            theInfoItems = new ArrayList<InfoItem<E>>();
+            theInfoItems = new ArrayList<>();
 
             /* Loop through the child values */
             for (Node myCurr = myInfoSet.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {
@@ -319,7 +319,7 @@ public class DataValues<E extends Enum<E>> {
                     Element myChild = (Element) myCurr;
 
                     /* Add item to the list */
-                    InfoItem<E> myInfo = new InfoItem<E>(myChild);
+                    InfoItem<E> myInfo = new InfoItem<>(myChild);
                     theInfoItems.add(myInfo);
                 }
             }
@@ -333,7 +333,7 @@ public class DataValues<E extends Enum<E>> {
         Element myChildren = getChild(pElement, TAG_CHILDREN);
         if (myChildren != null) {
             /* Allocate infoItems list */
-            theChildren = new ArrayList<DataValues<E>>();
+            theChildren = new ArrayList<>();
 
             /* Loop through the child values */
             for (Node myCurr = myChildren.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {
@@ -343,7 +343,7 @@ public class DataValues<E extends Enum<E>> {
                     Element myChild = (Element) myCurr;
 
                     /* Add item to the list */
-                    DataValues<E> myValues = new DataValues<E>(myChild, pFields, theItemType);
+                    DataValues<E> myValues = new DataValues<>(myChild, pFields, theItemType);
                     theChildren.add(myValues);
                 }
             }
@@ -363,7 +363,7 @@ public class DataValues<E extends Enum<E>> {
         theItemType = pName;
 
         /* Create the map */
-        theFields = new LinkedHashMap<MetisField, Object>();
+        theFields = new LinkedHashMap<>();
 
         /* No underlying arrays */
         theInfoItems = null;
@@ -472,8 +472,8 @@ public class DataValues<E extends Enum<E>> {
         /* Access the id */
         String myId = pElement.getAttribute(DataItem.FIELD_ID.getName());
         return (myId.length() > 0)
-                                  ? Integer.parseInt(myId)
-                                  : null;
+                                   ? Integer.parseInt(myId)
+                                   : null;
     }
 
     /**
@@ -610,8 +610,8 @@ public class DataValues<E extends Enum<E>> {
             theName = myClass.toString();
             theId = pInfo.getId();
             theValue = myClass.isLink()
-                                       ? pInfo.getLink(DataItem.class)
-                                       : pInfo.getValue(Object.class);
+                                        ? pInfo.getLink(DataItem.class)
+                                        : pInfo.getValue(Object.class);
         }
 
         /**
@@ -692,7 +692,7 @@ public class DataValues<E extends Enum<E>> {
          * @return the dataValues
          */
         public DataValues<E> getValues(final DataItem<E> pOwner) {
-            return new DataValues<E>(pOwner, this);
+            return new DataValues<>(pOwner, this);
         }
     }
 }

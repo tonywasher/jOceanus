@@ -166,7 +166,7 @@ public class SheetLoan
         String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Loan.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = new DataValues<>(Loan.OBJECT_NAME);
         myValues.addValue(Loan.FIELD_NAME, myName);
         myValues.addValue(Loan.FIELD_CATEGORY, myType);
         myValues.addValue(Loan.FIELD_CURRENCY, pData.getDefaultCurrency());

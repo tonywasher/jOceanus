@@ -34,8 +34,8 @@ import java.util.Map;
 import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.BinaryColumn;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.BooleanColumn;
@@ -132,13 +132,13 @@ public class TableDefinition {
         theDriver = pDriver;
 
         /* Create the column list */
-        theList = new ArrayList<ColumnDefinition>();
+        theList = new ArrayList<>();
 
         /* Create the sort list */
-        theSortList = new ArrayList<ColumnDefinition>();
+        theSortList = new ArrayList<>();
 
         /* Create the initial column map */
-        theMap = new HashMap<MetisField, ColumnDefinition>();
+        theMap = new HashMap<>();
 
         /* Add an Id column */
         theList.add(new IdColumn(this));
@@ -716,7 +716,7 @@ public class TableDefinition {
      * @throws OceanusException on error
      */
     public TethysMoney getMoneyValue(final MetisField pId,
-                                final MetisDataFormatter pFormatter) throws OceanusException {
+                                     final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -738,7 +738,7 @@ public class TableDefinition {
      * @throws OceanusException on error
      */
     public TethysPrice getPriceValue(final MetisField pId,
-                                final MetisDataFormatter pFormatter) throws OceanusException {
+                                     final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -760,7 +760,7 @@ public class TableDefinition {
      * @throws OceanusException on error
      */
     public TethysRate getRateValue(final MetisField pId,
-                              final MetisDataFormatter pFormatter) throws OceanusException {
+                                   final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -782,7 +782,7 @@ public class TableDefinition {
      * @throws OceanusException on error
      */
     public TethysUnits getUnitsValue(final MetisField pId,
-                                final MetisDataFormatter pFormatter) throws OceanusException {
+                                     final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -804,7 +804,7 @@ public class TableDefinition {
      * @throws OceanusException on error
      */
     public TethysDilution getDilutionValue(final MetisField pId,
-                                      final MetisDataFormatter pFormatter) throws OceanusException {
+                                           final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -826,7 +826,7 @@ public class TableDefinition {
      * @throws OceanusException on error
      */
     public TethysRatio getRatioValue(final MetisField pId,
-                                final MetisDataFormatter pFormatter) throws OceanusException {
+                                     final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 

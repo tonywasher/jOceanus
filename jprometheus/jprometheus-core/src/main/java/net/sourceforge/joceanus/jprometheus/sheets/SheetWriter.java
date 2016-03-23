@@ -194,7 +194,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
         theWorkBook = new MetisDataWorkBook(pType);
 
         /* Initialise the list */
-        theSheets = new ArrayList<SheetDataItem<?, ?>>();
+        theSheets = new ArrayList<>();
 
         /* Add security details */
         theSheets.add(new SheetControlKey(this));

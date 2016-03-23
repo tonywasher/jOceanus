@@ -178,7 +178,7 @@ public class SheetCash
         }
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Cash.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = new DataValues<>(Cash.OBJECT_NAME);
         myValues.addValue(Cash.FIELD_NAME, myName);
         myValues.addValue(Cash.FIELD_CATEGORY, myType);
         myValues.addValue(Cash.FIELD_CURRENCY, pData.getDefaultCurrency());
@@ -236,9 +236,8 @@ public class SheetCash
 
         /* Handle autoExpense which may be missing */
         myCell = pView.getRowCellByIndex(pRow, iAdjust++);
-        String myAutoPayee = null;
         if (myCell != null) {
-            myAutoPayee = myName + "Expense";
+            String myAutoPayee = myName + "Expense";
 
             /* Build values */
             DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);

@@ -213,7 +213,7 @@ public class SheetDeposit
         }
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Deposit.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = new DataValues<>(Deposit.OBJECT_NAME);
         myValues.addValue(Deposit.FIELD_NAME, myName);
         myValues.addValue(Deposit.FIELD_CATEGORY, myType);
         myValues.addValue(Deposit.FIELD_CURRENCY, pData.getDefaultCurrency());

@@ -78,7 +78,7 @@ public class DiscoverData
         super(pReport);
         thePreferenceMgr = pReport.getPreferenceMgr();
         theReport = pReport;
-        theExtractPlanMap = new LinkedHashMap<String, SvnExtract>();
+        theExtractPlanMap = new LinkedHashMap<>();
     }
 
     /**

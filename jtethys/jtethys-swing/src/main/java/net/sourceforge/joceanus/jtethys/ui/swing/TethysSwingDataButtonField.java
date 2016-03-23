@@ -305,7 +305,7 @@ public final class TethysSwingDataButtonField {
          */
         public TethysSwingDateButtonField(final TethysSwingDateButtonManager pManager) {
             /* Initialise underlying class */
-            super((JDateButton) pManager.getButton());
+            super((JDateButton) pManager.getNode());
 
             /* Store the manager and button */
             theManager = pManager;
@@ -363,7 +363,7 @@ public final class TethysSwingDataButtonField {
 
             /* Declare value to the manager */
             theManager.setSelectedDate(pValue);
-            getLabel().setText(theManager.getButton().getText());
+            getLabel().setText(theManager.getNode().getText());
         }
 
         @Override

@@ -125,6 +125,11 @@ public class MetisFXFieldSetPanel
     }
 
     @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
+    }
+
+    @Override
     public MetisFXFieldSetStringItem addStringField(final MetisField pField) {
         return new MetisFXFieldSetStringItem(this, pField);
     }

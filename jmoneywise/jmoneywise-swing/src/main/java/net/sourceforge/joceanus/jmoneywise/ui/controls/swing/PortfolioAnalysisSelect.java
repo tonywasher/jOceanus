@@ -27,8 +27,8 @@ import java.util.Iterator;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -44,20 +44,16 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Portfolio Analysis Selection.
  */
 public class PortfolioAnalysisSelect
-        extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 2005637648749797873L;
-
+        implements AnalysisFilterSelection<JComponent>, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Portfolio Label.
      */
@@ -66,39 +62,44 @@ public class PortfolioAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The active portfolio bucket list.
      */
-    private transient PortfolioBucketList thePortfolios;
+    private PortfolioBucketList thePortfolios;
 
     /**
      * The state.
      */
-    private transient PortfolioState theState;
+    private PortfolioState theState;
 
     /**
      * The savePoint.
      */
-    private transient PortfolioState theSavePoint;
+    private PortfolioState theSavePoint;
 
     /**
      * The portfolio button.
      */
-    private final JScrollButton<PortfolioBucket> thePortButton;
+    private final TethysSwingScrollButtonManager<PortfolioBucket> thePortButton;
 
     /**
-     * Portfolio menu builder.
+     * Portfolio menu.
      */
-    private final JScrollMenuBuilder<PortfolioBucket> thePortfolioMenuBuilder;
+    private final TethysScrollMenu<PortfolioBucket, ?> thePortfolioMenu;
 
     /**
      * Constructor.
      */
     public PortfolioAnalysisSelect() {
         /* Create the portfolio button */
-        thePortButton = new JScrollButton<>();
+        thePortButton = new TethysSwingScrollButtonManager<>();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -107,21 +108,30 @@ public class PortfolioAnalysisSelect
         JLabel myPortLabel = new JLabel(NLS_PORTFOLIO + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(Box.createHorizontalGlue());
-        add(myPortLabel);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(thePortButton);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel = new JPanel();
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
+        thePanel.add(Box.createHorizontalGlue());
+        thePanel.add(myPortLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel.add(thePortButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
 
         /* Create initial state */
         theState = new PortfolioState();
         theState.applyState();
 
+        /* Access the menus */
+        thePortfolioMenu = thePortButton.getMenu();
+
         /* Create the listeners */
-        thePortfolioMenuBuilder = thePortButton.getMenuBuilder();
-        thePortfolioMenuBuilder.getEventRegistrar().addEventListener(e -> buildPortfolioMenu());
-        thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewPortfolio());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPortfolio());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPortfolioMenu());
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
     }
 
     @Override
@@ -168,6 +178,11 @@ public class PortfolioAnalysisSelect
 
         /* Pass call on to buttons */
         thePortButton.setEnabled(portAvailable);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -253,10 +268,10 @@ public class PortfolioAnalysisSelect
      */
     private void buildPortfolioMenu() {
         /* Reset the popUp menu */
-        thePortfolioMenuBuilder.clearMenu();
+        thePortfolioMenu.removeAllItems();
 
         /* Record active item */
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<PortfolioBucket> myActive = null;
         PortfolioBucket myCurr = theState.getPortfolio();
 
         /* Loop through the available portfolio values */
@@ -264,8 +279,8 @@ public class PortfolioAnalysisSelect
         while (myIterator.hasNext()) {
             PortfolioBucket myBucket = myIterator.next();
 
-            /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = thePortfolioMenuBuilder.addItem(myBucket);
+            /* Create a new MenuItem and add it to the popUp */
+            TethysScrollMenuItem<PortfolioBucket> myItem = thePortfolioMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -275,7 +290,9 @@ public class PortfolioAnalysisSelect
         }
 
         /* Ensure active item is visible */
-        thePortfolioMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**

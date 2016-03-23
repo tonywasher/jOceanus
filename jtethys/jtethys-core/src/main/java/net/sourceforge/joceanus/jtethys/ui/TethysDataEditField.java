@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <I> the Icon type
  */
 public abstract class TethysDataEditField<T, N, C, F, I>
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * DataEditConverter interface.
      * @param <T> the data type
@@ -212,12 +212,6 @@ public abstract class TethysDataEditField<T, N, C, F, I>
             theEventManager.fireEvent(TethysUIEvent.NEWCOMMAND, mySelected.getValue());
         }
     }
-
-    /**
-     * Obtain the node.
-     * @return the node.
-     */
-    public abstract N getNode();
 
     /**
      * Show the command button.

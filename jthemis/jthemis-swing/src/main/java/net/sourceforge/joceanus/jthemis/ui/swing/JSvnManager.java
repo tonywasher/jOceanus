@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.swing.JFieldPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
 import net.sourceforge.joceanus.jthemis.git.data.GitPreferences;
 import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
@@ -225,7 +225,7 @@ public final class JSvnManager {
         theFrame = new JFrame(JSvnManager.class.getSimpleName());
 
         /* Create the Tabbed Pane */
-        TethysSwingTabManager myTabs = new TethysSwingTabManager();
+        TethysSwingTabPaneManager myTabs = new TethysSwingTabPaneManager();
 
         /* Create the panel */
         theStatusPanel = new JSvnStatusWindow(this);
@@ -234,7 +234,7 @@ public final class JSvnManager {
         MetisViewerEntry myMaintEntry = theViewerMgr.newEntry("Maintenance");
         MetisPreferencesPanel myPrefPanel = new MetisPreferencesPanel(thePrefMgr, myFieldMgr, theViewerMgr, myMaintEntry);
         myTabs.addTabItem("Status", theStatusPanel);
-        myTabs.addTabItem("Preferences", myPrefPanel.getNode());
+        myTabs.addTabItem("Preferences", myPrefPanel);
 
         /* Add interesting preferences */
         thePrefMgr.getPreferenceSet(BackupPreferences.class);
@@ -304,7 +304,6 @@ public final class JSvnManager {
         theFrame.setJMenuBar(myMainMenu);
 
         /* Attach the panel to the frame */
-        theStatusPanel.setOpaque(true);
         theFrame.setContentPane(myTabs.getNode());
         theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         theFrame.addWindowListener(theCloseHandler);

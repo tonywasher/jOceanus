@@ -121,6 +121,11 @@ public final class TethysFXListButton
         }
 
         @Override
+        public void setVisible(final boolean pVisible) {
+            getNode().setVisible(pVisible);
+        }
+
+        @Override
         public TethysFXScrollContextMenu<T> getMenu() {
             return (TethysFXScrollContextMenu<T>) super.getMenu();
         }

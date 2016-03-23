@@ -26,6 +26,7 @@ import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
+import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -43,12 +44,12 @@ import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest.StockOptionVestList;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -61,11 +62,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  */
 public class StockOptionVestTable
         extends JDataTable<StockOptionVest, MoneyWiseDataType> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -4616312420617272420L;
-
     /**
      * Date Column Title.
      */
@@ -84,12 +80,12 @@ public class StockOptionVestTable
     /**
      * The field manager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
      */
-    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The error panel.
@@ -114,22 +110,22 @@ public class StockOptionVestTable
     /**
      * Vest Header.
      */
-    private transient StockOptionVest theHeader;
+    private StockOptionVest theHeader;
 
     /**
      * Option.
      */
-    private transient StockOption theOption = null;
+    private StockOption theOption;
 
     /**
      * StockOptionVests.
      */
-    private transient StockOptionVestList theVests = null;
+    private StockOptionVestList theVests;
 
     /**
      * Editable flag.
      */
-    private transient boolean isEditable = false;
+    private boolean isEditable;
 
     /**
      * Constructor.
@@ -155,19 +151,20 @@ public class StockOptionVestTable
 
         /* Create the data column model and declare it */
         theColumns = new StockOptionVestColumnModel(this);
-        setColumnModel(theColumns);
+        JTable myTable = getTable();
+        myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
-        getTableHeader().setReorderingAllowed(false);
-        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+        myTable.getTableHeader().setReorderingAllowed(false);
+        myTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL >> 1, HEIGHT_PANEL >> 2));
+        myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL >> 1, HEIGHT_PANEL >> 2));
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(getScrollPane());
+        thePanel.add(super.getNode());
     }
 
     @Override
@@ -175,11 +172,8 @@ public class StockOptionVestTable
         theError.addError(pError);
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
-    protected JComponent getNode() {
+    @Override
+    public JComponent getNode() {
         return thePanel;
     }
 

@@ -28,18 +28,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchOpType;
-import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.SvnBranchList;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
-
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
@@ -51,6 +39,18 @@ import org.tmatesoft.svn.core.wc.SVNCopySource;
 import org.tmatesoft.svn.core.wc.SVNEvent;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchOpType;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.SvnBranchList;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
 
 /**
  * Handles creating branches/tags in subversion.
@@ -205,7 +205,7 @@ public class VersionMgr {
      */
     public List<SvnTag> createTags(final Collection<SvnBranch> pBranches) throws OceanusException {
         /* Create the list of tags */
-        List<SvnTag> myList = new ArrayList<SvnTag>();
+        List<SvnTag> myList = new ArrayList<>();
         SvnTag myTag;
 
         /* Loop through branches */
@@ -245,7 +245,7 @@ public class VersionMgr {
     public List<SvnBranch> createBranches(final Collection<SvnTag> pTags,
                                           final ScmBranchOpType pBranchType) throws OceanusException {
         /* Create the list of branches */
-        List<SvnBranch> myList = new ArrayList<SvnBranch>();
+        List<SvnBranch> myList = new ArrayList<>();
 
         /* Loop through tags */
         for (SvnTag myTag : pTags) {

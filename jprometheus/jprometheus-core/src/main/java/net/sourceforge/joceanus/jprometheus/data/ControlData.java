@@ -30,12 +30,15 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * ControlData definition and list. The Control Data represents the data version of the entire data set, allowing for migration code to be written to map
- * between different versions. It also holds a pointer to the active ControlKey.
+ * ControlData definition and list. The Control Data represents the data version of the entire data
+ * set, allowing for migration code to be written to map between different versions. It also holds a
+ * pointer to the active ControlKey.
  * <p>
- * When code is loaded from a database, it is possible that more than one control key will be active. This will occur if a failure occurs when we are writing
- * the results of a renew security request to the database and we have changed some records, but not all to the required controlKey. This record points to the
- * active controlKey. All records that are not encrypted by the correct controlKey should be re-encrypted and written to the database.
+ * When code is loaded from a database, it is possible that more than one control key will be
+ * active. This will occur if a failure occurs when we are writing the results of a renew security
+ * request to the database and we have changed some records, but not all to the required controlKey.
+ * This record points to the active controlKey. All records that are not encrypted by the correct
+ * controlKey should be re-encrypted and written to the database.
  * @author Tony Washer
  */
 public class ControlData
@@ -142,8 +145,8 @@ public class ControlData
     public Integer getControlKeyId() {
         ControlKey myKey = getControlKey();
         return (myKey == null)
-                              ? null
-                              : myKey.getId();
+                               ? null
+                               : myKey.getId();
     }
 
     /**
@@ -355,7 +358,7 @@ public class ControlData
          */
         public void addNewControl(final Integer pVersion) throws OceanusException {
             /* Create the ControlData */
-            DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(ControlData.OBJECT_NAME);
+            DataValues<CryptographyDataType> myValues = new DataValues<>(ControlData.OBJECT_NAME);
             myValues.addValue(FIELD_DATAVERSION, pVersion);
 
             /* Add the item */

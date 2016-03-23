@@ -27,35 +27,33 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDatePeriod;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateRangeSelector;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Report selection panel.
  * @author Tony Washer
  */
 public class ReportSelect
-        extends JPanel
-        implements TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 4943254899793653170L;
-
+        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
     /**
      * Strut width.
      */
@@ -67,11 +65,6 @@ public class ReportSelect
     private static final String NLS_REPORT = MoneyWiseUIResource.REPORT_PROMPT.getValue();
 
     /**
-     * Text for Print Button.
-     */
-    private static final String NLS_PRINT = MoneyWiseUIResource.REPORT_PRINT.getValue();
-
-    /**
      * Text for Selection Title.
      */
     private static final String NLS_TITLE = MoneyWiseUIResource.REPORT_TITLE.getValue();
@@ -79,32 +72,37 @@ public class ReportSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * Reports scroll button.
      */
-    private final JScrollButton<ReportType> theReportButton;
+    private final TethysSwingScrollButtonManager<ReportType> theReportButton;
 
     /**
      * Range select.
      */
-    private final TethysSwingDateRangeSelect theRangeSelect;
+    private final TethysSwingDateRangeSelector theRangeSelect;
 
     /**
      * Print button.
      */
-    private final JButton thePrintButton;
+    private final TethysSwingSimpleIconButtonManager<Boolean> thePrintButton;
 
     /**
      * Current state.
      */
-    private transient ReportState theState;
+    private ReportState theState;
 
     /**
      * Saved state.
      */
-    private transient ReportState theSavePoint;
+    private ReportState theSavePoint;
 
     /**
      * Active flag.
@@ -116,12 +114,11 @@ public class ReportSelect
      */
     public ReportSelect() {
         /* Create the report button */
-        theReportButton = new JScrollButton<>();
+        theReportButton = new TethysSwingScrollButtonManager<>();
         buildReportMenu();
 
         /* Create the Range Select and disable its border */
-        theRangeSelect = new TethysSwingDateRangeSelect();
-        theRangeSelect.setBorder(BorderFactory.createEmptyBorder());
+        theRangeSelect = new TethysSwingDateRangeSelector();
 
         /* Create initial state */
         theState = new ReportState();
@@ -131,33 +128,40 @@ public class ReportSelect
         JLabel myRepLabel = new JLabel(NLS_REPORT);
 
         /* Create the print button */
-        thePrintButton = new JButton(NLS_PRINT);
+        thePrintButton = new TethysSwingSimpleIconButtonManager<>();
+        MoneyWiseIcon.configurePrintIconButton(thePrintButton);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the selection panel */
-        setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
+        thePanel = new JPanel();
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
+        thePanel.setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
 
         /* Define the layout */
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(myRepLabel);
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(theReportButton);
-        add(Box.createHorizontalGlue());
-        add(theRangeSelect);
-        add(Box.createHorizontalGlue());
-        add(thePrintButton);
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        thePanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        thePanel.add(myRepLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        thePanel.add(theReportButton.getNode());
+        thePanel.add(Box.createHorizontalGlue());
+        thePanel.add(theRangeSelect.getNode());
+        thePanel.add(Box.createHorizontalGlue());
+        thePanel.add(thePrintButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Apply the current state */
         theState.setType(ReportType.NETWORTH);
 
         /* Add the listeners */
-        thePrintButton.addActionListener(e -> theEventManager.fireEvent(PrometheusDataEvent.PRINT));
-        theReportButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewReport());
-        theRangeSelect.addPropertyChangeListener(TethysSwingDateRangeSelect.PROPERTY_RANGE, e -> handleNewRange());
+        thePrintButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theEventManager.fireEvent(PrometheusDataEvent.PRINT));
+        theReportButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewReport());
+        theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
     }
 
     @Override
@@ -185,7 +189,7 @@ public class ReportSelect
      * Obtain the date range selection control.
      * @return the date range selection
      */
-    public TethysSwingDateRangeSelect getDateRangeSelect() {
+    public TethysSwingDateRangeSelector getDateRangeSelector() {
         return theRangeSelect;
     }
 
@@ -194,7 +198,7 @@ public class ReportSelect
      */
     private void buildReportMenu() {
         /* Create builder */
-        JScrollMenuBuilder<ReportType> myBuilder = theReportButton.getMenuBuilder();
+        TethysScrollMenu<ReportType, ?> myBuilder = theReportButton.getMenu();
 
         /* Loop through the reports */
         for (ReportType myType : ReportType.values()) {
@@ -236,6 +240,11 @@ public class ReportSelect
         theRangeSelect.setEnabled(bEnable);
         theReportButton.setEnabled(bEnable);
         thePrintButton.setEnabled(bEnable);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -317,7 +326,7 @@ public class ReportSelect
          * @param pSelect the Panel with the new range
          * @return true/false did a change occur
          */
-        private boolean setRange(final TethysSwingDateRangeSelect pSelect) {
+        private boolean setRange(final TethysSwingDateRangeSelector pSelect) {
             /* Adjust the date and build the new range */
             TethysDateRange myRange = new TethysDateRange(pSelect.getRange());
             if (!MetisDifference.isEqual(myRange, theRange)) {
@@ -368,9 +377,9 @@ public class ReportSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theReportButton.setText((theType == null)
-                                                      ? null
-                                                      : theType.toString());
+            theReportButton.setFixedText((theType == null)
+                                                           ? null
+                                                           : theType.toString());
         }
     }
 }

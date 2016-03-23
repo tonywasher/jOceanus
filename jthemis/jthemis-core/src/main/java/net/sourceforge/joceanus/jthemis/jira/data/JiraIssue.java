@@ -27,6 +27,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import net.sourceforge.joceanus.jmetis.http.MetisHTTPJiraClient;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
@@ -40,10 +44,6 @@ import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedDescIdObje
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraPriority;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraResolution;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraStatus;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Represents a Jira issue.
@@ -203,8 +203,8 @@ public class JiraIssue
             thePriority = theServer.getPriority(myObject.getString(JiraStatus.FIELD_NAME));
             myObject = myFields.optJSONObject(MetisHTTPJiraClient.JIRANAME_RESOLUTION);
             theResolution = (myObject == null)
-                                              ? null
-                                              : theServer.getResolution(myObject.getString(JiraResolution.FIELD_NAME));
+                                               ? null
+                                               : theServer.getResolution(myObject.getString(JiraResolution.FIELD_NAME));
 
             /* Determine the assignee and reporter */
             myObject = myFields.getJSONObject("creator");
@@ -213,16 +213,16 @@ public class JiraIssue
             theReporter = theServer.getUser(myObject.getString(JiraUser.FIELD_NAME));
             myObject = myFields.optJSONObject("assignee");
             theAssignee = (myObject == null)
-                                            ? null
-                                            : theServer.getUser(myObject.getString(JiraUser.FIELD_NAME));
+                                             ? null
+                                             : theServer.getUser(myObject.getString(JiraUser.FIELD_NAME));
 
             /* Create the lists */
-            theIssueLinks = new ArrayList<JiraIssueLink>();
-            theSubTasks = new ArrayList<JiraIssueReference>();
-            theComponents = new ArrayList<JiraComponent>();
-            theFixVers = new ArrayList<JiraVersion>();
-            theAffectsVers = new ArrayList<JiraVersion>();
-            theLabels = new ArrayList<String>();
+            theIssueLinks = new ArrayList<>();
+            theSubTasks = new ArrayList<>();
+            theComponents = new ArrayList<>();
+            theFixVers = new ArrayList<>();
+            theAffectsVers = new ArrayList<>();
+            theLabels = new ArrayList<>();
 
             /* Populate the issue link fields */
             JSONArray myArray = myFields.getJSONArray("issuelinks");
@@ -330,8 +330,8 @@ public class JiraIssue
      */
     public JiraIssue getParent() throws OceanusException {
         return theParent == null
-                                ? null
-                                : theParent.getIssue();
+                                 ? null
+                                 : theParent.getIssue();
     }
 
     /**

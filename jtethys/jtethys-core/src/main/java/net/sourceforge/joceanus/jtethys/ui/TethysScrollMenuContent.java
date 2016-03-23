@@ -176,7 +176,6 @@ public abstract class TethysScrollMenuContent {
          */
         TethysScrollMenuToggleItem<T> addToggleItem(final T pItem,
                                                     final String pName);
-
     }
 
     /**

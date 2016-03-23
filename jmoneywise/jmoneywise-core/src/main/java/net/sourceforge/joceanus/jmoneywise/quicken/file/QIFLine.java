@@ -976,7 +976,7 @@ public abstract class QIFLine<T extends QLineType> {
 
                 /* Build list of classes */
                 String[] myClasses = myLine.split(QIF_CLASSSEP);
-                List<QIFClass> myList = new ArrayList<QIFClass>();
+                List<QIFClass> myList = new ArrayList<>();
                 for (String myClass : myClasses) {
                     myList.add(pFile.getClass(myClass));
                 }
@@ -1256,7 +1256,7 @@ public abstract class QIFLine<T extends QLineType> {
 
                 /* Build list of classes */
                 String[] myClasses = myLine.split(QIF_CLASSSEP);
-                List<QIFClass> myList = new ArrayList<QIFClass>();
+                List<QIFClass> myList = new ArrayList<>();
                 for (String myClass : myClasses) {
                     myList.add(pFile.getClass(myClass));
                 }

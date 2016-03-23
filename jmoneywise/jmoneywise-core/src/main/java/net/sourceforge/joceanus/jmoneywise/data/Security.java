@@ -950,18 +950,21 @@ public class Security
         if (myParent == null) {
             addError(ERROR_MISSING, FIELD_PARENT);
         } else {
-            /* Access the classes */
-            SecurityTypeClass myClass = mySecType.getSecurityClass();
-            PayeeTypeClass myParClass = myParent.getPayeeTypeClass();
-
-            /* Parent must be suitable */
-            if (!myParClass.canParentSecurity(myClass)) {
-                addError(ERROR_BADPARENT, FIELD_PARENT);
-            }
-
             /* If we are open then parent must be open */
             if (!isClosed() && myParent.isClosed()) {
                 addError(ERROR_PARCLOSED, FIELD_CLOSED);
+            }
+
+            /* Check class */
+            if (mySecType != null) {
+                /* Access the classes */
+                SecurityTypeClass myClass = mySecType.getSecurityClass();
+                PayeeTypeClass myParClass = myParent.getPayeeTypeClass();
+
+                /* Parent must be suitable */
+                if (!myParClass.canParentSecurity(myClass)) {
+                    addError(ERROR_BADPARENT, FIELD_PARENT);
+                }
             }
         }
 
@@ -1325,8 +1328,8 @@ public class Security
          */
         public SecurityDataMap() {
             /* Create the maps */
-            theSymbolCountMap = new HashMap<String, Integer>();
-            theSymbolMap = new HashMap<String, Security>();
+            theSymbolCountMap = new HashMap<>();
+            theSymbolMap = new HashMap<>();
         }
 
         @Override

@@ -29,8 +29,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelPair;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTabManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTabManager.TethysFXTabItem;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTabPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTabPaneManager.TethysFXTabItem;
 
 /**
  * JavaFX FieldSet Panel Pair.
@@ -59,7 +59,7 @@ public class MetisFXFieldSetPanelPair
 
         /* Declare the main panel and tab manager */
         declareMainPanel(new MetisFXFieldSetPanel(this));
-        declareTabManager(new TethysFXTabManager());
+        declareTabManager(new TethysFXTabPaneManager());
 
         /* Create the new node */
         theNode = new GridPane();
@@ -80,6 +80,11 @@ public class MetisFXFieldSetPanelPair
     }
 
     @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
+    }
+
+    @Override
     public MetisFXFieldAttributeSet getAttributeSet() {
         return (MetisFXFieldAttributeSet) super.getAttributeSet();
     }
@@ -90,15 +95,15 @@ public class MetisFXFieldSetPanelPair
     }
 
     @Override
-    protected TethysFXTabManager getTabManager() {
-        return (TethysFXTabManager) super.getTabManager();
+    protected TethysFXTabPaneManager getTabManager() {
+        return (TethysFXTabPaneManager) super.getTabManager();
     }
 
     @Override
     public MetisFXFieldSetPanel addSubPanel(final String pName) {
         /* Create a new subPanel and add to tab manager */
         MetisFXFieldSetPanel myPanel = new MetisFXFieldSetPanel(this);
-        TethysFXTabItem myItem = getTabManager().addTabItem(pName, myPanel.getNode());
+        TethysFXTabItem myItem = getTabManager().addTabItem(pName, myPanel);
 
         /* Declare the sub panel */
         declareSubPanel(myItem, myPanel);

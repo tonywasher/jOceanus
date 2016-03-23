@@ -29,8 +29,8 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -50,21 +50,17 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Loan Analysis Selection.
  */
 public class LoanAnalysisSelect
-        extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 6479845850828034425L;
-
+        implements AnalysisFilterSelection<JComponent>, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Category Label.
      */
@@ -78,57 +74,62 @@ public class LoanAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The active category bucket list.
      */
-    private transient LoanCategoryBucketList theCategories;
+    private LoanCategoryBucketList theCategories;
 
     /**
      * The active loan bucket list.
      */
-    private transient LoanBucketList theLoans;
+    private LoanBucketList theLoans;
 
     /**
      * The state.
      */
-    private transient LoanState theState;
+    private LoanState theState;
 
     /**
      * The savePoint.
      */
-    private transient LoanState theSavePoint;
+    private LoanState theSavePoint;
 
     /**
      * The loan button.
      */
-    private final JScrollButton<LoanBucket> theLoanButton;
+    private final TethysSwingScrollButtonManager<LoanBucket> theLoanButton;
 
     /**
      * The category button.
      */
-    private final JScrollButton<LoanCategory> theCatButton;
+    private final TethysSwingScrollButtonManager<LoanCategory> theCatButton;
 
     /**
-     * Category menu builder.
+     * Category menu.
      */
-    private final JScrollMenuBuilder<LoanCategory> theCategoryMenuBuilder;
+    private final TethysScrollMenu<LoanCategory, ?> theCategoryMenu;
 
     /**
-     * Loan menu builder.
+     * Loan menu.
      */
-    private final JScrollMenuBuilder<LoanBucket> theLoanMenuBuilder;
+    private final TethysScrollMenu<LoanBucket, ?> theLoanMenu;
 
     /**
      * Constructor.
      */
     public LoanAnalysisSelect() {
         /* Create the loan button */
-        theLoanButton = new JScrollButton<>();
+        theLoanButton = new TethysSwingScrollButtonManager<>();
 
         /* Create the category button */
-        theCatButton = new JScrollButton<>();
+        theCatButton = new TethysSwingScrollButtonManager<>();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -138,28 +139,38 @@ public class LoanAnalysisSelect
         JLabel myLoanLabel = new JLabel(NLS_LOAN + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(Box.createHorizontalGlue());
-        add(myCatLabel);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(theCatButton);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE << 2, 0)));
-        add(myLoanLabel);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(theLoanButton);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel = new JPanel();
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
+        thePanel.add(Box.createHorizontalGlue());
+        thePanel.add(myCatLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel.add(theCatButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE << 2, 0)));
+        thePanel.add(myLoanLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel.add(theLoanButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
 
         /* Create initial state */
         theState = new LoanState();
         theState.applyState();
 
+        /* Access the menus */
+        theCategoryMenu = theCatButton.getMenu();
+        theLoanMenu = theLoanButton.getMenu();
+
         /* Create the listener */
-        theCategoryMenuBuilder = theCatButton.getMenuBuilder();
-        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu());
-        theLoanMenuBuilder = theLoanButton.getMenuBuilder();
-        theLoanMenuBuilder.getEventRegistrar().addEventListener(e -> buildLoanMenu());
-        theLoanButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewLoan());
-        theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewCategory());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theCatButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCategoryMenu());
+        myRegistrar = theLoanButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewLoan());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildLoanMenu());
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
     }
 
     @Override
@@ -207,6 +218,11 @@ public class LoanAnalysisSelect
         /* Pass call on to buttons */
         theLoanButton.setEnabled(lnAvailable);
         theCatButton.setEnabled(lnAvailable);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -333,14 +349,14 @@ public class LoanAnalysisSelect
      */
     private void buildCategoryMenu() {
         /* Reset the popUp menu */
-        theCategoryMenuBuilder.clearMenu();
+        theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+        Map<String, TethysScrollSubMenu<LoanCategory, ?>> myMap = new HashMap<>();
 
         /* Record active item */
         LoanCategory myCurrent = theState.getCategory();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<LoanCategory> myActive = null;
 
         /* Re-Loop through the available category values */
         Iterator<LoanCategoryBucket> myIterator = theCategories.iterator();
@@ -355,18 +371,18 @@ public class LoanAnalysisSelect
             /* Determine menu to add to */
             LoanCategory myParent = myBucket.getAccountCategory().getParentCategory();
             String myParentName = myParent.getName();
-            JScrollMenu myMenu = myMap.get(myParent.getName());
+            TethysScrollSubMenu<LoanCategory, ?> myMenu = myMap.get(myParent.getName());
 
             /* If this is a new menu */
             if (myMenu == null) {
                 /* Create a new JMenu and add it to the popUp */
-                myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
+                myMenu = theCategoryMenu.addSubMenu(myParentName);
                 myMap.put(myParentName, myMenu);
             }
 
             /* Create a new JMenuItem and add it to the popUp */
             LoanCategory myCategory = myBucket.getAccountCategory();
-            JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+            TethysScrollMenuItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myCategory.equals(myCurrent)) {
@@ -376,7 +392,9 @@ public class LoanAnalysisSelect
         }
 
         /* Ensure active item is visible */
-        theCategoryMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
@@ -384,10 +402,14 @@ public class LoanAnalysisSelect
      */
     private void buildLoanMenu() {
         /* Reset the popUp menu */
-        theLoanMenuBuilder.clearMenu();
+        theLoanMenu.removeAllItems();
 
         /* Access current category and Loan */
         LoanCategory myCategory = theState.getCategory();
+        LoanBucket myLoan = theState.getLoan();
+
+        /* Record active item */
+        TethysScrollMenuItem<LoanBucket> myActive = null;
 
         /* Loop through the available account values */
         Iterator<LoanBucket> myIterator = theLoans.iterator();
@@ -399,8 +421,19 @@ public class LoanAnalysisSelect
                 continue;
             }
 
-            /* Create a new JMenuItem and add it to the popUp */
-            theLoanMenuBuilder.addItem(myBucket);
+            /* Create a new MenuItem and add it to the popUp */
+            TethysScrollMenuItem<LoanBucket> myItem = theLoanMenu.addItem(myBucket);
+
+            /* If this is the active loan */
+            if (myBucket.equals(myLoan)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        if (myActive != null) {
+            myActive.scrollToItem();
         }
     }
 

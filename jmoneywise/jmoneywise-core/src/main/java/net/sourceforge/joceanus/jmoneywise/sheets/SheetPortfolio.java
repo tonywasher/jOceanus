@@ -174,7 +174,7 @@ public class SheetPortfolio
         String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Portfolio.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = new DataValues<>(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_NAME, myName);
         myValues.addValue(Portfolio.FIELD_PARENT, myParent);
         myValues.addValue(Portfolio.FIELD_CURRENCY, pData.getDefaultCurrency());

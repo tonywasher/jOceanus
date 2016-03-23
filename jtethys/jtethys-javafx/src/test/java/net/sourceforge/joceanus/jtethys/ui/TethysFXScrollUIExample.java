@@ -244,7 +244,7 @@ public class TethysFXScrollUIExample
         });
 
         /* Create date button line */
-        JDateButton myDateButton = theDateButtonMgr.getButton();
+        JDateButton myDateButton = theDateButtonMgr.getNode();
         myControl = TethysFXGuiUtils.getTitledPane("DateButton", myDateButton);
         myControl.setAlignment(Pos.CENTER);
         myControl.setMaxWidth(Double.MAX_VALUE);

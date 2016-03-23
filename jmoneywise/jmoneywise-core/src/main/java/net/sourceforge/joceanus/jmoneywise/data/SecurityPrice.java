@@ -28,14 +28,14 @@ import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedPrice;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -267,8 +267,8 @@ public class SecurityPrice
     public Integer getSecurityId() {
         Security mySecurity = getSecurity();
         return (mySecurity == null)
-                                   ? null
-                                   : mySecurity.getId();
+                                    ? null
+                                    : mySecurity.getId();
     }
 
     /**
@@ -278,8 +278,8 @@ public class SecurityPrice
     public String getSecurityName() {
         Security mySecurity = getSecurity();
         return (mySecurity == null)
-                                   ? null
-                                   : mySecurity.getName();
+                                    ? null
+                                    : mySecurity.getName();
     }
 
     /**
@@ -423,8 +423,8 @@ public class SecurityPrice
         /* If header settings differ */
         if (isHeader() != pThat.isHeader()) {
             return isHeader()
-                             ? -1
-                             : 1;
+                              ? -1
+                              : 1;
         }
 
         /* Compare the dates */
@@ -509,8 +509,8 @@ public class SecurityPrice
         } else {
             /* Ensure that currency is correct */
             AssetCurrency myCurrency = mySecurity == null
-                                                         ? null
-                                                         : mySecurity.getAssetCurrency();
+                                                          ? null
+                                                          : mySecurity.getAssetCurrency();
             if ((myCurrency != null)
                 && !myPrice.getCurrency().equals(myCurrency.getCurrency())) {
                 addError(ERROR_CURRENCY, FIELD_PRICE);
@@ -628,7 +628,7 @@ public class SecurityPrice
 
         @Override
         protected SecurityPriceDataMap<T> allocateDataMap() {
-            return new SecurityPriceDataMap<T>();
+            return new SecurityPriceDataMap<>();
         }
     }
 
@@ -766,8 +766,8 @@ public class SecurityPrice
          */
         public SecurityPriceDataMap() {
             /* Create the maps */
-            theMapOfMaps = new HashMap<Security, Map<TethysDate, Integer>>();
-            theMapOfPrices = new HashMap<Security, PriceList>();
+            theMapOfMaps = new HashMap<>();
+            theMapOfPrices = new HashMap<>();
         }
 
         @Override
@@ -811,7 +811,7 @@ public class SecurityPrice
             /* Access the map */
             Map<TethysDate, Integer> myMap = theMapOfMaps.get(mySecurity);
             if (myMap == null) {
-                myMap = new HashMap<TethysDate, Integer>();
+                myMap = new HashMap<>();
                 theMapOfMaps.put(mySecurity, myMap);
             }
 
@@ -865,8 +865,8 @@ public class SecurityPrice
             /* Access the map */
             Map<TethysDate, Integer> myMap = theMapOfMaps.get(pSecurity);
             return myMap != null
-                                ? myMap.get(pDate) == null
-                                : true;
+                                 ? myMap.get(pDate) == null
+                                 : true;
         }
 
         /**
@@ -876,7 +876,7 @@ public class SecurityPrice
          * @return the latest price for the date.
          */
         public TethysPrice getPriceForDate(final AssetBase<?> pSecurity,
-                                      final TethysDate pDate) {
+                                           final TethysDate pDate) {
             /* Access as security */
             Security mySecurity = Security.class.cast(pSecurity);
 
@@ -907,7 +907,7 @@ public class SecurityPrice
          * @return the two deep array of prices for the range.
          */
         public TethysPrice[] getPricesForRange(final Security pSecurity,
-                                          final TethysDateRange pRange) {
+                                               final TethysDateRange pRange) {
             /* Set price */
             Currency myCurrency = pSecurity.getCurrency();
             TethysPrice myFirst = TethysPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
@@ -953,8 +953,8 @@ public class SecurityPrice
             /* Access list for currency */
             PriceList myList = theMapOfPrices.get(pSecurity);
             return (myList != null)
-                                   ? myList.listIterator(myList.size())
-                                   : null;
+                                    ? myList.listIterator(myList.size())
+                                    : null;
         }
 
         /**

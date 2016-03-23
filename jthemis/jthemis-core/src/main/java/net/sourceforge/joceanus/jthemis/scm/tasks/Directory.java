@@ -150,6 +150,7 @@ public final class Directory {
             try {
                 Thread.sleep(PAUSE_DURATION);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 throw new JThemisIOException("Interrupted", e);
             }
         }

@@ -108,6 +108,11 @@ public enum MoneyWiseIcon implements TethysIconId {
     FROZENBOXCHECK("icons/BlueJellyCheckBox.png"),
 
     /**
+     * The print icon.
+     */
+    PRINT("icons/BlueJellyPrint.png"),
+
+    /**
      * The download arrow.
      */
     DOWNLOAD("icons/GreenJellyDownload.png");
@@ -153,6 +158,11 @@ public enum MoneyWiseIcon implements TethysIconId {
     private static final String TIP_DIRFROM = MoneyWiseUIResource.ICON_DIRFROM.getValue();
 
     /**
+     * Print Button ToolTip.
+     */
+    private static final String TIP_PRINT = MoneyWiseUIResource.ICON_PRINT.getValue();
+
+    /**
      * Download Button ToolTip.
      */
     private static final String TIP_NEW = MoneyWiseUIResource.ICON_DOWNLOAD.getValue();
@@ -176,12 +186,21 @@ public enum MoneyWiseIcon implements TethysIconId {
     }
 
     /**
+     * Configure print icon button.
+     * @param pButton the button manager
+     */
+    public static void configurePrintIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
+        pButton.setSimpleDetailsForValue(Boolean.TRUE, PRINT, TIP_PRINT);
+        pButton.setValue(Boolean.TRUE);
+    }
+
+    /**
      * Configure download icon button.
      * @param pButton the button manager
      */
     public static void configureDownloadIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
-        pButton.setValue(Boolean.TRUE);
         pButton.setSimpleDetailsForValue(Boolean.TRUE, DOWNLOAD, TIP_NEW);
+        pButton.setValue(Boolean.TRUE);
     }
 
     /**

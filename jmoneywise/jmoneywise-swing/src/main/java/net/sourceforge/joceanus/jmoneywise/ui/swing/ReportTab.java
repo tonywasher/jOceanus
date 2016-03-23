@@ -31,6 +31,7 @@ import java.awt.print.PrinterException;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
@@ -60,19 +61,19 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableScroll;
 
 /**
  * Report panel.
  */
 public class ReportTab
-        implements TethysEventProvider<PrometheusDataEvent> {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
     /**
      * Text for DataEntry Title.
      */
@@ -101,7 +102,7 @@ public class ReportTab
     /**
      * The Scroll Pane.
      */
-    private final TethysSwingEnableScroll theScroll;
+    private final JScrollPane theScroll;
 
     /**
      * The display version of the report.
@@ -168,7 +169,7 @@ public class ReportTab
         theBuilder = new ReportBuilder(theManager);
 
         /* Create a scroll-pane for the editor */
-        theScroll = new TethysSwingEnableScroll();
+        theScroll = new JScrollPane();
         theScroll.setViewportView(theEditor);
 
         /* Create the Report Selection panel */
@@ -180,7 +181,7 @@ public class ReportTab
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
-        myHeader.add(theSelect, BorderLayout.CENTER);
+        myHeader.add(theSelect.getNode(), BorderLayout.CENTER);
         myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
 
         /* Now define the panel */
@@ -202,23 +203,23 @@ public class ReportTab
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
+    @Override
     public JComponent getNode() {
         return thePanel;
     }
 
-    /**
-     * Set enabled state.
-     * @param pEnabled the state true/false
-     */
+    @Override
     public void setEnabled(final boolean pEnabled) {
         /* Pass on to important elements */
         theSelect.setEnabled(pEnabled);
         theError.setEnabled(pEnabled);
         theScroll.setEnabled(pEnabled);
+        theEditor.setEnabled(pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -346,7 +347,7 @@ public class ReportTab
      */
     private void handleGoToRequest(final TethysEvent<PrometheusDataEvent> pEvent) {
         /* Create the details of the report */
-        TethysSwingDateRangeSelect mySelect = theSelect.getDateRangeSelect();
+        TethysSwingDateRangeSelector mySelect = theSelect.getDateRangeSelector();
         AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
         StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
 

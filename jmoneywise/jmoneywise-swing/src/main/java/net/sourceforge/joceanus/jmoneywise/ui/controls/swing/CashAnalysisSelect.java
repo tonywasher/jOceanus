@@ -29,8 +29,8 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -50,21 +50,17 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Cash Analysis Selection.
  */
 public class CashAnalysisSelect
-        extends JPanel
-        implements AnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 3458135144597888214L;
-
+        implements AnalysisFilterSelection<JComponent>, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Category Label.
      */
@@ -78,57 +74,62 @@ public class CashAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * The active category bucket list.
      */
-    private transient CashCategoryBucketList theCategories;
+    private CashCategoryBucketList theCategories;
 
     /**
      * The active cash bucket list.
      */
-    private transient CashBucketList theCash;
+    private CashBucketList theCash;
 
     /**
      * The state.
      */
-    private transient CashState theState;
+    private CashState theState;
 
     /**
      * The savePoint.
      */
-    private transient CashState theSavePoint;
+    private CashState theSavePoint;
 
     /**
      * The cash button.
      */
-    private final JScrollButton<CashBucket> theCashButton;
+    private final TethysSwingScrollButtonManager<CashBucket> theCashButton;
 
     /**
      * The category button.
      */
-    private final JScrollButton<CashCategory> theCatButton;
+    private final TethysSwingScrollButtonManager<CashCategory> theCatButton;
 
     /**
-     * Category menu builder.
+     * Category menu.
      */
-    private final JScrollMenuBuilder<CashCategory> theCategoryMenuBuilder;
+    private final TethysScrollMenu<CashCategory, ?> theCategoryMenu;
 
     /**
-     * Cash menu builder.
+     * Cash menu.
      */
-    private final JScrollMenuBuilder<CashBucket> theCashMenuBuilder;
+    private final TethysScrollMenu<CashBucket, ?> theCashMenu;
 
     /**
      * Constructor.
      */
     public CashAnalysisSelect() {
         /* Create the cash button */
-        theCashButton = new JScrollButton<>();
+        theCashButton = new TethysSwingScrollButtonManager<>();
 
         /* Create the category button */
-        theCatButton = new JScrollButton<>();
+        theCatButton = new TethysSwingScrollButtonManager<>();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -138,28 +139,38 @@ public class CashAnalysisSelect
         JLabel myCshLabel = new JLabel(NLS_CASH + MetisFieldElement.STR_COLON);
 
         /* Define the layout */
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(Box.createHorizontalGlue());
-        add(myCatLabel);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(theCatButton);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE << 2, 0)));
-        add(myCshLabel);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(theCashButton);
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel = new JPanel();
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
+        thePanel.add(Box.createHorizontalGlue());
+        thePanel.add(myCatLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel.add(theCatButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE << 2, 0)));
+        thePanel.add(myCshLabel);
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel.add(theCashButton.getNode());
+        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
 
         /* Create initial state */
         theState = new CashState();
         theState.applyState();
 
+        /* Access the menus */
+        theCategoryMenu = theCatButton.getMenu();
+        theCashMenu = theCashButton.getMenu();
+
         /* Create the listeners */
-        theCategoryMenuBuilder = theCatButton.getMenuBuilder();
-        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu());
-        theCashMenuBuilder = theCashButton.getMenuBuilder();
-        theCashMenuBuilder.getEventRegistrar().addEventListener(e -> buildCashMenu());
-        theCashButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewCash());
-        theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewCategory());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theCatButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCategoryMenu());
+        myRegistrar = theCashButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCash());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCashMenu());
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
     }
 
     @Override
@@ -207,6 +218,11 @@ public class CashAnalysisSelect
         /* Pass call on to buttons */
         theCashButton.setEnabled(csAvailable);
         theCatButton.setEnabled(csAvailable);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -333,14 +349,14 @@ public class CashAnalysisSelect
      */
     private void buildCategoryMenu() {
         /* Reset the popUp menu */
-        theCategoryMenuBuilder.clearMenu();
+        theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+        Map<String, TethysScrollSubMenu<CashCategory, ?>> myMap = new HashMap<>();
 
         /* Record active item */
         CashCategory myCurrent = theState.getCategory();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<CashCategory> myActive = null;
 
         /* Loop through the available category values */
         Iterator<CashCategoryBucket> myIterator = theCategories.iterator();
@@ -355,18 +371,18 @@ public class CashAnalysisSelect
             /* Determine menu to add to */
             CashCategory myParent = myBucket.getAccountCategory().getParentCategory();
             String myParentName = myParent.getName();
-            JScrollMenu myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<CashCategory, ?> myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
             if (myMenu == null) {
                 /* Create a new JMenu and add it to the popUp */
-                myMenu = theCategoryMenuBuilder.addSubMenu(myParentName);
+                myMenu = theCategoryMenu.addSubMenu(myParentName);
                 myMap.put(myParentName, myMenu);
             }
 
             /* Create a new JMenuItem and add it to the popUp */
             CashCategory myCategory = myBucket.getAccountCategory();
-            JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+            TethysScrollMenuItem<CashCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myCategory.equals(myCurrent)) {
@@ -376,7 +392,9 @@ public class CashAnalysisSelect
         }
 
         /* Ensure active item is visible */
-        theCategoryMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
@@ -384,14 +402,14 @@ public class CashAnalysisSelect
      */
     private void buildCashMenu() {
         /* Reset the popUp menu */
-        theCashMenuBuilder.clearMenu();
+        theCashMenu.removeAllItems();
 
         /* Access current category and Account */
         CashCategory myCategory = theState.getCategory();
         CashBucket myCash = theState.getCash();
 
         /* Record active item */
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<CashBucket> myActive = null;
 
         /* Loop through the available account values */
         Iterator<CashBucket> myIterator = theCash.iterator();
@@ -404,7 +422,7 @@ public class CashAnalysisSelect
             }
 
             /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = theCashMenuBuilder.addItem(myBucket);
+            TethysScrollMenuItem<CashBucket> myItem = theCashMenu.addItem(myBucket);
 
             /* If this is the active cash */
             if (myBucket.equals(myCash)) {
@@ -414,7 +432,9 @@ public class CashAnalysisSelect
         }
 
         /* Ensure active item is visible */
-        theCashMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**

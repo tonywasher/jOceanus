@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyIte
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
@@ -56,7 +57,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <I> the icon type
  */
 public abstract class MetisFieldSetPanel<N, C, F, I>
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The event manager.
      */
@@ -125,12 +126,6 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
-
-    /**
-     * Obtain the node.
-     * @return the node
-     */
-    public abstract N getNode();
 
     /**
      * Obtain the formatter.
@@ -234,6 +229,19 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
                 /* Move to next child */
                 myChild = myChild.theNextSibling;
             }
+        }
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        /* Loop through the elements */
+        MetisFieldSetPanelItem<?, N, C, F, I> myChild = theFirstChild;
+        while (myChild != null) {
+            /* Set the editable state of the field */
+            myChild.setEnabled(pEnabled);
+
+            /* Move to next child */
+            myChild = myChild.theNextSibling;
         }
     }
 
@@ -686,6 +694,14 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
                     detachFromPanel(myPos);
                 }
             }
+        }
+
+        /**
+         * Set the enabled state of the item.
+         * @param pEnabled true/false
+         */
+        private void setEnabled(final boolean pEnabled) {
+            theEdit.setEnabled(pEnabled);
         }
 
         /**

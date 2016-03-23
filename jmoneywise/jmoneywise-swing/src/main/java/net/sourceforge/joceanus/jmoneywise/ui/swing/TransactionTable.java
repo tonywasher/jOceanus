@@ -25,9 +25,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -70,8 +70,8 @@ import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -79,6 +79,7 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingActionButtons;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -93,17 +94,13 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton.JScrollListMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Analysis Statement.
  */
 public class TransactionTable
         extends JDataTable<Transaction, MoneyWiseDataType> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -8054491530459145911L;
-
     /**
      * Text for DataEntry Title.
      */
@@ -242,32 +239,32 @@ public class TransactionTable
     /**
      * The data view.
      */
-    private final transient View theView;
+    private final View theView;
 
     /**
      * The updateSet.
      */
-    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The field manager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The analysis data entry.
      */
-    private final transient MetisViewerEntry theDataAnalysis;
+    private final MetisViewerEntry theDataAnalysis;
 
     /**
      * The filter data entry.
      */
-    private final transient MetisViewerEntry theDataFilter;
+    private final MetisViewerEntry theDataFilter;
 
     /**
      * Analysis View.
      */
-    private final transient AnalysisView theAnalysisView;
+    private final AnalysisView theAnalysisView;
 
     /**
      * Analysis Selection panel.
@@ -302,27 +299,27 @@ public class TransactionTable
     /**
      * The date range.
      */
-    private transient TethysDateRange theRange;
+    private TethysDateRange theRange;
 
     /**
      * The analysis filter.
      */
-    private transient AnalysisFilter<?, ?> theFilter;
+    private AnalysisFilter<?, ?> theFilter;
 
     /**
      * Transactions.
      */
-    private transient TransactionList theTransactions = null;
+    private TransactionList theTransactions;
 
     /**
      * Statement Header.
      */
-    private transient Transaction theHeader;
+    private Transaction theHeader;
 
     /**
      * The new button.
      */
-    private final JButton theNewButton;
+    private final TethysSwingScrollButtonManager<String> theNewButton;
 
     /**
      * The Transaction dialog.
@@ -332,12 +329,12 @@ public class TransactionTable
     /**
      * The List Selection Model.
      */
-    private final transient JDataTableSelection<Transaction, MoneyWiseDataType> theSelectionModel;
+    private final JDataTableSelection<Transaction, MoneyWiseDataType> theSelectionModel;
 
     /**
      * TransactionBuilder.
      */
-    private final transient TransactionBuilder theBuilder;
+    private final TransactionBuilder theBuilder;
 
     /**
      * Constructor.
@@ -366,7 +363,8 @@ public class TransactionTable
         theDataAnalysis.setObject(theUpdateSet);
 
         /* Create new button */
-        theNewButton = MoneyWiseIcons.getNewButton();
+        theNewButton = new TethysSwingScrollButtonManager<>();
+        PrometheusIcon.configureNewScrollButton(theNewButton);
 
         /* Create the Analysis View */
         theAnalysisView = new AnalysisView(theView, theUpdateSet);
@@ -386,12 +384,13 @@ public class TransactionTable
 
         /* Create the data column model and declare it */
         theColumns = new AnalysisColumnModel(this);
-        setColumnModel(theColumns);
+        JTable myTable = getTable();
+        myTable.setColumnModel(theColumns);
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
-        myHeader.add(theSelect, BorderLayout.CENTER);
+        myHeader.add(theSelect.getNode(), BorderLayout.CENTER);
         myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
         myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
 
@@ -399,17 +398,17 @@ public class TransactionTable
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
         thePanel.add(myHeader, BorderLayout.PAGE_START);
-        thePanel.add(getScrollPane(), BorderLayout.CENTER);
+        thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Create a transaction panel */
         theActiveTrans = new TransactionPanel(theFieldMgr, theUpdateSet, theBuilder, theSelect, theError);
         thePanel.add(theActiveTrans.getNode(), BorderLayout.PAGE_END);
 
         /* Prevent reordering of columns and auto-resizing */
-        getTableHeader().setReorderingAllowed(false);
+        myTable.getTableHeader().setReorderingAllowed(false);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
+        myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the selection model */
         theSelectionModel = new JDataTableSelection<>(this, theActiveTrans);
@@ -424,7 +423,7 @@ public class TransactionTable
         theActiveTrans.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
 
         /* Listen to swing events */
-        theNewButton.addActionListener(e -> theModel.addNewItem());
+        theNewButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.addNewItem());
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
@@ -457,7 +456,7 @@ public class TransactionTable
      */
     protected void determineFocus() {
         /* Request the focus */
-        requestFocusInWindow();
+        getTable().requestFocusInWindow();
 
         /* Set the required focus */
         theDataAnalysis.setFocus();
@@ -637,7 +636,7 @@ public class TransactionTable
         theSelect.setVisible(!isError);
 
         /* Lock scroll area */
-        getScrollPane().setEnabled(!isError);
+        super.getNode().setEnabled(!isError);
 
         /* Lock Action Buttons */
         theActionButtons.setEnabled(!isError);
@@ -1625,9 +1624,9 @@ public class TransactionTable
             }
 
             /* Set reSize mode */
-            setAutoResizeMode(reSize
-                                     ? AUTO_RESIZE_ALL_COLUMNS
-                                     : AUTO_RESIZE_OFF);
+            getTable().setAutoResizeMode(reSize
+                                                ? JTable.AUTO_RESIZE_ALL_COLUMNS
+                                                : JTable.AUTO_RESIZE_OFF);
 
             /* Store the column set */
             theColumnSet = pSet;

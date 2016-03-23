@@ -26,6 +26,7 @@ import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
+import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -46,12 +47,12 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice.ViewSecurityPriceList;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -65,11 +66,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  */
 public class SecurityPriceTable
         extends JDataTable<ViewSecurityPrice, MoneyWiseDataType> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -153651020207724175L;
-
     /**
      * Date Column Title.
      */
@@ -98,17 +94,17 @@ public class SecurityPriceTable
     /**
      * The data view.
      */
-    private final transient View theView;
+    private final View theView;
 
     /**
      * The field manager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
      */
-    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The error panel.
@@ -133,27 +129,27 @@ public class SecurityPriceTable
     /**
      * Price Header.
      */
-    private transient ViewSecurityPrice theHeader;
+    private ViewSecurityPrice theHeader;
 
     /**
      * Security.
      */
-    private transient Security theSecurity = null;
+    private Security theSecurity;
 
     /**
      * SecurityPrices.
      */
-    private transient ViewSecurityPriceList thePrices = null;
+    private ViewSecurityPriceList thePrices;
 
     /**
      * Dilutions.
      */
-    private transient DilutionEventMap theDilutions = null;
+    private DilutionEventMap theDilutions;
 
     /**
      * Editable flag.
      */
-    private transient boolean isEditable = false;
+    private boolean isEditable;
 
     /**
      * Constructor.
@@ -182,19 +178,20 @@ public class SecurityPriceTable
 
         /* Create the data column model and declare it */
         theColumns = new SecurityPriceColumnModel(this);
-        setColumnModel(theColumns);
+        JTable myTable = getTable();
+        myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
-        getTableHeader().setReorderingAllowed(false);
-        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+        myTable.getTableHeader().setReorderingAllowed(false);
+        myTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL >> 1, HEIGHT_PANEL >> 2));
+        myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL >> 1, HEIGHT_PANEL >> 2));
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(getScrollPane());
+        thePanel.add(super.getNode());
     }
 
     @Override
@@ -202,11 +199,8 @@ public class SecurityPriceTable
         theError.addError(pError);
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
-    protected JComponent getNode() {
+    @Override
+    public JComponent getNode() {
         return thePanel;
     }
 

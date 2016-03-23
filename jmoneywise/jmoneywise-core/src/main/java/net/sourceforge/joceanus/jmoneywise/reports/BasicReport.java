@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
 import net.sourceforge.joceanus.jmetis.list.MetisNestedHashMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-
-import org.w3c.dom.Document;
 
 /**
  * Interface provided by report builders.
@@ -50,8 +50,8 @@ public abstract class BasicReport {
      */
     protected BasicReport() {
         /* Allocate the hashMaps */
-        theDelayedMap = new MetisNestedHashMap<String, DelayedTable>();
-        theFilterMap = new MetisNestedHashMap<String, Object>();
+        theDelayedMap = new MetisNestedHashMap<>();
+        theFilterMap = new MetisNestedHashMap<>();
     }
 
     /**
@@ -79,8 +79,8 @@ public abstract class BasicReport {
         /* Lookup the filter */
         Object mySource = theFilterMap.get(pReference);
         return (mySource != null)
-                                 ? processFilter(mySource)
-                                 : null;
+                                  ? processFilter(mySource)
+                                  : null;
     }
 
     /**

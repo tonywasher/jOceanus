@@ -153,6 +153,11 @@ public abstract class TethysSwingDataTextField<T>
         return theNode;
     }
 
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
+    }
+
     /**
      * Obtain the label.
      * @return the label
@@ -167,6 +172,14 @@ public abstract class TethysSwingDataTextField<T>
      */
     protected JComponent getEditControl() {
         return theEditControl;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        /* Apply to the nodes */
+        theLabel.setEnabled(pEnabled);
+        theEditControl.setEnabled(pEnabled);
+        theCmdButton.setEnabled(pEnabled);
     }
 
     @Override

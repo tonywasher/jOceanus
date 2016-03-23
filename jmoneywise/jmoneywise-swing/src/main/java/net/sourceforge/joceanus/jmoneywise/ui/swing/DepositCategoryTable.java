@@ -29,11 +29,9 @@ import java.util.Iterator;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
+import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -56,32 +54,32 @@ import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.DepositCategoryPanel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Deposit Category Maintenance.
  */
 public class DepositCategoryTable
         extends JDataTable<DepositCategory, MoneyWiseDataType> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 733879777015598066L;
-
     /**
      * Name Column Title.
      */
@@ -120,22 +118,22 @@ public class DepositCategoryTable
     /**
      * The data view.
      */
-    private final transient SwingView theView;
+    private final SwingView theView;
 
     /**
      * The field manager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
      */
-    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The event entry.
      */
-    private final transient UpdateEntry<DepositCategory, MoneyWiseDataType> theCategoryEntry;
+    private final UpdateEntry<DepositCategory, MoneyWiseDataType> theCategoryEntry;
 
     /**
      * The error panel.
@@ -165,12 +163,12 @@ public class DepositCategoryTable
     /**
      * The select button.
      */
-    private final JScrollButton<DepositCategory> theSelectButton;
+    private final TethysSwingScrollButtonManager<DepositCategory> theSelectButton;
 
     /**
      * The new button.
      */
-    private final JButton theNewButton;
+    private final TethysSwingScrollButtonManager<String> theNewButton;
 
     /**
      * The DepositCategory dialog.
@@ -180,22 +178,21 @@ public class DepositCategoryTable
     /**
      * The List Selection Model.
      */
-    private final transient JDataTableSelection<DepositCategory, MoneyWiseDataType> theSelectionModel;
+    private final JDataTableSelection<DepositCategory, MoneyWiseDataType> theSelectionModel;
 
     /**
      * Category menu builder.
      */
-    private final JScrollMenuBuilder<DepositCategory> theCategoryMenuBuilder;
-
+    private final TethysScrollMenu<DepositCategory, ?> theCategoryMenu;
     /**
      * Deposit Categories.
      */
-    private transient DepositCategoryList theCategories;
+    private DepositCategoryList theCategories;
 
     /**
      * Active parent.
      */
-    private transient DepositCategory theParent;
+    private DepositCategory theParent;
 
     /**
      * Constructor.
@@ -223,22 +220,24 @@ public class DepositCategoryTable
 
         /* Create the data column model and declare it */
         theColumns = new CategoryColumnModel(this);
-        setColumnModel(theColumns);
+        JTable myTable = getTable();
+        myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
-        getTableHeader().setReorderingAllowed(false);
-        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+        myTable.getTableHeader().setReorderingAllowed(false);
+        myTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
+        myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the filter components */
         JLabel myPrompt = new JLabel(TITLE_FILTER);
-        theSelectButton = new JScrollButton<>();
+        theSelectButton = new TethysSwingScrollButtonManager<>();
         theSelectButton.setValue(null, FILTER_PARENTS);
 
         /* Create new button */
-        theNewButton = MoneyWiseIcons.getNewButton();
+        theNewButton = new TethysSwingScrollButtonManager<>();
+        PrometheusIcon.configureNewScrollButton(theNewButton);
 
         /* Create the filter panel */
         theFilterPanel = new TethysSwingEnablePanel();
@@ -246,15 +245,15 @@ public class DepositCategoryTable
         theFilterPanel.add(Box.createHorizontalGlue());
         theFilterPanel.add(myPrompt);
         theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
-        theFilterPanel.add(theSelectButton);
+        theFilterPanel.add(theSelectButton.getNode());
         theFilterPanel.add(Box.createHorizontalGlue());
-        theFilterPanel.add(theNewButton);
+        theFilterPanel.add(theNewButton.getNode());
         theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(getScrollPane(), BorderLayout.CENTER);
+        thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Create a Category panel */
         theActiveCategory = new DepositCategoryPanel(theFieldMgr, theUpdateSet, theError);
@@ -270,18 +269,16 @@ public class DepositCategoryTable
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
         theActiveCategory.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
         theActiveCategory.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
-        theCategoryMenuBuilder = theSelectButton.getMenuBuilder();
-        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildSelectMenu());
+        theCategoryMenu = theSelectButton.getMenu();
 
         /* Listen to swing events */
-        theNewButton.addActionListener(e -> theModel.addNewItem());
-        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleDepositSelection());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleDepositSelection());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildSelectMenu());
+        theNewButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.addNewItem());
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
+    @Override
     public JComponent getNode() {
         return thePanel;
     }
@@ -290,7 +287,7 @@ public class DepositCategoryTable
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected JPanel getFilterPanel() {
+    protected TethysSwingEnablePanel getFilterPanel() {
         return theFilterPanel;
     }
 
@@ -308,7 +305,7 @@ public class DepositCategoryTable
      */
     protected void determineFocus(final MetisViewerEntry pEntry) {
         /* Request the focus */
-        requestFocusInWindow();
+        getTable().requestFocusInWindow();
 
         /* Set the required focus */
         pEntry.setFocus(theCategoryEntry.getName());
@@ -392,7 +389,7 @@ public class DepositCategoryTable
 
         /* Find the item in the list */
         int myIndex = theCategories.indexOf(pCategory);
-        myIndex = convertRowIndexToView(myIndex);
+        myIndex = getTable().convertRowIndexToView(myIndex);
         if (myIndex != -1) {
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);
@@ -468,7 +465,7 @@ public class DepositCategoryTable
      */
     private void buildSelectMenu() {
         /* Clear the menu */
-        theCategoryMenuBuilder.clearMenu();
+        theCategoryMenu.removeAllItems();
 
         /* Cope if we have no categories */
         if (theCategories == null) {
@@ -476,10 +473,10 @@ public class DepositCategoryTable
         }
 
         /* Record active item */
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<DepositCategory> myActive = null;
 
         /* Create the no filter JMenuItem and add it to the popUp */
-        JMenuItem myItem = theCategoryMenuBuilder.addItem(null, FILTER_PARENTS);
+        TethysScrollMenuItem<DepositCategory> myItem = theCategoryMenu.addItem(null, FILTER_PARENTS);
 
         /* If this is the active parent */
         if (theParent == null) {
@@ -502,8 +499,8 @@ public class DepositCategoryTable
                 continue;
             }
 
-            /* Create a new JMenuItem and add it to the popUp */
-            myItem = theCategoryMenuBuilder.addItem(myCurr);
+            /* Create a new MenuItem and add it to the popUp */
+            myItem = theCategoryMenu.addItem(myCurr);
 
             /* If this is the active parent */
             if (myCurr.equals(theParent)) {
@@ -513,7 +510,9 @@ public class DepositCategoryTable
         }
 
         /* Ensure active item is visible */
-        theCategoryMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**

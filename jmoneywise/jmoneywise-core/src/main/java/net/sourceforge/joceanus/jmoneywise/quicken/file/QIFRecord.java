@@ -98,7 +98,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
         theFile = pFile;
 
         /* Create the map */
-        theMap = new EnumMap<T, QIFLine<T>>(pClass);
+        theMap = new EnumMap<>(pClass);
     }
 
     /**
@@ -158,7 +158,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
     protected void addRecord(final QIFRecord<T> pRecord) {
         /* Allocate list if required */
         if (theSubList == null) {
-            theSubList = new ArrayList<QIFRecord<T>>();
+            theSubList = new ArrayList<>();
         }
 
         /* Add to the list */

@@ -144,20 +144,20 @@ public class QIFFile {
         theFileType = pType;
 
         /* Allocate maps */
-        theAccountMap = new HashMap<String, QIFAccountEvents>();
-        thePayeeMap = new HashMap<String, QIFPayee>();
-        theSecurityMap = new HashMap<String, QIFSecurityPrices>();
-        theSymbolMap = new HashMap<String, QIFSecurity>();
-        theParentMap = new HashMap<String, QIFParentCategory>();
-        theCategories = new HashMap<String, QIFEventCategory>();
-        theClassMap = new HashMap<String, QIFClass>();
+        theAccountMap = new HashMap<>();
+        thePayeeMap = new HashMap<>();
+        theSecurityMap = new HashMap<>();
+        theSymbolMap = new HashMap<>();
+        theParentMap = new HashMap<>();
+        theCategories = new HashMap<>();
+        theClassMap = new HashMap<>();
 
         /* Allocate maps */
-        theAccounts = new MetisOrderedList<QIFAccountEvents>(QIFAccountEvents.class);
-        thePayees = new MetisOrderedList<QIFPayee>(QIFPayee.class);
-        theSecurities = new MetisOrderedList<QIFSecurityPrices>(QIFSecurityPrices.class);
-        theParentCategories = new MetisOrderedList<QIFParentCategory>(QIFParentCategory.class);
-        theClasses = new MetisOrderedList<QIFClass>(QIFClass.class);
+        theAccounts = new MetisOrderedList<>(QIFAccountEvents.class);
+        thePayees = new MetisOrderedList<>(QIFPayee.class);
+        theSecurities = new MetisOrderedList<>(QIFSecurityPrices.class);
+        theParentCategories = new MetisOrderedList<>(QIFParentCategory.class);
+        theClasses = new MetisOrderedList<>(QIFClass.class);
     }
 
     /**
@@ -616,8 +616,8 @@ public class QIFFile {
         /* Lookup the security */
         QIFAccountEvents myAccount = getAccountEvents(pName);
         return (myAccount == null)
-                                  ? null
-                                  : myAccount.getAccount();
+                                   ? null
+                                   : myAccount.getAccount();
     }
 
     /**
@@ -639,8 +639,8 @@ public class QIFFile {
         /* Lookup the security */
         QIFSecurityPrices myList = getSecurityPrices(pName);
         return (myList == null)
-                               ? null
-                               : myList.getSecurity();
+                                ? null
+                                : myList.getSecurity();
     }
 
     /**

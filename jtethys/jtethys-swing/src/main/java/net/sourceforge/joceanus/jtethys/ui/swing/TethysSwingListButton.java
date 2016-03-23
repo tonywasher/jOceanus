@@ -117,6 +117,11 @@ public final class TethysSwingListButton
         }
 
         @Override
+        public void setVisible(final boolean pVisible) {
+            getNode().setVisible(pVisible);
+        }
+
+        @Override
         public TethysSwingScrollContextMenu<T> getMenu() {
             return (TethysSwingScrollContextMenu<T>) super.getMenu();
         }

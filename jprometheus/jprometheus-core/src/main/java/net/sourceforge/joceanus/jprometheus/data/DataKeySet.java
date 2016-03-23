@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
@@ -119,7 +119,7 @@ public class DataKeySet
         switch (getStyle()) {
             case CLONE:
                 theSecurityFactory = pSource.theSecurityFactory;
-                theMap = new EnumMap<GordianSymKeyType, DataKey>(GordianSymKeyType.class);
+                theMap = new EnumMap<>(GordianSymKeyType.class);
                 theKeySet = theSecurityFactory.createKeySet();
                 theFieldGenerator = new MetisEncryptionGenerator(theKeySet, getDataSet().getDataFormatter());
                 break;
@@ -148,7 +148,7 @@ public class DataKeySet
         theSecurityFactory = mySecure.getSecurityFactory();
 
         /* Create the DataKey Map */
-        theMap = new EnumMap<GordianSymKeyType, DataKey>(GordianSymKeyType.class);
+        theMap = new EnumMap<>(GordianSymKeyType.class);
 
         /* Store the ControlKey */
         Object myValue = pValues.getValue(FIELD_CONTROLKEY);
@@ -207,7 +207,7 @@ public class DataKeySet
             theSecurityFactory = mySecure.getSecurityFactory();
 
             /* Create the DataKey Map */
-            theMap = new EnumMap<GordianSymKeyType, DataKey>(GordianSymKeyType.class);
+            theMap = new EnumMap<>(GordianSymKeyType.class);
 
             /* Create the KeySet */
             theKeySet = theSecurityFactory.createKeySet();
@@ -592,7 +592,7 @@ public class DataKeySet
         protected DataKeySet cloneDataKeySet(final ControlKey pControlKey,
                                              final DataKeySet pKeySet) throws OceanusException {
             /* Build data values */
-            DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(DataKeySet.OBJECT_NAME);
+            DataValues<CryptographyDataType> myValues = new DataValues<>(DataKeySet.OBJECT_NAME);
             myValues.addValue(DataKeySet.FIELD_ID, pKeySet.getId());
             myValues.addValue(DataKeySet.FIELD_CONTROLKEY, pControlKey);
             myValues.addValue(DataKeySet.FIELD_CREATEDATE, pKeySet.getCreationDate());

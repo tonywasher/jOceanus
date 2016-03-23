@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
-import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -33,6 +32,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -47,26 +47,24 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateRangeSelect;
+import net.sourceforge.joceanus.jtethys.date.TethysDateResource;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCardPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Selection panel for Analysis Statement.
  */
 public class AnalysisSelect
-        extends TethysSwingEnablePanel
-        implements TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 2389274012934107451L;
-
+        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
     /**
      * Strut size.
      */
@@ -118,29 +116,39 @@ public class AnalysisSelect
     private static final String NLS_FILTERTITLE = MoneyWiseUIResource.ANALYSIS_FILTER_TITLE.getValue();
 
     /**
+     * Text for Box Title.
+     */
+    private static final String NLS_RANGETITLE = TethysDateResource.TITLE_BOX.getValue();
+
+    /**
      * The Event Manager.
      */
-    private final transient TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * View.
      */
-    private final transient View theView;
+    private final View theView;
 
     /**
      * Analysis.
      */
-    private transient Analysis theAnalysis;
+    private Analysis theAnalysis;
 
     /**
      * Analysis State.
      */
-    private transient AnalysisState theState;
+    private AnalysisState theState;
 
     /**
      * The savePoint.
      */
-    private transient AnalysisState theSavePoint;
+    private AnalysisState theSavePoint;
+
+    /**
+     * Panel.
+     */
+    private final JPanel thePanel;
 
     /**
      * Range Button.
@@ -155,17 +163,17 @@ public class AnalysisSelect
     /**
      * Filter Type Button.
      */
-    private final JScrollButton<AnalysisType> theFilterTypeButton;
+    private final TethysSwingScrollButtonManager<AnalysisType> theFilterTypeButton;
 
     /**
      * Bucket Type Button.
      */
-    private final JScrollButton<BucketAttribute> theBucketButton;
+    private final TethysSwingScrollButtonManager<BucketAttribute> theBucketButton;
 
     /**
      * ColumnSet Button.
      */
-    private final JScrollButton<AnalysisColumnSet> theColumnButton;
+    private final TethysSwingScrollButtonManager<AnalysisColumnSet> theColumnButton;
 
     /**
      * The bucket label.
@@ -183,9 +191,9 @@ public class AnalysisSelect
     private final JPanel theFilterDetail;
 
     /**
-     * DateDayRange Select Panel.
+     * DateRange Select Panel.
      */
-    private final TethysSwingDateRangeSelect theRangeSelect;
+    private final TethysSwingDateRangeSelector theRangeSelect;
 
     /**
      * Filter Select Panel.
@@ -245,42 +253,37 @@ public class AnalysisSelect
     /**
      * The card panel.
      */
-    private final TethysSwingEnablePanel theCardPanel;
-
-    /**
-     * The card layout.
-     */
-    private final CardLayout theLayout;
+    private final TethysSwingCardPaneManager<AnalysisFilterSelection<JComponent>> theCardPanel;
 
     /**
      * The analysis view.
      */
-    private final transient AnalysisView theAnalysisView;
+    private final AnalysisView theAnalysisView;
 
     /**
      * Is the control refreshing?
      */
-    private boolean isRefreshing = false;
+    private boolean isRefreshing;
 
     /**
      * Select panel map.
      */
-    private final transient Map<AnalysisType, AnalysisFilterSelection> theMap;
+    private final Map<AnalysisType, AnalysisFilterSelection<JComponent>> theMap;
 
     /**
-     * AnalysisType menu builder.
+     * AnalysisType menu.
      */
-    private final JScrollMenuBuilder<AnalysisType> theTypeMenuBuilder;
+    private final TethysScrollMenu<AnalysisType, ?> theTypeMenu;
 
     /**
-     * Bucket menu builder.
+     * Bucket menu.
      */
-    private final JScrollMenuBuilder<BucketAttribute> theBucketMenuBuilder;
+    private final TethysScrollMenu<BucketAttribute, ?> theBucketMenu;
 
     /**
-     * Column menu builder.
+     * Column menu.
      */
-    private final JScrollMenuBuilder<AnalysisColumnSet> theColumnMenuBuilder;
+    private final TethysScrollMenu<AnalysisColumnSet, ?> theColumnMenu;
 
     /**
      * Constructor.
@@ -290,7 +293,7 @@ public class AnalysisSelect
      */
     public AnalysisSelect(final View pView,
                           final AnalysisView pAnalysisView,
-                          final JButton pNewButton) {
+                          final TethysSwingScrollButtonManager<?> pNewButton) {
         /* Access the analysis manager */
         theView = pView;
         theAnalysisView = pAnalysisView;
@@ -309,18 +312,19 @@ public class AnalysisSelect
         theFilterButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the filter type button */
-        theFilterTypeButton = new JScrollButton<>();
+        theFilterTypeButton = new TethysSwingScrollButtonManager<>();
 
         /* Create the columnSet button */
         theColumnLabel = new JLabel(NLS_COLUMNS);
-        theColumnButton = new JScrollButton<>();
+        theColumnButton = new TethysSwingScrollButtonManager<>();
 
         /* Create the bucket button */
         theBucketLabel = new JLabel(NLS_BUCKET);
-        theBucketButton = new JScrollButton<>();
+        theBucketButton = new TethysSwingScrollButtonManager<>();
 
         /* Create the Range Select panel */
-        theRangeSelect = new TethysSwingDateRangeSelect();
+        theRangeSelect = new TethysSwingDateRangeSelector();
+        theRangeSelect.getNode().setBorder(BorderFactory.createTitledBorder(NLS_RANGETITLE));
 
         /* Create the panel map */
         theMap = new EnumMap<>(AnalysisType.class);
@@ -338,9 +342,7 @@ public class AnalysisSelect
         theAllSelect = new AllSelect();
 
         /* Create the card panel */
-        theCardPanel = new TethysSwingEnablePanel();
-        theLayout = new CardLayout();
-        theCardPanel.setLayout(theLayout);
+        theCardPanel = new TethysSwingCardPaneManager<>();
 
         /* Create the filter detail panel */
         theFilterDetail = buildFilterDetail();
@@ -352,10 +354,11 @@ public class AnalysisSelect
         JPanel myPanel = buildControlPanel(pNewButton);
 
         /* Create the panel */
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(myPanel);
-        add(theRangeSelect);
-        add(theFilterSelect);
+        thePanel = new JPanel();
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(myPanel);
+        thePanel.add(theRangeSelect.getNode());
+        thePanel.add(theFilterSelect);
 
         /* Initially hide the select boxes */
         theRangeSelect.setVisible(false);
@@ -368,24 +371,29 @@ public class AnalysisSelect
         selectStatement(mySelect);
 
         /* set maximum size */
-        setMaximumSize(new Dimension(Integer.MAX_VALUE, MAX_HEIGHT));
+        thePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, MAX_HEIGHT));
+
+        /* Access the menus */
+        theTypeMenu = theFilterTypeButton.getMenu();
+        theBucketMenu = theBucketButton.getMenu();
+        theColumnMenu = theColumnButton.getMenu();
 
         /* Create the listeners */
-        theTypeMenuBuilder = theFilterTypeButton.getMenuBuilder();
-        theTypeMenuBuilder.getEventRegistrar().addEventListener(e -> buildAnalysisTypeMenu());
-        theBucketMenuBuilder = theBucketButton.getMenuBuilder();
-        theBucketMenuBuilder.getEventRegistrar().addEventListener(e -> buildBucketMenu());
-        theColumnMenuBuilder = theColumnButton.getMenuBuilder();
-        theColumnMenuBuilder.getEventRegistrar().addEventListener(e -> buildColumnsMenu());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theFilterTypeButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleFilterType());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildAnalysisTypeMenu());
+        myRegistrar = theBucketButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBucket());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildBucketMenu());
+        myRegistrar = theColumnButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewColumns());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildColumnsMenu());
         theAnalysisView.getEventRegistrar().addEventListener(e -> setAnalysisView());
 
         /* Handle buttons */
         theRangeButton.addActionListener(e -> handleRangeButton());
-        theRangeSelect.addPropertyChangeListener(TethysSwingDateRangeSelect.PROPERTY_RANGE, e -> handleNewRange());
         theFilterButton.addActionListener(e -> handleFilterButton());
-        theFilterTypeButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleFilterType());
-        theBucketButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewBucket());
-        theColumnButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, e -> handleNewColumns());
+        theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
 
         /* handle sub-selections */
         theDepositSelect.getEventRegistrar().addEventListener(e -> buildDepositFilter());
@@ -402,6 +410,11 @@ public class AnalysisSelect
     @Override
     public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    @Override
+    public JComponent getNode() {
+        return thePanel;
     }
 
     /**
@@ -449,7 +462,7 @@ public class AnalysisSelect
      * @param pNewButton the new button
      * @return the panel
      */
-    private JPanel buildControlPanel(final JButton pNewButton) {
+    private JPanel buildControlPanel(final TethysSwingScrollButtonManager<?> pNewButton) {
         /* Create the control panel */
         JPanel myPanel = new TethysSwingEnablePanel();
 
@@ -467,7 +480,7 @@ public class AnalysisSelect
         myPanel.add(Box.createHorizontalGlue());
         myPanel.add(theFilterDetail);
         myPanel.add(Box.createHorizontalGlue());
-        myPanel.add(pNewButton);
+        myPanel.add(pNewButton.getNode());
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
 
         /* Return the panel */
@@ -496,8 +509,8 @@ public class AnalysisSelect
         myPanel.add(theBucketLabel);
         myPanel.add(theColumnLabel);
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
-        myPanel.add(theBucketButton);
-        myPanel.add(theColumnButton);
+        myPanel.add(theBucketButton.getNode());
+        myPanel.add(theColumnButton.getNode());
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
 
         /* Return the panel */
@@ -516,16 +529,16 @@ public class AnalysisSelect
         JLabel myTypeLabel = new JLabel(NLS_FILTERTYPE);
 
         /* Add to the card panels */
-        theCardPanel.add(theDepositSelect, AnalysisType.DEPOSIT.name());
-        theCardPanel.add(theCashSelect, AnalysisType.CASH.name());
-        theCardPanel.add(theLoanSelect, AnalysisType.LOAN.name());
-        theCardPanel.add(theSecuritySelect, AnalysisType.SECURITY.name());
-        theCardPanel.add(thePortfolioSelect, AnalysisType.PORTFOLIO.name());
-        theCardPanel.add(thePayeeSelect, AnalysisType.PAYEE.name());
-        theCardPanel.add(theCategorySelect, AnalysisType.CATEGORY.name());
-        theCardPanel.add(theTaxBasisSelect, AnalysisType.TAXBASIS.name());
-        theCardPanel.add(theTagSelect, AnalysisType.TRANSTAG.name());
-        theCardPanel.add(theAllSelect, AnalysisType.ALL.name());
+        theCardPanel.addCard(AnalysisType.DEPOSIT.name(), theDepositSelect);
+        theCardPanel.addCard(AnalysisType.CASH.name(), theCashSelect);
+        theCardPanel.addCard(AnalysisType.LOAN.name(), theLoanSelect);
+        theCardPanel.addCard(AnalysisType.SECURITY.name(), theSecuritySelect);
+        theCardPanel.addCard(AnalysisType.PORTFOLIO.name(), thePortfolioSelect);
+        theCardPanel.addCard(AnalysisType.PAYEE.name(), thePayeeSelect);
+        theCardPanel.addCard(AnalysisType.CATEGORY.name(), theCategorySelect);
+        theCardPanel.addCard(AnalysisType.TAXBASIS.name(), theTaxBasisSelect);
+        theCardPanel.addCard(AnalysisType.TRANSTAG.name(), theTagSelect);
+        theCardPanel.addCard(AnalysisType.ALL.name(), theAllSelect);
 
         /* Build the map */
         theMap.put(AnalysisType.DEPOSIT, theDepositSelect);
@@ -545,10 +558,10 @@ public class AnalysisSelect
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
         myPanel.add(myTypeLabel);
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
-        myPanel.add(theFilterTypeButton);
+        myPanel.add(theFilterTypeButton.getNode());
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
         myPanel.add(Box.createHorizontalGlue());
-        myPanel.add(theCardPanel);
+        myPanel.add(theCardPanel.getNode());
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
 
         /* Return the panel */
@@ -564,7 +577,7 @@ public class AnalysisSelect
         isRefreshing = true;
 
         /* Update the range */
-        TethysSwingDateRangeSelect mySelect = pSelect.getRangeSelect();
+        TethysSwingDateRangeSelector mySelect = pSelect.getRangeSelect();
         if (mySelect != null) {
             theRangeSelect.setSelection(mySelect);
             theRangeSelect.lockPeriod(false);
@@ -579,10 +592,10 @@ public class AnalysisSelect
         /* Access the filter and the selection panel */
         AnalysisFilter<?, ?> myFilter = pSelect.getFilter();
         AnalysisType myType = myFilter.getAnalysisType();
-        AnalysisFilterSelection myPanel = theMap.get(myType);
+        AnalysisFilterSelection<?> myPanel = theMap.get(myType);
 
         /* Move correct card to front and update it */
-        theLayout.show(theCardPanel, myType.name());
+        theCardPanel.selectCard(myType.name());
         myPanel.setFilter(myFilter);
 
         /* Determine the state */
@@ -635,7 +648,7 @@ public class AnalysisSelect
     private void updateFilter() {
         /* Access the active panel */
         AnalysisType myType = theState.getType();
-        AnalysisFilterSelection myPanel = theMap.get(myType);
+        AnalysisFilterSelection<?> myPanel = theMap.get(myType);
 
         /* Update filters */
         if (myPanel != null) {
@@ -699,18 +712,23 @@ public class AnalysisSelect
         }
     }
 
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
+    }
+
     /**
      * Is there any filter available?
      * @return true/false
      */
     private boolean isAvailable() {
         /* Loop through the panels */
-        Iterator<Map.Entry<AnalysisType, AnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
+        Iterator<AnalysisFilterSelection<JComponent>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
-            Map.Entry<AnalysisType, AnalysisFilterSelection> myEntry = myIterator.next();
+            AnalysisFilterSelection<JComponent> myEntry = myIterator.next();
 
             /* If the filter is possible */
-            if (myEntry.getValue().isAvailable()) {
+            if (myEntry.isAvailable()) {
                 /* Filter available */
                 return true;
             }
@@ -730,7 +748,7 @@ public class AnalysisSelect
         /* If the type is selected */
         if (myType != null) {
             /* Check that the filter is appropriate */
-            AnalysisFilterSelection myPanel = theMap.get(myType);
+            AnalysisFilterSelection<?> myPanel = theMap.get(myType);
             if (myPanel.isAvailable()) {
                 /* We are OK */
                 AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
@@ -740,18 +758,18 @@ public class AnalysisSelect
         }
 
         /* Loop through the panels */
-        Iterator<Map.Entry<AnalysisType, AnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
+        Iterator<Map.Entry<AnalysisType, AnalysisFilterSelection<JComponent>>> myIterator = theMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            Map.Entry<AnalysisType, AnalysisFilterSelection> myEntry = myIterator.next();
+            Map.Entry<AnalysisType, AnalysisFilterSelection<JComponent>> myEntry = myIterator.next();
 
             /* If the filter is possible */
-            AnalysisFilterSelection myPanel = myEntry.getValue();
+            AnalysisFilterSelection<?> myPanel = myEntry.getValue();
             if (myPanel.isAvailable()) {
                 /* Access Analysis type */
                 myType = myEntry.getKey();
 
                 /* Move correct card to front */
-                theLayout.show(theCardPanel, myType.name());
+                theCardPanel.selectCard(myType.name());
 
                 /* Obtain the relevant filter */
                 AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
@@ -782,17 +800,17 @@ public class AnalysisSelect
      */
     private void buildAnalysisTypeMenu() {
         /* Reset the popUp menu */
-        theTypeMenuBuilder.clearMenu();
+        theTypeMenu.removeAllItems();
 
         /* Loop through the panels */
-        Iterator<Map.Entry<AnalysisType, AnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
+        Iterator<Map.Entry<AnalysisType, AnalysisFilterSelection<JComponent>>> myIterator = theMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            Map.Entry<AnalysisType, AnalysisFilterSelection> myEntry = myIterator.next();
+            Map.Entry<AnalysisType, AnalysisFilterSelection<JComponent>> myEntry = myIterator.next();
 
             /* If the filter is possible */
             if (myEntry.getValue().isAvailable()) {
-                /* Create a new JMenuItem and add it to the popUp */
-                theTypeMenuBuilder.addItem(myEntry.getKey());
+                /* Create a new MenuItem and add it to the popUp */
+                theTypeMenu.addItem(myEntry.getKey());
             }
         }
     }
@@ -802,20 +820,20 @@ public class AnalysisSelect
      */
     private void buildBucketMenu() {
         /* Reset the popUp menu */
-        theBucketMenuBuilder.clearMenu();
+        theBucketMenu.removeAllItems();
 
         /* Loop through the buckets */
         AnalysisFilter<?, ?> myFilter = theState.getFilter();
         for (BucketAttribute myAttr : theState.getType().getValues()) {
             /* If the value is a counter */
             if (myAttr.isCounter() && myFilter.isRelevantCounter(myAttr)) {
-                /* Create a new JMenuItem and add it to the popUp */
-                theBucketMenuBuilder.addItem(myAttr);
+                /* Create a new MenuItem and add it to the popUp */
+                theBucketMenu.addItem(myAttr);
             }
         }
 
         /* Add the entry for null bucket */
-        theBucketMenuBuilder.addNullItem(NLS_NONE);
+        theBucketMenu.addNullItem(NLS_NONE);
     }
 
     /**
@@ -823,7 +841,7 @@ public class AnalysisSelect
      */
     private void buildColumnsMenu() {
         /* Reset the popUp menu */
-        theColumnMenuBuilder.clearMenu();
+        theColumnMenu.removeAllItems();
 
         /* Determine whether we have balances */
         boolean hasBalances = theState.getType().hasBalances();
@@ -833,7 +851,7 @@ public class AnalysisSelect
             /* if we have balances or this is not the balance set */
             if (hasBalances || !mySet.isBalance()) {
                 /* Add the item */
-                theColumnMenuBuilder.addItem(mySet);
+                theColumnMenu.addItem(mySet);
             }
         }
     }
@@ -1044,10 +1062,10 @@ public class AnalysisSelect
             }
 
             /* Move correct card to front */
-            theLayout.show(theCardPanel, myType.name());
+            theCardPanel.selectCard(myType.name());
 
             /* Obtain the relevant filter */
-            AnalysisFilterSelection myPanel = theMap.get(myType);
+            AnalysisFilterSelection<?> myPanel = theMap.get(myType);
             AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
             myFilter.setCurrentAttribute(myType.getDefaultValue());
 
@@ -1170,7 +1188,7 @@ public class AnalysisSelect
          * Determine selection from panels.
          * @param pFilter selection panel
          */
-        private void determineState(final AnalysisFilterSelection pFilter) {
+        private void determineState(final AnalysisFilterSelection<?> pFilter) {
             /* Update the selection panels */
             theRange = theRangeSelect.getRange();
             theFilter = pFilter.getFilter();
@@ -1185,7 +1203,7 @@ public class AnalysisSelect
          * @param pSelect the selection panel
          * @return true/false did a change occur
          */
-        private boolean setRange(final TethysSwingDateRangeSelect pSelect) {
+        private boolean setRange(final TethysSwingDateRangeSelector pSelect) {
             /* Adjust the selected account */
             TethysDateRange myRange = pSelect.getRange();
             if (!MetisDifference.isEqual(myRange, theRange)) {
@@ -1293,7 +1311,7 @@ public class AnalysisSelect
         /**
          * The Range Selection.
          */
-        private final TethysSwingDateRangeSelect theRangeSelect;
+        private final TethysSwingDateRangeSelector theRangeSelect;
 
         /**
          * The AnalysisFilter.
@@ -1305,7 +1323,7 @@ public class AnalysisSelect
          * @param pRangeSelect the range selection
          * @param pFilter the analysis filter
          */
-        public StatementSelect(final TethysSwingDateRangeSelect pRangeSelect,
+        public StatementSelect(final TethysSwingDateRangeSelector pRangeSelect,
                                final AnalysisFilter<?, ?> pFilter) {
             /* Store parameters */
             theRangeSelect = pRangeSelect;
@@ -1316,7 +1334,7 @@ public class AnalysisSelect
          * Obtain the RangeSelection.
          * @return the filter
          */
-        public TethysSwingDateRangeSelect getRangeSelect() {
+        public TethysSwingDateRangeSelector getRangeSelect() {
             return theRangeSelect;
         }
 

@@ -58,7 +58,7 @@ public class SecurityPriceCursor {
         theDataMap = pData.getSecurityPriceDataMap();
 
         /* Create the cursor map */
-        theCursorMap = new HashMap<Security, SecurityCursor>();
+        theCursorMap = new HashMap<>();
     }
 
     /**
@@ -68,7 +68,7 @@ public class SecurityPriceCursor {
      * @return the security price
      */
     public TethysPrice getSecurityPrice(final Security pSecurity,
-                                   final TethysDate pDate) {
+                                        final TethysDate pDate) {
         /* Access cursor and return rate */
         SecurityCursor myCursor = getCursor(pSecurity);
         return myCursor.getSecurityPrice(pDate);

@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <N> the node type
  */
 public abstract class TethysDateRangeSelector<N>
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * ToolTip for Next Button.
      */
@@ -138,16 +138,16 @@ public abstract class TethysDateRangeSelector<N>
         theState = new TethysDateRangeState(pBaseIsStart);
     }
 
-    /**
-     * Obtain node.
-     * @return the node
-     */
-    public abstract N getNode();
-
     @Override
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
+
+    /**
+     * Is the panel visible?
+     * @return true/false
+     */
+    public abstract boolean isVisible();
 
     /**
      * Declare startButton.
@@ -268,12 +268,6 @@ public abstract class TethysDateRangeSelector<N>
         /* Build the range */
         applyState();
     }
-
-    /**
-     * Set the enabled state of the item.
-     * @param pEnabled true/false
-     */
-    public abstract void setEnabled(final boolean pEnabled);
 
     /**
      * Create SavePoint.

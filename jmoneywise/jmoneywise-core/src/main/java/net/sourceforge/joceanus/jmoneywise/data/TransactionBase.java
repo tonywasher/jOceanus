@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Currency;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedMoney;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -999,9 +999,11 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             }
 
             /* Check that amount is correct currency */
-            Currency myCurrency = myAccount.getCurrency();
-            if (!myAmount.getCurrency().equals(myCurrency)) {
-                addError(ERROR_CURRENCY, FIELD_AMOUNT);
+            if (myAccount != null) {
+                Currency myCurrency = myAccount.getCurrency();
+                if (!myAmount.getCurrency().equals(myCurrency)) {
+                    addError(ERROR_CURRENCY, FIELD_AMOUNT);
+                }
             }
         }
     }

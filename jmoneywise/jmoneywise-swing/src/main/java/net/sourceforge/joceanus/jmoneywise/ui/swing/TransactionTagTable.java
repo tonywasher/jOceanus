@@ -27,9 +27,8 @@ import java.awt.Dimension;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
@@ -47,30 +46,28 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagLis
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TransactionTagPanel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * TransactionTag Table.
  */
 public class TransactionTagTable
         extends JDataTable<TransactionTag, MoneyWiseDataType> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -3505466850582535851L;
-
     /**
      * Name Column Title.
      */
@@ -89,22 +86,22 @@ public class TransactionTagTable
     /**
      * The data view.
      */
-    private final transient SwingView theView;
+    private final SwingView theView;
 
     /**
      * The field manager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
      */
-    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The data entry.
      */
-    private final transient UpdateEntry<TransactionTag, MoneyWiseDataType> theTransactionTagEntry;
+    private final UpdateEntry<TransactionTag, MoneyWiseDataType> theTransactionTagEntry;
 
     /**
      * The error panel.
@@ -129,12 +126,12 @@ public class TransactionTagTable
     /**
      * The filter panel.
      */
-    private final JPanel theFilterPanel;
+    private final TethysSwingEnablePanel theFilterPanel;
 
     /**
      * The new button.
      */
-    private final JButton theNewButton;
+    private final TethysSwingScrollButtonManager<String> theNewButton;
 
     /**
      * The TransactionTag dialog.
@@ -144,12 +141,12 @@ public class TransactionTagTable
     /**
      * The List Selection Model.
      */
-    private final transient JDataTableSelection<TransactionTag, MoneyWiseDataType> theSelectionModel;
+    private final JDataTableSelection<TransactionTag, MoneyWiseDataType> theSelectionModel;
 
     /**
      * TransactionTags.
      */
-    private transient TransactionTagList theTransactionTags = null;
+    private TransactionTagList theTransactionTags;
 
     /**
      * Constructor.
@@ -176,33 +173,35 @@ public class TransactionTagTable
         setModel(theModel);
 
         /* Create the data column model and declare it */
+        JTable myTable = getTable();
         theColumns = new TransactionTagColumnModel(this);
-        setColumnModel(theColumns);
+        myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
-        getTableHeader().setReorderingAllowed(false);
-        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+        myTable.getTableHeader().setReorderingAllowed(false);
+        myTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
+        myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(getScrollPane(), BorderLayout.CENTER);
+        thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Create a Tag panel */
         theActiveTag = new TransactionTagPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveTag.getNode(), BorderLayout.PAGE_END);
 
         /* Create new button */
-        theNewButton = MoneyWiseIcons.getNewButton();
+        theNewButton = new TethysSwingScrollButtonManager<>();
+        PrometheusIcon.configureNewScrollButton(theNewButton);
 
         /* Create a dummy filter panel */
-        theFilterPanel = new JPanel();
+        theFilterPanel = new TethysSwingEnablePanel();
         theFilterPanel.setLayout(new BoxLayout(theFilterPanel, BoxLayout.X_AXIS));
         theFilterPanel.add(Box.createHorizontalGlue());
-        theFilterPanel.add(theNewButton);
+        theFilterPanel.add(theNewButton.getNode());
         theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
 
         /* Create the selection model */
@@ -214,13 +213,10 @@ public class TransactionTagTable
         theActiveTag.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
 
         /* Listen to swing events */
-        theNewButton.addActionListener(e -> theModel.addNewItem());
+        theNewButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.addNewItem());
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
+    @Override
     public JComponent getNode() {
         return thePanel;
     }
@@ -229,7 +225,7 @@ public class TransactionTagTable
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected JPanel getFilterPanel() {
+    protected TethysSwingEnablePanel getFilterPanel() {
         return theFilterPanel;
     }
 
@@ -247,7 +243,7 @@ public class TransactionTagTable
      */
     protected void determineFocus(final MetisViewerEntry pEntry) {
         /* Request the focus */
-        requestFocusInWindow();
+        getTable().requestFocusInWindow();
 
         /* Set the required focus */
         pEntry.setFocus(theTransactionTagEntry.getName());

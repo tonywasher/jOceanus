@@ -155,7 +155,7 @@ public class SheetTransTag
                 String myName = myCell.getStringValue();
 
                 /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(TransactionTag.OBJECT_NAME);
+                DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionTag.OBJECT_NAME);
                 myValues.addValue(TransactionTag.FIELD_NAME, myName);
 
                 /* Add the value into the list */

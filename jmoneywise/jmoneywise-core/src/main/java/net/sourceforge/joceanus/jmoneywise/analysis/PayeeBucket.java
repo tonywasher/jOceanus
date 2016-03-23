@@ -26,10 +26,10 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -131,10 +131,10 @@ public final class PayeeBucket
         /* Create the history map */
         AssetCurrency myDefault = theAnalysis.getCurrency();
         Currency myCurrency = myDefault == null
-                                               ? AccountBucket.DEFAULT_CURRENCY
-                                               : myDefault.getCurrency();
+                                                ? AccountBucket.DEFAULT_CURRENCY
+                                                : myDefault.getCurrency();
         PayeeValues myValues = new PayeeValues(myCurrency);
-        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(myValues);
+        theHistory = new BucketHistory<>(myValues);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -156,7 +156,7 @@ public final class PayeeBucket
         theData = theAnalysis.getData();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(pBase.getHistoryMap(), pDate);
+        theHistory = new BucketHistory<>(pBase.getHistoryMap(), pDate);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -178,7 +178,7 @@ public final class PayeeBucket
         theData = theAnalysis.getData();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(pBase.getHistoryMap(), pRange);
+        theHistory = new BucketHistory<>(pBase.getHistoryMap(), pRange);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -211,8 +211,8 @@ public final class PayeeBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
-                                                       ? myValue
-                                                       : MetisFieldValue.SKIP;
+                                                             ? myValue
+                                                             : MetisFieldValue.SKIP;
             }
             return myValue;
         }
@@ -236,8 +236,8 @@ public final class PayeeBucket
      */
     public String getName() {
         return (thePayee == null)
-                                 ? NAME_TOTALS
-                                 : thePayee.getName();
+                                  ? NAME_TOTALS
+                                  : thePayee.getName();
     }
 
     /**
@@ -318,7 +318,7 @@ public final class PayeeBucket
      * @return the delta (or null)
      */
     public TethysDecimal getDeltaForTransaction(final Transaction pTrans,
-                                           final PayeeAttribute pAttr) {
+                                                final PayeeAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaValue(pTrans, pAttr);
     }
@@ -353,8 +353,8 @@ public final class PayeeBucket
 
         /* Return the value */
         return (myValue != null)
-                                ? myValue
-                                : MetisFieldValue.SKIP;
+                                 ? myValue
+                                 : MetisFieldValue.SKIP;
     }
 
     /**
@@ -509,18 +509,10 @@ public final class PayeeBucket
                 } else {
                     myIncome.addAmount(myDonation);
                 }
-                if (myExpense == null) {
-                    myExpense = new TethysMoney(myDonation);
-                } else {
-                    myExpense.addAmount(myDonation);
-                }
+                myExpense = new TethysMoney(myDonation);
             } else {
-                if (myIncome == null) {
-                    myIncome = new TethysMoney(myDonation);
-                    myIncome.negate();
-                } else {
-                    myIncome.subtractAmount(myDonation);
-                }
+                myIncome = new TethysMoney(myDonation);
+                myIncome.negate();
                 if (myExpense == null) {
                     myExpense = new TethysMoney(myAmount);
                     myExpense.negate();

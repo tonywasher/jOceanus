@@ -26,10 +26,10 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -118,7 +118,7 @@ public final class TaxCalcBucket
         theTaxSection = theTaxCategory.getTaxClass().getClassSection();
 
         /* Create the attribute map */
-        theAttributes = new EnumMap<TaxAttribute, TethysDecimal>(TaxAttribute.class);
+        theAttributes = new EnumMap<>(TaxAttribute.class);
 
         /* Create all possible values */
         setAttribute(TaxAttribute.AMOUNT, new TethysMoney());
@@ -152,8 +152,8 @@ public final class TaxCalcBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
-                                                        ? myValue
-                                                        : MetisFieldValue.SKIP;
+                                                             ? myValue
+                                                             : MetisFieldValue.SKIP;
             }
             return myValue;
         }
@@ -255,7 +255,7 @@ public final class TaxCalcBucket
      * @return the value of the attribute or null
      */
     private <X extends TethysDecimal> X getValue(final TaxAttribute pAttr,
-                                            final Class<X> pClass) {
+                                                 final Class<X> pClass) {
         /* Obtain the attribute */
         return pClass.cast(getValue(pAttr));
     }
@@ -361,8 +361,8 @@ public final class TaxCalcBucket
 
         /* Calculate the tax if we have a rate */
         TethysMoney myTaxation = (myRate != null)
-                                             ? myAmount.valueAtRate(myRate)
-                                             : new TethysMoney();
+                                                  ? myAmount.valueAtRate(myRate)
+                                                  : new TethysMoney();
 
         /* Return the taxation amount */
         setAttribute(TaxAttribute.TAXATION, myTaxation);

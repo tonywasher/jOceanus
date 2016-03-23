@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
@@ -37,7 +38,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldRequired;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
@@ -110,7 +110,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
         theClass = theInfoList.getBaseClass();
 
         /* Create the Map */
-        theMap = new EnumMap<S, DataInfo<T, O, I, S, E>>(theTypeList.getEnumClass());
+        theMap = new EnumMap<>(theTypeList.getEnumClass());
     }
 
     @Override
@@ -151,7 +151,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
             if (myValue instanceof DataInfoLinkSet) {
                 /* Clone the infoLinkSet */
                 DataInfoLinkSet<T, O, I, S, E> mySet = (DataInfoLinkSet<T, O, I, S, E>) myValue;
-                DataInfo<T, O, I, S, E> myNew = new DataInfoLinkSet<T, O, I, S, E>(theInfoList, mySet);
+                DataInfo<T, O, I, S, E> myNew = new DataInfoLinkSet<>(theInfoList, mySet);
                 theMap.put(myEntry.getKey(), myNew);
 
                 /* else its a standard entry */
@@ -308,7 +308,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
             I myInfoType = theTypeList.findItemByClass(pInfoClass);
 
             /* Allocate the new set */
-            mySet = new DataInfoLinkSet<T, O, I, S, E>(theInfoList, theOwner, myInfoType);
+            mySet = new DataInfoLinkSet<>(theInfoList, theOwner, myInfoType);
 
             /* Add to the map */
             theMap.put(pInfoClass, mySet);
@@ -485,7 +485,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
             DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(myClass);
             if (mySet == null) {
                 /* Allocate the new set */
-                mySet = new DataInfoLinkSet<T, O, I, S, E>(theInfoList, theOwner, pInfo.getInfoType());
+                mySet = new DataInfoLinkSet<>(theInfoList, theOwner, pInfo.getInfoType());
 
                 /* Add to the map */
                 theMap.put(myClass, mySet);

@@ -328,7 +328,7 @@ public class TethysSwingScrollUIExample
                 e -> setListValue(e.getDetails(TethysScrollMenuToggleItem.class)));
 
         /* Create date button line */
-        JDateButton myDateButton = theDateButtonMgr.getButton();
+        JDateButton myDateButton = theDateButtonMgr.getNode();
         JPanel myDateArea = new JPanel();
         myDateArea.setLayout(new BorderLayout());
         myDateArea.setBorder(BorderFactory.createTitledBorder("DateButton"));

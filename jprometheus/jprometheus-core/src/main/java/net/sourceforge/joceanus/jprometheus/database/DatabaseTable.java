@@ -739,7 +739,7 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
      */
     protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
-        DataValues<E> myValues = new DataValues<E>(pName);
+        DataValues<E> myValues = new DataValues<>(pName);
 
         /* Add the id and return the new values */
         myValues.addValue(DataItem.FIELD_ID, theTable.getIntegerValue(DataItem.FIELD_ID));

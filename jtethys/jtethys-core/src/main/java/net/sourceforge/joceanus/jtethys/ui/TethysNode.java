@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPrometheus: Application Framework
+ * jTethys: Java Utilities
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,19 +20,28 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.views;
-
-import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
+package net.sourceforge.joceanus.jtethys.ui;
 
 /**
- * Interface to Error Panel.
+ * Node definition.
+ * @param <N> Node type
  */
-@FunctionalInterface
-public interface ErrorDisplay {
+public interface TethysNode<N> {
     /**
-     * Set error list for window.
-     * @param pExceptions the exceptions
+     * Obtain the Node.
+     * @return the node
      */
-    void setErrors(final DataErrorList<MetisExceptionWrapper> pExceptions);
+    N getNode();
+
+    /**
+     * Set Enabled status.
+     * @param pEnabled true/false
+     */
+    void setEnabled(final boolean pEnabled);
+
+    /**
+     * Set Visible.
+     * @param pVisible true/false
+     */
+    void setVisible(final boolean pVisible);
 }

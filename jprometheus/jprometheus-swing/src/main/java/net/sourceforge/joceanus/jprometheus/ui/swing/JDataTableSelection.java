@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui.swing;
 
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -36,9 +37,14 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
  */
 public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
     /**
+     * The data table.
+     */
+    private final JDataTable<T, E> theDataTable;
+
+    /**
      * The table.
      */
-    private final JDataTable<T, E> theTable;
+    private final JTable theTable;
 
     /**
      * The table model.
@@ -63,7 +69,8 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
     public JDataTableSelection(final JDataTable<T, E> pTable,
                                final DataItemPanel<T, E> pPanel) {
         /* Store parameters */
-        theTable = pTable;
+        theDataTable = pTable;
+        theTable = pTable.getTable();
         theItemPanel = pPanel;
 
         /* Derive further parameters */
@@ -85,7 +92,7 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
         recoverSelectedItem();
 
         /* Set default selection */
-        theTable.selectRowWithScroll(defaultSelectIndex());
+        theDataTable.selectRowWithScroll(defaultSelectIndex());
     }
 
     /**
@@ -123,11 +130,11 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
      */
     private void recoverSelectedItem() {
         /* Obtain the model index of the selected item */
-        DataList<T, E> myList = theTable.getList();
+        DataList<T, E> myList = theDataTable.getList();
         T myCurr = theItemPanel.getSelectedItem();
         int iIndex = myCurr == null
-                                   ? -1
-                                   : myList.indexOf(myCurr);
+                                    ? -1
+                                    : myList.indexOf(myCurr);
 
         /* If we have an active item */
         if (iIndex != -1) {
@@ -147,7 +154,7 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
         }
 
         /* Set selection */
-        theTable.selectRowWithScroll(iIndex);
+        theDataTable.selectRowWithScroll(iIndex);
     }
 
     /**
@@ -167,10 +174,10 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
         int iIndex = theTable.convertRowIndexToModel(0);
         T myFirst = theTableModel.getItemAtIndex(iIndex);
         return myFirst.isHeader()
-                                 ? iNumRows > 1
-                                               ? 1
-                                               : -1
-                                 : 0;
+                                  ? iNumRows > 1
+                                                 ? 1
+                                                 : -1
+                                  : 0;
     }
 
     /**
@@ -218,7 +225,7 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
         } else {
             theItemPanel.setEditable(false);
             theItemPanel.setItem(null);
-            theTable.notifyChanges();
+            theDataTable.notifyChanges();
         }
     }
 

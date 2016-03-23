@@ -28,6 +28,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import net.sourceforge.joceanus.jmetis.http.MetisHTTPJiraClient;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
@@ -39,10 +43,6 @@ import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedDescIdObje
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedDescObject;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedKeyedIdObject;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraNamedObject;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Represents a Jira project.
@@ -128,11 +128,11 @@ public class JiraProject
             theLead = theServer.getUser(myLeadDtl.getString(JiraUser.FIELD_NAME));
 
             /* Allocate the maps */
-            theIssues = new HashMap<String, JiraIssue>();
-            theIssueTypes = new ArrayList<JiraIssueType>();
-            theComponents = new HashMap<String, JiraComponent>();
-            theVersions = new HashMap<String, JiraVersion>();
-            theRoles = new HashMap<String, JiraProjectRole>();
+            theIssues = new HashMap<>();
+            theIssueTypes = new ArrayList<>();
+            theComponents = new HashMap<>();
+            theVersions = new HashMap<>();
+            theRoles = new HashMap<>();
 
             /* Load project details */
             loadIssueTypes(pProject);
@@ -493,7 +493,7 @@ public class JiraProject
             /* Protect against exceptions */
             try {
                 /* Access the details */
-                theActors = new ArrayList<JiraRoleActor>();
+                theActors = new ArrayList<>();
                 JSONArray myActors = pRole.getJSONArray("actors");
                 int myNumActors = myActors.length();
                 for (int i = 0; i < myNumActors; i++) {
@@ -552,8 +552,8 @@ public class JiraProject
                 /* Resolve the actor */
                 String myType = pActor.getString("type");
                 theActor = myType.equals(TYPE_ATLASSIAN_GROUP_ROLE)
-                                                                   ? theServer.getGroup(theName)
-                                                                   : theServer.getUser(theName);
+                                                                    ? theServer.getGroup(theName)
+                                                                    : theServer.getUser(theName);
             } catch (JSONException e) {
                 /* Pass the exception on */
                 throw new JThemisIOException("Failed to parse roleActor", e);
@@ -590,8 +590,8 @@ public class JiraProject
          */
         public Object getActorUser() {
             return (theActor instanceof JiraUser)
-                                                 ? (JiraUser) theActor
-                                                 : null;
+                                                  ? (JiraUser) theActor
+                                                  : null;
         }
 
         /**
@@ -600,8 +600,8 @@ public class JiraProject
          */
         public Object getActorGroup() {
             return (theActor instanceof JiraGroup)
-                                                  ? (JiraGroup) theActor
-                                                  : null;
+                                                   ? (JiraGroup) theActor
+                                                   : null;
         }
     }
 }

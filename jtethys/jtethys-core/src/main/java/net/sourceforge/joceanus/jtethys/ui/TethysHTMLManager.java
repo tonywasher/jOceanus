@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <N> the Node type
  */
 public abstract class TethysHTMLManager<N>
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The logger.
      */
@@ -72,12 +72,6 @@ public abstract class TethysHTMLManager<N>
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
-
-    /**
-     * Obtain the node.
-     * @return the node.
-     */
-    public abstract N getNode();
 
     /**
      * Process selected reference.

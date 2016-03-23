@@ -26,11 +26,11 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
@@ -175,8 +175,8 @@ public final class SecurityBucket
         /* Determine currency */
         AssetCurrency myReportingCurrency = pAnalysis.getCurrency();
         AssetCurrency myHoldingCurrency = (pHolding == null)
-                                                            ? myReportingCurrency
-                                                            : pHolding.getAssetCurrency();
+                                                             ? myReportingCurrency
+                                                             : pHolding.getAssetCurrency();
 
         /* Determine whether we are a foreign currency */
         isForeignCurrency = !MetisDifference.isEqual(myReportingCurrency, myHoldingCurrency);
@@ -185,9 +185,9 @@ public final class SecurityBucket
 
         /* Create the history map */
         SecurityValues myValues = isForeignCurrency
-                                                   ? new SecurityValues(myCurrency, myRepCurrency)
-                                                   : new SecurityValues(myCurrency);
-        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(myValues);
+                                                    ? new SecurityValues(myCurrency, myRepCurrency)
+                                                    : new SecurityValues(myCurrency);
+        theHistory = new BucketHistory<>(myValues);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -212,7 +212,7 @@ public final class SecurityBucket
         isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap());
+        theHistory = new BucketHistory<>(pBase.getHistoryMap());
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -239,7 +239,7 @@ public final class SecurityBucket
         isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap(), pDate);
+        theHistory = new BucketHistory<>(pBase.getHistoryMap(), pDate);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -266,7 +266,7 @@ public final class SecurityBucket
         isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap(), pRange);
+        theHistory = new BucketHistory<>(pBase.getHistoryMap(), pRange);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -305,8 +305,8 @@ public final class SecurityBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
-                                                       ? myValue
-                                                       : MetisFieldValue.SKIP;
+                                                             ? myValue
+                                                             : MetisFieldValue.SKIP;
             }
             return myValue;
         }
@@ -458,7 +458,7 @@ public final class SecurityBucket
      * @return the delta (or null)
      */
     public TethysDecimal getDeltaForTransaction(final Transaction pTrans,
-                                           final SecurityAttribute pAttr) {
+                                                final SecurityAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaValue(pTrans, pAttr);
     }
@@ -470,7 +470,7 @@ public final class SecurityBucket
      * @return the delta (or null)
      */
     public TethysMoney getMoneyDeltaForTransaction(final Transaction pTrans,
-                                              final SecurityAttribute pAttr) {
+                                                   final SecurityAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaMoneyValue(pTrans, pAttr);
     }
@@ -482,7 +482,7 @@ public final class SecurityBucket
      * @return the delta (or null)
      */
     public TethysUnits getUnitsDeltaForTransaction(final Transaction pTrans,
-                                              final SecurityAttribute pAttr) {
+                                                   final SecurityAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaUnitsValue(pTrans, pAttr);
     }
@@ -517,8 +517,8 @@ public final class SecurityBucket
 
         /* Return the value */
         return (myValue != null)
-                                ? myValue
-                                : MetisFieldValue.SKIP;
+                                 ? myValue
+                                 : MetisFieldValue.SKIP;
     }
 
     /**

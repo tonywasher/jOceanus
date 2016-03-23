@@ -151,12 +151,12 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
             T myOldData = theControl.getData();
 
             /* Create a new formatter */
-            DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<T, E>(theStatus);
+            DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(theStatus);
 
             /* Create backup */
             boolean bContinue = isSecure
-                                        ? myFormatter.createBackup(myOldData, myFile)
-                                        : myFormatter.createExtract(myOldData, myFile);
+                                         ? myFormatter.createBackup(myOldData, myFile)
+                                         : myFormatter.createExtract(myOldData, myFile);
 
             /* If this is a secure backup */
             if (isSecure) {

@@ -115,6 +115,11 @@ public class TethysFXIconButton
         }
 
         @Override
+        public void setVisible(final boolean pVisible) {
+            getNode().setVisible(pVisible);
+        }
+
+        @Override
         public <K extends Enum<K> & TethysIconId> void setDetailsForValue(final T pValue,
                                                                           final T pNext,
                                                                           final K pId,
@@ -143,6 +148,11 @@ public class TethysFXIconButton
         @Override
         public TethysFXIconButton getButton() {
             return (TethysFXIconButton) super.getButton();
+        }
+
+        @Override
+        public void setVisible(final boolean pVisible) {
+            getNode().setVisible(pVisible);
         }
 
         @Override

@@ -27,13 +27,14 @@ import javafx.scene.Node;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 
 /**
  * FX Tab Manager.
  */
-public class TethysFXTabManager
-        extends TethysTabManager<Node> {
+public class TethysFXTabPaneManager
+        extends TethysTabPaneManager<Node> {
     /**
      * The TabPane.
      */
@@ -47,7 +48,7 @@ public class TethysFXTabManager
     /**
      * Constructor.
      */
-    public TethysFXTabManager() {
+    public TethysFXTabPaneManager() {
         /* Create the pane */
         theTabPane = new TabPane();
         theModel = theTabPane.getSelectionModel();
@@ -62,8 +63,13 @@ public class TethysFXTabManager
     }
 
     @Override
+    public void setVisible(final boolean pVisible) {
+        theTabPane.setVisible(pVisible);
+    }
+
+    @Override
     public TethysFXTabItem addTabItem(final String pName,
-                                      final Node pItem) {
+                                      final TethysNode<Node> pItem) {
         return new TethysFXTabItem(this, pName, pItem);
     }
 
@@ -83,6 +89,11 @@ public class TethysFXTabManager
     public static class TethysFXTabItem
             extends TethysTabItem<Node> {
         /**
+         * The Node.
+         */
+        private final TethysNode<Node> theNode;
+
+        /**
          * The Tab.
          */
         private final Tab theTab;
@@ -98,17 +109,18 @@ public class TethysFXTabManager
          * @param pName the name of the tab
          * @param pItem the item
          */
-        protected TethysFXTabItem(final TethysFXTabManager pPane,
+        protected TethysFXTabItem(final TethysFXTabPaneManager pPane,
                                   final String pName,
-                                  final Node pItem) {
+                                  final TethysNode<Node> pItem) {
             /* Initialise the underlying class */
             super(pPane, pName);
 
             /* Create the pane */
             theTab = new Tab();
-            theTab.setContent(pItem);
+            theTab.setContent(pItem.getNode());
             theTab.setText(pName);
             theTab.setUserData(this);
+            theNode = pItem;
 
             /* Add to the TabPane */
             theTabList = getPane().theTabPane.getTabs();
@@ -116,8 +128,8 @@ public class TethysFXTabManager
         }
 
         @Override
-        public TethysFXTabManager getPane() {
-            return (TethysFXTabManager) super.getPane();
+        public TethysFXTabPaneManager getPane() {
+            return (TethysFXTabPaneManager) super.getPane();
         }
 
         @Override
@@ -148,6 +160,7 @@ public class TethysFXTabManager
         @Override
         protected void enableTab(final boolean pEnable) {
             theTab.setDisable(!pEnable);
+            theNode.setEnabled(pEnable);
         }
     }
 }

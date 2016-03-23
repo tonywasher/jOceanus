@@ -33,19 +33,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId.ProjectList;
-
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId.ProjectList;
 
 /**
  * Represents the definition of a project.
@@ -113,11 +113,12 @@ public class MvnProjectDefinition
             parseDependencies();
 
             /* Create the submodule list */
-            theSubModules = new ArrayList<MvnSubModule>();
+            theSubModules = new ArrayList<>();
             parseSubModules();
 
             /* Catch exceptions */
-        } catch (IOException | XmlPullParserException e) {
+        } catch (IOException
+                | XmlPullParserException e) {
             /* Throw Exception */
             throw new JThemisIOException("Failed to parse Project file", e);
         }
@@ -241,8 +242,8 @@ public class MvnProjectDefinition
 
         /* Return the file */
         return (myFile.exists())
-                                ? myFile
-                                : null;
+                                 ? myFile
+                                 : null;
     }
 
     /**

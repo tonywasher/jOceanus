@@ -26,14 +26,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedUnits;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -223,8 +223,8 @@ public class StockOptionVest
     public Integer getStockOptionId() {
         StockOption myOption = getStockOption();
         return (myOption == null)
-                                 ? null
-                                 : myOption.getId();
+                                  ? null
+                                  : myOption.getId();
     }
 
     /**
@@ -234,8 +234,8 @@ public class StockOptionVest
     public String getStockOptionName() {
         StockOption myOption = getStockOption();
         return (myOption == null)
-                                 ? null
-                                 : myOption.getName();
+                                  ? null
+                                  : myOption.getName();
     }
 
     /**
@@ -410,8 +410,8 @@ public class StockOptionVest
         /* If header settings differ */
         if (isHeader() != pThat.isHeader()) {
             return isHeader()
-                             ? -1
-                             : 1;
+                              ? -1
+                              : 1;
         }
 
         /* Compare the dates */
@@ -757,7 +757,7 @@ public class StockOptionVest
          */
         public StockOptionVestDataMap() {
             /* Create the maps */
-            theMapOfMaps = new HashMap<StockOption, Map<TethysDate, Integer>>();
+            theMapOfMaps = new HashMap<>();
         }
 
         @Override
@@ -797,7 +797,7 @@ public class StockOptionVest
             /* Access the map */
             Map<TethysDate, Integer> myMap = theMapOfMaps.get(myOption);
             if (myMap == null) {
-                myMap = new HashMap<TethysDate, Integer>();
+                myMap = new HashMap<>();
                 theMapOfMaps.put(myOption, myMap);
             }
 
@@ -841,8 +841,8 @@ public class StockOptionVest
             /* Access the map */
             Map<TethysDate, Integer> myMap = theMapOfMaps.get(pOption);
             return myMap != null
-                                ? myMap.get(pDate) == null
-                                : true;
+                                 ? myMap.get(pDate) == null
+                                 : true;
         }
     }
 }

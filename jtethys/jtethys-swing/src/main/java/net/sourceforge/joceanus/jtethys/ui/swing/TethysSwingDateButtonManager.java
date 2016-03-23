@@ -94,13 +94,19 @@ public class TethysSwingDateButtonManager
         });
     }
 
-    /**
-     * Obtain button.
-     * @return the button
-     */
     @Override
-    public JDateButton getButton() {
+    public JDateButton getNode() {
         return theButton;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnable) {
+        theButton.setEnabled(pEnable);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theButton.setVisible(pVisible);
     }
 
     /**

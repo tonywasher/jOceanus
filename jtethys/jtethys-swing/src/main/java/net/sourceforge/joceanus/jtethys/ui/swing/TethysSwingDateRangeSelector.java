@@ -153,11 +153,11 @@ public class TethysSwingDateRangeSelector
         theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         theCustomPane.add(myStartLabel);
         theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        theCustomPane.add(myStartButton.getButton());
+        theCustomPane.add(myStartButton.getNode());
         theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         theCustomPane.add(myEndLabel);
         theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        theCustomPane.add(myEndButton.getButton());
+        theCustomPane.add(myEndButton.getNode());
         theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Create the Standard Pane */
@@ -169,7 +169,7 @@ public class TethysSwingDateRangeSelector
         theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         theStandardPane.add(thePrevButton);
         theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        theStandardPane.add(myBaseButton.getButton());
+        theStandardPane.add(myBaseButton.getNode());
         theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         theStandardPane.add(theNextButton);
         theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
@@ -209,6 +209,16 @@ public class TethysSwingDateRangeSelector
             /* Ensure correct values */
             applyState();
         }
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
+    }
+
+    @Override
+    public boolean isVisible() {
+        return theNode.isVisible();
     }
 
     @Override

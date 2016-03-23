@@ -28,6 +28,7 @@ import java.util.Iterator;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
+import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -45,12 +46,12 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -64,11 +65,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  */
 public class DepositRateTable
         extends JDataTable<DepositRate, MoneyWiseDataType> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -8477792618183018247L;
-
     /**
      * Rate Column Title.
      */
@@ -92,12 +88,12 @@ public class DepositRateTable
     /**
      * The field manager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
      */
-    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The error panel.
@@ -122,22 +118,22 @@ public class DepositRateTable
     /**
      * Rate Header.
      */
-    private transient DepositRate theHeader;
+    private DepositRate theHeader;
 
     /**
      * Deposit.
      */
-    private transient Deposit theDeposit = null;
+    private Deposit theDeposit;
 
     /**
      * DepositRates.
      */
-    private transient DepositRateList theRates = null;
+    private DepositRateList theRates;
 
     /**
      * Editable flag.
      */
-    private transient boolean isEditable = false;
+    private boolean isEditable;
 
     /**
      * Constructor.
@@ -163,19 +159,20 @@ public class DepositRateTable
 
         /* Create the data column model and declare it */
         theColumns = new DepositRateColumnModel(this);
-        setColumnModel(theColumns);
+        JTable myTable = getTable();
+        myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
-        getTableHeader().setReorderingAllowed(false);
-        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+        myTable.getTableHeader().setReorderingAllowed(false);
+        myTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL >> 1, HEIGHT_PANEL >> 2));
+        myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL >> 1, HEIGHT_PANEL >> 2));
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(getScrollPane());
+        thePanel.add(super.getNode());
     }
 
     @Override
@@ -183,11 +180,8 @@ public class DepositRateTable
         theError.addError(pError);
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
-    protected JComponent getNode() {
+    @Override
+    public JComponent getNode() {
         return thePanel;
     }
 
@@ -496,7 +490,7 @@ public class DepositRateTable
             Point myCell = theDateEditor.getPoint();
 
             /* Determine whether this is the latest entry */
-            int i = convertRowIndexToView(myCell.y);
+            int i = getTable().convertRowIndexToView(myCell.y);
             boolean bAllowNull = i == 1;
             theDateConfig.setAllowNullDateSelection(bAllowNull);
         }

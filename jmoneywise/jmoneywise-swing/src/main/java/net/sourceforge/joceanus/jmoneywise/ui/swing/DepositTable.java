@@ -28,10 +28,9 @@ import java.awt.Point;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
@@ -60,31 +59,29 @@ import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.DepositPanel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Deposit Table.
  */
 public class DepositTable
         extends JDataTable<Deposit, MoneyWiseDataType> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -3345823820472643546L;
-
     /**
      * Name Column Title.
      */
@@ -133,32 +130,32 @@ public class DepositTable
     /**
      * The data view.
      */
-    private final transient SwingView theView;
+    private final SwingView theView;
 
     /**
      * The field manager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
      */
-    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The data entry.
      */
-    private final transient UpdateEntry<Deposit, MoneyWiseDataType> theDepositEntry;
+    private final UpdateEntry<Deposit, MoneyWiseDataType> theDepositEntry;
 
     /**
      * DepositInfo Update Entry.
      */
-    private final transient UpdateEntry<DepositInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<DepositInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
      * DepositRate Update Entry.
      */
-    private final transient UpdateEntry<DepositRate, MoneyWiseDataType> theRateEntry;
+    private final UpdateEntry<DepositRate, MoneyWiseDataType> theRateEntry;
 
     /**
      * The error panel.
@@ -193,7 +190,7 @@ public class DepositTable
     /**
      * The new button.
      */
-    private final JButton theNewButton;
+    private final TethysSwingScrollButtonManager<String> theNewButton;
 
     /**
      * The Deposit dialog.
@@ -203,12 +200,12 @@ public class DepositTable
     /**
      * The List Selection Model.
      */
-    private final transient JDataTableSelection<Deposit, MoneyWiseDataType> theSelectionModel;
+    private final JDataTableSelection<Deposit, MoneyWiseDataType> theSelectionModel;
 
     /**
      * Deposits.
      */
-    private transient DepositList theDeposits = null;
+    private DepositList theDeposits;
 
     /**
      * Constructor.
@@ -238,20 +235,22 @@ public class DepositTable
 
         /* Create the data column model and declare it */
         theColumns = new DepositColumnModel(this);
-        setColumnModel(theColumns);
+        JTable myTable = getTable();
+        myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
-        getTableHeader().setReorderingAllowed(false);
-        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+        myTable.getTableHeader().setReorderingAllowed(false);
+        myTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
+        myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the CheckBox */
         theLockedCheckBox = new JCheckBox(PROMPT_CLOSED);
 
         /* Create new button */
-        theNewButton = MoneyWiseIcons.getNewButton();
+        theNewButton = new TethysSwingScrollButtonManager<>();
+        PrometheusIcon.configureNewScrollButton(theNewButton);
 
         /* Create the filter panel */
         theFilterPanel = new TethysSwingEnablePanel();
@@ -259,13 +258,13 @@ public class DepositTable
         theFilterPanel.add(Box.createHorizontalGlue());
         theFilterPanel.add(theLockedCheckBox);
         theFilterPanel.add(Box.createHorizontalGlue());
-        theFilterPanel.add(theNewButton);
+        theFilterPanel.add(theNewButton.getNode());
         theFilterPanel.add(Box.createRigidArea(new Dimension(AccountPanel.STRUT_WIDTH, 0)));
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(getScrollPane(), BorderLayout.CENTER);
+        thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Create an account panel */
         theActiveAccount = new DepositPanel(theFieldMgr, theUpdateSet, theError);
@@ -280,14 +279,11 @@ public class DepositTable
         theActiveAccount.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
 
         /* Listen to swing events */
-        theNewButton.addActionListener(e -> theModel.addNewItem());
+        theNewButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.addNewItem());
         theLockedCheckBox.addItemListener(e -> setShowAll(theLockedCheckBox.isSelected()));
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
+    @Override
     public JComponent getNode() {
         return thePanel;
     }
@@ -296,7 +292,7 @@ public class DepositTable
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected JPanel getFilterPanel() {
+    protected TethysSwingEnablePanel getFilterPanel() {
         return theFilterPanel;
     }
 
@@ -314,7 +310,7 @@ public class DepositTable
      */
     protected void determineFocus(final MetisViewerEntry pEntry) {
         /* Request the focus */
-        requestFocusInWindow();
+        getTable().requestFocusInWindow();
 
         /* Set the required focus */
         pEntry.setFocus(theDepositEntry.getName());
@@ -396,7 +392,7 @@ public class DepositTable
     protected void selectDeposit(final Deposit pDeposit) {
         /* Find the item in the list */
         int myIndex = theDeposits.indexOf(pDeposit);
-        myIndex = convertRowIndexToView(myIndex);
+        myIndex = getTable().convertRowIndexToView(myIndex);
         if (myIndex != -1) {
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);

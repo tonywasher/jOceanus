@@ -179,7 +179,8 @@ public class TaxYearInfo
     /**
      * Compare this data to another to establish sort order.
      * @param pThat The TaxYearInfo to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
+     * object in the sort order
      */
     @Override
     public int compareTo(final DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> pThat) {
@@ -360,7 +361,7 @@ public class TaxYearInfo
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(TaxYearInfo.OBJECT_NAME);
+            DataValues<MoneyWiseDataType> myValues = new DataValues<>(TaxYearInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pTaxYear);

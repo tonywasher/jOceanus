@@ -30,6 +30,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import net.sourceforge.joceanus.jmetis.http.MetisHTTPJiraClient;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -37,10 +41,6 @@ import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraGroup;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraUser;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Represents a Jira server.
@@ -109,13 +109,13 @@ public class JiraServer {
      */
     public JiraServer(final MetisPreferenceManager pManager) throws OceanusException {
         /* Allocate the maps */
-        theProjects = new HashMap<String, JiraProject>();
-        theIssueLinkTypes = new HashMap<String, JiraIssueLinkType>();
-        theIssueTypes = new HashMap<String, JiraIssueType>();
-        theStatusCategories = new HashMap<String, JiraStatusCategory>();
-        theStatuses = new HashMap<String, JiraStatus>();
-        theResolutions = new HashMap<String, JiraResolution>();
-        thePriorities = new HashMap<String, JiraPriority>();
+        theProjects = new HashMap<>();
+        theIssueLinkTypes = new HashMap<>();
+        theIssueTypes = new HashMap<>();
+        theStatusCategories = new HashMap<>();
+        theStatuses = new HashMap<>();
+        theResolutions = new HashMap<>();
+        thePriorities = new HashMap<>();
 
         /* Access the Jira preferences */
         JiraPreferences myPreferences = pManager.getPreferenceSet(JiraPreferences.class);

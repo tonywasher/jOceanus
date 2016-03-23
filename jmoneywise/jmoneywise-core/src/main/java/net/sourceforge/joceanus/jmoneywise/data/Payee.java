@@ -1023,8 +1023,8 @@ public class Payee
          */
         public PayeeDataMap() {
             /* Create the maps */
-            thePayeeCountMap = new HashMap<Integer, Integer>();
-            thePayeeMap = new HashMap<Integer, Payee>();
+            thePayeeCountMap = new HashMap<>();
+            thePayeeMap = new HashMap<>();
         }
 
         @Override

@@ -25,14 +25,14 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysTabManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableTabbed;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 
 /**
  * Swing Tab Manager.
  */
-public class TethysSwingTabManager
-        extends TethysTabManager<JComponent> {
+public class TethysSwingTabPaneManager
+        extends TethysTabPaneManager<JComponent> {
     /**
      * The TabPane.
      */
@@ -41,9 +41,9 @@ public class TethysSwingTabManager
     /**
      * Constructor.
      */
-    public TethysSwingTabManager() {
+    public TethysSwingTabPaneManager() {
         /* Create the pane */
-        theTabPane = new TethysSwingEnableTabbed();
+        theTabPane = new JTabbedPane();
         theTabPane.addChangeListener(e -> notifySelection(getSelectedTab()));
     }
 
@@ -64,7 +64,7 @@ public class TethysSwingTabManager
 
     @Override
     public TethysSwingTabItem addTabItem(final String pName,
-                                         final JComponent pItem) {
+                                         final TethysNode<JComponent> pItem) {
         return new TethysSwingTabItem(this, pName, pItem);
     }
 
@@ -78,6 +78,11 @@ public class TethysSwingTabManager
         return findItemByIndex(theTabPane.getSelectedIndex());
     }
 
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theTabPane.setVisible(pVisible);
+    }
+
     /**
      * TabItem class.
      */
@@ -86,7 +91,7 @@ public class TethysSwingTabManager
         /**
          * The component.
          */
-        private final JComponent theNode;
+        private final TethysNode<JComponent> theNode;
 
         /**
          * Constructor.
@@ -94,31 +99,31 @@ public class TethysSwingTabManager
          * @param pName the name of the tab
          * @param pItem the item
          */
-        protected TethysSwingTabItem(final TethysSwingTabManager pPane,
+        protected TethysSwingTabItem(final TethysSwingTabPaneManager pPane,
                                      final String pName,
-                                     final JComponent pItem) {
+                                     final TethysNode<JComponent> pItem) {
             /* Initialise the underlying class */
             super(pPane, pName);
 
             /* Add to the TabPane */
             theNode = pItem;
-            pPane.theTabPane.addTab(pName, theNode);
+            pPane.theTabPane.addTab(pName, theNode.getNode());
         }
 
         @Override
-        public TethysSwingTabManager getPane() {
-            return (TethysSwingTabManager) super.getPane();
+        public TethysSwingTabPaneManager getPane() {
+            return (TethysSwingTabPaneManager) super.getPane();
         }
 
         @Override
         public JComponent getNode() {
-            return theNode;
+            return theNode.getNode();
         }
 
         @Override
         protected void attachToPane() {
             int myIndex = countPreviousVisibleSiblings();
-            getPane().theTabPane.insertTab(getName(), null, theNode, null, myIndex);
+            getPane().theTabPane.insertTab(getName(), null, theNode.getNode(), null, myIndex);
         }
 
         @Override

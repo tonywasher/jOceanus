@@ -28,6 +28,7 @@ import java.awt.Point;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
@@ -51,7 +52,6 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TaxYearPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -59,6 +59,7 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingActionButtons;
+import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
@@ -73,11 +74,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  */
 public class TaxYearTable
         extends JDataTable<TaxYear, MoneyWiseDataType> {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -9063059159264496070L;
-
     /**
      * Text for DataEntry Title.
      */
@@ -101,27 +97,27 @@ public class TaxYearTable
     /**
      * The data view.
      */
-    private final transient SwingView theView;
+    private final SwingView theView;
 
     /**
      * The field manager.
      */
-    private final transient MetisFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
      */
-    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The data entry.
      */
-    private final transient UpdateEntry<TaxYear, MoneyWiseDataType> theTaxYearEntry;
+    private final UpdateEntry<TaxYear, MoneyWiseDataType> theTaxYearEntry;
 
     /**
      * TaxYearInfo Update Entry.
      */
-    private final transient UpdateEntry<TaxYearInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<TaxYearInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
      * The error panel.
@@ -136,7 +132,7 @@ public class TaxYearTable
     /**
      * The data entry.
      */
-    private final transient MetisViewerEntry theDataEntry;
+    private final MetisViewerEntry theDataEntry;
 
     /**
      * The Column Model.
@@ -156,12 +152,12 @@ public class TaxYearTable
     /**
      * The List Selection Model.
      */
-    private final transient JDataTableSelection<TaxYear, MoneyWiseDataType> theSelectionModel;
+    private final JDataTableSelection<TaxYear, MoneyWiseDataType> theSelectionModel;
 
     /**
      * TaxYears.
      */
-    private transient TaxYearList theTaxYears = null;
+    private TaxYearList theTaxYears;
 
     /**
      * Constructor.
@@ -198,19 +194,20 @@ public class TaxYearTable
 
         /* Create the data column model and declare it */
         theColumns = new TaxYearColumnModel(this);
-        setColumnModel(theColumns);
+        JTable myTable = getTable();
+        myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
-        getTableHeader().setReorderingAllowed(false);
-        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+        myTable.getTableHeader().setReorderingAllowed(false);
+        myTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
+        myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the main panel */
         JPanel myMain = new TethysSwingEnablePanel();
         myMain.setLayout(new BorderLayout());
-        myMain.add(getScrollPane(), BorderLayout.CENTER);
+        myMain.add(super.getNode(), BorderLayout.CENTER);
         myMain.add(theActionButtons.getNode(), BorderLayout.LINE_END);
 
         /* Create the layout for the panel */
@@ -237,10 +234,7 @@ public class TaxYearTable
         theActiveYear.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
+    @Override
     public JComponent getNode() {
         return thePanel;
     }
@@ -258,7 +252,7 @@ public class TaxYearTable
      */
     protected void determineFocus() {
         /* Request the focus */
-        requestFocusInWindow();
+        getTable().requestFocusInWindow();
 
         /* Set the required focus */
         theDataEntry.setFocus();
@@ -335,7 +329,7 @@ public class TaxYearTable
     protected void selectTaxYear(final TaxYear pTaxYear) {
         /* Find the item in the list */
         int myIndex = theTaxYears.indexOf(pTaxYear);
-        myIndex = convertRowIndexToView(myIndex);
+        myIndex = getTable().convertRowIndexToView(myIndex);
         if (myIndex != -1) {
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);
@@ -403,7 +397,7 @@ public class TaxYearTable
         boolean isError = theError.hasError();
 
         /* Lock scroll area */
-        getScrollPane().setEnabled(!isError);
+        super.getNode().setEnabled(!isError);
 
         /* Lock Action Buttons */
         theActionButtons.setEnabled(!isError);

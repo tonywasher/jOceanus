@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmetis.preference.swing;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,14 +34,12 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
@@ -55,17 +52,20 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnableScroll;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Preference maintenance panel.
  * @author Tony Washer
  */
 public class MetisPreferencesPanel
-        implements TethysEventProvider<MetisPreferenceEvent> {
+        implements TethysEventProvider<MetisPreferenceEvent>, TethysNode<JComponent> {
     /**
      * Strut width.
      */
@@ -139,12 +139,12 @@ public class MetisPreferencesPanel
     /**
      * The selection button.
      */
-    private final JScrollButton<MetisPreferenceSetPanel> theSelectButton;
+    private final TethysSwingScrollButtonManager<MetisPreferenceSetPanel> theSelectButton;
 
     /**
      * The properties panel.
      */
-    private final TethysSwingEnablePanel theProperties;
+    private final TethysSwingCardPaneManager<MetisPreferenceSetPanel> theProperties;
 
     /**
      * The buttons panel.
@@ -152,19 +152,14 @@ public class MetisPreferencesPanel
     private final JPanel theButtons;
 
     /**
-     * The layout.
+     * The scroll pane.
      */
-    private final CardLayout theLayout;
+    private final JScrollPane theScrollPane;
 
     /**
-     * Preference menu builder.
+     * Preference menu.
      */
-    private final JScrollMenuBuilder<MetisPreferenceSetPanel> thePrefMenuBuilder;
-
-    /**
-     * The active set.
-     */
-    private MetisPreferenceSetPanel theActive = null;
+    private final TethysScrollMenu<MetisPreferenceSetPanel, ?> thePrefMenu;
 
     /**
      * The list of panels.
@@ -209,7 +204,7 @@ public class MetisPreferencesPanel
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_SET);
-        theSelectButton = new JScrollButton<>();
+        theSelectButton = new TethysSwingScrollButtonManager<>();
 
         /* Create the selection panel */
         JPanel mySelection = new TethysSwingEnablePanel();
@@ -219,18 +214,19 @@ public class MetisPreferencesPanel
         mySelection.setLayout(new BoxLayout(mySelection, BoxLayout.X_AXIS));
         mySelection.add(myLabel);
         mySelection.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        mySelection.add(theSelectButton);
+        mySelection.add(theSelectButton.getNode());
         mySelection.add(Box.createHorizontalGlue());
 
         /* Create the properties panel */
-        theProperties = new TethysSwingEnablePanel();
-        theLayout = new CardLayout();
-        theProperties.setLayout(theLayout);
+        theProperties = new TethysSwingCardPaneManager<>();
 
         /* Add Listeners */
         theOKButton.addActionListener(e -> saveUpdates());
         theResetButton.addActionListener(e -> resetUpdates());
-        theSelectButton.addPropertyChangeListener(e -> handlePropertySetSelect());
+        thePrefMenu = theSelectButton.getMenu();
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handlePropertySetSelect());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPreferenceMenu());
 
         /* Create the panel list */
         thePanels = new ArrayList<>();
@@ -242,17 +238,16 @@ public class MetisPreferencesPanel
         }
 
         /* Create a new Scroll Pane and add this table to it */
-        JScrollPane myScroll = new TethysSwingEnableScroll();
-        myScroll.setViewportView(theProperties);
+        theScrollPane = new JScrollPane();
+        theScrollPane.setViewportView(theProperties.getNode());
 
         /* Now define the panel */
         thePanel.setLayout(new BorderLayout());
         thePanel.add(mySelection, BorderLayout.PAGE_START);
-        thePanel.add(myScroll, BorderLayout.CENTER);
+        thePanel.add(theScrollPane, BorderLayout.CENTER);
         thePanel.add(theButtons, BorderLayout.PAGE_END);
 
         /* Determine the active items */
-        theActive = thePanels.get(0);
         setSelectText();
         setVisibility();
 
@@ -260,10 +255,6 @@ public class MetisPreferencesPanel
         theDataEntry = pDataMgr.newEntry("Preferences");
         theDataEntry.addAsChildOf(pSection);
         theDataEntry.setObject(pPreferenceMgr);
-
-        /* Access menu builders */
-        thePrefMenuBuilder = theSelectButton.getMenuBuilder();
-        thePrefMenuBuilder.getEventRegistrar().addEventListener(e -> buildPreferenceMenu());
 
         /* Add a listener for the addition of subsequent propertySets */
         pPreferenceMgr.getEventRegistrar().addEventListener(this::handleNewPropertySet);
@@ -273,15 +264,8 @@ public class MetisPreferencesPanel
      * handle propertySetSelect event.
      */
     private void handlePropertySetSelect() {
-        /* If the panel has changed */
         MetisPreferenceSetPanel myPanel = theSelectButton.getValue();
-        if (!MetisDifference.isEqual(theActive, myPanel)) {
-            /* Set the Active component */
-            theActive = myPanel;
-
-            /* Move correct card to front */
-            theLayout.show(theProperties, theActive.toString());
-        }
+        theProperties.selectCard(myPanel.toString());
     }
 
     /**
@@ -297,7 +281,6 @@ public class MetisPreferencesPanel
 
         /* Note that the panel should be re-displayed */
         setVisibility();
-        theProperties.invalidate();
     }
 
     @Override
@@ -305,12 +288,14 @@ public class MetisPreferencesPanel
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
+    @Override
     public JComponent getNode() {
         return thePanel;
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -324,13 +309,11 @@ public class MetisPreferencesPanel
         theDataEntry.setFocus();
     }
 
-    /**
-     * Set enabled state.
-     * @param pEnabled the state true/false
-     */
+    @Override
     public void setEnabled(final boolean pEnabled) {
         /* Pass on to important elements */
         theSelectButton.setEnabled(pEnabled);
+        theScrollPane.setEnabled(pEnabled);
         theProperties.setEnabled(pEnabled);
     }
 
@@ -343,7 +326,7 @@ public class MetisPreferencesPanel
         MetisPreferenceSetPanel myPanel = new MetisPreferenceSetPanel(theFieldMgr, pSet);
 
         /* Add the panel */
-        theProperties.add(myPanel, myPanel.toString());
+        theProperties.addCard(myPanel.toString(), myPanel);
         thePanels.add(myPanel);
 
         /* Add listener */
@@ -358,8 +341,9 @@ public class MetisPreferencesPanel
      * @return true/false
      */
     public boolean hasUpdates() {
-        return (theActive != null)
-               && (theActive.hasChanges());
+        MetisPreferenceSetPanel myPanel = theProperties.getActiveCard();
+        return (myPanel != null)
+               && myPanel.hasChanges();
     }
 
     /**
@@ -375,7 +359,8 @@ public class MetisPreferencesPanel
      */
     public void saveUpdates() {
         try {
-            theActive.storeChanges();
+            MetisPreferenceSetPanel myPanel = theProperties.getActiveCard();
+            myPanel.storeChanges();
         } catch (OceanusException e) {
             LOGGER.error(ERROR_STORE, e);
         }
@@ -392,7 +377,8 @@ public class MetisPreferencesPanel
      */
     public void resetUpdates() {
         /* Reset all changes */
-        theActive.resetChanges();
+        MetisPreferenceSetPanel myPanel = theProperties.getActiveCard();
+        myPanel.resetChanges();
 
         /* Set correct visibility */
         setVisibility();
@@ -406,12 +392,13 @@ public class MetisPreferencesPanel
      */
     protected final void setVisibility() {
         /* Enable selection */
-        theSelectButton.setEnabled((theActive != null)
-                                   && !theActive.hasChanges());
+        MetisPreferenceSetPanel myPanel = theProperties.getActiveCard();
+        theSelectButton.setEnabled((myPanel != null)
+                                   && !myPanel.hasChanges());
 
         /* Show/Hide the buttons */
-        theButtons.setVisible((theActive != null)
-                              && theActive.hasChanges());
+        theButtons.setVisible((myPanel != null)
+                              && myPanel.hasChanges());
     }
 
     /**
@@ -419,7 +406,7 @@ public class MetisPreferencesPanel
      */
     private void setSelectText() {
         /* Show selection text */
-        theSelectButton.setValue(theActive);
+        theSelectButton.setValue(theProperties.getActiveCard());
     }
 
     /**
@@ -427,10 +414,11 @@ public class MetisPreferencesPanel
      */
     private void buildPreferenceMenu() {
         /* Reset the popUp menu */
-        thePrefMenuBuilder.clearMenu();
+        thePrefMenu.removeAllItems();
 
         /* Record active item */
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<?> myActive = null;
+        String myActiveName = theProperties.getActiveName();
 
         /* Loop through the panels */
         Iterator<MetisPreferenceSetPanel> myIterator = thePanels.iterator();
@@ -438,16 +426,18 @@ public class MetisPreferencesPanel
             MetisPreferenceSetPanel myPanel = myIterator.next();
 
             /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = thePrefMenuBuilder.addItem(myPanel);
+            TethysScrollMenuItem<?> myItem = thePrefMenu.addItem(myPanel);
 
             /* If this is the active panel */
-            if (myPanel.equals(theActive)) {
+            if (myPanel.toString().equals(myActiveName)) {
                 /* Record it */
                 myActive = myItem;
             }
         }
 
         /* Ensure active item is visible */
-        thePrefMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 }

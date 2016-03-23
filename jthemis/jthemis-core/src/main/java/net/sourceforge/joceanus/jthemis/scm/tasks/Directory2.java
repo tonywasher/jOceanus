@@ -62,8 +62,8 @@ public final class Directory2 {
     public static void createDirectory(final File pDir) throws OceanusException {
         /* Use standard method */
         createDirectory(pDir == null
-                                    ? null
-                                    : pDir.toPath());
+                                     ? null
+                                     : pDir.toPath());
     }
 
     /**
@@ -98,8 +98,8 @@ public final class Directory2 {
     public static void removeDirectory(final File pDir) throws OceanusException {
         /* Remove the directory */
         removeDirectory(pDir == null
-                                    ? null
-                                    : pDir.toPath());
+                                     ? null
+                                     : pDir.toPath());
     }
 
     /**
@@ -135,8 +135,8 @@ public final class Directory2 {
     public static void clearDirectory(final File pDir) throws OceanusException {
         /* Clear the directory */
         clearDirectory(pDir == null
-                                   ? null
-                                   : pDir.toPath());
+                                    ? null
+                                    : pDir.toPath());
     }
 
     /**
@@ -149,8 +149,8 @@ public final class Directory2 {
                                       final String pKeep) throws OceanusException {
         /* Clear the directory */
         clearDirectory(pDir == null
-                                   ? null
-                                   : pDir.toPath(), pKeep);
+                                    ? null
+                                    : pDir.toPath(), pKeep);
     }
 
     /**
@@ -206,6 +206,7 @@ public final class Directory2 {
                 try {
                     Thread.sleep(PAUSE_DURATION);
                 } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
                     throw new IOException("Interrupted", ex);
                 }
             }
