@@ -109,12 +109,12 @@ public enum TethysFieldType {
     /**
      * Date column standard width.
      */
-    private static final int WIDTH_DATE = 100;
+    private static final int WIDTH_DATE = 130;
 
     /**
      * Money column standard width.
      */
-    private static final int WIDTH_MONEY = 100;
+    private static final int WIDTH_MONEY = 110;
 
     /**
      * Decimal column standard width.
@@ -149,12 +149,12 @@ public enum TethysFieldType {
             case DATE:
                 return WIDTH_DATE;
             case MONEY:
-                return WIDTH_MONEY;
             case PRICE:
+            case DILUTEDPRICE:
+                return WIDTH_MONEY;
             case RATE:
             case UNITS:
             case DILUTION:
-            case DILUTEDPRICE:
             case RATIO:
                 return WIDTH_DECIMAL;
             case INTEGER:

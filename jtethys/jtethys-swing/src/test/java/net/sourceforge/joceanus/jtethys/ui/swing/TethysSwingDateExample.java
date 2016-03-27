@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.date;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -29,8 +29,6 @@ import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Month;
 import java.util.Locale;
@@ -57,11 +55,11 @@ import net.sourceforge.jdatebutton.swing.JDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateCellEditor;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateCellRenderer;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateConfig;
-import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateRangeSelect;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * <p>
@@ -163,37 +161,37 @@ public class TethysSwingDateExample
     /**
      * The table.
      */
-    private JTable theTable = null;
+    private JTable theTable;
 
     /**
      * The cell editor.
      */
-    private TethysSwingDateCellEditor theEditor = null;
+    private TethysSwingDateCellEditor theEditor;
 
     /**
      * The list of locales.
      */
-    private JComboBox<ShortLocale> theLocaleList = null;
+    private JComboBox<ShortLocale> theLocaleList;
 
     /**
      * The list of formats.
      */
-    private JComboBox<String> theFormatList = null;
+    private JComboBox<String> theFormatList;
 
     /**
      * The start date.
      */
-    private TethysSwingDateButton theStartDate = null;
+    private transient TethysSwingDateButtonManager theStartDate;
 
     /**
      * The end date.
      */
-    private TethysSwingDateButton theEndDate = null;
+    private transient TethysSwingDateButtonManager theEndDate;
 
     /**
      * The selected range.
      */
-    private JLabel theSelectedRange = null;
+    private JLabel theSelectedRange;
 
     /**
      * The selected locale.
@@ -228,12 +226,17 @@ public class TethysSwingDateExample
     /**
      * The range selection.
      */
-    private TethysSwingDateRangeSelect theRangeSelect = null;
+    private transient TethysSwingDateRangeSelector theRangeSelect;
 
     /**
      * The formatter.
      */
-    private transient TethysDateFormatter theFormatter = new TethysDateFormatter();
+    private transient TethysDataFormatter theFormatter = new TethysDataFormatter();
+
+    /**
+     * The formatter.
+     */
+    private transient TethysDateFormatter theDateFormatter = theFormatter.getDateFormatter();
 
     /**
      * Create and show the GUI.
@@ -337,7 +340,7 @@ public class TethysSwingDateExample
         myConstraints.gridy = 0;
         myConstraints.gridwidth = 1;
         myConstraints.weightx = 1.0;
-        myRange.add(theStartDate, myConstraints);
+        myRange.add(theStartDate.getNode(), myConstraints);
         myConstraints.gridx = 0;
         myConstraints.gridy = 1;
         myConstraints.gridwidth = 1;
@@ -350,7 +353,7 @@ public class TethysSwingDateExample
         myConstraints.gridwidth = 1;
         myConstraints.weightx = 1.0;
         myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myRange.add(theEndDate, myConstraints);
+        myRange.add(theEndDate.getNode(), myConstraints);
 
         /* Create a Style sub-panel */
         JPanel myStyle = new JPanel(new GridBagLayout());
@@ -389,7 +392,7 @@ public class TethysSwingDateExample
         myConstraints.gridy = 0;
         myConstraints.gridwidth = 2;
         myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myOptions.add(theRangeSelect, myConstraints);
+        myOptions.add(theRangeSelect.getNode(), myConstraints);
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;
         myConstraints.gridy = 1;
@@ -525,8 +528,8 @@ public class TethysSwingDateExample
         theTable = new JTable(myModel);
 
         /* Create the renderer and editor */
-        TethysSwingDateCellRenderer myRenderer = new TethysSwingDateCellRenderer(theFormatter);
-        theEditor = new TethysSwingDateCellEditor(theFormatter);
+        TethysSwingDateCellRenderer myRenderer = new TethysSwingDateCellRenderer(theDateFormatter);
+        theEditor = new TethysSwingDateCellEditor(theDateFormatter);
 
         /* Set sorting on the table */
         theTable.setAutoCreateRowSorter(true);
@@ -587,27 +590,27 @@ public class TethysSwingDateExample
      */
     private void makeRangeButtons() {
         /* Create the buttons */
-        theStartDate = new TethysSwingDateButton(theFormatter);
-        theEndDate = new TethysSwingDateButton(theFormatter);
+        theStartDate = new TethysSwingDateButtonManager(theFormatter);
+        theEndDate = new TethysSwingDateButtonManager(theFormatter);
 
         /* Create the range selection */
-        theRangeSelect = new TethysSwingDateRangeSelect(theFormatter, true);
-        theRangeSelect.addPropertyChangeListener(TethysSwingDateRangeSelect.PROPERTY_RANGE, theListener);
+        theRangeSelect = new TethysSwingDateRangeSelector(theFormatter, true);
+        theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
 
         /* Initialise the values */
         TethysDate myStart = DATE_START;
         TethysDate myEnd = DATE_END;
 
         /* Set the values */
-        theStartDate.setSelectedDateDay(myStart);
-        theEndDate.setSelectedDateDay(myEnd);
+        theStartDate.setSelectedDate(myStart);
+        theEndDate.setSelectedDate(myEnd);
 
         /* Apply the range */
         applyRange();
 
         /* Add Listener to buttons */
-        theStartDate.addPropertyChangeListener(TethysSwingDateButton.PROPERTY_DATEDAY, theListener);
-        theEndDate.addPropertyChangeListener(TethysSwingDateButton.PROPERTY_DATEDAY, theListener);
+        theStartDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> applyRange());
+        theEndDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> applyRange());
 
         /* Create the range report label */
         theSelectedRange = new JLabel(theRangeSelect.getRange().toString());
@@ -621,8 +624,8 @@ public class TethysSwingDateExample
      * @return the requested date
      */
     private static TethysDate makeDate(final int pYear,
-                                     final Month pMonth,
-                                     final int pDay) {
+                                       final Month pMonth,
+                                       final int pDay) {
         return new TethysDate(pYear, pMonth, pDay);
     }
 
@@ -633,10 +636,8 @@ public class TethysSwingDateExample
         /* Set Null Date options */
         TethysSwingDateConfig myConfig = theEditor.getDateConfig();
         myConfig.setAllowNullDateSelection(false);
-        myConfig = theStartDate.getDateConfig();
-        myConfig.setAllowNullDateSelection(true);
-        myConfig = theEndDate.getDateConfig();
-        myConfig.setAllowNullDateSelection(true);
+        theStartDate.setAllowNullDateSelection(true);
+        theEndDate.setAllowNullDateSelection(true);
     }
 
     /**
@@ -648,15 +649,7 @@ public class TethysSwingDateExample
         theRangeSelect.setLocale(theLocale);
 
         /* Set range locale */
-        theSelectedRange.setText(theFormatter.formatDateDayRange(theRangeSelect.getRange()));
-
-        /* Set format options */
-        TethysSwingDateConfig myConfig = theEditor.getDateConfig();
-        myConfig.setFormatOptions(theMaxDayLen, doShrinkFromRight, doPretty);
-        myConfig = theStartDate.getDateConfig();
-        myConfig.setFormatOptions(theMaxDayLen, doShrinkFromRight, doPretty);
-        myConfig = theEndDate.getDateConfig();
-        myConfig.setFormatOptions(theMaxDayLen, doShrinkFromRight, doPretty);
+        theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
 
         /* Note that we should redraw the table */
         theTable.repaint();
@@ -670,7 +663,7 @@ public class TethysSwingDateExample
         theFormatter.setFormat(theFormat);
 
         /* Set range format */
-        theSelectedRange.setText(theFormatter.formatDateDayRange(theRangeSelect.getRange()));
+        theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
 
         /* Note that we should redraw the table */
         theTable.repaint();
@@ -681,12 +674,12 @@ public class TethysSwingDateExample
      */
     private void applyRange() {
         /* Access the Start/End Dates */
-        TethysDate myStart = theStartDate.getSelectedDateDay();
-        TethysDate myEnd = theEndDate.getSelectedDateDay();
+        TethysDate myStart = theStartDate.getSelectedDate();
+        TethysDate myEnd = theEndDate.getSelectedDate();
 
         /* Set the select-able range for the start/end buttons */
-        theStartDate.setLatestDateDay(myEnd);
-        theEndDate.setEarliestDateDay(myStart);
+        theStartDate.setLatestDate(myEnd);
+        theEndDate.setEarliestDate(myStart);
 
         /* Set the Editor range */
         theEditor.setEarliestDateDay(myStart);
@@ -697,31 +690,20 @@ public class TethysSwingDateExample
     }
 
     /**
+     * Handle the new range.
+     */
+    private void handleNewRange() {
+        TethysDateRange myRange = theRangeSelect.getRange();
+        if (theSelectedRange != null) {
+            theSelectedRange.setText(theDateFormatter.formatDateDayRange(myRange));
+        }
+    }
+
+    /**
      * Listener class.
      */
     private class DateListener
-            implements PropertyChangeListener, ItemListener {
-        @Override
-        public void propertyChange(final PropertyChangeEvent evt) {
-            /* Access source object */
-            Object o = evt.getSource();
-
-            /* If this is the start/end date */
-            if ((theStartDate.equals(o))
-                || (theEndDate.equals(o))) {
-                /* Apply the new range */
-                applyRange();
-
-                /* If this is the selectable range */
-            } else if (theRangeSelect.equals(o)) {
-                /* Apply the new range */
-                TethysDateRange myRange = theRangeSelect.getRange();
-                if (theSelectedRange != null) {
-                    theSelectedRange.setText(theFormatter.formatDateDayRange(myRange));
-                }
-            }
-        }
-
+            implements ItemListener {
         @Override
         public void itemStateChanged(final ItemEvent evt) {
             /* Access source object */

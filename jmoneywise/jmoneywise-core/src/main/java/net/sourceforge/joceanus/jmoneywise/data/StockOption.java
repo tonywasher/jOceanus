@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Currency;
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
@@ -33,7 +34,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
@@ -736,7 +736,7 @@ public class StockOption
      * @param pUpdateSet the update set
      * @return the default portfolio
      */
-    private Portfolio getDefaultPortfolio(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+    private static Portfolio getDefaultPortfolio(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* loop through the portfolios */
         PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
         Iterator<Portfolio> myIterator = myPortfolios.iterator();
@@ -759,8 +759,8 @@ public class StockOption
      * @param pPortfolio the portfolio
      * @return the default security
      */
-    private Security getDefaultSecurity(final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                        final Portfolio pPortfolio) {
+    private static Security getDefaultSecurity(final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                               final Portfolio pPortfolio) {
         /* No security if there is no portfolio */
         if (pPortfolio == null) {
             return null;

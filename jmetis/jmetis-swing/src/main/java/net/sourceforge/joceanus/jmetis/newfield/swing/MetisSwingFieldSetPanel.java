@@ -46,16 +46,20 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
-import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingStateIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutionTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingIntegerTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingLongTextField;
@@ -183,35 +187,14 @@ public class MetisSwingFieldSetPanel
     }
 
     @Override
-    public MetisSwingFieldSetDateItem addDateButtonField(final MetisField pField,
-                                                         final TethysDateButtonManager<?> pManager) {
-        return new MetisSwingFieldSetDateItem(this, pField, (TethysSwingDateButtonManager) pManager);
-    }
-
-    @Override
     public <X> MetisSwingFieldSetScrollItem<X> addScrollButtonField(final MetisField pField,
                                                                     final Class<X> pClass) {
         return new MetisSwingFieldSetScrollItem<>(this, pField, pClass);
     }
 
     @Override
-    public <X> MetisSwingFieldSetScrollItem<X> addScrollButtonField(final MetisField pField,
-                                                                    final TethysScrollButtonManager<X, JComponent, Icon> pManager,
-                                                                    final Class<X> pClass) {
-        return new MetisSwingFieldSetScrollItem<>(this, pField, pClass, (TethysSwingScrollButtonManager<X>) pManager);
-    }
-
-    @Override
-    public <X> MetisSwingFieldSetListItem<X> addListButtonField(final MetisField pField,
-                                                                final Class<X> pClass) {
-        return new MetisSwingFieldSetListItem<>(this, pField, pClass);
-    }
-
-    @Override
-    public <X> MetisSwingFieldSetListItem<X> addListButtonField(final MetisField pField,
-                                                                final TethysListButtonManager<X, JComponent, Icon> pManager,
-                                                                final Class<X> pClass) {
-        return new MetisSwingFieldSetListItem<>(this, pField, pClass, (TethysSwingListButtonManager<X>) pManager);
+    public <X> MetisSwingFieldSetListItem<X> addListButtonField(final MetisField pField) {
+        return new MetisSwingFieldSetListItem<>(this, pField);
     }
 
     @Override
@@ -221,10 +204,9 @@ public class MetisSwingFieldSetPanel
     }
 
     @Override
-    public <X> MetisSwingFieldSetIconItem<X> addIconButtonField(final MetisField pField,
-                                                                final TethysIconButtonManager<X, JComponent, Icon> pManager,
-                                                                final Class<X> pClass) {
-        return new MetisSwingFieldSetIconItem<>(this, pField, pClass, pManager);
+    public <X, S> MetisSwingFieldSetStateIconItem<X, S> addStateIconButtonField(final MetisField pField,
+                                                                                final Class<X> pClass) {
+        return new MetisSwingFieldSetStateIconItem<>(this, pField, pClass);
     }
 
     /**
@@ -329,7 +311,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetDateItem
             extends MetisSwingFieldSetPanelItem<TethysDate>
-            implements MetisFieldSetDateItem {
+            implements TethysDateField {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -337,21 +319,8 @@ public class MetisSwingFieldSetPanel
          */
         protected MetisSwingFieldSetDateItem(final MetisSwingFieldSetPanel pPanel,
                                              final MetisField pField) {
-            /* Create a new dateButton Manager */
-            this(pPanel, pField, new TethysSwingDateButtonManager(pPanel.getFormatter()));
-        }
-
-        /**
-         * Constructor.
-         * @param pPanel the panel
-         * @param pField the field
-         * @param pManager the date manager
-         */
-        protected MetisSwingFieldSetDateItem(final MetisSwingFieldSetPanel pPanel,
-                                             final MetisField pField,
-                                             final TethysSwingDateButtonManager pManager) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysDate.class, false, new TethysSwingDateButtonField(pManager));
+            super(pPanel, pField, TethysDate.class, false, new TethysSwingDateButtonField(pPanel.getFormatter()));
         }
 
         @Override
@@ -360,7 +329,7 @@ public class MetisSwingFieldSetPanel
         }
 
         @Override
-        public TethysSwingDateButtonManager getManager() {
+        public TethysSwingDateButtonManager getDateManager() {
             return getEditField().getDateManager();
         }
     }
@@ -371,7 +340,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetScrollItem<T>
             extends MetisSwingFieldSetPanelItem<T>
-            implements MetisFieldSetScrollItem<T, JComponent, Icon> {
+            implements TethysScrollField<T> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -381,23 +350,8 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetScrollItem(final MetisSwingFieldSetPanel pPanel,
                                                final MetisField pField,
                                                final Class<T> pClass) {
-            /* Create a new scrollButton Manager */
-            this(pPanel, pField, pClass, new TethysSwingScrollButtonManager<>());
-        }
-
-        /**
-         * Constructor.
-         * @param pPanel the panel
-         * @param pField the field
-         * @param pManager the scroll manager
-         * @param pClass the item class
-         */
-        protected MetisSwingFieldSetScrollItem(final MetisSwingFieldSetPanel pPanel,
-                                               final MetisField pField,
-                                               final Class<T> pClass,
-                                               final TethysSwingScrollButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, false, new TethysSwingScrollButtonField<T>(pManager));
+            super(pPanel, pField, pClass, false, new TethysSwingScrollButtonField<>());
         }
 
         @Override
@@ -406,7 +360,7 @@ public class MetisSwingFieldSetPanel
         }
 
         @Override
-        public TethysSwingScrollButtonManager<T> getManager() {
+        public TethysSwingScrollButtonManager<T> getScrollManager() {
             return getEditField().getScrollManager();
         }
     }
@@ -417,33 +371,16 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetListItem<T>
             extends MetisSwingFieldSetPanelItem<TethysItemList<T>>
-            implements MetisFieldSetListItem<T, JComponent, Icon> {
+            implements TethysListField<T> {
         /**
          * Constructor.
          * @param pPanel the panel
          * @param pField the field
-         * @param pClass the item class
          */
         protected MetisSwingFieldSetListItem(final MetisSwingFieldSetPanel pPanel,
-                                             final MetisField pField,
-                                             final Class<T> pClass) {
-            /* Create a new listButton Manager */
-            this(pPanel, pField, pClass, new TethysSwingListButtonManager<>());
-        }
-
-        /**
-         * Constructor.
-         * @param pPanel the panel
-         * @param pField the field
-         * @param pManager the list manager
-         * @param pClass the item class
-         */
-        protected MetisSwingFieldSetListItem(final MetisSwingFieldSetPanel pPanel,
-                                             final MetisField pField,
-                                             final Class<T> pClass,
-                                             final TethysSwingListButtonManager<T> pManager) {
+                                             final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, false, new TethysSwingListButtonField<T>(pManager));
+            super(pPanel, pField, false, new TethysSwingListButtonField<>());
         }
 
         @Override
@@ -452,7 +389,7 @@ public class MetisSwingFieldSetPanel
         }
 
         @Override
-        public TethysSwingListButtonManager<T> getManager() {
+        public TethysSwingListButtonManager<T> getListManager() {
             return getEditField().getListManager();
         }
 
@@ -474,7 +411,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetIconItem<T>
             extends MetisSwingFieldSetPanelItem<T>
-            implements MetisFieldSetIconItem<T, JComponent, Icon> {
+            implements TethysIconField<T> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -498,9 +435,9 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetIconItem(final MetisSwingFieldSetPanel pPanel,
                                              final MetisField pField,
                                              final Class<T> pClass,
-                                             final TethysIconButtonManager<T, JComponent, Icon> pManager) {
+                                             final TethysSimpleIconButtonManager<T, JComponent, Icon> pManager) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, false, new TethysSwingIconButtonField<T>(pManager));
+            super(pPanel, pField, pClass, false, new TethysSwingIconButtonField<>());
         }
 
         @Override
@@ -509,7 +446,40 @@ public class MetisSwingFieldSetPanel
         }
 
         @Override
-        public TethysIconButtonManager<T, JComponent, Icon> getManager() {
+        public TethysSimpleIconButtonManager<T, JComponent, Icon> getIconManager() {
+            return getEditField().getIconManager();
+        }
+    }
+
+    /**
+     * IconButtonField.
+     * @param <T> the item class
+     * @param <S> the state class
+     */
+    public static class MetisSwingFieldSetStateIconItem<T, S>
+            extends MetisSwingFieldSetPanelItem<T>
+            implements TethysStateIconField<T, S> {
+        /**
+         * Constructor.
+         * @param pPanel the panel
+         * @param pField the field
+         * @param pClass the item class
+         */
+        protected MetisSwingFieldSetStateIconItem(final MetisSwingFieldSetPanel pPanel,
+                                                  final MetisField pField,
+                                                  final Class<T> pClass) {
+            /* Initialise underlying class */
+            super(pPanel, pField, pClass, false, new TethysSwingStateIconButtonField<>());
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected TethysSwingStateIconButtonField<T, S> getEditField() {
+            return (TethysSwingStateIconButtonField<T, S>) super.getEditField();
+        }
+
+        @Override
+        public TethysStateIconButtonManager<T, S, JComponent, Icon> getIconManager() {
             return getEditField().getIconManager();
         }
     }
@@ -607,7 +577,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetMoneyItem
             extends MetisSwingFieldSetPanelItem<TethysMoney>
-            implements TethysCurrencyItem {
+            implements TethysCurrencyField {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -635,7 +605,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetPriceItem
             extends MetisSwingFieldSetPanelItem<TethysPrice>
-            implements TethysCurrencyItem {
+            implements TethysCurrencyField {
         /**
          * Constructor.
          * @param pPanel the panel

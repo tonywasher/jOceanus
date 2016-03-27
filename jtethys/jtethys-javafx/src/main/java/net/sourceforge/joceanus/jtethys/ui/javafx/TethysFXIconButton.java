@@ -125,7 +125,9 @@ public class TethysFXIconButton
                                                                           final K pId,
                                                                           final String pToolTip) {
             setNewValueForValue(pValue, pNext);
-            setIconForValue(pValue, TethysFXGuiUtils.getIconAtSize(pId, getWidth()));
+            setIconForValue(pValue, pId == null
+                                                ? null
+                                                : TethysFXGuiUtils.getIconAtSize(pId, getWidth()));
             setTooltipForValue(pValue, pToolTip);
         }
     }
@@ -161,7 +163,9 @@ public class TethysFXIconButton
                                                                           final K pId,
                                                                           final String pToolTip) {
             setNewValueForValue(pValue, pNext);
-            setIconForValue(pValue, TethysFXGuiUtils.getIconAtSize(pId, getWidth()));
+            setIconForValue(pValue, pId == null
+                                                ? null
+                                                : TethysFXGuiUtils.getIconAtSize(pId, getWidth()));
             setTooltipForValue(pValue, pToolTip);
         }
     }

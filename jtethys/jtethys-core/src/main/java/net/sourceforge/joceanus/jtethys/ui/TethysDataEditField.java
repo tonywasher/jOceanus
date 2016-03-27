@@ -37,6 +37,8 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 
@@ -232,11 +234,6 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         /* Store the menu */
         theCmdMenu = pMenu;
     }
-
-    /**
-     * Start cell editing.
-     */
-    public abstract void startCellEditing();
 
     /**
      * Set the font.
@@ -641,7 +638,7 @@ public abstract class TethysDataEditField<T, N, C, F, I>
      * CurrencyItem.
      */
     @FunctionalInterface
-    public interface TethysCurrencyItem {
+    public interface TethysCurrencyField {
         /**
          * Set the assumed currency.
          * @param pCurrency the currency
@@ -650,12 +647,77 @@ public abstract class TethysDataEditField<T, N, C, F, I>
     }
 
     /**
+     * Date Field interface.
+     */
+    @FunctionalInterface
+    public interface TethysDateField {
+        /**
+         * Obtain the manager.
+         * @return the manager
+         */
+        TethysDateButtonManager<?> getDateManager();
+    }
+
+    /**
+     * Scroll Field interface.
+     * @param <C> the value type
+     */
+    @FunctionalInterface
+    public interface TethysScrollField<C> {
+        /**
+         * Obtain the manager.
+         * @return the manager
+         */
+        TethysScrollButtonManager<C, ?, ?> getScrollManager();
+    }
+
+    /**
+     * List Field interface.
+     * @param <C> the value type
+     */
+    @FunctionalInterface
+    public interface TethysListField<C> {
+        /**
+         * Obtain the manager.
+         * @return the manager
+         */
+        TethysListButtonManager<C, ?, ?> getListManager();
+    }
+
+    /**
+     * Icon Field interface.
+     * @param <C> the value type
+     */
+    @FunctionalInterface
+    public interface TethysIconField<C> {
+        /**
+         * Obtain the manager.
+         * @return the manager
+         */
+        TethysSimpleIconButtonManager<C, ?, ?> getIconManager();
+    }
+
+    /**
+     * StateIcon Field interface.
+     * @param <C> the value type
+     * @param <S> the state type
+     */
+    @FunctionalInterface
+    public interface TethysStateIconField<C, S> {
+        /**
+         * Obtain the manager.
+         * @return the manager
+         */
+        TethysStateIconButtonManager<C, S, ?, ?> getIconManager();
+    }
+
+    /**
      * MoneyEditConverter class.
      * @param <T> the data type
      */
     public abstract static class TethysMoneyEditConverterBase<T extends TethysMoney>
             extends TethysNumberEditConverter<T>
-            implements TethysCurrencyItem {
+            implements TethysCurrencyField {
         /**
          * Default currency.
          */

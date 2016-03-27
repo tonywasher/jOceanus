@@ -124,8 +124,8 @@ public class CashInfoSet
 
         /* Return the value */
         return (myValue != null)
-                                ? myValue
-                                : MetisFieldValue.SKIP;
+                                 ? myValue
+                                 : MetisFieldValue.SKIP;
     }
 
     /**
@@ -201,8 +201,8 @@ public class CashInfoSet
     public MetisFieldRequired isFieldRequired(final MetisField pField) {
         AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
-                              ? MetisFieldRequired.NOTALLOWED
-                              : isClassRequired(myClass);
+                               ? MetisFieldRequired.NOTALLOWED
+                               : isClassRequired(myClass);
     }
 
     @Override
@@ -218,21 +218,21 @@ public class CashInfoSet
 
         /* Switch on class */
         switch (pClass) {
-        /* Allowed set */
+            /* Allowed set */
             case NOTES:
                 return MetisFieldRequired.CANEXIST;
 
             case OPENINGBALANCE:
                 return myCash.isAutoExpense()
-                                             ? MetisFieldRequired.NOTALLOWED
-                                             : MetisFieldRequired.CANEXIST;
+                                              ? MetisFieldRequired.NOTALLOWED
+                                              : MetisFieldRequired.CANEXIST;
             case AUTOPAYEE:
             case AUTOEXPENSE:
                 return myCash.isAutoExpense()
-                                             ? MetisFieldRequired.MUSTEXIST
-                                             : MetisFieldRequired.NOTALLOWED;
+                                              ? MetisFieldRequired.MUSTEXIST
+                                              : MetisFieldRequired.NOTALLOWED;
 
-                /* Disallowed Set */
+            /* Disallowed Set */
             case SORTCODE:
             case ACCOUNT:
             case REFERENCE:
@@ -328,7 +328,7 @@ public class CashInfoSet
      * @param pUpdateSet the updateSet
      * @return the default expense
      */
-    private TransactionCategory getDefaultAutoExpense(final DataListSet<MoneyWiseDataType> pUpdateSet) {
+    private static TransactionCategory getDefaultAutoExpense(final DataListSet<MoneyWiseDataType> pUpdateSet) {
         /* Access the category list */
         TransactionCategoryList myCategories = pUpdateSet.getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
@@ -358,7 +358,7 @@ public class CashInfoSet
      * @param pUpdateSet the updateSet
      * @return the default payee
      */
-    private Payee getDefaultAutoPayee(final DataListSet<MoneyWiseDataType> pUpdateSet) {
+    private static Payee getDefaultAutoPayee(final DataListSet<MoneyWiseDataType> pUpdateSet) {
         /* Access the payee list */
         PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 

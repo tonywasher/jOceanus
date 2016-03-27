@@ -22,6 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
@@ -39,16 +46,55 @@ public class TethysScrollUITestHelper<N, I> {
     private static final int MAX_ITEMS = 4;
 
     /**
-     * Available items.
+     * The default short value.
      */
-    private static final String[] AVAILABLE_ITEMS =
-    { "Work", "Important", "Personal" };
+    public static final short SHORT_DEF = 3;
+
+    /**
+     * The default integer value.
+     */
+    public static final int INT_DEF = 25;
+
+    /**
+     * The default long value.
+     */
+    public static final long LONG_DEF = 300;
+
+    /**
+     * The default money value.
+     */
+    public static final TethysMoney MONEY_DEF = new TethysMoney("12.45");
+
+    /**
+     * The default price value.
+     */
+    public static final TethysPrice PRICE_DEF = new TethysPrice("2.2");
+
+    /**
+     * The default units value.
+     */
+    public static final TethysUnits UNITS_DEF = new TethysUnits("1");
+
+    /**
+     * The default rate value.
+     */
+    public static final TethysRate RATE_DEF = new TethysRate(".10");
+
+    /**
+     * The default ratio value.
+     */
+    public static final TethysRatio RATIO_DEF = new TethysRatio("1.6");
+
+    /**
+     * The default dilution value.
+     */
+    public static final TethysDilution DILUTION_DEF = new TethysDilution("0.5");
 
     /**
      * Build the context menu.
      * @param pMenu the menu to build
      */
-    public void buildContextMenu(final TethysScrollMenu<String, I> pMenu) {
+    public void buildContextMenu(final TethysScrollMenu<String, ?> pMenu) {
         /* Set the display count */
         pMenu.setMaxDisplayItems(MAX_ITEMS);
         pMenu.removeAllItems();
@@ -58,7 +104,7 @@ public class TethysScrollUITestHelper<N, I> {
         addMenuItem(pMenu, "Second");
         addMenuItem(pMenu, "Third");
         addMenuItem(pMenu, "Fourth");
-        TethysScrollSubMenu<String, I> myMenu = addSubMenu(pMenu, "SubMenu");
+        TethysScrollSubMenu<String, ?> myMenu = addSubMenu(pMenu, "SubMenu");
         addSubMenuItem(myMenu, "AAAAA");
         addSubMenuItem(myMenu, "BBBBB");
         addMenuItem(pMenu, "Fifth");
@@ -72,7 +118,7 @@ public class TethysScrollUITestHelper<N, I> {
      * @param pMenu the menu to add to
      * @param pValue the value to add
      */
-    private void addMenuItem(final TethysScrollMenu<String, I> pMenu,
+    private void addMenuItem(final TethysScrollMenu<String, ?> pMenu,
                              final String pValue) {
         /* Add to context menu */
         pMenu.addItem(pValue);
@@ -84,7 +130,7 @@ public class TethysScrollUITestHelper<N, I> {
      * @param pValue the name to add
      * @return the subMenu
      */
-    private TethysScrollSubMenu<String, I> addSubMenu(final TethysScrollMenu<String, I> pMenu,
+    private TethysScrollSubMenu<String, ?> addSubMenu(final TethysScrollMenu<String, ?> pMenu,
                                                       final String pValue) {
         /* Add to context menu */
         return pMenu.addSubMenu(pValue);
@@ -95,7 +141,7 @@ public class TethysScrollUITestHelper<N, I> {
      * @param pMenu the subMenu
      * @param pValue the value to add
      */
-    private void addSubMenuItem(final TethysScrollSubMenu<String, I> pMenu,
+    private void addSubMenuItem(final TethysScrollSubMenu<String, ?> pMenu,
                                 final String pValue) {
         /* Add to sub menu */
         pMenu.getSubMenu().addItem(pValue);
@@ -106,20 +152,30 @@ public class TethysScrollUITestHelper<N, I> {
      * @param pManager the list manager
      * @return the list
      */
-    public TethysItemList<String> buildToggleList(final TethysListButtonManager<String, N, I> pManager) {
+    public TethysItemList<TethysListId> buildToggleList(final TethysListButtonManager<TethysListId, N, I> pManager) {
         /* Set the display count */
         pManager.getMenu().setMaxDisplayItems(MAX_ITEMS);
 
+        /* Build the toggle list */
+        return buildToggleList();
+    }
+
+    /**
+     * Create list.
+     * @param pManager the list manager
+     * @return the list
+     */
+    public TethysItemList<TethysListId> buildToggleList() {
         /* Create the list */
-        TethysItemList<String> myValues = new TethysItemList<>();
+        TethysItemList<TethysListId> myValues = new TethysItemList<>();
 
         /* Loop through the items */
-        for (String myValue : AVAILABLE_ITEMS) {
+        for (TethysListId myValue : TethysListId.values()) {
             myValues.setSelectableItem(myValue);
         }
 
         /* Select the work value */
-        myValues.selectItem("Work");
+        myValues.selectItem(TethysListId.WORK);
 
         /* Set the value */
         return myValues;
@@ -127,51 +183,41 @@ public class TethysScrollUITestHelper<N, I> {
 
     /**
      * Build the simple IconState.
+     * @param <K> the keyId type
      * @param pIconManager the menu to build
      * @param pFalseIcon the icon for the false state
      * @param pTrueIcon the icon for the true state
      */
-    public void buildSimpleIconState(final TethysSimpleIconButtonManager<Boolean, N, I> pIconManager,
-                                     final I pFalseIcon,
-                                     final I pTrueIcon) {
+    public <K extends Enum<K> & TethysIconId> void buildSimpleIconState(final TethysSimpleIconButtonManager<Boolean, ?, ?> pIconManager,
+                                                                        final K pFalseIcon,
+                                                                        final K pTrueIcon) {
         /* Set the state */
-        pIconManager.setIconForValue(Boolean.FALSE, pFalseIcon);
-        pIconManager.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
-        pIconManager.setTooltipForValue(Boolean.FALSE, "False");
-        pIconManager.setIconForValue(Boolean.TRUE, pTrueIcon);
-        pIconManager.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
-        pIconManager.setTooltipForValue(Boolean.TRUE, "True");
+        pIconManager.setDetailsForValue(Boolean.FALSE, Boolean.TRUE, pFalseIcon, "False");
+        pIconManager.setDetailsForValue(Boolean.TRUE, Boolean.FALSE, pTrueIcon, "True");
         pIconManager.setValue(Boolean.TRUE);
     }
 
     /**
      * Build the state IconState.
+     * @param <K> the keyId type
      * @param pIconManager the menu to build
      * @param pFalseIcon the icon for the false state
      * @param pTrueIcon the icon for the true state
      * @param pAltTrueIcon the icon for the true closed state
      */
-    public void buildStateIconState(final TethysStateIconButtonManager<Boolean, IconState, N, I> pIconManager,
-                                    final I pFalseIcon,
-                                    final I pTrueIcon,
-                                    final I pAltTrueIcon) {
+    public <K extends Enum<K> & TethysIconId> void buildStateIconState(final TethysStateIconButtonManager<Boolean, IconState, ?, ?> pIconManager,
+                                                                       final K pFalseIcon,
+                                                                       final K pTrueIcon,
+                                                                       final K pAltTrueIcon) {
         /* Set the CLOSED state */
         pIconManager.setMachineState(IconState.CLOSED);
-        pIconManager.setIconForValue(Boolean.FALSE, null);
-        pIconManager.setNewValueForValue(Boolean.FALSE, Boolean.FALSE);
-        pIconManager.setTooltipForValue(Boolean.FALSE, "False");
-        pIconManager.setIconForValue(Boolean.TRUE, pAltTrueIcon);
-        pIconManager.setNewValueForValue(Boolean.TRUE, Boolean.TRUE);
-        pIconManager.setTooltipForValue(Boolean.TRUE, "True");
+        pIconManager.setDetailsForValue(Boolean.FALSE, Boolean.FALSE, "False");
+        pIconManager.setDetailsForValue(Boolean.TRUE, Boolean.TRUE, pAltTrueIcon, "True");
 
         /* Set the OPEN state */
         pIconManager.setMachineState(IconState.OPEN);
-        pIconManager.setIconForValue(Boolean.FALSE, pFalseIcon);
-        pIconManager.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
-        pIconManager.setTooltipForValue(Boolean.FALSE, "False");
-        pIconManager.setIconForValue(Boolean.TRUE, pTrueIcon);
-        pIconManager.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
-        pIconManager.setTooltipForValue(Boolean.TRUE, "True");
+        pIconManager.setDetailsForValue(Boolean.FALSE, Boolean.TRUE, pFalseIcon, "False");
+        pIconManager.setDetailsForValue(Boolean.TRUE, Boolean.FALSE, pTrueIcon, "True");
         pIconManager.setValue(Boolean.TRUE);
     }
 

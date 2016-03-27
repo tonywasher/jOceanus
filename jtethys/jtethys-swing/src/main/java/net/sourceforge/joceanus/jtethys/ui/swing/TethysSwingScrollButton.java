@@ -112,7 +112,7 @@ public final class TethysSwingScrollButton
             /* Set context menu listener */
             TethysEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleMenuClosed());
-            myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
+            myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> notifyCancelled());
         }
 
         @Override

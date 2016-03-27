@@ -218,6 +218,12 @@ public abstract class TethysFXDataTextField<T>
     }
 
     /**
+     * Start cell editing.
+     * @param pCell the cell
+     */
+    public abstract void startCellEditing(final Node pCell);
+
+    /**
      * TextField class.
      * @param <T> the data type
      */
@@ -325,7 +331,7 @@ public abstract class TethysFXDataTextField<T>
         }
 
         @Override
-        public void startCellEditing() {
+        public void startCellEditing(final Node pCell) {
             isCellEditing = true;
             setEditable(true);
             theControl.clearNewValue();
@@ -487,17 +493,17 @@ public abstract class TethysFXDataTextField<T>
     }
 
     /**
-     * MoneyFXTextField base class.
+     * CurrencyFXTextField base class.
      * @param <T> the data type
      */
-    protected abstract static class TethysFXMoneyTextFieldBase<T extends TethysMoney>
+    protected abstract static class TethysFXCurrencyTextFieldBase<T extends TethysMoney>
             extends TethysFXTextEditField<T>
-            implements TethysCurrencyItem {
+            implements TethysCurrencyField {
         /**
          * Constructor.
          * @param pConverter the converter
          */
-        public TethysFXMoneyTextFieldBase(final TethysMoneyEditConverterBase<T> pConverter) {
+        public TethysFXCurrencyTextFieldBase(final TethysMoneyEditConverterBase<T> pConverter) {
             super(pConverter);
         }
 
@@ -516,7 +522,7 @@ public abstract class TethysFXDataTextField<T>
      * FXMoneyTextField class.
      */
     public static class TethysFXMoneyTextField
-            extends TethysFXMoneyTextFieldBase<TethysMoney> {
+            extends TethysFXCurrencyTextFieldBase<TethysMoney> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -530,7 +536,7 @@ public abstract class TethysFXDataTextField<T>
      * FXPriceTextField class.
      */
     public static class TethysFXPriceTextField
-            extends TethysFXMoneyTextFieldBase<TethysPrice> {
+            extends TethysFXCurrencyTextFieldBase<TethysPrice> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -544,7 +550,7 @@ public abstract class TethysFXDataTextField<T>
      * FXDilutedPriceTextField class.
      */
     public static class TethysFXDilutedPriceTextField
-            extends TethysFXMoneyTextFieldBase<TethysDilutedPrice> {
+            extends TethysFXCurrencyTextFieldBase<TethysDilutedPrice> {
         /**
          * Constructor.
          * @param pFormatter the formatter

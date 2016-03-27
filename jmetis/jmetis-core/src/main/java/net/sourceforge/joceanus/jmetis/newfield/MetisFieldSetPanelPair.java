@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanel.MetisFieldSet
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyField;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
@@ -298,9 +298,9 @@ public abstract class MetisFieldSetPanelPair<N, C, F, I>
         /* Look up the field and check that it is a currency item */
         MetisFieldSetPanelItem<?, N, C, F, I> myChild = theFieldMap.get(pField);
         if ((myChild != null)
-            && myChild instanceof TethysCurrencyItem) {
+            && myChild instanceof TethysCurrencyField) {
             /* Set the currency */
-            ((TethysCurrencyItem) myChild).setDeemedCurrency(pCurrency);
+            ((TethysCurrencyField) myChild).setDeemedCurrency(pCurrency);
         }
     }
 

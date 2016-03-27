@@ -23,66 +23,39 @@
 package net.sourceforge.joceanus.jtethys.ui;
 
 /**
- * Tethys User interface events.
+ * List Ids.
  */
-public enum TethysUIEvent {
+public enum TethysListId {
     /**
-     * New Value.
+     * Work.
      */
-    NEWVALUE,
+    WORK("Work"),
 
     /**
-     * New Command.
+     * Important.
      */
-    NEWCOMMAND,
+    IMPORTANT("Important"),
 
     /**
-     * Prepare Dialog.
+     * Personal.
      */
-    PREPAREDIALOG,
+    PERSONAL("Personal");
 
     /**
-     * Prepare Command Dialog.
+     * The name.
      */
-    PREPARECMDDIALOG,
+    private final String theName;
 
     /**
-     * Build Page.
+     * Constructor.
+     * @param pName the name
      */
-    BUILDPAGE,
+    TethysListId(final String pName) {
+        theName = pName;
+    }
 
-    /**
-     * Window Closed.
-     */
-    WINDOWCLOSED,
-
-    /**
-     * Edit Focus Lost.
-     */
-    EDITFOCUSLOST,
-
-    /**
-     * Cell newly created.
-     */
-    CELLCREATE,
-
-    /**
-     * Cell about to be formatted.
-     */
-    CELLFORMAT,
-
-    /**
-     * Cell about to be edited.
-     */
-    CELLPREEDIT,
-
-    /**
-     * Cell about to be committed.
-     */
-    CELLPRECOMMIT,
-
-    /**
-     * Cell has been committed.
-     */
-    CELLCOMMITTED;
+    @Override
+    public String toString() {
+        return theName;
+    }
 }

@@ -28,8 +28,6 @@ import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -48,11 +46,9 @@ import org.slf4j.LoggerFactory;
 
 import net.sourceforge.jdatebutton.swing.JDateButton;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -85,6 +81,11 @@ public class TethysSwingScrollUIExample
      * The default width.
      */
     private static final int DEFAULT_WIDTH = 400;
+
+    /**
+     * Default icon width.
+     */
+    private static final int DEFAULT_ICONWIDTH = 24;
 
     /**
      * Logger.
@@ -124,7 +125,7 @@ public class TethysSwingScrollUIExample
     /**
      * The list button manager.
      */
-    private final TethysSwingListButtonManager<String> theListButtonMgr;
+    private final TethysSwingListButtonManager<TethysListId> theListButtonMgr;
 
     /**
      * The date button manager.
@@ -162,11 +163,6 @@ public class TethysSwingScrollUIExample
     private final JLabel theListValues;
 
     /**
-     * The selected list values.
-     */
-    private final List<String> theSelectedValues;
-
-    /**
      * Constructor.
      */
     public TethysSwingScrollUIExample() {
@@ -174,12 +170,12 @@ public class TethysSwingScrollUIExample
         theHelper = new TethysScrollUITestHelper<>();
 
         /* Create resources */
-        theScrollMenu = new TethysSwingScrollContextMenu<String>();
-        theScrollButtonMgr = new TethysSwingScrollButtonManager<String>();
-        theSimpleIconButtonMgr = new TethysSwingSimpleIconButtonManager<Boolean>();
-        theStateIconButtonMgr = new TethysSwingStateIconButtonManager<Boolean, IconState>();
-        theStateButtonMgr = new TethysSwingScrollButtonManager<IconState>();
-        theListButtonMgr = new TethysSwingListButtonManager<String>();
+        theScrollMenu = new TethysSwingScrollContextMenu<>();
+        theScrollButtonMgr = new TethysSwingScrollButtonManager<>();
+        theSimpleIconButtonMgr = new TethysSwingSimpleIconButtonManager<>();
+        theStateIconButtonMgr = new TethysSwingStateIconButtonManager<>();
+        theStateButtonMgr = new TethysSwingScrollButtonManager<>();
+        theListButtonMgr = new TethysSwingListButtonManager<>();
         theDateButtonMgr = new TethysSwingDateButtonManager();
         theContextValue = new JLabel();
         theScrollValue = new JLabel();
@@ -187,7 +183,6 @@ public class TethysSwingScrollUIExample
         theSimpleIconValue = new JLabel();
         theStateIconValue = new JLabel();
         theListValues = new JLabel();
-        theSelectedValues = new ArrayList<String>();
     }
 
     @Override
@@ -324,8 +319,7 @@ public class TethysSwingScrollUIExample
         theListButtonMgr.getButton().setButtonText("Tag");
 
         /* Add listener */
-        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
-                e -> setListValue(e.getDetails(TethysScrollMenuToggleItem.class)));
+        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setListValue());
 
         /* Create date button line */
         JDateButton myDateButton = theDateButtonMgr.getNode();
@@ -348,9 +342,8 @@ public class TethysSwingScrollUIExample
         myIconArea.add(myIconButton.getButton(), BorderLayout.CENTER);
         buildResultLabel(theSimpleIconValue, "IconValue");
         myHelper.addFullLabeledRow(myIconArea, theSimpleIconValue);
-        theHelper.buildSimpleIconState(theSimpleIconButtonMgr,
-                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.OPENFALSE, TethysIconButtonManager.DEFAULT_ICONWIDTH),
-                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.OPENTRUE, TethysIconButtonManager.DEFAULT_ICONWIDTH));
+        theSimpleIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
+        theHelper.buildSimpleIconState(theSimpleIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
 
         /* Add listener */
         theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
@@ -366,10 +359,11 @@ public class TethysSwingScrollUIExample
         buildResultLabel(theStateIconValue, "StateIconValue");
         myHelper.addFullLabeledRow(myIconArea, theStateIconValue);
         theHelper.buildStateButton(theStateButtonMgr);
+        theStateIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
         theHelper.buildStateIconState(theStateIconButtonMgr,
-                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.OPENFALSE, TethysIconButtonManager.DEFAULT_ICONWIDTH),
-                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.OPENTRUE, TethysIconButtonManager.DEFAULT_ICONWIDTH),
-                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.CLOSEDTRUE, TethysIconButtonManager.DEFAULT_ICONWIDTH));
+                TethysHelperIcon.OPENFALSE,
+                TethysHelperIcon.OPENTRUE,
+                TethysHelperIcon.CLOSEDTRUE);
 
         /* Add listener */
         theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setStateIconValue(e.getDetails(Boolean.class)));
@@ -430,9 +424,8 @@ public class TethysSwingScrollUIExample
 
     /**
      * Set the list value.
-     * @param pValue the value to set
      */
-    private void setListValue(final TethysScrollMenuToggleItem<?> pValue) {
+    private void setListValue() {
         /* Record the value */
         theListValues.setText(theListButtonMgr.getText());
     }

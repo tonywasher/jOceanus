@@ -23,16 +23,24 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.text.Font;
 import net.sourceforge.jdatebutton.javafx.JDateButton;
+import net.sourceforge.jdatebutton.javafx.JDateDialog;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton.TethysFXSimpleIconButtonManager;
@@ -56,7 +64,8 @@ public final class TethysFXDataButtonField {
      * @param <S> the state class
      */
     public static class TethysFXStateIconButtonField<T, S>
-            extends TethysFXIconButtonField<T> {
+            extends TethysFXIconButtonField<T>
+            implements TethysStateIconField<T, S> {
         /**
          * Constructor.
          */
@@ -76,11 +85,12 @@ public final class TethysFXDataButtonField {
      * @param <T> the data type
      */
     public static class TethysFXIconButtonField<T>
-            extends TethysFXDataTextField<T> {
+            extends TethysFXDataTextField<T>
+            implements TethysIconField<T> {
         /**
          * The icon manager.
          */
-        private final TethysIconButtonManager<T, Node, Node> theManager;
+        private final TethysSimpleIconButtonManager<T, Node, Node> theManager;
 
         /**
          * The button.
@@ -103,7 +113,7 @@ public final class TethysFXDataButtonField {
          * Constructor.
          * @param pManager the manager
          */
-        public TethysFXIconButtonField(final TethysIconButtonManager<T, Node, Node> pManager) {
+        protected TethysFXIconButtonField(final TethysSimpleIconButtonManager<T, Node, Node> pManager) {
             /* Initialise underlying class */
             super((Control) pManager.getNode());
 
@@ -121,11 +131,8 @@ public final class TethysFXDataButtonField {
             });
         }
 
-        /**
-         * Obtain the manager.
-         * @return the manager
-         */
-        public TethysIconButtonManager<T, Node, Node> getIconManager() {
+        @Override
+        public TethysSimpleIconButtonManager<T, Node, Node> getIconManager() {
             return theManager;
         }
 
@@ -182,7 +189,7 @@ public final class TethysFXDataButtonField {
         }
 
         @Override
-        public void startCellEditing() {
+        public void startCellEditing(final Node pCell) {
             Platform.runLater(() -> theButton.fire());
         }
     }
@@ -192,7 +199,8 @@ public final class TethysFXDataButtonField {
      * @param <T> the data type
      */
     public static class TethysFXScrollButtonField<T>
-            extends TethysFXDataTextField<T> {
+            extends TethysFXDataTextField<T>
+            implements TethysScrollField<T> {
         /**
          * The scroll manager.
          */
@@ -219,7 +227,7 @@ public final class TethysFXDataButtonField {
          * Constructor.
          * @param pManager the manager
          */
-        public TethysFXScrollButtonField(final TethysFXScrollButtonManager<T> pManager) {
+        private TethysFXScrollButtonField(final TethysFXScrollButtonManager<T> pManager) {
             /* Initialise underlying class */
             super(pManager.getNode());
 
@@ -255,10 +263,7 @@ public final class TethysFXDataButtonField {
             }
         }
 
-        /**
-         * Obtain the manager.
-         * @return the manager
-         */
+        @Override
         public TethysFXScrollButtonManager<T> getScrollManager() {
             return theManager;
         }
@@ -286,10 +291,10 @@ public final class TethysFXDataButtonField {
         }
 
         @Override
-        public void startCellEditing() {
+        public void startCellEditing(final Node pCell) {
             isCellEditing = true;
-            setEditable(true);
-            Platform.runLater(() -> theButton.fire());
+            TethysFXScrollContextMenu<T> myMenu = theManager.getMenu();
+            myMenu.showMenuAtPosition(pCell, Side.BOTTOM);
         }
 
         /**
@@ -297,7 +302,6 @@ public final class TethysFXDataButtonField {
          */
         private void haltCellEditing() {
             if (isCellEditing) {
-                setEditable(false);
                 fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
             }
             isCellEditing = false;
@@ -308,7 +312,8 @@ public final class TethysFXDataButtonField {
      * DateButtonField class.
      */
     public static class TethysFXDateButtonField
-            extends TethysFXDataTextField<TethysDate> {
+            extends TethysFXDataTextField<TethysDate>
+            implements TethysDateField {
         /**
          * The date manager.
          */
@@ -343,7 +348,7 @@ public final class TethysFXDataButtonField {
          * Constructor.
          * @param pManager the manager
          */
-        public TethysFXDateButtonField(final TethysFXDateButtonManager pManager) {
+        private TethysFXDateButtonField(final TethysFXDateButtonManager pManager) {
             /* Initialise underlying class */
             super((JDateButton) pManager.getNode());
 
@@ -379,10 +384,7 @@ public final class TethysFXDataButtonField {
             }
         }
 
-        /**
-         * Obtain the manager.
-         * @return the manager
-         */
+        @Override
         public TethysFXDateButtonManager getDateManager() {
             return theManager;
         }
@@ -410,10 +412,20 @@ public final class TethysFXDataButtonField {
         }
 
         @Override
-        public void startCellEditing() {
+        public void startCellEditing(final Node pCell) {
+            /* Note editing */
             isCellEditing = true;
-            setEditable(true);
-            Platform.runLater(() -> theButton.fire());
+            JDateDialog myDialog = theManager.getDialog();
+
+            /* Determine the relevant bounds */
+            Bounds myBounds = pCell.localToScreen(pCell.getLayoutBounds());
+
+            /* Position the dialog just below the cell */
+            myDialog.setX(myBounds.getMinX());
+            myDialog.setY(myBounds.getMaxY());
+
+            /* Show the dialog */
+            myDialog.showDialog();
         }
 
         /**
@@ -421,7 +433,6 @@ public final class TethysFXDataButtonField {
          */
         private void haltCellEditing() {
             if (isCellEditing) {
-                setEditable(false);
                 fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
             }
             isCellEditing = false;
@@ -433,7 +444,8 @@ public final class TethysFXDataButtonField {
      * @param <T> the data type
      */
     public static class TethysFXListButtonField<T>
-            extends TethysFXDataTextField<TethysItemList<T>> {
+            extends TethysFXDataTextField<TethysItemList<T>>
+            implements TethysListField<T> {
         /**
          * The list manager.
          */
@@ -460,7 +472,7 @@ public final class TethysFXDataButtonField {
          * Constructor.
          * @param pManager the manager
          */
-        public TethysFXListButtonField(final TethysFXListButtonManager<T> pManager) {
+        private TethysFXListButtonField(final TethysFXListButtonManager<T> pManager) {
             /* Initialise underlying class */
             super(pManager.getNode());
 
@@ -482,7 +494,7 @@ public final class TethysFXDataButtonField {
         private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
             switch (pEvent.getEventId()) {
                 case NEWVALUE:
-                    updateText();
+                    setValue(theManager.getValue());
                     fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
                     break;
                 case EDITFOCUSLOST:
@@ -493,10 +505,7 @@ public final class TethysFXDataButtonField {
             }
         }
 
-        /**
-         * Obtain the manager.
-         * @return the manager
-         */
+        @Override
         public TethysFXListButtonManager<T> getListManager() {
             return theManager;
         }
@@ -528,10 +537,11 @@ public final class TethysFXDataButtonField {
         }
 
         @Override
-        public void startCellEditing() {
+        public void startCellEditing(final Node pCell) {
             isCellEditing = true;
-            setEditable(true);
-            Platform.runLater(() -> theButton.fire());
+            theManager.buildMenu();
+            TethysFXScrollContextMenu<T> myMenu = theManager.getMenu();
+            myMenu.showMenuAtPosition(pCell, Side.BOTTOM);
         }
 
         /**
@@ -539,7 +549,6 @@ public final class TethysFXDataButtonField {
          */
         private void haltCellEditing() {
             if (isCellEditing) {
-                setEditable(false);
                 fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
             }
             isCellEditing = false;

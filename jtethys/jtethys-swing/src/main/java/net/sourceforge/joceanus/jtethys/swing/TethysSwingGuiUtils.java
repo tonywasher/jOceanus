@@ -125,7 +125,29 @@ public final class TethysSwingGuiUtils {
         /* determine the display rectangle */
         Rectangle myArea = new Rectangle(myLocation.x, myLocation.y,
                 pSize.width, pSize.height);
-        myArea = adjustDisplayLocation(myArea, pAnchor, pSide, myScreen);
+        myArea = adjustDisplayLocation(myArea, pAnchor.getBounds(), pSide, myScreen);
+
+        /* Return the location */
+        return new Point(myArea.x, myArea.y);
+    }
+
+    /**
+     * Obtain display point for dialog.
+     * @param pAnchor the anchor node
+     * @param pSide the preferred side to display on
+     * @param pSize the size of the dialog
+     * @return the (adjusted) rectangle
+     */
+    public static Point obtainDisplayPoint(final Rectangle pAnchor,
+                                           final int pSide,
+                                           final Dimension pSize) {
+        /* First of all determine the display screen for the anchor node */
+        GraphicsDevice myScreen = getScreenForRectangle(pAnchor);
+
+        /* determine the display rectangle */
+        Rectangle myArea = new Rectangle(pAnchor.x, pAnchor.y,
+                pSize.width, pSize.height);
+        myArea = adjustDisplayLocation(myArea, pAnchor.getBounds(), pSide, myScreen);
 
         /* Return the location */
         return new Point(myArea.x, myArea.y);
@@ -137,10 +159,6 @@ public final class TethysSwingGuiUtils {
      * @return the relevant screen
      */
     private static GraphicsDevice getScreenForComponent(final Component pAnchor) {
-        /* Access the list of screens */
-        GraphicsEnvironment myEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[] myDevices = myEnv.getScreenDevices();
-
         /* Obtain full-qualified origin of node */
         Point myOrigin = pAnchor.getLocationOnScreen();
 
@@ -150,6 +168,20 @@ public final class TethysSwingGuiUtils {
                 myOrigin.y,
                 myLocalBounds.width,
                 myLocalBounds.height);
+
+        /* Look for rectangle */
+        return getScreenForRectangle(myBounds);
+    }
+
+    /**
+     * Obtain the screen that best contains the rectangle.
+     * @param pAnchor the anchor node.
+     * @return the relevant screen
+     */
+    private static GraphicsDevice getScreenForRectangle(final Rectangle pAnchor) {
+        /* Access the list of screens */
+        GraphicsEnvironment myEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] myDevices = myEnv.getScreenDevices();
 
         /* Set values */
         double myBest = 0;
@@ -164,7 +196,7 @@ public final class TethysSwingGuiUtils {
                 Rectangle myDevBounds = myConfig.getBounds();
 
                 /* Calculate intersection and record best */
-                double myIntersection = getIntersection(myBounds, myDevBounds);
+                double myIntersection = getIntersection(pAnchor, myDevBounds);
                 if (myIntersection > myBest) {
                     myBest = myIntersection;
                     myBestDevice = myDevice;
@@ -269,19 +301,18 @@ public final class TethysSwingGuiUtils {
      * @return the (adjusted) location
      */
     private static Rectangle adjustDisplayLocation(final Rectangle pSource,
-                                                   final Component pAnchor,
+                                                   final Rectangle pAnchor,
                                                    final int pSide,
                                                    final GraphicsDevice pScreen) {
         /* Access Screen bounds */
         Rectangle myScreenBounds = pScreen.getDefaultConfiguration().getBounds();
-        Rectangle myBounds = pAnchor.getBounds();
         double myAdjustX = 0;
         double myAdjustY = 0;
 
         /* Determine initial adjustment */
         switch (pSide) {
             case SwingConstants.RIGHT:
-                myAdjustX = myBounds.getWidth();
+                myAdjustX = pAnchor.getWidth();
                 if (pSource.getMaxX() + myAdjustX > myScreenBounds.getMaxX()) {
                     myAdjustX = -pSource.getWidth();
                 }
@@ -289,11 +320,11 @@ public final class TethysSwingGuiUtils {
             case SwingConstants.LEFT:
                 myAdjustX = -pSource.getWidth();
                 if (pSource.getMinX() + myAdjustX < myScreenBounds.getMinX()) {
-                    myAdjustX = myBounds.getWidth();
+                    myAdjustX = pAnchor.getWidth();
                 }
                 break;
             case SwingConstants.BOTTOM:
-                myAdjustY = myBounds.getHeight();
+                myAdjustY = pAnchor.getHeight();
                 if (pSource.getMaxY() + myAdjustY > myScreenBounds.getMaxY()) {
                     myAdjustY = -pSource.getHeight();
                 }
@@ -301,7 +332,7 @@ public final class TethysSwingGuiUtils {
             case SwingConstants.TOP:
                 myAdjustY = -pSource.getHeight();
                 if (pSource.getMinY() + myAdjustY < myScreenBounds.getMinY()) {
-                    myAdjustY = myBounds.getHeight();
+                    myAdjustY = pAnchor.getHeight();
                 }
                 break;
             default:

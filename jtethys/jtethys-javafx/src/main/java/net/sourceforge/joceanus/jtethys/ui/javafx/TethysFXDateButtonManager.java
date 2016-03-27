@@ -83,6 +83,14 @@ public class TethysFXDateButtonManager
         return theButton;
     }
 
+    /**
+     * Obtain the dialog.
+     * @return the dialog
+     */
+    public JDateDialog getDialog() {
+        return theDialog;
+    }
+
     @Override
     public void setEnabled(final boolean pEnable) {
         theButton.setDisable(!pEnable);

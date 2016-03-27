@@ -23,66 +23,109 @@
 package net.sourceforge.joceanus.jtethys.ui;
 
 /**
- * Tethys User interface events.
+ * Column Ids.
  */
-public enum TethysUIEvent {
+public enum TethysDataId {
     /**
-     * New Value.
+     * Name.
      */
-    NEWVALUE,
+    NAME("Name"),
 
     /**
-     * New Command.
+     * Date.
      */
-    NEWCOMMAND,
+    DATE("Date"),
 
     /**
-     * Prepare Dialog.
+     * Short.
      */
-    PREPAREDIALOG,
+    SHORT("Short"),
 
     /**
-     * Prepare Command Dialog.
+     * Integer.
      */
-    PREPARECMDDIALOG,
+    INTEGER("Integer"),
 
     /**
-     * Build Page.
+     * Long.
      */
-    BUILDPAGE,
+    LONG("Long"),
 
     /**
-     * Window Closed.
+     * Boolean.
      */
-    WINDOWCLOSED,
+    BOOLEAN("Boolean"),
 
     /**
-     * Edit Focus Lost.
+     * XtraBoolean.
      */
-    EDITFOCUSLOST,
+    XTRABOOL("XtraBoolean"),
 
     /**
-     * Cell newly created.
+     * Money.
      */
-    CELLCREATE,
+    MONEY("Money"),
 
     /**
-     * Cell about to be formatted.
+     * Price.
      */
-    CELLFORMAT,
+    PRICE("Price"),
 
     /**
-     * Cell about to be edited.
+     * Rate.
      */
-    CELLPREEDIT,
+    RATE("Rate"),
 
     /**
-     * Cell about to be committed.
+     * Ratio.
      */
-    CELLPRECOMMIT,
+    RATIO("Ratio"),
 
     /**
-     * Cell has been committed.
+     * Units.
      */
-    CELLCOMMITTED;
+    UNITS("Units"),
+
+    /**
+     * Dilution.
+     */
+    DILUTION("Dilution"),
+
+    /**
+     * DilutedPrice.
+     */
+    DILUTEDPRICE("DilutedPrice"),
+
+    /**
+     * Scroll.
+     */
+    SCROLL("Scroll"),
+
+    /**
+     * List.
+     */
+    LIST("List"),
+
+    /**
+     * Updates.
+     */
+    UPDATES("Updates");
+
+    /**
+     * The name.
+     */
+    private final String theName;
+
+    /**
+     * Constructor.
+     * @param pName the name
+     */
+    TethysDataId(final String pName) {
+        theName = pName;
+    }
+
+    @Override
+    public String toString() {
+        return theName;
+    }
 }

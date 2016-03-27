@@ -25,6 +25,9 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Currency;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase.AssetBaseList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
@@ -42,9 +45,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Transaction builder.
@@ -574,8 +574,8 @@ public class TransactionBuilder {
      * @param pCategory the category
      * @return the default partner or null
      */
-    private <X extends AssetBase<X>> TransactionAsset getDefaultAssetForCategory(final AssetBaseList<X> pList,
-                                                                                 final TransactionCategory pCategory) {
+    private static <X extends AssetBase<X>> TransactionAsset getDefaultAssetForCategory(final AssetBaseList<X> pList,
+                                                                                        final TransactionCategory pCategory) {
         /* Loop through the available values */
         Iterator<X> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
@@ -604,9 +604,9 @@ public class TransactionBuilder {
      * @param pCategory the category
      * @return the default partner or null
      */
-    private <X extends AssetBase<X>> TransactionAsset getDefaultPartnerAsset(final AssetBaseList<X> pList,
-                                                                             final TransactionAsset pAccount,
-                                                                             final TransactionCategory pCategory) {
+    private static <X extends AssetBase<X>> TransactionAsset getDefaultPartnerAsset(final AssetBaseList<X> pList,
+                                                                                    final TransactionAsset pAccount,
+                                                                                    final TransactionCategory pCategory) {
         /* Loop through the available values */
         Iterator<X> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
@@ -633,8 +633,8 @@ public class TransactionBuilder {
      * @param pCategory the category
      * @return the default partner
      */
-    private SecurityHolding getDefaultHolding(final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                              final TransactionCategory pCategory) {
+    private static SecurityHolding getDefaultHolding(final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                                     final TransactionCategory pCategory) {
         /* Access Portfolios and Holdings Map */
         MoneyWiseData myData = pUpdateSet.getDataSet(MoneyWiseData.class);
         PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
@@ -676,9 +676,9 @@ public class TransactionBuilder {
      * @param pCategory the category
      * @return the default partner
      */
-    private SecurityHolding getDefaultPartnerHolding(final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                                     final TransactionAsset pAccount,
-                                                     final TransactionCategory pCategory) {
+    private static SecurityHolding getDefaultPartnerHolding(final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                                            final TransactionAsset pAccount,
+                                                            final TransactionCategory pCategory) {
         /* Access Portfolios and Holdings Map */
         MoneyWiseData myData = pUpdateSet.getDataSet(MoneyWiseData.class);
         PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);

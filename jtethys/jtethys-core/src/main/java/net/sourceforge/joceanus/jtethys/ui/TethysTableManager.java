@@ -399,4 +399,48 @@ public abstract class TethysTableManager<I, R, N>
             return myCount;
         }
     }
+
+    /**
+     * Cell interface.
+     * @param <I> the column identity
+     * @param <R> the row type
+     * @param <C> the value type
+     */
+    public interface TethysTableCell<I, R, C> {
+        /**
+         * Obtain the column.
+         * @return the column
+         */
+        TethysTableColumn<I, R, ?> getColumn();
+
+        /**
+         * Obtain the control.
+         * @return the field
+         */
+        TethysDataEditField<C, ?, ?, ?, ?> getControl();
+
+        /**
+         * Obtain the new value.
+         * @return the new value
+         */
+        C getNewValue();
+
+        /**
+         * obtain the current row.
+         * @return the row (or null)
+         */
+        R getActiveRow();
+
+        /**
+         * Obtain the id of the column.
+         * @return the column id
+         */
+        I getColumnId();
+
+        /**
+         * Obtain the type of the column.
+         * @return the column type
+         */
+        TethysFieldType getCellType();
+    }
 }

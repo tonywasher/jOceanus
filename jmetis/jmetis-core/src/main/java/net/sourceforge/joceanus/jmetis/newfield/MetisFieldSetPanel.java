@@ -41,12 +41,13 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
@@ -270,9 +271,9 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
         /* Look up the field and check that it is a currency item */
         MetisFieldSetPanelItem<?, N, C, F, I> myChild = theFieldMap.get(pField);
         if ((myChild != null)
-            && myChild instanceof TethysCurrencyItem) {
+            && myChild instanceof TethysCurrencyField) {
             /* Set the currency */
-            ((TethysCurrencyItem) myChild).setDeemedCurrency(pCurrency);
+            ((TethysCurrencyField) myChild).setDeemedCurrency(pCurrency);
         }
     }
 
@@ -366,16 +367,7 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
      * @param pField the field
      * @return the field
      */
-    public abstract MetisFieldSetDateItem addDateButtonField(final MetisField pField);
-
-    /**
-     * Add dateButton field.
-     * @param pField the field
-     * @param pManager the manager
-     * @return the field
-     */
-    public abstract MetisFieldSetDateItem addDateButtonField(final MetisField pField,
-                                                             final TethysDateButtonManager<?> pManager);
+    public abstract TethysDateField addDateButtonField(final MetisField pField);
 
     /**
      * Add scrollButton field.
@@ -384,64 +376,37 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
      * @param pClass the item class
      * @return the field
      */
-    public abstract <T> MetisFieldSetScrollItem<T, N, I> addScrollButtonField(final MetisField pField,
-                                                                              final Class<T> pClass);
-
-    /**
-     * Add scrollButton field.
-     * @param <T> the item type
-     * @param pField the field
-     * @param pManager the manager
-     * @param pClass the item class
-     * @return the field
-     */
-    public abstract <T> MetisFieldSetScrollItem<T, N, I> addScrollButtonField(final MetisField pField,
-                                                                              final TethysScrollButtonManager<T, N, I> pManager,
-                                                                              final Class<T> pClass);
+    public abstract <T> TethysScrollField<T> addScrollButtonField(final MetisField pField,
+                                                                  final Class<T> pClass);
 
     /**
      * Add listButton field.
      * @param <T> the item type
      * @param pField the field
-     * @param pClass the item class
      * @return the list field
      */
-    public abstract <T> MetisFieldSetListItem<T, N, I> addListButtonField(final MetisField pField,
-                                                                          final Class<T> pClass);
+    public abstract <T> TethysListField<T> addListButtonField(final MetisField pField);
 
     /**
-     * Add listButton field.
-     * @param <T> the item type
-     * @param pField the field
-     * @param pManager the manager
-     * @param pClass the item class
-     * @return the list field
-     */
-    public abstract <T> MetisFieldSetListItem<T, N, I> addListButtonField(final MetisField pField,
-                                                                          final TethysListButtonManager<T, N, I> pManager,
-                                                                          final Class<T> pClass);
-
-    /**
-     * Add iconButton field.
+     * Add simpleIconButton field.
      * @param <T> the item type
      * @param pField the field
      * @param pClass the item class
      * @return the icon field
      */
-    public abstract <T> MetisFieldSetIconItem<T, N, I> addIconButtonField(final MetisField pField,
-                                                                          final Class<T> pClass);
+    public abstract <T> TethysIconField<T> addIconButtonField(final MetisField pField,
+                                                              final Class<T> pClass);
 
     /**
-     * Add iconButton field.
+     * Add stateIconButton field.
      * @param <T> the item type
+     * @param <S> the state type
      * @param pField the field
-     * @param pManager the manager
      * @param pClass the item class
      * @return the icon field
      */
-    public abstract <T> MetisFieldSetIconItem<T, N, I> addIconButtonField(final MetisField pField,
-                                                                          final TethysIconButtonManager<T, N, I> pManager,
-                                                                          final Class<T> pClass);
+    public abstract <T, S> TethysStateIconField<T, S> addStateIconButtonField(final MetisField pField,
+                                                                              final Class<T> pClass);
 
     /**
      * Is the panel visible?
@@ -838,62 +803,5 @@ public abstract class MetisFieldSetPanel<N, C, F, I>
             MetisFieldUpdate myUpdate = new MetisFieldUpdate(theField, pEvent.getDetails());
             thePanel.fireEvent(pEvent.getEventId(), myUpdate);
         }
-    }
-
-    /**
-     * DateButtonField.
-     */
-    @FunctionalInterface
-    public interface MetisFieldSetDateItem {
-        /**
-         * Obtain the date manager.
-         * @return the manager
-         */
-        TethysDateButtonManager<?> getManager();
-    }
-
-    /**
-     * ScrollButtonField.
-     * @param <T> the item type
-     * @param <N> the node type
-     * @param <I> the icon type
-     */
-    @FunctionalInterface
-    public interface MetisFieldSetScrollItem<T, N, I> {
-        /**
-         * Obtain the scroll manager.
-         * @return the manager
-         */
-        TethysScrollButtonManager<T, N, I> getManager();
-    }
-
-    /**
-     * ListButtonField.
-     * @param <T> the item type
-     * @param <N> the node type
-     * @param <I> the icon type
-     */
-    @FunctionalInterface
-    public interface MetisFieldSetListItem<T, N, I> {
-        /**
-         * Obtain the list manager.
-         * @return the manager
-         */
-        TethysListButtonManager<T, N, I> getManager();
-    }
-
-    /**
-     * IconButtonField.
-     * @param <T> the item type
-     * @param <N> the node type
-     * @param <I> the icon type
-     */
-    @FunctionalInterface
-    public interface MetisFieldSetIconItem<T, N, I> {
-        /**
-         * Obtain the icon manager.
-         * @return the manager
-         */
-        TethysIconButtonManager<T, N, I> getManager();
     }
 }

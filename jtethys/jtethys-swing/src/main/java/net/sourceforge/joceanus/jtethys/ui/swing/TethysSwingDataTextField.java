@@ -27,6 +27,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -233,6 +234,12 @@ public abstract class TethysSwingDataTextField<T>
             super.setEditable(pEditable);
         }
     }
+
+    /**
+     * Start cell editing.
+     * @param pCell the cell rectangle
+     */
+    public abstract void startCellEditing(final Rectangle pCell);
 
     /**
      * TextField class.
@@ -452,7 +459,7 @@ public abstract class TethysSwingDataTextField<T>
         }
 
         @Override
-        public void startCellEditing() {
+        public void startCellEditing(final Rectangle pCell) {
             isCellEditing = true;
             setEditable(true);
             theControl.clearNewValue();
@@ -532,14 +539,14 @@ public abstract class TethysSwingDataTextField<T>
      * SwingMoneyTextField base class.
      * @param <T> the data type
      */
-    protected abstract static class TethysSwingMoneyTextFieldBase<T extends TethysMoney>
+    protected abstract static class TethysSwingCurrencyTextFieldBase<T extends TethysMoney>
             extends TethysSwingTextEditField<T>
-            implements TethysCurrencyItem {
+            implements TethysCurrencyField {
         /**
          * Constructor.
          * @param pConverter the converter
          */
-        public TethysSwingMoneyTextFieldBase(final TethysMoneyEditConverterBase<T> pConverter) {
+        public TethysSwingCurrencyTextFieldBase(final TethysMoneyEditConverterBase<T> pConverter) {
             super(pConverter);
         }
 
@@ -558,7 +565,7 @@ public abstract class TethysSwingDataTextField<T>
      * SwingMoneyTextField class.
      */
     public static class TethysSwingMoneyTextField
-            extends TethysSwingMoneyTextFieldBase<TethysMoney> {
+            extends TethysSwingCurrencyTextFieldBase<TethysMoney> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -572,7 +579,7 @@ public abstract class TethysSwingDataTextField<T>
      * SwingPriceTextField class.
      */
     public static class TethysSwingPriceTextField
-            extends TethysSwingMoneyTextFieldBase<TethysPrice> {
+            extends TethysSwingCurrencyTextFieldBase<TethysPrice> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -586,7 +593,7 @@ public abstract class TethysSwingDataTextField<T>
      * SwingDilutedPriceTextField class.
      */
     public static class TethysSwingDilutedPriceTextField
-            extends TethysSwingMoneyTextFieldBase<TethysDilutedPrice> {
+            extends TethysSwingCurrencyTextFieldBase<TethysDilutedPrice> {
         /**
          * Constructor.
          * @param pFormatter the formatter

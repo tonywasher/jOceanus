@@ -28,9 +28,7 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Currency;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -60,11 +58,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
+import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
@@ -82,7 +80,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingShortTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingUnitsTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButton.TethysSwingListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
@@ -115,6 +112,11 @@ public class TethysSwingEditUIExample
      * The default width.
      */
     private static final int DEFAULT_WIDTH = 400;
+
+    /**
+     * Default icon width.
+     */
+    private static final int DEFAULT_ICONWIDTH = 24;
 
     /**
      * The Test helper.
@@ -179,7 +181,7 @@ public class TethysSwingEditUIExample
     /**
      * The icon button manager.
      */
-    private final TethysSwingSimpleIconButtonManager<Boolean> theIconButtonMgr;
+    private final TethysSimpleIconButtonManager<Boolean, ?, ?> theIconButtonMgr;
 
     /**
      * The icon button field.
@@ -197,11 +199,6 @@ public class TethysSwingEditUIExample
     private final TethysSwingScrollButtonField<String> theScrollField;
 
     /**
-     * The date button manager.
-     */
-    private final TethysSwingDateButtonManager theDateButtonMgr;
-
-    /**
      * The date button field.
      */
     private final TethysSwingDateButtonField theDateField;
@@ -209,12 +206,12 @@ public class TethysSwingEditUIExample
     /**
      * The list button manager.
      */
-    private final TethysSwingListButtonManager<String> theListButtonMgr;
+    private final TethysSwingListButtonManager<TethysListId> theListButtonMgr;
 
     /**
      * The list button field.
      */
-    private final TethysSwingListButtonField<String> theListField;
+    private final TethysSwingListButtonField<TethysListId> theListField;
 
     /**
      * The source.
@@ -240,11 +237,6 @@ public class TethysSwingEditUIExample
      * The Decimal formatter.
      */
     private final TethysDecimalFormatter theDecimalFormatter;
-
-    /**
-     * The selected list values.
-     */
-    private final List<String> theSelectedValues;
 
     /**
      * Constructor.
@@ -274,17 +266,15 @@ public class TethysSwingEditUIExample
         theSource = new JLabel();
         theClass = new JLabel();
         theValue = new JLabel();
-        theSelectedValues = new ArrayList<String>();
 
         /* Create button fields */
-        theScrollButtonMgr = new TethysSwingScrollButtonManager<String>();
-        theScrollField = new TethysSwingScrollButtonField<String>(theScrollButtonMgr);
-        theDateButtonMgr = new TethysSwingDateButtonManager(myFormatter);
-        theDateField = new TethysSwingDateButtonField(theDateButtonMgr);
-        theIconButtonMgr = new TethysSwingSimpleIconButtonManager<Boolean>();
-        theIconField = new TethysSwingIconButtonField<Boolean>(theIconButtonMgr);
-        theListButtonMgr = new TethysSwingListButtonManager<String>();
-        theListField = new TethysSwingListButtonField<String>(theListButtonMgr);
+        theScrollField = new TethysSwingScrollButtonField<>();
+        theScrollButtonMgr = theScrollField.getScrollManager();
+        theDateField = new TethysSwingDateButtonField(myFormatter);
+        theIconField = new TethysSwingIconButtonField<>();
+        theIconButtonMgr = theIconField.getIconManager();
+        theListField = new TethysSwingListButtonField<>();
+        theListButtonMgr = theListField.getListManager();
     }
 
     @Override
@@ -482,9 +472,8 @@ public class TethysSwingEditUIExample
         myLabel = new JLabel("IconButton:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         myGridHelper.addFullLabeledRow(myLabel, theIconField.getNode());
-        theHelper.buildSimpleIconState(theIconButtonMgr,
-                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.OPENFALSE, TethysIconButtonManager.DEFAULT_ICONWIDTH),
-                TethysSwingGuiUtils.getIconAtSize(TethysHelperIcon.OPENTRUE, TethysIconButtonManager.DEFAULT_ICONWIDTH));
+        theIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
+        theHelper.buildSimpleIconState(theIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
         theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
         theIconField.setValue(false);
 

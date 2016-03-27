@@ -271,6 +271,13 @@ public abstract class TethysIconButtonManager<T, B, I>
             theMapSet = pMapSet;
         }
 
+        /**
+         * Reset the configuration.
+         */
+        public void clearMaps() {
+            theMapSet.clearMaps();
+        }
+
         @Override
         protected I getIconForValue(final Object pValue) {
             Map<T, I> myMap = theMapSet.getIconMap();
@@ -450,6 +457,16 @@ public abstract class TethysIconButtonManager<T, B, I>
             setMapSet(mySet);
             applyButtonState();
         }
+
+        @Override
+        public void clearMaps() {
+            /* Reset state Maps */
+            theStateMap.clear();
+            theStateMap.put(theMachineState, getMapSet());
+
+            /* Clear the current map */
+            super.clearMaps();
+        }
     }
 
     /**
@@ -481,6 +498,15 @@ public abstract class TethysIconButtonManager<T, B, I>
             theValueMap = new HashMap<>();
             theIconMap = new HashMap<>();
             theTipMap = new HashMap<>();
+        }
+
+        /**
+         * Clear the mapSet.
+         */
+        private void clearMaps() {
+            theValueMap.clear();
+            theIconMap.clear();
+            theTipMap.clear();
         }
 
         /**

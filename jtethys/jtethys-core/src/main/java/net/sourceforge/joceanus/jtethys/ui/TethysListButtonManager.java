@@ -189,6 +189,23 @@ public abstract class TethysListButtonManager<T, B, I>
      * handleMenuRequest.
      */
     public void handleMenuRequest() {
+        /* If we should display the menu */
+        if (buildMenu()) {
+            /* Show the menu */
+            showMenu();
+
+            /* Else nothing to display */
+        } else {
+            /* notify cancellation */
+            notifyCancelled();
+        }
+    }
+
+    /**
+     * buildMenu.
+     * @return is menu display-able?
+     */
+    public boolean buildMenu() {
         /* Clear any existing elements from the menu */
         theMenu.removeAllItems();
 
@@ -208,12 +225,12 @@ public abstract class TethysListButtonManager<T, B, I>
             }
 
             /* Show the menu */
-            showMenu();
+            return true;
 
             /* Else nothing to display */
         } else {
             /* notify cancellation */
-            notifyCancelled();
+            return false;
         }
     }
 
@@ -243,7 +260,7 @@ public abstract class TethysListButtonManager<T, B, I>
         if (!theActiveValue.equals(theValue)) {
             /* Record the new value */
             setValue(theActiveValue);
-            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theValue);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theActiveValue);
 
             /* else no change */
         } else {

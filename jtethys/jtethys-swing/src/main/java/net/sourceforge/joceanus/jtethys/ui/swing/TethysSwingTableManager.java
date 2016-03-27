@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -110,10 +111,10 @@ public class TethysSwingTableManager<I, R>
      */
     public TethysSwingTableManager(final TethysDataFormatter pFormatter) {
         /* Create fields */
+        theColumnList = new ArrayList<>();
         theModel = new TethysSwingTableModel();
         theTable = new JTable(theModel);
         theColumns = theTable.getColumnModel();
-        theColumnList = new ArrayList<>();
         theCellFactory = new TethysSwingTableCellFactory<>(pFormatter);
         theSorter = new TethysSwingTableSorter<>(theModel);
 
@@ -300,11 +301,6 @@ public class TethysSwingTableManager<I, R>
         }
 
         @Override
-        public String getColumnName(final int pColIndex) {
-            return getIndexedColumn(pColIndex).getName();
-        }
-
-        @Override
         public boolean isCellEditable(final int pRowIndex,
                                       final int pColIndex) {
             return getIndexedColumn(pColIndex).isCellEditable(pRowIndex);
@@ -314,6 +310,13 @@ public class TethysSwingTableManager<I, R>
         public Object getValueAt(final int pRowIndex,
                                  final int pColIndex) {
             return getIndexedColumn(pColIndex).getCellValue(pRowIndex);
+        }
+
+        @Override
+        public void setValueAt(final Object pValue,
+                               final int pRowIndex,
+                               final int pColIndex) {
+            getIndexedColumn(pColIndex).setCellValue(pRowIndex, pValue);
         }
 
         @Override
@@ -350,7 +353,12 @@ public class TethysSwingTableManager<I, R>
         /**
          * Cell value factory.
          */
-        private Function<TethysSwingTableCell<I, R, C>, C> theValueFactory;
+        private Function<R, C> theValueFactory;
+
+        /**
+         * Cell commit factory.
+         */
+        private BiConsumer<R, C> theCommitFactory;
 
         /**
          * Constructor.
@@ -369,6 +377,7 @@ public class TethysSwingTableManager<I, R>
 
             /* Create the column and add to the table */
             theColumn = new TableColumn(myIndex);
+            theColumn.setHeaderValue(pId);
             pTable.theColumns.addColumn(theColumn);
             pTable.theColumnList.add(this);
 
@@ -383,8 +392,16 @@ public class TethysSwingTableManager<I, R>
          * Set cell value Factory.
          * @param pFactory the cell factory
          */
-        public void setCellValueFactory(final Function<TethysSwingTableCell<I, R, C>, C> pFactory) {
+        public void setCellValueFactory(final Function<R, C> pFactory) {
             theValueFactory = pFactory;
+        }
+
+        /**
+         * Set cell commit Factory.
+         * @param pFactory the cell factory
+         */
+        public void setCellCommitFactory(final BiConsumer<R, C> pFactory) {
+            theCommitFactory = pFactory;
         }
 
         /**
@@ -439,7 +456,20 @@ public class TethysSwingTableManager<I, R>
          */
         private C getCellValue(final int pIndex) {
             theCell.setActiveRow(pIndex);
-            return theValueFactory.apply(theCell);
+            return theValueFactory.apply(theCell.getActiveRow());
+        }
+
+        /**
+         * Set the cell value.
+         * @param pIndex the row index
+         * @param pValue the new value
+         */
+        private void setCellValue(final int pIndex,
+                                  final Object pValue) {
+            theCell.setActiveRow(pIndex);
+            if (theCommitFactory != null) {
+                theCommitFactory.accept(theCell.getActiveRow(), theCell.getCastValue(pValue));
+            }
         }
 
         /**

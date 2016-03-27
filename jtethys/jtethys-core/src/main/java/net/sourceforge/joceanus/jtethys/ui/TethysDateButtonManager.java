@@ -173,6 +173,14 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
     }
 
     /**
+     * Show Narrow Days. If this flag is set Days are show in narrow rather than short form.
+     * @param pShowNarrowDays true/false
+     */
+    public void setShowNarrowDays(final boolean pShowNarrowDays) {
+        theConfig.setShowNarrowDays(pShowNarrowDays);
+    }
+
+    /**
      * handleDialogRequest.
      */
     protected void handleDialogRequest() {

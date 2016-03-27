@@ -31,6 +31,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -343,6 +344,28 @@ public class TethysSwingScrollContextMenu<T>
         /* Create the dialog */
         if (theDialog == null) {
             createDialog(pAnchor);
+        }
+
+        /* determine the size of the menu */
+        determineSize();
+
+        /* determine location to display */
+        Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
+
+        /* Show menu */
+        showMenuAtLocation(myLocation);
+    }
+
+    /**
+     * Show the menu at position.
+     * @param pAnchor the anchor node
+     * @param pSide the side of the anchor node
+     */
+    public void showMenuAtPosition(final Rectangle pAnchor,
+                                   final int pSide) {
+        /* Create the dialog */
+        if (theDialog == null) {
+            createDialog(null);
         }
 
         /* determine the size of the menu */

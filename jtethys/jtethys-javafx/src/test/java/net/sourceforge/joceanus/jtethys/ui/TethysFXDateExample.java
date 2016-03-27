@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.date;
+package net.sourceforge.joceanus.jtethys.ui;
 
 import java.time.Month;
 import java.util.ArrayList;
@@ -57,18 +57,21 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import net.sourceforge.jdatebutton.javafx.JDateConfig;
-import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateButton;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateCell;
 import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateConfig;
-import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateRangeSelect;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateRangeSelector;
 
 /**
  * <p>
@@ -139,16 +142,18 @@ public class TethysFXDateExample
 
     @Override
     public void start(final Stage pStage) {
-        Scene myScene = new Scene(new Group());
+        GridPane myGrid = makePanel();
+        BorderPane myPane = new BorderPane();
+        Scene myScene = new Scene(myPane);
+        myPane.setCenter(myGrid);
         TethysFXGuiUtils.addStyleSheet(myScene);
-        GridPane myPane = makePanel();
         ((Group) myScene.getRoot()).getChildren().addAll(myPane);
         pStage.setTitle("JDateDayButton JavaFX Demo");
         pStage.setScene(myScene);
         pStage.show();
 
         /* Add a listener for width changes */
-        myPane.widthProperty().addListener(new ChangeListener<Number>() {
+        myGrid.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(final ObservableValue<? extends Number> pProperty,
                                 final Number pOldValue,
@@ -186,12 +191,12 @@ public class TethysFXDateExample
     /**
      * The start date.
      */
-    private TethysFXDateButton theStartDate;
+    private TethysFXDateButtonManager theStartDate;
 
     /**
      * The end date.
      */
-    private TethysFXDateButton theEndDate;
+    private TethysFXDateButtonManager theEndDate;
 
     /**
      * The Null Select checkBox.
@@ -236,12 +241,17 @@ public class TethysFXDateExample
     /**
      * The formatter.
      */
-    private final TethysDateFormatter theFormatter = new TethysDateFormatter();
+    private final TethysDataFormatter theFormatter = new TethysDataFormatter();
+
+    /**
+     * The formatter.
+     */
+    private final TethysDateFormatter theDateFormatter = theFormatter.getDateFormatter();
 
     /**
      * The range selection.
      */
-    private final TethysFXDateRangeSelect theRangeSelect = new TethysFXDateRangeSelect(theFormatter, true);
+    private final TethysFXDateRangeSelector theRangeSelect = new TethysFXDateRangeSelector(theFormatter, true);
 
     /**
      * The selected range.
@@ -251,7 +261,7 @@ public class TethysFXDateExample
     /**
      * The Cell Date Config.
      */
-    private final TethysFXDateConfig theDateConfig = new TethysFXDateConfig(theFormatter);
+    private final TethysFXDateConfig theDateConfig = new TethysFXDateConfig(theDateFormatter);
 
     /**
      * Create the panel.
@@ -282,7 +292,7 @@ public class TethysFXDateExample
         GridPane.setHalignment(myOptions, HPos.CENTER);
         myPanel.add(theTable, 0, iRow++, 2, 1);
         GridPane.setHalignment(theTable, HPos.CENTER);
-        Node myRangeSel = TethysFXGuiUtils.getTitledPane("Explicit Range Selection", theRangeSelect);
+        Node myRangeSel = TethysFXGuiUtils.getTitledPane("Explicit Range Selection", theRangeSelect.getNode());
         myPanel.add(myRangeSel, 0, iRow++, 2, 1);
         GridPane.setHalignment(myRangeSel, HPos.CENTER);
         GridPane.setFillWidth(myRangeSel, true);
@@ -317,10 +327,10 @@ public class TethysFXDateExample
         /* Position the contents */
         myRange.add(myStart, 0, 0);
         GridPane.setHalignment(myStart, HPos.RIGHT);
-        myRange.add(theStartDate, 1, 0);
+        myRange.add(theStartDate.getNode(), 1, 0);
         myRange.add(myEnd, 0, 1);
         GridPane.setHalignment(myEnd, HPos.RIGHT);
-        myRange.add(theEndDate, 1, 1);
+        myRange.add(theEndDate.getNode(), 1, 1);
 
         /* Return the panel */
         return TethysFXGuiUtils.getTitledPane("Range Selection", myRange);
@@ -447,8 +457,8 @@ public class TethysFXDateExample
      */
     private void makeRangeButtons() {
         /* Create the buttons */
-        theStartDate = new TethysFXDateButton(theFormatter);
-        theEndDate = new TethysFXDateButton(theFormatter);
+        theStartDate = new TethysFXDateButtonManager(theFormatter);
+        theEndDate = new TethysFXDateButtonManager(theFormatter);
 
         /* Initialise the values */
         TethysDate myStart = DATE_START;
@@ -456,14 +466,14 @@ public class TethysFXDateExample
         TethysDateRange myRange = new TethysDateRange(myStart, myEnd);
 
         /* Set the values */
-        theStartDate.setSelectedDateDay(myStart);
-        theEndDate.setSelectedDateDay(myEnd);
+        theStartDate.setSelectedDate(myStart);
+        theEndDate.setSelectedDate(myEnd);
         theDateConfig.setEarliestDateDay(myStart);
         theDateConfig.setLatestDateDay(myEnd);
 
         /* Set the range */
         theRangeSelect.setOverallRange(myRange);
-        theSelectedRange.setText(theFormatter.formatDateDayRange(theRangeSelect.getRange()));
+        theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
 
         /* Set the listeners */
         setListeners();
@@ -482,7 +492,7 @@ public class TethysFXDateExample
                 /* Set locale for formatter */
                 theFormatter.setLocale(pNewValue);
                 theRangeSelect.setLocale(pNewValue);
-                theSelectedRange.setText(theFormatter.formatDateDayRange(theRangeSelect.getRange()));
+                theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
             }
         });
 
@@ -494,7 +504,7 @@ public class TethysFXDateExample
                                 final String pNewValue) {
                 /* Set format for formatter */
                 theFormatter.setFormat(pNewValue);
-                theSelectedRange.setText(theFormatter.formatDateDayRange(theRangeSelect.getRange()));
+                theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
             }
         });
 
@@ -505,10 +515,8 @@ public class TethysFXDateExample
                                 final Boolean pOldValue,
                                 final Boolean pNewValue) {
                 /* Store the new flag */
-                JDateConfig myConfig = theStartDate.getDateConfig();
-                myConfig.setAllowNullDateSelection(pNewValue);
-                myConfig = theEndDate.getDateConfig();
-                myConfig.setAllowNullDateSelection(pNewValue);
+                theStartDate.setAllowNullDateSelection(pNewValue);
+                theEndDate.setAllowNullDateSelection(pNewValue);
                 theDateConfig.setAllowNullDateSelection(pNewValue);
             }
         });
@@ -520,52 +528,32 @@ public class TethysFXDateExample
                                 final Boolean pOldValue,
                                 final Boolean pNewValue) {
                 /* Store the new flag */
-                JDateConfig myConfig = theStartDate.getDateConfig();
-                myConfig.setShowNarrowDays(pNewValue);
-                myConfig = theEndDate.getDateConfig();
-                myConfig.setShowNarrowDays(pNewValue);
+                theStartDate.setShowNarrowDays(pNewValue);
+                theEndDate.setShowNarrowDays(pNewValue);
                 theDateConfig.setShowNarrowDays(pNewValue);
             }
         });
 
         /* Handle changes to startDate */
-        ObjectProperty<TethysDate> myProperty = theStartDate.selectedDateDayProperty();
-        myProperty.addListener(new ChangeListener<TethysDate>() {
-            @Override
-            public void changed(final ObservableValue<? extends TethysDate> pValue,
-                                final TethysDate pOldValue,
-                                final TethysDate pNewValue) {
-                /* Store the new earliestDate of endDate */
-                theEndDate.setEarliestDateDay(pNewValue);
-                theDateConfig.setEarliestDateDay(pNewValue);
-                theRangeSelect.setOverallRange(new TethysDateRange(pNewValue, theDateConfig.getLatestDateDay()));
-            }
+        theStartDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            TethysDate myDate = theStartDate.getSelectedDate();
+            theEndDate.setEarliestDate(myDate);
+            theDateConfig.setEarliestDateDay(myDate);
+            theRangeSelect.setOverallRange(new TethysDateRange(myDate, theEndDate.getSelectedDate()));
         });
 
         /* Handle changes to endDate */
-        myProperty = theEndDate.selectedDateDayProperty();
-        myProperty.addListener(new ChangeListener<TethysDate>() {
-            @Override
-            public void changed(final ObservableValue<? extends TethysDate> pValue,
-                                final TethysDate pOldValue,
-                                final TethysDate pNewValue) {
-                /* Store the new latestDate of startDate */
-                theStartDate.setLatestDateDay(pNewValue);
-                theDateConfig.setLatestDateDay(pNewValue);
-                theRangeSelect.setOverallRange(new TethysDateRange(theDateConfig.getEarliestDateDay(), pNewValue));
-            }
+        theEndDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            TethysDate myDate = theEndDate.getSelectedDate();
+            theEndDate.setLatestDate(myDate);
+            theDateConfig.setLatestDateDay(myDate);
+            theRangeSelect.setOverallRange(new TethysDateRange(theStartDate.getEarliestDate(), myDate));
         });
 
-        /* Handle changes to startDate */
-        ObjectProperty<TethysDateRange> myRangeProperty = theRangeSelect.rangeProperty();
-        myRangeProperty.addListener(new ChangeListener<TethysDateRange>() {
-            @Override
-            public void changed(final ObservableValue<? extends TethysDateRange> pValue,
-                                final TethysDateRange pOldValue,
-                                final TethysDateRange pNewValue) {
-                /* Store the new range text */
-                theSelectedRange.setText(theFormatter.formatDateDayRange(pNewValue));
-            }
+        /* Handle changes to range */
+        theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            TethysDateRange myRange = theRangeSelect.getRange();
+            theSelectedRange.setText(theDateFormatter.formatDateDayRange(myRange));
         });
     }
 
