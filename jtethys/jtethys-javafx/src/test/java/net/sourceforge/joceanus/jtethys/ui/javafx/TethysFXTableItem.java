@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui;
+package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -32,6 +32,10 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
+import net.sourceforge.joceanus.jtethys.ui.TethysListId;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 
 /**
  * Tethys Table item.

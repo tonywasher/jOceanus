@@ -172,13 +172,16 @@ public class TethysSwingTableManager<I, R>
     }
 
     /**
-     * Obtain the column for the model index.
+     * Obtain the row for the model index.
      * @param pIndex the index of the column
      * @return the table column
      */
     private R getIndexedRow(final int pIndex) {
+        if (theItems == null) {
+            return null;
+        }
         if ((pIndex < 0)
-            || (pIndex > theColumnList.size())) {
+            || (pIndex > theItems.size())) {
             throw new IllegalArgumentException();
         }
         return theItems.get(pIndex);

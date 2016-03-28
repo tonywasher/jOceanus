@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help;
+package net.sourceforge.joceanus.jtethys.help.swing;
 
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
@@ -38,7 +38,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpManager;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 
 /**
  * Help Window.

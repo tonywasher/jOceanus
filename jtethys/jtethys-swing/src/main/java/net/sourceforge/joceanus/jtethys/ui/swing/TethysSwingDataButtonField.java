@@ -130,7 +130,7 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        protected JButton getEditControl() {
+        public JButton getEditControl() {
             return (JButton) super.getEditControl();
         }
 
@@ -229,7 +229,7 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        protected JButton getEditControl() {
+        public JButton getEditControl() {
             return (JButton) super.getEditControl();
         }
 
@@ -347,7 +347,7 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        protected JDateButton getEditControl() {
+        public JDateButton getEditControl() {
             return (JDateButton) super.getEditControl();
         }
 
@@ -460,7 +460,7 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        protected JButton getEditControl() {
+        public JButton getEditControl() {
             return (JButton) super.getEditControl();
         }
 

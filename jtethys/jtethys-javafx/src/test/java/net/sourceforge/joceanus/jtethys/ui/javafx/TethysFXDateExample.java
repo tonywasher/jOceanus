@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui;
+package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.time.Month;
 import java.util.ArrayList;
@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -40,38 +38,32 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateCell;
-import net.sourceforge.joceanus.jtethys.date.javafx.TethysFXDateConfig;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateRangeSelector;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableStringColumn;
 
 /**
  * <p>
@@ -147,8 +139,7 @@ public class TethysFXDateExample
         Scene myScene = new Scene(myPane);
         myPane.setCenter(myGrid);
         TethysFXGuiUtils.addStyleSheet(myScene);
-        ((Group) myScene.getRoot()).getChildren().addAll(myPane);
-        pStage.setTitle("JDateDayButton JavaFX Demo");
+        pStage.setTitle("TethysDate JavaFX Demo");
         pStage.setScene(myScene);
         pStage.show();
 
@@ -176,7 +167,7 @@ public class TethysFXDateExample
     /**
      * The table.
      */
-    private DateTable theTable;
+    private TethysFXTableManager<String, DateItem> theTable;
 
     /**
      * The list of locales.
@@ -202,6 +193,11 @@ public class TethysFXDateExample
      * The Null Select checkBox.
      */
     private CheckBox theNullSelect;
+
+    /**
+     * The ShowNarrow checkBox.
+     */
+    private CheckBox theNarrowSelect;
 
     /**
      * The selected locale.
@@ -259,17 +255,13 @@ public class TethysFXDateExample
     private final Label theSelectedRange = new Label();
 
     /**
-     * The Cell Date Config.
-     */
-    private final TethysFXDateConfig theDateConfig = new TethysFXDateConfig(theDateFormatter);
-
-    /**
      * Create the panel.
      * @return the panel
      */
     private GridPane makePanel() {
         /* Create the table */
-        theTable = new DateTable();
+        theTable = new TethysFXTableManager<>(theFormatter);
+        makeTable();
 
         /* Create the range panel */
         Node myRange = makeRangePanel();
@@ -290,8 +282,8 @@ public class TethysFXDateExample
         myPanel.add(myStyle, 1, iRow++);
         myPanel.add(myOptions, 0, iRow++, 2, 1);
         GridPane.setHalignment(myOptions, HPos.CENTER);
-        myPanel.add(theTable, 0, iRow++, 2, 1);
-        GridPane.setHalignment(theTable, HPos.CENTER);
+        myPanel.add(theTable.getNode(), 0, iRow++, 2, 1);
+        GridPane.setHalignment(theTable.getNode(), HPos.CENTER);
         Node myRangeSel = TethysFXGuiUtils.getTitledPane("Explicit Range Selection", theRangeSelect.getNode());
         myPanel.add(myRangeSel, 0, iRow++, 2, 1);
         GridPane.setHalignment(myRangeSel, HPos.CENTER);
@@ -385,9 +377,11 @@ public class TethysFXDateExample
         HBox myOptions = new HBox();
         Region myStrut1 = new Region();
         Region myStrut2 = new Region();
+        Region myStrut3 = new Region();
         HBox.setHgrow(myStrut1, Priority.ALWAYS);
         HBox.setHgrow(myStrut2, Priority.ALWAYS);
-        myOptions.getChildren().addAll(myStrut1, theNullSelect, myStrut2);
+        HBox.setHgrow(myStrut3, Priority.ALWAYS);
+        myOptions.getChildren().addAll(myStrut1, theNullSelect, myStrut2, theNarrowSelect, myStrut3);
 
         /* Return the panel */
         return TethysFXGuiUtils.getTitledPane("Options", myOptions);
@@ -419,7 +413,7 @@ public class TethysFXDateExample
                 ShortLocale myLocale = pNewValue;
                 theLocale.setValue(myLocale.getLocale());
                 showNarrowDays.setValue(myLocale.showNarrowDays());
-                theTable.rePaint();
+                // theTable.rePaint();
             }
         });
     }
@@ -447,7 +441,7 @@ public class TethysFXDateExample
                                 final String pNewValue) {
                 /* Store the new format */
                 theFormat.setValue(pNewValue);
-                theTable.rePaint();
+                // theTable.rePaint();
             }
         });
     }
@@ -468,8 +462,6 @@ public class TethysFXDateExample
         /* Set the values */
         theStartDate.setSelectedDate(myStart);
         theEndDate.setSelectedDate(myEnd);
-        theDateConfig.setEarliestDateDay(myStart);
-        theDateConfig.setLatestDateDay(myEnd);
 
         /* Set the range */
         theRangeSelect.setOverallRange(myRange);
@@ -484,61 +476,35 @@ public class TethysFXDateExample
      */
     private void setListeners() {
         /* Handle changes to locale */
-        theLocale.addListener(new ChangeListener<Locale>() {
-            @Override
-            public void changed(final ObservableValue<? extends Locale> pValue,
-                                final Locale pOldValue,
-                                final Locale pNewValue) {
-                /* Set locale for formatter */
-                theFormatter.setLocale(pNewValue);
-                theRangeSelect.setLocale(pNewValue);
-                theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
-            }
+        theLocale.addListener((v, o, n) -> {
+            /* Set locale for formatter */
+            theFormatter.setLocale(n);
+            theRangeSelect.setLocale(n);
+            theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
         });
 
         /* Handle changes to format */
-        theFormat.addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(final ObservableValue<? extends String> pValue,
-                                final String pOldValue,
-                                final String pNewValue) {
-                /* Set format for formatter */
-                theFormatter.setFormat(pNewValue);
-                theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
-            }
+        theFormat.addListener((v, o, n) -> {
+            theFormatter.setFormat(n);
+            theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
         });
 
         /* Handle changes to allow nullDate */
-        allowNullDate.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(final ObservableValue<? extends Boolean> pValue,
-                                final Boolean pOldValue,
-                                final Boolean pNewValue) {
-                /* Store the new flag */
-                theStartDate.setAllowNullDateSelection(pNewValue);
-                theEndDate.setAllowNullDateSelection(pNewValue);
-                theDateConfig.setAllowNullDateSelection(pNewValue);
-            }
+        allowNullDate.addListener((v, o, n) -> {
+            theStartDate.setAllowNullDateSelection(n);
+            theEndDate.setAllowNullDateSelection(n);
         });
 
         /* Handle changes to allow narrowDays */
-        showNarrowDays.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(final ObservableValue<? extends Boolean> pValue,
-                                final Boolean pOldValue,
-                                final Boolean pNewValue) {
-                /* Store the new flag */
-                theStartDate.setShowNarrowDays(pNewValue);
-                theEndDate.setShowNarrowDays(pNewValue);
-                theDateConfig.setShowNarrowDays(pNewValue);
-            }
+        showNarrowDays.addListener((v, o, n) -> {
+            theStartDate.setShowNarrowDays(n);
+            theEndDate.setShowNarrowDays(n);
         });
 
         /* Handle changes to startDate */
         theStartDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             TethysDate myDate = theStartDate.getSelectedDate();
             theEndDate.setEarliestDate(myDate);
-            theDateConfig.setEarliestDateDay(myDate);
             theRangeSelect.setOverallRange(new TethysDateRange(myDate, theEndDate.getSelectedDate()));
         });
 
@@ -546,7 +512,6 @@ public class TethysFXDateExample
         theEndDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             TethysDate myDate = theEndDate.getSelectedDate();
             theEndDate.setLatestDate(myDate);
-            theDateConfig.setLatestDateDay(myDate);
             theRangeSelect.setOverallRange(new TethysDateRange(theStartDate.getEarliestDate(), myDate));
         });
 
@@ -563,18 +528,11 @@ public class TethysFXDateExample
     private void makeCheckBox() {
         /* Create the check boxes */
         theNullSelect = new CheckBox("Null Date Select");
+        theNarrowSelect = new CheckBox("Show Narrow Days");
 
         /* Action selections */
-        BooleanProperty myProperty = theNullSelect.selectedProperty();
-        myProperty.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(final ObservableValue<? extends Boolean> pValue,
-                                final Boolean pOldValue,
-                                final Boolean pNewValue) {
-                /* Set the value */
-                allowNullDate.set(pNewValue);
-            }
-        });
+        theNullSelect.selectedProperty().addListener((v, o, n) -> allowNullDate.set(n));
+        theNarrowSelect.selectedProperty().addListener((v, o, n) -> showNarrowDays.set(n));
     }
 
     /**
@@ -591,188 +549,50 @@ public class TethysFXDateExample
     }
 
     /**
-     * DateItem class.
+     * Make the table.
      */
-    private final class DateTable
-            extends TableView<DateItem> {
-        /**
-         * Date Column.
-         */
-        private final TableColumn<DateItem, TethysDate> theDateCol;
+    private void makeTable() {
+        /* Create the list */
+        List<DateItem> myList = new ArrayList<DateItem>();
+        myList.add(new DateItem(DATE_FIRST, "First Entry"));
+        myList.add(new DateItem(DATE_SECOND, "Second Entry"));
+        myList.add(new DateItem(DATE_THIRD, "Third Entry"));
+        myList.add(new DateItem(DATE_FOURTH, "Fourth Entry"));
+        myList.add(new DateItem(DATE_FIFTH, "Fifth Entry"));
 
-        /**
-         * Repaint.
-         */
-        private void rePaint() {
-            theDateCol.setVisible(false);
-            theDateCol.setVisible(true);
-        }
+        /* Create the Observable list */
+        ObservableList<DateItem> data = FXCollections.observableArrayList(myList);
+        theTable.setItems(data);
 
-        /**
-         * Constructor.
-         */
-        private DateTable() {
-            /* Allow editing */
-            setEditable(true);
+        /* Create the date column */
+        TethysFXTableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
+        myDateColumn.setCellValueFactory(p -> p.getValue().dateProperty());
 
-            /* Create the columns */
-            theDateCol = new TableColumn<DateItem, TethysDate>(DateItem.PROP_DATE);
-            theDateCol.setCellValueFactory(new DateCellValueFactory());
-            theDateCol.setCellFactory(new DateCellFactory());
-            theDateCol.setPrefWidth(COL_DATE_WIDTH);
-            theDateCol.setSortable(true);
-            TableColumn<DateItem, String> myCommentCol = new TableColumn<DateItem, String>(DateItem.PROP_COMMENTS);
-            myCommentCol.setCellValueFactory(new StringCellValueFactory());
-            myCommentCol.setCellFactory(new StringCellFactory());
-            myCommentCol.setSortable(false);
-            myCommentCol.setPrefWidth(COL_COMMENT_WIDTH);
-            getColumns().add(theDateCol);
-            getColumns().add(myCommentCol);
+        /* Create the comments column */
+        TethysFXTableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
+        myCommentsColumn.setCellValueFactory(p -> p.getValue().commentsProperty());
 
-            /* Create the list */
-            List<DateItem> myList = new ArrayList<DateItem>();
-            myList.add(new DateItem(DATE_FIRST, "First Entry"));
-            myList.add(new DateItem(DATE_SECOND, "Second Entry"));
-            myList.add(new DateItem(DATE_THIRD, "Third Entry"));
-            myList.add(new DateItem(DATE_FOURTH, "Fourth Entry"));
-            myList.add(new DateItem(DATE_FIFTH, "Fifth Entry"));
-
-            /* Create the Observable list */
-            ObservableList<DateItem> data = FXCollections.observableArrayList(myList);
-            setItems(data);
-
-            /* Set table height */
-            setPrefHeight(TABLE_HEIGHT);
-        }
+        /* Listen to preEdit requests */
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.CELLPREEDIT, this::handlePreEdit);
     }
 
     /**
-     * String Cell Value Factory class.
+     * Handle preEdit event.
+     * @param pEvent the event
      */
-    private static class StringCellValueFactory
-            implements Callback<CellDataFeatures<DateItem, String>, ObservableValue<String>> {
-        @Override
-        public ObservableValue<String> call(final CellDataFeatures<DateItem, String> p) {
-            DateItem myItem = p.getValue();
-            return myItem.commentsProperty();
-        }
-    }
+    @SuppressWarnings("unchecked")
+    private void handlePreEdit(final TethysEvent<TethysUIEvent> pEvent) {
+        TethysTableCell<String, DateItem, ?> myCell = pEvent.getDetails(TethysTableCell.class);
 
-    /**
-     * String TableCell Factory class.
-     */
-    private static class StringCellFactory
-            implements Callback<TableColumn<DateItem, String>, TableCell<DateItem, String>> {
-        @Override
-        public TableCell<DateItem, String> call(final TableColumn<DateItem, String> p) {
-            return new StringTableCell();
-        }
-    }
-
-    /**
-     * Date Cell Value Factory class.
-     */
-    private static class DateCellValueFactory
-            implements Callback<CellDataFeatures<DateItem, TethysDate>, ObservableValue<TethysDate>> {
-        @Override
-        public ObservableValue<TethysDate> call(final CellDataFeatures<DateItem, TethysDate> p) {
-            DateItem myItem = p.getValue();
-            return myItem.dateProperty();
-        }
-    }
-
-    /**
-     * Date TableCell Factory class.
-     */
-    private class DateCellFactory
-            implements Callback<TableColumn<DateItem, TethysDate>, TableCell<DateItem, TethysDate>> {
-        @Override
-        public TableCell<DateItem, TethysDate> call(final TableColumn<DateItem, TethysDate> p) {
-            return new TethysFXDateCell<DateItem>(theDateConfig);
-        }
-    }
-
-    /**
-     * String TableCell class.
-     */
-    private static final class StringTableCell
-            extends TableCell<DateItem, String> {
-        /**
-         * The Text Field.
-         */
-        private final TextField textField;
-
-        /**
-         * Constructor.
-         */
-        private StringTableCell() {
-            textField = new TextField();
-            textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(final KeyEvent t) {
-                    if (t.getCode() == KeyCode.ENTER) {
-                        commitEdit(textField.getText());
-                    } else if (t.getCode() == KeyCode.ESCAPE) {
-                        cancelEdit();
-                    } else if (t.getCode() == KeyCode.TAB) {
-                        commitEdit(textField.getText());
-                    }
-                }
-            });
-            textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(final ObservableValue<? extends Boolean> observable,
-                                    final Boolean oldValue,
-                                    final Boolean newValue) {
-                    if (!newValue) {
-                        commitEdit(textField.getText());
-                    }
-                }
-            });
-        }
-
-        @Override
-        public void startEdit() {
-            if (isEditable()) {
-                super.startEdit();
-                textField.setText(getItem());
-                textField.setMinWidth(getWidth() - getGraphicTextGap() * 2);
-                setGraphic(textField);
-                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        textField.requestFocus();
-                        textField.selectAll();
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void cancelEdit() {
-            super.cancelEdit();
-            setText(getItem());
-            setContentDisplay(ContentDisplay.TEXT_ONLY);
-        }
-
-        @Override
-        public void updateItem(final String pValue,
-                               final boolean pEmpty) {
-            /* Determine whether we are truly empty */
-            int iRow = getIndex();
-            boolean isEmpty = iRow < 0 || iRow >= getTableView().getItems().size();
-
-            super.updateItem(pValue, isEmpty);
-            if (isEmpty) {
-                setText(null);
-                setGraphic(null);
-                setEditable(false);
-            } else {
-                /* Set Text details */
-                setText(pValue);
-                setContentDisplay(ContentDisplay.TEXT_ONLY);
-            }
+        /* If this is the Date column */
+        if (DateItem.PROP_DATE.equals(myCell.getColumnId())) {
+            /* Configure the button */
+            TethysDateField myDateField = (TethysDateField) myCell;
+            TethysDateButtonManager<?> myManager = myDateField.getDateManager();
+            myManager.setEarliestDate(theStartDate.getSelectedDate());
+            myManager.setLatestDate(theEndDate.getSelectedDate());
+            myManager.setShowNarrowDays(showNarrowDays.get());
         }
     }
 
@@ -799,6 +619,18 @@ public class TethysFXDateExample
          * Comments Property.
          */
         private SimpleStringProperty theComments = new SimpleStringProperty(this, PROP_COMMENTS);
+
+        /**
+         * Constructor.
+         * @param pDate the date
+         * @param pComments the comments
+         */
+        private DateItem(final TethysDate pDate,
+                         final String pComments) {
+            /* Store parameters */
+            theDate.set(pDate);
+            theComments.set(pComments);
+        }
 
         /**
          * Obtain the Date.
@@ -846,18 +678,6 @@ public class TethysFXDateExample
          */
         public StringProperty commentsProperty() {
             return theComments;
-        }
-
-        /**
-         * Constructor.
-         * @param pDate the date
-         * @param pComments the comments
-         */
-        private DateItem(final TethysDate pDate,
-                         final String pComments) {
-            /* Store parameters */
-            theDate.set(pDate);
-            theComments.set(pComments);
         }
     }
 

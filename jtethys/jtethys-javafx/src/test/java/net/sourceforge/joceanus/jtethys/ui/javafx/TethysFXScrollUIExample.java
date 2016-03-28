@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui;
+package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -37,17 +37,16 @@ import javafx.stage.Stage;
 import net.sourceforge.jdatebutton.javafx.JDateButton;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
+import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton.TethysFXSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton.TethysFXStateIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXListButton;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXListButton.TethysFXListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButton.TethysFXScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.TethysFXContextEvent;
 
 /**

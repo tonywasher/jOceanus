@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui;
+package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.application.Application;
 import javafx.beans.Observable;
@@ -35,11 +35,16 @@ import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
+import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysListId;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutionColumn;

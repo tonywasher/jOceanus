@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help;
+package net.sourceforge.joceanus.jtethys.help.javafx;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,9 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.help.javafx.TethysFXHelpManager;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 
 /**
  * Help Window.

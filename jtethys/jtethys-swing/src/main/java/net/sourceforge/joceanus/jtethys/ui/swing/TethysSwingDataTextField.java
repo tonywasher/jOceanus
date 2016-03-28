@@ -163,7 +163,7 @@ public abstract class TethysSwingDataTextField<T>
      * Obtain the label.
      * @return the label
      */
-    protected JLabel getLabel() {
+    public JLabel getLabel() {
         return theLabel;
     }
 
@@ -171,7 +171,7 @@ public abstract class TethysSwingDataTextField<T>
      * Obtain the editControl.
      * @return the editControl
      */
-    protected JComponent getEditControl() {
+    public JComponent getEditControl() {
         return theEditControl;
     }
 
@@ -251,6 +251,7 @@ public abstract class TethysSwingDataTextField<T>
          * The converterControl.
          */
         private final TethysDataEditTextFieldControl<T> theControl;
+
         /**
          * The textField.
          */
@@ -314,7 +315,7 @@ public abstract class TethysSwingDataTextField<T>
         }
 
         @Override
-        protected JTextField getEditControl() {
+        public JTextField getEditControl() {
             return (JTextField) super.getEditControl();
         }
 
@@ -363,7 +364,6 @@ public abstract class TethysSwingDataTextField<T>
                 /* Clear error indications */
                 clearError();
             }
-
         }
 
         /**

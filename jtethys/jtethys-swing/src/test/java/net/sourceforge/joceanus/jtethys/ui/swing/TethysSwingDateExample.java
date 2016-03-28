@@ -31,35 +31,37 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JApplet;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.jdatebutton.swing.JDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateCellEditor;
-import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateCellRenderer;
-import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateConfig;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStringColumn;
 
 /**
  * <p>
@@ -161,12 +163,7 @@ public class TethysSwingDateExample
     /**
      * The table.
      */
-    private JTable theTable;
-
-    /**
-     * The cell editor.
-     */
-    private TethysSwingDateCellEditor theEditor;
+    private TethysSwingTableManager<String, DateItem> theTable;
 
     /**
      * The list of locales.
@@ -189,6 +186,16 @@ public class TethysSwingDateExample
     private transient TethysSwingDateButtonManager theEndDate;
 
     /**
+     * The Null Select checkBox.
+     */
+    private JCheckBox theNullSelect;
+
+    /**
+     * The ShowNarrow checkBox.
+     */
+    private JCheckBox theNarrowSelect;
+
+    /**
      * The selected range.
      */
     private JLabel theSelectedRange;
@@ -197,21 +204,6 @@ public class TethysSwingDateExample
      * The selected locale.
      */
     private Locale theLocale = Locale.UK;
-
-    /**
-     * The maximum day length.
-     */
-    private int theMaxDayLen = JDateConfig.MAX_DAY_NAME_LEN;
-
-    /**
-     * shrink day name from right.
-     */
-    private boolean doShrinkFromRight = true;
-
-    /**
-     * Prettify the days and months.
-     */
-    private boolean doPretty = true;
 
     /**
      * The selected format.
@@ -244,7 +236,7 @@ public class TethysSwingDateExample
     private static void createAndShowGUI() {
         try {
             /* Create the frame */
-            JFrame myFrame = new JFrame("JDateDayButton Swing Demo");
+            JFrame myFrame = new JFrame("TethysDate Swing Demo");
 
             /* Create the Example program */
             TethysSwingDateExample myProgram = new TethysSwingDateExample();
@@ -315,9 +307,6 @@ public class TethysSwingDateExample
         /* Create the format list */
         makeFormatList();
 
-        /* Apply options */
-        applyOptions();
-
         /* Create the additional labels */
         JLabel myFormat = new JLabel("Format:");
         JLabel myLocale = new JLabel("Locale:");
@@ -386,13 +375,13 @@ public class TethysSwingDateExample
         myStyle.add(theFormatList, myConstraints);
 
         /* Create a range select sub-panel */
-        JPanel myOptions = new JPanel(new GridBagLayout());
+        JPanel myRangeSelect = new JPanel(new GridBagLayout());
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;
         myConstraints.gridy = 0;
         myConstraints.gridwidth = 2;
         myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myOptions.add(theRangeSelect.getNode(), myConstraints);
+        myRangeSelect.add(theRangeSelect.getNode(), myConstraints);
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;
         myConstraints.gridy = 1;
@@ -400,13 +389,13 @@ public class TethysSwingDateExample
         myConstraints.weightx = 0.0;
         myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
         myConstraints.anchor = GridBagConstraints.LINE_END;
-        myOptions.add(mySelRange, myConstraints);
+        myRangeSelect.add(mySelRange, myConstraints);
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 1;
         myConstraints.gridy = 1;
         myConstraints.gridwidth = 1;
         myConstraints.weightx = 1.0;
-        myOptions.add(theSelectedRange, myConstraints);
+        myRangeSelect.add(theSelectedRange, myConstraints);
 
         /* Create the panel */
         JPanel myPanel = new JPanel(new GridBagLayout());
@@ -423,100 +412,34 @@ public class TethysSwingDateExample
         myConstraints.weightx = WEIGHT_NEUTRAL;
         myPanel.add(myStyle, myConstraints);
 
-        JScrollPane myScroll = new JScrollPane(theTable);
-        Dimension mySize = new Dimension(SCROLL_WIDTH, SCROLL_HEIGHT);
-        myScroll.setMinimumSize(mySize);
-        myScroll.setMaximumSize(mySize);
-        theTable.setPreferredScrollableViewportSize(mySize);
-
+        /* Build options panel */
+        JPanel myOptions = makeOptionsPanel();
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;
         myConstraints.gridy = 1;
         myConstraints.gridwidth = 2;
         myConstraints.fill = GridBagConstraints.BOTH;
-        myPanel.add(myScroll, myConstraints);
+        myPanel.add(myOptions, myConstraints);
 
+        theTable.getNode().setPreferredSize(new Dimension(SCROLL_WIDTH, SCROLL_HEIGHT));
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;
         myConstraints.gridy = 2;
         myConstraints.gridwidth = 2;
+        myConstraints.fill = GridBagConstraints.BOTH;
+        myPanel.add(theTable.getNode(), myConstraints);
+
+        myConstraints = new GridBagConstraints();
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 3;
+        myConstraints.gridwidth = 2;
         myConstraints.gridheight = GridBagConstraints.REMAINDER;
         myConstraints.weightx = WEIGHT_NEUTRAL;
         myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myPanel.add(myOptions, myConstraints);
+        myPanel.add(myRangeSelect, myConstraints);
 
         /* Return the panel */
         return myPanel;
-    }
-
-    /**
-     * Table Model.
-     */
-    private static class DateTable
-            extends AbstractTableModel {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -4842107163051671807L;
-
-        /**
-         * Column Names.
-         */
-        private static final String[] COLUMNS =
-        { "Date", "Description" };
-
-        /**
-         * Data for table.
-         */
-        private static final Object[][] DATA =
-        {
-                { DATE_FIRST, "First Entry" },
-                { DATE_SECOND, "Second Entry" },
-                { DATE_THIRD, "Third Entry" },
-                { DATE_FOURTH, "Fourth Entry" },
-                { DATE_FIFTH, "Fifth Entry" } };
-
-        @Override
-        public int getColumnCount() {
-            return DATA[0].length;
-        }
-
-        @Override
-        public int getRowCount() {
-            return DATA.length;
-        }
-
-        @Override
-        public String getColumnName(final int columnIndex) {
-            return COLUMNS[columnIndex];
-        }
-
-        @Override
-        public Class<?> getColumnClass(final int columnIndex) {
-            if (columnIndex == 0) {
-                return TethysDate.class;
-            }
-            return String.class;
-        }
-
-        @Override
-        public boolean isCellEditable(final int rowIndex,
-                                      final int columnIndex) {
-            return columnIndex == 0;
-        }
-
-        @Override
-        public Object getValueAt(final int rowIndex,
-                                 final int columnIndex) {
-            return DATA[rowIndex][columnIndex];
-        }
-
-        @Override
-        public void setValueAt(final Object pValue,
-                               final int rowIndex,
-                               final int columnIndex) {
-            DATA[rowIndex][columnIndex] = pValue;
-        }
     }
 
     /**
@@ -524,30 +447,51 @@ public class TethysSwingDateExample
      */
     private void makeTable() {
         /* Create the table */
-        TableModel myModel = new DateTable();
-        theTable = new JTable(myModel);
+        theTable = new TethysSwingTableManager<>(theFormatter);
 
-        /* Create the renderer and editor */
-        TethysSwingDateCellRenderer myRenderer = new TethysSwingDateCellRenderer(theDateFormatter);
-        theEditor = new TethysSwingDateCellEditor(theDateFormatter);
+        /* Create the list */
+        List<DateItem> myList = new ArrayList<DateItem>();
+        myList.add(new DateItem(DATE_FIRST, "First Entry"));
+        myList.add(new DateItem(DATE_SECOND, "Second Entry"));
+        myList.add(new DateItem(DATE_THIRD, "Third Entry"));
+        myList.add(new DateItem(DATE_FOURTH, "Fourth Entry"));
+        myList.add(new DateItem(DATE_FIFTH, "Fifth Entry"));
 
-        /* Set sorting on the table */
-        theTable.setAutoCreateRowSorter(true);
+        /* Declare the list to the table */
+        theTable.setItems(myList);
 
-        /* Format the first column */
-        TableColumnModel myColModel = theTable.getColumnModel();
+        /* Create the date column */
+        TethysSwingTableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
+        myDateColumn.setCellValueFactory(p -> p.getDate());
+        myDateColumn.setCellCommitFactory((p, v) -> p.setDate(v));
 
-        /* Set the width of the column */
-        TableColumn myFirstCol = myColModel.getColumn(0);
-        myFirstCol.setPreferredWidth(COL_1_WIDTH);
+        /* Create the comments column */
+        TethysSwingTableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
+        myCommentsColumn.setCellValueFactory(p -> p.getComments());
+        myCommentsColumn.setCellCommitFactory((p, v) -> p.setComments(v));
 
-        /* Set the renderer */
-        myFirstCol.setCellRenderer(myRenderer);
-        myFirstCol.setCellEditor(theEditor);
+        /* Listen to preEdit requests */
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.CELLPREEDIT, this::handlePreEdit);
+    }
 
-        /* Set the width of the column */
-        TableColumn mySecondCol = myColModel.getColumn(1);
-        mySecondCol.setPreferredWidth(COL_2_WIDTH);
+    /**
+     * Handle preEdit event.
+     * @param pEvent the event
+     */
+    @SuppressWarnings("unchecked")
+    private void handlePreEdit(final TethysEvent<TethysUIEvent> pEvent) {
+        TethysTableCell<String, DateItem, ?> myCell = pEvent.getDetails(TethysTableCell.class);
+
+        /* If this is the Date column */
+        if (DateItem.PROP_DATE.equals(myCell.getColumnId())) {
+            /* Configure the button */
+            TethysDateField myDateField = (TethysDateField) myCell;
+            TethysDateButtonManager<?> myManager = myDateField.getDateManager();
+            myManager.setEarliestDate(theStartDate.getSelectedDate());
+            myManager.setLatestDate(theEndDate.getSelectedDate());
+            myManager.setShowNarrowDays(theNarrowSelect.isSelected());
+        }
     }
 
     /**
@@ -583,6 +527,28 @@ public class TethysSwingDateExample
 
         /* Set the default item */
         theFormatList.setSelectedItem(theFormat);
+    }
+
+    /**
+     * Create the options panel.
+     * @return the panel
+     */
+    private JPanel makeOptionsPanel() {
+        /* Create the checkBoxes */
+        makeCheckBoxes();
+
+        /* Create an options sub-panel */
+        JPanel myOptions = new JPanel();
+        myOptions.setLayout(new BoxLayout(myOptions, BoxLayout.X_AXIS));
+        myOptions.add(Box.createHorizontalGlue());
+        myOptions.add(theNullSelect);
+        myOptions.add(Box.createHorizontalGlue());
+        myOptions.add(theNarrowSelect);
+        myOptions.add(Box.createHorizontalGlue());
+
+        /* Return the panel */
+        myOptions.setBorder(BorderFactory.createTitledBorder("Options"));
+        return myOptions;
     }
 
     /**
@@ -630,14 +596,38 @@ public class TethysSwingDateExample
     }
 
     /**
+     * Create the checkBox.
+     */
+    private void makeCheckBoxes() {
+        /* Create the check boxes */
+        theNullSelect = new JCheckBox("Null Date Select");
+        theNarrowSelect = new JCheckBox("Show Narrow Days");
+
+        /* Action selections */
+        theNullSelect.addItemListener(e -> applyNullOption());
+        theNarrowSelect.addItemListener(e -> applyNarrowOption());
+
+        /* Initialise */
+        applyNullOption();
+        applyNarrowOption();
+    }
+
+    /**
      * Apply Options to underlying objects.
      */
-    private void applyOptions() {
+    private void applyNullOption() {
         /* Set Null Date options */
-        TethysSwingDateConfig myConfig = theEditor.getDateConfig();
-        myConfig.setAllowNullDateSelection(false);
-        theStartDate.setAllowNullDateSelection(true);
-        theEndDate.setAllowNullDateSelection(true);
+        theStartDate.setAllowNullDateSelection(theNullSelect.isSelected());
+        theEndDate.setAllowNullDateSelection(theNullSelect.isSelected());
+    }
+
+    /**
+     * Apply Options to underlying objects.
+     */
+    private void applyNarrowOption() {
+        /* Set Narrow Date options */
+        theStartDate.setShowNarrowDays(theNarrowSelect.isSelected());
+        theEndDate.setShowNarrowDays(theNarrowSelect.isSelected());
     }
 
     /**
@@ -652,7 +642,7 @@ public class TethysSwingDateExample
         theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
 
         /* Note that we should redraw the table */
-        theTable.repaint();
+        // theTable.repaint();
     }
 
     /**
@@ -666,7 +656,7 @@ public class TethysSwingDateExample
         theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
 
         /* Note that we should redraw the table */
-        theTable.repaint();
+        // theTable.repaint();
     }
 
     /**
@@ -680,10 +670,6 @@ public class TethysSwingDateExample
         /* Set the select-able range for the start/end buttons */
         theStartDate.setLatestDate(myEnd);
         theEndDate.setEarliestDate(myStart);
-
-        /* Set the Editor range */
-        theEditor.setEarliestDateDay(myStart);
-        theEditor.setLatestDateDay(myEnd);
 
         /* set the range select range */
         theRangeSelect.setOverallRange(new TethysDateRange(myStart, myEnd));
@@ -719,8 +705,6 @@ public class TethysSwingDateExample
                 /* Store the new locale */
                 ShortLocale myLocale = (ShortLocale) evt.getItem();
                 theLocale = myLocale.getLocale();
-                theMaxDayLen = myLocale.getMaxDayLen();
-                doShrinkFromRight = myLocale.doShrinkFromRight();
 
                 /* Apply the new locale */
                 applyLocale();
@@ -737,6 +721,75 @@ public class TethysSwingDateExample
     }
 
     /**
+     * DateItem class.
+     */
+    public static final class DateItem {
+        /**
+         * Date Property Name.
+         */
+        private static final String PROP_DATE = "Date";
+
+        /**
+         * Date Property Name.
+         */
+        private static final String PROP_COMMENTS = "Comments";
+
+        /**
+         * Date Property.
+         */
+        private TethysDate theDate;
+
+        /**
+         * Comments Property.
+         */
+        private String theComments;
+
+        /**
+         * Constructor.
+         * @param pDate the date
+         * @param pComments the comments
+         */
+        private DateItem(final TethysDate pDate,
+                         final String pComments) {
+            /* Store parameters */
+            theDate = pDate;
+            theComments = pComments;
+        }
+
+        /**
+         * Obtain the Date.
+         * @return the name
+         */
+        public TethysDate getDate() {
+            return theDate;
+        }
+
+        /**
+         * Set the Date.
+         * @param pDate the Date
+         */
+        public void setDate(final TethysDate pDate) {
+            theDate = pDate;
+        }
+
+        /**
+         * Obtain the Comments.
+         * @return the Comment
+         */
+        public String getComments() {
+            return theComments;
+        }
+
+        /**
+         * Set the Comments.
+         * @param pComments the Comments
+         */
+        public void setComments(final String pComments) {
+            theComments = pComments;
+        }
+    }
+
+    /**
      * Some useful locales.
      */
     private enum ShortLocale {
@@ -744,7 +797,7 @@ public class TethysSwingDateExample
          * China (shorten day names to one character, and shrink from the right to make sure they
          * are different).
          */
-        CHINA(Locale.CHINA, 1, false),
+        CHINA(Locale.CHINA),
 
         /**
          * Germany.
@@ -764,12 +817,12 @@ public class TethysSwingDateExample
         /**
          * Japan (shorten day names to one character).
          */
-        JAPAN(Locale.JAPAN, 1),
+        JAPAN(Locale.JAPAN),
 
         /**
          * Korea (shorten day names to one character).
          */
-        KOREA(Locale.KOREA, 1),
+        KOREA(Locale.KOREA),
 
         /**
          * US.
@@ -779,22 +832,12 @@ public class TethysSwingDateExample
         /**
          * UK (shorten day names to two characters).
          */
-        UK(Locale.UK, 2);
+        UK(Locale.UK);
 
         /**
          * Locale property.
          */
         private final Locale theLocale;
-
-        /**
-         * Maximum day length.
-         */
-        private final int theMaxDayLen;
-
-        /**
-         * Shrink from right.
-         */
-        private final boolean doShrinkFromRight;
 
         /**
          * Constructor.
@@ -803,36 +846,6 @@ public class TethysSwingDateExample
         private ShortLocale(final Locale pLocale) {
             /* Store the Locale */
             theLocale = pLocale;
-            theMaxDayLen = JDateConfig.MAX_DAY_NAME_LEN;
-            doShrinkFromRight = true;
-        }
-
-        /**
-         * Constructor.
-         * @param pLocale the locale
-         * @param iMaxDayLen the maximum day length
-         */
-        private ShortLocale(final Locale pLocale,
-                            final int iMaxDayLen) {
-            /* Store the Locale */
-            theLocale = pLocale;
-            theMaxDayLen = iMaxDayLen;
-            doShrinkFromRight = true;
-        }
-
-        /**
-         * Constructor.
-         * @param pLocale the locale
-         * @param iMaxDayLen the maximum day length
-         * @param bShrinkFromRight shrink day names from right
-         */
-        private ShortLocale(final Locale pLocale,
-                            final int iMaxDayLen,
-                            final boolean bShrinkFromRight) {
-            /* Store the Locale */
-            theLocale = pLocale;
-            theMaxDayLen = iMaxDayLen;
-            doShrinkFromRight = bShrinkFromRight;
         }
 
         /**
@@ -841,22 +854,6 @@ public class TethysSwingDateExample
          */
         public Locale getLocale() {
             return theLocale;
-        }
-
-        /**
-         * Obtain maximum day length.
-         * @return the maximum day length
-         */
-        public int getMaxDayLen() {
-            return theMaxDayLen;
-        }
-
-        /**
-         * Shrink names from right.
-         * @return true/false
-         */
-        public boolean doShrinkFromRight() {
-            return doShrinkFromRight;
         }
 
         @Override

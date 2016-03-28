@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui;
+package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.Currency;
 
@@ -47,12 +47,17 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
+import net.sourceforge.joceanus.jtethys.ui.TethysListId;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXDilutionTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXIntegerTextField;
@@ -66,7 +71,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXUnitsTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXListButton.TethysFXListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButton.TethysFXScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu;
 
 /**
  * Scroll utilities examples.
