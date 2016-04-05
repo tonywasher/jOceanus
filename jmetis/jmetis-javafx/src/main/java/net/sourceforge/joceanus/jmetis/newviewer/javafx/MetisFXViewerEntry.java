@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager.TethysFXTr
  * JavaFX Data Viewer Entry.
  */
 public class MetisFXViewerEntry
-        extends MetisViewerEntry<MetisFXViewerEntry, Node> {
+        extends MetisViewerEntry<MetisFXViewerEntry, Node, Node> {
     /**
      * The Associated Tree Item.
      */

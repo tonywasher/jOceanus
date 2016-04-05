@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
@@ -48,8 +47,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIc
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutionColumn;
@@ -92,6 +91,11 @@ public class TethysSwingTableExample {
     private static final Logger LOGGER = LoggerFactory.getLogger(TethysSwingTableExample.class);
 
     /**
+     * The GUI Factory.
+     */
+    private final TethysSwingGuiFactory theGuiFactory = new TethysSwingGuiFactory();
+
+    /**
      * The TestData.
      */
     private final List<TethysSwingTableItem> theData;
@@ -120,7 +124,7 @@ public class TethysSwingTableExample {
         theData.add(new TethysSwingTableItem(theHelper, "Dave"));
 
         /* Create tableView */
-        theTable = new TethysSwingTableManager<>(new TethysDataFormatter());
+        theTable = theGuiFactory.newTable();
         theTable.setItems(theData);
         theTable.getNode().setPreferredSize(new Dimension(SCROLL_WIDTH, SCROLL_HEIGHT));
 
@@ -224,24 +228,24 @@ public class TethysSwingTableExample {
     @SuppressWarnings("unchecked")
     private void handleCreate(final TethysEvent<TethysUIEvent> pEvent) {
         /* Obtain the Cell */
-        TethysTableCell<TethysDataId, TethysSwingTableItem, ?> myCell = pEvent.getDetails(TethysTableCell.class);
+        TethysSwingTableCell<TethysDataId, TethysSwingTableItem, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
 
         /* Configure static configuration for cells */
         switch (myCell.getColumnId()) {
             case BOOLEAN:
-                TethysIconField<Boolean> myBoolField = (TethysIconField<Boolean>) myCell;
+                TethysIconField<Boolean, ?, ?> myBoolField = (TethysIconField<Boolean, ?, ?>) myCell;
                 TethysSimpleIconButtonManager<Boolean, ?, ?> myBoolMgr = myBoolField.getIconManager();
                 myBoolMgr.setWidth(DEFAULT_ICONWIDTH);
                 theHelper.buildSimpleIconState(myBoolMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
                 break;
             case XTRABOOL:
-                TethysStateIconField<Boolean, IconState> myStateField = (TethysStateIconField<Boolean, IconState>) myCell;
+                TethysStateIconField<Boolean, IconState, ?, ?> myStateField = (TethysStateIconField<Boolean, IconState, ?, ?>) myCell;
                 TethysStateIconButtonManager<Boolean, IconState, ?, ?> myStateMgr = myStateField.getIconManager();
                 myStateMgr.setWidth(DEFAULT_ICONWIDTH);
                 theHelper.buildStateIconState(myStateMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
                 break;
             case SCROLL:
-                TethysScrollField<String> myScrollField = (TethysScrollField<String>) myCell;
+                TethysScrollField<String, ?, ?> myScrollField = (TethysScrollField<String, ?, ?>) myCell;
                 theHelper.buildContextMenu(myScrollField.getScrollManager().getMenu());
                 break;
             default:
@@ -256,12 +260,12 @@ public class TethysSwingTableExample {
     @SuppressWarnings("unchecked")
     private void handleFormat(final TethysEvent<TethysUIEvent> pEvent) {
         /* Obtain the Cell */
-        TethysTableCell<TethysDataId, TethysSwingTableItem, ?> myCell = pEvent.getDetails(TethysTableCell.class);
+        TethysSwingTableCell<TethysDataId, TethysSwingTableItem, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
 
         /* If this is the extra Boolean field */
         if (TethysDataId.XTRABOOL.equals(myCell.getColumnId())) {
             /* Set correct state for extra Boolean */
-            TethysStateIconField<Boolean, IconState> myStateField = (TethysStateIconField<Boolean, IconState>) myCell;
+            TethysStateIconField<Boolean, IconState, ?, ?> myStateField = (TethysStateIconField<Boolean, IconState, ?, ?>) myCell;
             TethysSwingTableItem myRow = myCell.getActiveRow();
             myStateField.getIconManager().setMachineState(myRow.getBoolean()
                                                                              ? IconState.OPEN
@@ -294,7 +298,7 @@ public class TethysSwingTableExample {
      */
     @SuppressWarnings("unchecked")
     private void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysTableCell<TethysDataId, TethysSwingTableItem, ?> myCell = pEvent.getDetails(TethysTableCell.class);
+        TethysSwingTableCell<TethysDataId, TethysSwingTableItem, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
         TethysSwingTableItem myRow = myCell.getActiveRow();
         myRow.incrementUpdates();
     }
@@ -306,7 +310,7 @@ public class TethysSwingTableExample {
      */
     @SuppressWarnings("unchecked")
     private TethysDataId getColumnId(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysTableCell<TethysDataId, ?, ?> myCell = pEvent.getDetails(TethysTableCell.class);
+        TethysSwingTableCell<TethysDataId, ?, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
         return myCell.getColumnId();
     }
 

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
+import javax.swing.JComponent;
+
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
@@ -30,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
  * @param <N> The node type
  */
 public interface AnalysisFilterSelection<N>
-        extends TethysNode<N> {
+        extends TethysNode<JComponent> {
     /**
      * Is selection available?
      * @return true/false

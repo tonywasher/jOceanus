@@ -64,6 +64,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
@@ -133,15 +134,17 @@ public class DepositPanel
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public DepositPanel(final MetisFieldManager pFieldMgr,
+    public DepositPanel(final TethysSwingGuiFactory pFactory,
+                        final MetisFieldManager pFieldMgr,
                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
                         final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr, pUpdateSet, pError);
+        super(pFactory, pFieldMgr, pUpdateSet, pError);
 
         /* Create the buttons */
         theCategoryButton = new JScrollButton<>();
@@ -171,7 +174,7 @@ public class DepositPanel
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
         /* Create the DepositRates table */
-        theRates = new DepositRateTable(pFieldMgr, getUpdateSet(), pError);
+        theRates = new DepositRateTable(pFactory, pFieldMgr, getUpdateSet(), pError);
         myTabs.add(TAB_RATES, theRates.getNode());
 
         /* Layout the main panel */

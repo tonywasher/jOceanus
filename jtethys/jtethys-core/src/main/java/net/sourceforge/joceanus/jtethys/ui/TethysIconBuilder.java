@@ -30,6 +30,11 @@ import java.net.URL;
  */
 public abstract class TethysIconBuilder {
     /**
+     * Default icon width.
+     */
+    public static final int DEFAULT_ICONWIDTH = 16;
+
+    /**
      * Interface for eNums.
      */
     @FunctionalInterface

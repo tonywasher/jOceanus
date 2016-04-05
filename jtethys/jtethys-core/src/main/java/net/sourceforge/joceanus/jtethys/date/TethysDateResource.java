@@ -153,7 +153,42 @@ public enum TethysDateResource implements TethysResourceId {
     /**
      * Range To.
      */
-    RANGE_TO("range.to");
+    RANGE_TO("range.to"),
+
+    /**
+     * CurrentDay.
+     */
+    DIALOG_CURRENT("dialog.CurrentDay"),
+
+    /**
+     * SelectedDay.
+     */
+    DIALOG_SELECTED("dialog.SelectedDay"),
+
+    /**
+     * NextMonth.
+     */
+    DIALOG_NEXTMONTH("dialog.NextMonth"),
+
+    /**
+     * PreviousMonth.
+     */
+    DIALOG_PREVMONTH("dialog.PreviousMonth"),
+
+    /**
+     * NextYear.
+     */
+    DIALOG_NEXTYEAR("dialog.NextYear"),
+
+    /**
+     * PreviousYear.
+     */
+    DIALOG_PREVYEAR("dialog.PreviousYear"),
+
+    /**
+     * NullSelect.
+     */
+    DIALOG_NULL("dialog.NullSelect");
 
     /**
      * The Resource Builder.
@@ -185,7 +220,7 @@ public enum TethysDateResource implements TethysResourceId {
 
     @Override
     public String getNameSpace() {
-        return "JDateDay";
+        return "date";
     }
 
     @Override

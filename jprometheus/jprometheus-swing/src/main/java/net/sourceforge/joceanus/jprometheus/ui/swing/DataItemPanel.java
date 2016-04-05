@@ -45,8 +45,10 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Class to enable display/editing of and individual dataItem.
@@ -54,7 +56,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * @param <E> the data type enum class
  */
 public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        implements TethysEventProvider<PrometheusDataEvent>, PrometheusItemEditParent {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent>, PrometheusItemEditParent {
     /**
      * Details Tab Title.
      */
@@ -74,6 +76,11 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Field Height.
      */
     protected static final int FIELD_HEIGHT = 20;
+
+    /**
+     * The Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -147,17 +154,22 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
     @SuppressWarnings("unchecked")
-    protected DataItemPanel(final MetisFieldManager pFieldMgr,
+    protected DataItemPanel(final TethysSwingGuiFactory pFactory,
+                            final MetisFieldManager pFieldMgr,
                             final UpdateSet<E> pUpdateSet,
                             final PrometheusSwingErrorPanel pError) {
         /* Store parameters */
         theUpdateSet = pUpdateSet;
         theError = pError;
+
+        /* Create the Id */
+        theId = pFactory.getNextId();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -174,8 +186,8 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
 
         /* create the action panels */
-        theItemActions = new PrometheusSwingItemActions(this);
-        theEditActions = new PrometheusSwingItemEditActions(this);
+        theItemActions = new PrometheusSwingItemActions(pFactory, this);
+        theEditActions = new PrometheusSwingItemEditActions(pFactory, this);
 
         /* Create listener */
         theUpdateSet.getEventRegistrar().addEventListener(e -> refreshAfterUpdate());
@@ -198,16 +210,30 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     }
 
     @Override
+    public Integer getId() {
+        return theId;
+    }
+
+    @Override
     public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Obtain the panel.
-     * @return the panel
-     */
+    @Override
     public JPanel getNode() {
         return thePanel;
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theItemActions.setEnabled(pEnabled);
+        theMainPanel.setEnabled(pEnabled);
+        theEditActions.setEnabled(pEnabled);
     }
 
     /**

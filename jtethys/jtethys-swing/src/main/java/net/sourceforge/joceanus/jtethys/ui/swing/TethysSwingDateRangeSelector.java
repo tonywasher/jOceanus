@@ -27,24 +27,22 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jtethys.date.TethysDatePeriod;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRangeState;
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Selection panel to select a standard DatePeriod from within a range of dates.
  */
 public class TethysSwingDateRangeSelector
-        extends TethysDateRangeSelector<JComponent> {
+        extends TethysDateRangeSelector<JComponent, Icon> {
     /**
      * Strut width.
      */
@@ -87,37 +85,16 @@ public class TethysSwingDateRangeSelector
 
     /**
      * Constructor.
-     */
-    public TethysSwingDateRangeSelector() {
-        /* Call standard constructor */
-        this(false);
-    }
-
-    /**
-     * Constructor.
+     * @param pFactory the GUI factory
      * @param pBaseIsStart is the baseDate the start of the period? (true/false)
      */
-    public TethysSwingDateRangeSelector(final boolean pBaseIsStart) {
-        /* Call standard constructor */
-        this(new TethysDataFormatter(), pBaseIsStart);
-    }
-
-    /**
-     * Constructor.
-     * @param pFormatter the data formatter
-     * @param pBaseIsStart is the baseDate the start of the period? (true/false)
-     */
-    public TethysSwingDateRangeSelector(final TethysDataFormatter pFormatter,
+    public TethysSwingDateRangeSelector(final TethysSwingGuiFactory pFactory,
                                         final boolean pBaseIsStart) {
         /* Initialise the underlying class */
-        super(pFormatter, pBaseIsStart);
+        super(pFactory, pBaseIsStart);
 
         /* Create the Node */
         theNode = new TethysSwingEnablePanel();
-
-        /* Create the period button */
-        TethysSwingScrollButtonManager<TethysDatePeriod> myPeriodButton = new TethysSwingScrollButtonManager<>();
-        declarePeriodButton(myPeriodButton);
 
         /* Create the period panel */
         JLabel myPeriodLabel = new JLabel(NLS_PERIOD);
@@ -126,16 +103,8 @@ public class TethysSwingDateRangeSelector
         thePeriodPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         thePeriodPane.add(myPeriodLabel);
         thePeriodPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        thePeriodPane.add(myPeriodButton.getNode());
+        thePeriodPane.add(getPeriodButton().getNode());
         thePeriodPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-
-        /* Create the DateButtons */
-        TethysSwingDateButtonManager myStartButton = new TethysSwingDateButtonManager(pFormatter);
-        declareStartButton(myStartButton);
-        TethysSwingDateButtonManager myEndButton = new TethysSwingDateButtonManager(pFormatter);
-        declareEndButton(myEndButton);
-        TethysSwingDateButtonManager myBaseButton = new TethysSwingDateButtonManager(pFormatter);
-        declareBaseButton(myBaseButton);
 
         /* Create the buttons */
         theNextButton = new JButton(TethysSwingArrowIcon.RIGHT);
@@ -153,11 +122,11 @@ public class TethysSwingDateRangeSelector
         theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         theCustomPane.add(myStartLabel);
         theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        theCustomPane.add(myStartButton.getNode());
+        theCustomPane.add(getStartButton().getNode());
         theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         theCustomPane.add(myEndLabel);
         theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        theCustomPane.add(myEndButton.getNode());
+        theCustomPane.add(getEndButton().getNode());
         theCustomPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Create the Standard Pane */
@@ -169,7 +138,7 @@ public class TethysSwingDateRangeSelector
         theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         theStandardPane.add(thePrevButton);
         theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        theStandardPane.add(myBaseButton.getNode());
+        theStandardPane.add(getBaseButton().getNode());
         theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         theStandardPane.add(theNextButton);
         theStandardPane.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));

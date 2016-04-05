@@ -164,6 +164,9 @@ public class TaxYearTable
      * @param pView the data view
      */
     public TaxYearTable(final SwingView pView) {
+        /* initialise the underlying class */
+        super(pView.getUtilitySet().getGuiFactory());
+
         /* Record the view */
         theView = pView;
         theFieldMgr = theView.getFieldManager();
@@ -186,7 +189,7 @@ public class TaxYearTable
         theError = new PrometheusSwingErrorPanel(myDataMgr, theDataEntry);
 
         /* Create the action buttons */
-        theActionButtons = new PrometheusSwingActionButtons(theUpdateSet, false);
+        theActionButtons = new PrometheusSwingActionButtons(pView.getUtilitySet().getGuiFactory(), theUpdateSet, false);
 
         /* Create the table model */
         TaxYearTableModel myModel = new TaxYearTableModel(this);
@@ -217,7 +220,7 @@ public class TaxYearTable
         thePanel.add(myMain, BorderLayout.CENTER);
 
         /* Create a TaxYear panel */
-        theActiveYear = new TaxYearPanel(theFieldMgr, theUpdateSet, theError);
+        theActiveYear = new TaxYearPanel(pView.getUtilitySet().getGuiFactory(), theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveYear.getNode(), BorderLayout.PAGE_END);
 
         /* Hide the action buttons initially */

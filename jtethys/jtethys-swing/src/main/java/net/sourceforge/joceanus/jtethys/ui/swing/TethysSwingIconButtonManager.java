@@ -22,68 +22,22 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.Insets;
-
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
 
 /**
  * Simple button that displays icon.
  */
-public class TethysSwingIconButton
-        implements TethysIconButton<JComponent, Icon> {
-    /**
-     * Button.
-     */
-    private final JButton theButton;
-
+public final class TethysSwingIconButtonManager {
     /**
      * Constructor.
-     * @param pManager the button manager
      */
-    protected TethysSwingIconButton(final TethysIconButtonManager<?, JComponent, Icon> pManager) {
-        /* Create the button */
-        theButton = new JButton();
-
-        /* Create style of button */
-        theButton.setHorizontalAlignment(SwingConstants.CENTER);
-
-        /* Handle action */
-        theButton.addActionListener(e -> pManager.progressToNextState());
-    }
-
-    @Override
-    public JButton getButton() {
-        return theButton;
-    }
-
-    @Override
-    public void setButtonState(final Icon pIcon,
-                               final String pToolTip) {
-        /* Set the icon */
-        theButton.setIcon(pIcon);
-
-        /* Set the ToolTip */
-        theButton.setToolTipText(pToolTip);
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        theButton.setEnabled(pEnabled);
-    }
-
-    @Override
-    public void setNullMargins() {
-        theButton.setMargin(new Insets(0, 0, 0, 0));
+    private TethysSwingIconButtonManager() {
     }
 
     /**
@@ -94,25 +48,11 @@ public class TethysSwingIconButton
             extends TethysSimpleIconButtonManager<T, JComponent, Icon> {
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          */
-        public TethysSwingSimpleIconButtonManager() {
-            /* Create and declare the button */
-            declareButton(new TethysSwingIconButton(this));
-        }
-
-        @Override
-        public TethysSwingIconButton getButton() {
-            return (TethysSwingIconButton) super.getButton();
-        }
-
-        @Override
-        public JButton getNode() {
-            return (JButton) super.getNode();
-        }
-
-        @Override
-        public void setVisible(final boolean pVisible) {
-            getNode().setVisible(pVisible);
+        public TethysSwingSimpleIconButtonManager(final TethysSwingGuiFactory pFactory) {
+            /* Initialise underlying class */
+            super(pFactory);
         }
 
         @Override
@@ -137,20 +77,11 @@ public class TethysSwingIconButton
             extends TethysStateIconButtonManager<T, S, JComponent, Icon> {
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          */
-        public TethysSwingStateIconButtonManager() {
-            /* Create and declare the button */
-            declareButton(new TethysSwingIconButton(this));
-        }
-
-        @Override
-        public TethysSwingIconButton getButton() {
-            return (TethysSwingIconButton) super.getButton();
-        }
-
-        @Override
-        public void setVisible(final boolean pVisible) {
-            getNode().setVisible(pVisible);
+        public TethysSwingStateIconButtonManager(final TethysSwingGuiFactory pFactory) {
+            /* Initialise underlying class */
+            super(pFactory);
         }
 
         @Override

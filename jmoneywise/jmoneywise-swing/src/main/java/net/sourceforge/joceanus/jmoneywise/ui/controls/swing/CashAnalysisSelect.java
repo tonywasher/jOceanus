@@ -54,7 +54,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Cash Analysis Selection.
@@ -70,6 +71,11 @@ public class CashAnalysisSelect
      * Text for Account Label.
      */
     private static final String NLS_CASH = MoneyWiseDataType.CASH.getItemName();
+
+    /**
+     * Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -123,16 +129,18 @@ public class CashAnalysisSelect
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public CashAnalysisSelect() {
+    public CashAnalysisSelect(final TethysSwingGuiFactory pFactory) {
         /* Create the cash button */
-        theCashButton = new TethysSwingScrollButtonManager<>();
+        theCashButton = pFactory.newScrollButton();
 
         /* Create the category button */
-        theCatButton = new TethysSwingScrollButtonManager<>();
+        theCatButton = pFactory.newScrollButton();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
+        theId = pFactory.getNextId();
 
         /* Create the labels */
         JLabel myCatLabel = new JLabel(NLS_CATEGORY + MetisFieldElement.STR_COLON);
@@ -166,6 +174,11 @@ public class CashAnalysisSelect
         myRegistrar = theCashButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCash());
         myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCashMenu());
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

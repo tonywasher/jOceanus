@@ -22,72 +22,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Tooltip;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
 
 /**
  * Simple button that displays icon.
  */
-public class TethysFXIconButton
-        implements TethysIconButton<Node, Node> {
-    /**
-     * Button.
-     */
-    private final Button theButton;
-
+public final class TethysFXIconButtonManager {
     /**
      * Constructor.
-     * @param pManager the button manager
      */
-    protected TethysFXIconButton(final TethysIconButtonManager<?, Node, Node> pManager) {
-        /* Create the button */
-        theButton = new Button();
-
-        /* Create style of button */
-        theButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-        theButton.setAlignment(Pos.CENTER);
-        theButton.setMaxWidth(Double.MAX_VALUE);
-
-        /* Handle action */
-        theButton.setOnAction(e -> pManager.progressToNextState());
-    }
-
-    @Override
-    public Button getButton() {
-        return theButton;
-    }
-
-    @Override
-    public void setButtonState(final Node pIcon,
-                               final String pToolTip) {
-        /* Set the icon */
-        theButton.setGraphic(pIcon);
-
-        /* Set the ToolTip */
-        Tooltip myToolTip = pToolTip == null
-                                             ? null
-                                             : new Tooltip(pToolTip);
-        theButton.setTooltip(myToolTip);
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        theButton.setDisable(!pEnabled);
-    }
-
-    @Override
-    public void setNullMargins() {
-        theButton.setPadding(Insets.EMPTY);
+    private TethysFXIconButtonManager() {
     }
 
     /**
@@ -98,25 +46,11 @@ public class TethysFXIconButton
             extends TethysSimpleIconButtonManager<T, Node, Node> {
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          */
-        public TethysFXSimpleIconButtonManager() {
-            /* Create and declare the button */
-            declareButton(new TethysFXIconButton(this));
-        }
-
-        @Override
-        public TethysFXIconButton getButton() {
-            return (TethysFXIconButton) super.getButton();
-        }
-
-        @Override
-        public Button getNode() {
-            return (Button) super.getNode();
-        }
-
-        @Override
-        public void setVisible(final boolean pVisible) {
-            getNode().setVisible(pVisible);
+        protected TethysFXSimpleIconButtonManager(final TethysFXGuiFactory pFactory) {
+            /* Initialise underlying class */
+            super(pFactory);
         }
 
         @Override
@@ -141,20 +75,11 @@ public class TethysFXIconButton
             extends TethysStateIconButtonManager<T, S, Node, Node> {
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          */
-        public TethysFXStateIconButtonManager() {
-            /* Create and declare the button */
-            declareButton(new TethysFXIconButton(this));
-        }
-
-        @Override
-        public TethysFXIconButton getButton() {
-            return (TethysFXIconButton) super.getButton();
-        }
-
-        @Override
-        public void setVisible(final boolean pVisible) {
-            getNode().setVisible(pVisible);
+        protected TethysFXStateIconButtonManager(final TethysFXGuiFactory pFactory) {
+            /* Initialise underlying class */
+            super(pFactory);
         }
 
         @Override

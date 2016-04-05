@@ -44,18 +44,16 @@ import javax.swing.WindowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.jdatebutton.swing.JDateButton;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
+import net.sourceforge.joceanus.jtethys.ui.TethysLabel.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingStateIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButton.TethysSwingListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingStateIconButtonManager;
 
 /**
  * Scroll utilities examples.
@@ -91,6 +89,11 @@ public class TethysSwingScrollUIExample
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(TethysSwingScrollUIExample.class);
+
+    /**
+     * The GuiFactory.
+     */
+    private final TethysSwingGuiFactory theGuiFactory;
 
     /**
      * The Test helper.
@@ -135,32 +138,32 @@ public class TethysSwingScrollUIExample
     /**
      * The selected context value.
      */
-    private final JLabel theContextValue;
+    private final TethysSwingLabel theContextValue;
 
     /**
      * The selected scroll value.
      */
-    private final JLabel theScrollValue;
+    private final TethysSwingLabel theScrollValue;
 
     /**
      * The selected date value.
      */
-    private final JLabel theDateValue;
+    private final TethysSwingLabel theDateValue;
 
     /**
      * The selected simple icon value.
      */
-    private final JLabel theSimpleIconValue;
+    private final TethysSwingLabel theSimpleIconValue;
 
     /**
      * The selected state icon values.
      */
-    private final JLabel theStateIconValue;
+    private final TethysSwingLabel theStateIconValue;
 
     /**
      * The selected list values.
      */
-    private final JLabel theListValues;
+    private final TethysSwingLabel theListValues;
 
     /**
      * Constructor.
@@ -169,20 +172,23 @@ public class TethysSwingScrollUIExample
         /* Create helper */
         theHelper = new TethysScrollUITestHelper<>();
 
+        /* Create GUI Factory */
+        theGuiFactory = new TethysSwingGuiFactory();
+
         /* Create resources */
-        theScrollMenu = new TethysSwingScrollContextMenu<>();
-        theScrollButtonMgr = new TethysSwingScrollButtonManager<>();
-        theSimpleIconButtonMgr = new TethysSwingSimpleIconButtonManager<>();
-        theStateIconButtonMgr = new TethysSwingStateIconButtonManager<>();
-        theStateButtonMgr = new TethysSwingScrollButtonManager<>();
-        theListButtonMgr = new TethysSwingListButtonManager<>();
-        theDateButtonMgr = new TethysSwingDateButtonManager();
-        theContextValue = new JLabel();
-        theScrollValue = new JLabel();
-        theDateValue = new JLabel();
-        theSimpleIconValue = new JLabel();
-        theStateIconValue = new JLabel();
-        theListValues = new JLabel();
+        theScrollMenu = theGuiFactory.newContextMenu();
+        theScrollButtonMgr = theGuiFactory.newScrollButton();
+        theSimpleIconButtonMgr = theGuiFactory.newSimpleIconButton();
+        theStateIconButtonMgr = theGuiFactory.newStateIconButton();
+        theStateButtonMgr = theGuiFactory.newScrollButton();
+        theListButtonMgr = theGuiFactory.newListButton();
+        theDateButtonMgr = theGuiFactory.newDateButton();
+        theContextValue = theGuiFactory.newLabel();
+        theScrollValue = theGuiFactory.newLabel();
+        theDateValue = theGuiFactory.newLabel();
+        theSimpleIconValue = theGuiFactory.newLabel();
+        theStateIconValue = theGuiFactory.newLabel();
+        theListValues = theGuiFactory.newLabel();
     }
 
     @Override
@@ -260,7 +266,7 @@ public class TethysSwingScrollUIExample
         myContextArea.setBorder(BorderFactory.createTitledBorder("ContextArea"));
         myContextArea.setHorizontalAlignment(SwingConstants.CENTER);
         buildResultLabel(theContextValue, "ContextValue");
-        myHelper.addFullLabeledRow(myContextArea, theContextValue);
+        myHelper.addFullLabeledRow(myContextArea, theContextValue.getNode());
         setContextValue(null);
 
         /* Build the context menu */
@@ -291,13 +297,12 @@ public class TethysSwingScrollUIExample
         });
 
         /* Create scroll button line */
-        TethysSwingScrollButton myScrollButton = theScrollButtonMgr.getButton();
         JPanel myScrollArea = new JPanel();
         myScrollArea.setLayout(new BorderLayout());
         myScrollArea.setBorder(BorderFactory.createTitledBorder("ScrollButton"));
-        myScrollArea.add(myScrollButton.getButton(), BorderLayout.CENTER);
+        myScrollArea.add(theScrollButtonMgr.getNode(), BorderLayout.CENTER);
         buildResultLabel(theScrollValue, "ScrollValue");
-        myHelper.addFullLabeledRow(myScrollArea, theScrollValue);
+        myHelper.addFullLabeledRow(myScrollArea, theScrollValue.getNode());
         setScrollValue(null);
 
         /* Add listener */
@@ -307,41 +312,38 @@ public class TethysSwingScrollUIExample
                 e -> theHelper.buildContextMenu(theScrollButtonMgr.getMenu()));
 
         /* Create list button line */
-        TethysSwingListButton myListButton = theListButtonMgr.getButton();
         JPanel myListArea = new JPanel();
         myListArea.setLayout(new BorderLayout());
         myListArea.setBorder(BorderFactory.createTitledBorder("ListButton"));
-        myListArea.add(myListButton.getButton(), BorderLayout.CENTER);
+        myListArea.add(theListButtonMgr.getNode(), BorderLayout.CENTER);
         buildResultLabel(theListValues, "ListValues");
-        myHelper.addFullLabeledRow(myListArea, theListValues);
+        myHelper.addFullLabeledRow(myListArea, theListValues.getNode());
 
         theListButtonMgr.setValue(theHelper.buildToggleList(theListButtonMgr));
-        theListButtonMgr.getButton().setButtonText("Tag");
+        theListButtonMgr.setText("Tag");
 
         /* Add listener */
         theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setListValue());
 
         /* Create date button line */
-        JDateButton myDateButton = theDateButtonMgr.getNode();
         JPanel myDateArea = new JPanel();
         myDateArea.setLayout(new BorderLayout());
         myDateArea.setBorder(BorderFactory.createTitledBorder("DateButton"));
-        myDateArea.add(myDateButton, BorderLayout.CENTER);
-        myDateButton.setMinimumSize(new Dimension(20, 20));
+        myDateArea.add(theDateButtonMgr.getNode(), BorderLayout.CENTER);
+        theDateButtonMgr.getNode().setMinimumSize(new Dimension(20, 20));
         buildResultLabel(theDateValue, "DateValue");
-        myHelper.addFullLabeledRow(myDateArea, theDateValue);
+        myHelper.addFullLabeledRow(myDateArea, theDateValue.getNode());
 
         /* Add listener */
         theDateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setDateValue(e.getDetails(TethysDate.class)));
 
         /* Create simple icon button line */
-        TethysSwingIconButton myIconButton = theSimpleIconButtonMgr.getButton();
         JPanel myIconArea = new JPanel();
         myIconArea.setLayout(new BorderLayout());
         myIconArea.setBorder(BorderFactory.createTitledBorder("SimpleIconButton"));
-        myIconArea.add(myIconButton.getButton(), BorderLayout.CENTER);
+        myIconArea.add(theSimpleIconButtonMgr.getNode(), BorderLayout.CENTER);
         buildResultLabel(theSimpleIconValue, "IconValue");
-        myHelper.addFullLabeledRow(myIconArea, theSimpleIconValue);
+        myHelper.addFullLabeledRow(myIconArea, theSimpleIconValue.getNode());
         theSimpleIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
         theHelper.buildSimpleIconState(theSimpleIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
 
@@ -350,16 +352,16 @@ public class TethysSwingScrollUIExample
                 e -> setSimpleIconValue(e.getDetails(Boolean.class)));
 
         /* Create state icon button line */
-        myIconButton = theStateIconButtonMgr.getButton();
         myIconArea = new JPanel();
         myIconArea.setLayout(new BoxLayout(myIconArea, BoxLayout.X_AXIS));
         myIconArea.setBorder(BorderFactory.createTitledBorder("StateIconButton"));
         myIconArea.add(theStateButtonMgr.getNode());
-        myIconArea.add(myIconButton.getButton());
+        myIconArea.add(theStateIconButtonMgr.getNode());
         buildResultLabel(theStateIconValue, "StateIconValue");
-        myHelper.addFullLabeledRow(myIconArea, theStateIconValue);
+        myHelper.addFullLabeledRow(myIconArea, theStateIconValue.getNode());
         theHelper.buildStateButton(theStateButtonMgr);
         theStateIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
+        theStateIconButtonMgr.setNullMargins();
         theHelper.buildStateIconState(theStateIconButtonMgr,
                 TethysHelperIcon.OPENFALSE,
                 TethysHelperIcon.OPENTRUE,
@@ -383,14 +385,16 @@ public class TethysSwingScrollUIExample
      * @param pResult the result label
      * @param pTitle the title
      */
-    private void buildResultLabel(final JLabel pLabel,
+    private void buildResultLabel(final TethysSwingLabel pLabel,
                                   final String pTitle) {
-        pLabel.setBorder(BorderFactory.createTitledBorder(pTitle));
-        theContextValue.setHorizontalAlignment(SwingConstants.CENTER);
+        // pLabel.setBorder(BorderFactory.createTitledBorder(pTitle));
+        theContextValue.setAlignment(TethysAlignment.CENTRE);
 
+        JComponent myNode = pLabel.getNode();
         Dimension myDim = new Dimension(100, 39);
-        theContextValue.setMinimumSize(myDim);
-        theContextValue.setPreferredSize(myDim);
+        myNode.setMinimumSize(myDim);
+        myNode.setPreferredSize(myDim);
+        myNode.setBorder(BorderFactory.createTitledBorder(pTitle));
     }
 
     /**

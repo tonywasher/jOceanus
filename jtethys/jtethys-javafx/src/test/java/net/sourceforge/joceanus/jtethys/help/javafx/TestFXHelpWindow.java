@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
  * Help Window.
@@ -64,7 +65,7 @@ public class TestFXHelpWindow
      */
     public TestFXHelpWindow() {
         theButton = new Button("Help");
-        theHelpWindow = new TethysFXHelpManager();
+        theHelpWindow = new TethysFXHelpManager(new TethysFXGuiFactory());
     }
 
     /**

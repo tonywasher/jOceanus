@@ -73,6 +73,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGridBagUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Preference Set panel.
@@ -116,6 +117,11 @@ public class MetisPreferenceSetPanel
     private static final String NLS_SELECT = MetisPreferenceResource.UI_HEADER_SELECT.getValue();
 
     /**
+     * The Id.
+     */
+    private final Integer theId;
+
+    /**
      * The Event Manager.
      */
     private final TethysEventManager<MetisPreferenceEvent> theEventManager;
@@ -157,11 +163,16 @@ public class MetisPreferenceSetPanel
 
     /**
      * Constructor.
+     * @param pFactory the GuiFactory
      * @param pFieldMgr the field manager
      * @param pSet the preference set
      */
-    public MetisPreferenceSetPanel(final MetisFieldManager pFieldMgr,
+    public MetisPreferenceSetPanel(final TethysSwingGuiFactory pFactory,
+                                   final MetisFieldManager pFieldMgr,
                                    final MetisPreferenceSet pSet) {
+        /* Record the Id */
+        theId = pFactory.getNextId();
+
         /* Options SubPanel */
         TethysSwingEnablePanel myOptions = null;
         int myRow = 0;
@@ -257,6 +268,11 @@ public class MetisPreferenceSetPanel
             TethysSwingGridBagUtilities.setPanelRow(myConstraints, myRow);
             thePanel.add(myOptions, myConstraints);
         }
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

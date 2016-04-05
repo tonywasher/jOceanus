@@ -36,8 +36,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import net.sourceforge.jdatebutton.javafx.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -46,9 +44,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.TethysFXContextEvent;
 
@@ -57,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.Teth
  * @param <T> the data type
  */
 public abstract class TethysFXDataTextField<T>
-        extends TethysDataEditField<T, Node, Color, Font, Node> {
+        extends TethysDataEditField<T, Node, Node> {
     /**
      * The padding size to expand a label to match a TextField/Button.
      */
@@ -95,13 +91,18 @@ public abstract class TethysFXDataTextField<T>
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pEditControl the edit Control
      */
-    protected TethysFXDataTextField(final Control pEditControl) {
+    protected TethysFXDataTextField(final TethysFXGuiFactory pFactory,
+                                    final Node pEditControl) {
+        /* Initialise the underlying class */
+        super(pFactory);
+
         /* Create resources */
         theNode = new BorderPane();
         theLabel = new Label();
-        theEditControl = pEditControl;
+        theEditControl = (Control) pEditControl;
 
         /* Set maximum widths for fields */
         theLabel.setMaxWidth(Integer.MAX_VALUE);
@@ -169,18 +170,19 @@ public abstract class TethysFXDataTextField<T>
         theNode.setVisible(pVisible);
     }
 
-    @Override
-    public void setTextFill(final Color pColor) {
-        /* Apply font to the two nodes */
-        theLabel.setTextFill(pColor);
-        theEditControl.setStyle("-fx-text-inner-color: " + TethysFXGuiUtils.colorToHexString(pColor));
-    }
+    // @Override
+    // public void setTextFill(final Color pColor) {
+    // /* Apply font to the two nodes */
+    // theLabel.setTextFill(pColor);
+    // theEditControl.setStyle("-fx-text-inner-color: " +
+    // TethysFXGuiUtils.colorToHexString(pColor));
+    // }
 
-    @Override
-    public void setBackground(final Color pColor) {
-        /* Apply colour to the label only */
-        theLabel.setStyle("-fx-background-color: " + TethysFXGuiUtils.colorToHexString(pColor));
-    }
+    // @Override
+    // public void setBackground(final Color pColor) {
+    // /* Apply colour to the label only */
+    // theLabel.setStyle("-fx-background-color: " + TethysFXGuiUtils.colorToHexString(pColor));
+    // }
 
     @Override
     public void showCmdButton(final boolean pShow) {
@@ -251,11 +253,13 @@ public abstract class TethysFXDataTextField<T>
 
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          * @param pConverter the text converter
          */
-        public TethysFXTextEditField(final TethysDataEditConverter<T> pConverter) {
+        protected TethysFXTextEditField(final TethysFXGuiFactory pFactory,
+                                        final TethysDataEditConverter<T> pConverter) {
             /* Initialise underlying class */
-            super(new TextField());
+            super(pFactory, new TextField());
 
             /* Create the converter control */
             theControl = new TethysDataEditTextFieldControl<>(this, pConverter);
@@ -364,12 +368,12 @@ public abstract class TethysFXDataTextField<T>
             return theControl.getConverter();
         }
 
-        @Override
-        public void setFont(final Font pFont) {
-            /* Apply font to the two nodes */
-            getLabel().setFont(pFont);
-            theTextField.setFont(pFont);
-        }
+        // @Override
+        // public void setFont(final Font pFont) {
+        // /* Apply font to the two nodes */
+        // getLabel().setFont(pFont);
+        // theTextField.setFont(pFont);
+        // }
 
         /**
          * Process value.
@@ -444,9 +448,10 @@ public abstract class TethysFXDataTextField<T>
             extends TethysFXTextEditField<String> {
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          */
-        public TethysFXStringTextField() {
-            super(new TethysStringEditConverter());
+        protected TethysFXStringTextField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysStringEditConverter());
         }
     }
 
@@ -457,10 +462,10 @@ public abstract class TethysFXDataTextField<T>
             extends TethysFXTextEditField<Short> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
+         * @param pFactory the GUI factory
          */
-        public TethysFXShortTextField(final TethysDataFormatter pFormatter) {
-            super(new TethysShortEditConverter(pFormatter));
+        protected TethysFXShortTextField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysShortEditConverter(pFactory.getDataFormatter()));
         }
     }
 
@@ -471,10 +476,10 @@ public abstract class TethysFXDataTextField<T>
             extends TethysFXTextEditField<Integer> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
+         * @param pFactory the GUI factory
          */
-        public TethysFXIntegerTextField(final TethysDataFormatter pFormatter) {
-            super(new TethysIntegerEditConverter(pFormatter));
+        protected TethysFXIntegerTextField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysIntegerEditConverter(pFactory.getDataFormatter()));
         }
     }
 
@@ -485,10 +490,10 @@ public abstract class TethysFXDataTextField<T>
             extends TethysFXTextEditField<Long> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
+         * @param pFactory the GUI factory
          */
-        public TethysFXLongTextField(final TethysDataFormatter pFormatter) {
-            super(new TethysLongEditConverter(pFormatter));
+        protected TethysFXLongTextField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysLongEditConverter(pFactory.getDataFormatter()));
         }
     }
 
@@ -501,10 +506,12 @@ public abstract class TethysFXDataTextField<T>
             implements TethysCurrencyField {
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          * @param pConverter the converter
          */
-        public TethysFXCurrencyTextFieldBase(final TethysMoneyEditConverterBase<T> pConverter) {
-            super(pConverter);
+        protected TethysFXCurrencyTextFieldBase(final TethysFXGuiFactory pFactory,
+                                                final TethysMoneyEditConverterBase<T> pConverter) {
+            super(pFactory, pConverter);
         }
 
         @Override
@@ -525,10 +532,10 @@ public abstract class TethysFXDataTextField<T>
             extends TethysFXCurrencyTextFieldBase<TethysMoney> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
+         * @param pFactory the GUI factory
          */
-        public TethysFXMoneyTextField(final TethysDataFormatter pFormatter) {
-            super(new TethysMoneyEditConverter(pFormatter));
+        protected TethysFXMoneyTextField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysMoneyEditConverter(pFactory.getDataFormatter()));
         }
     }
 
@@ -539,10 +546,10 @@ public abstract class TethysFXDataTextField<T>
             extends TethysFXCurrencyTextFieldBase<TethysPrice> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
+         * @param pFactory the GUI factory
          */
-        public TethysFXPriceTextField(final TethysDataFormatter pFormatter) {
-            super(new TethysPriceEditConverter(pFormatter));
+        protected TethysFXPriceTextField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysPriceEditConverter(pFactory.getDataFormatter()));
         }
     }
 
@@ -553,10 +560,10 @@ public abstract class TethysFXDataTextField<T>
             extends TethysFXCurrencyTextFieldBase<TethysDilutedPrice> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
+         * @param pFactory the GUI factory
          */
-        public TethysFXDilutedPriceTextField(final TethysDataFormatter pFormatter) {
-            super(new TethysDilutedPriceEditConverter(pFormatter));
+        protected TethysFXDilutedPriceTextField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysDilutedPriceEditConverter(pFactory.getDataFormatter()));
         }
     }
 
@@ -567,10 +574,10 @@ public abstract class TethysFXDataTextField<T>
             extends TethysFXTextEditField<TethysRate> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
+         * @param pFactory the GUI factory
          */
-        public TethysFXRateTextField(final TethysDataFormatter pFormatter) {
-            super(new TethysRateEditConverter(pFormatter));
+        protected TethysFXRateTextField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysRateEditConverter(pFactory.getDataFormatter()));
         }
     }
 
@@ -581,10 +588,10 @@ public abstract class TethysFXDataTextField<T>
             extends TethysFXTextEditField<TethysUnits> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
+         * @param pFactory the GUI factory
          */
-        public TethysFXUnitsTextField(final TethysDataFormatter pFormatter) {
-            super(new TethysUnitsEditConverter(pFormatter));
+        protected TethysFXUnitsTextField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysUnitsEditConverter(pFactory.getDataFormatter()));
         }
     }
 
@@ -595,10 +602,10 @@ public abstract class TethysFXDataTextField<T>
             extends TethysFXTextEditField<TethysDilution> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
+         * @param pFactory the GUI factory
          */
-        public TethysFXDilutionTextField(final TethysDataFormatter pFormatter) {
-            super(new TethysDilutionEditConverter(pFormatter));
+        protected TethysFXDilutionTextField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysDilutionEditConverter(pFactory.getDataFormatter()));
         }
     }
 
@@ -609,10 +616,10 @@ public abstract class TethysFXDataTextField<T>
             extends TethysFXTextEditField<TethysRatio> {
         /**
          * Constructor.
-         * @param pFormatter the formatter
+         * @param pFactory the GUI factory
          */
-        public TethysFXRatioTextField(final TethysDataFormatter pFormatter) {
-            super(new TethysRatioEditConverter(pFormatter));
+        protected TethysFXRatioTextField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysRatioEditConverter(pFactory.getDataFormatter()));
         }
     }
 }

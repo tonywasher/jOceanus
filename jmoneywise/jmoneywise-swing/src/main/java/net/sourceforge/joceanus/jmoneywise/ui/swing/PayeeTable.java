@@ -68,10 +68,10 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Payee Table.
@@ -171,7 +171,7 @@ public class PayeeTable
     /**
      * The new button.
      */
-    private final TethysSwingScrollButtonManager<String> theNewButton;
+    private final TethysSwingButton theNewButton;
 
     /**
      * The Payee dialog.
@@ -197,6 +197,9 @@ public class PayeeTable
     public PayeeTable(final SwingView pView,
                       final UpdateSet<MoneyWiseDataType> pUpdateSet,
                       final PrometheusSwingErrorPanel pError) {
+        /* initialise the underlying class */
+        super(pView.getUtilitySet().getGuiFactory());
+
         /* Record the passed details */
         theView = pView;
         theError = pError;
@@ -229,8 +232,9 @@ public class PayeeTable
         theLockedCheckBox = new JCheckBox(PROMPT_CLOSED);
 
         /* Create new button */
-        theNewButton = new TethysSwingScrollButtonManager<>();
-        PrometheusIcon.configureNewScrollButton(theNewButton);
+        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        theNewButton = myFactory.newButton();
+        PrometheusIcon.configureNewIconButton(theNewButton);
 
         /* Create the filter panel */
         theFilterPanel = new TethysSwingEnablePanel();
@@ -247,7 +251,7 @@ public class PayeeTable
         thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Create an account panel */
-        theActiveAccount = new PayeePanel(theFieldMgr, theUpdateSet, theError);
+        theActiveAccount = new PayeePanel(myFactory, theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount.getNode(), BorderLayout.PAGE_END);
 
         /* Create the selection model */
@@ -259,7 +263,7 @@ public class PayeeTable
         theActiveAccount.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
 
         /* Listen to swing events */
-        theNewButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.addNewItem());
+        theNewButton.getEventRegistrar().addEventListener(e -> theModel.addNewItem());
         theLockedCheckBox.addItemListener(e -> setShowAll(theLockedCheckBox.isSelected()));
     }
 

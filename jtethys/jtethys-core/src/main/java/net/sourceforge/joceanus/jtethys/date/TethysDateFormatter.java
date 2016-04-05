@@ -65,17 +65,17 @@ public class TethysDateFormatter
     /**
      * The Simple Date format for the locale and format string.
      */
-    private String theFormat = null;
+    private String theFormat;
 
     /**
      * The Simple Date format for the locale and format string.
      */
-    private SimpleDateFormat theDateFormat = null;
+    private SimpleDateFormat theDateFormat;
 
     /**
      * The DateTime format for the locale and format string.
      */
-    private DateTimeFormatter theLocalDateFormat = null;
+    private DateTimeFormatter theLocalDateFormat;
 
     /**
      * Constructor.

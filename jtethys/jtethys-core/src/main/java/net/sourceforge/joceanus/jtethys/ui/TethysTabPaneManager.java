@@ -29,9 +29,20 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 /**
  * Tab Manager.
  * @param <N> the Node type
+ * @param <I> the Icon Type
  */
-public abstract class TethysTabPaneManager<N>
+public abstract class TethysTabPaneManager<N, I>
         implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+    /**
+     * The Gui Manager.
+     */
+    private final TethysGuiFactory<N, I> theGuiFactory;
+
+    /**
+     * The id.
+     */
+    private final Integer theId;
+
     /**
      * The Event Manager.
      */
@@ -40,12 +51,12 @@ public abstract class TethysTabPaneManager<N>
     /**
      * The first child item.
      */
-    private TethysTabItem<N> theFirstChild;
+    private TethysTabItem<N, I> theFirstChild;
 
     /**
      * The last child item.
      */
-    private TethysTabItem<N> theLastChild;
+    private TethysTabItem<N, I> theLastChild;
 
     /**
      * Is the pane enabled?
@@ -54,10 +65,18 @@ public abstract class TethysTabPaneManager<N>
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    protected TethysTabPaneManager() {
+    protected TethysTabPaneManager(final TethysGuiFactory<N, I> pFactory) {
+        theGuiFactory = pFactory;
+        theId = theGuiFactory.getNextId();
         theEventManager = new TethysEventManager<>();
         isEnabled = true;
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override
@@ -69,16 +88,16 @@ public abstract class TethysTabPaneManager<N>
      * Obtain selected tab.
      * @return the selected tab
      */
-    public abstract TethysTabItem<N> getSelectedTab();
+    public abstract TethysTabItem<N, I> getSelectedTab();
 
     /**
      * find Item by name.
      * @param pName the name of the item
      * @return the item (or null)
      */
-    public TethysTabItem<N> findItemByName(final String pName) {
+    public TethysTabItem<N, I> findItemByName(final String pName) {
         /* loop through children */
-        TethysTabItem<N> myChild = theFirstChild;
+        TethysTabItem<N, I> myChild = theFirstChild;
         while (myChild != null) {
             /* Break if we have found the item */
             if (myChild.getName().equals(pName)) {
@@ -98,9 +117,9 @@ public abstract class TethysTabPaneManager<N>
      * @param pIndex the index of the item
      * @return the item (or null)
      */
-    public TethysTabItem<N> findItemByIndex(final int pIndex) {
+    public TethysTabItem<N, I> findItemByIndex(final int pIndex) {
         /* loop through children */
-        TethysTabItem<N> myChild = theFirstChild;
+        TethysTabItem<N, I> myChild = theFirstChild;
         int myIndex = 0;
         while (myChild != null) {
             /* If the child is visible */
@@ -128,7 +147,7 @@ public abstract class TethysTabPaneManager<N>
     public void enableItemByName(final String pName,
                                  final boolean pEnabled) {
         /* Look up child and adjust */
-        TethysTabItem<N> myItem = findItemByName(pName);
+        TethysTabItem<N, I> myItem = findItemByName(pName);
         if (myItem != null) {
             myItem.setEnabled(pEnabled);
         }
@@ -148,8 +167,8 @@ public abstract class TethysTabPaneManager<N>
      * @param pItem the item
      * @return the new tab item
      */
-    public abstract TethysTabItem<N> addTabItem(final String pName,
-                                                final TethysNode<N> pItem);
+    public abstract TethysTabItem<N, I> addTabItem(final String pName,
+                                                   final TethysNode<N> pItem);
 
     @Override
     public void setEnabled(final boolean pEnabled) {
@@ -162,7 +181,7 @@ public abstract class TethysTabPaneManager<N>
             enablePane(isEnabled);
 
             /* loop through children */
-            TethysTabItem<N> myChild = theFirstChild;
+            TethysTabItem<N, I> myChild = theFirstChild;
             while (myChild != null) {
                 /* If the child is visible */
                 if (myChild.isVisible()) {
@@ -186,14 +205,20 @@ public abstract class TethysTabPaneManager<N>
 
     /**
      * TabItem class.
-     * @param <C> the component type
+     * @param <N> the component type
+     * @param <I> icon type
      */
-    public abstract static class TethysTabItem<C>
-            implements TethysNode<C> {
+    public abstract static class TethysTabItem<N, I>
+            implements TethysNode<N> {
         /**
          * The pane to which this item belongs.
          */
-        private final TethysTabPaneManager<C> thePane;
+        private final TethysTabPaneManager<N, I> thePane;
+
+        /**
+         * The id.
+         */
+        private final Integer theId;
 
         /**
          * The name of this item.
@@ -203,12 +228,12 @@ public abstract class TethysTabPaneManager<N>
         /**
          * The previous sibling of this item.
          */
-        private TethysTabItem<C> thePrevSibling;
+        private TethysTabItem<N, I> thePrevSibling;
 
         /**
          * The next sibling of this item.
          */
-        private TethysTabItem<C> theNextSibling;
+        private TethysTabItem<N, I> theNextSibling;
 
         /**
          * Is the item visible (i.e. part of the actual tabs)?
@@ -225,7 +250,7 @@ public abstract class TethysTabPaneManager<N>
          * @param pPane the containing pane
          * @param pName the name of the tab
          */
-        protected TethysTabItem(final TethysTabPaneManager<C> pPane,
+        protected TethysTabItem(final TethysTabPaneManager<N, I> pPane,
                                 final String pName) {
             /* Store parameters */
             thePane = pPane;
@@ -233,8 +258,11 @@ public abstract class TethysTabPaneManager<N>
             isVisible = true;
             isEnabled = true;
 
+            /* Determine the id */
+            theId = pPane.theGuiFactory.getNextId();
+
             /* If the pane already has children */
-            TethysTabItem<C> myChild = thePane.theLastChild;
+            TethysTabItem<N, I> myChild = thePane.theLastChild;
             if (myChild != null) {
                 /* Link to last child */
                 myChild.theNextSibling = this;
@@ -249,6 +277,11 @@ public abstract class TethysTabPaneManager<N>
             thePane.theLastChild = this;
         }
 
+        @Override
+        public Integer getId() {
+            return theId;
+        }
+
         /**
          * Obtain the name.
          * @return the name
@@ -261,7 +294,7 @@ public abstract class TethysTabPaneManager<N>
          * Obtain the tree.
          * @return the tree
          */
-        public TethysTabPaneManager<C> getPane() {
+        public TethysTabPaneManager<N, I> getPane() {
             return thePane;
         }
 
@@ -281,10 +314,7 @@ public abstract class TethysTabPaneManager<N>
             return isEnabled;
         }
 
-        /**
-         * Set the visibility of the item.
-         * @param pVisible true/false
-         */
+        @Override
         public void setVisible(final boolean pVisible) {
             /* If we are changing visibility */
             if (pVisible != isVisible) {
@@ -357,7 +387,7 @@ public abstract class TethysTabPaneManager<N>
         public int countPreviousVisibleSiblings() {
             /* Determine the previous visible sibling */
             int myCount = 0;
-            TethysTabItem<C> mySibling = thePrevSibling;
+            TethysTabItem<N, I> mySibling = thePrevSibling;
             while (mySibling != null) {
                 if (mySibling.isVisible) {
                     myCount++;

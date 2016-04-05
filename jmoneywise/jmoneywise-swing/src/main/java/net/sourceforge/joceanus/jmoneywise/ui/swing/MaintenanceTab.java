@@ -67,6 +67,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.TethysSwingTabItem;
 
@@ -100,6 +101,11 @@ public class MaintenanceTab
      * Static tab title.
      */
     private static final String TITLE_STATIC = MoneyWiseUIResource.MAINTENANCE_STATIC.getValue();
+
+    /**
+     * The Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -165,6 +171,10 @@ public class MaintenanceTab
         theView = pTop.getView();
         theParent = pTop;
 
+        /* Access GUI Factory */
+        TethysSwingGuiFactory myFactory = theView.getUtilitySet().getGuiFactory();
+        theId = myFactory.getNextId();
+
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
@@ -172,7 +182,7 @@ public class MaintenanceTab
         thePanel = new TethysSwingEnablePanel();
 
         /* Create the Tabbed Pane */
-        theTabs = new TethysSwingTabPaneManager();
+        theTabs = theView.getUtilitySet().getGuiFactory().newTabPane();
 
         /* Create the account Tab and add it */
         theAccountTab = new AccountPanel(theView);
@@ -208,7 +218,8 @@ public class MaintenanceTab
 
         /* Create the Preferences Tab */
         MetisPreferenceManager myPrefs = theView.getPreferenceManager();
-        thePreferences = new MetisPreferencesPanel(myPrefs, theView.getFieldManager(), theView.getViewerManager(), theView.getDataEntry(DataControl.DATA_MAINT));
+        thePreferences = new MetisPreferencesPanel(myFactory, myPrefs, theView.getFieldManager(),
+                theView.getViewerManager(), theView.getDataEntry(DataControl.DATA_MAINT));
         theTabs.addTabItem(TITLE_PREFERENCES, thePreferences);
 
         /* Add interesting preferences */
@@ -239,6 +250,11 @@ public class MaintenanceTab
             /* Update visibility */
             setVisibility();
         });
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override
@@ -442,7 +458,7 @@ public class MaintenanceTab
      */
     private void gotoNamedTab(final String pTabName) {
         /* Look up item and select it */
-        TethysTabItem<?> myItem = theTabs.findItemByName(pTabName);
+        TethysTabItem<?, ?> myItem = theTabs.findItemByName(pTabName);
         if (myItem != null) {
             myItem.selectItem();
         }

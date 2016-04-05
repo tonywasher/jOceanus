@@ -72,8 +72,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Cash Category Maintenance.
@@ -168,7 +170,7 @@ public class CashCategoryTable
     /**
      * The new button.
      */
-    private final TethysSwingScrollButtonManager<String> theNewButton;
+    private final TethysSwingButton theNewButton;
 
     /**
      * The CashCategory dialog.
@@ -204,6 +206,9 @@ public class CashCategoryTable
     public CashCategoryTable(final SwingView pView,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
                              final PrometheusSwingErrorPanel pError) {
+        /* initialise the underlying class */
+        super(pView.getUtilitySet().getGuiFactory());
+
         /* Record the passed details */
         theView = pView;
         theError = pError;
@@ -231,14 +236,15 @@ public class CashCategoryTable
         /* Set the number of visible rows */
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
+        /* Create new button */
+        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        theNewButton = myFactory.newButton();
+        PrometheusIcon.configureNewIconButton(theNewButton);
+
         /* Create the filter components */
         JLabel myPrompt = new JLabel(TITLE_FILTER);
-        theSelectButton = new TethysSwingScrollButtonManager<>();
+        theSelectButton = myFactory.newScrollButton();
         theSelectButton.setValue(null, FILTER_PARENTS);
-
-        /* Create new button */
-        theNewButton = new TethysSwingScrollButtonManager<>();
-        PrometheusIcon.configureNewScrollButton(theNewButton);
 
         /* Create the filter panel */
         theFilterPanel = new TethysSwingEnablePanel();
@@ -257,7 +263,7 @@ public class CashCategoryTable
         thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Create a Category panel */
-        theActiveCategory = new CashCategoryPanel(theFieldMgr, theUpdateSet, theError);
+        theActiveCategory = new CashCategoryPanel(myFactory, theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveCategory.getNode(), BorderLayout.PAGE_END);
 
         /* Initialise the columns */
@@ -276,7 +282,7 @@ public class CashCategoryTable
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleCashSelection());
         myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildSelectMenu());
-        theNewButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.addNewItem());
+        theNewButton.getEventRegistrar().addEventListener(e -> theModel.addNewItem());
     }
 
     @Override

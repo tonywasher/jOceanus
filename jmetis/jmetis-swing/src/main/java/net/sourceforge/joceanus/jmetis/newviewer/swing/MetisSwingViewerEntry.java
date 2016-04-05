@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newviewer.swing;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager.TethysSw
  * JavaSwing Data Viewer Entry.
  */
 public class MetisSwingViewerEntry
-        extends MetisViewerEntry<MetisSwingViewerEntry, JComponent> {
+        extends MetisViewerEntry<MetisSwingViewerEntry, JComponent, Icon> {
     /**
      * The Associated Tree Item.
      */

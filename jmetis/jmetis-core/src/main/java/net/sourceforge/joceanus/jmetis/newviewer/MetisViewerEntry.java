@@ -36,8 +36,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Data Viewer Entry.
  * @param <T> the item type
  * @param <N> the Node type
+ * @param <I> the Icon type
  */
-public abstract class MetisViewerEntry<T extends MetisViewerEntry<T, N>, N> {
+public abstract class MetisViewerEntry<T extends MetisViewerEntry<T, N, I>, N, I> {
     /**
      * The name of the entry.
      */
@@ -51,14 +52,14 @@ public abstract class MetisViewerEntry<T extends MetisViewerEntry<T, N>, N> {
     /**
      * The ViewerManager.
      */
-    private final MetisViewerManager<T, N> theManager;
+    private final MetisViewerManager<T, N, I> theManager;
 
     /**
      * Constructor.
      * @param pManager the viewer manager
      * @param pName the entry name
      */
-    protected MetisViewerEntry(final MetisViewerManager<T, N> pManager,
+    protected MetisViewerEntry(final MetisViewerManager<T, N, I> pManager,
                                final String pName) {
         /* Store parameters */
         theManager = pManager;
@@ -85,7 +86,7 @@ public abstract class MetisViewerEntry<T extends MetisViewerEntry<T, N>, N> {
      * Get viewer manager.
      * @return the manager
      */
-    protected MetisViewerManager<T, N> getManager() {
+    protected MetisViewerManager<T, N, I> getManager() {
         return theManager;
     }
 

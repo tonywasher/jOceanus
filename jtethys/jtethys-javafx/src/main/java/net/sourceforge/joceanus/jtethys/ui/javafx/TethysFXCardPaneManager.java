@@ -29,10 +29,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Tethys FX Card panel manager.
- * @param <C> the card item type
+ * @param <P> the card panel type
  */
-public class TethysFXCardPaneManager<C extends TethysNode<Node>>
-        extends TethysCardPaneManager<Node, C> {
+public class TethysFXCardPaneManager<P extends TethysNode<Node>>
+        extends TethysCardPaneManager<Node, Node, P> {
     /**
      * The panel.
      */
@@ -40,8 +40,10 @@ public class TethysFXCardPaneManager<C extends TethysNode<Node>>
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public TethysFXCardPaneManager() {
+    protected TethysFXCardPaneManager(final TethysFXGuiFactory pFactory) {
+        super(pFactory);
         thePanel = new BorderPane();
     }
 
@@ -53,10 +55,7 @@ public class TethysFXCardPaneManager<C extends TethysNode<Node>>
     @Override
     public void setEnabled(final boolean pEnabled) {
         thePanel.setDisable(!pEnabled);
-        C myCard = getActiveCard();
-        if (myCard != null) {
-            myCard.setEnabled(pEnabled);
-        }
+        super.setEnabled(pEnabled);
     }
 
     @Override
@@ -66,7 +65,7 @@ public class TethysFXCardPaneManager<C extends TethysNode<Node>>
 
     @Override
     public void addCard(final String pName,
-                        final C pCard) {
+                        final P pCard) {
         super.addCard(pName, pCard);
         if (getActiveCard() == null) {
             thePanel.setCenter(pCard.getNode());

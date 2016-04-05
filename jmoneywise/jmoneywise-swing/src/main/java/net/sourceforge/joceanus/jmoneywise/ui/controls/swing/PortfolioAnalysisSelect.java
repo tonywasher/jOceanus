@@ -47,7 +47,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Portfolio Analysis Selection.
@@ -58,6 +59,11 @@ public class PortfolioAnalysisSelect
      * Text for Portfolio Label.
      */
     private static final String NLS_PORTFOLIO = MoneyWiseDataType.PORTFOLIO.getItemName();
+
+    /**
+     * Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -96,13 +102,15 @@ public class PortfolioAnalysisSelect
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public PortfolioAnalysisSelect() {
+    public PortfolioAnalysisSelect(final TethysSwingGuiFactory pFactory) {
         /* Create the portfolio button */
-        thePortButton = new TethysSwingScrollButtonManager<>();
+        thePortButton = pFactory.newScrollButton();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
+        theId = pFactory.getNextId();
 
         /* Create the labels */
         JLabel myPortLabel = new JLabel(NLS_PORTFOLIO + MetisFieldElement.STR_COLON);
@@ -127,6 +135,11 @@ public class PortfolioAnalysisSelect
         TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPortfolio());
         myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPortfolioMenu());
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

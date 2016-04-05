@@ -47,7 +47,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Payee Analysis Selection.
@@ -58,6 +59,11 @@ public class PayeeAnalysisSelect
      * Text for Payee Label.
      */
     private static final String NLS_PAYEE = MoneyWiseDataType.PAYEE.getItemName();
+
+    /**
+     * Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -96,13 +102,15 @@ public class PayeeAnalysisSelect
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public PayeeAnalysisSelect() {
+    public PayeeAnalysisSelect(final TethysSwingGuiFactory pFactory) {
         /* Create the button */
-        theButton = new TethysSwingScrollButtonManager<>();
+        theButton = pFactory.newScrollButton();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
+        theId = pFactory.getNextId();
 
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_PAYEE + MetisFieldElement.STR_COLON);
@@ -127,6 +135,11 @@ public class PayeeAnalysisSelect
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPayee());
         myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPayeeMenu());
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

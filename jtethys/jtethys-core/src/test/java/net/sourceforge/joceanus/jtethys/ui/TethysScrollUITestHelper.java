@@ -162,7 +162,6 @@ public class TethysScrollUITestHelper<N, I> {
 
     /**
      * Create list.
-     * @param pManager the list manager
      * @return the list
      */
     public TethysItemList<TethysListId> buildToggleList() {

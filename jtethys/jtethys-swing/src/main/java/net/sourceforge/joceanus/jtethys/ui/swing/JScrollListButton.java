@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * PopUp menu that displays a list of checkMenu items.
  * @author Tony Washer
  * @param <T> the item type
- * @deprecated as of 1.5.0 use {@link TethysSwingListButton}
+ * @deprecated as of 1.5.0 use {@link TethysSwingListButtonManager}
  */
 @Deprecated
 public class JScrollListButton<T>

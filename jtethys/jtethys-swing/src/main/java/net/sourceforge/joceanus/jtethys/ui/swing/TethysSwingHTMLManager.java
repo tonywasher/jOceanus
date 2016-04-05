@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.io.IOException;
 import java.net.URL;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
@@ -44,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
  * JavaFX HTML Manager.
  */
 public class TethysSwingHTMLManager
-        extends TethysHTMLManager<JComponent> {
+        extends TethysHTMLManager<JComponent, Icon> {
     /**
      * The logger.
      */
@@ -57,8 +58,12 @@ public class TethysSwingHTMLManager
 
     /**
      * Constructor.
+     * @param pFactory the GUI Factory
      */
-    protected TethysSwingHTMLManager() {
+    protected TethysSwingHTMLManager(final TethysSwingGuiFactory pFactory) {
+        /* Initialise underlying class */
+        super(pFactory);
+
         /* Create EditorPane */
         theEditor = new JEditorPane();
         theEditor.setEditable(false);

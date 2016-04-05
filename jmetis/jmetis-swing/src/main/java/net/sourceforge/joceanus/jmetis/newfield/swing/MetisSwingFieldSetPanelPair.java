@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelPair;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.TethysSwingTabItem;
 
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.Tethy
  * Swing FieldSet Panel Pair.
  */
 public class MetisSwingFieldSetPanelPair
-        extends MetisFieldSetPanelPair<JComponent, Color, Font, Icon> {
+        extends MetisFieldSetPanelPair<JComponent, Font, Color, Icon> {
     /**
      * The Node.
      */
@@ -47,17 +48,19 @@ public class MetisSwingFieldSetPanelPair
 
     /**
      * Constructor.
+     * @param pFactory the GUI Factory
      * @param pAttributes the attribute set
      * @param pFormatter the data formatter
      */
-    protected MetisSwingFieldSetPanelPair(final MetisSwingFieldAttributeSet pAttributes,
+    protected MetisSwingFieldSetPanelPair(final TethysSwingGuiFactory pFactory,
+                                          final MetisSwingFieldAttributeSet pAttributes,
                                           final MetisDataFormatter pFormatter) {
         /* Initialise underlying set */
-        super(pAttributes, pFormatter);
+        super(pFactory, pAttributes, pFormatter);
 
         /* Declare the main panel and tab manager */
         declareMainPanel(new MetisSwingFieldSetPanel(this));
-        declareTabManager(new TethysSwingTabPaneManager());
+        declareTabManager(pFactory.newTabPane());
 
         /* Create the new node */
         theNode = new JPanel();

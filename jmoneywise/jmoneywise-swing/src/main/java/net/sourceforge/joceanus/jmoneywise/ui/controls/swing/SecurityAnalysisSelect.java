@@ -49,7 +49,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Security Analysis Selection.
@@ -65,6 +66,11 @@ public class SecurityAnalysisSelect
      * Text for Security Label.
      */
     private static final String NLS_SECURITY = MoneyWiseDataType.SECURITY.getItemName();
+
+    /**
+     * Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -113,16 +119,18 @@ public class SecurityAnalysisSelect
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public SecurityAnalysisSelect() {
+    public SecurityAnalysisSelect(final TethysSwingGuiFactory pFactory) {
         /* Create the security button */
-        theSecButton = new TethysSwingScrollButtonManager<>();
+        theSecButton = pFactory.newScrollButton();
 
         /* Create the portfolio button */
-        thePortButton = new TethysSwingScrollButtonManager<>();
+        thePortButton = pFactory.newScrollButton();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
+        theId = pFactory.getNextId();
 
         /* Create the labels */
         JLabel myPortLabel = new JLabel(NLS_PORTFOLIO + MetisFieldElement.STR_COLON);
@@ -156,6 +164,11 @@ public class SecurityAnalysisSelect
         myRegistrar = theSecButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewSecurity());
         myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildSecurityMenu());
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

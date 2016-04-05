@@ -28,14 +28,20 @@ import java.util.Map;
 /**
  * Tethys Card panel manager.
  * @param <N> the node type
- * @param <C> the card item type
+ * @param <I> the Icon Type
+ * @param <P> the card panel type
  */
-public abstract class TethysCardPaneManager<N, C extends TethysNode<N>>
+public abstract class TethysCardPaneManager<N, I, P extends TethysNode<N>>
         implements TethysNode<N> {
+    /**
+     * The id.
+     */
+    private final Integer theId;
+
     /**
      * The panel map.
      */
-    private final Map<String, C> theMap;
+    private final Map<String, P> theMap;
 
     /**
      * The active name.
@@ -45,13 +51,20 @@ public abstract class TethysCardPaneManager<N, C extends TethysNode<N>>
     /**
      * The active card.
      */
-    private C theActiveCard;
+    private P theActiveCard;
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    protected TethysCardPaneManager() {
+    protected TethysCardPaneManager(final TethysGuiFactory<N, I> pFactory) {
+        theId = pFactory.getNextId();
         theMap = new HashMap<>();
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     /**
@@ -66,7 +79,7 @@ public abstract class TethysCardPaneManager<N, C extends TethysNode<N>>
      * Get Active Card.
      * @return the card
      */
-    public C getActiveCard() {
+    public P getActiveCard() {
         return theActiveCard;
     }
 
@@ -76,7 +89,7 @@ public abstract class TethysCardPaneManager<N, C extends TethysNode<N>>
      * @param pCard the card
      */
     public void addCard(final String pName,
-                        final C pCard) {
+                        final P pCard) {
         theMap.put(pName, pCard);
         if (theActiveName == null) {
             theActiveName = pName;
@@ -91,7 +104,7 @@ public abstract class TethysCardPaneManager<N, C extends TethysNode<N>>
      */
     public boolean selectCard(final String pName) {
         /* If the name is valid */
-        C myCard = theMap.get(pName);
+        P myCard = theMap.get(pName);
         if (myCard != null) {
             /* Record selection */
             theActiveName = pName;
@@ -99,5 +112,12 @@ public abstract class TethysCardPaneManager<N, C extends TethysNode<N>>
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        for (TethysNode<N> myPane : theMap.values()) {
+            myPane.setEnabled(pEnabled);
+        }
     }
 }

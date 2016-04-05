@@ -28,12 +28,18 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AllFilter;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * All transactions Selection.
  */
 public class AllSelect
         implements AnalysisFilterSelection<JComponent> {
+    /**
+     * Id.
+     */
+    private final Integer theId;
+
     /**
      * The panel.
      */
@@ -46,11 +52,18 @@ public class AllSelect
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public AllSelect() {
+    public AllSelect(final TethysSwingGuiFactory pFactory) {
         /* Create the filter */
         thePanel = new JPanel();
         theFilter = AnalysisFilter.FILTER_ALL;
+        theId = pFactory.getNextId();
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

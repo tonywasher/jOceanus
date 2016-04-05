@@ -56,9 +56,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * SpotPrice selection panel.
@@ -102,6 +103,11 @@ public class SpotPricesSelect
     private static final String NLS_PREVTIP = MoneyWiseUIResource.SPOTPRICE_PREV.getValue();
 
     /**
+     * Id.
+     */
+    private final Integer theId;
+
+    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
@@ -139,7 +145,7 @@ public class SpotPricesSelect
     /**
      * The download button.
      */
-    private final TethysSwingSimpleIconButtonManager<Boolean> theDownloadButton;
+    private final TethysSwingButton theDownloadButton;
 
     /**
      * The portfolio button.
@@ -184,6 +190,10 @@ public class SpotPricesSelect
         /* Store table and view details */
         theView = pView;
 
+        /* Access GUI Factory */
+        TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pView.getUtilitySet().getGuiFactory();
+        theId = myFactory.getNextId();
+
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
@@ -196,10 +206,10 @@ public class SpotPricesSelect
         theShowClosed.setSelected(doShowClosed);
 
         /* Create the DateButton */
-        theDateButton = new TethysSwingDateButtonManager();
+        theDateButton = myFactory.newDateButton();
 
         /* Create the Download Button */
-        theDownloadButton = new TethysSwingSimpleIconButtonManager<>();
+        theDownloadButton = myFactory.newButton();
         MoneyWiseIcon.configureDownloadIconButton(theDownloadButton);
 
         /* Create the Buttons */
@@ -209,7 +219,7 @@ public class SpotPricesSelect
         thePrev.setToolTipText(NLS_PREVTIP);
 
         /* Create the portfolio button */
-        thePortButton = new TethysSwingScrollButtonManager<>();
+        thePortButton = myFactory.newScrollButton();
 
         /* Create initial state */
         theState = new SpotPricesState();
@@ -263,6 +273,11 @@ public class SpotPricesSelect
             theState.setPrev();
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         });
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

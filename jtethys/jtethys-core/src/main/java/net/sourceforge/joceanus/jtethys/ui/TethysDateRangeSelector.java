@@ -38,8 +38,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 /**
  * DateRange Selector.
  * @param <N> the node type
+ * @param <I> the icon type
  */
-public abstract class TethysDateRangeSelector<N>
+public abstract class TethysDateRangeSelector<N, I>
         implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * ToolTip for Next Button.
@@ -77,6 +78,11 @@ public abstract class TethysDateRangeSelector<N>
     protected static final String NLS_TITLE = TethysDateResource.TITLE_BOX.getValue();
 
     /**
+     * The Id.
+     */
+    private final Integer theId;
+
+    /**
      * The Event Manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
@@ -89,22 +95,22 @@ public abstract class TethysDateRangeSelector<N>
     /**
      * The Start Date button.
      */
-    private TethysDateButtonManager<?> theStartButton;
+    private final TethysDateButtonManager<N, I> theStartButton;
 
     /**
      * The End Date button.
      */
-    private TethysDateButtonManager<?> theEndButton;
+    private final TethysDateButtonManager<N, I> theEndButton;
 
     /**
      * The Base Date button.
      */
-    private TethysDateButtonManager<?> theBaseButton;
+    private final TethysDateButtonManager<N, I> theBaseButton;
 
     /**
      * The Period Button.
      */
-    private TethysScrollButtonManager<TethysDatePeriod, N, ?> thePeriodButton;
+    private final TethysScrollButtonManager<TethysDatePeriod, N, I> thePeriodButton;
 
     /**
      * The Published DateRange.
@@ -123,19 +129,38 @@ public abstract class TethysDateRangeSelector<N>
 
     /**
      * Constructor.
-     * @param pFormatter the date formatter
+     * @param pFactory the GUI factory
      * @param pBaseIsStart is the baseDate the start of the period? (true/false)
      */
-    protected TethysDateRangeSelector(final TethysDataFormatter pFormatter,
+    protected TethysDateRangeSelector(final TethysGuiFactory<N, I> pFactory,
                                       final boolean pBaseIsStart) {
         /* Store the parameters */
-        theFormatter = pFormatter.getDateFormatter();
+        theFormatter = pFactory.getDataFormatter().getDateFormatter();
 
         /* Create event manager */
+        theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
 
         /* Create initial state */
         theState = new TethysDateRangeState(pBaseIsStart);
+
+        /* Create the buttons */
+        theStartButton = pFactory.newDateButton();
+        theEndButton = pFactory.newDateButton();
+        theBaseButton = pFactory.newDateButton();
+        thePeriodButton = pFactory.newScrollButton();
+        buildPeriodMenu(thePeriodButton.getMenu());
+
+        /* Add the listeners */
+        theStartButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewStartDate(e.getDetails(TethysDate.class)));
+        theEndButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewEndDate(e.getDetails(TethysDate.class)));
+        theBaseButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBaseDate(e.getDetails(TethysDate.class)));
+        thePeriodButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setPeriod(thePeriodButton.getValue()));
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override
@@ -150,40 +175,35 @@ public abstract class TethysDateRangeSelector<N>
     public abstract boolean isVisible();
 
     /**
-     * Declare startButton.
-     * @param pButton the startButton
+     * Obtain the start button.
+     * @return the start button
      */
-    protected void declareStartButton(final TethysDateButtonManager<?> pButton) {
-        theStartButton = pButton;
-        theStartButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewStartDate(e.getDetails(TethysDate.class)));
+    protected TethysDateButtonManager<N, I> getStartButton() {
+        return theStartButton;
     }
 
     /**
-     * Declare endButton.
-     * @param pButton the endButton
+     * Obtain the end button.
+     * @return the end button
      */
-    protected void declareEndButton(final TethysDateButtonManager<?> pButton) {
-        theEndButton = pButton;
-        theEndButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewEndDate(e.getDetails(TethysDate.class)));
+    protected TethysDateButtonManager<N, I> getEndButton() {
+        return theEndButton;
     }
 
     /**
-     * Declare baseButton.
-     * @param pButton the baseButton
+     * Obtain the base button.
+     * @return the base button
      */
-    protected void declareBaseButton(final TethysDateButtonManager<?> pButton) {
-        theBaseButton = pButton;
-        theBaseButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBaseDate(e.getDetails(TethysDate.class)));
+    protected TethysDateButtonManager<N, I> getBaseButton() {
+        return theBaseButton;
     }
 
     /**
-     * Declare periodButton.
-     * @param pButton the periodButton
+     * Obtain the period button.
+     * @return the period button
      */
-    protected void declarePeriodButton(final TethysScrollButtonManager<TethysDatePeriod, N, ?> pButton) {
-        thePeriodButton = pButton;
-        buildPeriodMenu(thePeriodButton.getMenu());
-        thePeriodButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setPeriod(thePeriodButton.getValue()));
+    protected TethysScrollButtonManager<TethysDatePeriod, N, I> getPeriodButton() {
+        return thePeriodButton;
     }
 
     /**
@@ -258,7 +278,7 @@ public abstract class TethysDateRangeSelector<N>
      * Copy date selection from other box.
      * @param pSource the source box
      */
-    public void setSelection(final TethysDateRangeSelector<N> pSource) {
+    public void setSelection(final TethysDateRangeSelector<N, I> pSource) {
         /* Access the state */
         TethysDateRangeState myState = pSource.getState();
 

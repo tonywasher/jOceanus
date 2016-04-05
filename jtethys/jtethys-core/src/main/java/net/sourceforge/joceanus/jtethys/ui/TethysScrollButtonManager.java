@@ -43,57 +43,30 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * <dd>fired when the dialog is cancelled without a value being selected.
  * </dl>
  * @param <T> the object type
- * @param <B> the button type
+ * @param <N> the node type
  * @param <I> the Icon type
  */
-public abstract class TethysScrollButtonManager<T, B, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<B> {
+public abstract class TethysScrollButtonManager<T, N, I>
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
-     * Scroll Button.
-     * @param <B> the button type
-     * @param <I> the Icon type
+     * The GUI Manager.
      */
-    public interface TethysScrollButton<B, I> {
-        /**
-         * Set the button text.
-         * @param pText the button text to set.
-         */
-        void setButtonText(final String pText);
+    private final TethysGuiFactory<N, I> theGuiFactory;
 
-        /**
-         * Set the button icon.
-         * @param pIcon the button icon to set.
-         */
-        void setButtonIcon(final I pIcon);
-
-        /**
-         * Set the button toolTip.
-         * @param pToolTip the toolTip to set.
-         */
-        void setButtonToolTip(final String pToolTip);
-
-        /**
-         * Obtain the node.
-         * @return the node.
-         */
-        B getButton();
-
-        /**
-         * Set Enabled.
-         * @param pEnabled the enabled flag
-         */
-        void setEnabled(final boolean pEnabled);
-
-        /**
-         * Set Null Margins.
-         */
-        void setNullMargins();
-    }
+    /**
+     * The id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
+
+    /**
+     * The Button.
+     */
+    private final TethysButton<N, I> theButton;
 
     /**
      * The value.
@@ -106,22 +79,32 @@ public abstract class TethysScrollButtonManager<T, B, I>
     private boolean isFixedText;
 
     /**
-     * The Button.
-     */
-    private TethysScrollButton<B, I> theButton;
-
-    /**
      * The ScrollMenu.
      */
     private TethysScrollMenu<T, I> theMenu;
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    protected TethysScrollButtonManager() {
-        /* Create event manager */
+    protected TethysScrollButtonManager(final TethysGuiFactory<N, I> pFactory) {
+        /* Allocate resources */
+        theId = pFactory.getNextId();
+        theGuiFactory = pFactory;
         theEventManager = new TethysEventManager<>();
+        theButton = pFactory.newButton();
         isFixedText = false;
+
+        /* Note that the button should be Text and Icon */
+        theButton.setTextAndIcon();
+
+        /* Set action handler */
+        theButton.getEventRegistrar().addEventListener(e -> handleMenuRequest());
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     /**
@@ -133,15 +116,15 @@ public abstract class TethysScrollButtonManager<T, B, I>
     }
 
     @Override
-    public B getNode() {
-        return theButton.getButton();
+    public N getNode() {
+        return theButton.getNode();
     }
 
     /**
      * Obtain button.
      * @return the button
      */
-    public TethysScrollButton<B, I> getButton() {
+    protected TethysButton<N, I> getButton() {
         return theButton;
     }
 
@@ -150,30 +133,33 @@ public abstract class TethysScrollButtonManager<T, B, I>
      * @return the menu
      */
     public TethysScrollMenu<T, I> getMenu() {
+        ensureMenu();
         return theMenu;
     }
+
+    /**
+     * Make sure that the menu is created.
+     */
+    private void ensureMenu() {
+        /* If the menu does not exist */
+        if (theMenu == null) {
+            /* Create it */
+            theMenu = theGuiFactory.newContextMenu();
+            theMenu.setCloseOnToggle(false);
+
+            /* Register listeners */
+            registerListeners();
+        }
+    }
+
+    /**
+     * Register listeners.
+     */
+    protected abstract void registerListeners();
 
     @Override
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
-    }
-
-    /**
-     * Declare button.
-     * @param pButton the button
-     */
-    protected void declareButton(final TethysScrollButton<B, I> pButton) {
-        /* Store the button */
-        theButton = pButton;
-    }
-
-    /**
-     * Declare menu.
-     * @param pMenu the menu
-     */
-    protected void declareMenu(final TethysScrollMenu<T, I> pMenu) {
-        /* Store the menu */
-        theMenu = pMenu;
     }
 
     /**
@@ -192,7 +178,7 @@ public abstract class TethysScrollButtonManager<T, B, I>
      */
     public void setFixedText(final String pText) {
         /* Set the button text and flag */
-        theButton.setButtonText(pText);
+        theButton.setText(pText);
         isFixedText = true;
     }
 
@@ -208,7 +194,7 @@ public abstract class TethysScrollButtonManager<T, B, I>
 
         /* Set the button text if required */
         if (!isFixedText) {
-            theButton.setButtonText(pName);
+            theButton.setText(pName);
         }
     }
 
@@ -225,7 +211,7 @@ public abstract class TethysScrollButtonManager<T, B, I>
         setFixedText(null);
         setValue(null);
         setIcon(pId, pWidth);
-        theButton.setButtonToolTip(pToolTip);
+        theButton.setToolTip(pToolTip);
     }
 
     /**
@@ -240,6 +226,11 @@ public abstract class TethysScrollButtonManager<T, B, I>
     @Override
     public void setEnabled(final boolean pEnabled) {
         theButton.setEnabled(pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theButton.setVisible(pVisible);
     }
 
     /**
@@ -263,6 +254,9 @@ public abstract class TethysScrollButtonManager<T, B, I>
      * handleMenuRequest.
      */
     public void handleMenuRequest() {
+        /* Ensure the menu */
+        ensureMenu();
+
         /* fire menuBuild Event */
         theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theMenu);
 
@@ -289,7 +283,8 @@ public abstract class TethysScrollButtonManager<T, B, I>
     protected void handleMenuClosed() {
         /* If we selected a value */
         TethysScrollMenuItem<T> mySelected = theMenu.getSelectedItem();
-        if (mySelected != null) {
+        if ((mySelected != null)
+            && valueChanged(mySelected.getValue())) {
             /* Set the new value */
             setValue(mySelected.getValue(), mySelected.getText());
 
@@ -301,6 +296,17 @@ public abstract class TethysScrollButtonManager<T, B, I>
             /* notify cancellation */
             notifyCancelled();
         }
+    }
+
+    /**
+     * has value changed?
+     * @param pNew the new value
+     * @return true/false
+     */
+    private boolean valueChanged(final T pNew) {
+        return theValue == null
+                                ? pNew != null
+                                : !theValue.equals(pNew);
     }
 
     /**

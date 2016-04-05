@@ -51,7 +51,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * EventCategory Analysis Selection.
@@ -62,6 +63,11 @@ public class TransCategoryAnalysisSelect
      * Text for TransCategory Label.
      */
     private static final String NLS_CATEGORY = MoneyWiseDataType.TRANSCATEGORY.getItemName();
+
+    /**
+     * Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -100,16 +106,18 @@ public class TransCategoryAnalysisSelect
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public TransCategoryAnalysisSelect() {
+    public TransCategoryAnalysisSelect(final TethysSwingGuiFactory pFactory) {
         /* Create the button */
-        theButton = new TethysSwingScrollButtonManager<>();
+        theButton = pFactory.newScrollButton();
 
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_CATEGORY + MetisFieldElement.STR_COLON);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
+        theId = pFactory.getNextId();
 
         /* Define the layout */
         thePanel = new JPanel();
@@ -131,6 +139,11 @@ public class TransCategoryAnalysisSelect
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
         myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCategoryMenu());
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

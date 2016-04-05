@@ -26,6 +26,7 @@ import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -34,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager;
@@ -43,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager.TethysSw
  * JavaSwing Data Viewer Manager.
  */
 public class MetisSwingViewerManager
-        extends MetisViewerManager<MetisSwingViewerEntry, JComponent> {
+        extends MetisViewerManager<MetisSwingViewerEntry, JComponent, Icon> {
     /**
      * The frame.
      */
@@ -56,10 +58,11 @@ public class MetisSwingViewerManager
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public MetisSwingViewerManager() {
+    public MetisSwingViewerManager(final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
-        super(new TethysSwingSplitTreeManager<>());
+        super(pFactory.newSplitTreeManager());
     }
 
     @Override
@@ -122,7 +125,7 @@ public class MetisSwingViewerManager
     }
 
     @Override
-    public MetisSwingViewerEntry newEntry(final MetisViewerEntry<MetisSwingViewerEntry, JComponent> pParent,
+    public MetisSwingViewerEntry newEntry(final MetisViewerEntry<MetisSwingViewerEntry, JComponent, Icon> pParent,
                                           final String pName) throws OceanusException {
         /* Access parent and create the entry */
         MetisSwingViewerEntry myParent = MetisSwingViewerEntry.class.cast(pParent);

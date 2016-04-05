@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
@@ -79,15 +80,17 @@ public class LoanCategoryPanel
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public LoanCategoryPanel(final MetisFieldManager pFieldMgr,
+    public LoanCategoryPanel(final TethysSwingGuiFactory pFactory,
+                             final MetisFieldManager pFieldMgr,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
                              final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr, pUpdateSet, pError);
+        super(pFactory, pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         JTextField myName = new JTextField();

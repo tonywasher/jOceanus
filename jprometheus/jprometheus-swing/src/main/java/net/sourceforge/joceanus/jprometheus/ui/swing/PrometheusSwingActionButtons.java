@@ -27,6 +27,7 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,14 +35,14 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Action buttons panel.
  * @author Tony Washer
  */
 public class PrometheusSwingActionButtons
-        extends PrometheusActionButtons<JComponent> {
+        extends PrometheusActionButtons<JComponent, Icon> {
     /**
      * The panel.
      */
@@ -49,29 +50,25 @@ public class PrometheusSwingActionButtons
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pUpdateSet the update set
      */
-    public PrometheusSwingActionButtons(final UpdateSet<?> pUpdateSet) {
-        this(pUpdateSet, true);
+    public PrometheusSwingActionButtons(final TethysSwingGuiFactory pFactory,
+                                        final UpdateSet<?> pUpdateSet) {
+        this(pFactory, pUpdateSet, true);
     }
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pUpdateSet the update set
      * @param pHorizontal is this horizontal panel?
      */
-    public PrometheusSwingActionButtons(final UpdateSet<?> pUpdateSet,
+    public PrometheusSwingActionButtons(final TethysSwingGuiFactory pFactory,
+                                        final UpdateSet<?> pUpdateSet,
                                         final boolean pHorizontal) {
         /* Initialise base class */
-        super(pUpdateSet);
-
-        /* Create the buttons */
-        TethysSwingSimpleIconButtonManager<Boolean> myCommitButton = new TethysSwingSimpleIconButtonManager<>();
-        TethysSwingSimpleIconButtonManager<Boolean> myUndoButton = new TethysSwingSimpleIconButtonManager<>();
-        TethysSwingSimpleIconButtonManager<Boolean> myResetButton = new TethysSwingSimpleIconButtonManager<>();
-
-        /* declare the buttons */
-        declareButtons(myCommitButton, myUndoButton, myResetButton);
+        super(pFactory, pUpdateSet);
 
         /* Create the panel */
         thePanel = new TethysSwingEnablePanel();
@@ -93,11 +90,11 @@ public class PrometheusSwingActionButtons
 
         /* Define the layout */
         thePanel.add(Box.createRigidArea(myStrutSize));
-        thePanel.add(myCommitButton.getNode());
+        thePanel.add(getCommitButton().getNode());
         thePanel.add(Box.createRigidArea(myStrutSize));
-        thePanel.add(myUndoButton.getNode());
+        thePanel.add(getUndoButton().getNode());
         thePanel.add(Box.createRigidArea(myStrutSize));
-        thePanel.add(myResetButton.getNode());
+        thePanel.add(getResetButton().getNode());
         thePanel.add(Box.createRigidArea(myStrutSize));
     }
 

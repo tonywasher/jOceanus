@@ -29,6 +29,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -44,7 +45,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
@@ -53,11 +53,11 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSw
 
 /**
  * JavaSwing Table manager.
- * @param <I> the column identity
+ * @param <C> the column identity
  * @param <R> the row type
  */
-public class TethysSwingTableManager<I, R>
-        extends TethysTableManager<I, R, JComponent> {
+public class TethysSwingTableManager<C, R>
+        extends TethysTableManager<C, R, JComponent, Icon> {
     /**
      * The Scroll Pane.
      */
@@ -76,12 +76,12 @@ public class TethysSwingTableManager<I, R>
     /**
      * The ColumnList.
      */
-    private final List<TethysSwingTableColumn<I, R, ?>> theColumnList;
+    private final List<TethysSwingTableColumn<C, R, ?>> theColumnList;
 
     /**
      * The CellFactory.
      */
-    private final TethysSwingTableCellFactory<I, R> theCellFactory;
+    private final TethysSwingTableCellFactory<C, R> theCellFactory;
 
     /**
      * The model.
@@ -100,22 +100,18 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public TethysSwingTableManager() {
-        this(new TethysDataFormatter());
-    }
+    protected TethysSwingTableManager(final TethysSwingGuiFactory pFactory) {
+        /* Initialise underlying class */
+        super(pFactory);
 
-    /**
-     * Constructor.
-     * @param pFormatter the data formatter
-     */
-    public TethysSwingTableManager(final TethysDataFormatter pFormatter) {
         /* Create fields */
         theColumnList = new ArrayList<>();
         theModel = new TethysSwingTableModel();
         theTable = new JTable(theModel);
         theColumns = theTable.getColumnModel();
-        theCellFactory = new TethysSwingTableCellFactory<>(pFormatter);
+        theCellFactory = new TethysSwingTableCellFactory<>(pFactory);
         theSorter = new TethysSwingTableSorter<>(theModel);
 
         /* Listen to factory */
@@ -154,8 +150,16 @@ public class TethysSwingTableManager<I, R>
 
     @SuppressWarnings("unchecked")
     @Override
-    public TethysSwingTableColumn<I, R, ?> getColumn(final I pId) {
-        return (TethysSwingTableColumn<I, R, ?>) super.getColumn(pId);
+    public TethysSwingTableColumn<C, R, ?> getColumn(final C pId) {
+        return (TethysSwingTableColumn<C, R, ?>) super.getColumn(pId);
+    }
+
+    /**
+     * Obtain the table model.
+     * @return the table model
+     */
+    protected TethysSwingTableModel getTableModel() {
+        return theModel;
     }
 
     /**
@@ -163,7 +167,7 @@ public class TethysSwingTableManager<I, R>
      * @param pIndex the index of the column
      * @return the table column
      */
-    private TethysSwingTableColumn<I, R, ?> getIndexedColumn(final int pIndex) {
+    private TethysSwingTableColumn<C, R, ?> getIndexedColumn(final int pIndex) {
         if ((pIndex < 0)
             || (pIndex > theColumnList.size())) {
             throw new IllegalArgumentException();
@@ -197,93 +201,93 @@ public class TethysSwingTableManager<I, R>
     }
 
     @Override
-    public TethysSwingTableStringColumn<I, R> declareStringColumn(final I pId) {
+    public TethysSwingTableStringColumn<C, R> declareStringColumn(final C pId) {
         return new TethysSwingTableStringColumn<>(this, pId);
     }
 
     @Override
-    public TethysSwingTableShortColumn<I, R> declareShortColumn(final I pId) {
+    public TethysSwingTableShortColumn<C, R> declareShortColumn(final C pId) {
         return new TethysSwingTableShortColumn<>(this, pId);
     }
 
     @Override
-    public TethysSwingTableIntegerColumn<I, R> declareIntegerColumn(final I pId) {
+    public TethysSwingTableIntegerColumn<C, R> declareIntegerColumn(final C pId) {
         return new TethysSwingTableIntegerColumn<>(this, pId);
     }
 
     @Override
-    public TethysSwingTableLongColumn<I, R> declareLongColumn(final I pId) {
+    public TethysSwingTableLongColumn<C, R> declareLongColumn(final C pId) {
         return new TethysSwingTableLongColumn<>(this, pId);
     }
 
     @Override
-    public TethysSwingTableMoneyColumn<I, R> declareMoneyColumn(final I pId) {
+    public TethysSwingTableMoneyColumn<C, R> declareMoneyColumn(final C pId) {
         return new TethysSwingTableMoneyColumn<>(this, pId);
     }
 
     @Override
-    public TethysSwingTablePriceColumn<I, R> declarePriceColumn(final I pId) {
+    public TethysSwingTablePriceColumn<C, R> declarePriceColumn(final C pId) {
         return new TethysSwingTablePriceColumn<>(this, pId);
     }
 
     @Override
-    public TethysSwingTableRateColumn<I, R> declareRateColumn(final I pId) {
+    public TethysSwingTableRateColumn<C, R> declareRateColumn(final C pId) {
         return new TethysSwingTableRateColumn<>(this, pId);
     }
 
     @Override
-    public TethysSwingTableUnitsColumn<I, R> declareUnitsColumn(final I pId) {
+    public TethysSwingTableUnitsColumn<C, R> declareUnitsColumn(final C pId) {
         return new TethysSwingTableUnitsColumn<>(this, pId);
     }
 
     @Override
-    public TethysSwingTableDilutionColumn<I, R> declareDilutionColumn(final I pId) {
+    public TethysSwingTableDilutionColumn<C, R> declareDilutionColumn(final C pId) {
         return new TethysSwingTableDilutionColumn<>(this, pId);
     }
 
     @Override
-    public TethysSwingTableRatioColumn<I, R> declareRatioColumn(final I pId) {
+    public TethysSwingTableRatioColumn<C, R> declareRatioColumn(final C pId) {
         return new TethysSwingTableRatioColumn<>(this, pId);
     }
 
     @Override
-    public TethysSwingTableDilutedPriceColumn<I, R> declareDilutedPriceColumn(final I pId) {
+    public TethysSwingTableDilutedPriceColumn<C, R> declareDilutedPriceColumn(final C pId) {
         return new TethysSwingTableDilutedPriceColumn<>(this, pId);
     }
 
     @Override
-    public TethysSwingTableDateColumn<I, R> declareDateColumn(final I pId) {
+    public TethysSwingTableDateColumn<C, R> declareDateColumn(final C pId) {
         return new TethysSwingTableDateColumn<>(this, pId);
     }
 
     @Override
-    public <C> TethysSwingTableScrollColumn<I, R, C> declareScrollColumn(final I pId,
-                                                                         final Class<C> pClass) {
+    public <T> TethysSwingTableScrollColumn<C, R, T> declareScrollColumn(final C pId,
+                                                                         final Class<T> pClass) {
         return new TethysSwingTableScrollColumn<>(this, pId, pClass);
     }
 
     @Override
-    public <C> TethysSwingTableListColumn<I, R, C> declareListColumn(final I pId,
-                                                                     final Class<C> pClass) {
+    public <T> TethysSwingTableListColumn<C, R, T> declareListColumn(final C pId,
+                                                                     final Class<T> pClass) {
         return new TethysSwingTableListColumn<>(this, pId, pClass);
     }
 
     @Override
-    public <C> TethysSwingTableIconColumn<I, R, C> declareIconColumn(final I pId,
-                                                                     final Class<C> pClass) {
+    public <T> TethysSwingTableIconColumn<C, R, T> declareIconColumn(final C pId,
+                                                                     final Class<T> pClass) {
         return new TethysSwingTableIconColumn<>(this, pId, pClass);
     }
 
     @Override
-    public <C> TethysSwingTableStateIconColumn<I, R, C> declareStateIconColumn(final I pId,
-                                                                               final Class<C> pClass) {
+    public <T> TethysSwingTableStateIconColumn<C, R, T> declareStateIconColumn(final C pId,
+                                                                               final Class<T> pClass) {
         return new TethysSwingTableStateIconColumn<>(this, pId, pClass);
     }
 
     /**
      * Table Model.
      */
-    private class TethysSwingTableModel
+    protected class TethysSwingTableModel
             extends AbstractTableModel
             implements TethysSwingTableSorterModel<R> {
         /**
@@ -337,12 +341,12 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Column Definition.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the row type
-     * @param <C> the column type
+     * @param <T> the column type
      */
-    public abstract static class TethysSwingTableColumn<I, R, C>
-            extends TethysTableColumn<I, R, JComponent> {
+    public abstract static class TethysSwingTableColumn<C, R, T>
+            extends TethysTableColumn<C, R, JComponent, Icon> {
         /**
          * The underlying column.
          */
@@ -351,17 +355,17 @@ public class TethysSwingTableManager<I, R>
         /**
          * The table cell.
          */
-        private TethysSwingTableCell<I, R, C> theCell;
+        private TethysSwingTableCell<C, R, T> theCell;
 
         /**
          * Cell value factory.
          */
-        private Function<R, C> theValueFactory;
+        private Function<R, T> theValueFactory;
 
         /**
          * Cell commit factory.
          */
-        private BiConsumer<R, C> theCommitFactory;
+        private BiConsumer<R, T> theCommitFactory;
 
         /**
          * Constructor.
@@ -369,8 +373,8 @@ public class TethysSwingTableManager<I, R>
          * @param pId the column id
          * @param pType the type of the column
          */
-        protected TethysSwingTableColumn(final TethysSwingTableManager<I, R> pTable,
-                                         final I pId,
+        protected TethysSwingTableColumn(final TethysSwingTableManager<C, R> pTable,
+                                         final C pId,
                                          final TethysFieldType pType) {
             /* Initialise underlying class */
             super(pTable, pId, pType);
@@ -395,7 +399,7 @@ public class TethysSwingTableManager<I, R>
          * Set cell value Factory.
          * @param pFactory the cell factory
          */
-        public void setCellValueFactory(final Function<R, C> pFactory) {
+        public void setCellValueFactory(final Function<R, T> pFactory) {
             theValueFactory = pFactory;
         }
 
@@ -403,7 +407,7 @@ public class TethysSwingTableManager<I, R>
          * Set cell commit Factory.
          * @param pFactory the cell factory
          */
-        public void setCellCommitFactory(final BiConsumer<R, C> pFactory) {
+        public void setCellCommitFactory(final BiConsumer<R, T> pFactory) {
             theCommitFactory = pFactory;
         }
 
@@ -411,15 +415,15 @@ public class TethysSwingTableManager<I, R>
          * Declare cell.
          * @param pCell the cell
          */
-        protected void declareCell(final TethysSwingTableCell<I, R, C> pCell) {
+        protected void declareCell(final TethysSwingTableCell<C, R, T> pCell) {
             theCell = pCell;
             theColumn.setCellRenderer(theCell.getRenderer());
             theColumn.setCellEditor(theCell.getEditor());
         }
 
         @Override
-        public TethysSwingTableManager<I, R> getTable() {
-            return (TethysSwingTableManager<I, R>) super.getTable();
+        public TethysSwingTableManager<C, R> getTable() {
+            return (TethysSwingTableManager<C, R>) super.getTable();
         }
 
         @Override
@@ -457,7 +461,7 @@ public class TethysSwingTableManager<I, R>
          * @param pIndex the row index
          * @return the value
          */
-        private C getCellValue(final int pIndex) {
+        private T getCellValue(final int pIndex) {
             theCell.setActiveRow(pIndex);
             return theValueFactory.apply(theCell.getActiveRow());
         }
@@ -484,29 +488,34 @@ public class TethysSwingTableManager<I, R>
             return getTable().getIndexedRow(pIndex);
         }
 
-        /**
-         * Set the column width.
-         * @param pWidth the width
-         */
+        @Override
         public void setColumnWidth(final int pWidth) {
             theColumn.setPreferredWidth(pWidth);
+        }
+
+        /**
+         * Obtain the column index.
+         * @return the index
+         */
+        protected int getColumnIndex() {
+            return theColumn.getModelIndex();
         }
     }
 
     /**
      * String Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTableStringColumn<I, R>
-            extends TethysSwingTableColumn<I, R, String> {
+    public static class TethysSwingTableStringColumn<C, R>
+            extends TethysSwingTableColumn<C, R, String> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          */
-        protected TethysSwingTableStringColumn(final TethysSwingTableManager<I, R> pTable,
-                                               final I pId) {
+        protected TethysSwingTableStringColumn(final TethysSwingTableManager<C, R> pTable,
+                                               final C pId) {
             super(pTable, pId, TethysFieldType.STRING);
             declareCell(getTable().theCellFactory.stringCell(this));
         }
@@ -514,18 +523,18 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Short Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTableShortColumn<I, R>
-            extends TethysSwingTableColumn<I, R, Short> {
+    public static class TethysSwingTableShortColumn<C, R>
+            extends TethysSwingTableColumn<C, R, Short> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          */
-        protected TethysSwingTableShortColumn(final TethysSwingTableManager<I, R> pTable,
-                                              final I pId) {
+        protected TethysSwingTableShortColumn(final TethysSwingTableManager<C, R> pTable,
+                                              final C pId) {
             super(pTable, pId, TethysFieldType.SHORT);
             declareCell(getTable().theCellFactory.shortCell(this));
         }
@@ -533,18 +542,18 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Integer Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTableIntegerColumn<I, R>
-            extends TethysSwingTableColumn<I, R, Integer> {
+    public static class TethysSwingTableIntegerColumn<C, R>
+            extends TethysSwingTableColumn<C, R, Integer> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          */
-        protected TethysSwingTableIntegerColumn(final TethysSwingTableManager<I, R> pTable,
-                                                final I pId) {
+        protected TethysSwingTableIntegerColumn(final TethysSwingTableManager<C, R> pTable,
+                                                final C pId) {
             super(pTable, pId, TethysFieldType.INTEGER);
             declareCell(getTable().theCellFactory.integerCell(this));
         }
@@ -552,18 +561,18 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Long Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTableLongColumn<I, R>
-            extends TethysSwingTableColumn<I, R, Long> {
+    public static class TethysSwingTableLongColumn<C, R>
+            extends TethysSwingTableColumn<C, R, Long> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          */
-        protected TethysSwingTableLongColumn(final TethysSwingTableManager<I, R> pTable,
-                                             final I pId) {
+        protected TethysSwingTableLongColumn(final TethysSwingTableManager<C, R> pTable,
+                                             final C pId) {
             super(pTable, pId, TethysFieldType.LONG);
             declareCell(getTable().theCellFactory.longCell(this));
         }
@@ -571,18 +580,18 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Money Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTableMoneyColumn<I, R>
-            extends TethysSwingTableColumn<I, R, TethysMoney> {
+    public static class TethysSwingTableMoneyColumn<C, R>
+            extends TethysSwingTableColumn<C, R, TethysMoney> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          */
-        protected TethysSwingTableMoneyColumn(final TethysSwingTableManager<I, R> pTable,
-                                              final I pId) {
+        protected TethysSwingTableMoneyColumn(final TethysSwingTableManager<C, R> pTable,
+                                              final C pId) {
             super(pTable, pId, TethysFieldType.MONEY);
             declareCell(getTable().theCellFactory.moneyCell(this));
         }
@@ -590,18 +599,18 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Price Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTablePriceColumn<I, R>
-            extends TethysSwingTableColumn<I, R, TethysPrice> {
+    public static class TethysSwingTablePriceColumn<C, R>
+            extends TethysSwingTableColumn<C, R, TethysPrice> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          */
-        protected TethysSwingTablePriceColumn(final TethysSwingTableManager<I, R> pTable,
-                                              final I pId) {
+        protected TethysSwingTablePriceColumn(final TethysSwingTableManager<C, R> pTable,
+                                              final C pId) {
             super(pTable, pId, TethysFieldType.PRICE);
             declareCell(getTable().theCellFactory.priceCell(this));
         }
@@ -609,18 +618,18 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Rate Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTableRateColumn<I, R>
-            extends TethysSwingTableColumn<I, R, TethysRate> {
+    public static class TethysSwingTableRateColumn<C, R>
+            extends TethysSwingTableColumn<C, R, TethysRate> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          */
-        protected TethysSwingTableRateColumn(final TethysSwingTableManager<I, R> pTable,
-                                             final I pId) {
+        protected TethysSwingTableRateColumn(final TethysSwingTableManager<C, R> pTable,
+                                             final C pId) {
             super(pTable, pId, TethysFieldType.RATE);
             declareCell(getTable().theCellFactory.rateCell(this));
         }
@@ -628,18 +637,18 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Units Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTableUnitsColumn<I, R>
-            extends TethysSwingTableColumn<I, R, TethysUnits> {
+    public static class TethysSwingTableUnitsColumn<C, R>
+            extends TethysSwingTableColumn<C, R, TethysUnits> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          */
-        protected TethysSwingTableUnitsColumn(final TethysSwingTableManager<I, R> pTable,
-                                              final I pId) {
+        protected TethysSwingTableUnitsColumn(final TethysSwingTableManager<C, R> pTable,
+                                              final C pId) {
             super(pTable, pId, TethysFieldType.UNITS);
             declareCell(getTable().theCellFactory.unitsCell(this));
         }
@@ -647,18 +656,18 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Dilution Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTableDilutionColumn<I, R>
-            extends TethysSwingTableColumn<I, R, TethysDilution> {
+    public static class TethysSwingTableDilutionColumn<C, R>
+            extends TethysSwingTableColumn<C, R, TethysDilution> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          */
-        protected TethysSwingTableDilutionColumn(final TethysSwingTableManager<I, R> pTable,
-                                                 final I pId) {
+        protected TethysSwingTableDilutionColumn(final TethysSwingTableManager<C, R> pTable,
+                                                 final C pId) {
             super(pTable, pId, TethysFieldType.DILUTION);
             declareCell(getTable().theCellFactory.dilutionCell(this));
         }
@@ -666,18 +675,18 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Ratio Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTableRatioColumn<I, R>
-            extends TethysSwingTableColumn<I, R, TethysRatio> {
+    public static class TethysSwingTableRatioColumn<C, R>
+            extends TethysSwingTableColumn<C, R, TethysRatio> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          */
-        protected TethysSwingTableRatioColumn(final TethysSwingTableManager<I, R> pTable,
-                                              final I pId) {
+        protected TethysSwingTableRatioColumn(final TethysSwingTableManager<C, R> pTable,
+                                              final C pId) {
             super(pTable, pId, TethysFieldType.RATIO);
             declareCell(getTable().theCellFactory.ratioCell(this));
         }
@@ -685,18 +694,18 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * DilutedPrice Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTableDilutedPriceColumn<I, R>
-            extends TethysSwingTableColumn<I, R, TethysDilutedPrice> {
+    public static class TethysSwingTableDilutedPriceColumn<C, R>
+            extends TethysSwingTableColumn<C, R, TethysDilutedPrice> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          */
-        protected TethysSwingTableDilutedPriceColumn(final TethysSwingTableManager<I, R> pTable,
-                                                     final I pId) {
+        protected TethysSwingTableDilutedPriceColumn(final TethysSwingTableManager<C, R> pTable,
+                                                     final C pId) {
             super(pTable, pId, TethysFieldType.DILUTEDPRICE);
             declareCell(getTable().theCellFactory.dilutedPriceCell(this));
         }
@@ -704,18 +713,18 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Date Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTableDateColumn<I, R>
-            extends TethysSwingTableColumn<I, R, TethysDate> {
+    public static class TethysSwingTableDateColumn<C, R>
+            extends TethysSwingTableColumn<C, R, TethysDate> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          */
-        protected TethysSwingTableDateColumn(final TethysSwingTableManager<I, R> pTable,
-                                             final I pId) {
+        protected TethysSwingTableDateColumn(final TethysSwingTableManager<C, R> pTable,
+                                             final C pId) {
             super(pTable, pId, TethysFieldType.DATE);
             declareCell(getTable().theCellFactory.dateCell(this));
         }
@@ -723,21 +732,21 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Scroll Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
-     * @param <C> the column type
+     * @param <T> the column type
      */
-    public static class TethysSwingTableScrollColumn<I, R, C>
-            extends TethysSwingTableColumn<I, R, C> {
+    public static class TethysSwingTableScrollColumn<C, R, T>
+            extends TethysSwingTableColumn<C, R, T> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          * @param pClass the item class
          */
-        protected TethysSwingTableScrollColumn(final TethysSwingTableManager<I, R> pTable,
-                                               final I pId,
-                                               final Class<C> pClass) {
+        protected TethysSwingTableScrollColumn(final TethysSwingTableManager<C, R> pTable,
+                                               final C pId,
+                                               final Class<T> pClass) {
             super(pTable, pId, TethysFieldType.SCROLL);
             declareCell(getTable().theCellFactory.scrollCell(this, pClass));
         }
@@ -745,21 +754,21 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * List Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
-     * @param <C> the column type
+     * @param <T> the column type
      */
-    public static class TethysSwingTableListColumn<I, R, C>
-            extends TethysSwingTableColumn<I, R, TethysItemList<C>> {
+    public static class TethysSwingTableListColumn<C, R, T>
+            extends TethysSwingTableColumn<C, R, TethysItemList<T>> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          * @param pClass the item class
          */
-        protected TethysSwingTableListColumn(final TethysSwingTableManager<I, R> pTable,
-                                             final I pId,
-                                             final Class<C> pClass) {
+        protected TethysSwingTableListColumn(final TethysSwingTableManager<C, R> pTable,
+                                             final C pId,
+                                             final Class<T> pClass) {
             super(pTable, pId, TethysFieldType.LIST);
             declareCell(getTable().theCellFactory.listCell(this, pClass));
         }
@@ -767,21 +776,21 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * Icon Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
-     * @param <C> the column type
+     * @param <T> the column type
      */
-    public static class TethysSwingTableIconColumn<I, R, C>
-            extends TethysSwingTableColumn<I, R, C> {
+    public static class TethysSwingTableIconColumn<C, R, T>
+            extends TethysSwingTableColumn<C, R, T> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          * @param pClass the item class
          */
-        protected TethysSwingTableIconColumn(final TethysSwingTableManager<I, R> pTable,
-                                             final I pId,
-                                             final Class<C> pClass) {
+        protected TethysSwingTableIconColumn(final TethysSwingTableManager<C, R> pTable,
+                                             final C pId,
+                                             final Class<T> pClass) {
             super(pTable, pId, TethysFieldType.ICON);
             declareCell(getTable().theCellFactory.iconCell(this, pClass));
         }
@@ -789,21 +798,21 @@ public class TethysSwingTableManager<I, R>
 
     /**
      * StateIcon Column.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
-     * @param <C> the column type
+     * @param <T> the column type
      */
-    public static class TethysSwingTableStateIconColumn<I, R, C>
-            extends TethysSwingTableColumn<I, R, C> {
+    public static class TethysSwingTableStateIconColumn<C, R, T>
+            extends TethysSwingTableColumn<C, R, T> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
          * @param pClass the item class
          */
-        protected TethysSwingTableStateIconColumn(final TethysSwingTableManager<I, R> pTable,
-                                                  final I pId,
-                                                  final Class<C> pClass) {
+        protected TethysSwingTableStateIconColumn(final TethysSwingTableManager<C, R> pTable,
+                                                  final C pId,
+                                                  final Class<T> pClass) {
             super(pTable, pId, TethysFieldType.STATEICON);
             declareCell(getTable().theCellFactory.stateIconCell(this, pClass));
         }

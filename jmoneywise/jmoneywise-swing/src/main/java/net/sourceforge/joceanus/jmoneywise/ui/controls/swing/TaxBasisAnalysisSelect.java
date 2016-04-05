@@ -50,7 +50,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * TaxBasisAnalysis Selection.
@@ -71,6 +72,11 @@ public class TaxBasisAnalysisSelect
      * Text for All Item.
      */
     private static final String NLS_ALL = "All";
+
+    /**
+     * Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -119,14 +125,16 @@ public class TaxBasisAnalysisSelect
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public TaxBasisAnalysisSelect() {
+    public TaxBasisAnalysisSelect(final TethysSwingGuiFactory pFactory) {
         /* Create the buttons */
-        theBasisButton = new TethysSwingScrollButtonManager<>();
-        theAccountButton = new TethysSwingScrollButtonManager<>();
+        theBasisButton = pFactory.newScrollButton();
+        theAccountButton = pFactory.newScrollButton();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
+        theId = pFactory.getNextId();
 
         /* Create the labels */
         JLabel myBasisLabel = new JLabel(NLS_BASIS + MetisFieldElement.STR_COLON);
@@ -160,6 +168,11 @@ public class TaxBasisAnalysisSelect
         myRegistrar = theAccountButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewAccount());
         myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildAccountMenu());
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

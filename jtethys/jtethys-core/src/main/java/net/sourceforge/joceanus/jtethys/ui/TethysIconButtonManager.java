@@ -40,52 +40,30 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
  * Detail is new value
  * </dl>
  * @param <T> the object type
- * @param <B> the button type
+ * @param <N> the button type
  * @param <I> the Icon type
  */
-public abstract class TethysIconButtonManager<T, B, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<B> {
+public abstract class TethysIconButtonManager<T, N, I>
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * Default icon width.
      */
-    public static final int DEFAULT_ICONWIDTH = 16;
+    protected static final int DEFAULT_ICONWIDTH = TethysIconBuilder.DEFAULT_ICONWIDTH;
 
     /**
-     * Icon Button.
-     * @param <B> the button type
-     * @param <I> the Icon type
+     * The id.
      */
-    public interface TethysIconButton<B, I> {
-        /**
-         * Set the state.
-         * @param pIcon the value to set.
-         * @param pToolTip the toolTip to set.
-         */
-        void setButtonState(final I pIcon,
-                            final String pToolTip);
-
-        /**
-         * Obtain the node.
-         * @return the node.
-         */
-        B getButton();
-
-        /**
-         * Set Enabled.
-         * @param pEnabled the enabled flag
-         */
-        void setEnabled(final boolean pEnabled);
-
-        /**
-         * Set Null Margins.
-         */
-        void setNullMargins();
-    }
+    private final Integer theId;
 
     /**
      * The Event Manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
+
+    /**
+     * The icon button.
+     */
+    private final TethysButton<N, I> theButton;
 
     /**
      * The icon Width.
@@ -98,17 +76,26 @@ public abstract class TethysIconButtonManager<T, B, I>
     private T theValue;
 
     /**
-     * The icon button.
-     */
-    private TethysIconButton<B, I> theButton;
-
-    /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    protected TethysIconButtonManager() {
-        /* Create event manager */
+    protected TethysIconButtonManager(final TethysGuiFactory<N, I> pFactory) {
+        /* Allocate resources */
+        theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
+        theButton = pFactory.newButton();
         theWidth = DEFAULT_ICONWIDTH;
+
+        /* Note that the button should be Icon only */
+        theButton.setIconOnly();
+
+        /* Handle action */
+        theButton.getEventRegistrar().addEventListener(e -> progressToNextState());
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     /**
@@ -120,15 +107,15 @@ public abstract class TethysIconButtonManager<T, B, I>
     }
 
     @Override
-    public B getNode() {
-        return theButton.getButton();
+    public N getNode() {
+        return theButton.getNode();
     }
 
     /**
      * Obtain button.
      * @return the button
      */
-    public TethysIconButton<B, I> getButton() {
+    protected TethysButton<N, I> getButton() {
         return theButton;
     }
 
@@ -171,6 +158,11 @@ public abstract class TethysIconButtonManager<T, B, I>
         theButton.setEnabled(pEnabled);
     }
 
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theButton.setVisible(pVisible);
+    }
+
     /**
      * Set Null Margins.
      */
@@ -187,7 +179,8 @@ public abstract class TethysIconButtonManager<T, B, I>
         String myTip = getToolTipForValue(theValue);
 
         /* Apply button state */
-        theButton.setButtonState(myIcon, myTip);
+        theButton.setIcon(myIcon);
+        theButton.setToolTip(myTip);
     }
 
     /**
@@ -202,15 +195,6 @@ public abstract class TethysIconButtonManager<T, B, I>
 
         /* fire new Event */
         theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myValue);
-    }
-
-    /**
-     * Declare button.
-     * @param pButton the button
-     */
-    protected void declareButton(final TethysIconButton<B, I> pButton) {
-        /* Store the button */
-        theButton = pButton;
     }
 
     /**
@@ -237,11 +221,11 @@ public abstract class TethysIconButtonManager<T, B, I>
     /**
      * Simple IconButton Manager.
      * @param <T> the object type
-     * @param <B> the button type
+     * @param <N> the button type
      * @param <I> the Icon type
      */
-    public abstract static class TethysSimpleIconButtonManager<T, B, I>
-            extends TethysIconButtonManager<T, B, I> {
+    public abstract static class TethysSimpleIconButtonManager<T, N, I>
+            extends TethysIconButtonManager<T, N, I> {
         /**
          * Active Map Set.
          */
@@ -249,8 +233,12 @@ public abstract class TethysIconButtonManager<T, B, I>
 
         /**
          * Constructor.
+         * @param pManager the GUI manager
          */
-        protected TethysSimpleIconButtonManager() {
+        protected TethysSimpleIconButtonManager(final TethysGuiFactory<N, I> pManager) {
+            /* Initialise the underlying class */
+            super(pManager);
+
             /* Set a default mapSet */
             setMapSet(new IconMapSet<T, I>());
         }
@@ -388,11 +376,16 @@ public abstract class TethysIconButtonManager<T, B, I>
      * State-based IconButton Manager.
      * @param <T> the object type
      * @param <S> the state
-     * @param <B> the button type
+     * @param <N> the button type
      * @param <I> the Icon type
      */
-    public abstract static class TethysStateIconButtonManager<T, S, B, I>
-            extends TethysSimpleIconButtonManager<T, B, I> {
+    public abstract static class TethysStateIconButtonManager<T, S, N, I>
+            extends TethysSimpleIconButtonManager<T, N, I> {
+        /**
+         * State set?
+         */
+        private boolean stateSet;
+
         /**
          * Current state.
          */
@@ -405,23 +398,14 @@ public abstract class TethysIconButtonManager<T, B, I>
 
         /**
          * Constructor.
+         * @param pManager the GUI manager
          */
-        public TethysStateIconButtonManager() {
-            /* Initialise state to null */
-            this(null);
-        }
+        public TethysStateIconButtonManager(final TethysGuiFactory<N, I> pManager) {
+            /* Initialise the underlying class */
+            super(pManager);
 
-        /**
-         * Constructor.
-         * @param pState the initial state
-         */
-        public TethysStateIconButtonManager(final S pState) {
             /* Allocate the maps */
             theStateMap = new HashMap<>();
-
-            /* Register the initial state */
-            theMachineState = pState;
-            theStateMap.put(theMachineState, getMapSet());
         }
 
         /**
@@ -438,23 +422,35 @@ public abstract class TethysIconButtonManager<T, B, I>
          */
         public void setMachineState(final S pState) {
             /* Ignore if we are already correct state */
-            if (pState.equals(theMachineState)) {
+            if (stateSet
+                && pState.equals(theMachineState)) {
                 return;
             }
 
-            /* Look for existing state */
-            IconMapSet<T, I> mySet = theStateMap.get(pState);
+            /* If this is the initial state */
+            if (!stateSet) {
+                /* Register against default set */
+                theStateMap.put(pState, getMapSet());
+                stateSet = true;
 
-            /* If this is a new state */
-            if (mySet == null) {
-                /* Create the new state and record it */
-                mySet = new IconMapSet<>();
-                theStateMap.put(pState, mySet);
+                /* Else this is a subsequent state */
+            } else {
+                /* Look for existing state */
+                IconMapSet<T, I> mySet = theStateMap.get(pState);
+
+                /* If this is a new state */
+                if (mySet == null) {
+                    /* Create the new state and record it */
+                    mySet = new IconMapSet<>();
+                    theStateMap.put(pState, mySet);
+                }
+
+                /* Switch to this set */
+                setMapSet(mySet);
             }
 
             /* register the map Set */
             theMachineState = pState;
-            setMapSet(mySet);
             applyButtonState();
         }
 

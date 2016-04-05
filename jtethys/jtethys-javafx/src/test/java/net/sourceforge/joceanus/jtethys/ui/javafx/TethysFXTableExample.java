@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
@@ -43,8 +42,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIc
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutionColumn;
@@ -71,6 +70,11 @@ public class TethysFXTableExample
      * Default icon width.
      */
     private static final int DEFAULT_ICONWIDTH = 16;
+
+    /**
+     * The GUI Factory.
+     */
+    private final TethysFXGuiFactory theGuiFactory = new TethysFXGuiFactory();
 
     /**
      * The TestData.
@@ -102,7 +106,7 @@ public class TethysFXTableExample
         theData.add(new TethysFXTableItem(theHelper, "Dave"));
 
         /* Create tableView */
-        theTable = new TethysFXTableManager<>(new TethysDataFormatter());
+        theTable = theGuiFactory.newTable();
         theTable.setItems(theData);
 
         /* Listen to preCommit requests */
@@ -189,24 +193,24 @@ public class TethysFXTableExample
     @SuppressWarnings("unchecked")
     private void handleCreate(final TethysEvent<TethysUIEvent> pEvent) {
         /* Obtain the Cell */
-        TethysTableCell<TethysDataId, TethysFXTableItem, ?> myCell = pEvent.getDetails(TethysTableCell.class);
+        TethysFXTableCell<TethysDataId, TethysFXTableItem, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
 
         /* Configure static configuration for cells */
         switch (myCell.getColumnId()) {
             case BOOLEAN:
-                TethysIconField<Boolean> myBoolField = (TethysIconField<Boolean>) myCell;
+                TethysIconField<Boolean, ?, ?> myBoolField = (TethysIconField<Boolean, ?, ?>) myCell;
                 TethysSimpleIconButtonManager<Boolean, ?, ?> myBoolMgr = myBoolField.getIconManager();
                 myBoolMgr.setWidth(DEFAULT_ICONWIDTH);
                 theHelper.buildSimpleIconState(myBoolMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
                 break;
             case XTRABOOL:
-                TethysStateIconField<Boolean, IconState> myStateField = (TethysStateIconField<Boolean, IconState>) myCell;
+                TethysStateIconField<Boolean, IconState, ?, ?> myStateField = (TethysStateIconField<Boolean, IconState, ?, ?>) myCell;
                 TethysStateIconButtonManager<Boolean, IconState, ?, ?> myStateMgr = myStateField.getIconManager();
                 myStateMgr.setWidth(DEFAULT_ICONWIDTH);
                 theHelper.buildStateIconState(myStateMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
                 break;
             case SCROLL:
-                TethysScrollField<String> myScrollField = (TethysScrollField<String>) myCell;
+                TethysScrollField<String, ?, ?> myScrollField = (TethysScrollField<String, ?, ?>) myCell;
                 theHelper.buildContextMenu(myScrollField.getScrollManager().getMenu());
                 break;
             default:
@@ -221,12 +225,12 @@ public class TethysFXTableExample
     @SuppressWarnings("unchecked")
     private void handleFormat(final TethysEvent<TethysUIEvent> pEvent) {
         /* Obtain the Cell */
-        TethysTableCell<TethysDataId, TethysFXTableItem, ?> myCell = pEvent.getDetails(TethysTableCell.class);
+        TethysFXTableCell<TethysDataId, TethysFXTableItem, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
 
         /* If this is the extra Boolean field */
         if (TethysDataId.XTRABOOL.equals(myCell.getColumnId())) {
             /* Set correct state for extra Boolean */
-            TethysStateIconField<Boolean, IconState> myStateField = (TethysStateIconField<Boolean, IconState>) myCell;
+            TethysStateIconField<Boolean, IconState, ?, ?> myStateField = (TethysStateIconField<Boolean, IconState, ?, ?>) myCell;
             TethysFXTableItem myRow = myCell.getActiveRow();
             myStateField.getIconManager().setMachineState(myRow.booleanProperty().get()
                                                                                         ? IconState.OPEN
@@ -259,7 +263,7 @@ public class TethysFXTableExample
      */
     @SuppressWarnings("unchecked")
     private void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysTableCell<TethysDataId, TethysFXTableItem, ?> myCell = pEvent.getDetails(TethysTableCell.class);
+        TethysFXTableCell<TethysDataId, TethysFXTableItem, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
         TethysFXTableItem myRow = myCell.getActiveRow();
         myRow.incrementUpdates();
     }
@@ -271,7 +275,7 @@ public class TethysFXTableExample
      */
     @SuppressWarnings("unchecked")
     private TethysDataId getColumnId(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysTableCell<TethysDataId, ?, ?> myCell = pEvent.getDetails(TethysTableCell.class);
+        TethysFXTableCell<TethysDataId, ?, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
         return myCell.getColumnId();
     }
 
@@ -288,6 +292,7 @@ public class TethysFXTableExample
         /* Create scene */
         BorderPane myPane = new BorderPane();
         Scene myScene = new Scene(myPane);
+        theGuiFactory.applyStyleSheets(myScene);
         myPane.setCenter(theTable.getNode());
         pStage.setTitle("JavaFXTable Demo");
         TethysFXGuiUtils.addStyleSheet(myScene);

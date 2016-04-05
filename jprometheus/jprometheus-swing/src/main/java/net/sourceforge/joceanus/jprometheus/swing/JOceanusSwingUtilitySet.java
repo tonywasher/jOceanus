@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jprometheus.swing;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
@@ -31,6 +32,7 @@ import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.swing.JFieldPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * JOceanus Swing Utility Set.
@@ -51,6 +53,11 @@ public class JOceanusSwingUtilitySet
      * Field Preferences.
      */
     private final JFieldPreferences theFieldPreferences;
+
+    /**
+     * GUI Factory.
+     */
+    private final TethysSwingGuiFactory theGuiFactory;
 
     /**
      * Constructor.
@@ -89,6 +96,9 @@ public class JOceanusSwingUtilitySet
         /* Create components */
         theViewerManager = new MetisSwingViewerManager(theFieldManager);
 
+        /* Create the GUI Factory */
+        theGuiFactory = new TethysSwingGuiFactory(new MetisDataFormatter());
+
         /* Create listener */
         theFieldPreferences.getEventRegistrar().addEventListener(e -> theFieldManager.setConfig(theFieldPreferences.getConfiguration()));
     }
@@ -112,6 +122,11 @@ public class JOceanusSwingUtilitySet
     @Override
     public MetisSwingViewerManager getViewerManager() {
         return theViewerManager;
+    }
+
+    @Override
+    public TethysSwingGuiFactory getGuiFactory() {
+        return theGuiFactory;
     }
 
     /**

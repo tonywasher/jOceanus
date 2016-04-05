@@ -53,7 +53,7 @@ public class TethysFXTreeManager<T>
     /**
      * Constructor.
      */
-    public TethysFXTreeManager() {
+    protected TethysFXTreeManager() {
         /* Create the tree */
         theRoot = new TethysFXTreeItem<>(this);
         theTree = new TreeView<>(theRoot.getNode());

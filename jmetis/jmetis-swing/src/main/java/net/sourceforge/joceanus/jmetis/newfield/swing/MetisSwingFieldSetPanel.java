@@ -35,7 +35,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanel;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -71,15 +70,15 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingUnitsTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButton.TethysSwingListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Swing FieldSet Panel.
  */
 public class MetisSwingFieldSetPanel
-        extends MetisFieldSetPanel<JComponent, Color, Font, Icon> {
+        extends MetisFieldSetPanel<JComponent, Font, Color, Icon> {
     /**
      * The Node.
      */
@@ -100,21 +99,13 @@ public class MetisSwingFieldSetPanel
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pAttributes the attribute set
      */
-    public MetisSwingFieldSetPanel(final MetisSwingFieldAttributeSet pAttributes) {
-        this(pAttributes, new MetisDataFormatter());
-    }
-
-    /**
-     * Constructor.
-     * @param pAttributes the attribute set
-     * @param pFormatter the formatter
-     */
-    public MetisSwingFieldSetPanel(final MetisSwingFieldAttributeSet pAttributes,
-                                   final MetisDataFormatter pFormatter) {
+    public MetisSwingFieldSetPanel(final TethysSwingGuiFactory pFactory,
+                                   final MetisSwingFieldAttributeSet pAttributes) {
         /* Initialise underlying class */
-        super(pAttributes, pFormatter);
+        super(pFactory, pAttributes);
 
         /* Create the Node */
         theNode = new JPanel();
@@ -214,7 +205,7 @@ public class MetisSwingFieldSetPanel
      * @param <T> the item type
      */
     protected static class MetisSwingFieldSetPanelItem<T>
-            extends MetisFieldSetPanelItem<T, JComponent, Color, Font, Icon> {
+            extends MetisFieldSetPanelItem<T, JComponent, Font, Color, Icon> {
         /**
          * The node.
          */
@@ -235,7 +226,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetPanelItem(final MetisSwingFieldSetPanel pPanel,
                                               final MetisField pField,
                                               final boolean pNumeric,
-                                              final TethysDataEditField<T, JComponent, Color, Font, Icon> pEdit) {
+                                              final TethysDataEditField<T, JComponent, Icon> pEdit) {
             /* Set fields */
             this(pPanel, pField, null, pNumeric, pEdit);
         }
@@ -252,7 +243,7 @@ public class MetisSwingFieldSetPanel
                                               final MetisField pField,
                                               final Class<T> pClass,
                                               final boolean pNumeric,
-                                              final TethysDataEditField<T, JComponent, Color, Font, Icon> pEdit) {
+                                              final TethysDataEditField<T, JComponent, Icon> pEdit) {
             /* Initialise underlying class */
             super(pPanel, pField, pClass, pNumeric, pEdit);
 
@@ -311,7 +302,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetDateItem
             extends MetisSwingFieldSetPanelItem<TethysDate>
-            implements TethysDateField {
+            implements TethysDateField<JComponent, Icon> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -320,7 +311,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetDateItem(final MetisSwingFieldSetPanel pPanel,
                                              final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysDate.class, false, new TethysSwingDateButtonField(pPanel.getFormatter()));
+            super(pPanel, pField, TethysDate.class, false, pPanel.getGuiFactory().newDateField());
         }
 
         @Override
@@ -340,7 +331,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetScrollItem<T>
             extends MetisSwingFieldSetPanelItem<T>
-            implements TethysScrollField<T> {
+            implements TethysScrollField<T, JComponent, Icon> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -351,7 +342,7 @@ public class MetisSwingFieldSetPanel
                                                final MetisField pField,
                                                final Class<T> pClass) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, false, new TethysSwingScrollButtonField<>());
+            super(pPanel, pField, pClass, false, pPanel.getGuiFactory().newScrollField());
         }
 
         @Override
@@ -371,7 +362,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetListItem<T>
             extends MetisSwingFieldSetPanelItem<TethysItemList<T>>
-            implements TethysListField<T> {
+            implements TethysListField<T, JComponent, Icon> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -380,7 +371,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetListItem(final MetisSwingFieldSetPanel pPanel,
                                              final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, false, new TethysSwingListButtonField<>());
+            super(pPanel, pField, false, pPanel.getGuiFactory().newListField());
         }
 
         @Override
@@ -411,7 +402,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetIconItem<T>
             extends MetisSwingFieldSetPanelItem<T>
-            implements TethysIconField<T> {
+            implements TethysIconField<T, JComponent, Icon> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -421,23 +412,8 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetIconItem(final MetisSwingFieldSetPanel pPanel,
                                              final MetisField pField,
                                              final Class<T> pClass) {
-            /* Create a new iconButton Manager */
-            this(pPanel, pField, pClass, new TethysSwingSimpleIconButtonManager<>());
-        }
-
-        /**
-         * Constructor.
-         * @param pPanel the panel
-         * @param pField the field
-         * @param pManager the list manager
-         * @param pClass the item class
-         */
-        protected MetisSwingFieldSetIconItem(final MetisSwingFieldSetPanel pPanel,
-                                             final MetisField pField,
-                                             final Class<T> pClass,
-                                             final TethysSimpleIconButtonManager<T, JComponent, Icon> pManager) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, false, new TethysSwingIconButtonField<>());
+            super(pPanel, pField, pClass, false, pPanel.getGuiFactory().newSimpleIconField());
         }
 
         @Override
@@ -458,7 +434,7 @@ public class MetisSwingFieldSetPanel
      */
     public static class MetisSwingFieldSetStateIconItem<T, S>
             extends MetisSwingFieldSetPanelItem<T>
-            implements TethysStateIconField<T, S> {
+            implements TethysStateIconField<T, S, JComponent, Icon> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -469,7 +445,7 @@ public class MetisSwingFieldSetPanel
                                                   final MetisField pField,
                                                   final Class<T> pClass) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, false, new TethysSwingStateIconButtonField<>());
+            super(pPanel, pField, pClass, false, pPanel.getGuiFactory().newStateIconField());
         }
 
         @SuppressWarnings("unchecked")
@@ -497,7 +473,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetStringItem(final MetisSwingFieldSetPanel pPanel,
                                                final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, String.class, false, new TethysSwingStringTextField());
+            super(pPanel, pField, String.class, false, pPanel.getGuiFactory().newStringField());
         }
 
         @Override
@@ -519,7 +495,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetShortItem(final MetisSwingFieldSetPanel pPanel,
                                               final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, Short.class, true, new TethysSwingShortTextField(pPanel.getFormatter()));
+            super(pPanel, pField, Short.class, true, pPanel.getGuiFactory().newShortField());
         }
 
         @Override
@@ -541,7 +517,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetIntegerItem(final MetisSwingFieldSetPanel pPanel,
                                                 final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, Integer.class, true, new TethysSwingIntegerTextField(pPanel.getFormatter()));
+            super(pPanel, pField, Integer.class, true, pPanel.getGuiFactory().newIntegerField());
         }
 
         @Override
@@ -563,7 +539,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetLongItem(final MetisSwingFieldSetPanel pPanel,
                                              final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, Long.class, true, new TethysSwingLongTextField(pPanel.getFormatter()));
+            super(pPanel, pField, Long.class, true, pPanel.getGuiFactory().newLongField());
         }
 
         @Override
@@ -586,7 +562,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetMoneyItem(final MetisSwingFieldSetPanel pPanel,
                                               final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysMoney.class, true, new TethysSwingMoneyTextField(pPanel.getFormatter()));
+            super(pPanel, pField, TethysMoney.class, true, pPanel.getGuiFactory().newMoneyField());
         }
 
         @Override
@@ -614,7 +590,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetPriceItem(final MetisSwingFieldSetPanel pPanel,
                                               final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysPrice.class, true, new TethysSwingPriceTextField(pPanel.getFormatter()));
+            super(pPanel, pField, TethysPrice.class, true, pPanel.getGuiFactory().newPriceField());
         }
 
         @Override
@@ -641,7 +617,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetRateItem(final MetisSwingFieldSetPanel pPanel,
                                              final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysRate.class, true, new TethysSwingRateTextField(pPanel.getFormatter()));
+            super(pPanel, pField, TethysRate.class, true, pPanel.getGuiFactory().newRateField());
         }
 
         @Override
@@ -663,7 +639,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetUnitsItem(final MetisSwingFieldSetPanel pPanel,
                                               final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysUnits.class, true, new TethysSwingUnitsTextField(pPanel.getFormatter()));
+            super(pPanel, pField, TethysUnits.class, true, pPanel.getGuiFactory().newUnitsField());
         }
 
         @Override
@@ -685,7 +661,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetDilutionItem(final MetisSwingFieldSetPanel pPanel,
                                                  final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysDilution.class, true, new TethysSwingDilutionTextField(pPanel.getFormatter()));
+            super(pPanel, pField, TethysDilution.class, true, pPanel.getGuiFactory().newDilutionField());
         }
 
         @Override
@@ -707,7 +683,7 @@ public class MetisSwingFieldSetPanel
         protected MetisSwingFieldSetRatioItem(final MetisSwingFieldSetPanel pPanel,
                                               final MetisField pField) {
             /* Initialise underlying class */
-            super(pPanel, pField, TethysRatio.class, true, new TethysSwingRatioTextField(pPanel.getFormatter()));
+            super(pPanel, pField, TethysRatio.class, true, pPanel.getGuiFactory().newRatioField());
         }
 
         @Override

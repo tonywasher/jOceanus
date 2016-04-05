@@ -56,7 +56,7 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXArrowIcon;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
@@ -74,19 +74,24 @@ public class TethysFXScrollContextMenu<T>
         extends Stage
         implements TethysScrollMenu<T, Node> {
     /**
+     * StyleSheet Name.
+     */
+    private static final String CSS_STYLE_NAME = "jtethys-javafx-contextmenu.css";
+
+    /**
      * StyleSheet.
      */
-    private static final String CSS_STYLE = TethysFXScrollContextMenu.class.getResource("jtethys-javafx-contextmenu.css").toExternalForm();
+    private static final String CSS_STYLE = TethysFXScrollContextMenu.class.getResource(CSS_STYLE_NAME).toExternalForm();
 
     /**
      * The menu style.
      */
-    private static final String STYLE_MENU = "-jtethys-context";
+    private static final String STYLE_MENU = TethysFXGuiFactory.CSS_STYLE_BASE + "-context";
 
     /**
      * The item style.
      */
-    private static final String STYLE_ITEM = "-jtethys-context-item";
+    private static final String STYLE_ITEM = STYLE_MENU + "-item";
 
     /**
      * List of menu items.
@@ -166,7 +171,7 @@ public class TethysFXScrollContextMenu<T>
     /**
      * Constructor.
      */
-    public TethysFXScrollContextMenu() {
+    protected TethysFXScrollContextMenu() {
         this(TethysScrollMenuContent.DEFAULT_ITEMCOUNT);
     }
 
@@ -174,7 +179,7 @@ public class TethysFXScrollContextMenu<T>
      * Constructor.
      * @param pMaxDisplayItems the maximum number of items to display
      */
-    public TethysFXScrollContextMenu(final int pMaxDisplayItems) {
+    private TethysFXScrollContextMenu(final int pMaxDisplayItems) {
         this(null, pMaxDisplayItems);
     }
 
@@ -926,7 +931,7 @@ public class TethysFXScrollContextMenu<T>
             /* Create a Label for the graphic */
             theIcon = new Label();
             theIcon.setGraphic(pGraphic);
-            theIcon.setMinWidth(TethysIconButtonManager.DEFAULT_ICONWIDTH);
+            theIcon.setMinWidth(TethysIconBuilder.DEFAULT_ICONWIDTH);
 
             /* Add the children */
             setLeft(theIcon);
@@ -1057,7 +1062,7 @@ public class TethysFXScrollContextMenu<T>
         public void setSelected(final boolean pSelected) {
             isSelected = pSelected;
             setIcon(isSelected
-                               ? TethysFXGuiUtils.getIconAtSize(TethysScrollIcon.CHECKMARK, TethysIconButtonManager.DEFAULT_ICONWIDTH)
+                               ? TethysFXGuiUtils.getIconAtSize(TethysScrollIcon.CHECKMARK, TethysIconBuilder.DEFAULT_ICONWIDTH)
                                : null);
         }
 

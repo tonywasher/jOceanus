@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
+import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
 
 /**
@@ -189,18 +189,20 @@ public enum MoneyWiseIcon implements TethysIconId {
      * Configure print icon button.
      * @param pButton the button manager
      */
-    public static void configurePrintIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
-        pButton.setSimpleDetailsForValue(Boolean.TRUE, PRINT, TIP_PRINT);
-        pButton.setValue(Boolean.TRUE);
+    public static void configurePrintIconButton(final TethysButton<?, ?> pButton) {
+        PrometheusIcon.configureButton(pButton);
+        pButton.setIcon(PRINT);
+        pButton.setToolTip(TIP_PRINT);
     }
 
     /**
      * Configure download icon button.
      * @param pButton the button manager
      */
-    public static void configureDownloadIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
-        pButton.setSimpleDetailsForValue(Boolean.TRUE, DOWNLOAD, TIP_NEW);
-        pButton.setValue(Boolean.TRUE);
+    public static void configureDownloadIconButton(final TethysButton<?, ?> pButton) {
+        PrometheusIcon.configureButton(pButton);
+        pButton.setIcon(DOWNLOAD);
+        pButton.setToolTip(TIP_NEW);
     }
 
     /**

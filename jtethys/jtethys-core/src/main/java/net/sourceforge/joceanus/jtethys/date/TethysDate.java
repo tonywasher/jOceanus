@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.date;
 
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -155,27 +156,6 @@ public class TethysDate
     }
 
     /**
-     * Construct a new Date and initialise from a java calendar.
-     * @param pDate the java calendar to initialise from
-     */
-    public TethysDate(final Calendar pDate) {
-        this(pDate, Locale.getDefault());
-    }
-
-    /**
-     * Construct a new Date and initialise from a java date.
-     * @param pDate the java date to initialise from
-     * @param pLocale the locale for this date
-     */
-    public TethysDate(final Calendar pDate,
-                      final Locale pLocale) {
-        /* Null dates not allowed */
-        this(pDate == null
-                           ? null
-                           : pDate.getTime(), pLocale);
-    }
-
-    /**
      * Construct a new Date and initialise from a java date.
      * @param pDate the java calendar to initialise from
      */
@@ -202,7 +182,7 @@ public class TethysDate
     }
 
     /**
-     * Construct a new Date and initialise from a finance date.
+     * Construct a new Date and initialise from a date.
      * @param pDate the finance date to initialise from
      */
     public TethysDate(final TethysDate pDate) {
@@ -337,6 +317,22 @@ public class TethysDate
      */
     public int getDay() {
         return theDay;
+    }
+
+    /**
+     * Get the day of the week.
+     * @return the day of the week
+     */
+    public DayOfWeek getDayOfWeek() {
+        return theDate.getDayOfWeek();
+    }
+
+    /**
+     * Get the month value.
+     * @return the month value
+     */
+    public Month getMonthValue() {
+        return theDate.getMonth();
     }
 
     /**

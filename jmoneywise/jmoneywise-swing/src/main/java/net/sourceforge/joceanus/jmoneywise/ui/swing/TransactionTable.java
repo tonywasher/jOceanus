@@ -93,8 +93,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton.JScrollListMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Analysis Statement.
@@ -319,7 +320,7 @@ public class TransactionTable
     /**
      * The new button.
      */
-    private final TethysSwingScrollButtonManager<String> theNewButton;
+    private final TethysSwingButton theNewButton;
 
     /**
      * The Transaction dialog.
@@ -341,6 +342,9 @@ public class TransactionTable
      * @param pView the data view
      */
     public TransactionTable(final SwingView pView) {
+        /* initialise the underlying class */
+        super(pView.getUtilitySet().getGuiFactory());
+
         /* Record the passed details */
         theView = pView;
         theFieldMgr = pView.getFieldManager();
@@ -363,8 +367,9 @@ public class TransactionTable
         theDataAnalysis.setObject(theUpdateSet);
 
         /* Create new button */
-        theNewButton = new TethysSwingScrollButtonManager<>();
-        PrometheusIcon.configureNewScrollButton(theNewButton);
+        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        theNewButton = myFactory.newButton();
+        PrometheusIcon.configureNewIconButton(theNewButton);
 
         /* Create the Analysis View */
         theAnalysisView = new AnalysisView(theView, theUpdateSet);
@@ -373,7 +378,7 @@ public class TransactionTable
         theSelect = new AnalysisSelect(theView, theAnalysisView, theNewButton);
 
         /* Create the action buttons */
-        theActionButtons = new PrometheusSwingActionButtons(theUpdateSet);
+        theActionButtons = new PrometheusSwingActionButtons(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
         theError = new PrometheusSwingErrorPanel(myDataMgr, myDataRegister);
@@ -401,7 +406,7 @@ public class TransactionTable
         thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Create a transaction panel */
-        theActiveTrans = new TransactionPanel(theFieldMgr, theUpdateSet, theBuilder, theSelect, theError);
+        theActiveTrans = new TransactionPanel(myFactory, theFieldMgr, theUpdateSet, theBuilder, theSelect, theError);
         thePanel.add(theActiveTrans.getNode(), BorderLayout.PAGE_END);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -423,7 +428,7 @@ public class TransactionTable
         theActiveTrans.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
 
         /* Listen to swing events */
-        theNewButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.addNewItem());
+        theNewButton.getEventRegistrar().addEventListener(e -> theModel.addNewItem());
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);

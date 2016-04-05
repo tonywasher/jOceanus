@@ -92,6 +92,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton.JScrollListMe
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollListButton.ToggleState;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
@@ -196,19 +197,21 @@ public class TransactionPanel
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pBuilder the transaction builder
      * @param pAnalysisSelect the analysis selection panel
      * @param pError the error panel
      */
-    public TransactionPanel(final MetisFieldManager pFieldMgr,
+    public TransactionPanel(final TethysSwingGuiFactory pFactory,
+                            final MetisFieldManager pFieldMgr,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final TransactionBuilder pBuilder,
                             final AnalysisSelect pAnalysisSelect,
                             final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr, pUpdateSet, pError);
+        super(pFactory, pFieldMgr, pUpdateSet, pError);
         theAnalysisSelect = pAnalysisSelect;
         theBuilder = pBuilder;
 

@@ -42,7 +42,7 @@ public class TethysEventManager<E extends Enum<E>>
     /**
      * The Next managerId.
      */
-    private static AtomicInteger theNextMgrId = new AtomicInteger(1);
+    private static final AtomicInteger NEXT_ID = new AtomicInteger(1);
 
     /**
      * The Id of this manager.
@@ -59,7 +59,7 @@ public class TethysEventManager<E extends Enum<E>>
      */
     public TethysEventManager() {
         /* Store the owner */
-        theMgrId = theNextMgrId.getAndIncrement();
+        theMgrId = NEXT_ID.getAndIncrement();
 
         /* Allocate the registrar */
         theRegistrar = new TethysEventRegistrar<>(theMgrId);

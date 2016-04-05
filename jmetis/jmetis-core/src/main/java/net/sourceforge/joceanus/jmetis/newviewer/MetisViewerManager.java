@@ -36,8 +36,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * Data Viewer Manager.
  * @param <T> the item type
  * @param <N> the Node type
+ * @param <I> the Icon type
  */
-public abstract class MetisViewerManager<T extends MetisViewerEntry<T, N>, N>
+public abstract class MetisViewerManager<T extends MetisViewerEntry<T, N, I>, N, I>
         implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Height of the window.
@@ -57,7 +58,7 @@ public abstract class MetisViewerManager<T extends MetisViewerEntry<T, N>, N>
     /**
      * The split tree.
      */
-    private final TethysSplitTreeManager<T, N> theSplitTree;
+    private final TethysSplitTreeManager<T, N, I> theSplitTree;
 
     /**
      * The tree manager.
@@ -67,13 +68,13 @@ public abstract class MetisViewerManager<T extends MetisViewerEntry<T, N>, N>
     /**
      * The HTML manager.
      */
-    private final TethysHTMLManager<N> theHtml;
+    private final TethysHTMLManager<N, I> theHtml;
 
     /**
      * Constructor.
      * @param pSplitManager the split tree manager
      */
-    protected MetisViewerManager(final TethysSplitTreeManager<T, N> pSplitManager) {
+    protected MetisViewerManager(final TethysSplitTreeManager<T, N, I> pSplitManager) {
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
@@ -95,7 +96,7 @@ public abstract class MetisViewerManager<T extends MetisViewerEntry<T, N>, N>
      * Obtain the SplitTree Manager.
      * @return the tree manager
      */
-    public TethysSplitTreeManager<T, N> getSplitTreeManager() {
+    public TethysSplitTreeManager<T, N, I> getSplitTreeManager() {
         return theSplitTree;
     }
 
@@ -111,7 +112,7 @@ public abstract class MetisViewerManager<T extends MetisViewerEntry<T, N>, N>
      * Obtain the HTML Manager.
      * @return the HTML manager
      */
-    public TethysHTMLManager<N> getHTMLManager() {
+    public TethysHTMLManager<N, I> getHTMLManager() {
         return theHtml;
     }
 
@@ -165,6 +166,6 @@ public abstract class MetisViewerManager<T extends MetisViewerEntry<T, N>, N>
      * @return the new entry
      * @throws OceanusException on error
      */
-    public abstract T newEntry(final MetisViewerEntry<T, N> pParent,
+    public abstract T newEntry(final MetisViewerEntry<T, N, I> pParent,
                                final String pName) throws OceanusException;
 }

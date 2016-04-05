@@ -81,7 +81,7 @@
     <ApachePOIVersion>3.14</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <XercesVersion>2.11.0</XercesVersion>
-    <SLF4JVersion>1.7.19</SLF4JVersion>
+    <SLF4JVersion>1.7.21</SLF4JVersion>
     <LOG4JVersion>2.5</LOG4JVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
   </properties>

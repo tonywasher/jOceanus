@@ -48,21 +48,20 @@ import java.awt.Dimension;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemActions;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Utility panel to handle actions on selected item.
  */
 public class PrometheusSwingItemActions
-        extends PrometheusItemActions<JComponent> {
+        extends PrometheusItemActions<JComponent, Icon> {
     /**
      * The panel.
      */
@@ -70,19 +69,13 @@ public class PrometheusSwingItemActions
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pParent the parent panel
      */
-    protected PrometheusSwingItemActions(final PrometheusItemEditParent pParent) {
+    protected PrometheusSwingItemActions(final TethysSwingGuiFactory pFactory,
+                                         final PrometheusItemEditParent pParent) {
         /* Initialise base class */
-        super(pParent);
-
-        /* Create the buttons */
-        TethysSwingScrollButtonManager<PrometheusGoToEvent> myGoToButton = new TethysSwingScrollButtonManager<>();
-        TethysSwingSimpleIconButtonManager<Boolean> myEditButton = new TethysSwingSimpleIconButtonManager<>();
-        TethysSwingSimpleIconButtonManager<Boolean> myDeleteButton = new TethysSwingSimpleIconButtonManager<>();
-
-        /* declare the buttons */
-        declareButtons(myGoToButton, myEditButton, myDeleteButton);
+        super(pFactory, pParent);
 
         /* Create the standard strut */
         Dimension myStrutSize = new Dimension(0, STRUT_HEIGHT);
@@ -92,11 +85,11 @@ public class PrometheusSwingItemActions
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
 
         /* Create the layout */
-        thePanel.add(myGoToButton.getNode());
+        thePanel.add(getGoToButton().getNode());
         thePanel.add(Box.createRigidArea(myStrutSize));
-        thePanel.add(myEditButton.getNode());
+        thePanel.add(getEditButton().getNode());
         thePanel.add(Box.createRigidArea(myStrutSize));
-        thePanel.add(myDeleteButton.getNode());
+        thePanel.add(getDeleteButton().getNode());
     }
 
     @Override

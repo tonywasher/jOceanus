@@ -32,8 +32,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 /**
  * Tree Manager.
  * @param <N> the Node type
+ * @param <I> the icon type
  */
-public abstract class TethysHTMLManager<N>
+public abstract class TethysHTMLManager<N, I>
         implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The logger.
@@ -44,6 +45,11 @@ public abstract class TethysHTMLManager<N>
      * Reference Separator.
      */
     private static final String REF_SEPARATOR = "#";
+
+    /**
+     * The id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -62,10 +68,17 @@ public abstract class TethysHTMLManager<N>
 
     /**
      * Constructor.
+     * @param pFactory the GUI Factory
      */
-    protected TethysHTMLManager() {
+    protected TethysHTMLManager(final TethysGuiFactory<N, I> pFactory) {
+        theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
         waitingForPage = false;
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

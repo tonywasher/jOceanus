@@ -28,13 +28,13 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton.TethysFXSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
  * Utility panel to handle actions on selected item.
  */
 public class PrometheusFXItemEditActions
-        extends PrometheusItemEditActions<Node> {
+        extends PrometheusItemEditActions<Node, Node> {
     /**
      * The panel.
      */
@@ -42,30 +42,23 @@ public class PrometheusFXItemEditActions
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pParent the parent panel
      */
-    protected PrometheusFXItemEditActions(final PrometheusItemEditParent pParent) {
+    protected PrometheusFXItemEditActions(final TethysFXGuiFactory pFactory,
+                                          final PrometheusItemEditParent pParent) {
         /* Initialise base class */
-        super(pParent);
-
-        /* Create the buttons */
-        TethysFXSimpleIconButtonManager<Boolean> myCommitButton = new TethysFXSimpleIconButtonManager<>();
-        TethysFXSimpleIconButtonManager<Boolean> myUndoButton = new TethysFXSimpleIconButtonManager<>();
-        TethysFXSimpleIconButtonManager<Boolean> myResetButton = new TethysFXSimpleIconButtonManager<>();
-        TethysFXSimpleIconButtonManager<Boolean> myCancelButton = new TethysFXSimpleIconButtonManager<>();
-
-        /* declare the buttons */
-        declareButtons(myCommitButton, myUndoButton, myResetButton, myCancelButton);
+        super(pFactory, pParent);
 
         /* Create the panel */
         thePanel = new VBox(STRUT_HEIGHT);
 
         /* Create the layout */
         List<Node> myChildren = thePanel.getChildren();
-        myChildren.add(myCommitButton.getNode());
-        myChildren.add(myUndoButton.getNode());
-        myChildren.add(myResetButton.getNode());
-        myChildren.add(myCancelButton.getNode());
+        myChildren.add(getCommitButton().getNode());
+        myChildren.add(getUndoButton().getNode());
+        myChildren.add(getResetButton().getNode());
+        myChildren.add(getCancelButton().getNode());
     }
 
     @Override
@@ -77,5 +70,4 @@ public class PrometheusFXItemEditActions
     public void setVisible(final boolean pVisible) {
         thePanel.setVisible(pVisible);
     }
-
 }

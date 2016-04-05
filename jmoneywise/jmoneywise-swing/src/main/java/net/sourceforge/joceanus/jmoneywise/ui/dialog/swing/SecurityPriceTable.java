@@ -60,6 +60,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Panel to display a list of SecurityPrices associated with a Security.
@@ -162,6 +163,9 @@ public class SecurityPriceTable
                                  final MetisFieldManager pFieldMgr,
                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                  final PrometheusSwingErrorPanel pError) {
+        /* initialise the underlying class */
+        super((TethysSwingGuiFactory) pView.getUtilitySet().getGuiFactory());
+
         /* Record the passed details */
         theView = pView;
         theError = pError;

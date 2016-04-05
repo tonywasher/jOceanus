@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Help Window.
@@ -72,7 +73,7 @@ public class TestSwingHelpWindow
      */
     public TestSwingHelpWindow() {
         theButton = new JButton("Help");
-        theHelpWindow = new TethysSwingHelpManager();
+        theHelpWindow = new TethysSwingHelpManager(new TethysSwingGuiFactory());
     }
 
     /**

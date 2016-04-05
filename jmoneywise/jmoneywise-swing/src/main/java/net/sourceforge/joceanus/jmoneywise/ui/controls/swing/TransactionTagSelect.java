@@ -47,7 +47,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * TransactionTag Selection.
@@ -58,6 +59,11 @@ public class TransactionTagSelect
      * Text for TransactionTag Label.
      */
     private static final String NLS_TAG = MoneyWiseDataType.TRANSTAG.getItemName();
+
+    /**
+     * Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -96,13 +102,15 @@ public class TransactionTagSelect
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public TransactionTagSelect() {
+    public TransactionTagSelect(final TethysSwingGuiFactory pFactory) {
         /* Create the tags button */
-        theTagButton = new TethysSwingScrollButtonManager<>();
+        theTagButton = pFactory.newScrollButton();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
+        theId = pFactory.getNextId();
 
         /* Create the label */
         JLabel myTagLabel = new JLabel(NLS_TAG + MetisFieldElement.STR_COLON);
@@ -125,6 +133,11 @@ public class TransactionTagSelect
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTag());
         myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildTagMenu());
         theTagMenu = theTagButton.getMenu();
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

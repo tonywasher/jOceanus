@@ -1,4 +1,5 @@
 /*******************************************************************************
+
  * jTethys: Java Utilities
  * Copyright 2012,2014 Tony Washer
  *
@@ -58,8 +59,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStringColumn;
 
@@ -161,6 +162,11 @@ public class TethysSwingDateExample
     private static final String DATEFORMAT_3 = "yyyy/MMM/dd";
 
     /**
+     * The GUI Factory.
+     */
+    private transient TethysSwingGuiFactory theGuiFactory = new TethysSwingGuiFactory();
+
+    /**
      * The table.
      */
     private TethysSwingTableManager<String, DateItem> theTable;
@@ -223,7 +229,7 @@ public class TethysSwingDateExample
     /**
      * The formatter.
      */
-    private transient TethysDataFormatter theFormatter = new TethysDataFormatter();
+    private transient TethysDataFormatter theFormatter = theGuiFactory.getDataFormatter();
 
     /**
      * The formatter.
@@ -447,7 +453,7 @@ public class TethysSwingDateExample
      */
     private void makeTable() {
         /* Create the table */
-        theTable = new TethysSwingTableManager<>(theFormatter);
+        theTable = theGuiFactory.newTable();
 
         /* Create the list */
         List<DateItem> myList = new ArrayList<DateItem>();
@@ -464,11 +470,13 @@ public class TethysSwingDateExample
         TethysSwingTableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
         myDateColumn.setCellValueFactory(p -> p.getDate());
         myDateColumn.setCellCommitFactory((p, v) -> p.setDate(v));
+        myDateColumn.setColumnWidth(COL_1_WIDTH);
 
         /* Create the comments column */
         TethysSwingTableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
         myCommentsColumn.setCellValueFactory(p -> p.getComments());
         myCommentsColumn.setCellCommitFactory((p, v) -> p.setComments(v));
+        myCommentsColumn.setColumnWidth(COL_2_WIDTH);
 
         /* Listen to preEdit requests */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
@@ -481,13 +489,13 @@ public class TethysSwingDateExample
      */
     @SuppressWarnings("unchecked")
     private void handlePreEdit(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysTableCell<String, DateItem, ?> myCell = pEvent.getDetails(TethysTableCell.class);
+        TethysSwingTableCell<String, DateItem, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
 
         /* If this is the Date column */
         if (DateItem.PROP_DATE.equals(myCell.getColumnId())) {
             /* Configure the button */
-            TethysDateField myDateField = (TethysDateField) myCell;
-            TethysDateButtonManager<?> myManager = myDateField.getDateManager();
+            TethysDateField<?, ?> myDateField = (TethysDateField<?, ?>) myCell;
+            TethysDateButtonManager<?, ?> myManager = myDateField.getDateManager();
             myManager.setEarliestDate(theStartDate.getSelectedDate());
             myManager.setLatestDate(theEndDate.getSelectedDate());
             myManager.setShowNarrowDays(theNarrowSelect.isSelected());
@@ -556,11 +564,11 @@ public class TethysSwingDateExample
      */
     private void makeRangeButtons() {
         /* Create the buttons */
-        theStartDate = new TethysSwingDateButtonManager(theFormatter);
-        theEndDate = new TethysSwingDateButtonManager(theFormatter);
+        theStartDate = theGuiFactory.newDateButton();
+        theEndDate = theGuiFactory.newDateButton();
 
         /* Create the range selection */
-        theRangeSelect = new TethysSwingDateRangeSelector(theFormatter, true);
+        theRangeSelect = theGuiFactory.newDateRangeSelector(true);
         theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
 
         /* Initialise the values */
@@ -642,7 +650,7 @@ public class TethysSwingDateExample
         theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
 
         /* Note that we should redraw the table */
-        // theTable.repaint();
+        theTable.repaintColumn(DateItem.PROP_DATE);
     }
 
     /**
@@ -656,7 +664,7 @@ public class TethysSwingDateExample
         theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
 
         /* Note that we should redraw the table */
-        // theTable.repaint();
+        theTable.repaintColumn(DateItem.PROP_COMMENTS);
     }
 
     /**

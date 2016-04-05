@@ -44,4 +44,10 @@ public interface TethysNode<N> {
      * @param pVisible true/false
      */
     void setVisible(final boolean pVisible);
+
+    /**
+     * Obtain the Id.
+     * @return the id
+     */
+    Integer getId();
 }

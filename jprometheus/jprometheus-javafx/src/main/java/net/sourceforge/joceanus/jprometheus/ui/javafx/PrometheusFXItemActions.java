@@ -27,17 +27,15 @@ import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemActions;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton.TethysFXSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButton.TethysFXScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
  * Utility panel to handle actions on selected item.
  */
 public class PrometheusFXItemActions
-        extends PrometheusItemActions<Node> {
+        extends PrometheusItemActions<Node, Node> {
     /**
      * The panel.
      */
@@ -45,28 +43,22 @@ public class PrometheusFXItemActions
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pParent the parent panel
      */
-    protected PrometheusFXItemActions(final PrometheusItemEditParent pParent) {
+    protected PrometheusFXItemActions(final TethysFXGuiFactory pFactory,
+                                      final PrometheusItemEditParent pParent) {
         /* Initialise base class */
-        super(pParent);
-
-        /* Create the buttons */
-        TethysFXScrollButtonManager<PrometheusGoToEvent> myGoToButton = new TethysFXScrollButtonManager<>();
-        TethysFXSimpleIconButtonManager<Boolean> myEditButton = new TethysFXSimpleIconButtonManager<>();
-        TethysFXSimpleIconButtonManager<Boolean> myDeleteButton = new TethysFXSimpleIconButtonManager<>();
-
-        /* declare the buttons */
-        declareButtons(myGoToButton, myEditButton, myDeleteButton);
+        super(pFactory, pParent);
 
         /* Create the panel */
         thePanel = new VBox(STRUT_HEIGHT);
 
         /* Create the layout */
         List<Node> myChildren = thePanel.getChildren();
-        myChildren.add(myGoToButton.getNode());
-        myChildren.add(myEditButton.getNode());
-        myChildren.add(myDeleteButton.getNode());
+        myChildren.add(getGoToButton().getNode());
+        myChildren.add(getEditButton().getNode());
+        myChildren.add(getDeleteButton().getNode());
     }
 
     @Override

@@ -46,11 +46,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * Generic class for displaying and editing a data field.
  * @param <T> the data type
  * @param <N> the Node type
- * @param <C> the Colour type
- * @param <F> the Font type
  * @param <I> the Icon type
  */
-public abstract class TethysDataEditField<T, N, C, F, I>
+public abstract class TethysDataEditField<T, N, I>
         implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * DataEditConverter interface.
@@ -97,6 +95,11 @@ public abstract class TethysDataEditField<T, N, C, F, I>
     private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
+     * The id.
+     */
+    private Integer theId;
+
+    /**
      * Is the field editable?
      */
     private boolean isEditable;
@@ -113,10 +116,17 @@ public abstract class TethysDataEditField<T, N, C, F, I>
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    protected TethysDataEditField() {
+    protected TethysDataEditField(final TethysGuiFactory<N, I> pFactory) {
         /* Create event manager */
+        theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     /**
@@ -236,24 +246,6 @@ public abstract class TethysDataEditField<T, N, C, F, I>
     }
 
     /**
-     * Set the font.
-     * @param pFont the font for the field
-     */
-    public abstract void setFont(final F pFont);
-
-    /**
-     * Set the textFill colour.
-     * @param pColor the colour
-     */
-    public abstract void setTextFill(final C pColor);
-
-    /**
-     * Set the background colour.
-     * @param pColor the colour
-     */
-    public abstract void setBackground(final C pColor);
-
-    /**
      * DataEditTextField base class.
      * @param <T> the data type
      */
@@ -261,7 +253,7 @@ public abstract class TethysDataEditField<T, N, C, F, I>
         /**
          * The Field.
          */
-        private final TethysDataEditField<T, ?, ?, ?, ?> theField;
+        private final TethysDataEditField<T, ?, ?> theField;
 
         /**
          * The DataConverter.
@@ -288,7 +280,7 @@ public abstract class TethysDataEditField<T, N, C, F, I>
          * @param pField the owing field
          * @param pConverter the data converter
          */
-        public TethysDataEditTextFieldControl(final TethysDataEditField<T, ?, ?, ?, ?> pField,
+        public TethysDataEditTextFieldControl(final TethysDataEditField<T, ?, ?> pField,
                                               final TethysDataEditConverter<T> pConverter) {
             theField = pField;
             theConverter = pConverter;
@@ -648,67 +640,77 @@ public abstract class TethysDataEditField<T, N, C, F, I>
 
     /**
      * Date Field interface.
+     * @param <N> the Node type
+     * @param <I> the Icon type
      */
     @FunctionalInterface
-    public interface TethysDateField {
+    public interface TethysDateField<N, I> {
         /**
          * Obtain the manager.
          * @return the manager
          */
-        TethysDateButtonManager<?> getDateManager();
+        TethysDateButtonManager<N, I> getDateManager();
     }
 
     /**
      * Scroll Field interface.
-     * @param <C> the value type
+     * @param <T> the value type
+     * @param <N> the Node type
+     * @param <I> the Icon type
      */
     @FunctionalInterface
-    public interface TethysScrollField<C> {
+    public interface TethysScrollField<T, N, I> {
         /**
          * Obtain the manager.
          * @return the manager
          */
-        TethysScrollButtonManager<C, ?, ?> getScrollManager();
+        TethysScrollButtonManager<T, N, I> getScrollManager();
     }
 
     /**
      * List Field interface.
-     * @param <C> the value type
+     * @param <T> the value type
+     * @param <N> the Node type
+     * @param <I> the Icon type
      */
     @FunctionalInterface
-    public interface TethysListField<C> {
+    public interface TethysListField<T, N, I> {
         /**
          * Obtain the manager.
          * @return the manager
          */
-        TethysListButtonManager<C, ?, ?> getListManager();
+        TethysListButtonManager<T, N, I> getListManager();
     }
 
     /**
      * Icon Field interface.
-     * @param <C> the value type
+     * @param <T> the value type
+     * @param <N> the Node type
+     * @param <I> the Icon type
      */
     @FunctionalInterface
-    public interface TethysIconField<C> {
+    public interface TethysIconField<T, N, I> {
         /**
          * Obtain the manager.
          * @return the manager
          */
-        TethysSimpleIconButtonManager<C, ?, ?> getIconManager();
+        TethysSimpleIconButtonManager<T, N, I> getIconManager();
     }
 
     /**
      * StateIcon Field interface.
-     * @param <C> the value type
+     * @param <T> the value type
      * @param <S> the state type
+     * @param <N> the Node type
+     * @param <I> the Icon type
      */
     @FunctionalInterface
-    public interface TethysStateIconField<C, S> {
+    public interface TethysStateIconField<T, S, N, I> {
         /**
          * Obtain the manager.
          * @return the manager
          */
-        TethysStateIconButtonManager<C, S, ?, ?> getIconManager();
+        TethysStateIconButtonManager<T, S, N, I> getIconManager();
     }
 
     /**

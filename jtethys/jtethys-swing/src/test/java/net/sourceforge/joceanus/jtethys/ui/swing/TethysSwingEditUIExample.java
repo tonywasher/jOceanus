@@ -80,8 +80,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingShortTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingUnitsTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButton.TethysSwingListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
 
 /**
  * Scroll utilities examples.
@@ -117,6 +115,11 @@ public class TethysSwingEditUIExample
      * Default icon width.
      */
     private static final int DEFAULT_ICONWIDTH = 24;
+
+    /**
+     * The GuiFactory.
+     */
+    private final TethysSwingGuiFactory theGuiFactory;
 
     /**
      * The Test helper.
@@ -216,17 +219,17 @@ public class TethysSwingEditUIExample
     /**
      * The source.
      */
-    private final JLabel theSource;
+    private final TethysSwingLabel theSource;
 
     /**
      * The result.
      */
-    private final JLabel theClass;
+    private final TethysSwingLabel theClass;
 
     /**
      * The result.
      */
-    private final JLabel theValue;
+    private final TethysSwingLabel theValue;
 
     /**
      * The Date formatter.
@@ -245,35 +248,38 @@ public class TethysSwingEditUIExample
         /* Create helper */
         theHelper = new TethysScrollUITestHelper<>();
 
-        /* Create formatter */
-        TethysDataFormatter myFormatter = new TethysDataFormatter();
+        /* Create GUI Factory */
+        theGuiFactory = new TethysSwingGuiFactory();
+
+        /* Access formatters */
+        TethysDataFormatter myFormatter = theGuiFactory.getDataFormatter();
         theDecimalFormatter = myFormatter.getDecimalFormatter();
         theDateFormatter = myFormatter.getDateFormatter();
 
         /* Create resources */
-        theStringField = new TethysSwingStringTextField();
+        theStringField = theGuiFactory.newStringField();
         theStringField.showCmdButton(true);
-        theShortField = new TethysSwingShortTextField(myFormatter);
-        theIntegerField = new TethysSwingIntegerTextField(myFormatter);
-        theLongField = new TethysSwingLongTextField(myFormatter);
-        theMoneyField = new TethysSwingMoneyTextField(myFormatter);
-        thePriceField = new TethysSwingPriceTextField(myFormatter);
-        theDilutedPriceField = new TethysSwingDilutedPriceTextField(myFormatter);
-        theDilutionField = new TethysSwingDilutionTextField(myFormatter);
-        theUnitsField = new TethysSwingUnitsTextField(myFormatter);
-        theRateField = new TethysSwingRateTextField(myFormatter);
-        theRatioField = new TethysSwingRatioTextField(myFormatter);
-        theSource = new JLabel();
-        theClass = new JLabel();
-        theValue = new JLabel();
+        theShortField = theGuiFactory.newShortField();
+        theIntegerField = theGuiFactory.newIntegerField();
+        theLongField = theGuiFactory.newLongField();
+        theMoneyField = theGuiFactory.newMoneyField();
+        thePriceField = theGuiFactory.newPriceField();
+        theDilutedPriceField = theGuiFactory.newDilutedPriceField();
+        theDilutionField = theGuiFactory.newDilutionField();
+        theUnitsField = theGuiFactory.newUnitsField();
+        theRateField = theGuiFactory.newRateField();
+        theRatioField = theGuiFactory.newRatioField();
+        theSource = theGuiFactory.newLabel();
+        theClass = theGuiFactory.newLabel();
+        theValue = theGuiFactory.newLabel();
 
         /* Create button fields */
-        theScrollField = new TethysSwingScrollButtonField<>();
+        theScrollField = theGuiFactory.newScrollField();
         theScrollButtonMgr = theScrollField.getScrollManager();
-        theDateField = new TethysSwingDateButtonField(myFormatter);
-        theIconField = new TethysSwingIconButtonField<>();
+        theDateField = theGuiFactory.newDateField();
+        theIconField = theGuiFactory.newSimpleIconField();
         theIconButtonMgr = theIconField.getIconManager();
-        theListField = new TethysSwingListButtonField<>();
+        theListField = theGuiFactory.newListField();
         theListButtonMgr = theListField.getListManager();
     }
 
@@ -501,13 +507,13 @@ public class TethysSwingEditUIExample
         /* Build the grid */
         JLabel myLabel = new JLabel("Source:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        myHelper.addFullLabeledRow(myLabel, theSource);
+        myHelper.addFullLabeledRow(myLabel, theSource.getNode());
         myLabel = new JLabel("Class:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        myHelper.addFullLabeledRow(myLabel, theClass);
+        myHelper.addFullLabeledRow(myLabel, theClass.getNode());
         myLabel = new JLabel("Value:");
         myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        myHelper.addFullLabeledRow(myLabel, theValue);
+        myHelper.addFullLabeledRow(myLabel, theValue.getNode());
 
         /* Return the panel */
         return myPanel;
@@ -534,7 +540,7 @@ public class TethysSwingEditUIExample
         });
 
         /* Create ScrollButton button for currency */
-        TethysSwingScrollButtonManager<Currency> myCurrencyMgr = new TethysSwingScrollButtonManager<Currency>();
+        TethysSwingScrollButtonManager<Currency> myCurrencyMgr = theGuiFactory.newScrollButton();
         TethysSwingScrollContextMenu<Currency> myMenu = myCurrencyMgr.getMenu();
         Currency myDefault = Currency.getInstance("GBP");
         myMenu.addItem(myDefault, "Pounds");

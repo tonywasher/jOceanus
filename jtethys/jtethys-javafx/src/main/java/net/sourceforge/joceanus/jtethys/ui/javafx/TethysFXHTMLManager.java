@@ -44,7 +44,7 @@ import netscape.javascript.JSObject;
  * JavaFX HTML Manager.
  */
 public class TethysFXHTMLManager
-        extends TethysHTMLManager<Node> {
+        extends TethysHTMLManager<Node, Node> {
     /**
      * The logger.
      */
@@ -87,8 +87,12 @@ public class TethysFXHTMLManager
 
     /**
      * Constructor.
+     * @param pFactory the GUI Factory
      */
-    protected TethysFXHTMLManager() {
+    protected TethysFXHTMLManager(final TethysFXGuiFactory pFactory) {
+        /* Initialise underlying class */
+        super(pFactory);
+
         /* Create WebView and access the engine */
         theWebView = new WebView();
         theWebEngine = theWebView.getEngine();

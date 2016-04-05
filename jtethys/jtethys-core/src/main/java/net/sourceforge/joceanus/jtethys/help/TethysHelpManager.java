@@ -38,8 +38,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 /**
  * Help Manager class, responsible for displaying the help.
  * @param <N> the Node type
+ * @param <I> the Icon type
  */
-public abstract class TethysHelpManager<N>
+public abstract class TethysHelpManager<N, I>
         implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Height of the window.
@@ -59,7 +60,7 @@ public abstract class TethysHelpManager<N>
     /**
      * The split tree.
      */
-    private final TethysSplitTreeManager<TethysHelpEntry, N> theSplitTree;
+    private final TethysSplitTreeManager<TethysHelpEntry, N, I> theSplitTree;
 
     /**
      * The tree manager.
@@ -69,13 +70,13 @@ public abstract class TethysHelpManager<N>
     /**
      * The HTML manager.
      */
-    private final TethysHTMLManager<N> theHtml;
+    private final TethysHTMLManager<N, I> theHtml;
 
     /**
      * Constructor.
      * @param pSplitManager the split tree manager
      */
-    protected TethysHelpManager(final TethysSplitTreeManager<TethysHelpEntry, N> pSplitManager) {
+    protected TethysHelpManager(final TethysSplitTreeManager<TethysHelpEntry, N, I> pSplitManager) {
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
@@ -97,7 +98,7 @@ public abstract class TethysHelpManager<N>
      * Obtain the SplitTree Manager.
      * @return the tree manager
      */
-    public TethysSplitTreeManager<TethysHelpEntry, N> getSplitTreeManager() {
+    public TethysSplitTreeManager<TethysHelpEntry, N, I> getSplitTreeManager() {
         return theSplitTree;
     }
 
@@ -113,7 +114,7 @@ public abstract class TethysHelpManager<N>
      * Obtain the HTML Manager.
      * @return the HTML manager
      */
-    public TethysHTMLManager<N> getHTMLManager() {
+    public TethysHTMLManager<N, I> getHTMLManager() {
         return theHtml;
     }
 

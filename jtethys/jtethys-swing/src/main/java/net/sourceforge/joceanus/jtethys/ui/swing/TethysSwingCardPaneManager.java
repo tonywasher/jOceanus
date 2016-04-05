@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.CardLayout;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
@@ -32,10 +33,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Tethys Swing Card panel manager.
- * @param <C> the card item type
+ * @param <P> the card panel type
  */
-public class TethysSwingCardPaneManager<C extends TethysNode<JComponent>>
-        extends TethysCardPaneManager<JComponent, C> {
+public class TethysSwingCardPaneManager<P extends TethysNode<JComponent>>
+        extends TethysCardPaneManager<JComponent, Icon, P> {
     /**
      * The panel.
      */
@@ -48,8 +49,10 @@ public class TethysSwingCardPaneManager<C extends TethysNode<JComponent>>
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public TethysSwingCardPaneManager() {
+    protected TethysSwingCardPaneManager(final TethysSwingGuiFactory pFactory) {
+        super(pFactory);
         thePanel = new JPanel();
         theLayout = new CardLayout();
         thePanel.setLayout(theLayout);
@@ -63,10 +66,7 @@ public class TethysSwingCardPaneManager<C extends TethysNode<JComponent>>
     @Override
     public void setEnabled(final boolean pEnabled) {
         thePanel.setEnabled(pEnabled);
-        C myCard = getActiveCard();
-        if (myCard != null) {
-            myCard.setEnabled(pEnabled);
-        }
+        super.setEnabled(pEnabled);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class TethysSwingCardPaneManager<C extends TethysNode<JComponent>>
 
     @Override
     public void addCard(final String pName,
-                        final C pCard) {
+                        final P pCard) {
         super.addCard(pName, pCard);
         thePanel.add(pCard.getNode(), pName);
     }

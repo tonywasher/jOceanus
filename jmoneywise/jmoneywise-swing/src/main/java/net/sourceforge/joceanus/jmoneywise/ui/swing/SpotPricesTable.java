@@ -185,6 +185,9 @@ public class SpotPricesTable
      * @param pView the data view
      */
     public SpotPricesTable(final SwingView pView) {
+        /* initialise the underlying class */
+        super(pView.getUtilitySet().getGuiFactory());
+
         /* Record the passed details */
         theView = pView;
         theFieldMgr = pView.getFieldManager();
@@ -220,7 +223,7 @@ public class SpotPricesTable
 
         /* Create the sub panels */
         theSelect = new SpotPricesSelect(theView);
-        theActionButtons = new PrometheusSwingActionButtons(theUpdateSet);
+        theActionButtons = new PrometheusSwingActionButtons(pView.getUtilitySet().getGuiFactory(), theUpdateSet);
 
         /* Create the error panel for this view */
         theError = new PrometheusSwingErrorPanel(myDataMgr, theDataPrice);

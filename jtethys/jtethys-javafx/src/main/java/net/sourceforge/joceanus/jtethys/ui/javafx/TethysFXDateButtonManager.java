@@ -22,93 +22,66 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import net.sourceforge.jdatebutton.javafx.JDateButton;
-import net.sourceforge.jdatebutton.javafx.JDateConfig;
-import net.sourceforge.jdatebutton.javafx.JDateDialog;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import javafx.scene.Node;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.javafx.TethysFXArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * JavaFX DateButton Manager.
  */
 public class TethysFXDateButtonManager
-        extends TethysDateButtonManager<JDateButton> {
-    /**
-     * The button.
-     */
-    private final JDateButton theButton;
-
+        extends TethysDateButtonManager<Node, Node> {
     /**
      * The dialog.
      */
-    private final JDateDialog theDialog;
+    private TethysFXDateDialog theDialog;
 
     /**
      * Constructor.
+     * @param pFactory the GuiFactory
      */
-    public TethysFXDateButtonManager() {
-        this(new TethysDataFormatter());
-    }
-
-    /**
-     * Constructor.
-     * @param pFormatter the data formatter
-     */
-    public TethysFXDateButtonManager(final TethysDataFormatter pFormatter) {
-        this(new JDateConfig(pFormatter.getDateFormatter()), pFormatter);
-    }
-
-    /**
-     * Constructor.
-     * @param pConfig the configuration
-     * @param pFormatter the data formatter
-     */
-    public TethysFXDateButtonManager(final JDateConfig pConfig,
-                                     final TethysDataFormatter pFormatter) {
+    protected TethysFXDateButtonManager(final TethysFXGuiFactory pFactory) {
         /* Initialise the super-class */
-        super(pConfig, pFormatter);
+        super(pFactory);
 
-        /* Create and declare the button */
-        theButton = new JDateButton(pConfig);
-        theButton.setMaxWidth(Double.MAX_VALUE);
-
-        /* Catch the dialog opening/closing */
-        theDialog = theButton.getDialog();
-        theDialog.setOnShowing(e -> handleDialogRequest());
-        theDialog.setOnHidden(e -> handleDialogClosure());
-    }
-
-    @Override
-    public JDateButton getNode() {
-        return theButton;
+        /* Set down Arrow as the graphic */
+        getButton().setIcon(TethysFXArrowIcon.DOWN.getArrow());
     }
 
     /**
      * Obtain the dialog.
      * @return the dialog
      */
-    public JDateDialog getDialog() {
+    public TethysFXDateDialog getDialog() {
+        ensureDialog();
         return theDialog;
     }
 
-    @Override
-    public void setEnabled(final boolean pEnable) {
-        theButton.setDisable(!pEnable);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        theButton.setVisible(pVisible);
-    }
-
     /**
-     * Handle dialog closure.
+     * Make sure that the dialog is created.
      */
-    private void handleDialogClosure() {
-        if (theDialog.haveSelected()) {
-            handleNewValue();
-        } else {
-            handleDialogClosed();
+    private void ensureDialog() {
+        /* If the dialog does not exist */
+        if (theDialog == null) {
+            /* Create it */
+            theDialog = new TethysFXDateDialog(getConfig());
+
+            /* Add listeners */
+            TethysEventRegistrar<TethysUIEvent> myRegistrar = theDialog.getEventRegistrar();
+            myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> handleDialogRequest());
+            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewValue());
+            myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleDialogClosed());
         }
+    }
+
+    @Override
+    protected void showDialog() {
+        /* Make sure that the dialog exists */
+        ensureDialog();
+
+        /* Show the dialog under the node */
+        theDialog.showDialogUnderNode(getNode());
     }
 }

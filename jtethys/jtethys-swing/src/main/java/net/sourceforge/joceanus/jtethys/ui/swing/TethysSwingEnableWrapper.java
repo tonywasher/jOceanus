@@ -90,6 +90,11 @@ public final class TethysSwingEnableWrapper {
         }
 
         @Override
+        public Integer getId() {
+            return -1;
+        }
+
+        @Override
         public JComponent getNode() {
             return this;
         }

@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
@@ -41,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager.TethysFXTr
  * JavaFX Data Viewer Manager.
  */
 public class MetisFXViewerManager
-        extends MetisViewerManager<MetisFXViewerEntry, Node> {
+        extends MetisViewerManager<MetisFXViewerEntry, Node, Node> {
     /**
      * The stage.
      */
@@ -54,10 +55,11 @@ public class MetisFXViewerManager
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public MetisFXViewerManager() {
+    public MetisFXViewerManager(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
-        super(new TethysFXSplitTreeManager<>());
+        super(pFactory.newSplitTreeManager());
     }
 
     @Override
@@ -134,7 +136,7 @@ public class MetisFXViewerManager
     }
 
     @Override
-    public MetisFXViewerEntry newEntry(final MetisViewerEntry<MetisFXViewerEntry, Node> pParent,
+    public MetisFXViewerEntry newEntry(final MetisViewerEntry<MetisFXViewerEntry, Node, Node> pParent,
                                        final String pName) throws OceanusException {
         /* Access parent and create the entry */
         MetisFXViewerEntry myParent = MetisFXViewerEntry.class.cast(pParent);

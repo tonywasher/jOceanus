@@ -27,6 +27,11 @@ package net.sourceforge.joceanus.jtethys.ui;
  */
 public enum TethysUIEvent {
     /**
+     * Button Pressed.
+     */
+    PRESSED,
+
+    /**
      * New Value.
      */
     NEWVALUE,

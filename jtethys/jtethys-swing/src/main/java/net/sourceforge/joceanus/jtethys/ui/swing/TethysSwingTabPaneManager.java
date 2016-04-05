@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
  * Swing Tab Manager.
  */
 public class TethysSwingTabPaneManager
-        extends TethysTabPaneManager<JComponent> {
+        extends TethysTabPaneManager<JComponent, Icon> {
     /**
      * The TabPane.
      */
@@ -40,8 +41,12 @@ public class TethysSwingTabPaneManager
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public TethysSwingTabPaneManager() {
+    protected TethysSwingTabPaneManager(final TethysSwingGuiFactory pFactory) {
+        /* Initialise underlying class */
+        super(pFactory);
+
         /* Create the pane */
         theTabPane = new JTabbedPane();
         theTabPane.addChangeListener(e -> notifySelection(getSelectedTab()));
@@ -87,7 +92,7 @@ public class TethysSwingTabPaneManager
      * TabItem class.
      */
     public static class TethysSwingTabItem
-            extends TethysTabItem<JComponent> {
+            extends TethysTabItem<JComponent, Icon> {
         /**
          * The component.
          */

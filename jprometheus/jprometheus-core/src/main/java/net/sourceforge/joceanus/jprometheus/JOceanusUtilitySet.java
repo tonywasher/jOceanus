@@ -22,10 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 
 /**
  * JOceanus Utility Set.
@@ -90,4 +94,10 @@ public abstract class JOceanusUtilitySet {
      * @return the manager
      */
     public abstract MetisViewerManager getViewerManager();
+
+    /**
+     * Obtain the GUI Factory.
+     * @return the factory
+     */
+    public abstract TethysGuiFactory<JComponent, Icon> getGuiFactory();
 }

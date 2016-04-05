@@ -29,6 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelPair;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTabPaneManager.TethysFXTabItem;
 
@@ -36,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTabPaneManager.TethysF
  * JavaFX FieldSet Panel Pair.
  */
 public class MetisFXFieldSetPanelPair
-        extends MetisFieldSetPanelPair<Node, Color, Font, Node> {
+        extends MetisFieldSetPanelPair<Node, Font, Color, Node> {
     /**
      * 50% width.
      */
@@ -49,17 +50,19 @@ public class MetisFXFieldSetPanelPair
 
     /**
      * Constructor.
+     * @param pFactory the GUI Factory
      * @param pAttributes the attribute set
      * @param pFormatter the data formatter
      */
-    protected MetisFXFieldSetPanelPair(final MetisFXFieldAttributeSet pAttributes,
+    protected MetisFXFieldSetPanelPair(final TethysFXGuiFactory pFactory,
+                                       final MetisFXFieldAttributeSet pAttributes,
                                        final MetisDataFormatter pFormatter) {
         /* Initialise underlying set */
-        super(pAttributes, pFormatter);
+        super(pFactory, pAttributes, pFormatter);
 
         /* Declare the main panel and tab manager */
         declareMainPanel(new MetisFXFieldSetPanel(this));
-        declareTabManager(new TethysFXTabPaneManager());
+        declareTabManager(pFactory.newTabPane());
 
         /* Create the new node */
         theNode = new GridPane();

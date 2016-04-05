@@ -32,18 +32,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import net.sourceforge.jdatebutton.javafx.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.date.TethysDatePeriod;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRangeState;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButton.TethysFXScrollButtonManager;
 
 /**
  * Selection panel to select a standard DatePeriod from within a range of dates.
  */
 public class TethysFXDateRangeSelector
-        extends TethysDateRangeSelector<Node> {
+        extends TethysDateRangeSelector<Node, Node> {
     /**
      * Strut width.
      */
@@ -91,56 +88,23 @@ public class TethysFXDateRangeSelector
 
     /**
      * Constructor.
-     */
-    public TethysFXDateRangeSelector() {
-        /* Call standard constructor */
-        this(false);
-    }
-
-    /**
-     * Constructor.
+     * @param pFactory the GUI factory
      * @param pBaseIsStart is the baseDate the start of the period? (true/false)
      */
-    public TethysFXDateRangeSelector(final boolean pBaseIsStart) {
-        /* Call standard constructor */
-        this(new TethysDataFormatter(), pBaseIsStart);
-    }
-
-    /**
-     * Constructor.
-     * @param pFormatter the data formatter
-     * @param pBaseIsStart is the baseDate the start of the period? (true/false)
-     */
-    public TethysFXDateRangeSelector(final TethysDataFormatter pFormatter,
-                                     final boolean pBaseIsStart) {
+    protected TethysFXDateRangeSelector(final TethysFXGuiFactory pFactory,
+                                        final boolean pBaseIsStart) {
         /* Initialise the underlying class */
-        super(pFormatter, pBaseIsStart);
+        super(pFactory, pBaseIsStart);
 
         /* Create the Node */
         theNode = new HBox();
-
-        /* Create the period button */
-        TethysFXScrollButtonManager<TethysDatePeriod> myPeriodButton = new TethysFXScrollButtonManager<>();
-        myPeriodButton.getNode().setMaxHeight(Double.MAX_VALUE);
-        declarePeriodButton(myPeriodButton);
 
         /* Create the period box */
         Label myPeriodLabel = new Label(NLS_PERIOD);
         thePeriodBox = new HBox();
         thePeriodBox.setAlignment(Pos.CENTER);
         thePeriodBox.setSpacing(STRUT_WIDTH);
-        thePeriodBox.getChildren().addAll(myPeriodLabel, myPeriodButton.getNode());
-
-        /* Create the DateButtons */
-        TethysFXDateButtonManager myStartButton = new TethysFXDateButtonManager(pFormatter);
-        myStartButton.getNode().setMaxHeight(Double.MAX_VALUE);
-        declareStartButton(myStartButton);
-        TethysFXDateButtonManager myEndButton = new TethysFXDateButtonManager(pFormatter);
-        myEndButton.getNode().setMaxHeight(Double.MAX_VALUE);
-        declareEndButton(myEndButton);
-        TethysFXDateButtonManager myBaseButton = new TethysFXDateButtonManager(pFormatter);
-        myBaseButton.getNode().setMaxHeight(Double.MAX_VALUE);
-        declareBaseButton(myBaseButton);
+        thePeriodBox.getChildren().addAll(myPeriodLabel, getPeriodButton().getNode());
 
         /* Create the next button */
         theNextButton = new Button();
@@ -160,14 +124,14 @@ public class TethysFXDateRangeSelector
         theCustomBox.setSpacing(STRUT_WIDTH);
         Label myStartLabel = new Label(NLS_START);
         Label myEndLabel = new Label(NLS_END);
-        theCustomBox.getChildren().addAll(myStartLabel, myStartButton.getNode(), myEndLabel, myEndButton.getNode());
+        theCustomBox.getChildren().addAll(myStartLabel, getStartButton().getNode(), myEndLabel, getEndButton().getNode());
 
         /* Create the Standard HBox */
         theStandardBox = new HBox();
         theStandardBox.setAlignment(Pos.CENTER);
         theStandardBox.setSpacing(STRUT_WIDTH);
         theStandardLabel = new Label();
-        theStandardBox.getChildren().addAll(theStandardLabel, thePrevButton, myBaseButton.getNode(), theNextButton);
+        theStandardBox.getChildren().addAll(theStandardLabel, thePrevButton, getBaseButton().getNode(), theNextButton);
 
         /* Create a small region for the centre */
         theSpacer = new Region();

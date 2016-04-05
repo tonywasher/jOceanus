@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
 
 /**
@@ -73,6 +74,11 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Default row height.
      */
     protected static final int ROW_HEIGHT = 16;
+
+    /**
+     * The Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -126,8 +132,12 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public JDataTable() {
+    public JDataTable(final TethysSwingGuiFactory pFactory) {
+        /* Create the Id */
+        theId = pFactory.getNextId();
+
         /* Store parameters */
         theTable = new JTable();
         theRowHdrModel = new RowTableModel<>(this);
@@ -137,6 +147,11 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

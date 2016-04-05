@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
  * FX Tab Manager.
  */
 public class TethysFXTabPaneManager
-        extends TethysTabPaneManager<Node> {
+        extends TethysTabPaneManager<Node, Node> {
     /**
      * The TabPane.
      */
@@ -47,8 +47,12 @@ public class TethysFXTabPaneManager
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public TethysFXTabPaneManager() {
+    protected TethysFXTabPaneManager(final TethysFXGuiFactory pFactory) {
+        /* Initialise underlying class */
+        super(pFactory);
+
         /* Create the pane */
         theTabPane = new TabPane();
         theModel = theTabPane.getSelectionModel();
@@ -87,7 +91,7 @@ public class TethysFXTabPaneManager
      * TabItem class.
      */
     public static class TethysFXTabItem
-            extends TethysTabItem<Node> {
+            extends TethysTabItem<Node, Node> {
         /**
          * The Node.
          */

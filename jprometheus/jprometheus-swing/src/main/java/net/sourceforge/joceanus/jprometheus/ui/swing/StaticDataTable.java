@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Static Data Table.
@@ -169,6 +169,9 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
                            final PrometheusSwingErrorPanel pError,
                            final E pItemType,
                            final Class<L> pListClass) {
+        /* initialise the underlying class */
+        super(pUtilitySet.getGuiFactory());
+
         /* Record the passed details */
         theError = pError;
         theItemType = pItemType;
@@ -199,7 +202,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create new button */
-        theNewButton = new TethysSwingScrollButtonManager<>();
+        theNewButton = pUtilitySet.getGuiFactory().newScrollButton();
         PrometheusIcon.configureNewScrollButton(theNewButton);
 
         /* Create the panel */

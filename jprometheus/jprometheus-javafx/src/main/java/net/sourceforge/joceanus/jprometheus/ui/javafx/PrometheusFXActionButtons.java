@@ -32,14 +32,14 @@ import javafx.scene.layout.VBox;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton.TethysFXSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
  * Action buttons panel.
  * @author Tony Washer
  */
 public class PrometheusFXActionButtons
-        extends PrometheusActionButtons<Node> {
+        extends PrometheusActionButtons<Node, Node> {
     /**
      * The panel.
      */
@@ -47,29 +47,25 @@ public class PrometheusFXActionButtons
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pUpdateSet the update set
      */
-    public PrometheusFXActionButtons(final UpdateSet<?> pUpdateSet) {
-        this(pUpdateSet, true);
+    public PrometheusFXActionButtons(final TethysFXGuiFactory pFactory,
+                                     final UpdateSet<?> pUpdateSet) {
+        this(pFactory, pUpdateSet, true);
     }
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pUpdateSet the update set
      * @param pHorizontal is this horizontal panel?
      */
-    public PrometheusFXActionButtons(final UpdateSet<?> pUpdateSet,
+    public PrometheusFXActionButtons(final TethysFXGuiFactory pFactory,
+                                     final UpdateSet<?> pUpdateSet,
                                      final boolean pHorizontal) {
         /* Initialise base class */
-        super(pUpdateSet);
-
-        /* Create the buttons */
-        TethysFXSimpleIconButtonManager<Boolean> myCommitButton = new TethysFXSimpleIconButtonManager<>();
-        TethysFXSimpleIconButtonManager<Boolean> myUndoButton = new TethysFXSimpleIconButtonManager<>();
-        TethysFXSimpleIconButtonManager<Boolean> myResetButton = new TethysFXSimpleIconButtonManager<>();
-
-        /* declare the buttons */
-        declareButtons(myCommitButton, myUndoButton, myResetButton);
+        super(pFactory, pUpdateSet);
 
         /* Create the panel */
         Pane myPane = pHorizontal
@@ -81,9 +77,9 @@ public class PrometheusFXActionButtons
         if (!pHorizontal) {
             myChildren.add(new Label(NLS_TITLE));
         }
-        myChildren.add(myCommitButton.getNode());
-        myChildren.add(myUndoButton.getNode());
-        myChildren.add(myResetButton.getNode());
+        myChildren.add(getCommitButton().getNode());
+        myChildren.add(getUndoButton().getNode());
+        myChildren.add(getResetButton().getNode());
 
         /* Set the panel */
         thePanel = pHorizontal

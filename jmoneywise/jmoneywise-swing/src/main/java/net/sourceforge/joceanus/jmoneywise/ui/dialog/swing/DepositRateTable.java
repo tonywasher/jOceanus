@@ -59,6 +59,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Panel to display a list of DepositRates associated with a Deposit.
@@ -137,13 +138,18 @@ public class DepositRateTable
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected DepositRateTable(final MetisFieldManager pFieldMgr,
+    protected DepositRateTable(final TethysSwingGuiFactory pFactory,
+                               final MetisFieldManager pFieldMgr,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                final PrometheusSwingErrorPanel pError) {
+        /* initialise the underlying class */
+        super(pFactory);
+
         /* Record the passed details */
         theError = pError;
         theFieldMgr = pFieldMgr;

@@ -1,0 +1,114 @@
+/*******************************************************************************
+ * jTethys: Java Utilities
+ * Copyright 2012,2014 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
+package net.sourceforge.joceanus.jtethys.ui.javafx;
+
+import java.util.Iterator;
+
+import javafx.scene.Node;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+
+/**
+ * FX Box Pane Manager.
+ */
+public class TethysFXBoxPaneManager
+        extends TethysBoxPaneManager<Node, Node> {
+    /**
+     * The Pane.
+     */
+    private final Pane thePane;
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI factory
+     * @param pHorizontal horizontal box true/false
+     */
+    protected TethysFXBoxPaneManager(final TethysFXGuiFactory pFactory,
+                                     final boolean pHorizontal) {
+        super(pFactory);
+        thePane = pHorizontal
+                              ? new HBox(STRUT_SIZE)
+                              : new VBox(STRUT_SIZE);
+    }
+
+    @Override
+    public Node getNode() {
+        return thePane;
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePane.setVisible(pVisible);
+    }
+
+    @Override
+    public void addNode(final TethysNode<Node> pNode) {
+        super.addNode(pNode);
+        thePane.getChildren().add(pNode.getNode());
+    }
+
+    @Override
+    public void setChildVisible(final TethysNode<Node> pChild,
+                                final boolean pVisible) {
+        /* Handle nothing to do */
+        Node myChildNode = pChild.getNode();
+        boolean isVisible = myChildNode.isVisible();
+        if (isVisible == pVisible) {
+            return;
+        }
+
+        /* If the node is not visible */
+        if (pVisible) {
+            /* Count visible prior siblings */
+            int myId = pChild.getId();
+            int myIndex = 0;
+            Iterator<TethysNode<Node>> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                TethysNode<Node> myNode = myIterator.next();
+                Integer myNodeId = myNode.getId();
+
+                /* If we have found the node */
+                if (myNodeId == myId) {
+                    /* Set visible and add into the list */
+                    myChildNode.setVisible(true);
+                    thePane.getChildren().add(myIndex, myChildNode);
+                    break;
+                }
+
+                /* Increment count if node is visible */
+                if (myNode.getNode().isVisible()) {
+                    myIndex++;
+                }
+            }
+
+            /* else we must hide the node */
+        } else {
+            /* set invisible and remove from the list */
+            myChildNode.setVisible(false);
+            thePane.getChildren().remove(myChildNode);
+        }
+    }
+}

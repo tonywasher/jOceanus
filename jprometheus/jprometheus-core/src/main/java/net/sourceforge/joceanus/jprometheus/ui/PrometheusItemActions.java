@@ -26,20 +26,28 @@ import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions.Prometh
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Item Action buttons.
  * @param <N> the node type
+ * @param <I> the icon type
  */
-public abstract class PrometheusItemActions<N>
-        implements TethysEventProvider<PrometheusUIEvent> {
+public abstract class PrometheusItemActions<N, I>
+        implements TethysEventProvider<PrometheusUIEvent>, TethysNode<N> {
     /**
      * Strut width.
      */
     protected static final int STRUT_HEIGHT = PrometheusActionButtons.STRUT_LENGTH;
+
+    /**
+     * The Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -54,60 +62,38 @@ public abstract class PrometheusItemActions<N>
     /**
      * The GoTo button.
      */
-    private TethysScrollButtonManager<PrometheusGoToEvent, ?, ?> theGoToButton;
+    private TethysScrollButtonManager<PrometheusGoToEvent, N, I> theGoToButton;
 
     /**
      * The Edit button.
      */
-    private TethysSimpleIconButtonManager<Boolean, ?, ?> theEditButton;
+    private TethysButton<N, I> theEditButton;
 
     /**
      * The Delete button.
      */
-    private TethysSimpleIconButtonManager<Boolean, ?, ?> theDeleteButton;
+    private TethysButton<N, I> theDeleteButton;
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pParent the parent
      */
-    protected PrometheusItemActions(final PrometheusItemEditParent pParent) {
+    protected PrometheusItemActions(final TethysGuiFactory<N, I> pFactory,
+                                    final PrometheusItemEditParent pParent) {
         /* Record the parent */
         theParent = pParent;
 
+        /* Record the id */
+        theId = pFactory.getNextId();
+
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
-    }
 
-    @Override
-    public TethysEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
-    }
-
-    /**
-     * Obtain the node.
-     * @return the node
-     */
-    public abstract N getNode();
-
-    /**
-     * Set visibility.
-     * @param pVisible true/false
-     */
-    public abstract void setVisible(final boolean pVisible);
-
-    /**
-     * Declare buttons.
-     * @param pGoTo the goTo button
-     * @param pEdit the edit button
-     * @param pDelete the delete button
-     */
-    protected void declareButtons(final TethysScrollButtonManager<PrometheusGoToEvent, ?, ?> pGoTo,
-                                  final TethysSimpleIconButtonManager<Boolean, ?, ?> pEdit,
-                                  final TethysSimpleIconButtonManager<Boolean, ?, ?> pDelete) {
-        /* Record the buttons */
-        theGoToButton = pGoTo;
-        theEditButton = pEdit;
-        theDeleteButton = pDelete;
+        /* Create the buttons */
+        theGoToButton = pFactory.newScrollButton();
+        theEditButton = pFactory.newButton();
+        theDeleteButton = pFactory.newButton();
 
         /* Configure the buttons */
         PrometheusIcon.configureGoToScrollButton(theGoToButton);
@@ -123,6 +109,40 @@ public abstract class PrometheusItemActions<N>
 
         /* Buttons are initially disabled */
         setEnabled(false);
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
+    }
+
+    @Override
+    public TethysEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Obtain the goTo button.
+     * @return the button
+     */
+    protected TethysScrollButtonManager<PrometheusGoToEvent, N, I> getGoToButton() {
+        return theGoToButton;
+    }
+
+    /**
+     * Obtain the undo button.
+     * @return the button
+     */
+    protected TethysButton<N, I> getEditButton() {
+        return theEditButton;
+    }
+
+    /**
+     * Obtain the reset button.
+     * @return the button
+     */
+    protected TethysButton<N, I> getDeleteButton() {
+        return theDeleteButton;
     }
 
     /**

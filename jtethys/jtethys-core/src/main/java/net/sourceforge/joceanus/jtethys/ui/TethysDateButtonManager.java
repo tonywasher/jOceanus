@@ -22,15 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
-import java.time.LocalDate;
-
-import net.sourceforge.jdatebutton.JDateBaseButton;
-import net.sourceforge.jdatebutton.JDateBaseConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.date.TethysDateEvent;
+import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -48,36 +42,102 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * <dt>EDITFOCUSLOST
  * <dd>fired when the dialog is cancelled without a value being selected.
  * </dl>
- * @param <B> the button type
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public abstract class TethysDateButtonManager<B extends JDateBaseButton>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<B> {
+public abstract class TethysDateButtonManager<N, I>
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+    /**
+     * The id.
+     */
+    private final Integer theId;
+
     /**
      * The Event Manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
+     * The button.
+     */
+    private final TethysButton<N, I> theButton;
+
+    /**
+     * The date formatter.
+     */
+    private final TethysDateFormatter theFormatter;
+
+    /**
      * The Configuration.
      */
-    private final JDateBaseConfig<B> theConfig;
+    private final TethysDateConfig theConfig;
+
+    /**
+     * The Value.
+     */
+    private TethysDate theValue;
 
     /**
      * Constructor.
-     * @param pConfig the date configuration
-     * @param pFormatter the data formatter
+     * @param pFactory the GUI Factory
      */
-    protected TethysDateButtonManager(final JDateBaseConfig<B> pConfig,
-                                      final TethysDataFormatter pFormatter) {
-        /* Store parameters */
-        theConfig = pConfig;
+    protected TethysDateButtonManager(final TethysGuiFactory<N, I> pFactory) {
+        /* Create configuration */
+        theFormatter = pFactory.getDataFormatter().getDateFormatter();
+        theConfig = new TethysDateConfig(theFormatter);
 
-        /* Create event manager */
+        /* Create resources */
+        theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
+        theButton = pFactory.newButton();
+
+        /* Note that the button should be Text and Icon */
+        theButton.setTextAndIcon();
+
+        /* Add listener for button */
+        theButton.getEventRegistrar().addEventListener(e -> showDialog());
 
         /* Add listener for locale changes */
-        TethysDateFormatter myFormatter = pFormatter.getDateFormatter();
-        myFormatter.getEventRegistrar().addEventListener(new LocaleListener(myFormatter));
+        theFormatter.getEventRegistrar().addEventListener(e -> {
+            theConfig.setLocale(theFormatter.getLocale());
+            setButtonText();
+        });
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
+    }
+
+    @Override
+    public N getNode() {
+        return theButton.getNode();
+    }
+
+    /**
+     * Obtain button.
+     * @return the button
+     */
+    protected TethysButton<N, I> getButton() {
+        return theButton;
+    }
+
+    /**
+     * Obtain the configuration.
+     * @return the configuration
+     */
+    protected TethysDateConfig getConfig() {
+        return theConfig;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theButton.setEnabled(!pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theButton.setVisible(pVisible);
     }
 
     @Override
@@ -86,33 +146,16 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
     }
 
     /**
-     * Convert a localDate to a tethysDate.
-     * @param pDate the localDate
-     * @return the tethysDate
+     * show the dialog.
      */
-    private TethysDate localToTethysDate(final LocalDate pDate) {
-        return pDate == null
-                             ? null
-                             : new TethysDate(pDate, theConfig.getLocale());
-    }
-
-    /**
-     * Convert a tethysDate to a localDate.
-     * @param pDate the tethysDate
-     * @return the localDate
-     */
-    private static LocalDate tethysToLocalDate(final TethysDate pDate) {
-        return pDate == null
-                             ? null
-                             : pDate.getDate();
-    }
+    protected abstract void showDialog();
 
     /**
      * Obtain the selected Date.
      * @return the selected Date
      */
     public TethysDate getSelectedDate() {
-        return localToTethysDate(theConfig.getSelectedDate());
+        return theValue;
     }
 
     /**
@@ -120,7 +163,7 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
      * @return the earliest Date
      */
     public TethysDate getEarliestDate() {
-        return localToTethysDate(theConfig.getEarliestDate());
+        return theConfig.getEarliestDate();
     }
 
     /**
@@ -128,7 +171,7 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
      * @return the latest Date
      */
     public TethysDate getLatestDate() {
-        return localToTethysDate(theConfig.getLatestDate());
+        return theConfig.getLatestDate();
     }
 
     /**
@@ -136,7 +179,24 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
      * @param pDate the selected date
      */
     public void setSelectedDate(final TethysDate pDate) {
-        theConfig.setSelectedDate(tethysToLocalDate(pDate));
+        theValue = pDate;
+        theConfig.setSelectedDate(pDate);
+        setButtonText();
+    }
+
+    /**
+     * Set button text.
+     */
+    private void setButtonText() {
+        theButton.setText(theFormatter.formatDateDay(theValue));
+    }
+
+    /**
+     * Get button text.
+     * @return the text
+     */
+    public String getText() {
+        return theFormatter.formatDateDay(theValue);
     }
 
     /**
@@ -144,7 +204,7 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
      * @param pDate the earliest date
      */
     public void setEarliestDate(final TethysDate pDate) {
-        theConfig.setEarliestDate(tethysToLocalDate(pDate));
+        theConfig.setEarliestDate(pDate);
     }
 
     /**
@@ -152,7 +212,7 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
      * @param pDate the latest date
      */
     public void setLatestDate(final TethysDate pDate) {
-        theConfig.setLatestDate(tethysToLocalDate(pDate));
+        theConfig.setLatestDate(pDate);
     }
 
     /**
@@ -198,31 +258,24 @@ public abstract class TethysDateButtonManager<B extends JDateBaseButton>
      * handleNewValue.
      */
     protected void handleNewValue() {
-        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, getSelectedDate());
+        TethysDate myNewValue = theConfig.getSelectedDate();
+        if (valueChanged(myNewValue)) {
+            theValue = myNewValue;
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myNewValue);
+            setButtonText();
+        } else {
+            handleDialogClosed();
+        }
     }
 
     /**
-     * Locale Listener class.
+     * has value changed?
+     * @param pNew the new value
+     * @return true/false
      */
-    private final class LocaleListener
-            implements TethysEventListener<TethysDateEvent> {
-        /**
-         * The formatter.
-         */
-        private final TethysDateFormatter theFormatter;
-
-        /**
-         * Constructor.
-         * @param pFormatter the formatter
-         */
-        private LocaleListener(final TethysDateFormatter pFormatter) {
-            theFormatter = pFormatter;
-        }
-
-        @Override
-        public void handleEvent(final TethysEvent<TethysDateEvent> e) {
-            theConfig.setTheLocale(theFormatter.getLocale());
-            getNode().refreshText();
-        }
+    private boolean valueChanged(final TethysDate pNew) {
+        return theValue == null
+                                ? pNew != null
+                                : !theValue.equals(pNew);
     }
 }

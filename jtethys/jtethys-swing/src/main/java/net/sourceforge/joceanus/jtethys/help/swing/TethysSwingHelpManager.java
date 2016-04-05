@@ -26,6 +26,7 @@ import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -33,6 +34,7 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager;
@@ -41,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager;
  * Help Window class, responsible for displaying the help.
  */
 public class TethysSwingHelpManager
-        extends TethysHelpManager<JComponent> {
+        extends TethysHelpManager<JComponent, Icon> {
     /**
      * The frame.
      */
@@ -54,10 +56,11 @@ public class TethysSwingHelpManager
 
     /**
      * Constructor.
+     * @param pFactory the GUI Factory
      */
-    public TethysSwingHelpManager() {
+    public TethysSwingHelpManager(final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
-        super(new TethysSwingSplitTreeManager<>());
+        super(pFactory.newSplitTreeManager());
     }
 
     @Override

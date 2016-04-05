@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.swing.JFieldPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
 import net.sourceforge.joceanus.jthemis.git.data.GitPreferences;
 import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
@@ -85,6 +86,11 @@ public final class JSvnManager {
      * The Base version.
      */
     private static final String BASE_BRANCH = "v1.2.1";
+
+    /**
+     * The GUI Factory.
+     */
+    private final TethysSwingGuiFactory theGuiFactory;
 
     /**
      * The Frame.
@@ -206,6 +212,9 @@ public final class JSvnManager {
      * @throws OceanusException on error
      */
     protected JSvnManager() throws OceanusException {
+        /* Create the GuiFactory */
+        theGuiFactory = new TethysSwingGuiFactory();
+
         /* Create the preference manager */
         thePrefMgr = new MetisPreferenceManager();
         thePreferences = thePrefMgr.getPreferenceSet(SubVersionPreferences.class);
@@ -225,14 +234,14 @@ public final class JSvnManager {
         theFrame = new JFrame(JSvnManager.class.getSimpleName());
 
         /* Create the Tabbed Pane */
-        TethysSwingTabPaneManager myTabs = new TethysSwingTabPaneManager();
+        TethysSwingTabPaneManager myTabs = theGuiFactory.newTabPane();
 
         /* Create the panel */
         theStatusPanel = new JSvnStatusWindow(this);
 
         /* Create the Preferences Tab */
         MetisViewerEntry myMaintEntry = theViewerMgr.newEntry("Maintenance");
-        MetisPreferencesPanel myPrefPanel = new MetisPreferencesPanel(thePrefMgr, myFieldMgr, theViewerMgr, myMaintEntry);
+        MetisPreferencesPanel myPrefPanel = new MetisPreferencesPanel(theGuiFactory, thePrefMgr, myFieldMgr, theViewerMgr, myMaintEntry);
         myTabs.addTabItem("Status", theStatusPanel);
         myTabs.addTabItem("Preferences", myPrefPanel);
 
@@ -325,6 +334,14 @@ public final class JSvnManager {
      */
     protected MetisPreferenceManager getPreferenceMgr() {
         return thePrefMgr;
+    }
+
+    /**
+     * Obtain GUI factory.
+     * @return the factory
+     */
+    protected TethysSwingGuiFactory getGuiFactory() {
+        return theGuiFactory;
     }
 
     /**

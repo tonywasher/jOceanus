@@ -214,7 +214,7 @@ public class MainTab
         myTask = myTask.startTask("buildMain");
 
         /* Create the Tabbed Pane */
-        theTabs = new TethysSwingTabPaneManager();
+        theTabs = theView.getUtilitySet().getGuiFactory().newTabPane();
 
         /* Create the Report Tab */
         myTask.startTask("Report");
@@ -383,7 +383,7 @@ public class MainTab
      */
     private void gotoNamedTab(final String pTabName) {
         /* Look up item and select it */
-        TethysTabItem<?> myItem = theTabs.findItemByName(pTabName);
+        TethysTabItem<?, ?> myItem = theTabs.findItemByName(pTabName);
         if (myItem != null) {
             myItem.selectItem();
         }

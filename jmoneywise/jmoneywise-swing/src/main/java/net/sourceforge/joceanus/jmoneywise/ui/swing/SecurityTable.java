@@ -70,10 +70,10 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Security Table.
@@ -188,7 +188,7 @@ public class SecurityTable
     /**
      * The new button.
      */
-    private final TethysSwingScrollButtonManager<String> theNewButton;
+    private final TethysSwingButton theNewButton;
 
     /**
      * The Security dialog.
@@ -214,6 +214,9 @@ public class SecurityTable
     public SecurityTable(final SwingView pView,
                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
                          final PrometheusSwingErrorPanel pError) {
+        /* initialise the underlying class */
+        super(pView.getUtilitySet().getGuiFactory());
+
         /* Record the passed details */
         theView = pView;
         theError = pError;
@@ -247,8 +250,9 @@ public class SecurityTable
         theLockedCheckBox = new JCheckBox(PROMPT_CLOSED);
 
         /* Create new button */
-        theNewButton = new TethysSwingScrollButtonManager<>();
-        PrometheusIcon.configureNewScrollButton(theNewButton);
+        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        theNewButton = myFactory.newButton();
+        PrometheusIcon.configureNewIconButton(theNewButton);
 
         /* Create the filter panel */
         theFilterPanel = new TethysSwingEnablePanel();
@@ -265,7 +269,7 @@ public class SecurityTable
         thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Create an account panel */
-        theActiveAccount = new SecurityPanel(theView, theFieldMgr, theUpdateSet, theError);
+        theActiveAccount = new SecurityPanel(myFactory, theView, theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount.getNode(), BorderLayout.PAGE_END);
 
         /* Create the selection model */
@@ -277,7 +281,7 @@ public class SecurityTable
         theActiveAccount.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
 
         /* Listen to swing events */
-        theNewButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.addNewItem());
+        theNewButton.getEventRegistrar().addEventListener(e -> theModel.addNewItem());
         theLockedCheckBox.addItemListener(e -> setShowAll(theLockedCheckBox.isSelected()));
     }
 

@@ -26,18 +26,19 @@ import java.awt.Dimension;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Utility panel to handle actions on selected item.
  */
 public class PrometheusSwingItemEditActions
-        extends PrometheusItemEditActions<JComponent> {
+        extends PrometheusItemEditActions<JComponent, Icon> {
     /**
      * The panel.
      */
@@ -45,20 +46,13 @@ public class PrometheusSwingItemEditActions
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pParent the parent panel
      */
-    protected PrometheusSwingItemEditActions(final PrometheusItemEditParent pParent) {
+    protected PrometheusSwingItemEditActions(final TethysSwingGuiFactory pFactory,
+                                             final PrometheusItemEditParent pParent) {
         /* Initialise base class */
-        super(pParent);
-
-        /* Create the buttons */
-        TethysSwingSimpleIconButtonManager<Boolean> myCommitButton = new TethysSwingSimpleIconButtonManager<>();
-        TethysSwingSimpleIconButtonManager<Boolean> myUndoButton = new TethysSwingSimpleIconButtonManager<>();
-        TethysSwingSimpleIconButtonManager<Boolean> myResetButton = new TethysSwingSimpleIconButtonManager<>();
-        TethysSwingSimpleIconButtonManager<Boolean> myCancelButton = new TethysSwingSimpleIconButtonManager<>();
-
-        /* declare the buttons */
-        declareButtons(myCommitButton, myUndoButton, myResetButton, myCancelButton);
+        super(pFactory, pParent);
 
         /* Create the standard strut */
         Dimension myStrutSize = new Dimension(0, STRUT_HEIGHT);
@@ -68,13 +62,13 @@ public class PrometheusSwingItemEditActions
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
 
         /* Create the layout */
-        thePanel.add(myCommitButton.getNode());
+        thePanel.add(getCommitButton().getNode());
         thePanel.add(Box.createRigidArea(myStrutSize));
-        thePanel.add(myUndoButton.getNode());
+        thePanel.add(getUndoButton().getNode());
         thePanel.add(Box.createRigidArea(myStrutSize));
-        thePanel.add(myResetButton.getNode());
+        thePanel.add(getResetButton().getNode());
         thePanel.add(Box.createRigidArea(myStrutSize));
-        thePanel.add(myCancelButton.getNode());
+        thePanel.add(getCancelButton().getNode());
     }
 
     @Override

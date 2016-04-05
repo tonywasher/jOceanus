@@ -58,7 +58,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Preference maintenance panel.
@@ -105,6 +106,16 @@ public class MetisPreferencesPanel
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MetisPreferencesPanel.class);
+
+    /**
+     * The Gui Factory.
+     */
+    private final TethysSwingGuiFactory theGuiFactory;
+
+    /**
+     * The Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -168,15 +179,21 @@ public class MetisPreferencesPanel
 
     /**
      * Constructor.
+     * @param pFactory the GuiFactory
      * @param pPreferenceMgr the preference manager
      * @param pFieldMgr the field manager
      * @param pDataMgr the data manager
      * @param pSection the data section
      */
-    public MetisPreferencesPanel(final MetisPreferenceManager pPreferenceMgr,
+    public MetisPreferencesPanel(final TethysSwingGuiFactory pFactory,
+                                 final MetisPreferenceManager pPreferenceMgr,
                                  final MetisFieldManager pFieldMgr,
                                  final MetisViewerManager pDataMgr,
                                  final MetisViewerEntry pSection) {
+        /* Record the GUI Factory */
+        theGuiFactory = pFactory;
+        theId = theGuiFactory.getNextId();
+
         /* Access field manager and logger */
         theFieldMgr = pFieldMgr;
 
@@ -204,7 +221,7 @@ public class MetisPreferencesPanel
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_SET);
-        theSelectButton = new TethysSwingScrollButtonManager<>();
+        theSelectButton = pFactory.newScrollButton();
 
         /* Create the selection panel */
         JPanel mySelection = new TethysSwingEnablePanel();
@@ -218,7 +235,7 @@ public class MetisPreferencesPanel
         mySelection.add(Box.createHorizontalGlue());
 
         /* Create the properties panel */
-        theProperties = new TethysSwingCardPaneManager<>();
+        theProperties = pFactory.newCardPane();
 
         /* Add Listeners */
         theOKButton.addActionListener(e -> saveUpdates());
@@ -284,6 +301,11 @@ public class MetisPreferencesPanel
     }
 
     @Override
+    public Integer getId() {
+        return theId;
+    }
+
+    @Override
     public TethysEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
@@ -323,7 +345,7 @@ public class MetisPreferencesPanel
      */
     private void registerSet(final MetisPreferenceSet pSet) {
         /* Create the underlying panel */
-        MetisPreferenceSetPanel myPanel = new MetisPreferenceSetPanel(theFieldMgr, pSet);
+        MetisPreferenceSetPanel myPanel = new MetisPreferenceSetPanel(theGuiFactory, theFieldMgr, pSet);
 
         /* Add the panel */
         theProperties.addCard(myPanel.toString(), myPanel);

@@ -66,6 +66,11 @@ public class JSvnStatusWindow
     private final JPanel thePanel;
 
     /**
+     * Id.
+     */
+    private final Integer theId;
+
+    /**
      * SvnManager.
      */
     private final JSvnManager theManager;
@@ -117,6 +122,7 @@ public class JSvnStatusWindow
     protected JSvnStatusWindow(final JSvnManager pManager) {
         /* Store the manager */
         theManager = pManager;
+        theId = pManager.getGuiFactory().getNextId();
 
         /* Create text area and button */
         theText = new JTextArea();
@@ -147,6 +153,11 @@ public class JSvnStatusWindow
         thePanel.add(myScroll);
         thePanel.add(myButtonPanel);
         thePanel.setOpaque(true);
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
  * @param <T> the item type
  */
 public class TethysFXSplitTreeManager<T>
-        extends TethysSplitTreeManager<T, Node> {
+        extends TethysSplitTreeManager<T, Node, Node> {
     /**
      * Split pane.
      */
@@ -40,10 +40,11 @@ public class TethysFXSplitTreeManager<T>
 
     /**
      * Constructor.
+     * @param pFactory the GUI Factory
      */
-    public TethysFXSplitTreeManager() {
+    protected TethysFXSplitTreeManager(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
-        super(new TethysFXTreeManager<T>(), new TethysFXHTMLManager());
+        super(new TethysFXTreeManager<T>(), new TethysFXHTMLManager(pFactory));
 
         /* Create the split pane */
         theSplit = new SplitPane();

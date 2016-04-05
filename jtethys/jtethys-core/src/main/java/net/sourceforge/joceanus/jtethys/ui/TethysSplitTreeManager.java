@@ -31,8 +31,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Split Manager, hosting a Tree and HTML in a split window.
  * @param <T> the item type
  * @param <N> the Node type
+ * @param <I> the icon type
  */
-public abstract class TethysSplitTreeManager<T, N>
+public abstract class TethysSplitTreeManager<T, N, I>
         implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Event Manager.
@@ -47,7 +48,7 @@ public abstract class TethysSplitTreeManager<T, N>
     /**
      * The HTML Manager.
      */
-    private final TethysHTMLManager<N> theHTMLManager;
+    private final TethysHTMLManager<N, I> theHTMLManager;
 
     /**
      * Constructor.
@@ -55,7 +56,7 @@ public abstract class TethysSplitTreeManager<T, N>
      * @param pHTMLManager the html manager
      */
     protected TethysSplitTreeManager(final TethysTreeManager<T, N> pTreeManager,
-                                     final TethysHTMLManager<N> pHTMLManager) {
+                                     final TethysHTMLManager<N, I> pHTMLManager) {
         /* Store parameters */
         theTreeManager = pTreeManager;
         theHTMLManager = pHTMLManager;
@@ -82,7 +83,7 @@ public abstract class TethysSplitTreeManager<T, N>
      * Obtain the HTML Manager.
      * @return the HTML manager
      */
-    public TethysHTMLManager<N> getHTMLManager() {
+    public TethysHTMLManager<N, I> getHTMLManager() {
         return theHTMLManager;
     }
 

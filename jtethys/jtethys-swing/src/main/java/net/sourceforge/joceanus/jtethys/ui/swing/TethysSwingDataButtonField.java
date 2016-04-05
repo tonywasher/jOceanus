@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.Font;
 import java.awt.Rectangle;
 
 import javax.swing.Icon;
@@ -31,8 +30,6 @@ import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.jdatebutton.swing.JDateButton;
-import net.sourceforge.jdatebutton.swing.JDateDialog;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
@@ -40,14 +37,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingStateIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButton.TethysSwingListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingStateIconButtonManager;
 
 /**
  * Generic class for displaying and editing a button data field.
@@ -66,12 +59,13 @@ public final class TethysSwingDataButtonField {
      */
     public static class TethysSwingStateIconButtonField<T, S>
             extends TethysSwingIconButtonField<T>
-            implements TethysStateIconField<T, S> {
+            implements TethysStateIconField<T, S, JComponent, Icon> {
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          */
-        public TethysSwingStateIconButtonField() {
-            super(new TethysSwingStateIconButtonManager<>());
+        protected TethysSwingStateIconButtonField(final TethysSwingGuiFactory pFactory) {
+            super(pFactory, pFactory.newStateIconButton());
         }
 
         @SuppressWarnings("unchecked")
@@ -87,7 +81,7 @@ public final class TethysSwingDataButtonField {
      */
     public static class TethysSwingIconButtonField<T>
             extends TethysSwingDataTextField<T>
-            implements TethysIconField<T> {
+            implements TethysIconField<T, JComponent, Icon> {
         /**
          * The icon manager.
          */
@@ -100,18 +94,21 @@ public final class TethysSwingDataButtonField {
 
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          */
-        public TethysSwingIconButtonField() {
-            this(new TethysSwingSimpleIconButtonManager<>());
+        protected TethysSwingIconButtonField(final TethysSwingGuiFactory pFactory) {
+            this(pFactory, pFactory.newSimpleIconButton());
         }
 
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          * @param pManager the manager
          */
-        protected TethysSwingIconButtonField(final TethysSimpleIconButtonManager<T, JComponent, Icon> pManager) {
+        private TethysSwingIconButtonField(final TethysSwingGuiFactory pFactory,
+                                           final TethysSimpleIconButtonManager<T, JComponent, Icon> pManager) {
             /* Initialise underlying class */
-            super(pManager.getNode());
+            super(pFactory, pManager.getNode());
 
             /* Store the manager and button */
             theManager = pManager;
@@ -132,13 +129,6 @@ public final class TethysSwingDataButtonField {
         @Override
         public JButton getEditControl() {
             return (JButton) super.getEditControl();
-        }
-
-        @Override
-        public void setFont(final Font pFont) {
-            /* Apply font to the two nodes */
-            getLabel().setFont(pFont);
-            theButton.setFont(pFont);
         }
 
         @Override
@@ -163,7 +153,7 @@ public final class TethysSwingDataButtonField {
      */
     public static class TethysSwingScrollButtonField<T>
             extends TethysSwingDataTextField<T>
-            implements TethysScrollField<T> {
+            implements TethysScrollField<T, JComponent, Icon> {
         /**
          * The scroll manager.
          */
@@ -181,22 +171,25 @@ public final class TethysSwingDataButtonField {
 
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          */
-        public TethysSwingScrollButtonField() {
-            this(new TethysSwingScrollButtonManager<>());
+        protected TethysSwingScrollButtonField(final TethysSwingGuiFactory pFactory) {
+            this(pFactory, pFactory.newScrollButton());
         }
 
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          * @param pManager the manager
          */
-        private TethysSwingScrollButtonField(final TethysSwingScrollButtonManager<T> pManager) {
+        private TethysSwingScrollButtonField(final TethysSwingGuiFactory pFactory,
+                                             final TethysSwingScrollButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super(pManager.getNode());
+            super(pFactory, pManager.getNode());
 
             /* Store the manager and button */
             theManager = pManager;
-            theButton = pManager.getNode();
+            theButton = getEditControl();
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(this::handleEvent);
@@ -234,13 +227,6 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        public void setFont(final Font pFont) {
-            /* Apply font to the two nodes */
-            getLabel().setFont(pFont);
-            theButton.setFont(pFont);
-        }
-
-        @Override
         public void setValue(final T pValue) {
             /* Store the value */
             super.setValue(pValue);
@@ -273,16 +259,11 @@ public final class TethysSwingDataButtonField {
      */
     public static class TethysSwingDateButtonField
             extends TethysSwingDataTextField<TethysDate>
-            implements TethysDateField {
+            implements TethysDateField<JComponent, Icon> {
         /**
          * The date manager.
          */
         private final TethysSwingDateButtonManager theManager;
-
-        /**
-         * The button.
-         */
-        private final JDateButton theButton;
 
         /**
          * Are we editing a cell?
@@ -291,30 +272,24 @@ public final class TethysSwingDataButtonField {
 
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          */
-        public TethysSwingDateButtonField() {
-            this(new TethysDataFormatter());
+        protected TethysSwingDateButtonField(final TethysSwingGuiFactory pFactory) {
+            this(pFactory, pFactory.newDateButton());
         }
 
         /**
          * Constructor.
-         * @param pFormatter the data formatter
-         */
-        public TethysSwingDateButtonField(final TethysDataFormatter pFormatter) {
-            this(new TethysSwingDateButtonManager(pFormatter));
-        }
-
-        /**
-         * Constructor.
+         * @param pFactory the GUI factory
          * @param pManager the manager
          */
-        private TethysSwingDateButtonField(final TethysSwingDateButtonManager pManager) {
+        private TethysSwingDateButtonField(final TethysSwingGuiFactory pFactory,
+                                           final TethysSwingDateButtonManager pManager) {
             /* Initialise underlying class */
-            super((JDateButton) pManager.getNode());
+            super(pFactory, pManager.getNode());
 
             /* Store the manager and button */
             theManager = pManager;
-            theButton = getEditControl();
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(this::handleEvent);
@@ -347,15 +322,8 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        public JDateButton getEditControl() {
-            return (JDateButton) super.getEditControl();
-        }
-
-        @Override
-        public void setFont(final Font pFont) {
-            /* Apply font to the two nodes */
-            getLabel().setFont(pFont);
-            theButton.setFont(pFont);
+        public JButton getEditControl() {
+            return (JButton) super.getEditControl();
         }
 
         @Override
@@ -365,19 +333,16 @@ public final class TethysSwingDataButtonField {
 
             /* Declare value to the manager */
             theManager.setSelectedDate(pValue);
-            getLabel().setText(theManager.getNode().getText());
+            getLabel().setText(theManager.getText());
         }
 
         @Override
         public void startCellEditing(final Rectangle pCell) {
             isCellEditing = true;
-            JDateDialog myDialog = theManager.getDialog();
-
-            /* Position the dialog just below the cell */
-            myDialog.setLocation(pCell.x, pCell.y + pCell.height);
+            TethysSwingDateDialog myDialog = theManager.getDialog();
 
             /* Show the dialog */
-            myDialog.setVisible(true);
+            myDialog.showDialogUnderRectangle(pCell);
         }
 
         /**
@@ -397,16 +362,11 @@ public final class TethysSwingDataButtonField {
      */
     public static class TethysSwingListButtonField<T>
             extends TethysSwingDataTextField<TethysItemList<T>>
-            implements TethysListField<T> {
+            implements TethysListField<T, JComponent, Icon> {
         /**
          * The icon manager.
          */
         private final TethysSwingListButtonManager<T> theManager;
-
-        /**
-         * The button.
-         */
-        private final JButton theButton;
 
         /**
          * Are we editing a cell?
@@ -415,22 +375,24 @@ public final class TethysSwingDataButtonField {
 
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          */
-        public TethysSwingListButtonField() {
-            this(new TethysSwingListButtonManager<>());
+        protected TethysSwingListButtonField(final TethysSwingGuiFactory pFactory) {
+            this(pFactory, pFactory.newListButton());
         }
 
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          * @param pManager the manager
          */
-        private TethysSwingListButtonField(final TethysSwingListButtonManager<T> pManager) {
+        private TethysSwingListButtonField(final TethysSwingGuiFactory pFactory,
+                                           final TethysSwingListButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super(pManager.getNode());
+            super(pFactory, pManager.getNode());
 
             /* Store the manager and button */
             theManager = pManager;
-            theButton = getEditControl();
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(this::handleEvent);
@@ -462,13 +424,6 @@ public final class TethysSwingDataButtonField {
         @Override
         public JButton getEditControl() {
             return (JButton) super.getEditControl();
-        }
-
-        @Override
-        public void setFont(final Font pFont) {
-            /* Apply font to the two nodes */
-            getLabel().setFont(pFont);
-            theButton.setFont(pFont);
         }
 
         @Override

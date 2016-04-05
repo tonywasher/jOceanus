@@ -22,109 +22,72 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
+import java.awt.Insets;
 
-import javax.swing.SwingConstants;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 
-import net.sourceforge.jdatebutton.swing.JDateButton;
-import net.sourceforge.jdatebutton.swing.JDateConfig;
-import net.sourceforge.jdatebutton.swing.JDateDialog;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * JavaFX DateButton Manager.
  */
 public class TethysSwingDateButtonManager
-        extends TethysDateButtonManager<JDateButton> {
-    /**
-     * The button.
-     */
-    private final JDateButton theButton;
-
+        extends TethysDateButtonManager<JComponent, Icon> {
     /**
      * The dialog.
      */
-    private final JDateDialog theDialog;
+    private TethysSwingDateDialog theDialog;
 
     /**
      * Constructor.
+     * @param pFactory the GuiFactory
      */
-    public TethysSwingDateButtonManager() {
-        this(new TethysDataFormatter());
-    }
-
-    /**
-     * Constructor.
-     * @param pFormatter the data formatter
-     */
-    public TethysSwingDateButtonManager(final TethysDataFormatter pFormatter) {
-        this(new JDateConfig(pFormatter.getDateFormatter()), pFormatter);
-    }
-
-    /**
-     * Constructor.
-     * @param pConfig the configuration
-     * @param pFormatter the data formatter
-     */
-    public TethysSwingDateButtonManager(final JDateConfig pConfig,
-                                        final TethysDataFormatter pFormatter) {
+    protected TethysSwingDateButtonManager(final TethysSwingGuiFactory pFactory) {
         /* Initialise the super-class */
-        super(pConfig, pFormatter);
+        super(pFactory);
 
-        /* Create and declare the button */
-        theButton = new JDateButton(pConfig);
-        theButton.setHorizontalAlignment(SwingConstants.CENTER);
-        theButton.setVerticalAlignment(SwingConstants.CENTER);
-        theButton.setHorizontalTextPosition(SwingConstants.LEFT);
-
-        /* Catch the dialog opening/closing */
-        theDialog = theButton.getDialog();
-        theDialog.addWindowFocusListener(new WindowFocusListener() {
-            @Override
-            public void windowGainedFocus(final WindowEvent e) {
-                handleDialogRequest();
-            }
-
-            @Override
-            public void windowLostFocus(final WindowEvent e) {
-                handleDialogClosure();
-            }
-        });
-    }
-
-    @Override
-    public JDateButton getNode() {
-        return theButton;
+        /* Set down Arrow as the graphic */
+        getButton().setIcon(TethysSwingArrowIcon.DOWN);
+        ((JButton) getNode()).setMargin(new Insets(1, 1, 1, 1));
     }
 
     /**
      * Obtain the dialog.
      * @return the dialog
      */
-    public JDateDialog getDialog() {
+    public TethysSwingDateDialog getDialog() {
+        ensureDialog();
         return theDialog;
     }
 
-    @Override
-    public void setEnabled(final boolean pEnable) {
-        theButton.setEnabled(pEnable);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        theButton.setVisible(pVisible);
-    }
-
     /**
-     * Handle dialog closure.
+     * Make sure that the dialog is created.
      */
-    private void handleDialogClosure() {
-        if (theDialog.haveSelected()) {
-            handleNewValue();
-        } else {
-            handleDialogClosed();
+    private void ensureDialog() {
+        /* If the dialog does not exist */
+        if (theDialog == null) {
+            /* Create it */
+            theDialog = new TethysSwingDateDialog(getConfig());
+
+            /* Add listeners */
+            TethysEventRegistrar<TethysUIEvent> myRegistrar = theDialog.getEventRegistrar();
+            myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> handleDialogRequest());
+            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewValue());
+            myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleDialogClosed());
         }
+    }
+
+    @Override
+    protected void showDialog() {
+        /* Make sure that the dialog exists */
+        ensureDialog();
+
+        /* Show the dialog under the node */
+        theDialog.showDialogUnderNode(getNode());
     }
 }

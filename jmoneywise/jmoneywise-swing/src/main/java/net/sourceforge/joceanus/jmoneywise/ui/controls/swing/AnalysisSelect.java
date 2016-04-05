@@ -55,10 +55,12 @@ import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Selection panel for Analysis Statement.
@@ -124,6 +126,11 @@ public class AnalysisSelect
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
+     * Id.
+     */
+    private final Integer theId;
 
     /**
      * View.
@@ -293,10 +300,14 @@ public class AnalysisSelect
      */
     public AnalysisSelect(final View pView,
                           final AnalysisView pAnalysisView,
-                          final TethysSwingScrollButtonManager<?> pNewButton) {
+                          final TethysSwingButton pNewButton) {
         /* Access the analysis manager */
         theView = pView;
         theAnalysisView = pAnalysisView;
+
+        /* Determine the Id */
+        TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pView.getUtilitySet().getGuiFactory();
+        theId = myFactory.getNextId();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -312,37 +323,37 @@ public class AnalysisSelect
         theFilterButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the filter type button */
-        theFilterTypeButton = new TethysSwingScrollButtonManager<>();
+        theFilterTypeButton = myFactory.newScrollButton();
 
         /* Create the columnSet button */
         theColumnLabel = new JLabel(NLS_COLUMNS);
-        theColumnButton = new TethysSwingScrollButtonManager<>();
+        theColumnButton = myFactory.newScrollButton();
 
         /* Create the bucket button */
         theBucketLabel = new JLabel(NLS_BUCKET);
-        theBucketButton = new TethysSwingScrollButtonManager<>();
+        theBucketButton = myFactory.newScrollButton();
 
         /* Create the Range Select panel */
-        theRangeSelect = new TethysSwingDateRangeSelector();
+        theRangeSelect = myFactory.newDateRangeSelector();
         theRangeSelect.getNode().setBorder(BorderFactory.createTitledBorder(NLS_RANGETITLE));
 
         /* Create the panel map */
         theMap = new EnumMap<>(AnalysisType.class);
 
         /* Create the filter selection panels */
-        theDepositSelect = new DepositAnalysisSelect();
-        theCashSelect = new CashAnalysisSelect();
-        theLoanSelect = new LoanAnalysisSelect();
-        theSecuritySelect = new SecurityAnalysisSelect();
-        thePortfolioSelect = new PortfolioAnalysisSelect();
-        thePayeeSelect = new PayeeAnalysisSelect();
-        theCategorySelect = new TransCategoryAnalysisSelect();
-        theTaxBasisSelect = new TaxBasisAnalysisSelect();
-        theTagSelect = new TransactionTagSelect();
-        theAllSelect = new AllSelect();
+        theDepositSelect = new DepositAnalysisSelect(myFactory);
+        theCashSelect = new CashAnalysisSelect(myFactory);
+        theLoanSelect = new LoanAnalysisSelect(myFactory);
+        theSecuritySelect = new SecurityAnalysisSelect(myFactory);
+        thePortfolioSelect = new PortfolioAnalysisSelect(myFactory);
+        thePayeeSelect = new PayeeAnalysisSelect(myFactory);
+        theCategorySelect = new TransCategoryAnalysisSelect(myFactory);
+        theTaxBasisSelect = new TaxBasisAnalysisSelect(myFactory);
+        theTagSelect = new TransactionTagSelect(myFactory);
+        theAllSelect = new AllSelect(myFactory);
 
         /* Create the card panel */
-        theCardPanel = new TethysSwingCardPaneManager<>();
+        theCardPanel = myFactory.newCardPane();
 
         /* Create the filter detail panel */
         theFilterDetail = buildFilterDetail();
@@ -408,6 +419,11 @@ public class AnalysisSelect
     }
 
     @Override
+    public Integer getId() {
+        return theId;
+    }
+
+    @Override
     public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
@@ -462,7 +478,7 @@ public class AnalysisSelect
      * @param pNewButton the new button
      * @return the panel
      */
-    private JPanel buildControlPanel(final TethysSwingScrollButtonManager<?> pNewButton) {
+    private JPanel buildControlPanel(final TethysSwingButton pNewButton) {
         /* Create the control panel */
         JPanel myPanel = new TethysSwingEnablePanel();
 

@@ -68,10 +68,10 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Options Table.
@@ -171,7 +171,7 @@ public class StockOptionTable
     /**
      * The new button.
      */
-    private final TethysSwingScrollButtonManager<String> theNewButton;
+    private final TethysSwingButton theNewButton;
 
     /**
      * The Option dialog.
@@ -197,6 +197,9 @@ public class StockOptionTable
     public StockOptionTable(final SwingView pView,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final PrometheusSwingErrorPanel pError) {
+        /* initialise the underlying class */
+        super(pView.getUtilitySet().getGuiFactory());
+
         /* Record the passed details */
         theView = pView;
         theError = pError;
@@ -230,8 +233,9 @@ public class StockOptionTable
         theLockedCheckBox = new JCheckBox(PROMPT_CLOSED);
 
         /* Create new button */
-        theNewButton = new TethysSwingScrollButtonManager<>();
-        PrometheusIcon.configureNewScrollButton(theNewButton);
+        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        theNewButton = myFactory.newButton();
+        PrometheusIcon.configureNewIconButton(theNewButton);
 
         /* Create the filter panel */
         theFilterPanel = new TethysSwingEnablePanel();
@@ -248,7 +252,7 @@ public class StockOptionTable
         thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Create an account panel */
-        theActiveAccount = new StockOptionPanel(theFieldMgr, theUpdateSet, theError);
+        theActiveAccount = new StockOptionPanel(myFactory, theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount.getNode(), BorderLayout.PAGE_END);
 
         /* Create the selection model */
@@ -260,7 +264,7 @@ public class StockOptionTable
         theActiveAccount.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
 
         /* Listen to swing events */
-        theNewButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.addNewItem());
+        theNewButton.getEventRegistrar().addEventListener(e -> theModel.addNewItem());
         theLockedCheckBox.addItemListener(e -> setShowAll(theLockedCheckBox.isSelected()));
     }
 

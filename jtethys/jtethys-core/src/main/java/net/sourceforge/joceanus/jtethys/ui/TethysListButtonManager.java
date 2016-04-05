@@ -44,47 +44,20 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * <dd>fired when the dialog is cancelled without a value being selected.
  * </dl>
  * @param <T> the object type
- * @param <B> the button type
+ * @param <N> the node type
  * @param <I> the Icon type
  */
-public abstract class TethysListButtonManager<T, B, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<B> {
+public abstract class TethysListButtonManager<T, N, I>
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
-     * List Button.
-     * @param <B> the button type
-     * @param <I> the Icon type
+     * The GUI Manager.
      */
-    public interface TethysListButton<B, I> {
-        /**
-         * Set the button text.
-         * @param pText the button text to set.
-         */
-        void setButtonText(final String pText);
+    private final TethysGuiFactory<N, I> theGuiFactory;
 
-        /**
-         * Set the button icon.
-         * @param pIcon the button icon to set.
-         */
-        void setButtonIcon(final I pIcon);
-
-        /**
-         * Set the button toolTip.
-         * @param pToolTip the toolTip to set.
-         */
-        void setButtonToolTip(final String pToolTip);
-
-        /**
-         * Obtain the node.
-         * @return the node.
-         */
-        B getButton();
-
-        /**
-         * Set Enabled.
-         * @param pEnabled the enabled flag
-         */
-        void setEnabled(final boolean pEnabled);
-    }
+    /**
+     * The id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -94,7 +67,7 @@ public abstract class TethysListButtonManager<T, B, I>
     /**
      * The Button.
      */
-    private TethysListButton<B, I> theButton;
+    private final TethysButton<N, I> theButton;
 
     /**
      * The ScrollListMenu.
@@ -113,22 +86,37 @@ public abstract class TethysListButtonManager<T, B, I>
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    protected TethysListButtonManager() {
-        /* Create event manager */
+    protected TethysListButtonManager(final TethysGuiFactory<N, I> pFactory) {
+        /* Allocate resources */
+        theId = pFactory.getNextId();
+        theGuiFactory = pFactory;
         theEventManager = new TethysEventManager<>();
+        theButton = pFactory.newButton();
+
+        /* Note that the button should be Text and Icon */
+        theButton.setTextAndIcon();
+
+        /* Set action handler */
+        theButton.getEventRegistrar().addEventListener(e -> handleMenuRequest());
     }
 
     @Override
-    public B getNode() {
-        return theButton.getButton();
+    public Integer getId() {
+        return theId;
+    }
+
+    @Override
+    public N getNode() {
+        return theButton.getNode();
     }
 
     /**
      * Obtain button.
      * @return the button
      */
-    public TethysListButton<B, I> getButton() {
+    protected TethysButton<N, I> getButton() {
         return theButton;
     }
 
@@ -137,6 +125,7 @@ public abstract class TethysListButtonManager<T, B, I>
      * @return the menu
      */
     public TethysScrollMenu<T, I> getMenu() {
+        ensureMenu();
         return theMenu;
     }
 
@@ -146,22 +135,32 @@ public abstract class TethysListButtonManager<T, B, I>
     }
 
     /**
-     * Declare button.
-     * @param pButton the button
+     * Set Text.
+     * @param pText the text
      */
-    protected void declareButton(final TethysListButton<B, I> pButton) {
-        theButton = pButton;
+    public void setText(final String pText) {
+        theButton.setText(pText);
     }
 
     /**
-     * Declare menu.
-     * @param pMenu the menu
+     * Make sure that the menu is created.
      */
-    protected void declareMenu(final TethysScrollMenu<T, I> pMenu) {
-        /* Store the menu */
-        theMenu = pMenu;
-        theMenu.setCloseOnToggle(false);
+    private void ensureMenu() {
+        /* If the menu does not exist */
+        if (theMenu == null) {
+            /* Create it */
+            theMenu = theGuiFactory.newContextMenu();
+            theMenu.setCloseOnToggle(false);
+
+            /* Register listeners */
+            registerListeners();
+        }
     }
+
+    /**
+     * Register listeners.
+     */
+    protected abstract void registerListeners();
 
     /**
      * Set the value.
@@ -185,6 +184,11 @@ public abstract class TethysListButtonManager<T, B, I>
         theButton.setEnabled(pEnabled);
     }
 
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theButton.setVisible(pVisible);
+    }
+
     /**
      * handleMenuRequest.
      */
@@ -206,6 +210,9 @@ public abstract class TethysListButtonManager<T, B, I>
      * @return is menu display-able?
      */
     public boolean buildMenu() {
+        /* Ensure the menu */
+        ensureMenu();
+
         /* Clear any existing elements from the menu */
         theMenu.removeAllItems();
 
@@ -281,7 +288,7 @@ public abstract class TethysListButtonManager<T, B, I>
      * Update the button text.
      */
     private void updateText() {
-        theButton.setButtonText(getText());
+        theButton.setText(getText());
     }
 
     /**

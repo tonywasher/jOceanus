@@ -56,6 +56,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Panel to display a list of Vests associated with a StockOption.
@@ -129,13 +130,18 @@ public class StockOptionVestTable
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected StockOptionVestTable(final MetisFieldManager pFieldMgr,
+    protected StockOptionVestTable(final TethysSwingGuiFactory pFactory,
+                                   final MetisFieldManager pFieldMgr,
                                    final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                    final PrometheusSwingErrorPanel pError) {
+        /* initialise the underlying class */
+        super(pFactory);
+
         /* Record the passed details */
         theError = pError;
         theFieldMgr = pFieldMgr;

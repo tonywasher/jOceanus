@@ -33,7 +33,7 @@ import javax.swing.JButton;
 /**
  * Simple button that displays icon.
  * @param <T> the object type
- * @deprecated as of 1.5.0 use {@link TethysSwingIconButton}
+ * @deprecated as of 1.5.0 use {@link TethysSwingIconButtonManager}
  */
 @Deprecated
 public class JIconButton<T>

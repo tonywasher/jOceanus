@@ -49,7 +49,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
@@ -71,17 +70,15 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXShortTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXUnitsTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButton.TethysFXStateIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXListButton.TethysFXListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButton.TethysFXScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager.TethysFXStateIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableColumn;
 
 /**
  * TableCell implementations built on DataEditFields.
- * @param <I> the column identity
+ * @param <C> the column identity
  * @param <R> the table row type
  */
-public class TethysFXTableCellFactory<I, R>
+public class TethysFXTableCellFactory<C, R>
         implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Event Manager.
@@ -89,24 +86,17 @@ public class TethysFXTableCellFactory<I, R>
     private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
-     * The Data formatter.
+     * The GUI Factory.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysFXGuiFactory theGuiFactory;
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public TethysFXTableCellFactory() {
-        this(new TethysDataFormatter());
-    }
-
-    /**
-     * Constructor.
-     * @param pFormatter the data formatter
-     */
-    public TethysFXTableCellFactory(final TethysDataFormatter pFormatter) {
+    protected TethysFXTableCellFactory(final TethysFXGuiFactory pFactory) {
         theEventManager = new TethysEventManager<>();
-        theFormatter = pFormatter;
+        theGuiFactory = pFactory;
     }
 
     @Override
@@ -119,8 +109,8 @@ public class TethysFXTableCellFactory<I, R>
      * @param pColumn the column
      * @return the string cell factory
      */
-    protected Callback<TableColumn<R, String>, TableCell<R, String>> stringCellFactory(final TethysFXTableColumn<I, R, String> pColumn) {
-        return e -> listenToCell(new TethysFXTableStringCell<>(pColumn));
+    protected Callback<TableColumn<R, String>, TableCell<R, String>> stringCellFactory(final TethysFXTableColumn<C, R, String> pColumn) {
+        return e -> listenToCell(new TethysFXTableStringCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -128,8 +118,8 @@ public class TethysFXTableCellFactory<I, R>
      * @param pColumn the column
      * @return the short cell factory
      */
-    protected Callback<TableColumn<R, Short>, TableCell<R, Short>> shortCellFactory(final TethysFXTableColumn<I, R, Short> pColumn) {
-        return e -> listenToCell(new TethysFXTableShortCell<>(pColumn, theFormatter));
+    protected Callback<TableColumn<R, Short>, TableCell<R, Short>> shortCellFactory(final TethysFXTableColumn<C, R, Short> pColumn) {
+        return e -> listenToCell(new TethysFXTableShortCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -137,8 +127,8 @@ public class TethysFXTableCellFactory<I, R>
      * @param pColumn the column
      * @return the integer cell factory
      */
-    protected Callback<TableColumn<R, Integer>, TableCell<R, Integer>> integerCellFactory(final TethysFXTableColumn<I, R, Integer> pColumn) {
-        return e -> listenToCell(new TethysFXTableIntegerCell<>(pColumn, theFormatter));
+    protected Callback<TableColumn<R, Integer>, TableCell<R, Integer>> integerCellFactory(final TethysFXTableColumn<C, R, Integer> pColumn) {
+        return e -> listenToCell(new TethysFXTableIntegerCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -146,8 +136,8 @@ public class TethysFXTableCellFactory<I, R>
      * @param pColumn the column
      * @return the long cell factory
      */
-    protected Callback<TableColumn<R, Long>, TableCell<R, Long>> longCellFactory(final TethysFXTableColumn<I, R, Long> pColumn) {
-        return e -> listenToCell(new TethysFXTableLongCell<>(pColumn, theFormatter));
+    protected Callback<TableColumn<R, Long>, TableCell<R, Long>> longCellFactory(final TethysFXTableColumn<C, R, Long> pColumn) {
+        return e -> listenToCell(new TethysFXTableLongCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -155,8 +145,8 @@ public class TethysFXTableCellFactory<I, R>
      * @param pColumn the column
      * @return the money cell factory
      */
-    protected Callback<TableColumn<R, TethysMoney>, TableCell<R, TethysMoney>> moneyCellFactory(final TethysFXTableColumn<I, R, TethysMoney> pColumn) {
-        return e -> listenToCell(new TethysFXTableMoneyCell<>(pColumn, theFormatter));
+    protected Callback<TableColumn<R, TethysMoney>, TableCell<R, TethysMoney>> moneyCellFactory(final TethysFXTableColumn<C, R, TethysMoney> pColumn) {
+        return e -> listenToCell(new TethysFXTableMoneyCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -164,8 +154,8 @@ public class TethysFXTableCellFactory<I, R>
      * @param pColumn the column
      * @return the price cell factory
      */
-    protected Callback<TableColumn<R, TethysPrice>, TableCell<R, TethysPrice>> priceCellFactory(final TethysFXTableColumn<I, R, TethysPrice> pColumn) {
-        return e -> listenToCell(new TethysFXTablePriceCell<>(pColumn, theFormatter));
+    protected Callback<TableColumn<R, TethysPrice>, TableCell<R, TethysPrice>> priceCellFactory(final TethysFXTableColumn<C, R, TethysPrice> pColumn) {
+        return e -> listenToCell(new TethysFXTablePriceCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -173,8 +163,8 @@ public class TethysFXTableCellFactory<I, R>
      * @param pColumn the column
      * @return the rate cell factory
      */
-    protected Callback<TableColumn<R, TethysRate>, TableCell<R, TethysRate>> rateCellFactory(final TethysFXTableColumn<I, R, TethysRate> pColumn) {
-        return e -> listenToCell(new TethysFXTableRateCell<>(pColumn, theFormatter));
+    protected Callback<TableColumn<R, TethysRate>, TableCell<R, TethysRate>> rateCellFactory(final TethysFXTableColumn<C, R, TethysRate> pColumn) {
+        return e -> listenToCell(new TethysFXTableRateCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -182,8 +172,8 @@ public class TethysFXTableCellFactory<I, R>
      * @param pColumn the column
      * @return the units cell factory
      */
-    protected Callback<TableColumn<R, TethysUnits>, TableCell<R, TethysUnits>> unitsCellFactory(final TethysFXTableColumn<I, R, TethysUnits> pColumn) {
-        return e -> listenToCell(new TethysFXTableUnitsCell<>(pColumn, theFormatter));
+    protected Callback<TableColumn<R, TethysUnits>, TableCell<R, TethysUnits>> unitsCellFactory(final TethysFXTableColumn<C, R, TethysUnits> pColumn) {
+        return e -> listenToCell(new TethysFXTableUnitsCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -191,8 +181,8 @@ public class TethysFXTableCellFactory<I, R>
      * @param pColumn the column
      * @return the dilution cell factory
      */
-    protected Callback<TableColumn<R, TethysDilution>, TableCell<R, TethysDilution>> dilutionCellFactory(final TethysFXTableColumn<I, R, TethysDilution> pColumn) {
-        return e -> listenToCell(new TethysFXTableDilutionCell<>(pColumn, theFormatter));
+    protected Callback<TableColumn<R, TethysDilution>, TableCell<R, TethysDilution>> dilutionCellFactory(final TethysFXTableColumn<C, R, TethysDilution> pColumn) {
+        return e -> listenToCell(new TethysFXTableDilutionCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -200,8 +190,8 @@ public class TethysFXTableCellFactory<I, R>
      * @param pColumn the column
      * @return the ratio cell factory
      */
-    protected Callback<TableColumn<R, TethysRatio>, TableCell<R, TethysRatio>> ratioCellFactory(final TethysFXTableColumn<I, R, TethysRatio> pColumn) {
-        return e -> listenToCell(new TethysFXTableRatioCell<>(pColumn, theFormatter));
+    protected Callback<TableColumn<R, TethysRatio>, TableCell<R, TethysRatio>> ratioCellFactory(final TethysFXTableColumn<C, R, TethysRatio> pColumn) {
+        return e -> listenToCell(new TethysFXTableRatioCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -209,31 +199,32 @@ public class TethysFXTableCellFactory<I, R>
      * @param pColumn the column
      * @return the dilutedPrice cell factory
      */
-    protected Callback<TableColumn<R, TethysDilutedPrice>, TableCell<R, TethysDilutedPrice>> dilutedPriceCellFactory(final TethysFXTableColumn<I, R, TethysDilutedPrice> pColumn) {
-        return e -> listenToCell(new TethysFXTableDilutedPriceCell<>(pColumn, theFormatter));
+    protected Callback<TableColumn<R, TethysDilutedPrice>, TableCell<R, TethysDilutedPrice>> dilutedPriceCellFactory(final TethysFXTableColumn<C, R, TethysDilutedPrice> pColumn) {
+        return e -> listenToCell(new TethysFXTableDilutedPriceCell<>(pColumn, theGuiFactory));
     }
 
     /**
      * Obtain Scroll Cell Factory.
-     * @param <C> the column type
+     * @param <T> the column type
      * @param pColumn the column
      * @param pClass the class of the item
      * @return the scroll cell factory
      */
-    protected <C> Callback<TableColumn<R, C>, TableCell<R, C>> scrollCellFactory(final TethysFXTableColumn<I, R, C> pColumn,
-                                                                                 final Class<C> pClass) {
-        return e -> listenToCell(new TethysFXTableScrollCell<>(pColumn, pClass));
+    protected <T> Callback<TableColumn<R, T>, TableCell<R, T>> scrollCellFactory(final TethysFXTableColumn<C, R, T> pColumn,
+                                                                                 final Class<T> pClass) {
+        return e -> listenToCell(new TethysFXTableScrollCell<>(pColumn, theGuiFactory, pClass));
     }
 
     /**
      * Obtain List Cell Factory.
-     * @param <C> the column type
+     * @param <T> the column type
      * @param pColumn the column
      * @param pClass the class of the item
      * @return the scroll cell factory
      */
-    protected <C> Callback<TableColumn<R, TethysItemList<C>>, TableCell<R, TethysItemList<C>>> listCellFactory(final TethysFXTableColumn<I, R, TethysItemList<C>> pColumn, final Class<C> pClass) {
-        return e -> listenToCell(new TethysFXTableListCell<>(pColumn, pClass));
+    protected <T> Callback<TableColumn<R, TethysItemList<T>>, TableCell<R, TethysItemList<T>>> listCellFactory(final TethysFXTableColumn<C, R, TethysItemList<T>> pColumn,
+                                                                                                               final Class<T> pClass) {
+        return e -> listenToCell(new TethysFXTableListCell<>(pColumn, theGuiFactory, pClass));
     }
 
     /**
@@ -241,41 +232,41 @@ public class TethysFXTableCellFactory<I, R>
      * @param pColumn the column
      * @return the date cell factory
      */
-    protected Callback<TableColumn<R, TethysDate>, TableCell<R, TethysDate>> dateCellFactory(final TethysFXTableColumn<I, R, TethysDate> pColumn) {
-        return e -> listenToCell(new TethysFXTableDateCell<>(pColumn, theFormatter));
+    protected Callback<TableColumn<R, TethysDate>, TableCell<R, TethysDate>> dateCellFactory(final TethysFXTableColumn<C, R, TethysDate> pColumn) {
+        return e -> listenToCell(new TethysFXTableDateCell<>(pColumn, theGuiFactory));
     }
 
     /**
      * Obtain Icon Cell Factory.
-     * @param <C> the column type
+     * @param <T> the column type
      * @param pColumn the column
      * @param pClass the class of the item
      * @return the icon cell factory
      */
-    protected <C> Callback<TableColumn<R, C>, TableCell<R, C>> iconCellFactory(final TethysFXTableColumn<I, R, C> pColumn,
-                                                                               final Class<C> pClass) {
-        return e -> listenToCell(new TethysFXTableIconCell<>(pColumn, pClass));
+    protected <T> Callback<TableColumn<R, T>, TableCell<R, T>> iconCellFactory(final TethysFXTableColumn<C, R, T> pColumn,
+                                                                               final Class<T> pClass) {
+        return e -> listenToCell(new TethysFXTableIconCell<>(pColumn, theGuiFactory, pClass));
     }
 
     /**
      * Obtain State Icon Cell Factory.
-     * @param <C> the column type
+     * @param <T> the column type
      * @param pColumn the column
      * @param pClass the class of the item
      * @return the icon cell factory
      */
-    protected <C> Callback<TableColumn<R, C>, TableCell<R, C>> stateIconCellFactory(final TethysFXTableColumn<I, R, C> pColumn,
-                                                                                    final Class<C> pClass) {
-        return e -> listenToCell(new TethysFXTableStateIconCell<>(pColumn, pClass));
+    protected <T> Callback<TableColumn<R, T>, TableCell<R, T>> stateIconCellFactory(final TethysFXTableColumn<C, R, T> pColumn,
+                                                                                    final Class<T> pClass) {
+        return e -> listenToCell(new TethysFXTableStateIconCell<>(pColumn, theGuiFactory, pClass));
     }
 
     /**
      * Listen to cell.
-     * @param <C> the column type
+     * @param <T> the column type
      * @param pCell the cell
      * @return the cell
      */
-    private <C> TethysFXTableCell<I, R, C> listenToCell(final TethysFXTableCell<I, R, C> pCell) {
+    private <T> TethysFXTableCell<C, R, T> listenToCell(final TethysFXTableCell<C, R, T> pCell) {
         theEventManager.fireEvent(TethysUIEvent.CELLCREATE, pCell);
         pCell.getEventRegistrar().addEventListener(theEventManager::cascadeEvent);
         return pCell;
@@ -283,27 +274,27 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * DataCell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
-     * @param <C> the column item class
+     * @param <T> the column item class
      */
-    public abstract static class TethysFXTableCell<I, R, C>
-            extends TableCell<R, C>
-            implements TethysEventProvider<TethysUIEvent>, TethysTableCell<I, R, C> {
+    public abstract static class TethysFXTableCell<C, R, T>
+            extends TableCell<R, T>
+            implements TethysEventProvider<TethysUIEvent>, TethysTableCell<T, C, R, Node, Node> {
         /**
          * The Column.
          */
-        private final TethysFXTableColumn<I, R, C> theColumn;
+        private final TethysFXTableColumn<C, R, T> theColumn;
 
         /**
          * The Control field.
          */
-        private final TethysFXDataTextField<C> theControl;
+        private final TethysFXDataTextField<T> theControl;
 
         /**
          * The Data class.
          */
-        private final Class<C> theClass;
+        private final Class<T> theClass;
 
         /**
          * The Event Manager.
@@ -313,15 +304,15 @@ public class TethysFXTableCellFactory<I, R>
         /**
          * The new value.
          */
-        private C theNewValue;
+        private T theNewValue;
 
         /**
          * Constructor.
          * @param pColumn the column
          * @param pField the edit field
          */
-        protected TethysFXTableCell(final TethysFXTableColumn<I, R, C> pColumn,
-                                    final TethysFXDataTextField<C> pField) {
+        protected TethysFXTableCell(final TethysFXTableColumn<C, R, T> pColumn,
+                                    final TethysFXDataTextField<T> pField) {
             /* Record the parameters */
             this(pColumn, pField, null);
         }
@@ -332,9 +323,9 @@ public class TethysFXTableCellFactory<I, R>
          * @param pControl the edit control
          * @param pClass the field class
          */
-        protected TethysFXTableCell(final TethysFXTableColumn<I, R, C> pColumn,
-                                    final TethysFXDataTextField<C> pControl,
-                                    final Class<C> pClass) {
+        protected TethysFXTableCell(final TethysFXTableColumn<C, R, T> pColumn,
+                                    final TethysFXDataTextField<T> pControl,
+                                    final Class<T> pClass) {
             /* Record the parameters */
             theColumn = pColumn;
             theControl = pControl;
@@ -359,17 +350,17 @@ public class TethysFXTableCellFactory<I, R>
         }
 
         @Override
-        public TethysFXTableColumn<I, R, C> getColumn() {
+        public TethysFXTableColumn<C, R, T> getColumn() {
             return theColumn;
         }
 
         @Override
-        public I getColumnId() {
+        public C getColumnId() {
             return theColumn.getId();
         }
 
         @Override
-        public TethysFXDataTextField<C> getControl() {
+        public TethysFXDataTextField<T> getControl() {
             return theControl;
         }
 
@@ -379,7 +370,7 @@ public class TethysFXTableCellFactory<I, R>
         }
 
         @Override
-        public C getNewValue() {
+        public T getNewValue() {
             return theNewValue;
         }
 
@@ -417,7 +408,7 @@ public class TethysFXTableCellFactory<I, R>
         }
 
         @Override
-        public void updateItem(final C pValue,
+        public void updateItem(final T pValue,
                                final boolean pEmpty) {
             /* Update correctly */
             super.updateItem(pValue, pEmpty);
@@ -447,13 +438,13 @@ public class TethysFXTableCellFactory<I, R>
          * @param pNewValue the new value
          * @return continue edit true/false
          */
-        private boolean preCommitHook(final C pNewValue) {
+        private boolean preCommitHook(final T pNewValue) {
             theNewValue = pNewValue;
             return theEventManager.fireEvent(TethysUIEvent.CELLPRECOMMIT, this);
         }
 
         @Override
-        public void commitEdit(final C pNewValue) {
+        public void commitEdit(final T pNewValue) {
             /* Perform preCommitCheck */
             if (preCommitHook(pNewValue)) {
                 /* pass on the call */
@@ -485,21 +476,29 @@ public class TethysFXTableCellFactory<I, R>
         private void handleCancel() {
             cancelEdit();
         }
+
+        @Override
+        public void repaintColumnCell(final C pId) {
+            TethysFXTableManager<C, R> myTable = theColumn.getTable();
+            myTable.repaintColumn(pId);
+        }
     }
 
     /**
      * String Cell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableStringCell<I, R>
-            extends TethysFXTableCell<I, R, String> {
+    public static class TethysFXTableStringCell<C, R>
+            extends TethysFXTableCell<C, R, String> {
         /**
          * Constructor.
          * @param pColumn the column
+         * @param pFactory the GUI Factory
          */
-        protected TethysFXTableStringCell(final TethysFXTableColumn<I, R, String> pColumn) {
-            super(pColumn, new TethysFXStringTextField(), String.class);
+        protected TethysFXTableStringCell(final TethysFXTableColumn<C, R, String> pColumn,
+                                          final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newStringField(), String.class);
         }
 
         @Override
@@ -510,19 +509,19 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * Short Cell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableShortCell<I, R>
-            extends TethysFXTableCell<I, R, Short> {
+    public static class TethysFXTableShortCell<C, R>
+            extends TethysFXTableCell<C, R, Short> {
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pFormatter the data formatter
+         * @param pFactory the GUI Factory
          */
-        protected TethysFXTableShortCell(final TethysFXTableColumn<I, R, Short> pColumn,
-                                         final TethysDataFormatter pFormatter) {
-            super(pColumn, new TethysFXShortTextField(pFormatter), Short.class);
+        protected TethysFXTableShortCell(final TethysFXTableColumn<C, R, Short> pColumn,
+                                         final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newShortField(), Short.class);
         }
 
         @Override
@@ -533,19 +532,19 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * Integer Cell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableIntegerCell<I, R>
-            extends TethysFXTableCell<I, R, Integer> {
+    public static class TethysFXTableIntegerCell<C, R>
+            extends TethysFXTableCell<C, R, Integer> {
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pFormatter the data formatter
+         * @param pFactory the GUI Factory
          */
-        protected TethysFXTableIntegerCell(final TethysFXTableColumn<I, R, Integer> pColumn,
-                                           final TethysDataFormatter pFormatter) {
-            super(pColumn, new TethysFXIntegerTextField(pFormatter), Integer.class);
+        protected TethysFXTableIntegerCell(final TethysFXTableColumn<C, R, Integer> pColumn,
+                                           final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newIntegerField(), Integer.class);
         }
 
         @Override
@@ -556,19 +555,19 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * Long Cell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableLongCell<I, R>
-            extends TethysFXTableCell<I, R, Long> {
+    public static class TethysFXTableLongCell<C, R>
+            extends TethysFXTableCell<C, R, Long> {
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pFormatter the data formatter
+         * @param pFactory the GUI Factory
          */
-        protected TethysFXTableLongCell(final TethysFXTableColumn<I, R, Long> pColumn,
-                                        final TethysDataFormatter pFormatter) {
-            super(pColumn, new TethysFXLongTextField(pFormatter), Long.class);
+        protected TethysFXTableLongCell(final TethysFXTableColumn<C, R, Long> pColumn,
+                                        final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newLongField(), Long.class);
         }
 
         @Override
@@ -579,20 +578,20 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * Money Cell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableMoneyCell<I, R>
-            extends TethysFXTableCell<I, R, TethysMoney>
+    public static class TethysFXTableMoneyCell<C, R>
+            extends TethysFXTableCell<C, R, TethysMoney>
             implements TethysCurrencyField {
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pFormatter the data formatter
+         * @param pFactory the GUI Factory
          */
-        protected TethysFXTableMoneyCell(final TethysFXTableColumn<I, R, TethysMoney> pColumn,
-                                         final TethysDataFormatter pFormatter) {
-            super(pColumn, new TethysFXMoneyTextField(pFormatter), TethysMoney.class);
+        protected TethysFXTableMoneyCell(final TethysFXTableColumn<C, R, TethysMoney> pColumn,
+                                         final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newMoneyField(), TethysMoney.class);
         }
 
         @Override
@@ -608,20 +607,20 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * Price Cell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTablePriceCell<I, R>
-            extends TethysFXTableCell<I, R, TethysPrice>
+    public static class TethysFXTablePriceCell<C, R>
+            extends TethysFXTableCell<C, R, TethysPrice>
             implements TethysCurrencyField {
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pFormatter the data formatter
+         * @param pFactory the GUI Factory
          */
-        protected TethysFXTablePriceCell(final TethysFXTableColumn<I, R, TethysPrice> pColumn,
-                                         final TethysDataFormatter pFormatter) {
-            super(pColumn, new TethysFXPriceTextField(pFormatter), TethysPrice.class);
+        protected TethysFXTablePriceCell(final TethysFXTableColumn<C, R, TethysPrice> pColumn,
+                                         final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newPriceField(), TethysPrice.class);
         }
 
         @Override
@@ -637,19 +636,19 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * Rate Cell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableRateCell<I, R>
-            extends TethysFXTableCell<I, R, TethysRate> {
+    public static class TethysFXTableRateCell<C, R>
+            extends TethysFXTableCell<C, R, TethysRate> {
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pFormatter the data formatter
+         * @param pFactory the GUI Factory
          */
-        protected TethysFXTableRateCell(final TethysFXTableColumn<I, R, TethysRate> pColumn,
-                                        final TethysDataFormatter pFormatter) {
-            super(pColumn, new TethysFXRateTextField(pFormatter), TethysRate.class);
+        protected TethysFXTableRateCell(final TethysFXTableColumn<C, R, TethysRate> pColumn,
+                                        final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newRateField(), TethysRate.class);
         }
 
         @Override
@@ -660,19 +659,19 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * Units Cell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableUnitsCell<I, R>
-            extends TethysFXTableCell<I, R, TethysUnits> {
+    public static class TethysFXTableUnitsCell<C, R>
+            extends TethysFXTableCell<C, R, TethysUnits> {
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pFormatter the data formatter
+         * @param pFactory the GUI Factory
          */
-        protected TethysFXTableUnitsCell(final TethysFXTableColumn<I, R, TethysUnits> pColumn,
-                                         final TethysDataFormatter pFormatter) {
-            super(pColumn, new TethysFXUnitsTextField(pFormatter), TethysUnits.class);
+        protected TethysFXTableUnitsCell(final TethysFXTableColumn<C, R, TethysUnits> pColumn,
+                                         final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newUnitsField(), TethysUnits.class);
         }
 
         @Override
@@ -683,19 +682,19 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * Dilution Cell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableDilutionCell<I, R>
-            extends TethysFXTableCell<I, R, TethysDilution> {
+    public static class TethysFXTableDilutionCell<C, R>
+            extends TethysFXTableCell<C, R, TethysDilution> {
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pFormatter the data formatter
+         * @param pFactory the GUI Factory
          */
-        protected TethysFXTableDilutionCell(final TethysFXTableColumn<I, R, TethysDilution> pColumn,
-                                            final TethysDataFormatter pFormatter) {
-            super(pColumn, new TethysFXDilutionTextField(pFormatter), TethysDilution.class);
+        protected TethysFXTableDilutionCell(final TethysFXTableColumn<C, R, TethysDilution> pColumn,
+                                            final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newDilutionField(), TethysDilution.class);
         }
 
         @Override
@@ -706,20 +705,20 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * DilutedPrice Cell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableDilutedPriceCell<I, R>
-            extends TethysFXTableCell<I, R, TethysDilutedPrice>
+    public static class TethysFXTableDilutedPriceCell<C, R>
+            extends TethysFXTableCell<C, R, TethysDilutedPrice>
             implements TethysCurrencyField {
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pFormatter the data formatter
+         * @param pFactory the GUI Factory
          */
-        protected TethysFXTableDilutedPriceCell(final TethysFXTableColumn<I, R, TethysDilutedPrice> pColumn,
-                                                final TethysDataFormatter pFormatter) {
-            super(pColumn, new TethysFXDilutedPriceTextField(pFormatter), TethysDilutedPrice.class);
+        protected TethysFXTableDilutedPriceCell(final TethysFXTableColumn<C, R, TethysDilutedPrice> pColumn,
+                                                final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newDilutedPriceField(), TethysDilutedPrice.class);
         }
 
         @Override
@@ -735,19 +734,19 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * Ratio Cell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableRatioCell<I, R>
-            extends TethysFXTableCell<I, R, TethysRatio> {
+    public static class TethysFXTableRatioCell<C, R>
+            extends TethysFXTableCell<C, R, TethysRatio> {
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pFormatter the data formatter
+         * @param pFactory the GUI Factory
          */
-        protected TethysFXTableRatioCell(final TethysFXTableColumn<I, R, TethysRatio> pColumn,
-                                         final TethysDataFormatter pFormatter) {
-            super(pColumn, new TethysFXRatioTextField(pFormatter), TethysRatio.class);
+        protected TethysFXTableRatioCell(final TethysFXTableColumn<C, R, TethysRatio> pColumn,
+                                         final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newRatioField(), TethysRatio.class);
         }
 
         @Override
@@ -758,20 +757,20 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * DateCell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableDateCell<I, R>
-            extends TethysFXTableCell<I, R, TethysDate>
-            implements TethysDateField {
+    public static class TethysFXTableDateCell<C, R>
+            extends TethysFXTableCell<C, R, TethysDate>
+            implements TethysDateField<Node, Node> {
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pFormatter the data formatter
+         * @param pFactory the GUI Factory
          */
-        protected TethysFXTableDateCell(final TethysFXTableColumn<I, R, TethysDate> pColumn,
-                                        final TethysDataFormatter pFormatter) {
-            super(pColumn, new TethysFXDateButtonField(pFormatter), TethysDate.class);
+        protected TethysFXTableDateCell(final TethysFXTableColumn<C, R, TethysDate> pColumn,
+                                        final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newDateField(), TethysDate.class);
         }
 
         @Override
@@ -787,60 +786,64 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * ScrollCell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
-     * @param <C> the column item class
+     * @param <T> the column item class
      */
-    public static class TethysFXTableScrollCell<I, R, C>
-            extends TethysFXTableCell<I, R, C>
-            implements TethysScrollField<C> {
+    public static class TethysFXTableScrollCell<C, R, T>
+            extends TethysFXTableCell<C, R, T>
+            implements TethysScrollField<T, Node, Node> {
         /**
          * Constructor.
          * @param pColumn the column
+         * @param pFactory the GUI Factory
          * @param pClass the field class
          */
-        protected TethysFXTableScrollCell(final TethysFXTableColumn<I, R, C> pColumn,
-                                          final Class<C> pClass) {
-            super(pColumn, new TethysFXScrollButtonField<>(), pClass);
+        protected TethysFXTableScrollCell(final TethysFXTableColumn<C, R, T> pColumn,
+                                          final TethysFXGuiFactory pFactory,
+                                          final Class<T> pClass) {
+            super(pColumn, pFactory.newScrollField(), pClass);
         }
 
         @Override
-        public TethysFXScrollButtonField<C> getControl() {
-            return (TethysFXScrollButtonField<C>) super.getControl();
+        public TethysFXScrollButtonField<T> getControl() {
+            return (TethysFXScrollButtonField<T>) super.getControl();
         }
 
         @Override
-        public TethysFXScrollButtonManager<C> getScrollManager() {
+        public TethysFXScrollButtonManager<T> getScrollManager() {
             return getControl().getScrollManager();
         }
     }
 
     /**
      * ListCell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
-     * @param <C> the column item class
+     * @param <T> the column item class
      */
-    public static class TethysFXTableListCell<I, R, C>
-            extends TethysFXTableCell<I, R, TethysItemList<C>>
-            implements TethysListField<C> {
+    public static class TethysFXTableListCell<C, R, T>
+            extends TethysFXTableCell<C, R, TethysItemList<T>>
+            implements TethysListField<T, Node, Node> {
         /**
          * Constructor.
          * @param pColumn the column
+         * @param pFactory the GUI Factory
          * @param pClass the field class
          */
-        protected TethysFXTableListCell(final TethysFXTableColumn<I, R, TethysItemList<C>> pColumn,
-                                        final Class<C> pClass) {
-            super(pColumn, new TethysFXListButtonField<C>());
+        protected TethysFXTableListCell(final TethysFXTableColumn<C, R, TethysItemList<T>> pColumn,
+                                        final TethysFXGuiFactory pFactory,
+                                        final Class<T> pClass) {
+            super(pColumn, pFactory.newListField());
         }
 
         @Override
-        public TethysFXListButtonField<C> getControl() {
-            return (TethysFXListButtonField<C>) super.getControl();
+        public TethysFXListButtonField<T> getControl() {
+            return (TethysFXListButtonField<T>) super.getControl();
         }
 
         @Override
-        public TethysFXListButtonManager<C> getListManager() {
+        public TethysFXListButtonManager<T> getListManager() {
             return getControl().getListManager();
         }
 
@@ -853,62 +856,66 @@ public class TethysFXTableCellFactory<I, R>
 
     /**
      * IconCell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
-     * @param <C> the column item class
+     * @param <T> the column item class
      */
-    public static class TethysFXTableIconCell<I, R, C>
-            extends TethysFXTableCell<I, R, C>
-            implements TethysIconField<C> {
+    public static class TethysFXTableIconCell<C, R, T>
+            extends TethysFXTableCell<C, R, T>
+            implements TethysIconField<T, Node, Node> {
         /**
          * Constructor.
          * @param pColumn the column
+         * @param pFactory the GUI Factory
          * @param pClass the field class
          */
-        protected TethysFXTableIconCell(final TethysFXTableColumn<I, R, C> pColumn,
-                                        final Class<C> pClass) {
-            super(pColumn, new TethysFXIconButtonField<C>(), pClass);
+        protected TethysFXTableIconCell(final TethysFXTableColumn<C, R, T> pColumn,
+                                        final TethysFXGuiFactory pFactory,
+                                        final Class<T> pClass) {
+            super(pColumn, pFactory.newSimpleIconField(), pClass);
         }
 
         @Override
-        public TethysFXIconButtonField<C> getControl() {
-            return (TethysFXIconButtonField<C>) super.getControl();
+        public TethysFXIconButtonField<T> getControl() {
+            return (TethysFXIconButtonField<T>) super.getControl();
         }
 
         @Override
-        public TethysSimpleIconButtonManager<C, Node, Node> getIconManager() {
+        public TethysSimpleIconButtonManager<T, Node, Node> getIconManager() {
             return getControl().getIconManager();
         }
     }
 
     /**
      * IconStateCell.
-     * @param <I> the column identity
+     * @param <C> the column identity
      * @param <R> the table item class
-     * @param <C> the column item class
+     * @param <T> the column item class
      * @param <S> the state class
      */
-    public static class TethysFXTableStateIconCell<I, R, C, S>
-            extends TethysFXTableCell<I, R, C>
-            implements TethysStateIconField<C, S> {
+    public static class TethysFXTableStateIconCell<C, R, T, S>
+            extends TethysFXTableCell<C, R, T>
+            implements TethysStateIconField<T, S, Node, Node> {
         /**
          * Constructor.
          * @param pColumn the column
+         * @param pFactory the GUI Factory
          * @param pClass the field class
          */
-        protected TethysFXTableStateIconCell(final TethysFXTableColumn<I, R, C> pColumn,
-                                             final Class<C> pClass) {
-            super(pColumn, new TethysFXStateIconButtonField<C, S>(), pClass);
+        protected TethysFXTableStateIconCell(final TethysFXTableColumn<C, R, T> pColumn,
+                                             final TethysFXGuiFactory pFactory,
+                                             final Class<T> pClass) {
+            super(pColumn, pFactory.newStateIconField(), pClass);
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public TethysFXStateIconButtonField<C, S> getControl() {
-            return (TethysFXStateIconButtonField<C, S>) super.getControl();
+        public TethysFXStateIconButtonField<T, S> getControl() {
+            return (TethysFXStateIconButtonField<T, S>) super.getControl();
         }
 
         @Override
-        public TethysFXStateIconButtonManager<C, S> getIconManager() {
+        public TethysFXStateIconButtonManager<T, S> getIconManager() {
             return getControl().getIconManager();
         }
     }

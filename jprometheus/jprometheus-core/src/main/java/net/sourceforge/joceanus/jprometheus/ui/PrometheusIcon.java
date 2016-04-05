@@ -23,8 +23,9 @@
 package net.sourceforge.joceanus.jprometheus.ui;
 
 import net.sourceforge.joceanus.jprometheus.data.PrometheusAction;
+import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 
@@ -161,11 +162,12 @@ public enum PrometheusIcon implements TethysIconId {
     }
 
     /**
-     * Configure simple icon button.
-     * @param pButton the button manager
+     * Configure button.
+     * @param pButton the button
      */
-    private static void configureSimpleIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
-        pButton.setWidth(ICON_SIZE);
+    public static void configureButton(final TethysButton<?, ?> pButton) {
+        pButton.setIconOnly();
+        pButton.setIconWidth(ICON_SIZE);
         pButton.setNullMargins();
     }
 
@@ -174,7 +176,7 @@ public enum PrometheusIcon implements TethysIconId {
      * @param pButton the button manager
      */
     public static void configureNewScrollButton(final TethysScrollButtonManager<?, ?, ?> pButton) {
-        pButton.setSimpleDetails(NEW, TethysIconButtonManager.DEFAULT_ICONWIDTH, TIP_NEW);
+        pButton.setSimpleDetails(NEW, TethysIconBuilder.DEFAULT_ICONWIDTH, TIP_NEW);
     }
 
     /**
@@ -190,69 +192,70 @@ public enum PrometheusIcon implements TethysIconId {
      * Configure new icon button.
      * @param pButton the button manager
      */
-    public static void configureNewIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
-        pButton.setValue(Boolean.TRUE);
-        pButton.setSimpleDetailsForValue(Boolean.TRUE, NEW, TIP_NEW);
+    public static void configureNewIconButton(final TethysButton<?, ?> pButton) {
+        configureButton(pButton);
+        pButton.setIcon(NEW);
+        pButton.setToolTip(TIP_NEW);
     }
 
     /**
      * Configure edit icon button.
      * @param pButton the button manager
      */
-    public static void configureEditIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
-        configureSimpleIconButton(pButton);
-        pButton.setSimpleDetailsForValue(Boolean.TRUE, EDIT, TIP_EDIT);
-        pButton.setValue(Boolean.TRUE);
+    public static void configureEditIconButton(final TethysButton<?, ?> pButton) {
+        configureButton(pButton);
+        pButton.setIcon(EDIT);
+        pButton.setToolTip(TIP_EDIT);
     }
 
     /**
      * Configure delete icon button.
      * @param pButton the button manager
      */
-    public static void configureDeleteIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
-        configureSimpleIconButton(pButton);
-        pButton.setSimpleDetailsForValue(Boolean.TRUE, DELETE, TIP_DELETE);
-        pButton.setValue(Boolean.TRUE);
+    public static void configureDeleteIconButton(final TethysButton<?, ?> pButton) {
+        configureButton(pButton);
+        pButton.setIcon(DELETE);
+        pButton.setToolTip(TIP_DELETE);
     }
 
     /**
      * Configure commit icon button.
      * @param pButton the button manager
      */
-    public static void configureCommitIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
-        configureSimpleIconButton(pButton);
-        pButton.setSimpleDetailsForValue(Boolean.TRUE, COMMIT, TIP_COMMIT);
-        pButton.setValue(Boolean.TRUE);
+    public static void configureCommitIconButton(final TethysButton<?, ?> pButton) {
+        configureButton(pButton);
+        pButton.setIcon(COMMIT);
+        pButton.setToolTip(TIP_COMMIT);
     }
 
     /**
      * Configure undo icon button.
      * @param pButton the button manager
      */
-    public static void configureUndoIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
-        configureSimpleIconButton(pButton);
-        pButton.setSimpleDetailsForValue(Boolean.TRUE, UNDO, TIP_UNDO);
-        pButton.setValue(Boolean.TRUE);
+    public static void configureUndoIconButton(final TethysButton<?, ?> pButton) {
+        configureButton(pButton);
+        pButton.setIcon(UNDO);
+        pButton.setToolTip(TIP_UNDO);
     }
 
     /**
      * Configure reset icon button.
      * @param pButton the button manager
      */
-    public static void configureResetIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
-        configureSimpleIconButton(pButton);
-        pButton.setSimpleDetailsForValue(Boolean.TRUE, RESET, TIP_RESET);
-        pButton.setValue(Boolean.TRUE);
+    public static void configureResetIconButton(final TethysButton<?, ?> pButton) {
+        configureButton(pButton);
+        pButton.setIcon(RESET);
+        pButton.setToolTip(TIP_RESET);
     }
 
     /**
      * Configure cancel icon button.
      * @param pButton the button manager
      */
-    public static void configureCancelIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
-        configureSimpleIconButton(pButton);
-        pButton.setSimpleDetailsForValue(Boolean.TRUE, CANCEL, TIP_CANCEL);
-        pButton.setValue(Boolean.TRUE);
+    public static void configureCancelIconButton(final TethysButton<?, ?> pButton) {
+        configureButton(pButton);
+        pButton.setIcon(CANCEL);
+        pButton.setToolTip(TIP_CANCEL);
     }
 
     /**

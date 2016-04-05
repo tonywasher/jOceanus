@@ -64,7 +64,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Top-level panel for Accounts.
@@ -90,6 +91,11 @@ public class AccountPanel
      * Text for Selection Prompt.
      */
     private static final String NLS_DATA = MoneyWiseUIResource.ASSET_PROMPT_SELECT.getValue();
+
+    /**
+     * The Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -199,6 +205,10 @@ public class AccountPanel
         /* Store details */
         theView = pView;
 
+        /* Access GUI Factory */
+        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        theId = myFactory.getNextId();
+
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
@@ -219,7 +229,7 @@ public class AccountPanel
         theError = new PrometheusSwingErrorPanel(myDataMgr, theDataEntry);
 
         /* Create the action buttons panel */
-        theActionButtons = new PrometheusSwingActionButtons(theUpdateSet);
+        theActionButtons = new PrometheusSwingActionButtons(myFactory, theUpdateSet);
 
         /* Create the table panels */
         thePayeeTable = new PayeeTable(pView, theUpdateSet, theError);
@@ -232,11 +242,11 @@ public class AccountPanel
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
-        theSelectButton = new TethysSwingScrollButtonManager<>();
+        theSelectButton = myFactory.newScrollButton();
         buildSelectMenu();
 
         /* Create the card panel */
-        theCardPanel = new TethysSwingCardPaneManager<>();
+        theCardPanel = myFactory.newCardPane();
 
         /* Add to the card panels */
         theCardPanel.addCard(PanelName.DEPOSITS.toString(), theDepositTable);
@@ -250,7 +260,7 @@ public class AccountPanel
         theSelectButton.setFixedText(theActive.toString());
 
         /* Create the new card panel */
-        theFilterCardPanel = new TethysSwingCardPaneManager<>();
+        theFilterCardPanel = myFactory.newCardPane();
 
         /* Build the new card panel */
         theFilterCardPanel.addCard(PanelName.DEPOSITS.toString(), theDepositTable.getFilterPanel());
@@ -305,6 +315,11 @@ public class AccountPanel
         setChildListeners(thePortfolioTable.getEventRegistrar());
         setChildListeners(theSecurityTable.getEventRegistrar());
         setChildListeners(theOptionTable.getEventRegistrar());
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

@@ -25,14 +25,17 @@ package net.sourceforge.joceanus.jprometheus.ui;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Item Edit Action buttons.
  * @param <N> the node type
+ * @param <I> the icon type
  */
-public abstract class PrometheusItemEditActions<N>
-        implements TethysEventProvider<PrometheusUIEvent> {
+public abstract class PrometheusItemEditActions<N, I>
+        implements TethysEventProvider<PrometheusUIEvent>, TethysNode<N> {
     /**
      * ItemEditParent interface.
      */
@@ -74,6 +77,11 @@ public abstract class PrometheusItemEditActions<N>
     protected static final int STRUT_HEIGHT = PrometheusActionButtons.STRUT_LENGTH;
 
     /**
+     * The Id.
+     */
+    private final Integer theId;
+
+    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusUIEvent> theEventManager;
@@ -86,68 +94,44 @@ public abstract class PrometheusItemEditActions<N>
     /**
      * The Commit button.
      */
-    private TethysSimpleIconButtonManager<Boolean, ?, ?> theCommitButton;
+    private final TethysButton<N, I> theCommitButton;
 
     /**
      * The Undo button.
      */
-    private TethysSimpleIconButtonManager<Boolean, ?, ?> theUndoButton;
+    private final TethysButton<N, I> theUndoButton;
 
     /**
      * The Reset button.
      */
-    private TethysSimpleIconButtonManager<Boolean, ?, ?> theResetButton;
+    private final TethysButton<N, I> theResetButton;
 
     /**
      * The Cancel button.
      */
-    private TethysSimpleIconButtonManager<Boolean, ?, ?> theCancelButton;
+    private final TethysButton<N, I> theCancelButton;
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pParent the parent
      */
-    protected PrometheusItemEditActions(final PrometheusItemEditParent pParent) {
+    protected PrometheusItemEditActions(final TethysGuiFactory<N, I> pFactory,
+                                        final PrometheusItemEditParent pParent) {
         /* Record the parent */
         theParent = pParent;
 
+        /* Record the id */
+        theId = pFactory.getNextId();
+
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
-    }
 
-    @Override
-    public TethysEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
-    }
-
-    /**
-     * Obtain the node.
-     * @return the node
-     */
-    public abstract N getNode();
-
-    /**
-     * Set visibility.
-     * @param pVisible true/false
-     */
-    public abstract void setVisible(final boolean pVisible);
-
-    /**
-     * Declare buttons.
-     * @param pCommit the commit button
-     * @param pUndo the undo button
-     * @param pReset the reset button
-     * @param pCancel the cancel button
-     */
-    protected void declareButtons(final TethysSimpleIconButtonManager<Boolean, ?, ?> pCommit,
-                                  final TethysSimpleIconButtonManager<Boolean, ?, ?> pUndo,
-                                  final TethysSimpleIconButtonManager<Boolean, ?, ?> pReset,
-                                  final TethysSimpleIconButtonManager<Boolean, ?, ?> pCancel) {
-        /* Record the buttons */
-        theCommitButton = pCommit;
-        theUndoButton = pUndo;
-        theResetButton = pReset;
-        theCancelButton = pCancel;
+        /* Create the buttons */
+        theCommitButton = pFactory.newButton();
+        theUndoButton = pFactory.newButton();
+        theResetButton = pFactory.newButton();
+        theCancelButton = pFactory.newButton();
 
         /* Configure the buttons */
         PrometheusIcon.configureCommitIconButton(theCommitButton);
@@ -163,6 +147,48 @@ public abstract class PrometheusItemEditActions<N>
 
         /* Buttons are initially disabled */
         setEnabled(false);
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
+    }
+
+    @Override
+    public TethysEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Obtain the commit button.
+     * @return the button
+     */
+    protected TethysButton<N, I> getCommitButton() {
+        return theCommitButton;
+    }
+
+    /**
+     * Obtain the undo button.
+     * @return the button
+     */
+    protected TethysButton<N, I> getUndoButton() {
+        return theUndoButton;
+    }
+
+    /**
+     * Obtain the reset button.
+     * @return the button
+     */
+    protected TethysButton<N, I> getResetButton() {
+        return theResetButton;
+    }
+
+    /**
+     * Obtain the cancel button.
+     * @return the button
+     */
+    protected TethysButton<N, I> getCancelButton() {
+        return theCancelButton;
     }
 
     /**

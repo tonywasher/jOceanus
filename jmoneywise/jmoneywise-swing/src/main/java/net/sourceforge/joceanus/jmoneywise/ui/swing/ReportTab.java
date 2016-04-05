@@ -68,6 +68,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Report panel.
@@ -83,6 +84,11 @@ public class ReportTab
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportTab.class);
+
+    /**
+     * The Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -143,6 +149,10 @@ public class ReportTab
         /* Store the view */
         theView = pView;
 
+        /* Access GUI Factory */
+        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        theId = myFactory.getNextId();
+
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
@@ -173,7 +183,7 @@ public class ReportTab
         theScroll.setViewportView(theEditor);
 
         /* Create the Report Selection panel */
-        theSelect = new ReportSelect();
+        theSelect = new ReportSelect(myFactory);
 
         /* Create the error panel for this view */
         theError = new PrometheusSwingErrorPanel(myDataMgr, myDataReport);
@@ -196,6 +206,11 @@ public class ReportTab
         theSelect.getEventRegistrar().addEventListener(e -> handleReportRequest());
         theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.PRINT, e -> printIt());
         theEditor.addMouseListener(new ReportMouseListener());
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

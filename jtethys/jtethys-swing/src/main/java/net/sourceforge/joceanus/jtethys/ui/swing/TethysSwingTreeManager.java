@@ -62,7 +62,7 @@ public class TethysSwingTreeManager<T>
     /**
      * Constructor.
      */
-    public TethysSwingTreeManager() {
+    protected TethysSwingTreeManager() {
         /* Create the tree */
         theRoot = new TethysSwingTreeItem<>(this);
         theTreeModel = new DefaultTreeModel(theRoot.getNode());

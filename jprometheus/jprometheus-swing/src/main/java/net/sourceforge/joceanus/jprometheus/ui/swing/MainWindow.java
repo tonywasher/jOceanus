@@ -65,6 +65,7 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Main window for application.
@@ -197,127 +198,127 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The data view.
      */
-    private DataControl<T, E> theView = null;
+    private DataControl<T, E> theView;
 
     /**
      * The frame.
      */
-    private JFrame theFrame = null;
+    private JFrame theFrame;
 
     /**
      * The panel.
      */
-    private JPanel thePanel = null;
+    private JPanel thePanel;
 
     /**
      * The status bar.
      */
-    private StatusBar theStatusBar = null;
+    private StatusBar theStatusBar;
 
     /**
      * The data menu.
      */
-    private JMenu theDataMenu = null;
+    private JMenu theDataMenu;
 
     /**
      * The edit menu.
      */
-    private JMenu theEditMenu = null;
+    private JMenu theEditMenu;
 
     /**
      * The backup menu.
      */
-    private JMenu theBackupMenu = null;
+    private JMenu theBackupMenu;
 
     /**
      * The security menu.
      */
-    private JMenu theSecureMenu = null;
+    private JMenu theSecureMenu;
 
     /**
      * The Create Database menu item.
      */
-    private JMenuItem theCreateDBase = null;
+    private JMenuItem theCreateDBase;
 
     /**
      * The Purge Database menu item.
      */
-    private JMenuItem thePurgeDBase = null;
+    private JMenuItem thePurgeDBase;
 
     /**
      * The Load Database menu item.
      */
-    private JMenuItem theLoadDBase = null;
+    private JMenuItem theLoadDBase;
 
     /**
      * The Save Database menu item.
      */
-    private JMenuItem theSaveDBase = null;
+    private JMenuItem theSaveDBase;
 
     /**
      * The Undo Edit menu item.
      */
-    private JMenuItem theUndoEdit = null;
+    private JMenuItem theUndoEdit;
 
     /**
      * The Reset Edit menu item.
      */
-    private JMenuItem theResetEdit = null;
+    private JMenuItem theResetEdit;
 
     /**
      * The Write Backup menu item.
      */
-    private JMenuItem theWriteBackup = null;
+    private JMenuItem theWriteBackup;
 
     /**
      * The Load Backup menu item.
      */
-    private JMenuItem theLoadBackup = null;
+    private JMenuItem theLoadBackup;
 
     /**
      * The Create XML Extract menu item.
      */
-    private JMenuItem theCreateXtract = null;
+    private JMenuItem theCreateXtract;
 
     /**
      * The Create XML Backup menu item.
      */
-    private JMenuItem theCreateXml = null;
+    private JMenuItem theCreateXml;
 
     /**
      * The Load XML menu item.
      */
-    private JMenuItem theLoadXml = null;
+    private JMenuItem theLoadXml;
 
     /**
      * The Update password menu item.
      */
-    private JMenuItem theUpdatePass = null;
+    private JMenuItem theUpdatePass;
 
     /**
      * The Renew security menu item.
      */
-    private JMenuItem theRenewSec = null;
+    private JMenuItem theRenewSec;
 
     /**
      * The Show dataMgr menu item.
      */
-    private JMenuItem theShowDataMgr = null;
+    private JMenuItem theShowDataMgr;
 
     /**
      * The Show about menu item.
      */
-    private JMenuItem theShowAbout = null;
+    private JMenuItem theShowAbout;
 
     /**
      * The Show help menu item.
      */
-    private JMenuItem theHelpMgr = null;
+    private JMenuItem theHelpMgr;
 
     /**
      * The Active thread.
      */
-    private WorkerThread<?> theThread = null;
+    private WorkerThread<?> theThread;
 
     /**
      * The Thread executor.
@@ -332,12 +333,12 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Viewer Manager.
      */
-    private MetisSwingViewerManager theViewerMgr = null;
+    private MetisSwingViewerManager theViewerMgr;
 
     /**
      * The Started data window.
      */
-    private MetisViewerWindow theDataWdw = null;
+    private MetisViewerWindow theDataWdw;
 
     /**
      * The listener.
@@ -892,7 +893,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private void displayHelp() {
         try {
             /* Create the help window */
-            theHelpWdw = new TethysSwingHelpManager();
+            theHelpWdw = new TethysSwingHelpManager((TethysSwingGuiFactory) theView.getUtilitySet().getGuiFactory());
             theHelpWdw.setFrame(theFrame);
             theHelpWdw.setModule(getHelpModule());
 

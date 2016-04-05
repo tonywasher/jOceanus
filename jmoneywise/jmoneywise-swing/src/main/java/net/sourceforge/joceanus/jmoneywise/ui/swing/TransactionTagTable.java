@@ -59,9 +59,9 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * TransactionTag Table.
@@ -131,7 +131,7 @@ public class TransactionTagTable
     /**
      * The new button.
      */
-    private final TethysSwingScrollButtonManager<String> theNewButton;
+    private final TethysSwingButton theNewButton;
 
     /**
      * The TransactionTag dialog.
@@ -157,6 +157,9 @@ public class TransactionTagTable
     public TransactionTagTable(final SwingView pView,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                final PrometheusSwingErrorPanel pError) {
+        /* initialise the underlying class */
+        super(pView.getUtilitySet().getGuiFactory());
+
         /* Record the passed details */
         theView = pView;
         theError = pError;
@@ -189,13 +192,14 @@ public class TransactionTagTable
         thePanel.setLayout(new BorderLayout());
         thePanel.add(super.getNode(), BorderLayout.CENTER);
 
-        /* Create a Tag panel */
-        theActiveTag = new TransactionTagPanel(theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveTag.getNode(), BorderLayout.PAGE_END);
-
         /* Create new button */
-        theNewButton = new TethysSwingScrollButtonManager<>();
-        PrometheusIcon.configureNewScrollButton(theNewButton);
+        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        theNewButton = myFactory.newButton();
+        PrometheusIcon.configureNewIconButton(theNewButton);
+
+        /* Create a Tag panel */
+        theActiveTag = new TransactionTagPanel(myFactory, theFieldMgr, theUpdateSet, theError);
+        thePanel.add(theActiveTag.getNode(), BorderLayout.PAGE_END);
 
         /* Create a dummy filter panel */
         theFilterPanel = new TethysSwingEnablePanel();
@@ -213,7 +217,7 @@ public class TransactionTagTable
         theActiveTag.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
 
         /* Listen to swing events */
-        theNewButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.addNewItem());
+        theNewButton.getEventRegistrar().addEventListener(e -> theModel.addNewItem());
     }
 
     @Override

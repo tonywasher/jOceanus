@@ -47,8 +47,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * SpotRates selection panel.
@@ -85,6 +86,11 @@ public class SpotRatesSelect
      * Text for Previous toolTip.
      */
     private static final String NLS_PREVTIP = MoneyWiseUIResource.SPOTRATE_PREV.getValue();
+
+    /**
+     * Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -124,7 +130,7 @@ public class SpotRatesSelect
     /**
      * The download button.
      */
-    private final TethysSwingSimpleIconButtonManager<Boolean> theDownloadButton;
+    private final TethysSwingButton theDownloadButton;
 
     /**
      * The current state.
@@ -144,6 +150,10 @@ public class SpotRatesSelect
         /* Store table and view details */
         theView = pView;
 
+        /* Access GUI Factory */
+        TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pView.getUtilitySet().getGuiFactory();
+        theId = myFactory.getNextId();
+
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
@@ -152,10 +162,10 @@ public class SpotRatesSelect
         JLabel myDate = new JLabel(NLS_DATE);
 
         /* Create the DateButton */
-        theDateButton = new TethysSwingDateButtonManager();
+        theDateButton = myFactory.newDateButton();
 
         /* Create the Download Button */
-        theDownloadButton = new TethysSwingSimpleIconButtonManager<>();
+        theDownloadButton = myFactory.newButton();
         MoneyWiseIcon.configureDownloadIconButton(theDownloadButton);
 
         /* Create the Currency indication */
@@ -211,6 +221,11 @@ public class SpotRatesSelect
             theState.setPrev();
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         });
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

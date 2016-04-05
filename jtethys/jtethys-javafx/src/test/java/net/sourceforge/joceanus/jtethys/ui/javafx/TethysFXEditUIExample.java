@@ -69,8 +69,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXShortTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXUnitsTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXListButton.TethysFXListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButton.TethysFXScrollButtonManager;
 
 /**
  * Scroll utilities examples.
@@ -91,6 +89,11 @@ public class TethysFXEditUIExample
      * Default icon width.
      */
     private static final int DEFAULT_ICONWIDTH = 24;
+
+    /**
+     * The GuiFactory.
+     */
+    private final TethysFXGuiFactory theGuiFactory;
 
     /**
      * The Test helper.
@@ -190,17 +193,17 @@ public class TethysFXEditUIExample
     /**
      * The source.
      */
-    private final Label theSource;
+    private final TethysFXLabel theSource;
 
     /**
      * The result.
      */
-    private final Label theClass;
+    private final TethysFXLabel theClass;
 
     /**
      * The result.
      */
-    private final Label theValue;
+    private final TethysFXLabel theValue;
 
     /**
      * The Date formatter.
@@ -219,35 +222,38 @@ public class TethysFXEditUIExample
         /* Create helper */
         theHelper = new TethysScrollUITestHelper<>();
 
-        /* Create formatter */
-        TethysDataFormatter myFormatter = new TethysDataFormatter();
+        /* Create GUI Factory */
+        theGuiFactory = new TethysFXGuiFactory();
+
+        /* Access formatters */
+        TethysDataFormatter myFormatter = theGuiFactory.getDataFormatter();
         theDecimalFormatter = myFormatter.getDecimalFormatter();
         theDateFormatter = myFormatter.getDateFormatter();
 
         /* Create resources */
-        theStringField = new TethysFXStringTextField();
+        theStringField = theGuiFactory.newStringField();
         theStringField.showCmdButton(true);
-        theShortField = new TethysFXShortTextField(myFormatter);
-        theIntegerField = new TethysFXIntegerTextField(myFormatter);
-        theLongField = new TethysFXLongTextField(myFormatter);
-        theMoneyField = new TethysFXMoneyTextField(myFormatter);
-        thePriceField = new TethysFXPriceTextField(myFormatter);
-        theDilutedPriceField = new TethysFXDilutedPriceTextField(myFormatter);
-        theDilutionField = new TethysFXDilutionTextField(myFormatter);
-        theUnitsField = new TethysFXUnitsTextField(myFormatter);
-        theRateField = new TethysFXRateTextField(myFormatter);
-        theRatioField = new TethysFXRatioTextField(myFormatter);
-        theSource = new Label();
-        theClass = new Label();
-        theValue = new Label();
+        theShortField = theGuiFactory.newShortField();
+        theIntegerField = theGuiFactory.newIntegerField();
+        theLongField = theGuiFactory.newLongField();
+        theMoneyField = theGuiFactory.newMoneyField();
+        thePriceField = theGuiFactory.newPriceField();
+        theDilutedPriceField = theGuiFactory.newDilutedPriceField();
+        theDilutionField = theGuiFactory.newDilutionField();
+        theUnitsField = theGuiFactory.newUnitsField();
+        theRateField = theGuiFactory.newRateField();
+        theRatioField = theGuiFactory.newRatioField();
+        theSource = theGuiFactory.newLabel();
+        theClass = theGuiFactory.newLabel();
+        theValue = theGuiFactory.newLabel();
 
         /* Create button fields */
-        theScrollField = new TethysFXScrollButtonField<>();
+        theScrollField = theGuiFactory.newScrollField();
         theScrollButtonMgr = theScrollField.getScrollManager();
-        theDateField = new TethysFXDateButtonField(myFormatter);
-        theIconField = new TethysFXIconButtonField<>();
+        theDateField = theGuiFactory.newDateField();
+        theIconField = theGuiFactory.newSimpleIconField();
         theIconButtonMgr = theIconField.getIconManager();
-        theListField = new TethysFXListButtonField<>();
+        theListField = theGuiFactory.newListField();
         theListButtonMgr = theListField.getListManager();
     }
 
@@ -267,6 +273,7 @@ public class TethysFXEditUIExample
         /* Create scene */
         BorderPane myPane = new BorderPane();
         Scene myScene = new Scene(myPane);
+        theGuiFactory.applyStyleSheets(myScene);
         myPane.setCenter(myMain);
         pStage.setTitle("JavaFXEdit Demo");
         TethysFXGuiUtils.addStyleSheet(myScene);
@@ -442,13 +449,13 @@ public class TethysFXEditUIExample
         /* Build the grid */
         Label myLabel = new Label("Source:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myGrid.addRow(myRowNo++, myLabel, theSource);
+        myGrid.addRow(myRowNo++, myLabel, theSource.getNode());
         myLabel = new Label("Class:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myGrid.addRow(myRowNo++, myLabel, theClass);
+        myGrid.addRow(myRowNo++, myLabel, theClass.getNode());
         myLabel = new Label("Value:");
         GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myGrid.addRow(myRowNo++, myLabel, theValue);
+        myGrid.addRow(myRowNo++, myLabel, theValue.getNode());
 
         /* Return the pane */
         return myGrid;
@@ -477,7 +484,7 @@ public class TethysFXEditUIExample
         });
 
         /* Create ScrollButton button for currency */
-        TethysFXScrollButtonManager<Currency> myCurrencyMgr = new TethysFXScrollButtonManager<Currency>();
+        TethysFXScrollButtonManager<Currency> myCurrencyMgr = theGuiFactory.newScrollButton();
         TethysFXScrollContextMenu<Currency> myMenu = myCurrencyMgr.getMenu();
         Currency myDefault = Currency.getInstance("GBP");
         myMenu.addItem(myDefault, "Pounds");

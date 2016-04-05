@@ -44,9 +44,10 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateRangeSelector;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButton.TethysSwingSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButton.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Report selection panel.
@@ -68,6 +69,11 @@ public class ReportSelect
      * Text for Selection Title.
      */
     private static final String NLS_TITLE = MoneyWiseUIResource.REPORT_TITLE.getValue();
+
+    /**
+     * Id.
+     */
+    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -92,7 +98,7 @@ public class ReportSelect
     /**
      * Print button.
      */
-    private final TethysSwingSimpleIconButtonManager<Boolean> thePrintButton;
+    private final TethysSwingButton thePrintButton;
 
     /**
      * Current state.
@@ -111,14 +117,15 @@ public class ReportSelect
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    public ReportSelect() {
+    public ReportSelect(final TethysSwingGuiFactory pFactory) {
         /* Create the report button */
-        theReportButton = new TethysSwingScrollButtonManager<>();
+        theReportButton = pFactory.newScrollButton();
         buildReportMenu();
 
         /* Create the Range Select and disable its border */
-        theRangeSelect = new TethysSwingDateRangeSelector();
+        theRangeSelect = pFactory.newDateRangeSelector();
 
         /* Create initial state */
         theState = new ReportState();
@@ -128,11 +135,12 @@ public class ReportSelect
         JLabel myRepLabel = new JLabel(NLS_REPORT);
 
         /* Create the print button */
-        thePrintButton = new TethysSwingSimpleIconButtonManager<>();
+        thePrintButton = pFactory.newButton();
         MoneyWiseIcon.configurePrintIconButton(thePrintButton);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
+        theId = pFactory.getNextId();
 
         /* Create the selection panel */
         thePanel = new JPanel();
@@ -154,9 +162,14 @@ public class ReportSelect
         theState.setType(ReportType.NETWORTH);
 
         /* Add the listeners */
-        thePrintButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theEventManager.fireEvent(PrometheusDataEvent.PRINT));
+        thePrintButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.PRINT));
         theReportButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewReport());
         theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

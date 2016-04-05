@@ -60,8 +60,8 @@ import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableStringColumn;
 
@@ -91,11 +91,6 @@ public class TethysFXDateExample
      * Comment Column Width.
      */
     private static final int COL_COMMENT_WIDTH = 250;
-
-    /**
-     * Table Height.
-     */
-    private static final int TABLE_HEIGHT = 150;
 
     /**
      * Start sample date.
@@ -139,6 +134,7 @@ public class TethysFXDateExample
         Scene myScene = new Scene(myPane);
         myPane.setCenter(myGrid);
         TethysFXGuiUtils.addStyleSheet(myScene);
+        theGuiFactory.applyStyleSheets(myScene);
         pStage.setTitle("TethysDate JavaFX Demo");
         pStage.setScene(myScene);
         pStage.show();
@@ -163,6 +159,11 @@ public class TethysFXDateExample
     public static void main(final String[] args) {
         launch(args);
     }
+
+    /**
+     * The GUI Factory.
+     */
+    private final TethysFXGuiFactory theGuiFactory = new TethysFXGuiFactory();
 
     /**
      * The table.
@@ -202,7 +203,7 @@ public class TethysFXDateExample
     /**
      * The selected locale.
      */
-    private SimpleObjectProperty<Locale> theLocale = new SimpleObjectProperty<Locale>(Locale.UK);
+    private final SimpleObjectProperty<Locale> theLocale = new SimpleObjectProperty<Locale>(Locale.UK);
 
     /**
      * The first date format.
@@ -237,7 +238,7 @@ public class TethysFXDateExample
     /**
      * The formatter.
      */
-    private final TethysDataFormatter theFormatter = new TethysDataFormatter();
+    private final TethysDataFormatter theFormatter = theGuiFactory.getDataFormatter();
 
     /**
      * The formatter.
@@ -247,7 +248,7 @@ public class TethysFXDateExample
     /**
      * The range selection.
      */
-    private final TethysFXDateRangeSelector theRangeSelect = new TethysFXDateRangeSelector(theFormatter, true);
+    private final TethysFXDateRangeSelector theRangeSelect = theGuiFactory.newDateRangeSelector(true);
 
     /**
      * The selected range.
@@ -260,7 +261,7 @@ public class TethysFXDateExample
      */
     private GridPane makePanel() {
         /* Create the table */
-        theTable = new TethysFXTableManager<>(theFormatter);
+        theTable = theGuiFactory.newTable();
         makeTable();
 
         /* Create the range panel */
@@ -413,7 +414,7 @@ public class TethysFXDateExample
                 ShortLocale myLocale = pNewValue;
                 theLocale.setValue(myLocale.getLocale());
                 showNarrowDays.setValue(myLocale.showNarrowDays());
-                // theTable.rePaint();
+                theTable.repaintColumn(DateItem.PROP_DATE);
             }
         });
     }
@@ -441,7 +442,7 @@ public class TethysFXDateExample
                                 final String pNewValue) {
                 /* Store the new format */
                 theFormat.setValue(pNewValue);
-                // theTable.rePaint();
+                theTable.repaintColumn(DateItem.PROP_DATE);
             }
         });
     }
@@ -451,8 +452,8 @@ public class TethysFXDateExample
      */
     private void makeRangeButtons() {
         /* Create the buttons */
-        theStartDate = new TethysFXDateButtonManager(theFormatter);
-        theEndDate = new TethysFXDateButtonManager(theFormatter);
+        theStartDate = theGuiFactory.newDateButton();
+        theEndDate = theGuiFactory.newDateButton();
 
         /* Initialise the values */
         TethysDate myStart = DATE_START;
@@ -567,10 +568,12 @@ public class TethysFXDateExample
         /* Create the date column */
         TethysFXTableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
         myDateColumn.setCellValueFactory(p -> p.getValue().dateProperty());
+        myDateColumn.setColumnWidth(COL_DATE_WIDTH);
 
         /* Create the comments column */
         TethysFXTableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
         myCommentsColumn.setCellValueFactory(p -> p.getValue().commentsProperty());
+        myCommentsColumn.setColumnWidth(COL_COMMENT_WIDTH);
 
         /* Listen to preEdit requests */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
@@ -583,13 +586,13 @@ public class TethysFXDateExample
      */
     @SuppressWarnings("unchecked")
     private void handlePreEdit(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysTableCell<String, DateItem, ?> myCell = pEvent.getDetails(TethysTableCell.class);
+        TethysFXTableCell<String, DateItem, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
 
         /* If this is the Date column */
         if (DateItem.PROP_DATE.equals(myCell.getColumnId())) {
             /* Configure the button */
-            TethysDateField myDateField = (TethysDateField) myCell;
-            TethysDateButtonManager<?> myManager = myDateField.getDateManager();
+            TethysDateField<?, ?> myDateField = (TethysDateField<?, ?>) myCell;
+            TethysDateButtonManager<?, ?> myManager = myDateField.getDateManager();
             myManager.setEarliestDate(theStartDate.getSelectedDate());
             myManager.setLatestDate(theEndDate.getSelectedDate());
             myManager.setShowNarrowDays(showNarrowDays.get());

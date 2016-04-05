@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -33,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
  * @param <T> the item type
  */
 public class TethysSwingSplitTreeManager<T>
-        extends TethysSplitTreeManager<T, JComponent> {
+        extends TethysSplitTreeManager<T, JComponent, Icon> {
     /**
      * Split pane.
      */
@@ -41,10 +42,11 @@ public class TethysSwingSplitTreeManager<T>
 
     /**
      * Constructor.
+     * @param pFactory the GUI Factory
      */
-    public TethysSwingSplitTreeManager() {
+    protected TethysSwingSplitTreeManager(final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
-        super(new TethysSwingTreeManager<T>(), new TethysSwingHTMLManager());
+        super(new TethysSwingTreeManager<T>(), new TethysSwingHTMLManager(pFactory));
 
         /* Create scroll-panes */
         JScrollPane myTreeScroll = new JScrollPane(getTreeManager().getNode());
@@ -69,5 +71,4 @@ public class TethysSwingSplitTreeManager<T>
     public JComponent getNode() {
         return theSplit;
     }
-
 }

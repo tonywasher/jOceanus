@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * MoneyWise Data Item Panel.
@@ -69,14 +70,16 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected MoneyWiseDataItemPanel(final MetisFieldManager pFieldMgr,
+    protected MoneyWiseDataItemPanel(final TethysSwingGuiFactory pFactory,
+                                     final MetisFieldManager pFieldMgr,
                                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                      final PrometheusSwingErrorPanel pError) {
-        super(pFieldMgr, pUpdateSet, pError);
+        super(pFactory, pFieldMgr, pUpdateSet, pError);
         theGoToFilterList = new ArrayList<>();
         theGoToItemList = new ArrayList<>();
     }
