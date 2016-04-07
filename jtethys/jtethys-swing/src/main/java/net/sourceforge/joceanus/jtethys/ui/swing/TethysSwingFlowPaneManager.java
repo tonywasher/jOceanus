@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -68,5 +69,10 @@ public class TethysSwingFlowPaneManager
     public void setChildVisible(final TethysNode<JComponent> pChild,
                                 final boolean pVisible) {
         pChild.getNode().setVisible(pVisible);
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode.setBorder(BorderFactory.createTitledBorder(pTitle));
     }
 }

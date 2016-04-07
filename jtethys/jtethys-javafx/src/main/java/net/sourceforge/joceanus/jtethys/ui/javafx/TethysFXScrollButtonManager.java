@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.geometry.Side;
 import javafx.scene.Node;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXArrowIcon;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.TethysFXContextEvent;
@@ -37,15 +35,31 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.Teth
 public final class TethysFXScrollButtonManager<T>
         extends TethysScrollButtonManager<T, Node, Node> {
     /**
+     * The node.
+     */
+    private Node theNode;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
     public TethysFXScrollButtonManager(final TethysFXGuiFactory pFactory) {
         /* Initialise the underlying class */
         super(pFactory);
+        theNode = super.getNode();
 
         /* Set down Arrow as the graphic */
         getButton().setIcon(TethysFXArrowIcon.DOWN.getArrow());
+    }
+
+    @Override
+    public Node getNode() {
+        return theNode;
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
     }
 
     @Override
@@ -70,5 +84,10 @@ public final class TethysFXScrollButtonManager<T>
     public <K extends Enum<K> & TethysIconId> void setIcon(final K pId,
                                                            final int pWidth) {
         getButton().setIcon(TethysFXGuiUtils.getIconAtSize(pId, pWidth));
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode = TethysFXGuiUtils.getTitledPane(pTitle, super.getNode());
     }
 }

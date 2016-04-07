@@ -45,32 +45,32 @@ public abstract class TethysDateRangeSelector<N, I>
     /**
      * ToolTip for Next Button.
      */
-    protected static final String NLS_NEXTTIP = TethysDateResource.TIP_NEXTDATE.getValue();
+    private static final String NLS_NEXTTIP = TethysDateResource.TIP_NEXTDATE.getValue();
 
     /**
      * ToolTip for Previous Button.
      */
-    protected static final String NLS_PREVTIP = TethysDateResource.TIP_PREVDATE.getValue();
+    private static final String NLS_PREVTIP = TethysDateResource.TIP_PREVDATE.getValue();
 
     /**
      * Text for Start Label.
      */
-    protected static final String NLS_START = TethysDateResource.LABEL_STARTING.getValue();
+    private static final String NLS_START = TethysDateResource.LABEL_STARTING.getValue();
 
     /**
      * Text for End Label.
      */
-    protected static final String NLS_END = TethysDateResource.LABEL_ENDING.getValue();
+    private static final String NLS_END = TethysDateResource.LABEL_ENDING.getValue();
 
     /**
      * Text for Containing Label.
      */
-    protected static final String NLS_CONTAIN = TethysDateResource.LABEL_CONTAINING.getValue();
+    private static final String NLS_CONTAIN = TethysDateResource.LABEL_CONTAINING.getValue();
 
     /**
      * Text for Period Label.
      */
-    protected static final String NLS_PERIOD = TethysDateResource.LABEL_PERIOD.getValue();
+    private static final String NLS_PERIOD = TethysDateResource.LABEL_PERIOD.getValue();
 
     /**
      * Text for Box Title.
@@ -78,9 +78,9 @@ public abstract class TethysDateRangeSelector<N, I>
     protected static final String NLS_TITLE = TethysDateResource.TITLE_BOX.getValue();
 
     /**
-     * The Id.
+     * The GUI Factory.
      */
-    private final Integer theId;
+    private final TethysGuiFactory<N, I> theGuiFactory;
 
     /**
      * The Event Manager.
@@ -91,6 +91,41 @@ public abstract class TethysDateRangeSelector<N, I>
      * The formatter.
      */
     private final TethysDateFormatter theFormatter;
+
+    /**
+     * The Control.
+     */
+    private final TethysBoxPaneManager<N, I> theControl;
+
+    /**
+     * The Period Box.
+     */
+    private final TethysBoxPaneManager<N, I> thePeriodBox;
+
+    /**
+     * The Standard Box.
+     */
+    private final TethysBoxPaneManager<N, I> theStandardBox;
+
+    /**
+     * The Period Box.
+     */
+    private final TethysBoxPaneManager<N, I> theCustomBox;
+
+    /**
+     * The Standard Label.
+     */
+    private final TethysLabel<N, I> theStandardLabel;
+
+    /**
+     * The Next button.
+     */
+    private final TethysButton<N, I> theNextButton;
+
+    /**
+     * The Previous button.
+     */
+    private final TethysButton<N, I> thePrevButton;
 
     /**
      * The Start Date button.
@@ -137,19 +172,63 @@ public abstract class TethysDateRangeSelector<N, I>
         /* Store the parameters */
         theFormatter = pFactory.getDataFormatter().getDateFormatter();
 
+        /* Record the factory */
+        theGuiFactory = pFactory;
+
         /* Create event manager */
-        theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
 
         /* Create initial state */
         theState = new TethysDateRangeState(pBaseIsStart);
 
         /* Create the buttons */
-        theStartButton = pFactory.newDateButton();
-        theEndButton = pFactory.newDateButton();
-        theBaseButton = pFactory.newDateButton();
-        thePeriodButton = pFactory.newScrollButton();
+        theStartButton = theGuiFactory.newDateButton();
+        theEndButton = theGuiFactory.newDateButton();
+        theBaseButton = theGuiFactory.newDateButton();
+        thePeriodButton = theGuiFactory.newScrollButton();
         buildPeriodMenu(thePeriodButton.getMenu());
+
+        /* Create the period box */
+        TethysLabel<N, I> myPeriodLabel = pFactory.newLabel(NLS_PERIOD);
+        thePeriodBox = pFactory.newHBoxPane();
+        thePeriodBox.addNode(myPeriodLabel);
+        thePeriodBox.addNode(thePeriodButton);
+
+        /* Create the next button */
+        theNextButton = pFactory.newButton();
+        theNextButton.setToolTip(NLS_NEXTTIP);
+        theNextButton.getEventRegistrar().addEventListener(e -> handleNextDate());
+
+        /* Create the Previous button */
+        thePrevButton = pFactory.newButton();
+        thePrevButton.setToolTip(NLS_PREVTIP);
+        thePrevButton.getEventRegistrar().addEventListener(e -> handlePreviousDate());
+
+        /* Create the Custom HBox */
+        theCustomBox = pFactory.newHBoxPane();
+        TethysLabel<N, I> myStartLabel = pFactory.newLabel(NLS_START);
+        TethysLabel<N, I> myEndLabel = pFactory.newLabel(NLS_END);
+        theCustomBox.addNode(myStartLabel);
+        theCustomBox.addNode(theStartButton);
+        theCustomBox.addNode(myEndLabel);
+        theCustomBox.addNode(theEndButton);
+
+        /* Create the Standard HBox */
+        theStandardBox = pFactory.newHBoxPane();
+        theStandardLabel = pFactory.newLabel();
+        theStandardBox.addNode(theStandardLabel);
+        theStandardBox.addNode(thePrevButton);
+        theStandardBox.addNode(theBaseButton);
+        theStandardBox.addNode(theNextButton);
+
+        /* Create the Main Node */
+        theControl = theGuiFactory.newHBoxPane();
+
+        /* Configure the node */
+        theControl.addNode(thePeriodBox);
+        theControl.addSpacer();
+        theControl.addNode(theStandardBox);
+        theControl.addNode(theCustomBox);
 
         /* Add the listeners */
         theStartButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewStartDate(e.getDetails(TethysDate.class)));
@@ -160,7 +239,7 @@ public abstract class TethysDateRangeSelector<N, I>
 
     @Override
     public Integer getId() {
-        return theId;
+        return theControl.getId();
     }
 
     @Override
@@ -175,35 +254,33 @@ public abstract class TethysDateRangeSelector<N, I>
     public abstract boolean isVisible();
 
     /**
-     * Obtain the start button.
-     * @return the start button
+     * Set the Border Title.
+     * @param pTitle the title text
      */
-    protected TethysDateButtonManager<N, I> getStartButton() {
-        return theStartButton;
+    public abstract void setBorderTitle(final String pTitle);
+
+    /**
+     * Obtain the previous button.
+     * @return the previous button
+     */
+    protected TethysButton<N, I> getPrevButton() {
+        return thePrevButton;
     }
 
     /**
-     * Obtain the end button.
-     * @return the end button
+     * Obtain the next button.
+     * @return the next button
      */
-    protected TethysDateButtonManager<N, I> getEndButton() {
-        return theEndButton;
+    protected TethysButton<N, I> getNextButton() {
+        return theNextButton;
     }
 
     /**
-     * Obtain the base button.
-     * @return the base button
+     * Obtain the control.
+     * @return the control
      */
-    protected TethysDateButtonManager<N, I> getBaseButton() {
-        return theBaseButton;
-    }
-
-    /**
-     * Obtain the period button.
-     * @return the period button
-     */
-    protected TethysScrollButtonManager<TethysDatePeriod, N, I> getPeriodButton() {
-        return thePeriodButton;
+    protected TethysBoxPaneManager<N, I> getControl() {
+        return theControl;
     }
 
     /**
@@ -396,5 +473,50 @@ public abstract class TethysDateRangeSelector<N, I>
      * Apply the state.
      * @param pState the state
      */
-    protected abstract void applyState(final TethysDateRangeState pState);
+    protected void applyState(final TethysDateRangeState pState) {
+        /* Determine flags */
+        boolean isUpTo = pState.isUpTo()
+                         && pState.isLocked();
+        boolean isAdjust = pState.isAdjustable();
+        boolean isFull = pState.isFull();
+        boolean isContaining = pState.isContaining();
+        boolean isBaseStartOfPeriod = pState.isBaseStartOfPeriod();
+
+        /* Adjust visibility */
+        theGuiFactory.setNodeVisible(thePeriodBox, !isUpTo);
+
+        /* If this is a custom state */
+        if (pState.isCustom()) {
+            theGuiFactory.setNodeVisible(theStandardBox, false);
+            theGuiFactory.setNodeVisible(theCustomBox, true);
+
+            /* else this is a standard state */
+        } else if (!isFull) {
+            /* Enable/disable the adjustment buttons */
+            theNextButton.setEnabled(pState.isNextOK());
+            thePrevButton.setEnabled(pState.isPrevOK());
+
+            /* Hide Next/Previous if necessary */
+            theNextButton.setVisible(isAdjust);
+            thePrevButton.setVisible(isAdjust);
+
+            /* Label is hidden for UpTo range */
+            theStandardLabel.setVisible(!isUpTo);
+
+            /* Set correct text for label */
+            theStandardLabel.setText(isContaining
+                                                  ? NLS_CONTAIN
+                                                  : isBaseStartOfPeriod
+                                                                        ? NLS_START
+                                                                        : NLS_END);
+
+            /* Display the standard box */
+            theGuiFactory.setNodeVisible(theCustomBox, false);
+            theGuiFactory.setNodeVisible(theStandardBox, true);
+        } else {
+            /* Hide the boxes */
+            theGuiFactory.setNodeVisible(theCustomBox, false);
+            theGuiFactory.setNodeVisible(theStandardBox, false);
+        }
+    }
 }

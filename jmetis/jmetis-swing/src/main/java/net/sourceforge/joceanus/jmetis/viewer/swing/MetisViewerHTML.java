@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
-import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
 
 /**
  * Data object formatting in HTML.

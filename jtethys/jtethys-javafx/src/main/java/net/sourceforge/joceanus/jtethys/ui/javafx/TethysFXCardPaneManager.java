@@ -34,6 +34,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 public class TethysFXCardPaneManager<P extends TethysNode<Node>>
         extends TethysCardPaneManager<Node, Node, P> {
     /**
+     * The node.
+     */
+    private Node theNode;
+
+    /**
      * The panel.
      */
     private final BorderPane thePanel;
@@ -45,11 +50,12 @@ public class TethysFXCardPaneManager<P extends TethysNode<Node>>
     protected TethysFXCardPaneManager(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         thePanel = new BorderPane();
+        theNode = thePanel;
     }
 
     @Override
     public Node getNode() {
-        return thePanel;
+        return theNode;
     }
 
     @Override
@@ -60,7 +66,7 @@ public class TethysFXCardPaneManager<P extends TethysNode<Node>>
 
     @Override
     public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
+        theNode.setVisible(pVisible);
     }
 
     @Override
@@ -81,5 +87,10 @@ public class TethysFXCardPaneManager<P extends TethysNode<Node>>
             thePanel.setCenter(getActiveCard().getNode());
         }
         return isSelected;
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode = TethysFXGuiUtils.getTitledPane(pTitle, thePanel);
     }
 }

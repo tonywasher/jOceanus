@@ -48,11 +48,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 public abstract class TethysDateButtonManager<N, I>
         implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
-     * The id.
-     */
-    private final Integer theId;
-
-    /**
      * The Event Manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
@@ -87,7 +82,6 @@ public abstract class TethysDateButtonManager<N, I>
         theConfig = new TethysDateConfig(theFormatter);
 
         /* Create resources */
-        theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
         theButton = pFactory.newButton();
 
@@ -106,7 +100,7 @@ public abstract class TethysDateButtonManager<N, I>
 
     @Override
     public Integer getId() {
-        return theId;
+        return theButton.getId();
     }
 
     @Override
@@ -144,6 +138,12 @@ public abstract class TethysDateButtonManager<N, I>
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
+
+    /**
+     * Set the Border Title.
+     * @param pTitle the title text
+     */
+    public abstract void setBorderTitle(final String pTitle);
 
     /**
      * show the dialog.

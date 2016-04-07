@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.geometry.Side;
 import javafx.scene.Node;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.TethysFXContextEvent;
 
@@ -35,15 +34,31 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.Teth
 public final class TethysFXListButtonManager<T>
         extends TethysListButtonManager<T, Node, Node> {
     /**
+     * The node.
+     */
+    private Node theNode;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
     protected TethysFXListButtonManager(final TethysFXGuiFactory pFactory) {
         /* Initialise the underlying class */
         super(pFactory);
+        theNode = super.getNode();
 
         /* Set down Arrow as the graphic */
         getButton().setIcon(TethysFXArrowIcon.DOWN.getArrow());
+    }
+
+    @Override
+    public Node getNode() {
+        return theNode;
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
     }
 
     @Override
@@ -62,5 +77,10 @@ public final class TethysFXListButtonManager<T>
     @Override
     protected void showMenu() {
         getMenu().showMenuAtPosition(getNode(), Side.BOTTOM);
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode = TethysFXGuiUtils.getTitledPane(pTitle, super.getNode());
     }
 }

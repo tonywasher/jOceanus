@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
@@ -89,5 +89,10 @@ public class TethysSwingDateButtonManager
 
         /* Show the dialog under the node */
         theDialog.showDialogUnderNode(getNode());
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        getNode().setBorder(BorderFactory.createTitledBorder(pTitle));
     }
 }

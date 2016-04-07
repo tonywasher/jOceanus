@@ -51,11 +51,6 @@ public abstract class TethysIconButtonManager<T, N, I>
     protected static final int DEFAULT_ICONWIDTH = TethysIconBuilder.DEFAULT_ICONWIDTH;
 
     /**
-     * The id.
-     */
-    private final Integer theId;
-
-    /**
      * The Event Manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
@@ -81,7 +76,6 @@ public abstract class TethysIconButtonManager<T, N, I>
      */
     protected TethysIconButtonManager(final TethysGuiFactory<N, I> pFactory) {
         /* Allocate resources */
-        theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
         theButton = pFactory.newButton();
         theWidth = DEFAULT_ICONWIDTH;
@@ -95,7 +89,7 @@ public abstract class TethysIconButtonManager<T, N, I>
 
     @Override
     public Integer getId() {
-        return theId;
+        return theButton.getId();
     }
 
     /**
@@ -131,6 +125,12 @@ public abstract class TethysIconButtonManager<T, N, I>
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
+
+    /**
+     * Set the Border Title.
+     * @param pTitle the title text
+     */
+    public abstract void setBorderTitle(final String pTitle);
 
     /**
      * Set the width.

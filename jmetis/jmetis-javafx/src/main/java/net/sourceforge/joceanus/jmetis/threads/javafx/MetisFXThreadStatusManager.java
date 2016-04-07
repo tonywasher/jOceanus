@@ -35,7 +35,7 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatus;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
 
 /**
  * JavaFX Thread Status Manager.

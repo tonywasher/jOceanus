@@ -24,18 +24,13 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
@@ -187,20 +182,20 @@ public class TethysFXScrollUIExample
         myGrid.getColumnConstraints().addAll(new ColumnConstraints(), new ColumnConstraints(VALUE_WIDTH));
 
         /* Create context menu line */
-        Label myContextArea = new Label("Right-click for Menu");
-        StackPane myContext = TethysFXGuiUtils.getTitledPane("ContextArea", myContextArea);
-        myContext.setAlignment(Pos.CENTER);
-        myContext.setMaxWidth(Double.MAX_VALUE);
-        StackPane myResult = TethysFXGuiUtils.getTitledPane("ContextValue", theContextValue.getNode());
+        TethysFXLabel myContextArea = theGuiFactory.newLabel("Right-click for Menu");
+        myContextArea.setBorderTitle("ContextArea");
+        myContextArea.setAlignment(TethysAlignment.CENTRE);
+        theContextValue.setBorderTitle("ContextValue");
         theContextValue.setAlignment(TethysAlignment.CENTRE);
-        myGrid.addRow(myRowNo++, myContext, myResult);
+        myGrid.addRow(myRowNo++, myContextArea.getNode(), theContextValue.getNode());
         setContextValue(null);
 
         /* Build the context menu */
         theHelper.buildContextMenu(theContextMenu);
 
         /* Create the menu hook */
-        myContext.setOnContextMenuRequested(e -> theContextMenu.showMenuAtPosition(myContext, e.getX(), e.getY()));
+        // myContext.setOnContextMenuRequested(e -> theContextMenu.showMenuAtPosition(myContext,
+        // e.getX(), e.getY()));
 
         /* Add listener */
         theContextMenu.addEventHandler(TethysFXContextEvent.MENU_SELECT, e -> {
@@ -213,12 +208,10 @@ public class TethysFXScrollUIExample
         });
 
         /* Create scroll button line */
-        StackPane myControl = TethysFXGuiUtils.getTitledPane("ScrollButton", theScrollButtonMgr.getNode());
-        myControl.setAlignment(Pos.CENTER);
-        myControl.setMaxWidth(Double.MAX_VALUE);
-        myResult = TethysFXGuiUtils.getTitledPane("ScrollValue", theScrollValue.getNode());
+        theScrollButtonMgr.setBorderTitle("ScrollButton");
+        theScrollValue.setBorderTitle("ScrollValue");
         theScrollValue.setAlignment(TethysAlignment.CENTRE);
-        myGrid.addRow(myRowNo++, myControl, myResult);
+        myGrid.addRow(myRowNo++, theScrollButtonMgr.getNode(), theScrollValue.getNode());
         setScrollValue(null);
 
         /* Add listener */
@@ -230,12 +223,10 @@ public class TethysFXScrollUIExample
                 e -> theHelper.buildContextMenu(theScrollButtonMgr.getMenu()));
 
         /* Create list button line */
-        myControl = TethysFXGuiUtils.getTitledPane("ListButton", theListButtonMgr.getNode());
-        myControl.setAlignment(Pos.CENTER);
-        myControl.setMaxWidth(Double.MAX_VALUE);
-        myResult = TethysFXGuiUtils.getTitledPane("ListValues", theListValues.getNode());
+        theListButtonMgr.setBorderTitle("ListButton");
+        theListValues.setBorderTitle("ListValues");
         theListValues.setAlignment(TethysAlignment.CENTRE);
-        myGrid.addRow(myRowNo++, myControl, myResult);
+        myGrid.addRow(myRowNo++, theListButtonMgr.getNode(), theListValues.getNode());
 
         theListButtonMgr.setValue(theHelper.buildToggleList(theListButtonMgr));
         theListButtonMgr.setText("Tag");
@@ -247,12 +238,10 @@ public class TethysFXScrollUIExample
         });
 
         /* Create date button line */
-        myControl = TethysFXGuiUtils.getTitledPane("DateButton", theDateButtonMgr.getNode());
-        myControl.setAlignment(Pos.CENTER);
-        myControl.setMaxWidth(Double.MAX_VALUE);
-        myResult = TethysFXGuiUtils.getTitledPane("DateValue", theDateValue.getNode());
+        theDateButtonMgr.setBorderTitle("DateButton");
+        theDateValue.setBorderTitle("DateValue");
         theDateValue.setAlignment(TethysAlignment.CENTRE);
-        myGrid.addRow(myRowNo++, myControl, myResult);
+        myGrid.addRow(myRowNo++, theDateButtonMgr.getNode(), theDateValue.getNode());
 
         /* Add listener */
         theDateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
@@ -261,12 +250,10 @@ public class TethysFXScrollUIExample
         });
 
         /* Create simple icon button line */
-        myControl = TethysFXGuiUtils.getTitledPane("SimpleIconButton", theSimpleIconButtonMgr.getNode());
-        myControl.setAlignment(Pos.CENTER);
-        myControl.setMaxWidth(Double.MAX_VALUE);
-        myResult = TethysFXGuiUtils.getTitledPane("IconValue", theSimpleIconValue.getNode());
+        theSimpleIconButtonMgr.setBorderTitle("SimpleIconButton");
+        theSimpleIconValue.setBorderTitle("IconValue");
         theSimpleIconValue.setAlignment(TethysAlignment.CENTRE);
-        myGrid.addRow(myRowNo++, myControl, myResult);
+        myGrid.addRow(myRowNo++, theSimpleIconButtonMgr.getNode(), theSimpleIconValue.getNode());
         theSimpleIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
         theHelper.buildSimpleIconState(theSimpleIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
 
@@ -277,14 +264,13 @@ public class TethysFXScrollUIExample
         });
 
         /* Create state icon button line */
-        HBox myBox = new HBox();
-        myBox.getChildren().addAll(theStateButtonMgr.getNode(), theStateIconButtonMgr.getNode());
-        myControl = TethysFXGuiUtils.getTitledPane("StateIconButton", myBox);
-        myControl.setAlignment(Pos.CENTER);
-        myControl.setMaxWidth(Double.MAX_VALUE);
-        myResult = TethysFXGuiUtils.getTitledPane("StateIconValue", theStateIconValue.getNode());
+        TethysFXBoxPaneManager myBox = theGuiFactory.newHBoxPane();
+        myBox.addNode(theStateButtonMgr);
+        myBox.addNode(theStateIconButtonMgr);
+        myBox.setBorderTitle("StateIconButton");
+        theStateIconValue.setBorderTitle("StateIconValue");
         theStateIconValue.setAlignment(TethysAlignment.CENTRE);
-        myGrid.addRow(myRowNo++, myControl, myResult);
+        myGrid.addRow(myRowNo++, myBox.getNode(), theStateIconValue.getNode());
         theHelper.buildStateButton(theStateButtonMgr);
         theStateIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
         theHelper.buildStateIconState(theStateIconButtonMgr,
@@ -311,7 +297,6 @@ public class TethysFXScrollUIExample
         theGuiFactory.applyStyleSheets(myScene);
         myPane.setCenter(myGrid);
         pStage.setTitle("JavaFXScroll Demo");
-        TethysFXGuiUtils.addStyleSheet(myScene);
         pStage.setScene(myScene);
         pStage.show();
     }

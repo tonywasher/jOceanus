@@ -33,7 +33,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 
 /**
  * Thread Manager Tester.
@@ -119,7 +118,6 @@ public class MetisFXThreadTester
         Scene myScene = new Scene(new Group());
         ((Group) myScene.getRoot()).getChildren().addAll(theMainPanel);
         pStage.setTitle("MetisFXThread Demo");
-        TethysFXGuiUtils.addStyleSheet(myScene);
         pStage.setScene(myScene);
         pStage.show();
     }

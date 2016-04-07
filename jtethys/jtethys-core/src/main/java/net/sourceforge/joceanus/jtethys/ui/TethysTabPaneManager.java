@@ -79,6 +79,12 @@ public abstract class TethysTabPaneManager<N, I>
         return theId;
     }
 
+    /**
+     * Set the Border Title.
+     * @param pTitle the title text
+     */
+    public abstract void setBorderTitle(final String pTitle);
+
     @Override
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();

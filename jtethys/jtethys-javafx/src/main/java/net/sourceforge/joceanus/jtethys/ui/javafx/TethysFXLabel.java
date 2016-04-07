@@ -33,7 +33,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 public class TethysFXLabel
         extends TethysLabel<Node, Node> {
     /**
-     * The Node.
+     * The node.
+     */
+    private Node theNode;
+
+    /**
+     * The Label.
      */
     private final Label theLabel;
 
@@ -44,6 +49,7 @@ public class TethysFXLabel
     protected TethysFXLabel(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         theLabel = new Label();
+        theNode = theLabel;
         setAlignment(TethysAlignment.LEADING);
     }
 
@@ -59,7 +65,7 @@ public class TethysFXLabel
 
     @Override
     public Node getNode() {
-        return theLabel;
+        return theNode;
     }
 
     @Override
@@ -69,7 +75,7 @@ public class TethysFXLabel
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theLabel.setVisible(pVisible);
+        theNode.setVisible(pVisible);
     }
 
     /**
@@ -87,5 +93,10 @@ public class TethysFXLabel
             default:
                 return Pos.CENTER_LEFT;
         }
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theLabel);
     }
 }

@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.scene.Node;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
@@ -33,6 +32,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  */
 public class TethysFXDateButtonManager
         extends TethysDateButtonManager<Node, Node> {
+    /**
+     * The node.
+     */
+    private Node theNode;
+
     /**
      * The dialog.
      */
@@ -45,9 +49,20 @@ public class TethysFXDateButtonManager
     protected TethysFXDateButtonManager(final TethysFXGuiFactory pFactory) {
         /* Initialise the super-class */
         super(pFactory);
+        theNode = super.getNode();
 
         /* Set down Arrow as the graphic */
         getButton().setIcon(TethysFXArrowIcon.DOWN.getArrow());
+    }
+
+    @Override
+    public Node getNode() {
+        return theNode;
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
     }
 
     /**
@@ -83,5 +98,10 @@ public class TethysFXDateButtonManager
 
         /* Show the dialog under the node */
         theDialog.showDialogUnderNode(getNode());
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode = TethysFXGuiUtils.getTitledPane(pTitle, super.getNode());
     }
 }

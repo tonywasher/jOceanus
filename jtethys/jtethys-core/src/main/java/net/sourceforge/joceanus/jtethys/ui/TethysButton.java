@@ -98,6 +98,12 @@ public abstract class TethysButton<N, I>
     public abstract void setText(final String pText);
 
     /**
+     * Set the Border Title.
+     * @param pTitle the title text
+     */
+    public abstract void setBorderTitle(final String pTitle);
+
+    /**
      * Set icon for button.
      * @param <K> the keyId type
      * @param pId the icon Id

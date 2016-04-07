@@ -72,6 +72,12 @@ public abstract class TethysBorderPaneManager<N, I>
     }
 
     /**
+     * Set the Border Title.
+     * @param pTitle the title text
+     */
+    public abstract void setBorderTitle(final String pTitle);
+
+    /**
      * Set the Centre Node.
      * @param pNode the node
      */

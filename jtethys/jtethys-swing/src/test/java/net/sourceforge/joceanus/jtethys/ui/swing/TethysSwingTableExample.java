@@ -200,11 +200,13 @@ public class TethysSwingTableExample {
         TethysSwingTableIconColumn<TethysDataId, TethysSwingTableItem, Boolean> myBoolColumn = theTable.declareIconColumn(TethysDataId.BOOLEAN, Boolean.class);
         myBoolColumn.setCellValueFactory(p -> p.getBoolean());
         myBoolColumn.setCellCommitFactory((p, v) -> p.setBoolean(v));
+        myBoolColumn.setName("B");
 
         /* Create the extra boolean column */
         TethysSwingTableStateIconColumn<TethysDataId, TethysSwingTableItem, Boolean> myXtraBoolColumn = theTable.declareStateIconColumn(TethysDataId.XTRABOOL, Boolean.class);
         myXtraBoolColumn.setCellValueFactory(p -> p.getXtraBoolean());
         myXtraBoolColumn.setCellCommitFactory((p, v) -> p.setXtraBoolean(v));
+        myXtraBoolColumn.setName("X");
 
         /* Create the scroll column */
         TethysSwingTableScrollColumn<TethysDataId, TethysSwingTableItem, String> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
@@ -219,6 +221,7 @@ public class TethysSwingTableExample {
         /* Create the updates column */
         TethysSwingTableIntegerColumn<TethysDataId, TethysSwingTableItem> myUpdatesColumn = theTable.declareIntegerColumn(TethysDataId.UPDATES);
         myUpdatesColumn.setCellValueFactory(p -> p.getUpdates());
+        myUpdatesColumn.setName("U");
     }
 
     /**

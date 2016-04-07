@@ -31,7 +31,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
@@ -168,10 +167,12 @@ public class TethysFXTableExample
         /* Create the boolean column */
         TethysFXTableIconColumn<TethysDataId, TethysFXTableItem, Boolean> myBoolColumn = theTable.declareIconColumn(TethysDataId.BOOLEAN, Boolean.class);
         myBoolColumn.setCellValueFactory(p -> p.getValue().booleanProperty());
+        myBoolColumn.setName("B");
 
         /* Create the extra boolean column */
         TethysFXTableStateIconColumn<TethysDataId, TethysFXTableItem, Boolean> myXtraBoolColumn = theTable.declareStateIconColumn(TethysDataId.XTRABOOL, Boolean.class);
         myXtraBoolColumn.setCellValueFactory(p -> p.getValue().xtraBooleanProperty());
+        myXtraBoolColumn.setName("X");
 
         /* Create the scroll column */
         TethysFXTableScrollColumn<TethysDataId, TethysFXTableItem, String> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
@@ -184,6 +185,7 @@ public class TethysFXTableExample
         /* Create the updates column */
         TethysFXTableIntegerColumn<TethysDataId, TethysFXTableItem> myUpdatesColumn = theTable.declareIntegerColumn(TethysDataId.UPDATES);
         myUpdatesColumn.setCellValueFactory(p -> p.getValue().updatesProperty());
+        myUpdatesColumn.setName("U");
     }
 
     /**
@@ -295,7 +297,6 @@ public class TethysFXTableExample
         theGuiFactory.applyStyleSheets(myScene);
         myPane.setCenter(theTable.getNode());
         pStage.setTitle("JavaFXTable Demo");
-        TethysFXGuiUtils.addStyleSheet(myScene);
         pStage.setScene(myScene);
         pStage.show();
     }

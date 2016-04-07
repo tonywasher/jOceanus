@@ -33,9 +33,14 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 public class TethysFXBorderPaneManager
         extends TethysBorderPaneManager<Node, Node> {
     /**
+     * The Node.
+     */
+    private Node theNode;
+
+    /**
      * The BorderPane.
      */
-    private final BorderPane theNode;
+    private final BorderPane theBorderNode;
 
     /**
      * Constructor.
@@ -43,7 +48,8 @@ public class TethysFXBorderPaneManager
      */
     protected TethysFXBorderPaneManager(final TethysFXGuiFactory pFactory) {
         super(pFactory);
-        theNode = new BorderPane();
+        theBorderNode = new BorderPane();
+        theNode = theBorderNode;
     }
 
     @Override
@@ -59,41 +65,41 @@ public class TethysFXBorderPaneManager
     @Override
     public void setCentre(final TethysNode<Node> pNode) {
         super.setCentre(pNode);
-        theNode.setCenter(pNode == null
-                                        ? null
-                                        : pNode.getNode());
+        theBorderNode.setCenter(pNode == null
+                                              ? null
+                                              : pNode.getNode());
     }
 
     @Override
     public void setNorth(final TethysNode<Node> pNode) {
         super.setNorth(pNode);
-        theNode.setTop(pNode == null
-                                     ? null
-                                     : pNode.getNode());
+        theBorderNode.setTop(pNode == null
+                                           ? null
+                                           : pNode.getNode());
     }
 
     @Override
     public void setSouth(final TethysNode<Node> pNode) {
         super.setSouth(pNode);
-        theNode.setBottom(pNode == null
-                                        ? null
-                                        : pNode.getNode());
+        theBorderNode.setBottom(pNode == null
+                                              ? null
+                                              : pNode.getNode());
     }
 
     @Override
     public void setWest(final TethysNode<Node> pNode) {
         super.setWest(pNode);
-        theNode.setLeft(pNode == null
-                                      ? null
-                                      : pNode.getNode());
+        theBorderNode.setLeft(pNode == null
+                                            ? null
+                                            : pNode.getNode());
     }
 
     @Override
     public void setEast(final TethysNode<Node> pNode) {
         super.setEast(pNode);
-        theNode.setRight(pNode == null
-                                       ? null
-                                       : pNode.getNode());
+        theBorderNode.setRight(pNode == null
+                                             ? null
+                                             : pNode.getNode());
     }
 
     @Override
@@ -107,21 +113,26 @@ public class TethysFXBorderPaneManager
         /* Switch on location */
         switch (pLocation) {
             case NORTH:
-                theNode.setTop(myNode);
+                theBorderNode.setTop(myNode);
                 break;
             case SOUTH:
-                theNode.setBottom(myNode);
+                theBorderNode.setBottom(myNode);
                 break;
             case WEST:
-                theNode.setLeft(myNode);
+                theBorderNode.setLeft(myNode);
                 break;
             case EAST:
-                theNode.setRight(myNode);
+                theBorderNode.setRight(myNode);
                 break;
             case CENTRE:
             default:
-                theNode.setCenter(myNode);
+                theBorderNode.setCenter(myNode);
                 break;
         }
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theBorderNode);
     }
 }

@@ -32,6 +32,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 public class TethysFXCheckBox
         extends TethysCheckBox<Node, Node> {
     /**
+     * The node.
+     */
+    private Node theNode;
+
+    /**
      * CheckBox.
      */
     private final CheckBox theCheckBox;
@@ -43,12 +48,13 @@ public class TethysFXCheckBox
     protected TethysFXCheckBox(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         theCheckBox = new CheckBox();
+        theNode = theCheckBox;
         theCheckBox.selectedProperty().addListener((v, o, n) -> handleSelected(n));
     }
 
     @Override
     public Node getNode() {
-        return theCheckBox;
+        return theNode;
     }
 
     @Override
@@ -58,7 +64,7 @@ public class TethysFXCheckBox
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theCheckBox.setVisible(pVisible);
+        theNode.setVisible(pVisible);
     }
 
     @Override
@@ -70,5 +76,10 @@ public class TethysFXCheckBox
     public void setSelected(final boolean pSelected) {
         super.setSelected(pSelected);
         theCheckBox.setSelected(pSelected);
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theCheckBox);
     }
 }

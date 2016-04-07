@@ -28,7 +28,7 @@ import java.awt.Font;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
 
 /**
  * Wrapper class for java preferences.

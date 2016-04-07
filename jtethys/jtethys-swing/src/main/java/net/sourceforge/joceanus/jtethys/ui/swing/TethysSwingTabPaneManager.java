@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
@@ -86,6 +87,11 @@ public class TethysSwingTabPaneManager
     @Override
     public void setVisible(final boolean pVisible) {
         theTabPane.setVisible(pVisible);
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theTabPane.setBorder(BorderFactory.createTitledBorder(pTitle));
     }
 
     /**

@@ -28,7 +28,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Tooltip;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
@@ -37,6 +36,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
  */
 public class TethysFXButton
         extends TethysButton<Node, Node> {
+    /**
+     * The node.
+     */
+    private Node theNode;
+
     /**
      * The button.
      */
@@ -49,12 +53,13 @@ public class TethysFXButton
     protected TethysFXButton(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         theButton = new Button();
+        theNode = theButton;
         theButton.setOnAction(e -> handlePressed());
     }
 
     @Override
     public Node getNode() {
-        return theButton;
+        return theNode;
     }
 
     @Override
@@ -64,7 +69,7 @@ public class TethysFXButton
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theButton.setVisible(pVisible);
+        theNode.setVisible(pVisible);
     }
 
     @Override
@@ -115,5 +120,10 @@ public class TethysFXButton
         theButton.setContentDisplay(ContentDisplay.TEXT_ONLY);
         theButton.setAlignment(Pos.CENTER);
         theButton.setMaxWidth(Double.MAX_VALUE);
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theButton);
     }
 }

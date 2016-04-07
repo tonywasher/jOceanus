@@ -68,6 +68,12 @@ public abstract class TethysCardPaneManager<N, I, P extends TethysNode<N>>
     }
 
     /**
+     * Set the Border Title.
+     * @param pTitle the title text
+     */
+    public abstract void setBorderTitle(final String pTitle);
+
+    /**
      * Get Active Name.
      * @return the name
      */

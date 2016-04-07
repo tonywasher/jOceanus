@@ -66,6 +66,12 @@ public abstract class TethysFlowPaneManager<N, I>
     }
 
     /**
+     * Set the Border Title.
+     * @param pTitle the title text
+     */
+    public abstract void setBorderTitle(final String pTitle);
+
+    /**
      * Add Node.
      * @param pNode the node
      */

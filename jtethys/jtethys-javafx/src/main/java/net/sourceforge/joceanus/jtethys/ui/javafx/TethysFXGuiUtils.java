@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.javafx;
+package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.List;
 
@@ -50,9 +50,24 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
  */
 public final class TethysFXGuiUtils {
     /**
-     * StyleSheet.
+     * The titled style.
      */
-    private static final String CSS_STYLE = TethysFXGuiUtils.class.getResource("jtethys-javafx-titled.css").toExternalForm();
+    private static final String STYLE_TITLED = TethysFXGuiFactory.CSS_STYLE_BASE + "-titled";
+
+    /**
+     * The title style.
+     */
+    private static final String STYLE_TITLE = STYLE_TITLED + "-title";
+
+    /**
+     * The border style.
+     */
+    private static final String STYLE_BORDER = STYLE_TITLED + "-border";
+
+    /**
+     * The content style.
+     */
+    private static final String STYLE_CONTENT = STYLE_TITLED + "-content";
 
     /**
      * RGB header.
@@ -101,6 +116,7 @@ public final class TethysFXGuiUtils {
      */
     public static StackPane getTitledPane(final String pTitle,
                                           final Node pNode) {
+        /* TODO Make this protected */
         /* Access the Node */
         Node myNode = pNode;
         if (!(myNode instanceof Pane)) {
@@ -117,22 +133,16 @@ public final class TethysFXGuiUtils {
         StackPane myPanel = new StackPane();
         Label myTitle = new Label(pTitle);
         StackPane.setAlignment(myTitle, Pos.TOP_LEFT);
-        StackPane.setAlignment(pNode, Pos.CENTER);
+        StackPane.setAlignment(myNode, Pos.CENTER);
         myPanel.getChildren().addAll(myTitle, myNode);
-        myNode.getStyleClass().add("-jtethys-titled-content");
-        myTitle.getStyleClass().add("-jtethys-titled-title");
-        myPanel.getStyleClass().add("-jtethys-titled-border");
+
+        /* Set the styles */
+        myNode.getStyleClass().add(STYLE_CONTENT);
+        myTitle.getStyleClass().add(STYLE_TITLE);
+        myPanel.getStyleClass().add(STYLE_BORDER);
 
         /* Return the panel */
         return myPanel;
-    }
-
-    /**
-     * Add necessary styleSheets to scene.
-     * @param pScene the scene
-     */
-    public static void addStyleSheet(final Scene pScene) {
-        pScene.getStylesheets().add(CSS_STYLE);
     }
 
     /**
@@ -142,9 +152,9 @@ public final class TethysFXGuiUtils {
      * @param pSize the size of the dialog
      * @return the (adjusted) rectangle
      */
-    public static Point2D obtainDisplayPoint(final Node pAnchor,
-                                             final Point2D pLocation,
-                                             final Dimension2D pSize) {
+    protected static Point2D obtainDisplayPoint(final Node pAnchor,
+                                                final Point2D pLocation,
+                                                final Dimension2D pSize) {
         /* First of all determine the display screen for the anchor node */
         Screen myScreen = getScreenForNode(pAnchor);
 
@@ -167,9 +177,9 @@ public final class TethysFXGuiUtils {
      * @param pSize the size of the dialog
      * @return the (adjusted) rectangle
      */
-    public static Point2D obtainDisplayPoint(final Node pAnchor,
-                                             final Side pSide,
-                                             final Dimension2D pSize) {
+    protected static Point2D obtainDisplayPoint(final Node pAnchor,
+                                                final Side pSide,
+                                                final Dimension2D pSize) {
         /* First of all determine the display screen for the anchor node */
         Screen myScreen = getScreenForNode(pAnchor);
 

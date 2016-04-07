@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -89,5 +90,10 @@ public class TethysSwingLabel
             default:
                 return SwingConstants.LEFT;
         }
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theLabel.setBorder(BorderFactory.createTitledBorder(pTitle));
     }
 }

@@ -26,6 +26,7 @@ import java.awt.Component;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -138,5 +139,17 @@ public class TethysSwingBoxPaneManager
         if (myPanel != null) {
             myPanel.setVisible(pVisible);
         }
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        thePanel.setBorder(BorderFactory.createTitledBorder(pTitle));
+    }
+
+    @Override
+    public void addSpacer() {
+        thePanel.add(isHorizontal
+                                  ? Box.createHorizontalGlue()
+                                  : Box.createVerticalGlue());
     }
 }

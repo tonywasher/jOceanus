@@ -22,12 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
@@ -65,5 +65,10 @@ public final class TethysSwingListButtonManager<T>
     @Override
     protected void showMenu() {
         getMenu().showMenuAtPosition(getNode(), SwingConstants.BOTTOM);
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        getNode().setBorder(BorderFactory.createTitledBorder(pTitle));
     }
 }

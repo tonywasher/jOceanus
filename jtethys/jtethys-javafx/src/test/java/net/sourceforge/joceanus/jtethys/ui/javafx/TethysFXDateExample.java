@@ -56,7 +56,6 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
@@ -133,14 +132,13 @@ public class TethysFXDateExample
         BorderPane myPane = new BorderPane();
         Scene myScene = new Scene(myPane);
         myPane.setCenter(myGrid);
-        TethysFXGuiUtils.addStyleSheet(myScene);
         theGuiFactory.applyStyleSheets(myScene);
         pStage.setTitle("TethysDate JavaFX Demo");
         pStage.setScene(myScene);
         pStage.show();
 
         /* Add a listener for width changes */
-        myGrid.widthProperty().addListener(new ChangeListener<Number>() {
+        myGrid.prefWidthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(final ObservableValue<? extends Number> pProperty,
                                 final Number pOldValue,

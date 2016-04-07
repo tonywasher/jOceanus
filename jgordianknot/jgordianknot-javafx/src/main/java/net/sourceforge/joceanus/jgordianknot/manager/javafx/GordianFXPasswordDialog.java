@@ -42,7 +42,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import net.sourceforge.joceanus.jgordianknot.manager.MgrResource;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
@@ -253,7 +253,7 @@ public class GordianFXPasswordDialog
         theContainer.setCenter(myForm);
         Scene myScene = new Scene(theContainer);
         setScene(myScene);
-        TethysFXGuiUtils.addStyleSheet(myScene);
+        // TethysFXGuiUtils.addStyleSheet(myScene);
     }
 
     /**

@@ -23,27 +23,19 @@
 package net.sourceforge.joceanus.jtethys.ui;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory.TethysParentNode;
-
 /**
- * Flow Pane Manager.
+ * Grid Pane Manager.
  * @param <N> the node type
  * @param <I> the Icon Type
  */
-public abstract class TethysBoxPaneManager<N, I>
-        implements TethysNode<N>, TethysParentNode<N> {
+public abstract class TethysGridPaneManager<N, I>
+        implements TethysNode<N> {
     /**
-     * Strut Size.
+     * Inset depth.
      */
-    protected static final int STRUT_SIZE = 4;
-
-    /**
-     * The GUI Factory.
-     */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    protected static final int INSET_DEPTH = 5;
 
     /**
      * The id.
@@ -56,13 +48,24 @@ public abstract class TethysBoxPaneManager<N, I>
     private final List<TethysNode<N>> theNodeList;
 
     /**
+     * The row id.
+     */
+    private Integer theRowIndex;
+
+    /**
+     * The next id.
+     */
+    private Integer theColIndex;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysBoxPaneManager(final TethysGuiFactory<N, I> pFactory) {
-        theGuiFactory = pFactory;
-        theId = theGuiFactory.getNextId();
+    protected TethysGridPaneManager(final TethysGuiFactory<N, I> pFactory) {
+        theId = pFactory.getNextId();
         theNodeList = new ArrayList<>();
+        theRowIndex = 0;
+        theColIndex = 0;
     }
 
     @Override
@@ -76,28 +79,6 @@ public abstract class TethysBoxPaneManager<N, I>
      */
     public abstract void setBorderTitle(final String pTitle);
 
-    /**
-     * Add spacer.
-     */
-    public abstract void addSpacer();
-
-    /**
-     * Add Spacer Node.
-     * @param pNode the node
-     */
-    protected void addSpacerNode(final TethysNode<N> pNode) {
-        theNodeList.add(pNode);
-    }
-
-    /**
-     * Add Node.
-     * @param pNode the node
-     */
-    public void addNode(final TethysNode<N> pNode) {
-        theNodeList.add(pNode);
-        theGuiFactory.registerChild(this, pNode);
-    }
-
     @Override
     public void setEnabled(final boolean pEnabled) {
         for (TethysNode<N> myNode : theNodeList) {
@@ -106,10 +87,54 @@ public abstract class TethysBoxPaneManager<N, I>
     }
 
     /**
-     * Obtain List iterator.
-     * @return the iterator
+     * Shift to next row.
      */
-    protected Iterator<TethysNode<N>> iterator() {
-        return theNodeList.iterator();
+    public void newRow() {
+        theRowIndex = theRowIndex + 1;
+        theColIndex = 0;
+    }
+
+    /**
+     * Use columns.
+     * @param pCols the number of columns that have been filled.
+     */
+    protected void useColumns(final int pCols) {
+        theColIndex = theColIndex + pCols;
+    }
+
+    /**
+     * Add cell.
+     * @param pNode the node to add
+     */
+    public abstract void addSingleCell(final TethysNode<N> pNode);
+
+    /**
+     * Add final cell for row
+     * @param pNode the node to add
+     */
+    public abstract void addFinalCell(final TethysNode<N> pNode);
+
+    /**
+     * Add simple Node
+     * @param pNode the node to add
+     */
+    protected void addNode(final TethysNode<N> pNode) {
+        theNodeList.add(pNode);
+    }
+
+    /**
+     * Obtain the row Id.
+     * @return the row Id.
+     */
+    protected Integer getRowIndex() {
+        return theRowIndex;
+    }
+
+    /**
+     * Obtain the column Id.
+     * @return the column Id.
+     */
+    protected Integer getColumnIndex() {
+        return theColIndex;
     }
 }

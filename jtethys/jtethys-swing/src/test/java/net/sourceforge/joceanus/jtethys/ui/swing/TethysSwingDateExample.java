@@ -387,6 +387,8 @@ public class TethysSwingDateExample
         myConstraints.gridy = 0;
         myConstraints.gridwidth = 2;
         myConstraints.fill = GridBagConstraints.HORIZONTAL;
+        myConstraints.weightx = 1.0;
+        theRangeSelect.setBorderTitle("Range Selection");
         myRangeSelect.add(theRangeSelect.getNode(), myConstraints);
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;

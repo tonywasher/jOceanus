@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
@@ -110,5 +110,10 @@ public class TethysSwingButton
         theButton.setHorizontalAlignment(SwingConstants.CENTER);
         theButton.setVerticalAlignment(SwingConstants.CENTER);
         theButton.setHorizontalTextPosition(SwingConstants.CENTER);
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theButton.setBorder(BorderFactory.createTitledBorder(pTitle));
     }
 }

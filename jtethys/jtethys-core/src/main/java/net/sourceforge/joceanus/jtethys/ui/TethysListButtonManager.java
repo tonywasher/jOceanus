@@ -55,11 +55,6 @@ public abstract class TethysListButtonManager<T, N, I>
     private final TethysGuiFactory<N, I> theGuiFactory;
 
     /**
-     * The id.
-     */
-    private final Integer theId;
-
-    /**
      * The Event Manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
@@ -90,7 +85,6 @@ public abstract class TethysListButtonManager<T, N, I>
      */
     protected TethysListButtonManager(final TethysGuiFactory<N, I> pFactory) {
         /* Allocate resources */
-        theId = pFactory.getNextId();
         theGuiFactory = pFactory;
         theEventManager = new TethysEventManager<>();
         theButton = pFactory.newButton();
@@ -104,7 +98,7 @@ public abstract class TethysListButtonManager<T, N, I>
 
     @Override
     public Integer getId() {
-        return theId;
+        return theButton.getId();
     }
 
     @Override
@@ -156,6 +150,12 @@ public abstract class TethysListButtonManager<T, N, I>
             registerListeners();
         }
     }
+
+    /**
+     * Set the Border Title.
+     * @param pTitle the title text
+     */
+    public abstract void setBorderTitle(final String pTitle);
 
     /**
      * Register listeners.

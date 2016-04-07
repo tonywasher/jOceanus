@@ -493,6 +493,12 @@ public class TethysSwingTableManager<C, R>
             theColumn.setPreferredWidth(pWidth);
         }
 
+        @Override
+        public void setName(final String pName) {
+            super.setName(pName);
+            theColumn.setHeaderValue(pName);
+        }
+
         /**
          * Obtain the column index.
          * @return the index

@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -72,5 +73,10 @@ public class TethysSwingCheckBox
     public void setSelected(final boolean pSelected) {
         super.setSelected(pSelected);
         theCheckBox.setSelected(pSelected);
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theCheckBox.setBorder(BorderFactory.createTitledBorder(pTitle));
     }
 }

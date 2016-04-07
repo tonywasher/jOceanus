@@ -48,8 +48,6 @@ import javax.swing.event.MenuKeyListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
-
 /**
  * Scroll-able extension to JPopUpMenu.
  * @deprecated as of 1.5.0 use {@link TethysSwingScrollContextMenu}

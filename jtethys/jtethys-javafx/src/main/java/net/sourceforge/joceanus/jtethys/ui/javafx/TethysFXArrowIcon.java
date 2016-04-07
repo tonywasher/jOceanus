@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.javafx;
+package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.awt.Point;
 

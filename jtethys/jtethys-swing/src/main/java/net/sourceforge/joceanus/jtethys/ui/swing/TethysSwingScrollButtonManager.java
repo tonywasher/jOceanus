@@ -22,13 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.swing.TethysSwingArrowIcon;
-import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -73,5 +72,10 @@ public final class TethysSwingScrollButtonManager<T>
     public <K extends Enum<K> & TethysIconId> void setIcon(final K pId,
                                                            final int pWidth) {
         getButton().setIcon(TethysSwingGuiUtils.getIconAtSize(pId, pWidth));
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        getNode().setBorder(BorderFactory.createTitledBorder(pTitle));
     }
 }

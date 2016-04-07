@@ -36,6 +36,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 public class TethysFXTabPaneManager
         extends TethysTabPaneManager<Node, Node> {
     /**
+     * The Node.
+     */
+    private Node theNode;
+
+    /**
      * The TabPane.
      */
     private final TabPane theTabPane;
@@ -56,6 +61,7 @@ public class TethysFXTabPaneManager
         /* Create the pane */
         theTabPane = new TabPane();
         theModel = theTabPane.getSelectionModel();
+        theNode = theTabPane;
 
         /* Listen to selections */
         theModel.selectedItemProperty().addListener((v, o, n) -> notifySelection(n.getUserData()));
@@ -63,12 +69,12 @@ public class TethysFXTabPaneManager
 
     @Override
     public Node getNode() {
-        return theTabPane;
+        return theNode;
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theTabPane.setVisible(pVisible);
+        theNode.setVisible(pVisible);
     }
 
     @Override
@@ -85,6 +91,11 @@ public class TethysFXTabPaneManager
     @Override
     public TethysFXTabItem getSelectedTab() {
         return (TethysFXTabItem) theModel.getSelectedItem().getUserData();
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theTabPane);
     }
 
     /**

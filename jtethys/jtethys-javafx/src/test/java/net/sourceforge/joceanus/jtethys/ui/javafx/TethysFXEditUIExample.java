@@ -46,7 +46,6 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
@@ -276,7 +275,6 @@ public class TethysFXEditUIExample
         theGuiFactory.applyStyleSheets(myScene);
         myPane.setCenter(myMain);
         pStage.setTitle("JavaFXEdit Demo");
-        TethysFXGuiUtils.addStyleSheet(myScene);
         pStage.setScene(myScene);
         pStage.show();
     }
@@ -323,111 +321,111 @@ public class TethysFXEditUIExample
         myPane.getColumnConstraints().addAll(new ColumnConstraints(), new ColumnConstraints(VALUE_WIDTH));
 
         /* Create String field line */
-        Label myLabel = new Label("String:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theStringField.getNode());
+        TethysFXLabel myLabel = theGuiFactory.newLabel("String:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theStringField.getNode());
         theStringField.getEventRegistrar().addEventListener(e -> processActionEvent(theStringField, e));
         theStringField.setValue("Test");
 
         /* Create Short field line */
-        myLabel = new Label("Short:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theShortField.getNode());
+        myLabel = theGuiFactory.newLabel("Short:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theShortField.getNode());
         theShortField.getEventRegistrar().addEventListener(e -> processActionEvent(theShortField, e));
         theShortField.setValue(TethysScrollUITestHelper.SHORT_DEF);
 
         /* Create Integer field line */
-        myLabel = new Label("Integer:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theIntegerField.getNode());
+        myLabel = theGuiFactory.newLabel("Integer:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theIntegerField.getNode());
         theIntegerField.getEventRegistrar().addEventListener(e -> processActionEvent(theIntegerField, e));
         theIntegerField.setValue(TethysScrollUITestHelper.INT_DEF);
 
         /* Create Long field line */
-        myLabel = new Label("Long:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theLongField.getNode());
+        myLabel = theGuiFactory.newLabel("Long:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theLongField.getNode());
         theLongField.getEventRegistrar().addEventListener(e -> processActionEvent(theLongField, e));
         theLongField.setValue(TethysScrollUITestHelper.LONG_DEF);
 
         /* Create Money field line */
-        myLabel = new Label("Money:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theMoneyField.getNode());
+        myLabel = theGuiFactory.newLabel("Money:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theMoneyField.getNode());
         theMoneyField.getEventRegistrar().addEventListener(e -> processActionEvent(theMoneyField, e));
         theMoneyField.setValue(TethysScrollUITestHelper.MONEY_DEF);
 
         /* Create Price field line */
-        myLabel = new Label("Price:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, thePriceField.getNode());
+        myLabel = theGuiFactory.newLabel("Price:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), thePriceField.getNode());
         thePriceField.getEventRegistrar().addEventListener(e -> processActionEvent(thePriceField, e));
         thePriceField.setValue(TethysScrollUITestHelper.PRICE_DEF);
 
         /* Create Units field line */
-        myLabel = new Label("Units:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theUnitsField.getNode());
+        myLabel = theGuiFactory.newLabel("Units:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theUnitsField.getNode());
         theUnitsField.getEventRegistrar().addEventListener(e -> processActionEvent(theUnitsField, e));
         theUnitsField.setValue(TethysScrollUITestHelper.UNITS_DEF);
 
         /* Create Rate field line */
-        myLabel = new Label("Rate:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theRateField.getNode());
+        myLabel = theGuiFactory.newLabel("Rate:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theRateField.getNode());
         theRateField.getEventRegistrar().addEventListener(e -> processActionEvent(theRateField, e));
         theRateField.setValue(TethysScrollUITestHelper.RATE_DEF);
 
         /* Create Ratio field line */
-        myLabel = new Label("Ratio:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theRatioField.getNode());
+        myLabel = theGuiFactory.newLabel("Ratio:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theRatioField.getNode());
         theRatioField.getEventRegistrar().addEventListener(e -> processActionEvent(theRatioField, e));
         theRatioField.setValue(TethysScrollUITestHelper.RATIO_DEF);
 
         /* Create Dilution field line */
-        myLabel = new Label("Dilution:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theDilutionField.getNode());
+        myLabel = theGuiFactory.newLabel("Dilution:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theDilutionField.getNode());
         theDilutionField.getEventRegistrar().addEventListener(e -> processActionEvent(theDilutionField, e));
         theDilutionField.setValue(TethysScrollUITestHelper.DILUTION_DEF);
 
         /* Create DilutedPrice field line */
-        myLabel = new Label("DilutedPrice:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theDilutedPriceField.getNode());
+        myLabel = theGuiFactory.newLabel("DilutedPrice:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theDilutedPriceField.getNode());
         theDilutedPriceField.getEventRegistrar().addEventListener(e -> processActionEvent(theDilutedPriceField, e));
 
         /* Create ScrollButton field line */
-        myLabel = new Label("ScrollButton:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theScrollField.getNode());
+        myLabel = theGuiFactory.newLabel("ScrollButton:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theScrollField.getNode());
         theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theScrollField, e));
         theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theHelper.buildContextMenu(theScrollButtonMgr.getMenu()));
         theScrollField.setValue("First");
 
         /* Create DateButton field line */
-        myLabel = new Label("DateButton:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theDateField.getNode());
+        myLabel = theGuiFactory.newLabel("DateButton:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theDateField.getNode());
         theDateField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theDateField, e));
         theDateField.setValue(new TethysDate());
 
+        /* Create ListButton field line */
+        myLabel = theGuiFactory.newLabel("ListButton:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theListField.getNode());
+        theListField.setValue(theHelper.buildToggleList(theListButtonMgr));
+        theListField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theListField, e));
+
         /* Create IconButton field line */
-        myLabel = new Label("IconButton:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theIconField.getNode());
+        myLabel = theGuiFactory.newLabel("IconButton:");
+        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
+        myPane.addRow(myRowNo++, myLabel.getNode(), theIconField.getNode());
         theIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
         theHelper.buildSimpleIconState(theIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
         theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
         theIconField.setValue(false);
-
-        /* Create ListButton field line */
-        myLabel = new Label("ListButton:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel, theListField.getNode());
-        theListField.setValue(theHelper.buildToggleList(theListButtonMgr));
-        theListField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theListField, e));
 
         /* Return the pane */
         return myPane;

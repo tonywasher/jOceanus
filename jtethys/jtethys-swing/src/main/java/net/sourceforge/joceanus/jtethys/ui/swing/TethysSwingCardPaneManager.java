@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.CardLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -90,5 +91,10 @@ public class TethysSwingCardPaneManager<P extends TethysNode<JComponent>>
             theLayout.show(thePanel, pName);
         }
         return isSelected;
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        thePanel.setBorder(BorderFactory.createTitledBorder(pTitle));
     }
 }

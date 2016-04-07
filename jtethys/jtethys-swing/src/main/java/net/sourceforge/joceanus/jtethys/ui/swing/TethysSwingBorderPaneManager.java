@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.BorderLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -135,5 +136,10 @@ public class TethysSwingBorderPaneManager
             default:
                 return BorderLayout.CENTER;
         }
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode.setBorder(BorderFactory.createTitledBorder(pTitle));
     }
 }

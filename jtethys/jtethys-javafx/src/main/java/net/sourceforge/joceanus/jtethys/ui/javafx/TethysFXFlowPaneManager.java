@@ -37,7 +37,12 @@ public class TethysFXFlowPaneManager
     /**
      * The Node.
      */
-    private final FlowPane theNode;
+    private Node theNode;
+
+    /**
+     * The FlowPane.
+     */
+    private final FlowPane theFlowPane;
 
     /**
      * Constructor.
@@ -45,7 +50,8 @@ public class TethysFXFlowPaneManager
      */
     protected TethysFXFlowPaneManager(final TethysFXGuiFactory pFactory) {
         super(pFactory);
-        theNode = new FlowPane();
+        theFlowPane = new FlowPane();
+        theNode = theFlowPane;
     }
 
     @Override
@@ -61,7 +67,7 @@ public class TethysFXFlowPaneManager
     @Override
     public void addNode(final TethysNode<Node> pNode) {
         super.addNode(pNode);
-        theNode.getChildren().add(pNode.getNode());
+        theFlowPane.getChildren().add(pNode.getNode());
     }
 
     @Override
@@ -88,7 +94,7 @@ public class TethysFXFlowPaneManager
                 if (myNodeId == myId) {
                     /* Set visible and add into the list */
                     myChildNode.setVisible(true);
-                    theNode.getChildren().add(myIndex, myChildNode);
+                    theFlowPane.getChildren().add(myIndex, myChildNode);
                     break;
                 }
 
@@ -102,7 +108,12 @@ public class TethysFXFlowPaneManager
         } else {
             /* set invisible and remove from the list */
             myChildNode.setVisible(false);
-            theNode.getChildren().remove(myChildNode);
+            theFlowPane.getChildren().remove(myChildNode);
         }
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theFlowPane);
     }
 }

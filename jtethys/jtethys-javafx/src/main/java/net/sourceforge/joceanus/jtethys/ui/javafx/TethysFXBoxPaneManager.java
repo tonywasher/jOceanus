@@ -24,9 +24,12 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.Iterator;
 
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -37,9 +40,14 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 public class TethysFXBoxPaneManager
         extends TethysBoxPaneManager<Node, Node> {
     /**
-     * The Pane.
+     * The Node.
      */
-    private final Pane thePane;
+    private Region theNode;
+
+    /**
+     * The BoxPane.
+     */
+    private final Pane theBoxPane;
 
     /**
      * Constructor.
@@ -49,25 +57,32 @@ public class TethysFXBoxPaneManager
     protected TethysFXBoxPaneManager(final TethysFXGuiFactory pFactory,
                                      final boolean pHorizontal) {
         super(pFactory);
-        thePane = pHorizontal
-                              ? new HBox(STRUT_SIZE)
-                              : new VBox(STRUT_SIZE);
+        if (pHorizontal) {
+            HBox myBox = new HBox(STRUT_SIZE);
+            myBox.setAlignment(Pos.CENTER);
+            theBoxPane = myBox;
+        } else {
+            VBox myBox = new VBox(STRUT_SIZE);
+            myBox.setAlignment(Pos.CENTER);
+            theBoxPane = myBox;
+        }
+        theNode = theBoxPane;
     }
 
     @Override
-    public Node getNode() {
-        return thePane;
+    public Region getNode() {
+        return theNode;
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        thePane.setVisible(pVisible);
+        theNode.setVisible(pVisible);
     }
 
     @Override
     public void addNode(final TethysNode<Node> pNode) {
         super.addNode(pNode);
-        thePane.getChildren().add(pNode.getNode());
+        theBoxPane.getChildren().add(pNode.getNode());
     }
 
     @Override
@@ -94,7 +109,7 @@ public class TethysFXBoxPaneManager
                 if (myNodeId == myId) {
                     /* Set visible and add into the list */
                     myChildNode.setVisible(true);
-                    thePane.getChildren().add(myIndex, myChildNode);
+                    theBoxPane.getChildren().add(myIndex, myChildNode);
                     break;
                 }
 
@@ -108,7 +123,62 @@ public class TethysFXBoxPaneManager
         } else {
             /* set invisible and remove from the list */
             myChildNode.setVisible(false);
-            thePane.getChildren().remove(myChildNode);
+            theBoxPane.getChildren().remove(myChildNode);
+        }
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theBoxPane);
+    }
+
+    @Override
+    public void addSpacer() {
+        TethysFXSpacer mySpacer = new TethysFXSpacer(theBoxPane instanceof HBox);
+        addSpacerNode(mySpacer);
+        theBoxPane.getChildren().add(mySpacer.getNode());
+    }
+
+    /**
+     * Spacer node.
+     */
+    private static final class TethysFXSpacer
+            implements TethysNode<Node> {
+        /**
+         * Region.
+         */
+        private final Region theRegion;
+
+        /**
+         * Constructor.
+         * @param pHorizontal is this a horizontal spacer?
+         */
+        private TethysFXSpacer(final boolean pHorizontal) {
+            theRegion = new Region();
+            theRegion.setPrefWidth(STRUT_SIZE);
+            theRegion.setPrefHeight(STRUT_SIZE);
+            HBox.setHgrow(theRegion, Priority.ALWAYS);
+            VBox.setVgrow(theRegion, Priority.ALWAYS);
+        }
+
+        @Override
+        public Node getNode() {
+            return theRegion;
+        }
+
+        @Override
+        public void setEnabled(final boolean pEnabled) {
+            theRegion.setDisable(!pEnabled);
+        }
+
+        @Override
+        public void setVisible(final boolean pVisible) {
+            theRegion.setVisible(pVisible);
+        }
+
+        @Override
+        public Integer getId() {
+            return -1;
         }
     }
 }

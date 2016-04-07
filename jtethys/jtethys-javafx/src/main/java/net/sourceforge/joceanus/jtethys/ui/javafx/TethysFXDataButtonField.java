@@ -117,7 +117,7 @@ public final class TethysFXDataButtonField {
             theButton = getEditControl();
 
             /* Set padding */
-            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING - 1, PADDING));
+            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(e -> {
@@ -227,7 +227,7 @@ public final class TethysFXDataButtonField {
             theButton = getEditControl();
 
             /* Set padding */
-            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING - 1, PADDING));
+            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(this::handleEvent);
@@ -330,7 +330,7 @@ public final class TethysFXDataButtonField {
             theManager = pManager;
 
             /* Set padding */
-            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING - 1, PADDING));
+            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(this::handleEvent);
@@ -437,7 +437,7 @@ public final class TethysFXDataButtonField {
             theManager = pManager;
 
             /* Set padding */
-            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING - 1, PADDING));
+            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(this::handleEvent);

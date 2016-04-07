@@ -74,6 +74,12 @@ public abstract class TethysCheckBox<N, I>
     public abstract void setText(final String pText);
 
     /**
+     * Set the Border Title.
+     * @param pTitle the title text
+     */
+    public abstract void setBorderTitle(final String pTitle);
+
+    /**
      * set selected.
      * @param pSelected is the box selected?
      */

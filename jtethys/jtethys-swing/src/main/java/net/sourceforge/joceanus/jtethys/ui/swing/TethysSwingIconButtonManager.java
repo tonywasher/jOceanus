@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jtethys.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
@@ -66,6 +66,11 @@ public final class TethysSwingIconButtonManager {
                                                 : TethysSwingGuiUtils.getIconAtSize(pId, getWidth()));
             setTooltipForValue(pValue, pToolTip);
         }
+
+        @Override
+        public void setBorderTitle(final String pTitle) {
+            getNode().setBorder(BorderFactory.createTitledBorder(pTitle));
+        }
     }
 
     /**
@@ -94,6 +99,11 @@ public final class TethysSwingIconButtonManager {
                                                 ? null
                                                 : TethysSwingGuiUtils.getIconAtSize(pId, getWidth()));
             setTooltipForValue(pValue, pToolTip);
+        }
+
+        @Override
+        public void setBorderTitle(final String pTitle) {
+            getNode().setBorder(BorderFactory.createTitledBorder(pTitle));
         }
     }
 }
