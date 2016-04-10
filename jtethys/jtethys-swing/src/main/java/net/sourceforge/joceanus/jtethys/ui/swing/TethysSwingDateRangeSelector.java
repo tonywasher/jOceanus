@@ -22,7 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import javax.swing.BorderFactory;
+import java.awt.Dimension;
+
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
@@ -57,8 +58,38 @@ public class TethysSwingDateRangeSelector
     }
 
     @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        JComponent myNode = getNode();
+        Dimension myDim = myNode.getPreferredSize();
+        myDim = new Dimension(pWidth, myDim.height);
+        myNode.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        JComponent myNode = getNode();
+        Dimension myDim = myNode.getPreferredSize();
+        myDim = new Dimension(myDim.width, pHeight);
+        myNode.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
     public void setBorderTitle(final String pTitle) {
-        getNode().setBorder(BorderFactory.createTitledBorder(pTitle));
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), getNode());
     }
 
     @Override

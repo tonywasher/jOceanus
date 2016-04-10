@@ -88,8 +88,32 @@ public class TethysFXDateRangeSelector
     }
 
     @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        theNode.setPrefWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        theNode.setPrefHeight(pHeight);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
     public void setBorderTitle(final String pTitle) {
-        theNode = TethysFXGuiUtils.getTitledPane(pTitle, getControl().getNode());
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), getControl().getNode());
     }
 
     @Override

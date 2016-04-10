@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
@@ -60,11 +61,24 @@ public class TethysSwingGuiFactory
     }
 
     /**
+     * Frame.
+     */
+    private JFrame theFrame;
+
+    /**
      * Constructor.
      * @param pFormatter the formatter
      */
     public TethysSwingGuiFactory(final TethysDataFormatter pFormatter) {
         super(pFormatter);
+    }
+
+    /**
+     * Set the frame.
+     * @param pFrame the frame
+     */
+    public void setFrame(final JFrame pFrame) {
+        theFrame = pFrame;
     }
 
     @Override
@@ -152,6 +166,16 @@ public class TethysSwingGuiFactory
     }
 
     @Override
+    public TethysSwingFileSelector newFileSelector() {
+        return new TethysSwingFileSelector(theFrame);
+    }
+
+    @Override
+    public TethysSwingDirectorySelector newDirectorySelector() {
+        return new TethysSwingDirectorySelector(theFrame);
+    }
+
+    @Override
     public TethysSwingTabPaneManager newTabPane() {
         return new TethysSwingTabPaneManager(this);
     }
@@ -179,6 +203,11 @@ public class TethysSwingGuiFactory
     @Override
     public TethysSwingBoxPaneManager newHBoxPane() {
         return new TethysSwingBoxPaneManager(this, true);
+    }
+
+    @Override
+    public TethysSwingGridPaneManager newGridPane() {
+        return new TethysSwingGridPaneManager(this);
     }
 
     @Override

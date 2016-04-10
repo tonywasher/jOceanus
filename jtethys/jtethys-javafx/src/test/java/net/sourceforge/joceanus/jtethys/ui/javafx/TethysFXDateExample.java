@@ -29,33 +29,20 @@ import java.util.Locale;
 
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
@@ -128,26 +115,12 @@ public class TethysFXDateExample
 
     @Override
     public void start(final Stage pStage) {
-        GridPane myGrid = makePanel();
-        BorderPane myPane = new BorderPane();
-        Scene myScene = new Scene(myPane);
-        myPane.setCenter(myGrid);
+        TethysFXGridPaneManager myGrid = makePanel();
+        Scene myScene = new Scene(myGrid.getNode());
         theGuiFactory.applyStyleSheets(myScene);
         pStage.setTitle("TethysDate JavaFX Demo");
         pStage.setScene(myScene);
         pStage.show();
-
-        /* Add a listener for width changes */
-        myGrid.prefWidthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(final ObservableValue<? extends Number> pProperty,
-                                final Number pOldValue,
-                                final Number pNewValue) {
-                Double myChange = (Double) pNewValue - (Double) pOldValue;
-                Double myWidth = pStage.getWidth() + myChange;
-                pStage.setWidth(myWidth);
-            }
-        });
     }
 
     /**
@@ -171,12 +144,12 @@ public class TethysFXDateExample
     /**
      * The list of locales.
      */
-    private ChoiceBox<ShortLocale> theLocaleList;
+    private TethysFXScrollButtonManager<ShortLocale> theLocaleList;
 
     /**
      * The list of formats.
      */
-    private ChoiceBox<String> theFormatList;
+    private TethysFXScrollButtonManager<String> theFormatList;
 
     /**
      * The start date.
@@ -191,12 +164,12 @@ public class TethysFXDateExample
     /**
      * The Null Select checkBox.
      */
-    private CheckBox theNullSelect;
+    private TethysFXCheckBox theNullSelect;
 
     /**
      * The ShowNarrow checkBox.
      */
-    private CheckBox theNarrowSelect;
+    private TethysFXCheckBox theNarrowSelect;
 
     /**
      * The selected locale.
@@ -251,47 +224,54 @@ public class TethysFXDateExample
     /**
      * The selected range.
      */
-    private final Label theSelectedRange = new Label();
+    private final TethysFXLabel theSelectedRange = theGuiFactory.newLabel();
 
     /**
      * Create the panel.
      * @return the panel
      */
-    private GridPane makePanel() {
+    private TethysFXGridPaneManager makePanel() {
         /* Create the table */
         theTable = theGuiFactory.newTable();
         makeTable();
 
         /* Create the range panel */
-        Node myRange = makeRangePanel();
+        TethysFXGridPaneManager myRange = makeRangePanel();
 
         /* Create the style panel */
-        Node myStyle = makeStylePanel();
+        TethysFXGridPaneManager myStyle = makeStylePanel();
 
         /* Create the options panel */
-        Node myOptions = makeOptionsPanel();
+        TethysFXBoxPaneManager myOptions = makeOptionsPanel();
 
         /* Create the panel */
-        int iRow = 0;
-        GridPane myPanel = new GridPane();
-        myPanel.setHgap(GRID_GAP);
-        myPanel.setVgap(GRID_GAP);
-        myPanel.setPadding(new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH));
-        myPanel.add(myRange, 0, iRow);
-        myPanel.add(myStyle, 1, iRow++);
-        myPanel.add(myOptions, 0, iRow++, 2, 1);
-        GridPane.setHalignment(myOptions, HPos.CENTER);
-        myPanel.add(theTable.getNode(), 0, iRow++, 2, 1);
-        GridPane.setHalignment(theTable.getNode(), HPos.CENTER);
-        Node myRangeSel = TethysFXGuiUtils.getTitledPane("Explicit Range Selection", theRangeSelect.getNode());
-        myPanel.add(myRangeSel, 0, iRow++, 2, 1);
-        GridPane.setHalignment(myRangeSel, HPos.CENTER);
-        GridPane.setFillWidth(myRangeSel, true);
-        Label mySelRange = new Label("SelectedRange:");
-        myPanel.add(mySelRange, 0, iRow);
-        myPanel.add(theSelectedRange, 1, iRow++);
+        TethysFXGridPaneManager myPanel = theGuiFactory.newGridPane();
+        myPanel.setHGap(GRID_GAP);
+        myPanel.setVGap(GRID_GAP);
+        myPanel.setBorderPadding(INSET_DEPTH);
 
-        myPanel.setMaxWidth(Double.MAX_VALUE);
+        /* Set the contents */
+        myPanel.addCell(myRange);
+        myPanel.addCell(myStyle);
+        myPanel.allowCellGrowth(myStyle);
+        myPanel.newRow();
+        myPanel.addCell(myOptions, 2);
+        myPanel.setCellAlignment(myOptions, TethysAlignment.CENTRE);
+        myPanel.allowCellGrowth(myOptions);
+        myPanel.newRow();
+        myPanel.addCell(theTable, 2);
+        myPanel.setCellAlignment(theTable, TethysAlignment.CENTRE);
+        myPanel.allowCellGrowth(theTable);
+        myPanel.newRow();
+        theRangeSelect.setBorderTitle("Explicit Range Selection");
+        myPanel.addCell(theRangeSelect, 2);
+        myPanel.setCellAlignment(theRangeSelect, TethysAlignment.CENTRE);
+        myPanel.allowCellGrowth(theRangeSelect);
+        myPanel.newRow();
+        TethysFXLabel mySelRange = theGuiFactory.newLabel("SelectedRange:");
+        myPanel.addCell(mySelRange);
+        myPanel.addCell(theSelectedRange);
+        myPanel.allowCellGrowth(theSelectedRange);
 
         /* Return the panel */
         return myPanel;
@@ -301,37 +281,41 @@ public class TethysFXDateExample
      * Create the range panel.
      * @return the panel
      */
-    private Node makeRangePanel() {
+    private TethysFXGridPaneManager makeRangePanel() {
         /* Create the range buttons */
         makeRangeButtons();
 
         /* Create the additional labels */
-        Label myStart = new Label("Start:");
-        Label myEnd = new Label("End:");
+        TethysFXLabel myStart = theGuiFactory.newLabel("Start:");
+        TethysFXLabel myEnd = theGuiFactory.newLabel("End:");
 
         /* Create a Range sub-panel */
-        GridPane myRange = new GridPane();
-        myRange.setHgap(GRID_GAP);
-        myRange.setVgap(GRID_GAP);
-        myRange.setPadding(new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH));
+        TethysFXGridPaneManager myRange = theGuiFactory.newGridPane();
+        myRange.setHGap(GRID_GAP);
+        myRange.setVGap(GRID_GAP);
+        myRange.setBorderPadding(INSET_DEPTH);
+        myRange.setBorderTitle("Range Selection");
 
         /* Position the contents */
-        myRange.add(myStart, 0, 0);
-        GridPane.setHalignment(myStart, HPos.RIGHT);
-        myRange.add(theStartDate.getNode(), 1, 0);
-        myRange.add(myEnd, 0, 1);
-        GridPane.setHalignment(myEnd, HPos.RIGHT);
-        myRange.add(theEndDate.getNode(), 1, 1);
+        myRange.addCell(myStart);
+        myRange.setCellAlignment(myStart, TethysAlignment.EAST);
+        myRange.addCell(theStartDate);
+        myRange.allowCellGrowth(theStartDate);
+        myRange.newRow();
+        myRange.addCell(myEnd);
+        myRange.setCellAlignment(myEnd, TethysAlignment.EAST);
+        myRange.addCell(theEndDate);
+        myRange.allowCellGrowth(theEndDate);
 
         /* Return the panel */
-        return TethysFXGuiUtils.getTitledPane("Range Selection", myRange);
+        return myRange;
     }
 
     /**
      * Create the range panel.
      * @return the panel
      */
-    private Node makeStylePanel() {
+    private TethysFXGridPaneManager makeStylePanel() {
         /* Create the locale list */
         makeLocaleList();
 
@@ -339,51 +323,50 @@ public class TethysFXDateExample
         makeFormatList();
 
         /* Create the additional labels */
-        Label myFormat = new Label("Format:");
-        Label myLocale = new Label("Locale:");
+        TethysFXLabel myFormat = theGuiFactory.newLabel("Format:");
+        TethysFXLabel myLocale = theGuiFactory.newLabel("Locale:");
 
         /* Create a Style sub-panel */
-        GridPane myStyle = new GridPane();
-        myStyle.setHgap(GRID_GAP);
-        myStyle.setVgap(GRID_GAP);
-        myStyle.setPadding(new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH));
+        TethysFXGridPaneManager myStyle = theGuiFactory.newGridPane();
+        myStyle.setHGap(GRID_GAP);
+        myStyle.setVGap(GRID_GAP);
+        myStyle.setBorderPadding(INSET_DEPTH);
+        myStyle.setBorderTitle("Format Selection");
 
         /* Position the contents */
-        myStyle.add(myLocale, 0, 0);
-        GridPane.setHalignment(myLocale, HPos.RIGHT);
-        myStyle.add(theLocaleList, 1, 0);
-        myStyle.add(myFormat, 0, 1);
-        GridPane.setHalignment(myFormat, HPos.RIGHT);
-        myStyle.add(theFormatList, 1, 1);
-
-        /* Ensure that the button is same width */
-        theLocaleList.setMaxWidth(Integer.MAX_VALUE);
-        theFormatList.setMaxWidth(Integer.MAX_VALUE);
+        myStyle.addCell(myLocale);
+        myStyle.setCellAlignment(myLocale, TethysAlignment.EAST);
+        myStyle.addCell(theLocaleList);
+        myStyle.allowCellGrowth(theLocaleList);
+        myStyle.newRow();
+        myStyle.addCell(myFormat);
+        myStyle.setCellAlignment(myFormat, TethysAlignment.EAST);
+        myStyle.addCell(theFormatList);
+        myStyle.allowCellGrowth(theFormatList);
 
         /* Return the panel */
-        return TethysFXGuiUtils.getTitledPane("Format Selection", myStyle);
+        return myStyle;
     }
 
     /**
      * Create the options panel.
      * @return the panel
      */
-    private Node makeOptionsPanel() {
+    private TethysFXBoxPaneManager makeOptionsPanel() {
         /* Create the checkBox */
         makeCheckBox();
 
         /* Create an options sub-panel */
-        HBox myOptions = new HBox();
-        Region myStrut1 = new Region();
-        Region myStrut2 = new Region();
-        Region myStrut3 = new Region();
-        HBox.setHgrow(myStrut1, Priority.ALWAYS);
-        HBox.setHgrow(myStrut2, Priority.ALWAYS);
-        HBox.setHgrow(myStrut3, Priority.ALWAYS);
-        myOptions.getChildren().addAll(myStrut1, theNullSelect, myStrut2, theNarrowSelect, myStrut3);
+        TethysFXBoxPaneManager myOptions = theGuiFactory.newHBoxPane();
+        myOptions.addSpacer();
+        myOptions.addNode(theNullSelect);
+        myOptions.addSpacer();
+        myOptions.addNode(theNarrowSelect);
+        myOptions.addSpacer();
+        myOptions.setBorderTitle("Options");
 
         /* Return the panel */
-        return TethysFXGuiUtils.getTitledPane("Options", myOptions);
+        return myOptions;
     }
 
     /**
@@ -391,29 +374,23 @@ public class TethysFXDateExample
      */
     private void makeLocaleList() {
         /* Create the Combo box and populate it */
-        theLocaleList = new ChoiceBox<ShortLocale>();
-        ObservableList<ShortLocale> myItems = theLocaleList.getItems();
+        theLocaleList = theGuiFactory.newScrollButton();
+        TethysFXScrollContextMenu<ShortLocale> myMenu = theLocaleList.getMenu();
         for (ShortLocale myLocale : ShortLocale.values()) {
             /* Add the Locale to the list */
-            myItems.add(myLocale);
+            myMenu.addItem(myLocale);
         }
 
         /* Set the default item */
         theLocaleList.setValue(ShortLocale.UK);
 
         /* Action selections */
-        ReadOnlyObjectProperty<ShortLocale> myProperty = theLocaleList.getSelectionModel().selectedItemProperty();
-        myProperty.addListener(new ChangeListener<ShortLocale>() {
-            @Override
-            public void changed(final ObservableValue<? extends ShortLocale> pValue,
-                                final ShortLocale pOldValue,
-                                final ShortLocale pNewValue) {
-                /* Store the new locale */
-                ShortLocale myLocale = pNewValue;
-                theLocale.setValue(myLocale.getLocale());
-                showNarrowDays.setValue(myLocale.showNarrowDays());
-                theTable.repaintColumn(DateItem.PROP_DATE);
-            }
+        theLocaleList.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            /* Store the new locale */
+            ShortLocale myLocale = e.getDetails(ShortLocale.class);
+            theLocale.setValue(myLocale.getLocale());
+            showNarrowDays.setValue(myLocale.showNarrowDays());
+            theTable.repaintColumn(DateItem.PROP_DATE);
         });
     }
 
@@ -422,26 +399,20 @@ public class TethysFXDateExample
      */
     private void makeFormatList() {
         /* Create the Combo box and populate it */
-        theFormatList = new ChoiceBox<String>();
-        ObservableList<String> myItems = theFormatList.getItems();
-        myItems.add(DATEFORMAT_1);
-        myItems.add(DATEFORMAT_2);
-        myItems.add(DATEFORMAT_3);
+        theFormatList = theGuiFactory.newScrollButton();
+        TethysFXScrollContextMenu<String> myMenu = theFormatList.getMenu();
+        myMenu.addItem(DATEFORMAT_1);
+        myMenu.addItem(DATEFORMAT_2);
+        myMenu.addItem(DATEFORMAT_3);
 
         /* Set the default item */
         theFormatList.setValue(theFormat.getValue());
 
         /* Action selections */
-        ReadOnlyObjectProperty<String> myProperty = theFormatList.getSelectionModel().selectedItemProperty();
-        myProperty.addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(final ObservableValue<? extends String> pValue,
-                                final String pOldValue,
-                                final String pNewValue) {
-                /* Store the new format */
-                theFormat.setValue(pNewValue);
-                theTable.repaintColumn(DateItem.PROP_DATE);
-            }
+        theFormatList.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            /* Store the new format */
+            theFormat.setValue(e.getDetails(String.class));
+            theTable.repaintColumn(DateItem.PROP_DATE);
         });
     }
 
@@ -526,12 +497,12 @@ public class TethysFXDateExample
      */
     private void makeCheckBox() {
         /* Create the check boxes */
-        theNullSelect = new CheckBox("Null Date Select");
-        theNarrowSelect = new CheckBox("Show Narrow Days");
+        theNullSelect = theGuiFactory.newCheckBox("Null Date Select");
+        theNarrowSelect = theGuiFactory.newCheckBox("Show Narrow Days");
 
         /* Action selections */
-        theNullSelect.selectedProperty().addListener((v, o, n) -> allowNullDate.set(n));
-        theNarrowSelect.selectedProperty().addListener((v, o, n) -> showNarrowDays.set(n));
+        theNullSelect.getEventRegistrar().addEventListener(e -> allowNullDate.set(theNullSelect.isSelected()));
+        theNarrowSelect.getEventRegistrar().addEventListener(e -> showNarrowDays.set(theNarrowSelect.isSelected()));
     }
 
     /**

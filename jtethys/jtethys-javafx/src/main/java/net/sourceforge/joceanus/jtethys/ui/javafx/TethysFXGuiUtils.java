@@ -26,6 +26,7 @@ import java.util.List;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -109,37 +110,58 @@ public final class TethysFXGuiUtils {
     }
 
     /**
-     * Create titled pane wrapper around panel.
+     * Create titled/padded border around pane.
      * @param pTitle the title
+     * @param pPadding the padding
      * @param pNode the node
      * @return the titled pane
      */
-    public static StackPane getTitledPane(final String pTitle,
+    protected static Pane getBorderedPane(final String pTitle,
+                                          final Integer pPadding,
                                           final Node pNode) {
-        /* TODO Make this protected */
         /* Access the Node */
-        Node myNode = pNode;
-        if (!(myNode instanceof Pane)) {
+        Pane myPane;
+        if (!(pNode instanceof Pane)) {
             /* Create an HBox for the content */
             HBox myBox = new HBox();
             myBox.getChildren().add(pNode);
-            myNode = myBox;
+            myPane = myBox;
 
             /* Set the HBox to fill the pane */
             HBox.setHgrow(pNode, Priority.ALWAYS);
+        } else {
+            myPane = (Pane) pNode;
         }
 
-        /* Create the panel */
-        StackPane myPanel = new StackPane();
-        Label myTitle = new Label(pTitle);
-        StackPane.setAlignment(myTitle, Pos.TOP_LEFT);
-        StackPane.setAlignment(myNode, Pos.CENTER);
-        myPanel.getChildren().addAll(myTitle, myNode);
+        /* Return the pane if we have no title or padding */
+        if ((pTitle == null)
+            && (pPadding == null)) {
+            return myPane;
+        }
 
-        /* Set the styles */
-        myNode.getStyleClass().add(STYLE_CONTENT);
-        myTitle.getStyleClass().add(STYLE_TITLE);
-        myPanel.getStyleClass().add(STYLE_BORDER);
+        /* Create the stack pane */
+        StackPane myPanel = new StackPane();
+
+        /* If we have a title */
+        if (pTitle != null) {
+            Label myTitle = new Label(pTitle);
+            StackPane.setAlignment(myTitle, Pos.TOP_LEFT);
+            StackPane.setAlignment(myPane, Pos.CENTER);
+            myPanel.getChildren().add(myTitle);
+
+            /* Set the styles */
+            myPane.getStyleClass().add(STYLE_CONTENT);
+            myTitle.getStyleClass().add(STYLE_TITLE);
+            myPanel.getStyleClass().add(STYLE_BORDER);
+        }
+
+        /* Set padding if required */
+        if (pPadding != null) {
+            myPanel.setPadding(new Insets(pPadding, pPadding, pPadding, pPadding));
+        }
+
+        /* Add the node */
+        myPanel.getChildren().add(myPane);
 
         /* Return the panel */
         return myPanel;

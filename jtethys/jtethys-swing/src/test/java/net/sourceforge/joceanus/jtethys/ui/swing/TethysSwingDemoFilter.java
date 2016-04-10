@@ -29,11 +29,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JApplet;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -53,13 +51,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSw
  * Demo application for JTableFilter.
  * @author Tony Washer
  */
-public class TethysSwingDemoFilter
-        extends JApplet {
-    /**
-     * The Serial Id.
-     */
-    private static final long serialVersionUID = 1701124585110023740L;
-
+public class TethysSwingDemoFilter {
     /**
      * New Name text.
      */
@@ -69,28 +61,6 @@ public class TethysSwingDemoFilter
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(TethysSwingDemoFilter.class);
-
-    @Override
-    public void init() {
-        // Execute a job on the event-dispatching thread; creating this applet's GUI.
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    /* Create the Test Table */
-                    TestTable myTable = new TestTable();
-
-                    /* Access the panel */
-                    JScrollPane myPanel = myTable.getScrollPane();
-                    setContentPane(myPanel);
-                }
-            });
-        } catch (InvocationTargetException e) {
-            LOGGER.error("Failed to invoke thread", e);
-        } catch (InterruptedException e) {
-            LOGGER.error("Thread was interrupted", e);
-        }
-    }
 
     /**
      * Main function.

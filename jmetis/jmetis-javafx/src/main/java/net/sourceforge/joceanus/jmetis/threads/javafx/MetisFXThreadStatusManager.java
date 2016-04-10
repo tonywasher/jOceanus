@@ -31,11 +31,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatus;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
 
 /**
  * JavaFX Thread Status Manager.
@@ -80,12 +78,12 @@ public class MetisFXThreadStatusManager
     /**
      * The Status Node.
      */
-    private final StackPane theStatusNode;
+    private final Node theStatusNode;
 
     /**
      * The Progress Node.
      */
-    private final StackPane theProgressNode;
+    private final Node theProgressNode;
 
     /**
      * The Node.
@@ -124,7 +122,7 @@ public class MetisFXThreadStatusManager
         BorderPane myStatusNode = new BorderPane();
         myStatusNode.setCenter(theStatusField);
         myStatusNode.setLeft(theClearButton);
-        theStatusNode = TethysFXGuiUtils.getTitledPane(NLS_STATUS, myStatusNode);
+        theStatusNode = myStatusNode; // TethysFXGuiUtils.getTitledPane(NLS_STATUS, myStatusNode);
 
         /* Create the task progress pane */
         BorderPane myTaskProgress = new BorderPane();
@@ -144,7 +142,8 @@ public class MetisFXThreadStatusManager
         BorderPane myProgressNode = new BorderPane();
         myProgressNode.setCenter(myProgressGrid);
         myProgressNode.setRight(theCancelButton);
-        theProgressNode = TethysFXGuiUtils.getTitledPane(NLS_PROGRESS, myProgressNode);
+        theProgressNode = myProgressNode; // TethysFXGuiUtils.getTitledPane(NLS_PROGRESS,
+                                          // myProgressNode);
 
         /* Create the basic Pane */
         theNode = new BorderPane();

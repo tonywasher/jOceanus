@@ -25,27 +25,16 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 import java.util.Currency;
 
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
@@ -82,7 +71,7 @@ public class TethysFXEditUIExample
     /**
      * The value width.
      */
-    private static final int VALUE_WIDTH = 200;
+    private static final int VALUE_WIDTH = 300;
 
     /**
      * Default icon width.
@@ -215,6 +204,11 @@ public class TethysFXEditUIExample
     private final TethysDecimalFormatter theDecimalFormatter;
 
     /**
+     * The edit mode.
+     */
+    private boolean isEditing;
+
+    /**
      * Constructor.
      */
     public TethysFXEditUIExample() {
@@ -285,175 +279,219 @@ public class TethysFXEditUIExample
      */
     private Node buildPanel() {
         /* Create a GridPane for the fields */
-        GridPane myPane = buildFieldPane();
+        TethysFXGridPaneManager myPane = buildFieldPane();
 
-        /* Create a ControlPane for the buttons */
-        HBox myControls = buildControlPane();
+        /* Create a BoxPane for the buttons */
+        TethysFXBoxPaneManager myControls = buildControlPane();
 
         /* Create a GridPane for the results */
-        GridPane myResults = buildResultsPane();
+        TethysFXGridPaneManager myResults = buildResultsPane();
 
         /* Create borderPane for the window */
-        BorderPane myMain = new BorderPane();
-        StackPane myStack = TethysFXGuiUtils.getTitledPane("FieldArea", myPane);
-        myMain.setCenter(myStack);
-        myStack = TethysFXGuiUtils.getTitledPane("Controls", myControls);
-        myMain.setTop(myStack);
-        myStack = TethysFXGuiUtils.getTitledPane("Results", myResults);
-        myMain.setBottom(myStack);
-        myMain.setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
+        TethysFXBoxPaneManager myMain = theGuiFactory.newVBoxPane();
+        myControls.setBorderTitle("Controls");
+        myMain.addNode(myControls);
+        myPane.setBorderTitle("FieldArea");
+        myMain.addNode(myPane);
+        myResults.setBorderTitle("Results");
+        myMain.addNode(myResults);
+        myMain.setBorderPadding(PADDING);
+        myMain.setPreferredWidth(VALUE_WIDTH);
 
         /* Return the panel */
-        return myMain;
+        return myMain.getNode();
     }
 
     /**
      * Build field pane.
      * @return the field pane
      */
-    private GridPane buildFieldPane() {
+    private TethysFXGridPaneManager buildFieldPane() {
         /* Create a GridPane for the fields */
-        GridPane myPane = new GridPane();
-        int myRowNo = 0;
-        myPane.setHgap(PADDING);
-        myPane.setVgap(PADDING << 1);
-        myPane.setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
-        myPane.getColumnConstraints().addAll(new ColumnConstraints(), new ColumnConstraints(VALUE_WIDTH));
+        TethysFXGridPaneManager myGrid = theGuiFactory.newGridPane();
 
         /* Create String field line */
         TethysFXLabel myLabel = theGuiFactory.newLabel("String:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theStringField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theStringField);
+        myGrid.allowCellGrowth(theStringField);
+        myGrid.newRow();
         theStringField.getEventRegistrar().addEventListener(e -> processActionEvent(theStringField, e));
         theStringField.setValue("Test");
 
         /* Create Short field line */
         myLabel = theGuiFactory.newLabel("Short:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theShortField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theShortField);
+        myGrid.allowCellGrowth(theShortField);
+        myGrid.newRow();
         theShortField.getEventRegistrar().addEventListener(e -> processActionEvent(theShortField, e));
         theShortField.setValue(TethysScrollUITestHelper.SHORT_DEF);
 
         /* Create Integer field line */
         myLabel = theGuiFactory.newLabel("Integer:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theIntegerField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theIntegerField);
+        myGrid.allowCellGrowth(theIntegerField);
+        myGrid.newRow();
         theIntegerField.getEventRegistrar().addEventListener(e -> processActionEvent(theIntegerField, e));
         theIntegerField.setValue(TethysScrollUITestHelper.INT_DEF);
 
         /* Create Long field line */
         myLabel = theGuiFactory.newLabel("Long:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theLongField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theLongField);
+        myGrid.allowCellGrowth(theLongField);
+        myGrid.newRow();
         theLongField.getEventRegistrar().addEventListener(e -> processActionEvent(theLongField, e));
         theLongField.setValue(TethysScrollUITestHelper.LONG_DEF);
 
         /* Create Money field line */
         myLabel = theGuiFactory.newLabel("Money:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theMoneyField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theMoneyField);
+        myGrid.allowCellGrowth(theMoneyField);
+        myGrid.newRow();
         theMoneyField.getEventRegistrar().addEventListener(e -> processActionEvent(theMoneyField, e));
         theMoneyField.setValue(TethysScrollUITestHelper.MONEY_DEF);
 
         /* Create Price field line */
         myLabel = theGuiFactory.newLabel("Price:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), thePriceField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(thePriceField);
+        myGrid.allowCellGrowth(thePriceField);
+        myGrid.newRow();
         thePriceField.getEventRegistrar().addEventListener(e -> processActionEvent(thePriceField, e));
         thePriceField.setValue(TethysScrollUITestHelper.PRICE_DEF);
 
         /* Create Units field line */
         myLabel = theGuiFactory.newLabel("Units:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theUnitsField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theUnitsField);
+        myGrid.allowCellGrowth(theUnitsField);
+        myGrid.newRow();
         theUnitsField.getEventRegistrar().addEventListener(e -> processActionEvent(theUnitsField, e));
         theUnitsField.setValue(TethysScrollUITestHelper.UNITS_DEF);
 
         /* Create Rate field line */
         myLabel = theGuiFactory.newLabel("Rate:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theRateField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theRateField);
+        myGrid.allowCellGrowth(theRateField);
+        myGrid.newRow();
         theRateField.getEventRegistrar().addEventListener(e -> processActionEvent(theRateField, e));
         theRateField.setValue(TethysScrollUITestHelper.RATE_DEF);
 
         /* Create Ratio field line */
         myLabel = theGuiFactory.newLabel("Ratio:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theRatioField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theRatioField);
+        myGrid.allowCellGrowth(theRatioField);
+        myGrid.newRow();
         theRatioField.getEventRegistrar().addEventListener(e -> processActionEvent(theRatioField, e));
         theRatioField.setValue(TethysScrollUITestHelper.RATIO_DEF);
 
         /* Create Dilution field line */
         myLabel = theGuiFactory.newLabel("Dilution:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theDilutionField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theDilutionField);
+        myGrid.allowCellGrowth(theDilutionField);
+        myGrid.newRow();
         theDilutionField.getEventRegistrar().addEventListener(e -> processActionEvent(theDilutionField, e));
         theDilutionField.setValue(TethysScrollUITestHelper.DILUTION_DEF);
 
         /* Create DilutedPrice field line */
         myLabel = theGuiFactory.newLabel("DilutedPrice:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theDilutedPriceField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theDilutedPriceField);
+        myGrid.allowCellGrowth(theDilutedPriceField);
+        myGrid.newRow();
         theDilutedPriceField.getEventRegistrar().addEventListener(e -> processActionEvent(theDilutedPriceField, e));
 
         /* Create ScrollButton field line */
         myLabel = theGuiFactory.newLabel("ScrollButton:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theScrollField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theScrollField);
+        myGrid.allowCellGrowth(theScrollField);
+        myGrid.newRow();
         theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theScrollField, e));
         theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theHelper.buildContextMenu(theScrollButtonMgr.getMenu()));
         theScrollField.setValue("First");
 
         /* Create DateButton field line */
         myLabel = theGuiFactory.newLabel("DateButton:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theDateField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theDateField);
+        myGrid.allowCellGrowth(theDateField);
+        myGrid.newRow();
         theDateField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theDateField, e));
         theDateField.setValue(new TethysDate());
 
         /* Create ListButton field line */
         myLabel = theGuiFactory.newLabel("ListButton:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theListField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theListField);
+        myGrid.allowCellGrowth(theListField);
+        myGrid.newRow();
         theListField.setValue(theHelper.buildToggleList(theListButtonMgr));
         theListField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theListField, e));
 
         /* Create IconButton field line */
         myLabel = theGuiFactory.newLabel("IconButton:");
-        GridPane.setHalignment(myLabel.getNode(), HPos.RIGHT);
-        myPane.addRow(myRowNo++, myLabel.getNode(), theIconField.getNode());
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theIconField);
+        myGrid.allowCellGrowth(theIconField);
+        myGrid.newRow();
         theIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
         theHelper.buildSimpleIconState(theIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
         theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
         theIconField.setValue(false);
 
         /* Return the pane */
-        return myPane;
+        return myGrid;
     }
 
     /**
      * Build Result pane.
      * @return the result pane
      */
-    private GridPane buildResultsPane() {
+    private TethysFXGridPaneManager buildResultsPane() {
         /* Create a GridPane for the results */
-        GridPane myGrid = new GridPane();
-        int myRowNo = 0;
-        myGrid.setHgap(PADDING);
-        myGrid.setVgap(PADDING << 1);
-        myGrid.setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
-        myGrid.getColumnConstraints().addAll(new ColumnConstraints(), new ColumnConstraints(VALUE_WIDTH));
+        TethysFXGridPaneManager myGrid = theGuiFactory.newGridPane();
 
         /* Build the grid */
-        Label myLabel = new Label("Source:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myGrid.addRow(myRowNo++, myLabel, theSource.getNode());
-        myLabel = new Label("Class:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myGrid.addRow(myRowNo++, myLabel, theClass.getNode());
-        myLabel = new Label("Value:");
-        GridPane.setHalignment(myLabel, HPos.RIGHT);
-        myGrid.addRow(myRowNo++, myLabel, theValue.getNode());
+        TethysFXLabel myLabel = theGuiFactory.newLabel("Source:");
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theSource);
+        myGrid.allowCellGrowth(theSource);
+        myGrid.newRow();
+        myLabel = theGuiFactory.newLabel("Class:");
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theClass);
+        myGrid.allowCellGrowth(theClass);
+        myGrid.newRow();
+        myLabel = theGuiFactory.newLabel("Value:");
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theValue);
+        myGrid.allowCellGrowth(theValue);
 
         /* Return the pane */
         return myGrid;
@@ -463,22 +501,19 @@ public class TethysFXEditUIExample
      * Build Control pane.
      * @return the control pane
      */
-    private HBox buildControlPane() {
+    private TethysFXBoxPaneManager buildControlPane() {
         /* Create Toggle button for edit mode */
-        ToggleButton myEditButton = new ToggleButton("Edit");
-        myEditButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(final ObservableValue<? extends Boolean> pObservable,
-                                final Boolean pOldValue,
-                                final Boolean pNewValue) {
-                if (pNewValue) {
-                    myEditButton.setText("Freeze");
-                    setEditMode(true);
-                } else {
-                    myEditButton.setText("Edit");
-                    setEditMode(false);
-                }
+        TethysFXButton myEditButton = theGuiFactory.newButton();
+        myEditButton.setText("Edit");
+        myEditButton.getEventRegistrar().addEventListener(e -> {
+            if (!isEditing) {
+                myEditButton.setText("Freeze");
+                setEditMode(true);
+            } else {
+                myEditButton.setText("Edit");
+                setEditMode(false);
             }
+            isEditing = !isEditing;
         });
 
         /* Create ScrollButton button for currency */
@@ -492,14 +527,11 @@ public class TethysFXEditUIExample
         setCurrency(myDefault);
         myCurrencyMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setCurrency(e.getDetails(Currency.class)));
 
-        /* Create a spacer region */
-        Region mySpacer = new Region();
-        HBox.setHgrow(mySpacer, Priority.ALWAYS);
-
         /* Create an HBox for buttons */
-        HBox myBox = new HBox();
-        myBox.setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
-        myBox.getChildren().addAll(myEditButton, mySpacer, myCurrencyMgr.getNode());
+        TethysFXBoxPaneManager myBox = theGuiFactory.newHBoxPane();
+        myBox.addNode(myEditButton);
+        myBox.addSpacer();
+        myBox.addNode(myCurrencyMgr);
 
         /* Return the pane */
         return myBox;

@@ -22,17 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui.javafx;
 
-import java.util.List;
-
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
 
 /**
  * Action buttons panel.
@@ -40,11 +33,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
  */
 public class PrometheusFXActionButtons
         extends PrometheusActionButtons<Node, Node> {
-    /**
-     * The panel.
-     */
-    private final Pane thePanel;
-
     /**
      * Constructor.
      * @param pFactory the GUI factory
@@ -65,35 +53,6 @@ public class PrometheusFXActionButtons
                                      final UpdateSet<?> pUpdateSet,
                                      final boolean pHorizontal) {
         /* Initialise base class */
-        super(pFactory, pUpdateSet);
-
-        /* Create the panel */
-        Pane myPane = pHorizontal
-                                  ? new HBox(STRUT_LENGTH)
-                                  : new VBox(STRUT_LENGTH);
-
-        /* Define the layout */
-        List<Node> myChildren = myPane.getChildren();
-        if (!pHorizontal) {
-            myChildren.add(new Label(NLS_TITLE));
-        }
-        myChildren.add(getCommitButton().getNode());
-        myChildren.add(getUndoButton().getNode());
-        myChildren.add(getResetButton().getNode());
-
-        /* Set the panel */
-        thePanel = pHorizontal
-                               ? TethysFXGuiUtils.getTitledPane(NLS_TITLE, myPane)
-                               : myPane;
-    }
-
-    @Override
-    public Node getNode() {
-        return thePanel;
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
+        super(pFactory, pUpdateSet, pHorizontal);
     }
 }

@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.scene.Node;
+import javafx.scene.layout.Region;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
@@ -46,7 +47,7 @@ public final class TethysFXIconButtonManager {
         /**
          * The node.
          */
-        private Node theNode;
+        private Region theNode;
 
         /**
          * Constructor.
@@ -55,7 +56,7 @@ public final class TethysFXIconButtonManager {
         protected TethysFXSimpleIconButtonManager(final TethysFXGuiFactory pFactory) {
             /* Initialise underlying class */
             super(pFactory);
-            theNode = super.getNode();
+            theNode = (Region) super.getNode();
         }
 
         @Override
@@ -71,7 +72,7 @@ public final class TethysFXIconButtonManager {
         }
 
         @Override
-        public Node getNode() {
+        public Region getNode() {
             return theNode;
         }
 
@@ -81,8 +82,32 @@ public final class TethysFXIconButtonManager {
         }
 
         @Override
+        public void setPreferredWidth(final Integer pWidth) {
+            getNode().setPrefWidth(pWidth);
+        }
+
+        @Override
+        public void setPreferredHeight(final Integer pHeight) {
+            getNode().setPrefHeight(pHeight);
+        }
+
+        @Override
+        public void setBorderPadding(final Integer pPadding) {
+            super.setBorderPadding(pPadding);
+            createWrapperPane();
+        }
+
+        @Override
         public void setBorderTitle(final String pTitle) {
-            theNode = TethysFXGuiUtils.getTitledPane(pTitle, super.getNode());
+            super.setBorderTitle(pTitle);
+            createWrapperPane();
+        }
+
+        /**
+         * create wrapper pane.
+         */
+        private void createWrapperPane() {
+            theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), super.getNode());
         }
     }
 
@@ -96,7 +121,7 @@ public final class TethysFXIconButtonManager {
         /**
          * The node.
          */
-        private Node theNode;
+        private Region theNode;
 
         /**
          * Constructor.
@@ -105,7 +130,7 @@ public final class TethysFXIconButtonManager {
         protected TethysFXStateIconButtonManager(final TethysFXGuiFactory pFactory) {
             /* Initialise underlying class */
             super(pFactory);
-            theNode = super.getNode();
+            theNode = (Region) super.getNode();
         }
 
         @Override
@@ -121,7 +146,7 @@ public final class TethysFXIconButtonManager {
         }
 
         @Override
-        public Node getNode() {
+        public Region getNode() {
             return theNode;
         }
 
@@ -131,8 +156,32 @@ public final class TethysFXIconButtonManager {
         }
 
         @Override
+        public void setPreferredWidth(final Integer pWidth) {
+            getNode().setPrefWidth(pWidth);
+        }
+
+        @Override
+        public void setPreferredHeight(final Integer pHeight) {
+            getNode().setPrefHeight(pHeight);
+        }
+
+        @Override
+        public void setBorderPadding(final Integer pPadding) {
+            super.setBorderPadding(pPadding);
+            createWrapperPane();
+        }
+
+        @Override
         public void setBorderTitle(final String pTitle) {
-            theNode = TethysFXGuiUtils.getTitledPane(pTitle, super.getNode());
+            super.setBorderTitle(pTitle);
+            createWrapperPane();
+        }
+
+        /**
+         * create wrapper pane.
+         */
+        private void createWrapperPane() {
+            theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), super.getNode());
         }
     }
 }

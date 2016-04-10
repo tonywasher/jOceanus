@@ -23,16 +23,12 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
@@ -48,19 +44,14 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.Teth
 public class TethysFXScrollUIExample
         extends Application {
     /**
-     * The padding.
-     */
-    private static final int PADDING = 5;
-
-    /**
-     * The value width.
-     */
-    private static final int VALUE_WIDTH = 200;
-
-    /**
      * Default icon width.
      */
     private static final int DEFAULT_ICONWIDTH = 24;
+
+    /**
+     * Value width.
+     */
+    private static final int DEFAULT_VALUEWIDTH = 200;
 
     /**
      * The GuiFactory.
@@ -174,12 +165,7 @@ public class TethysFXScrollUIExample
     @Override
     public void start(final Stage pStage) {
         /* Create a GridPane */
-        GridPane myGrid = new GridPane();
-        int myRowNo = 0;
-        myGrid.setHgap(PADDING);
-        myGrid.setVgap(PADDING << 1);
-        myGrid.setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
-        myGrid.getColumnConstraints().addAll(new ColumnConstraints(), new ColumnConstraints(VALUE_WIDTH));
+        TethysFXGridPaneManager myGrid = theGuiFactory.newGridPane();
 
         /* Create context menu line */
         TethysFXLabel myContextArea = theGuiFactory.newLabel("Right-click for Menu");
@@ -187,7 +173,11 @@ public class TethysFXScrollUIExample
         myContextArea.setAlignment(TethysAlignment.CENTRE);
         theContextValue.setBorderTitle("ContextValue");
         theContextValue.setAlignment(TethysAlignment.CENTRE);
-        myGrid.addRow(myRowNo++, myContextArea.getNode(), theContextValue.getNode());
+        theContextValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(myContextArea);
+        myGrid.addCell(theContextValue);
+        myGrid.allowCellGrowth(theContextValue);
+        myGrid.newRow();
         setContextValue(null);
 
         /* Build the context menu */
@@ -211,7 +201,11 @@ public class TethysFXScrollUIExample
         theScrollButtonMgr.setBorderTitle("ScrollButton");
         theScrollValue.setBorderTitle("ScrollValue");
         theScrollValue.setAlignment(TethysAlignment.CENTRE);
-        myGrid.addRow(myRowNo++, theScrollButtonMgr.getNode(), theScrollValue.getNode());
+        theScrollValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(theScrollButtonMgr);
+        myGrid.addCell(theScrollValue);
+        myGrid.allowCellGrowth(theScrollValue);
+        myGrid.newRow();
         setScrollValue(null);
 
         /* Add listener */
@@ -226,7 +220,11 @@ public class TethysFXScrollUIExample
         theListButtonMgr.setBorderTitle("ListButton");
         theListValues.setBorderTitle("ListValues");
         theListValues.setAlignment(TethysAlignment.CENTRE);
-        myGrid.addRow(myRowNo++, theListButtonMgr.getNode(), theListValues.getNode());
+        theListValues.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(theListButtonMgr);
+        myGrid.addCell(theListValues);
+        myGrid.allowCellGrowth(theListValues);
+        myGrid.newRow();
 
         theListButtonMgr.setValue(theHelper.buildToggleList(theListButtonMgr));
         theListButtonMgr.setText("Tag");
@@ -241,7 +239,11 @@ public class TethysFXScrollUIExample
         theDateButtonMgr.setBorderTitle("DateButton");
         theDateValue.setBorderTitle("DateValue");
         theDateValue.setAlignment(TethysAlignment.CENTRE);
-        myGrid.addRow(myRowNo++, theDateButtonMgr.getNode(), theDateValue.getNode());
+        theDateValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(theDateButtonMgr);
+        myGrid.addCell(theDateValue);
+        myGrid.allowCellGrowth(theDateValue);
+        myGrid.newRow();
 
         /* Add listener */
         theDateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
@@ -253,7 +255,11 @@ public class TethysFXScrollUIExample
         theSimpleIconButtonMgr.setBorderTitle("SimpleIconButton");
         theSimpleIconValue.setBorderTitle("IconValue");
         theSimpleIconValue.setAlignment(TethysAlignment.CENTRE);
-        myGrid.addRow(myRowNo++, theSimpleIconButtonMgr.getNode(), theSimpleIconValue.getNode());
+        theSimpleIconValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(theSimpleIconButtonMgr);
+        myGrid.addCell(theSimpleIconValue);
+        myGrid.allowCellGrowth(theSimpleIconValue);
+        myGrid.newRow();
         theSimpleIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
         theHelper.buildSimpleIconState(theSimpleIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
 
@@ -270,7 +276,11 @@ public class TethysFXScrollUIExample
         myBox.setBorderTitle("StateIconButton");
         theStateIconValue.setBorderTitle("StateIconValue");
         theStateIconValue.setAlignment(TethysAlignment.CENTRE);
-        myGrid.addRow(myRowNo++, myBox.getNode(), theStateIconValue.getNode());
+        theStateIconValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(myBox);
+        myGrid.addCell(theStateIconValue);
+        myGrid.allowCellGrowth(theStateIconValue);
+        myGrid.newRow();
         theHelper.buildStateButton(theStateButtonMgr);
         theStateIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
         theHelper.buildStateIconState(theStateIconButtonMgr,
@@ -291,11 +301,12 @@ public class TethysFXScrollUIExample
             pStage.sizeToScene();
         });
 
+        /* Configure the grid */
+        myGrid.setBorderPadding(3);
+
         /* Create scene */
-        BorderPane myPane = new BorderPane();
-        Scene myScene = new Scene(myPane);
+        Scene myScene = new Scene(myGrid.getNode());
         theGuiFactory.applyStyleSheets(myScene);
-        myPane.setCenter(myGrid);
         pStage.setTitle("JavaFXScroll Demo");
         pStage.setScene(myScene);
         pStage.show();

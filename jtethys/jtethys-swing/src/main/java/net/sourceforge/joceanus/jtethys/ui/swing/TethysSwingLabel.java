@@ -22,12 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import javax.swing.BorderFactory;
+import java.awt.Dimension;
+
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 
 /**
@@ -47,7 +49,7 @@ public class TethysSwingLabel
     protected TethysSwingLabel(final TethysSwingGuiFactory pFactory) {
         super(pFactory);
         theLabel = new JLabel();
-        setAlignment(TethysAlignment.LEADING);
+        setAlignment(TethysAlignment.WEST);
     }
 
     @Override
@@ -57,7 +59,8 @@ public class TethysSwingLabel
 
     @Override
     public void setAlignment(final TethysAlignment pAlign) {
-        theLabel.setHorizontalTextPosition(determineAlignment(pAlign));
+        theLabel.setHorizontalTextPosition(determineHAlignment(pAlign));
+        theLabel.setVerticalTextPosition(determineVAlignment(pAlign));
     }
 
     @Override
@@ -76,24 +79,81 @@ public class TethysSwingLabel
     }
 
     /**
-     * Translate alignment.
+     * Translate horizontal alignment.
      * @param pAlign the alignment
-     * @return the Swing alignment
+     * @return the FX alignment
      */
-    private int determineAlignment(final TethysAlignment pAlign) {
+    private int determineHAlignment(final TethysAlignment pAlign) {
         switch (pAlign) {
-            case TRAILING:
+            case NORTHEAST:
+            case EAST:
+            case SOUTHEAST:
                 return SwingConstants.RIGHT;
+            case NORTH:
             case CENTRE:
+            case SOUTH:
                 return SwingConstants.CENTER;
-            case LEADING:
+            case NORTHWEST:
+            case WEST:
+            case SOUTHWEST:
             default:
                 return SwingConstants.LEFT;
         }
     }
 
+    /**
+     * Translate vertical alignment.
+     * @param pAlign the alignment
+     * @return the FX alignment
+     */
+    private int determineVAlignment(final TethysAlignment pAlign) {
+        switch (pAlign) {
+            case NORTHEAST:
+            case NORTH:
+            case NORTHWEST:
+                return SwingConstants.TOP;
+            case WEST:
+            case CENTRE:
+            case EAST:
+                return SwingConstants.CENTER;
+            case SOUTHWEST:
+            case SOUTH:
+            case SOUTHEAST:
+            default:
+                return SwingConstants.BOTTOM;
+        }
+    }
+
+    @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        Dimension myDim = theLabel.getPreferredSize();
+        myDim = new Dimension(pWidth, myDim.height);
+        theLabel.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        Dimension myDim = theLabel.getPreferredSize();
+        myDim = new Dimension(myDim.width, pHeight);
+        theLabel.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
     @Override
     public void setBorderTitle(final String pTitle) {
-        theLabel.setBorder(BorderFactory.createTitledBorder(pTitle));
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), theLabel);
     }
 }

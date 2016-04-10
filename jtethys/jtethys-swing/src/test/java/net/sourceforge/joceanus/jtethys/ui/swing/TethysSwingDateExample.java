@@ -23,28 +23,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
-import java.awt.Insets;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.lang.reflect.InvocationTargetException;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JApplet;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
@@ -56,6 +42,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
@@ -69,17 +56,16 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysS
  * Provides a simple application that illustrates the features of JDateDay.
  * @author Tony Washer
  */
-public class TethysSwingDateExample
-        extends JApplet {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 2036674133513416250L;
-
+public class TethysSwingDateExample {
     /**
      * Inset depth.
      */
     private static final int INSET_DEPTH = 5;
+
+    /**
+     * Grid Gap.
+     */
+    private static final int GRID_GAP = 5;
 
     /**
      * First Column Width.
@@ -89,22 +75,7 @@ public class TethysSwingDateExample
     /**
      * Second Column Width.
      */
-    private static final int COL_2_WIDTH = 200;
-
-    /**
-     * Scroll Width.
-     */
-    private static final int SCROLL_WIDTH = 500;
-
-    /**
-     * Scroll Height.
-     */
-    private static final int SCROLL_HEIGHT = 120;
-
-    /**
-     * Neutral Weight.
-     */
-    private static final double WEIGHT_NEUTRAL = 0.5f;
+    private static final int COL_2_WIDTH = 250;
 
     /**
      * Start sample date.
@@ -164,7 +135,7 @@ public class TethysSwingDateExample
     /**
      * The GUI Factory.
      */
-    private transient TethysSwingGuiFactory theGuiFactory = new TethysSwingGuiFactory();
+    private TethysSwingGuiFactory theGuiFactory = new TethysSwingGuiFactory();
 
     /**
      * The table.
@@ -174,37 +145,37 @@ public class TethysSwingDateExample
     /**
      * The list of locales.
      */
-    private JComboBox<ShortLocale> theLocaleList;
+    private TethysSwingScrollButtonManager<ShortLocale> theLocaleList;
 
     /**
      * The list of formats.
      */
-    private JComboBox<String> theFormatList;
+    private TethysSwingScrollButtonManager<String> theFormatList;
 
     /**
      * The start date.
      */
-    private transient TethysSwingDateButtonManager theStartDate;
+    private TethysSwingDateButtonManager theStartDate;
 
     /**
      * The end date.
      */
-    private transient TethysSwingDateButtonManager theEndDate;
+    private TethysSwingDateButtonManager theEndDate;
 
     /**
      * The Null Select checkBox.
      */
-    private JCheckBox theNullSelect;
+    private TethysSwingCheckBox theNullSelect;
 
     /**
      * The ShowNarrow checkBox.
      */
-    private JCheckBox theNarrowSelect;
+    private TethysSwingCheckBox theNarrowSelect;
 
     /**
      * The selected range.
      */
-    private JLabel theSelectedRange;
+    private TethysSwingLabel theSelectedRange;
 
     /**
      * The selected locale.
@@ -217,24 +188,19 @@ public class TethysSwingDateExample
     private String theFormat = DATEFORMAT_1;
 
     /**
-     * The listener.
-     */
-    private transient DateListener theListener = new DateListener();
-
-    /**
      * The range selection.
      */
-    private transient TethysSwingDateRangeSelector theRangeSelect;
+    private TethysSwingDateRangeSelector theRangeSelect;
 
     /**
      * The formatter.
      */
-    private transient TethysDataFormatter theFormatter = theGuiFactory.getDataFormatter();
+    private TethysDataFormatter theFormatter = theGuiFactory.getDataFormatter();
 
     /**
      * The formatter.
      */
-    private transient TethysDateFormatter theDateFormatter = theFormatter.getDateFormatter();
+    private TethysDateFormatter theDateFormatter = theFormatter.getDateFormatter();
 
     /**
      * Create and show the GUI.
@@ -248,11 +214,12 @@ public class TethysSwingDateExample
             TethysSwingDateExample myProgram = new TethysSwingDateExample();
 
             /* Create the panel */
-            JPanel myPanel = myProgram.makePanel();
+            TethysSwingGridPaneManager myPanel = myProgram.makePanel();
+            JComponent myNode = myPanel.getNode();
 
             /* Attach the panel to the frame */
-            myPanel.setOpaque(true);
-            myFrame.setContentPane(myPanel);
+            myNode.setOpaque(true);
+            myFrame.setContentPane(myNode);
             myFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
             /* Show the frame */
@@ -277,30 +244,11 @@ public class TethysSwingDateExample
         });
     }
 
-    @Override
-    public void init() {
-        // Execute a job on the event-dispatching thread; creating this applet's GUI.
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    /* Create the panel */
-                    JPanel myPanel = makePanel();
-                    setContentPane(myPanel);
-                }
-            });
-        } catch (InvocationTargetException e) {
-            LOGGER.error("Failed to invoke thread", e);
-        } catch (InterruptedException e) {
-            LOGGER.error("Thread was interrupted", e);
-        }
-    }
-
     /**
      * Create the panel.
      * @return the panel
      */
-    private JPanel makePanel() {
+    private TethysSwingGridPaneManager makePanel() {
         /* Create the table */
         makeTable();
 
@@ -314,137 +262,78 @@ public class TethysSwingDateExample
         makeFormatList();
 
         /* Create the additional labels */
-        JLabel myFormat = new JLabel("Format:");
-        JLabel myLocale = new JLabel("Locale:");
-        JLabel myStart = new JLabel("Start:");
-        JLabel myEnd = new JLabel("End:");
-        JLabel mySelRange = new JLabel("SelectedRange:");
+        TethysSwingLabel myFormat = theGuiFactory.newLabel("Format:");
+        TethysSwingLabel myLocale = theGuiFactory.newLabel("Locale:");
+        TethysSwingLabel myStart = theGuiFactory.newLabel("Start:");
+        TethysSwingLabel myEnd = theGuiFactory.newLabel("End:");
+        TethysSwingLabel mySelRange = theGuiFactory.newLabel("SelectedRange:");
 
         /* Create a Range sub-panel */
-        JPanel myRange = new JPanel(new GridBagLayout());
-        GridBagConstraints myConstraints = new GridBagConstraints();
-        myRange.setBorder(BorderFactory.createTitledBorder("Range Selection"));
-        myConstraints.gridx = 0;
-        myConstraints.gridy = 0;
-        myConstraints.gridwidth = 1;
-        myConstraints.weightx = 0.0;
-        myConstraints.anchor = GridBagConstraints.LINE_END;
-        myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
-        myRange.add(myStart, myConstraints);
-        myConstraints.gridx = 1;
-        myConstraints.gridy = 0;
-        myConstraints.gridwidth = 1;
-        myConstraints.weightx = 1.0;
-        myRange.add(theStartDate.getNode(), myConstraints);
-        myConstraints.gridx = 0;
-        myConstraints.gridy = 1;
-        myConstraints.gridwidth = 1;
-        myConstraints.weightx = 0.0;
-        myConstraints.anchor = GridBagConstraints.LINE_END;
-        myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
-        myRange.add(myEnd, myConstraints);
-        myConstraints.gridx = 1;
-        myConstraints.gridy = 1;
-        myConstraints.gridwidth = 1;
-        myConstraints.weightx = 1.0;
-        myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myRange.add(theEndDate.getNode(), myConstraints);
+        TethysSwingGridPaneManager myRange = theGuiFactory.newGridPane();
+        myRange.setHGap(GRID_GAP);
+        myRange.setVGap(GRID_GAP);
+        myRange.setBorderPadding(INSET_DEPTH);
+        myRange.setBorderTitle("Range Selection");
+
+        /* Position the contents */
+        myRange.addCell(myStart);
+        myRange.setCellAlignment(myStart, TethysAlignment.EAST);
+        myRange.addCell(theStartDate);
+        myRange.allowCellGrowth(theStartDate);
+        myRange.newRow();
+        myRange.addCell(myEnd);
+        myRange.setCellAlignment(myEnd, TethysAlignment.EAST);
+        myRange.addCell(theEndDate);
+        myRange.allowCellGrowth(theEndDate);
 
         /* Create a Style sub-panel */
-        JPanel myStyle = new JPanel(new GridBagLayout());
-        myStyle.setBorder(BorderFactory.createTitledBorder("Format Selection"));
-        myConstraints = new GridBagConstraints();
-        myConstraints.gridx = 0;
-        myConstraints.gridy = 0;
-        myConstraints.gridwidth = 1;
-        myConstraints.weightx = 0.0;
-        myConstraints.anchor = GridBagConstraints.LINE_END;
-        myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
-        myStyle.add(myLocale, myConstraints);
-        myConstraints.gridx = 1;
-        myConstraints.gridy = 0;
-        myConstraints.gridwidth = 1;
-        myConstraints.weightx = 1.0;
-        myStyle.add(theLocaleList, myConstraints);
-        myConstraints.gridx = 0;
-        myConstraints.gridy = 1;
-        myConstraints.gridwidth = 1;
-        myConstraints.weightx = 0.0;
-        myConstraints.anchor = GridBagConstraints.LINE_END;
-        myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
-        myStyle.add(myFormat, myConstraints);
-        myConstraints.gridx = 1;
-        myConstraints.gridy = 1;
-        myConstraints.gridwidth = 1;
-        myConstraints.weightx = 1.0;
-        myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myStyle.add(theFormatList, myConstraints);
+        TethysSwingGridPaneManager myStyle = theGuiFactory.newGridPane();
+        myStyle.setHGap(GRID_GAP);
+        myStyle.setVGap(GRID_GAP);
+        myStyle.setBorderPadding(INSET_DEPTH);
+        myStyle.setBorderTitle("Format Selection");
 
-        /* Create a range select sub-panel */
-        JPanel myRangeSelect = new JPanel(new GridBagLayout());
-        myConstraints = new GridBagConstraints();
-        myConstraints.gridx = 0;
-        myConstraints.gridy = 0;
-        myConstraints.gridwidth = 2;
-        myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myConstraints.weightx = 1.0;
-        theRangeSelect.setBorderTitle("Range Selection");
-        myRangeSelect.add(theRangeSelect.getNode(), myConstraints);
-        myConstraints = new GridBagConstraints();
-        myConstraints.gridx = 0;
-        myConstraints.gridy = 1;
-        myConstraints.gridwidth = 1;
-        myConstraints.weightx = 0.0;
-        myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
-        myConstraints.anchor = GridBagConstraints.LINE_END;
-        myRangeSelect.add(mySelRange, myConstraints);
-        myConstraints = new GridBagConstraints();
-        myConstraints.gridx = 1;
-        myConstraints.gridy = 1;
-        myConstraints.gridwidth = 1;
-        myConstraints.weightx = 1.0;
-        myRangeSelect.add(theSelectedRange, myConstraints);
+        /* Position the contents */
+        myStyle.addCell(myLocale);
+        myStyle.setCellAlignment(myLocale, TethysAlignment.EAST);
+        myStyle.addCell(theLocaleList);
+        myStyle.allowCellGrowth(theLocaleList);
+        myStyle.newRow();
+        myStyle.addCell(myFormat);
+        myStyle.setCellAlignment(myFormat, TethysAlignment.EAST);
+        myStyle.addCell(theFormatList);
+        myStyle.allowCellGrowth(theFormatList);
+
+        /* Create the options panel */
+        TethysSwingBoxPaneManager myOptions = makeOptionsPanel();
 
         /* Create the panel */
-        JPanel myPanel = new JPanel(new GridBagLayout());
-        myConstraints = new GridBagConstraints();
-        myConstraints.gridx = 0;
-        myConstraints.gridy = 0;
-        myConstraints.gridwidth = 1;
-        myConstraints.weightx = WEIGHT_NEUTRAL;
-        myPanel.add(myRange, myConstraints);
-        myConstraints = new GridBagConstraints();
-        myConstraints.gridx = 1;
-        myConstraints.gridy = 0;
-        myConstraints.gridwidth = 1;
-        myConstraints.weightx = WEIGHT_NEUTRAL;
-        myPanel.add(myStyle, myConstraints);
+        TethysSwingGridPaneManager myPanel = theGuiFactory.newGridPane();
+        myPanel.setHGap(GRID_GAP);
+        myPanel.setVGap(GRID_GAP);
+        myPanel.setBorderPadding(INSET_DEPTH);
 
-        /* Build options panel */
-        JPanel myOptions = makeOptionsPanel();
-        myConstraints = new GridBagConstraints();
-        myConstraints.gridx = 0;
-        myConstraints.gridy = 1;
-        myConstraints.gridwidth = 2;
-        myConstraints.fill = GridBagConstraints.BOTH;
-        myPanel.add(myOptions, myConstraints);
-
-        theTable.getNode().setPreferredSize(new Dimension(SCROLL_WIDTH, SCROLL_HEIGHT));
-        myConstraints = new GridBagConstraints();
-        myConstraints.gridx = 0;
-        myConstraints.gridy = 2;
-        myConstraints.gridwidth = 2;
-        myConstraints.fill = GridBagConstraints.BOTH;
-        myPanel.add(theTable.getNode(), myConstraints);
-
-        myConstraints = new GridBagConstraints();
-        myConstraints.gridx = 0;
-        myConstraints.gridy = 3;
-        myConstraints.gridwidth = 2;
-        myConstraints.gridheight = GridBagConstraints.REMAINDER;
-        myConstraints.weightx = WEIGHT_NEUTRAL;
-        myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myPanel.add(myRangeSelect, myConstraints);
+        /* Set the contents */
+        myPanel.addCell(myRange);
+        myPanel.addCell(myStyle);
+        myPanel.allowCellGrowth(myStyle);
+        myPanel.newRow();
+        myPanel.addCell(myOptions, 2);
+        myPanel.setCellAlignment(myOptions, TethysAlignment.CENTRE);
+        myPanel.allowCellGrowth(myOptions);
+        myPanel.newRow();
+        myPanel.addCell(theTable, 2);
+        myPanel.setCellAlignment(theTable, TethysAlignment.CENTRE);
+        myPanel.allowCellGrowth(theTable);
+        myPanel.newRow();
+        theRangeSelect.setBorderTitle("Explicit Range Selection");
+        myPanel.addCell(theRangeSelect, 2);
+        myPanel.setCellAlignment(theRangeSelect, TethysAlignment.CENTRE);
+        myPanel.allowCellGrowth(theRangeSelect);
+        myPanel.newRow();
+        myPanel.addCell(mySelRange);
+        myPanel.addCell(theSelectedRange);
+        myPanel.allowCellGrowth(theSelectedRange);
 
         /* Return the panel */
         return myPanel;
@@ -509,17 +398,25 @@ public class TethysSwingDateExample
      */
     private void makeLocaleList() {
         /* Create the Combo box and populate it */
-        theLocaleList = new JComboBox<ShortLocale>();
+        theLocaleList = theGuiFactory.newScrollButton();
+        TethysSwingScrollContextMenu<ShortLocale> myMenu = theLocaleList.getMenu();
         for (ShortLocale myLocale : ShortLocale.values()) {
             /* Add the Locale to the list */
-            theLocaleList.addItem(myLocale);
+            myMenu.addItem(myLocale);
         }
 
-        /* Add Listener to List */
-        theLocaleList.addItemListener(theListener);
-
         /* Set the default item */
-        theLocaleList.setSelectedItem(ShortLocale.UK);
+        theLocaleList.setValue(ShortLocale.UK);
+
+        /* Action selections */
+        theLocaleList.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            /* Store the new locale */
+            ShortLocale myLocale = e.getDetails(ShortLocale.class);
+            theLocale = myLocale.getLocale();
+            applyLocale();
+            theTable.repaintColumn(DateItem.PROP_DATE);
+            theNarrowSelect.setSelected(myLocale.showNarrowDays());
+        });
     }
 
     /**
@@ -527,37 +424,42 @@ public class TethysSwingDateExample
      */
     private void makeFormatList() {
         /* Create the Combo box and populate it */
-        theFormatList = new JComboBox<String>();
-        theFormatList.addItem(DATEFORMAT_1);
-        theFormatList.addItem(DATEFORMAT_2);
-        theFormatList.addItem(DATEFORMAT_3);
-
-        /* Add Listener to List */
-        theFormatList.addItemListener(theListener);
+        theFormatList = theGuiFactory.newScrollButton();
+        TethysSwingScrollContextMenu<String> myMenu = theFormatList.getMenu();
+        myMenu.addItem(DATEFORMAT_1);
+        myMenu.addItem(DATEFORMAT_2);
+        myMenu.addItem(DATEFORMAT_3);
 
         /* Set the default item */
-        theFormatList.setSelectedItem(theFormat);
+        theFormatList.setValue(theFormat);
+
+        /* Action selections */
+        theFormatList.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            /* Store the new format */
+            theFormat = e.getDetails(String.class);
+            applyFormat();
+            theTable.repaintColumn(DateItem.PROP_DATE);
+        });
     }
 
     /**
      * Create the options panel.
      * @return the panel
      */
-    private JPanel makeOptionsPanel() {
+    private TethysSwingBoxPaneManager makeOptionsPanel() {
         /* Create the checkBoxes */
         makeCheckBoxes();
 
         /* Create an options sub-panel */
-        JPanel myOptions = new JPanel();
-        myOptions.setLayout(new BoxLayout(myOptions, BoxLayout.X_AXIS));
-        myOptions.add(Box.createHorizontalGlue());
-        myOptions.add(theNullSelect);
-        myOptions.add(Box.createHorizontalGlue());
-        myOptions.add(theNarrowSelect);
-        myOptions.add(Box.createHorizontalGlue());
+        TethysSwingBoxPaneManager myOptions = theGuiFactory.newHBoxPane();
+        myOptions.addSpacer();
+        myOptions.addNode(theNullSelect);
+        myOptions.addSpacer();
+        myOptions.addNode(theNarrowSelect);
+        myOptions.addSpacer();
+        myOptions.setBorderTitle("Options");
 
         /* Return the panel */
-        myOptions.setBorder(BorderFactory.createTitledBorder("Options"));
         return myOptions;
     }
 
@@ -589,7 +491,7 @@ public class TethysSwingDateExample
         theEndDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> applyRange());
 
         /* Create the range report label */
-        theSelectedRange = new JLabel(theRangeSelect.getRange().toString());
+        theSelectedRange = theGuiFactory.newLabel(theRangeSelect.getRange().toString());
     }
 
     /**
@@ -610,12 +512,12 @@ public class TethysSwingDateExample
      */
     private void makeCheckBoxes() {
         /* Create the check boxes */
-        theNullSelect = new JCheckBox("Null Date Select");
-        theNarrowSelect = new JCheckBox("Show Narrow Days");
+        theNullSelect = theGuiFactory.newCheckBox("Null Date Select");
+        theNarrowSelect = theGuiFactory.newCheckBox("Show Narrow Days");
 
         /* Action selections */
-        theNullSelect.addItemListener(e -> applyNullOption());
-        theNarrowSelect.addItemListener(e -> applyNarrowOption());
+        theNullSelect.getEventRegistrar().addEventListener(e -> applyNullOption());
+        theNarrowSelect.getEventRegistrar().addEventListener(e -> applyNarrowOption());
 
         /* Initialise */
         applyNullOption();
@@ -696,41 +598,6 @@ public class TethysSwingDateExample
     }
 
     /**
-     * Listener class.
-     */
-    private class DateListener
-            implements ItemListener {
-        @Override
-        public void itemStateChanged(final ItemEvent evt) {
-            /* Access source object */
-            Object o = evt.getSource();
-
-            /* Ignore if we are not selecting */
-            if (evt.getStateChange() != ItemEvent.SELECTED) {
-                return;
-            }
-
-            /* If this is the Locale list */
-            if (theLocaleList.equals(o)) {
-                /* Store the new locale */
-                ShortLocale myLocale = (ShortLocale) evt.getItem();
-                theLocale = myLocale.getLocale();
-
-                /* Apply the new locale */
-                applyLocale();
-
-                /* If this is the Format list */
-            } else if (theFormatList.equals(o)) {
-                /* Store the new format */
-                theFormat = (String) evt.getItem();
-
-                /* Apply the new format */
-                applyFormat();
-            }
-        }
-    }
-
-    /**
      * DateItem class.
      */
     public static final class DateItem {
@@ -807,7 +674,7 @@ public class TethysSwingDateExample
          * China (shorten day names to one character, and shrink from the right to make sure they
          * are different).
          */
-        CHINA(Locale.CHINA),
+        CHINA(Locale.CHINA, true),
 
         /**
          * Germany.
@@ -827,12 +694,12 @@ public class TethysSwingDateExample
         /**
          * Japan (shorten day names to one character).
          */
-        JAPAN(Locale.JAPAN),
+        JAPAN(Locale.JAPAN, true),
 
         /**
          * Korea (shorten day names to one character).
          */
-        KOREA(Locale.KOREA),
+        KOREA(Locale.KOREA, true),
 
         /**
          * US.
@@ -850,12 +717,29 @@ public class TethysSwingDateExample
         private final Locale theLocale;
 
         /**
+         * Show narrow days.
+         */
+        private final boolean doShowNarrowDays;
+
+        /**
          * Constructor.
          * @param pLocale the locale
          */
         private ShortLocale(final Locale pLocale) {
             /* Store the Locale */
+            this(pLocale, false);
+        }
+
+        /**
+         * Constructor.
+         * @param pLocale the locale
+         * @param pShowNarrowDays true/false
+         */
+        ShortLocale(final Locale pLocale,
+                    final boolean pShowNarrowDays) {
+            /* Store the Locale */
             theLocale = pLocale;
+            doShowNarrowDays = pShowNarrowDays;
         }
 
         /**
@@ -864,6 +748,14 @@ public class TethysSwingDateExample
          */
         public Locale getLocale() {
             return theLocale;
+        }
+
+        /**
+         * Show narrow days.
+         * @return true/false
+         */
+        public boolean showNarrowDays() {
+            return doShowNarrowDays;
         }
 
         @Override

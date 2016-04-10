@@ -28,10 +28,10 @@
  * Titled Pane values.
  */
 .-jtethys-titled-title {
-  -fx-translate-x:  8;
-  -fx-translate-y: -10;
+  -fx-translate-x:  4;
+  -fx-translate-y: -8;
   -fx-padding: 0 0 0 4;
-  -fx-background-color: white;
+  -fx-background-color: whitesmoke;
 }
 
 .-jtethys-titled-border {

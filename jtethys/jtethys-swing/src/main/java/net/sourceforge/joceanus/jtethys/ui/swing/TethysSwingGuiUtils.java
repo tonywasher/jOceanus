@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -34,9 +35,12 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
@@ -79,6 +83,60 @@ public final class TethysSwingGuiUtils {
         pComponent.setPreferredSize(myPrefDims);
         pComponent.setMaximumSize(myMaxDims);
         pComponent.setMinimumSize(myMinDims);
+    }
+
+    /**
+     * create wrapper pane.
+     * @param pTitle the title
+     * @param pPadding the padding
+     * @param pNode the node
+     * @return the new pane
+     */
+    public static JComponent addPanelBorder(final String pTitle,
+                                            final Integer pPadding,
+                                            final JComponent pNode) {
+        if ((pPadding == null) && (pTitle == null)) {
+            return pNode;
+        } else {
+            JComponent myNode = new JPanel(new BorderLayout());
+            myNode.add(pNode, BorderLayout.CENTER);
+            setPanelBorder(pTitle, pPadding, myNode);
+            return myNode;
+        }
+    }
+
+    /**
+     * Apply titled and padded borders around panel.
+     * @param pTitle the title
+     * @param pPadding the padding
+     * @param pNode the node
+     */
+    protected static void setPanelBorder(final String pTitle,
+                                         final Integer pPadding,
+                                         final JComponent pNode) {
+        /* Access contents */
+        boolean hasTitle = pTitle != null;
+        boolean hasPadding = pPadding != null;
+
+        /* Create borders */
+        Border myPaddedBorder = hasPadding
+                                           ? BorderFactory.createEmptyBorder(pPadding, pPadding, pPadding, pPadding)
+                                           : null;
+        Border myTitleBorder = hasTitle
+                                        ? BorderFactory.createTitledBorder(pTitle)
+                                        : null;
+
+        /* Create compound border */
+        Border myBorder = hasPadding
+                                     ? hasTitle
+                                                ? BorderFactory.createCompoundBorder(myPaddedBorder, myTitleBorder)
+                                                : myPaddedBorder
+                                     : hasTitle
+                                                ? myTitleBorder
+                                                : BorderFactory.createEmptyBorder();
+
+        /* Set the border */
+        pNode.setBorder(myBorder);
     }
 
     /**

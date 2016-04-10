@@ -22,22 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.HeadlessException;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.lang.reflect.InvocationTargetException;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.Icon;
-import javax.swing.JApplet;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
@@ -45,8 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
@@ -58,27 +47,11 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.Te
 /**
  * Scroll utilities examples.
  */
-public class TethysSwingScrollUIExample
-        extends JApplet {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 1335897095869650737L;
-
-    /**
-     * The padding.
-     */
-    private static final int PADDING = 5;
-
-    /**
-     * The default height.
-     */
-    private static final int DEFAULT_HEIGHT = 350;
-
+public class TethysSwingScrollUIExample {
     /**
      * The default width.
      */
-    private static final int DEFAULT_WIDTH = 400;
+    private static final int DEFAULT_VALUEWIDTH = 200;
 
     /**
      * Default icon width.
@@ -191,25 +164,6 @@ public class TethysSwingScrollUIExample
         theListValues = theGuiFactory.newLabel();
     }
 
-    @Override
-    public void init() {
-        // Execute a job on the event-dispatching thread; creating this applet's GUI.
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    /* Access the panel */
-                    JPanel myPanel = buildPanel();
-                    setContentPane(myPanel);
-                }
-            });
-        } catch (InvocationTargetException e) {
-            LOGGER.error("Failed to invoke thread", e);
-        } catch (InterruptedException e) {
-            LOGGER.error("Thread was interrupted", e);
-        }
-    }
-
     /**
      * Main function.
      * @param args the arguments
@@ -235,11 +189,11 @@ public class TethysSwingScrollUIExample
             TethysSwingScrollUIExample myExample = new TethysSwingScrollUIExample();
 
             /* Build the panel */
-            JPanel myPanel = myExample.buildPanel();
+            TethysSwingGridPaneManager myPanel = myExample.buildPanel();
 
             /* Attach the panel to the frame */
-            myPanel.setOpaque(true);
-            myFrame.setContentPane(myPanel);
+            myPanel.getNode().setOpaque(true);
+            myFrame.setContentPane(myPanel.getNode());
             myFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
             /* Show the frame */
@@ -254,38 +208,41 @@ public class TethysSwingScrollUIExample
     /**
      * Build the panel.
      */
-    private JPanel buildPanel() {
+    private TethysSwingGridPaneManager buildPanel() {
         /* Create a panel */
-        JPanel myPanel = new JPanel();
-        TethysSwingGridBagHelper myHelper = new TethysSwingGridBagHelper(myPanel);
-        myHelper.setInsetSize(PADDING);
-        myPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        TethysSwingGridPaneManager myGrid = theGuiFactory.newGridPane();
+        // myGrid.getNode().setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
         /* Create context menu line */
-        JLabel myContextArea = new JLabel("Right-click for Menu");
-        myContextArea.setBorder(BorderFactory.createTitledBorder("ContextArea"));
-        myContextArea.setHorizontalAlignment(SwingConstants.CENTER);
-        buildResultLabel(theContextValue, "ContextValue");
-        myHelper.addFullLabeledRow(myContextArea, theContextValue.getNode());
+        TethysSwingLabel myContextArea = theGuiFactory.newLabel("Right-click for Menu");
+        myContextArea.setBorderTitle("ContextArea");
+        myContextArea.setAlignment(TethysAlignment.CENTRE);
+        theContextValue.setBorderTitle("ContextValue");
+        theContextValue.setAlignment(TethysAlignment.CENTRE);
+        theContextValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(myContextArea);
+        myGrid.addCell(theContextValue);
+        myGrid.allowCellGrowth(theContextValue);
+        myGrid.newRow();
         setContextValue(null);
 
         /* Build the context menu */
         theHelper.buildContextMenu(theScrollMenu);
 
         /* Add popUp listener */
-        myContextArea.addMouseListener(new MouseAdapter() {
-            public void mousePressed(final MouseEvent evt) {
-                if (evt.isPopupTrigger()) {
-                    theScrollMenu.showMenuAtPosition(evt.getComponent(), evt.getX(), evt.getY());
-                }
-            }
+        // myContextArea.addMouseListener(new MouseAdapter() {
+        // public void mousePressed(final MouseEvent evt) {
+        // if (evt.isPopupTrigger()) {
+        // theScrollMenu.showMenuAtPosition(evt.getComponent(), evt.getX(), evt.getY());
+        // }
+        // }
 
-            public void mouseReleased(final MouseEvent evt) {
-                if (evt.isPopupTrigger()) {
-                    theScrollMenu.showMenuAtPosition(evt.getComponent(), evt.getX(), evt.getY());
-                }
-            }
-        });
+        // public void mouseReleased(final MouseEvent evt) {
+        // if (evt.isPopupTrigger()) {
+        // theScrollMenu.showMenuAtPosition(evt.getComponent(), evt.getX(), evt.getY());
+        // }
+        // }
+        // });
 
         /* Add listener */
         theScrollMenu.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
@@ -297,12 +254,14 @@ public class TethysSwingScrollUIExample
         });
 
         /* Create scroll button line */
-        JPanel myScrollArea = new JPanel();
-        myScrollArea.setLayout(new BorderLayout());
-        myScrollArea.setBorder(BorderFactory.createTitledBorder("ScrollButton"));
-        myScrollArea.add(theScrollButtonMgr.getNode(), BorderLayout.CENTER);
-        buildResultLabel(theScrollValue, "ScrollValue");
-        myHelper.addFullLabeledRow(myScrollArea, theScrollValue.getNode());
+        theScrollButtonMgr.setBorderTitle("ScrollButton");
+        theScrollValue.setBorderTitle("ScrollValue");
+        theScrollValue.setAlignment(TethysAlignment.CENTRE);
+        theScrollValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(theScrollButtonMgr);
+        myGrid.addCell(theScrollValue);
+        myGrid.allowCellGrowth(theScrollValue);
+        myGrid.newRow();
         setScrollValue(null);
 
         /* Add listener */
@@ -312,12 +271,14 @@ public class TethysSwingScrollUIExample
                 e -> theHelper.buildContextMenu(theScrollButtonMgr.getMenu()));
 
         /* Create list button line */
-        JPanel myListArea = new JPanel();
-        myListArea.setLayout(new BorderLayout());
-        myListArea.setBorder(BorderFactory.createTitledBorder("ListButton"));
-        myListArea.add(theListButtonMgr.getNode(), BorderLayout.CENTER);
-        buildResultLabel(theListValues, "ListValues");
-        myHelper.addFullLabeledRow(myListArea, theListValues.getNode());
+        theListButtonMgr.setBorderTitle("ListButton");
+        theListValues.setBorderTitle("ListValues");
+        theListValues.setAlignment(TethysAlignment.CENTRE);
+        theListValues.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(theListButtonMgr);
+        myGrid.addCell(theListValues);
+        myGrid.allowCellGrowth(theListValues);
+        myGrid.newRow();
 
         theListButtonMgr.setValue(theHelper.buildToggleList(theListButtonMgr));
         theListButtonMgr.setText("Tag");
@@ -326,24 +287,30 @@ public class TethysSwingScrollUIExample
         theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setListValue());
 
         /* Create date button line */
-        JPanel myDateArea = new JPanel();
-        myDateArea.setLayout(new BorderLayout());
-        myDateArea.setBorder(BorderFactory.createTitledBorder("DateButton"));
-        myDateArea.add(theDateButtonMgr.getNode(), BorderLayout.CENTER);
-        theDateButtonMgr.getNode().setMinimumSize(new Dimension(20, 20));
-        buildResultLabel(theDateValue, "DateValue");
-        myHelper.addFullLabeledRow(myDateArea, theDateValue.getNode());
+        theDateButtonMgr.setBorderTitle("DateButton");
+        theDateValue.setBorderTitle("DateValue");
+        theDateValue.setAlignment(TethysAlignment.CENTRE);
+        theDateValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(theDateButtonMgr);
+        myGrid.addCell(theDateValue);
+        myGrid.allowCellGrowth(theDateValue);
+        myGrid.newRow();
 
         /* Add listener */
         theDateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setDateValue(e.getDetails(TethysDate.class)));
 
         /* Create simple icon button line */
-        JPanel myIconArea = new JPanel();
-        myIconArea.setLayout(new BorderLayout());
-        myIconArea.setBorder(BorderFactory.createTitledBorder("SimpleIconButton"));
-        myIconArea.add(theSimpleIconButtonMgr.getNode(), BorderLayout.CENTER);
-        buildResultLabel(theSimpleIconValue, "IconValue");
-        myHelper.addFullLabeledRow(myIconArea, theSimpleIconValue.getNode());
+        theSimpleIconButtonMgr.setBorderTitle("SimpleIconButton");
+        theSimpleIconValue.setBorderTitle("IconValue");
+        theSimpleIconValue.setAlignment(TethysAlignment.CENTRE);
+        theSimpleIconValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(theSimpleIconButtonMgr);
+        myGrid.addCell(theSimpleIconValue);
+        myGrid.allowCellGrowth(theSimpleIconValue);
+        myGrid.newRow();
+        theSimpleIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
+        theHelper.buildSimpleIconState(theSimpleIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+
         theSimpleIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
         theHelper.buildSimpleIconState(theSimpleIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
 
@@ -352,13 +319,18 @@ public class TethysSwingScrollUIExample
                 e -> setSimpleIconValue(e.getDetails(Boolean.class)));
 
         /* Create state icon button line */
-        myIconArea = new JPanel();
-        myIconArea.setLayout(new BoxLayout(myIconArea, BoxLayout.X_AXIS));
-        myIconArea.setBorder(BorderFactory.createTitledBorder("StateIconButton"));
-        myIconArea.add(theStateButtonMgr.getNode());
-        myIconArea.add(theStateIconButtonMgr.getNode());
-        buildResultLabel(theStateIconValue, "StateIconValue");
-        myHelper.addFullLabeledRow(myIconArea, theStateIconValue.getNode());
+        TethysSwingBoxPaneManager myBox = theGuiFactory.newHBoxPane();
+        myBox.addNode(theStateButtonMgr);
+        myBox.addNode(theStateIconButtonMgr);
+        myBox.setBorderTitle("StateIconButton");
+        theStateIconValue.setBorderTitle("StateIconValue");
+        theStateIconValue.setAlignment(TethysAlignment.CENTRE);
+        theStateIconValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(myBox);
+        myGrid.addCell(theStateIconValue);
+        myGrid.allowCellGrowth(theStateIconValue);
+        myGrid.newRow();
+
         theHelper.buildStateButton(theStateButtonMgr);
         theStateIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
         theStateIconButtonMgr.setNullMargins();
@@ -376,25 +348,11 @@ public class TethysSwingScrollUIExample
             setStateIconValue(theStateIconButtonMgr.getValue());
         });
 
+        /* Configure the grid */
+        myGrid.setBorderPadding(3);
+
         /* Return the panel */
-        return myPanel;
-    }
-
-    /**
-     * Build result.
-     * @param pResult the result label
-     * @param pTitle the title
-     */
-    private void buildResultLabel(final TethysSwingLabel pLabel,
-                                  final String pTitle) {
-        // pLabel.setBorder(BorderFactory.createTitledBorder(pTitle));
-        theContextValue.setAlignment(TethysAlignment.CENTRE);
-
-        JComponent myNode = pLabel.getNode();
-        Dimension myDim = new Dimension(100, 39);
-        myNode.setMinimumSize(myDim);
-        myNode.setPreferredSize(myDim);
-        myNode.setBorder(BorderFactory.createTitledBorder(pTitle));
+        return myGrid;
     }
 
     /**

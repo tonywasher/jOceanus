@@ -22,10 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.geometry.Insets;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
@@ -37,12 +40,12 @@ public class TethysFXGridPaneManager
     /**
      * The Node.
      */
-    private Node theNode;
+    private Region theNode;
 
     /**
      * The Pane.
      */
-    private final GridPane thePane;
+    private final GridPane theGridPane;
 
     /**
      * Constructor.
@@ -50,12 +53,14 @@ public class TethysFXGridPaneManager
      */
     protected TethysFXGridPaneManager(final TethysFXGuiFactory pFactory) {
         super(pFactory);
-        thePane = new GridPane();
-        theNode = thePane;
+        theGridPane = new GridPane();
+        theGridPane.setHgap(getHGap());
+        theGridPane.setVgap(getVGap());
+        theNode = theGridPane;
     }
 
     @Override
-    public Node getNode() {
+    public Region getNode() {
         return theNode;
     }
 
@@ -65,43 +70,125 @@ public class TethysFXGridPaneManager
     }
 
     @Override
-    public void addSingleCell(final TethysNode<Node> pNode) {
-        /* Access the node */
-        Node myNode = pNode.getNode();
-
-        /* Set standard options */
-        GridPane.setFillWidth(myNode, true);
-        GridPane.setMargin(myNode, new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH));
-
-        /* add the node */
-        thePane.add(myNode, getColumnIndex(), getRowIndex());
-        addNode(pNode);
-
-        /* Shift to next column */
-        useColumns(1);
+    public void setHGap(final Integer pGap) {
+        super.setHGap(pGap);
+        theGridPane.setHgap(getHGap());
     }
 
     @Override
-    public void addFinalCell(final TethysNode<Node> pNode) {
+    public void setVGap(final Integer pGap) {
+        super.setVGap(pGap);
+        theGridPane.setVgap(getHGap());
+    }
+
+    @Override
+    public void addCellAtPosition(final TethysNode<Node> pNode,
+                                  final int pRow,
+                                  final int pColumn) {
         /* Access the node */
         Node myNode = pNode.getNode();
 
-        /* Set to fill remaining row and expand horizontally */
-        GridPane.setColumnSpan(myNode, GridPane.REMAINING);
-        GridPane.setFillWidth(myNode, true);
-        GridPane.setHgrow(myNode, Priority.ALWAYS);
-        GridPane.setMargin(myNode, new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH));
-
         /* add the node */
-        thePane.add(myNode, getColumnIndex(), getRowIndex());
+        theGridPane.add(myNode, pColumn, pRow);
         addNode(pNode);
+    }
 
-        /* Shift to next row */
-        newRow();
+    @Override
+    public void setCellColumnSpan(final TethysNode<Node> pNode,
+                                  final int pNumCols) {
+        GridPane.setColumnSpan(pNode.getNode(), pNumCols);
+    }
+
+    @Override
+    public void setFinalCell(final TethysNode<Node> pNode) {
+        GridPane.setColumnSpan(pNode.getNode(), GridPane.REMAINING);
+    }
+
+    @Override
+    public void allowCellGrowth(final TethysNode<Node> pNode) {
+        GridPane.setHgrow(pNode.getNode(), Priority.ALWAYS);
+    }
+
+    @Override
+    public void setCellAlignment(final TethysNode<Node> pNode,
+                                 final TethysAlignment pAlign) {
+        Node myNode = pNode.getNode();
+        GridPane.setHalignment(myNode, determineHAlignment(pAlign));
+        GridPane.setValignment(myNode, determineVAlignment(pAlign));
+    }
+
+    @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        theGridPane.setPrefWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        theGridPane.setPrefHeight(pHeight);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
-        theNode = TethysFXGuiUtils.getTitledPane(pTitle, thePane);
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theGridPane);
+    }
+
+    /**
+     * Translate horizontal alignment.
+     * @param pAlign the alignment
+     * @return the FX alignment
+     */
+    private HPos determineHAlignment(final TethysAlignment pAlign) {
+        switch (pAlign) {
+            case NORTHEAST:
+            case EAST:
+            case SOUTHEAST:
+                return HPos.RIGHT;
+            case NORTH:
+            case CENTRE:
+            case SOUTH:
+                return HPos.CENTER;
+            case NORTHWEST:
+            case WEST:
+            case SOUTHWEST:
+            default:
+                return HPos.LEFT;
+        }
+    }
+
+    /**
+     * Translate vertical alignment.
+     * @param pAlign the alignment
+     * @return the FX alignment
+     */
+    private VPos determineVAlignment(final TethysAlignment pAlign) {
+        switch (pAlign) {
+            case NORTHEAST:
+            case NORTH:
+            case NORTHWEST:
+                return VPos.TOP;
+            case WEST:
+            case CENTRE:
+            case EAST:
+                return VPos.CENTER;
+            case SOUTHWEST:
+            case SOUTH:
+            case SOUTHEAST:
+            default:
+                return VPos.BOTTOM;
+        }
     }
 }

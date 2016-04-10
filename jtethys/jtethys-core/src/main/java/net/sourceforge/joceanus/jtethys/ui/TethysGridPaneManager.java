@@ -33,9 +33,9 @@ import java.util.List;
 public abstract class TethysGridPaneManager<N, I>
         implements TethysNode<N> {
     /**
-     * Inset depth.
+     * Grid Gap default.
      */
-    protected static final int INSET_DEPTH = 5;
+    private static final int GRID_GAP = 4;
 
     /**
      * The id.
@@ -46,6 +46,26 @@ public abstract class TethysGridPaneManager<N, I>
      * Node List.
      */
     private final List<TethysNode<N>> theNodeList;
+
+    /**
+     * The Padding.
+     */
+    private Integer thePadding;
+
+    /**
+     * The Title.
+     */
+    private String theTitle;
+
+    /**
+     * The Horizontal Gap.
+     */
+    private Integer theHGap;
+
+    /**
+     * The Vertical Gap.
+     */
+    private Integer theVGap;
 
     /**
      * The row id.
@@ -62,10 +82,13 @@ public abstract class TethysGridPaneManager<N, I>
      * @param pFactory the GUI factory
      */
     protected TethysGridPaneManager(final TethysGuiFactory<N, I> pFactory) {
+        /* Initialise values */
         theId = pFactory.getNextId();
         theNodeList = new ArrayList<>();
         theRowIndex = 0;
         theColIndex = 0;
+        theHGap = GRID_GAP;
+        theVGap = GRID_GAP;
     }
 
     @Override
@@ -74,10 +97,80 @@ public abstract class TethysGridPaneManager<N, I>
     }
 
     /**
-     * Set the Border Title.
-     * @param pTitle the title text
+     * Obtain the Horizontal Grid Gap.
+     * @return the GridGap.
      */
-    public abstract void setBorderTitle(final String pTitle);
+    protected Integer getHGap() {
+        return theHGap;
+    }
+
+    /**
+     * Obtain the Vertical Grid Gap.
+     * @return the GridGap.
+     */
+    protected Integer getVGap() {
+        return theVGap;
+    }
+
+    /**
+     * Obtain the Border Padding.
+     * @return the Padding.
+     */
+    protected Integer getBorderPadding() {
+        return thePadding;
+    }
+
+    /**
+     * Obtain the Border Title.
+     * @return the Title.
+     */
+    protected String getBorderTitle() {
+        return theTitle;
+    }
+
+    /**
+     * Set the Horizontal Grid Gap.
+     * @param pGap the GridGap.
+     */
+    public void setHGap(final Integer pGap) {
+        theHGap = pGap;
+    }
+
+    /**
+     * Set the Vertical Grid Gap.
+     * @param pGap the GridGap.
+     */
+    public void setVGap(final Integer pGap) {
+        theVGap = pGap;
+    }
+
+    /**
+     * Set the Border Padding.
+     * @param pPadding the border padding
+     */
+    public void setBorderPadding(final Integer pPadding) {
+        thePadding = pPadding;
+    }
+
+    /**
+     * Set the Border Title.
+     * @param pTitle the border title
+     */
+    public void setBorderTitle(final String pTitle) {
+        theTitle = pTitle;
+    }
+
+    /**
+     * Set the Preferred Width.
+     * @param pWidth the width
+     */
+    public abstract void setPreferredWidth(final Integer pWidth);
+
+    /**
+     * Set the Preferred Height.
+     * @param pHeight the height
+     */
+    public abstract void setPreferredHeight(final Integer pHeight);
 
     @Override
     public void setEnabled(final boolean pEnabled) {
@@ -87,7 +180,7 @@ public abstract class TethysGridPaneManager<N, I>
     }
 
     /**
-     * Shift to next row.
+     * Adjust to next row.
      */
     public void newRow() {
         theRowIndex = theRowIndex + 1;
@@ -98,43 +191,82 @@ public abstract class TethysGridPaneManager<N, I>
      * Use columns.
      * @param pCols the number of columns that have been filled.
      */
-    protected void useColumns(final int pCols) {
+    private void useColumns(final int pCols) {
         theColIndex = theColIndex + pCols;
     }
 
     /**
-     * Add cell.
+     * Add cell at current column and increment column #.
      * @param pNode the node to add
      */
-    public abstract void addSingleCell(final TethysNode<N> pNode);
+    public void addCell(final TethysNode<N> pNode) {
+        /* add the node */
+        addCellAtPosition(pNode, theRowIndex, theColIndex);
+
+        /* Shift to next column */
+        useColumns(1);
+    }
 
     /**
-     * Add final cell for row
+     * Add cell that spans a number of columns at current column and adjust column #.
      * @param pNode the node to add
+     * @param pNumCols the number of columns to span
      */
-    public abstract void addFinalCell(final TethysNode<N> pNode);
+    public void addCell(final TethysNode<N> pNode,
+                        final int pNumCols) {
+        /* add the node */
+        addCellAtPosition(pNode, theRowIndex, theColIndex);
+
+        /* Set standard options */
+        setCellColumnSpan(pNode, pNumCols);
+
+        /* Shift to next column */
+        useColumns(pNumCols);
+    }
 
     /**
-     * Add simple Node
+     * Add cell at position.
+     * @param pNode the node to add
+     * @param pRow the row to add the cell at
+     * @param pColumn the column to add the cell at
+     */
+    public abstract void addCellAtPosition(final TethysNode<N> pNode,
+                                           final int pRow,
+                                           final int pColumn);
+
+    /**
+     * Set cell column span.
+     * @param pNode the node to set column span on
+     * @param pNumCols the number of columns to span
+     */
+    public abstract void setCellColumnSpan(final TethysNode<N> pNode,
+                                           final int pNumCols);
+
+    /**
+     * Set final cell.
+     * @param pNode the node to set as final cell in row
+     */
+    public abstract void setFinalCell(final TethysNode<N> pNode);
+
+    /**
+     * Allow Cell as growth.
+     * @param pNode the node to allow growth on
+     */
+    public abstract void allowCellGrowth(final TethysNode<N> pNode);
+
+    /**
+     * Set cell alignment.
+     * @param pNode the node to align
+     * @param pAlign the cell alignment
+     */
+    public abstract void setCellAlignment(final TethysNode<N> pNode,
+                                          final TethysAlignment pAlign);
+
+    /**
+     * Add simple Node.
      * @param pNode the node to add
      */
     protected void addNode(final TethysNode<N> pNode) {
         theNodeList.add(pNode);
-    }
-
-    /**
-     * Obtain the row Id.
-     * @return the row Id.
-     */
-    protected Integer getRowIndex() {
-        return theRowIndex;
-    }
-
-    /**
-     * Obtain the column Id.
-     * @return the column Id.
-     */
-    protected Integer getColumnIndex() {
-        return theColIndex;
     }
 }

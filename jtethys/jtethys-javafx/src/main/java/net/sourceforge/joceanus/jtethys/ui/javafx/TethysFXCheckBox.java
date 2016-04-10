@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.layout.Region;
 import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 
 /**
@@ -34,7 +35,7 @@ public class TethysFXCheckBox
     /**
      * The node.
      */
-    private Node theNode;
+    private Region theNode;
 
     /**
      * CheckBox.
@@ -53,7 +54,7 @@ public class TethysFXCheckBox
     }
 
     @Override
-    public Node getNode() {
+    public Region getNode() {
         return theNode;
     }
 
@@ -79,7 +80,31 @@ public class TethysFXCheckBox
     }
 
     @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        getNode().setPrefWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        getNode().setPrefHeight(pHeight);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
     public void setBorderTitle(final String pTitle) {
-        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theCheckBox);
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theCheckBox);
     }
 }

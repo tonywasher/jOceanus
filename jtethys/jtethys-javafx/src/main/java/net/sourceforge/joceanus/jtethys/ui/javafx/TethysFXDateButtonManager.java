@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.scene.Node;
+import javafx.scene.layout.Region;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -35,7 +36,7 @@ public class TethysFXDateButtonManager
     /**
      * The node.
      */
-    private Node theNode;
+    private Region theNode;
 
     /**
      * The dialog.
@@ -49,14 +50,14 @@ public class TethysFXDateButtonManager
     protected TethysFXDateButtonManager(final TethysFXGuiFactory pFactory) {
         /* Initialise the super-class */
         super(pFactory);
-        theNode = super.getNode();
+        theNode = (Region) super.getNode();
 
         /* Set down Arrow as the graphic */
         getButton().setIcon(TethysFXArrowIcon.DOWN.getArrow());
     }
 
     @Override
-    public Node getNode() {
+    public Region getNode() {
         return theNode;
     }
 
@@ -101,7 +102,31 @@ public class TethysFXDateButtonManager
     }
 
     @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        getNode().setPrefWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        getNode().setPrefHeight(pHeight);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
     public void setBorderTitle(final String pTitle) {
-        theNode = TethysFXGuiUtils.getTitledPane(pTitle, super.getNode());
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), super.getNode());
     }
 }

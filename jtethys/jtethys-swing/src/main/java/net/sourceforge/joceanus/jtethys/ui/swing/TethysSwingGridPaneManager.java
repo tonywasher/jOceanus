@@ -22,15 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridLayout;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
@@ -45,13 +48,25 @@ public class TethysSwingGridPaneManager
     private final JPanel thePanel;
 
     /**
+     * The Layout.
+     */
+    private final GridBagLayout theLayout;
+
+    /**
+     * The Constraint Map.
+     */
+    private final Map<Integer, GridBagConstraints> theConstraintMap;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
     protected TethysSwingGridPaneManager(final TethysSwingGuiFactory pFactory) {
         super(pFactory);
         thePanel = new JPanel();
-        thePanel.setLayout(new GridLayout());
+        theLayout = new GridBagLayout();
+        thePanel.setLayout(theLayout);
+        theConstraintMap = new HashMap<>();
     }
 
     @Override
@@ -65,49 +80,124 @@ public class TethysSwingGridPaneManager
     }
 
     @Override
-    public void addSingleCell(final TethysNode<JComponent> pNode) {
+    public void addCellAtPosition(final TethysNode<JComponent> pNode,
+                                  final int pRow,
+                                  final int pColumn) {
         /* Access the node */
         JComponent myNode = pNode.getNode();
 
+        /* Obtain the padding size */
+        Integer myHPad = getHGap() >> 1;
+        Integer myVPad = getHGap() >> 1;
+
         /* Create constraints */
         GridBagConstraints myConstraints = new GridBagConstraints();
-        myConstraints.gridx = getColumnIndex();
-        myConstraints.gridy = getRowIndex();
-        myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
+        myConstraints.gridx = pColumn;
+        myConstraints.gridy = pRow;
+        myConstraints.fill = GridBagConstraints.BOTH;
+        myConstraints.insets = new Insets(myVPad, myHPad, myVPad, myHPad);
+
+        /* Store the constraints */
+        theConstraintMap.put(pNode.getId(), myConstraints);
 
         /* add the node */
         thePanel.add(myNode, myConstraints);
         addNode(pNode);
-
-        /* Shift to next column */
-        useColumns(1);
     }
 
     @Override
-    public void addFinalCell(final TethysNode<JComponent> pNode) {
-        /* Access the node */
-        JComponent myNode = pNode.getNode();
+    public void setCellColumnSpan(final TethysNode<JComponent> pNode,
+                                  final int pNumCols) {
+        GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
+        if (myConstraints != null) {
+            myConstraints.gridwidth = pNumCols;
+            theLayout.setConstraints(pNode.getNode(), myConstraints);
+        }
+    }
 
-        /* Create constraints */
-        GridBagConstraints myConstraints = new GridBagConstraints();
-        myConstraints.gridx = getColumnIndex();
-        myConstraints.gridy = getRowIndex();
-        myConstraints.gridwidth = GridBagConstraints.REMAINDER;
-        myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myConstraints.weightx = 1.0;
-        myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
+    @Override
+    public void setFinalCell(final TethysNode<JComponent> pNode) {
+        setCellColumnSpan(pNode, GridBagConstraints.REMAINDER);
+    }
 
-        /* add the node */
-        thePanel.add(myNode, myConstraints);
-        addNode(pNode);
+    @Override
+    public void allowCellGrowth(final TethysNode<JComponent> pNode) {
+        GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
+        if (myConstraints != null) {
+            myConstraints.weightx = 1.0;
+            theLayout.setConstraints(pNode.getNode(), myConstraints);
+        }
+    }
 
-        /* Shift to next row */
-        newRow();
+    @Override
+    public void setCellAlignment(final TethysNode<JComponent> pNode,
+                                 final TethysAlignment pAlign) {
+        GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
+        if (myConstraints != null) {
+            myConstraints.anchor = determineAlignment(pAlign);
+            theLayout.setConstraints(pNode.getNode(), myConstraints);
+        }
+    }
+
+    @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        Dimension myDim = thePanel.getPreferredSize();
+        myDim = new Dimension(pWidth, myDim.height);
+        thePanel.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        Dimension myDim = thePanel.getPreferredSize();
+        myDim = new Dimension(myDim.width, pHeight);
+        thePanel.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
-        thePanel.setBorder(BorderFactory.createTitledBorder(pTitle));
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), thePanel);
+    }
+
+    /**
+     * Translate alignment.
+     * @param pAlign the alignment
+     * @return the FX alignment
+     */
+    private int determineAlignment(final TethysAlignment pAlign) {
+        switch (pAlign) {
+            case NORTHWEST:
+                return GridBagConstraints.NORTHWEST;
+            case NORTH:
+                return GridBagConstraints.NORTH;
+            case NORTHEAST:
+                return GridBagConstraints.NORTHEAST;
+            case WEST:
+                return GridBagConstraints.WEST;
+            case CENTRE:
+                return GridBagConstraints.CENTER;
+            case EAST:
+                return GridBagConstraints.EAST;
+            case SOUTHWEST:
+                return GridBagConstraints.SOUTHWEST;
+            case SOUTH:
+                return GridBagConstraints.SOUTH;
+            case SOUTHEAST:
+            default:
+                return GridBagConstraints.SOUTHEAST;
+        }
     }
 }

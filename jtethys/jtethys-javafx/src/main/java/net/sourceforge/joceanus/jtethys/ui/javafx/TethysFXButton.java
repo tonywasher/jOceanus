@@ -28,6 +28,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Region;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
@@ -39,7 +40,7 @@ public class TethysFXButton
     /**
      * The node.
      */
-    private Node theNode;
+    private Region theNode;
 
     /**
      * The button.
@@ -58,7 +59,7 @@ public class TethysFXButton
     }
 
     @Override
-    public Node getNode() {
+    public Region getNode() {
         return theNode;
     }
 
@@ -123,7 +124,31 @@ public class TethysFXButton
     }
 
     @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        getNode().setPrefWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        getNode().setPrefHeight(pHeight);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
     public void setBorderTitle(final String pTitle) {
-        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theButton);
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theButton);
     }
 }

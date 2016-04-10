@@ -49,6 +49,16 @@ public abstract class TethysTabPaneManager<N, I>
     private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
+     * The Padding.
+     */
+    private Integer thePadding;
+
+    /**
+     * The Title.
+     */
+    private String theTitle;
+
+    /**
      * The first child item.
      */
     private TethysTabItem<N, I> theFirstChild;
@@ -79,16 +89,54 @@ public abstract class TethysTabPaneManager<N, I>
         return theId;
     }
 
-    /**
-     * Set the Border Title.
-     * @param pTitle the title text
-     */
-    public abstract void setBorderTitle(final String pTitle);
-
     @Override
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
+
+    /**
+     * Obtain the Border Padding.
+     * @return the Padding.
+     */
+    protected Integer getBorderPadding() {
+        return thePadding;
+    }
+
+    /**
+     * Obtain the Border Title.
+     * @return the Title.
+     */
+    protected String getBorderTitle() {
+        return theTitle;
+    }
+
+    /**
+     * Set the Border Padding.
+     * @param pPadding the border padding
+     */
+    public void setBorderPadding(final Integer pPadding) {
+        thePadding = pPadding;
+    }
+
+    /**
+     * Set the Border Title.
+     * @param pTitle the border title
+     */
+    public void setBorderTitle(final String pTitle) {
+        theTitle = pTitle;
+    }
+
+    /**
+     * Set the Preferred Width.
+     * @param pWidth the width
+     */
+    public abstract void setPreferredWidth(final Integer pWidth);
+
+    /**
+     * Set the Preferred Height.
+     * @param pHeight the height
+     */
+    public abstract void setPreferredHeight(final Integer pHeight);
 
     /**
      * Obtain selected tab.

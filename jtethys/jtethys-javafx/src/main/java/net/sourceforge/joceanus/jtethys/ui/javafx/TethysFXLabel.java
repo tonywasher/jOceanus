@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 
 /**
@@ -50,7 +51,7 @@ public class TethysFXLabel
         super(pFactory);
         theLabel = new Label();
         theNode = theLabel;
-        setAlignment(TethysAlignment.LEADING);
+        setAlignment(TethysAlignment.WEST);
     }
 
     @Override
@@ -85,18 +86,54 @@ public class TethysFXLabel
      */
     private Pos determineAlignment(final TethysAlignment pAlign) {
         switch (pAlign) {
-            case TRAILING:
-                return Pos.CENTER_RIGHT;
+            case NORTHWEST:
+                return Pos.TOP_LEFT;
+            case NORTH:
+                return Pos.TOP_CENTER;
+            case NORTHEAST:
+                return Pos.TOP_RIGHT;
+            case WEST:
+                return Pos.CENTER_LEFT;
             case CENTRE:
                 return Pos.CENTER;
-            case LEADING:
+            case EAST:
+                return Pos.CENTER_RIGHT;
+            case SOUTHWEST:
+                return Pos.BOTTOM_LEFT;
+            case SOUTH:
+                return Pos.BOTTOM_CENTER;
+            case SOUTHEAST:
             default:
-                return Pos.CENTER_LEFT;
+                return Pos.BOTTOM_RIGHT;
         }
     }
 
     @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        theLabel.setPrefWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        theLabel.setPrefHeight(pHeight);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
     public void setBorderTitle(final String pTitle) {
-        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theLabel);
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theLabel);
     }
 }

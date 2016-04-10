@@ -58,11 +58,11 @@ public class TethysFXBoxPaneManager
                                      final boolean pHorizontal) {
         super(pFactory);
         if (pHorizontal) {
-            HBox myBox = new HBox(STRUT_SIZE);
+            HBox myBox = new HBox(getGap());
             myBox.setAlignment(Pos.CENTER);
             theBoxPane = myBox;
         } else {
-            VBox myBox = new VBox(STRUT_SIZE);
+            VBox myBox = new VBox(getGap());
             myBox.setAlignment(Pos.CENTER);
             theBoxPane = myBox;
         }
@@ -128,13 +128,47 @@ public class TethysFXBoxPaneManager
     }
 
     @Override
+    public void setGap(final Integer pGap) {
+        super.setGap(pGap);
+        if (theBoxPane instanceof HBox) {
+            ((HBox) theBoxPane).setSpacing(getGap());
+        } else if (theBoxPane instanceof VBox) {
+            ((VBox) theBoxPane).setSpacing(getGap());
+        }
+    }
+
+    @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        theBoxPane.setPrefWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        theBoxPane.setPrefHeight(pHeight);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
     public void setBorderTitle(final String pTitle) {
-        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theBoxPane);
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theBoxPane);
     }
 
     @Override
     public void addSpacer() {
-        TethysFXSpacer mySpacer = new TethysFXSpacer(theBoxPane instanceof HBox);
+        TethysFXSpacer mySpacer = new TethysFXSpacer();
         addSpacerNode(mySpacer);
         theBoxPane.getChildren().add(mySpacer.getNode());
     }
@@ -142,7 +176,7 @@ public class TethysFXBoxPaneManager
     /**
      * Spacer node.
      */
-    private static final class TethysFXSpacer
+    private final class TethysFXSpacer
             implements TethysNode<Node> {
         /**
          * Region.
@@ -151,12 +185,11 @@ public class TethysFXBoxPaneManager
 
         /**
          * Constructor.
-         * @param pHorizontal is this a horizontal spacer?
          */
-        private TethysFXSpacer(final boolean pHorizontal) {
+        private TethysFXSpacer() {
             theRegion = new Region();
-            theRegion.setPrefWidth(STRUT_SIZE);
-            theRegion.setPrefHeight(STRUT_SIZE);
+            theRegion.setPrefWidth(getGap());
+            theRegion.setPrefHeight(getGap());
             HBox.setHgrow(theRegion, Priority.ALWAYS);
             VBox.setVgrow(theRegion, Priority.ALWAYS);
         }

@@ -23,10 +23,10 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -41,11 +41,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
  */
 public class TethysSwingBoxPaneManager
         extends TethysBoxPaneManager<JComponent, Icon> {
-    /**
-     * The HalfStrut Size.
-     */
-    private static final int HALFSTRUT_SIZE = STRUT_SIZE >> 1;
-
     /**
      * The Panel.
      */
@@ -114,9 +109,10 @@ public class TethysSwingBoxPaneManager
      * @return the strut
      */
     private Component createStrut() {
+        Integer myGap = getGap() >> 1;
         return isHorizontal
-                            ? Box.createHorizontalStrut(HALFSTRUT_SIZE)
-                            : Box.createVerticalStrut(HALFSTRUT_SIZE);
+                            ? Box.createHorizontalStrut(myGap)
+                            : Box.createVerticalStrut(myGap);
     }
 
     /**
@@ -142,8 +138,36 @@ public class TethysSwingBoxPaneManager
     }
 
     @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        Dimension myDim = thePanel.getPreferredSize();
+        myDim = new Dimension(pWidth, myDim.height);
+        thePanel.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        Dimension myDim = thePanel.getPreferredSize();
+        myDim = new Dimension(myDim.width, pHeight);
+        thePanel.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
     public void setBorderTitle(final String pTitle) {
-        thePanel.setBorder(BorderFactory.createTitledBorder(pTitle));
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), thePanel);
     }
 
     @Override

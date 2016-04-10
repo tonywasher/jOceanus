@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.CardLayout;
+import java.awt.Dimension;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -94,7 +94,35 @@ public class TethysSwingCardPaneManager<P extends TethysNode<JComponent>>
     }
 
     @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        Dimension myDim = thePanel.getPreferredSize();
+        myDim = new Dimension(pWidth, myDim.height);
+        thePanel.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        Dimension myDim = thePanel.getPreferredSize();
+        myDim = new Dimension(myDim.width, pHeight);
+        thePanel.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
     public void setBorderTitle(final String pTitle) {
-        thePanel.setBorder(BorderFactory.createTitledBorder(pTitle));
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), thePanel);
     }
 }

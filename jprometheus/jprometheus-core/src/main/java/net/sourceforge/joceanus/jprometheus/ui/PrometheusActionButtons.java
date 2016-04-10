@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -48,11 +49,6 @@ public abstract class PrometheusActionButtons<N, I>
     protected static final String NLS_TITLE = PrometheusUIResource.ACTION_TITLE_SAVE.getValue();
 
     /**
-     * The Id.
-     */
-    private final Integer theId;
-
-    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusUIEvent> theEventManager;
@@ -61,6 +57,11 @@ public abstract class PrometheusActionButtons<N, I>
      * The update set.
      */
     private final UpdateSet<?> theUpdateSet;
+
+    /**
+     * The panel.
+     */
+    private final TethysBoxPaneManager<N, I> thePanel;
 
     /**
      * The Commit button.
@@ -81,14 +82,13 @@ public abstract class PrometheusActionButtons<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      * @param pUpdateSet the update set
+     * @param pHorizontal is this horizontal panel?
      */
     protected PrometheusActionButtons(final TethysGuiFactory<N, I> pFactory,
-                                      final UpdateSet<?> pUpdateSet) {
+                                      final UpdateSet<?> pUpdateSet,
+                                      final boolean pHorizontal) {
         /* Record the update set */
         theUpdateSet = pUpdateSet;
-
-        /* Record the id */
-        theId = pFactory.getNextId();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -108,13 +108,36 @@ public abstract class PrometheusActionButtons<N, I>
         theUndoButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.UNDO));
         theResetButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.RESET));
 
+        /* Create the panel */
+        thePanel = pHorizontal
+                               ? pFactory.newHBoxPane()
+                               : pFactory.newVBoxPane();
+
+        /* Define the layout */
+        if (!pHorizontal) {
+            thePanel.addNode(pFactory.newLabel(NLS_TITLE));
+        }
+        thePanel.addNode(getCommitButton());
+        thePanel.addNode(getUndoButton());
+        thePanel.addNode(getResetButton());
+
+        /* Set border if required */
+        if (pHorizontal) {
+            thePanel.setBorderTitle(NLS_TITLE);
+        }
+
         /* Buttons are initially disabled */
         setEnabled(false);
     }
 
     @Override
+    public N getNode() {
+        return thePanel.getNode();
+    }
+
+    @Override
     public Integer getId() {
-        return theId;
+        return thePanel.getId();
     }
 
     @Override
@@ -146,10 +169,12 @@ public abstract class PrometheusActionButtons<N, I>
         return theResetButton;
     }
 
-    /**
-     * Set enabled.
-     * @param bEnabled the enabled status
-     */
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
+    }
+
+    @Override
     public void setEnabled(final boolean bEnabled) {
         /* If the table is locked clear the buttons */
         if (!bEnabled) {

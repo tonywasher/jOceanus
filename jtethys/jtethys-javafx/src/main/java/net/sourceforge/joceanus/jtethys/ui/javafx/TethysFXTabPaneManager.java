@@ -27,6 +27,7 @@ import javafx.scene.Node;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.Region;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 
@@ -38,7 +39,7 @@ public class TethysFXTabPaneManager
     /**
      * The Node.
      */
-    private Node theNode;
+    private Region theNode;
 
     /**
      * The TabPane.
@@ -68,7 +69,7 @@ public class TethysFXTabPaneManager
     }
 
     @Override
-    public Node getNode() {
+    public Region getNode() {
         return theNode;
     }
 
@@ -94,8 +95,32 @@ public class TethysFXTabPaneManager
     }
 
     @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        theTabPane.setPrefWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        theTabPane.setPrefHeight(pHeight);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
     public void setBorderTitle(final String pTitle) {
-        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theTabPane);
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theTabPane);
     }
 
     /**

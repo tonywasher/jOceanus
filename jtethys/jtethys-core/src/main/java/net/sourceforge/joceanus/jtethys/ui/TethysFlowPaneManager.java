@@ -51,6 +51,16 @@ public abstract class TethysFlowPaneManager<N, I>
     private final List<TethysNode<N>> theNodeList;
 
     /**
+     * The Padding.
+     */
+    private Integer thePadding;
+
+    /**
+     * The Title.
+     */
+    private String theTitle;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
@@ -66,10 +76,48 @@ public abstract class TethysFlowPaneManager<N, I>
     }
 
     /**
-     * Set the Border Title.
-     * @param pTitle the title text
+     * Obtain the Border Padding.
+     * @return the Padding.
      */
-    public abstract void setBorderTitle(final String pTitle);
+    protected Integer getBorderPadding() {
+        return thePadding;
+    }
+
+    /**
+     * Obtain the Border Title.
+     * @return the Title.
+     */
+    protected String getBorderTitle() {
+        return theTitle;
+    }
+
+    /**
+     * Set the Border Padding.
+     * @param pPadding the border padding
+     */
+    public void setBorderPadding(final Integer pPadding) {
+        thePadding = pPadding;
+    }
+
+    /**
+     * Set the Border Title.
+     * @param pTitle the border title
+     */
+    public void setBorderTitle(final String pTitle) {
+        theTitle = pTitle;
+    }
+
+    /**
+     * Set the Preferred Width.
+     * @param pWidth the width
+     */
+    public abstract void setPreferredWidth(final Integer pWidth);
+
+    /**
+     * Set the Preferred Height.
+     * @param pHeight the height
+     */
+    public abstract void setPreferredHeight(final Integer pHeight);
 
     /**
      * Add Node.

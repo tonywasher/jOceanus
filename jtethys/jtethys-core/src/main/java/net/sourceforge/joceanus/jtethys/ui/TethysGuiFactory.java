@@ -239,6 +239,18 @@ public abstract class TethysGuiFactory<N, I> {
     public abstract <T> TethysSplitTreeManager<T, N, I> newSplitTreeManager();
 
     /**
+     * Obtain a new fileSelector.
+     * @return the new selector
+     */
+    public abstract TethysFileSelector newFileSelector();
+
+    /**
+     * Obtain a new directorySelector.
+     * @return the new selector
+     */
+    public abstract TethysDirectorySelector newDirectorySelector();
+
+    /**
      * Obtain a new tabPane manager.
      * @return the new manager
      */
@@ -274,6 +286,12 @@ public abstract class TethysGuiFactory<N, I> {
      * @return the new manager
      */
     public abstract TethysBoxPaneManager<N, I> newHBoxPane();
+
+    /**
+     * Obtain a new gridPane manager.
+     * @return the new manager
+     */
+    public abstract TethysGridPaneManager<N, I> newGridPane();
 
     /**
      * Obtain a new string data field.

@@ -26,6 +26,7 @@ import java.util.Iterator;
 
 import javafx.scene.Node;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Region;
 import net.sourceforge.joceanus.jtethys.ui.TethysFlowPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
@@ -37,7 +38,7 @@ public class TethysFXFlowPaneManager
     /**
      * The Node.
      */
-    private Node theNode;
+    private Region theNode;
 
     /**
      * The FlowPane.
@@ -55,7 +56,7 @@ public class TethysFXFlowPaneManager
     }
 
     @Override
-    public Node getNode() {
+    public Region getNode() {
         return theNode;
     }
 
@@ -113,7 +114,31 @@ public class TethysFXFlowPaneManager
     }
 
     @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        theFlowPane.setPrefWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        theFlowPane.setPrefHeight(pHeight);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
     public void setBorderTitle(final String pTitle) {
-        theNode = TethysFXGuiUtils.getTitledPane(pTitle, theFlowPane);
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theFlowPane);
     }
 }

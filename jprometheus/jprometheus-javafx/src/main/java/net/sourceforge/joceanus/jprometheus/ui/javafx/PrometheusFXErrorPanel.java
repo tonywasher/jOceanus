@@ -33,7 +33,6 @@ import javafx.scene.paint.Color;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
 
 /**
  * Error panel.
@@ -78,7 +77,8 @@ public class PrometheusFXErrorPanel
         /* Create the error panel */
         Pane myPane = new HBox(STRUT_WIDTH);
         List<Node> myChildren = myPane.getChildren();
-        thePanel = TethysFXGuiUtils.getTitledPane(NLS_TITLE, myPane);
+        thePanel = myPane;
+        // thePanel = TethysFXGuiUtils.getTitledPane(NLS_TITLE, myPane);
 
         /* Define the layout */
         myChildren.add(theClearButton);

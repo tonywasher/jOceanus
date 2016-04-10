@@ -22,7 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import javax.swing.BorderFactory;
+import java.awt.Dimension;
+
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
@@ -38,15 +39,31 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 public final class TethysSwingListButtonManager<T>
         extends TethysListButtonManager<T, JComponent, Icon> {
     /**
+     * The node.
+     */
+    private JComponent theNode;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
     public TethysSwingListButtonManager(final TethysSwingGuiFactory pFactory) {
         /* Initialise the underlying class */
         super(pFactory);
+        theNode = super.getNode();
 
         /* Set down Arrow as the graphic */
         getButton().setIcon(TethysSwingArrowIcon.DOWN);
+    }
+
+    @Override
+    public JComponent getNode() {
+        return theNode;
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
     }
 
     @Override
@@ -68,7 +85,35 @@ public final class TethysSwingListButtonManager<T>
     }
 
     @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        Dimension myDim = theNode.getPreferredSize();
+        myDim = new Dimension(pWidth, myDim.height);
+        theNode.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        Dimension myDim = theNode.getPreferredSize();
+        myDim = new Dimension(myDim.width, pHeight);
+        theNode.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
     public void setBorderTitle(final String pTitle) {
-        getNode().setBorder(BorderFactory.createTitledBorder(pTitle));
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
+    }
+
+    /**
+     * create wrapper pane.
+     */
+    private void createWrapperPane() {
+        theNode = TethysSwingGuiUtils.addPanelBorder(getBorderTitle(), getBorderPadding(), super.getNode());
     }
 }

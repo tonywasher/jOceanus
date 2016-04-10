@@ -38,7 +38,7 @@ public abstract class TethysBoxPaneManager<N, I>
     /**
      * Strut Size.
      */
-    protected static final int STRUT_SIZE = 4;
+    private static final int STRUT_SIZE = 4;
 
     /**
      * The GUI Factory.
@@ -56,6 +56,21 @@ public abstract class TethysBoxPaneManager<N, I>
     private final List<TethysNode<N>> theNodeList;
 
     /**
+     * The Padding.
+     */
+    private Integer thePadding;
+
+    /**
+     * The Title.
+     */
+    private String theTitle;
+
+    /**
+     * The Horizontal Gap.
+     */
+    private Integer theGap;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
@@ -63,6 +78,7 @@ public abstract class TethysBoxPaneManager<N, I>
         theGuiFactory = pFactory;
         theId = theGuiFactory.getNextId();
         theNodeList = new ArrayList<>();
+        theGap = STRUT_SIZE;
     }
 
     @Override
@@ -71,10 +87,64 @@ public abstract class TethysBoxPaneManager<N, I>
     }
 
     /**
-     * Set the Border Title.
-     * @param pTitle the title text
+     * Obtain the Gap.
+     * @return the Gap.
      */
-    public abstract void setBorderTitle(final String pTitle);
+    protected Integer getGap() {
+        return theGap;
+    }
+
+    /**
+     * Obtain the Border Padding.
+     * @return the Padding.
+     */
+    protected Integer getBorderPadding() {
+        return thePadding;
+    }
+
+    /**
+     * Obtain the Border Title.
+     * @return the Title.
+     */
+    protected String getBorderTitle() {
+        return theTitle;
+    }
+
+    /**
+     * Set the Gap.
+     * @param pGap the Gap.
+     */
+    public void setGap(final Integer pGap) {
+        theGap = pGap;
+    }
+
+    /**
+     * Set the Border Padding.
+     * @param pPadding the border padding
+     */
+    public void setBorderPadding(final Integer pPadding) {
+        thePadding = pPadding;
+    }
+
+    /**
+     * Set the Border Title.
+     * @param pTitle the border title
+     */
+    public void setBorderTitle(final String pTitle) {
+        theTitle = pTitle;
+    }
+
+    /**
+     * Set the Preferred Width.
+     * @param pWidth the width
+     */
+    public abstract void setPreferredWidth(final Integer pWidth);
+
+    /**
+     * Set the Preferred Height.
+     * @param pHeight the height
+     */
+    public abstract void setPreferredHeight(final Integer pHeight);
 
     /**
      * Add spacer.

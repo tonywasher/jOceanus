@@ -30,19 +30,18 @@ import org.slf4j.LoggerFactory;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import net.sourceforge.joceanus.jgordianknot.manager.MgrResource;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
@@ -157,7 +156,7 @@ public class GordianFXPasswordDialog
     /**
      * The error panel.
      */
-    private final StackPane theError;
+    private final Node theError;
 
     /**
      * Confirmation field.
@@ -222,7 +221,7 @@ public class GordianFXPasswordDialog
         theErrorField = new Label();
         BorderPane myErrorBox = new BorderPane();
         myErrorBox.setCenter(theErrorField);
-        theError = TethysFXGuiUtils.getTitledPane(NLS_ERROR, myErrorBox);
+        theError = myErrorBox; // TethysFXGuiUtils.getTitledPane(NLS_ERROR, myErrorBox);
         BorderPane.setMargin(theError, new Insets(PADDING_SIZE, 0, 0, 0));
 
         /* Set the Error panel to be red */

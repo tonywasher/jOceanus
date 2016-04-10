@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -67,6 +68,11 @@ public class TethysFXGuiFactory
     private static final String CSS_STYLE = TethysFXGuiFactory.class.getResource(CSS_STYLE_NAME).toExternalForm();
 
     /**
+     * Stage.
+     */
+    private Stage theStage;
+
+    /**
      * Constructor.
      */
     public TethysFXGuiFactory() {
@@ -88,6 +94,14 @@ public class TethysFXGuiFactory
     public void applyStyleSheets(final Scene pScene) {
         pScene.getStylesheets().add(CSS_STYLE);
         pScene.getRoot().getStyleClass().add(CSS_STYLE_BASE);
+    }
+
+    /**
+     * Set the stage.
+     * @param pStage the stage
+     */
+    public void setStage(final Stage pStage) {
+        theStage = pStage;
     }
 
     @Override
@@ -175,6 +189,16 @@ public class TethysFXGuiFactory
     }
 
     @Override
+    public TethysFXFileSelector newFileSelector() {
+        return new TethysFXFileSelector(theStage);
+    }
+
+    @Override
+    public TethysFXDirectorySelector newDirectorySelector() {
+        return new TethysFXDirectorySelector(theStage);
+    }
+
+    @Override
     public TethysFXTabPaneManager newTabPane() {
         return new TethysFXTabPaneManager(this);
     }
@@ -202,6 +226,11 @@ public class TethysFXGuiFactory
     @Override
     public TethysFXBoxPaneManager newHBoxPane() {
         return new TethysFXBoxPaneManager(this, true);
+    }
+
+    @Override
+    public TethysFXGridPaneManager newGridPane() {
+        return new TethysFXGridPaneManager(this);
     }
 
     @Override
