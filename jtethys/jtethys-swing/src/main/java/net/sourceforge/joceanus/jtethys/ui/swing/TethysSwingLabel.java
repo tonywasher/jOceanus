@@ -23,6 +23,8 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -41,6 +43,16 @@ public class TethysSwingLabel
      * The Node.
      */
     private final JLabel theLabel;
+
+    /**
+     * The Context Menu.
+     */
+    private TethysSwingScrollContextMenu<?> theContextMenu;
+
+    /**
+     * Has the context menu handler been set.
+     */
+    private boolean menuListenerSet;
 
     /**
      * Constructor.
@@ -76,6 +88,22 @@ public class TethysSwingLabel
     @Override
     public void setVisible(final boolean pVisible) {
         theLabel.setVisible(pVisible);
+    }
+
+    /**
+     * Set context menu.
+     * @param pMenu the context menu.
+     */
+    public void setContextMenu(final TethysSwingScrollContextMenu<?> pMenu) {
+        /* Record the menu */
+        theContextMenu = pMenu;
+
+        /* If the listener has not been set */
+        if (!menuListenerSet) {
+            /* Set the handler */
+            theLabel.addMouseListener(new TethysLabelListener());
+            menuListenerSet = true;
+        }
     }
 
     /**
@@ -155,5 +183,31 @@ public class TethysSwingLabel
      */
     private void createWrapperPane() {
         TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), theLabel);
+    }
+
+    /**
+     * Context Menu Listener.
+     */
+    private class TethysLabelListener
+            extends MouseAdapter {
+        @Override
+        public void mousePressed(final MouseEvent pEvent) {
+            handleContextMenu(pEvent);
+        }
+
+        @Override
+        public void mouseReleased(final MouseEvent pEvent) {
+            handleContextMenu(pEvent);
+        }
+
+        /**
+         * Handle mouse event.
+         * @param pEvent the event
+         */
+        private void handleContextMenu(final MouseEvent pEvent) {
+            if ((theContextMenu != null) && (pEvent.isPopupTrigger())) {
+                theContextMenu.showMenuAtPosition(theLabel, pEvent.getX(), pEvent.getY());
+            }
+        }
     }
 }

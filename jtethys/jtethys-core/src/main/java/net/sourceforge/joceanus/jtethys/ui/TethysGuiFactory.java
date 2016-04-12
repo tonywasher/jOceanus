@@ -251,6 +251,18 @@ public abstract class TethysGuiFactory<N, I> {
     public abstract TethysDirectorySelector newDirectorySelector();
 
     /**
+     * Obtain a new progressBar.
+     * @return the new progressBar
+     */
+    public abstract TethysProgressBar<N, I> newProgressBar();
+
+    /**
+     * Obtain a new slider.
+     * @return the new slider
+     */
+    public abstract TethysSlider<N, I> newSlider();
+
+    /**
      * Obtain a new tabPane manager.
      * @return the new manager
      */

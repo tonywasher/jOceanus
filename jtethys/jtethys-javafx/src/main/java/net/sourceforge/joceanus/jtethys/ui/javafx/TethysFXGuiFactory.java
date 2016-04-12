@@ -199,6 +199,16 @@ public class TethysFXGuiFactory
     }
 
     @Override
+    public TethysFXProgressBar newProgressBar() {
+        return new TethysFXProgressBar(this);
+    }
+
+    @Override
+    public TethysFXSlider newSlider() {
+        return new TethysFXSlider(this);
+    }
+
+    @Override
     public TethysFXTabPaneManager newTabPane() {
         return new TethysFXTabPaneManager(this);
     }
@@ -317,4 +327,5 @@ public class TethysFXGuiFactory
     public <C, R> TethysFXTableManager<C, R> newTable() {
         return new TethysFXTableManager<>(this);
     }
+
 }

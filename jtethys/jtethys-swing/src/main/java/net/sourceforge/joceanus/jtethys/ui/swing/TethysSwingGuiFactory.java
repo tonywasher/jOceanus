@@ -176,6 +176,16 @@ public class TethysSwingGuiFactory
     }
 
     @Override
+    public TethysSwingProgressBar newProgressBar() {
+        return new TethysSwingProgressBar(this);
+    }
+
+    @Override
+    public TethysSwingSlider newSlider() {
+        return new TethysSwingSlider(this);
+    }
+
+    @Override
     public TethysSwingTabPaneManager newTabPane() {
         return new TethysSwingTabPaneManager(this);
     }

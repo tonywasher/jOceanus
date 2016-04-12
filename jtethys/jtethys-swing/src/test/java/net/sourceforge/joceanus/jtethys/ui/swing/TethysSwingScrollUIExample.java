@@ -211,7 +211,6 @@ public class TethysSwingScrollUIExample {
     private TethysSwingGridPaneManager buildPanel() {
         /* Create a panel */
         TethysSwingGridPaneManager myGrid = theGuiFactory.newGridPane();
-        // myGrid.getNode().setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
         /* Create context menu line */
         TethysSwingLabel myContextArea = theGuiFactory.newLabel("Right-click for Menu");
@@ -229,20 +228,8 @@ public class TethysSwingScrollUIExample {
         /* Build the context menu */
         theHelper.buildContextMenu(theScrollMenu);
 
-        /* Add popUp listener */
-        // myContextArea.addMouseListener(new MouseAdapter() {
-        // public void mousePressed(final MouseEvent evt) {
-        // if (evt.isPopupTrigger()) {
-        // theScrollMenu.showMenuAtPosition(evt.getComponent(), evt.getX(), evt.getY());
-        // }
-        // }
-
-        // public void mouseReleased(final MouseEvent evt) {
-        // if (evt.isPopupTrigger()) {
-        // theScrollMenu.showMenuAtPosition(evt.getComponent(), evt.getX(), evt.getY());
-        // }
-        // }
-        // });
+        /* Create the menu hook */
+        myContextArea.setContextMenu(theScrollMenu);
 
         /* Add listener */
         theScrollMenu.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {

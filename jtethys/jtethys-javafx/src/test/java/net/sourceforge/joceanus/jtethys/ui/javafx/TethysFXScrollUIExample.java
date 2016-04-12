@@ -184,8 +184,7 @@ public class TethysFXScrollUIExample
         theHelper.buildContextMenu(theContextMenu);
 
         /* Create the menu hook */
-        // myContext.setOnContextMenuRequested(e -> theContextMenu.showMenuAtPosition(myContext,
-        // e.getX(), e.getY()));
+        myContextArea.setContextMenu(theContextMenu);
 
         /* Add listener */
         theContextMenu.addEventHandler(TethysFXContextEvent.MENU_SELECT, e -> {

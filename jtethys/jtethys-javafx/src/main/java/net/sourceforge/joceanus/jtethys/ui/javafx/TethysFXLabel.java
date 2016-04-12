@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.ContextMenuEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 
@@ -42,6 +43,16 @@ public class TethysFXLabel
      * The Label.
      */
     private final Label theLabel;
+
+    /**
+     * The Context Menu.
+     */
+    private TethysFXScrollContextMenu<?> theContextMenu;
+
+    /**
+     * Has the context menu handler been set.
+     */
+    private boolean menuListenerSet;
 
     /**
      * Constructor.
@@ -77,6 +88,22 @@ public class TethysFXLabel
     @Override
     public void setVisible(final boolean pVisible) {
         theNode.setVisible(pVisible);
+    }
+
+    /**
+     * Set context menu.
+     * @param pMenu the context menu.
+     */
+    public void setContextMenu(final TethysFXScrollContextMenu<?> pMenu) {
+        /* Record the menu */
+        theContextMenu = pMenu;
+
+        /* If the listener has not been set */
+        if (!menuListenerSet) {
+            /* Set the handler */
+            theLabel.setOnContextMenuRequested(this::handleContextMenu);
+            menuListenerSet = true;
+        }
     }
 
     /**
@@ -135,5 +162,15 @@ public class TethysFXLabel
      */
     private void createWrapperPane() {
         theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theLabel);
+    }
+
+    /**
+     * handleContextMenu.
+     * @param pEvent the event
+     */
+    private void handleContextMenu(final ContextMenuEvent pEvent) {
+        if (theContextMenu != null) {
+            theContextMenu.showMenuAtPosition(theLabel, pEvent.getX(), pEvent.getY());
+        }
     }
 }
