@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>joceanus</artifactId>
-    <version>v1.5.0-SNAPSHOT</version>   
+    <version>v1.5.0-b3</version>   
   </parent>
   <artifactId>jmetis</artifactId>
   <name>jMetis Data Framework</name>
