@@ -33,6 +33,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Currency;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -41,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -50,6 +52,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
@@ -69,9 +72,14 @@ public abstract class TethysSwingDataTextField<T>
     private static final String NAME_EDIT = "Edit";
 
     /**
+     * The GUI factory.
+     */
+    private final TethysSwingGuiFactory theGuiFactory;
+
+    /**
      * The error colour.
      */
-    private static final Color COLOR_ERROR = Color.decode("#DC381F");
+    private final TethysSwingDataFieldAdjust theAdjuster;
 
     /**
      * The panel.
@@ -112,17 +120,23 @@ public abstract class TethysSwingDataTextField<T>
      * Constructor.
      * @param pFactory the GUI factory
      * @param pEditControl the edit Control
+     * @param pLabel the label
      */
     protected TethysSwingDataTextField(final TethysSwingGuiFactory pFactory,
-                                       final JComponent pEditControl) {
+                                       final JComponent pEditControl,
+                                       final JLabel pLabel) {
         /* Initialise the underlying class */
         super(pFactory);
+        theGuiFactory = pFactory;
 
         /* Create resources */
         theNode = new JPanel();
-        theLabel = new JLabel();
+        theLabel = pLabel;
         theEditNode = new JPanel();
         theEditControl = pEditControl;
+
+        /* Obtain the field adjuster */
+        theAdjuster = theGuiFactory.getFieldAdjuster();
 
         /* Create the command button */
         theCmdButton = new JButton();
@@ -159,6 +173,22 @@ public abstract class TethysSwingDataTextField<T>
     @Override
     public void setVisible(final boolean pVisible) {
         theNode.setVisible(pVisible);
+    }
+
+    /**
+     * Obtain the error colour.
+     * @return the colour.
+     */
+    protected Color getErrorColour() {
+        return theAdjuster.getErrorColor();
+    }
+
+    /**
+     * Obtain the GuiFactory.
+     * @return the factory
+     */
+    protected TethysSwingGuiFactory getGuiFactory() {
+        return theGuiFactory;
     }
 
     /**
@@ -231,11 +261,30 @@ public abstract class TethysSwingDataTextField<T>
     public abstract void startCellEditing(final Rectangle pCell);
 
     /**
+     * Adjust data field.
+     */
+    public void adjustField() {
+        theAdjuster.adjustField(this, theLabel);
+    }
+
+    /**
+     * Clone the dataField.
+     * @param pLabel the label
+     * @return the cloned data field
+     */
+    protected abstract TethysSwingDataTextField<T> cloneField(final JLabel pLabel);
+
+    /**
      * TextField class.
      * @param <T> the data type
      */
     public abstract static class TethysSwingTextEditField<T>
             extends TethysSwingDataTextField<T> {
+        /**
+         * The standard border.
+         */
+        private static final Border BORDER_STD = BorderFactory.createEmptyBorder();
+
         /**
          * The converterControl.
          */
@@ -252,9 +301,9 @@ public abstract class TethysSwingDataTextField<T>
         private String theErrorText;
 
         /**
-         * The cache colour.
+         * The errorBorder.
          */
-        private Color theCacheColor;
+        private Border theErrorBorder;
 
         /**
          * Are we editing a cell?
@@ -265,11 +314,13 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          * @param pConverter the text converter
+         * @param pLabel the label
          */
         protected TethysSwingTextEditField(final TethysSwingGuiFactory pFactory,
-                                           final TethysDataEditConverter<T> pConverter) {
+                                           final TethysDataEditConverter<T> pConverter,
+                                           final JLabel pLabel) {
             /* Initialise underlying class */
-            super(pFactory, new JTextField());
+            super(pFactory, new JTextField(), pLabel);
 
             /* Create the converter control */
             theControl = new TethysDataEditTextFieldControl<>(this, pConverter);
@@ -277,6 +328,7 @@ public abstract class TethysSwingDataTextField<T>
             /* Access the fields */
             JLabel myLabel = getLabel();
             theTextField = getEditControl();
+            theTextField.setBorder(BORDER_STD);
 
             /* Set alignment */
             int myAlignment = pConverter.rightAlignFields()
@@ -335,10 +387,11 @@ public abstract class TethysSwingDataTextField<T>
                 theErrorText = myText;
 
                 /* Cache the background colour */
-                if (theCacheColor == null) {
-                    theCacheColor = theTextField.getBackground();
+                if (theErrorBorder == null) {
+                    theErrorBorder = BorderFactory.createLineBorder(getErrorColour());
                 }
-                theTextField.setBackground(COLOR_ERROR);
+                theTextField.setBorder(theErrorBorder);
+                setTheAttribute(TethysFieldAttribute.ERROR);
 
                 /* request focus again */
                 SwingUtilities.invokeLater(() -> theTextField.requestFocus());
@@ -359,10 +412,8 @@ public abstract class TethysSwingDataTextField<T>
             theErrorText = null;
 
             /* Restore cached background colour */
-            if (theCacheColor != null) {
-                theTextField.setBackground(theCacheColor);
-            }
-            theCacheColor = null;
+            theTextField.setBorder(BORDER_STD);
+            clearTheAttribute(TethysFieldAttribute.ERROR);
         }
 
         /**
@@ -423,23 +474,23 @@ public abstract class TethysSwingDataTextField<T>
             public void keyReleased(final KeyEvent e) {
                 /* NoOp */
             }
-        }
 
-        /**
-         * handle enterKey.
-         */
-        private void handleEnterKey() {
-            processValue();
-            haltCellEditing();
-        }
+            /**
+             * handle enterKey.
+             */
+            private void handleEnterKey() {
+                processValue();
+                haltCellEditing();
+            }
 
-        /**
-         * handle escapeKey.
-         */
-        private void handleEscapeKey() {
-            theTextField.setText(theControl.getEditText());
-            clearError();
-            haltCellEditing();
+            /**
+             * handle escapeKey.
+             */
+            private void handleEscapeKey() {
+                theTextField.setText(theControl.getEditText());
+                clearError();
+                haltCellEditing();
+            }
         }
 
         @Override
@@ -474,7 +525,22 @@ public abstract class TethysSwingDataTextField<T>
          * @param pFactory the GUI factory
          */
         protected TethysSwingStringTextField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, new TethysStringEditConverter());
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingStringTextField(final TethysSwingGuiFactory pFactory,
+                                           final JLabel pLabel) {
+            super(pFactory, new TethysStringEditConverter(), pLabel);
+        }
+
+        @Override
+        protected TethysSwingStringTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingStringTextField(getGuiFactory(), pLabel);
         }
     }
 
@@ -488,7 +554,22 @@ public abstract class TethysSwingDataTextField<T>
          * @param pFactory the GUI factory
          */
         protected TethysSwingShortTextField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, new TethysShortEditConverter(pFactory.getDataFormatter()));
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingShortTextField(final TethysSwingGuiFactory pFactory,
+                                          final JLabel pLabel) {
+            super(pFactory, new TethysShortEditConverter(pFactory.getDataFormatter()), pLabel);
+        }
+
+        @Override
+        protected TethysSwingShortTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingShortTextField(getGuiFactory(), pLabel);
         }
     }
 
@@ -502,7 +583,22 @@ public abstract class TethysSwingDataTextField<T>
          * @param pFactory the GUI factory
          */
         protected TethysSwingIntegerTextField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, new TethysIntegerEditConverter(pFactory.getDataFormatter()));
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingIntegerTextField(final TethysSwingGuiFactory pFactory,
+                                            final JLabel pLabel) {
+            super(pFactory, new TethysIntegerEditConverter(pFactory.getDataFormatter()), pLabel);
+        }
+
+        @Override
+        protected TethysSwingIntegerTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingIntegerTextField(getGuiFactory(), pLabel);
         }
     }
 
@@ -516,7 +612,22 @@ public abstract class TethysSwingDataTextField<T>
          * @param pFactory the GUI factory
          */
         protected TethysSwingLongTextField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, new TethysLongEditConverter(pFactory.getDataFormatter()));
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingLongTextField(final TethysSwingGuiFactory pFactory,
+                                         final JLabel pLabel) {
+            super(pFactory, new TethysLongEditConverter(pFactory.getDataFormatter()), pLabel);
+        }
+
+        @Override
+        protected TethysSwingLongTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingLongTextField(getGuiFactory(), pLabel);
         }
     }
 
@@ -531,10 +642,12 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          * @param pConverter the converter
+         * @param pLabel the label
          */
         protected TethysSwingCurrencyTextFieldBase(final TethysSwingGuiFactory pFactory,
-                                                   final TethysMoneyEditConverterBase<T> pConverter) {
-            super(pFactory, pConverter);
+                                                   final TethysMoneyEditConverterBase<T> pConverter,
+                                                   final JLabel pLabel) {
+            super(pFactory, pConverter, pLabel);
         }
 
         @Override
@@ -558,7 +671,22 @@ public abstract class TethysSwingDataTextField<T>
          * @param pFactory the GUI factory
          */
         protected TethysSwingMoneyTextField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, new TethysMoneyEditConverter(pFactory.getDataFormatter()));
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingMoneyTextField(final TethysSwingGuiFactory pFactory,
+                                          final JLabel pLabel) {
+            super(pFactory, new TethysMoneyEditConverter(pFactory.getDataFormatter()), pLabel);
+        }
+
+        @Override
+        protected TethysSwingMoneyTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingMoneyTextField(getGuiFactory(), pLabel);
         }
     }
 
@@ -572,7 +700,22 @@ public abstract class TethysSwingDataTextField<T>
          * @param pFactory the GUI factory
          */
         protected TethysSwingPriceTextField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, new TethysPriceEditConverter(pFactory.getDataFormatter()));
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingPriceTextField(final TethysSwingGuiFactory pFactory,
+                                          final JLabel pLabel) {
+            super(pFactory, new TethysPriceEditConverter(pFactory.getDataFormatter()), pLabel);
+        }
+
+        @Override
+        protected TethysSwingPriceTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingPriceTextField(getGuiFactory(), pLabel);
         }
     }
 
@@ -586,7 +729,22 @@ public abstract class TethysSwingDataTextField<T>
          * @param pFactory the GUI factory
          */
         protected TethysSwingDilutedPriceTextField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, new TethysDilutedPriceEditConverter(pFactory.getDataFormatter()));
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingDilutedPriceTextField(final TethysSwingGuiFactory pFactory,
+                                                 final JLabel pLabel) {
+            super(pFactory, new TethysDilutedPriceEditConverter(pFactory.getDataFormatter()), pLabel);
+        }
+
+        @Override
+        protected TethysSwingDilutedPriceTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingDilutedPriceTextField(getGuiFactory(), pLabel);
         }
     }
 
@@ -600,7 +758,22 @@ public abstract class TethysSwingDataTextField<T>
          * @param pFactory the GUI factory
          */
         protected TethysSwingRateTextField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, new TethysRateEditConverter(pFactory.getDataFormatter()));
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingRateTextField(final TethysSwingGuiFactory pFactory,
+                                         final JLabel pLabel) {
+            super(pFactory, new TethysRateEditConverter(pFactory.getDataFormatter()), pLabel);
+        }
+
+        @Override
+        protected TethysSwingRateTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingRateTextField(getGuiFactory(), pLabel);
         }
     }
 
@@ -614,7 +787,22 @@ public abstract class TethysSwingDataTextField<T>
          * @param pFactory the GUI factory
          */
         protected TethysSwingUnitsTextField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, new TethysUnitsEditConverter(pFactory.getDataFormatter()));
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingUnitsTextField(final TethysSwingGuiFactory pFactory,
+                                          final JLabel pLabel) {
+            super(pFactory, new TethysUnitsEditConverter(pFactory.getDataFormatter()), pLabel);
+        }
+
+        @Override
+        protected TethysSwingUnitsTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingUnitsTextField(getGuiFactory(), pLabel);
         }
     }
 
@@ -628,7 +816,22 @@ public abstract class TethysSwingDataTextField<T>
          * @param pFactory the GUI factory
          */
         protected TethysSwingDilutionTextField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, new TethysDilutionEditConverter(pFactory.getDataFormatter()));
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingDilutionTextField(final TethysSwingGuiFactory pFactory,
+                                             final JLabel pLabel) {
+            super(pFactory, new TethysDilutionEditConverter(pFactory.getDataFormatter()), pLabel);
+        }
+
+        @Override
+        protected TethysSwingDilutionTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingDilutionTextField(getGuiFactory(), pLabel);
         }
     }
 
@@ -642,7 +845,22 @@ public abstract class TethysSwingDataTextField<T>
          * @param pFactory the GUI factory
          */
         protected TethysSwingRatioTextField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, new TethysRatioEditConverter(pFactory.getDataFormatter()));
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingRatioTextField(final TethysSwingGuiFactory pFactory,
+                                          final JLabel pLabel) {
+            super(pFactory, new TethysRatioEditConverter(pFactory.getDataFormatter()), pLabel);
+        }
+
+        @Override
+        protected TethysSwingRatioTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingRatioTextField(getGuiFactory(), pLabel);
         }
     }
 }

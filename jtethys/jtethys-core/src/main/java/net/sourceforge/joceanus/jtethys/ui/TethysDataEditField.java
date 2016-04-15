@@ -23,6 +23,8 @@
 package net.sourceforge.joceanus.jtethys.ui;
 
 import java.util.Currency;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Objects;
 
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
@@ -95,6 +97,11 @@ public abstract class TethysDataEditField<T, N, I>
     private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
+     * The Attributes.
+     */
+    private final Map<TethysFieldAttribute, TethysFieldAttribute> theAttributes;
+
+    /**
      * The id.
      */
     private Integer theId;
@@ -122,6 +129,7 @@ public abstract class TethysDataEditField<T, N, I>
         /* Create event manager */
         theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
+        theAttributes = new EnumMap<>(TethysFieldAttribute.class);
     }
 
     @Override
@@ -159,6 +167,45 @@ public abstract class TethysDataEditField<T, N, I>
      */
     protected void setTheValue(final T pValue) {
         theValue = pValue;
+    }
+
+    /**
+     * Set the attribute state.
+     * @param pAttr the attribute
+     * @param pState the state
+     */
+    public void setTheAttributeState(final TethysFieldAttribute pAttr,
+                                     final boolean pState) {
+        if (pState) {
+            setTheAttribute(pAttr);
+        } else {
+            clearTheAttribute(pAttr);
+        }
+    }
+
+    /**
+     * Set the attribute.
+     * @param pAttr the attribute
+     */
+    public void setTheAttribute(final TethysFieldAttribute pAttr) {
+        theAttributes.put(pAttr, pAttr);
+    }
+
+    /**
+     * Clear the attribute.
+     * @param pAttr the attribute
+     */
+    public void clearTheAttribute(final TethysFieldAttribute pAttr) {
+        theAttributes.remove(pAttr);
+    }
+
+    /**
+     * Is the attribute set?
+     * @param pAttr the attribute
+     * @return true/false
+     */
+    public boolean isAttributeSet(final TethysFieldAttribute pAttr) {
+        return theAttributes.containsKey(pAttr);
     }
 
     /**

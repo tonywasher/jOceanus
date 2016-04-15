@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableCell;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableStateIconCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutionColumn;
@@ -222,6 +223,10 @@ public class TethysSwingTableExample {
         TethysSwingTableIntegerColumn<TethysDataId, TethysSwingTableItem> myUpdatesColumn = theTable.declareIntegerColumn(TethysDataId.UPDATES);
         myUpdatesColumn.setCellValueFactory(p -> p.getUpdates());
         myUpdatesColumn.setName("U");
+
+        /* Set Disabled indicator */
+        theTable.setChanged((c, r) -> c == TethysDataId.NAME && r.getUpdates() > 0);
+        theTable.setDisabled(r -> r.getBoolean());
     }
 
     /**
@@ -268,11 +273,11 @@ public class TethysSwingTableExample {
         /* If this is the extra Boolean field */
         if (TethysDataId.XTRABOOL.equals(myCell.getColumnId())) {
             /* Set correct state for extra Boolean */
-            TethysStateIconField<Boolean, IconState, ?, ?> myStateField = (TethysStateIconField<Boolean, IconState, ?, ?>) myCell;
+            TethysSwingTableStateIconCell<?, ?, Boolean, IconState> myStateCell = (TethysSwingTableStateIconCell<?, ?, Boolean, IconState>) myCell;
             TethysSwingTableItem myRow = myCell.getActiveRow();
-            myStateField.getIconManager().setMachineState(myRow.getBoolean()
-                                                                             ? IconState.OPEN
-                                                                             : IconState.CLOSED);
+            myStateCell.setRenderMachineState(myRow.getBoolean()
+                                                                 ? IconState.OPEN
+                                                                 : IconState.CLOSED);
         }
     }
 
@@ -280,10 +285,34 @@ public class TethysSwingTableExample {
      * Handle preEdit event.
      * @param pEvent the event
      */
+    @SuppressWarnings("unchecked")
     private void handlePreEdit(final TethysEvent<TethysUIEvent> pEvent) {
+        /* Access column id */
+        TethysDataId myId = getColumnId(pEvent);
+
         /* Make the updates column read-only */
-        if (TethysDataId.UPDATES.equals(getColumnId(pEvent))) {
+        if (TethysDataId.UPDATES.equals(myId)) {
             pEvent.consume();
+        }
+
+        /* If this is the extra Boolean field */
+        if (TethysDataId.XTRABOOL.equals(myId)) {
+            /* Access details */
+            TethysSwingTableCell<TethysDataId, TethysSwingTableItem, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
+            TethysSwingTableStateIconCell<?, ?, Boolean, IconState> myStateCell = (TethysSwingTableStateIconCell<?, ?, Boolean, IconState>) myCell;
+            TethysSwingTableItem myRow = myCell.getActiveRow();
+
+            /* Not editable if boolean is false */
+            if (!myRow.getBoolean()) {
+                pEvent.consume();
+
+                /* else update the state */
+            } else {
+                /* Set correct state for extra Boolean */
+                myStateCell.setEditMachineState(myRow.getBoolean()
+                                                                   ? IconState.OPEN
+                                                                   : IconState.CLOSED);
+            }
         }
     }
 
@@ -304,6 +333,11 @@ public class TethysSwingTableExample {
         TethysSwingTableCell<TethysDataId, TethysSwingTableItem, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
         TethysSwingTableItem myRow = myCell.getActiveRow();
         myRow.incrementUpdates();
+        myCell.repaintColumnCell(TethysDataId.UPDATES);
+        myCell.repaintColumnCell(TethysDataId.NAME);
+        if (myCell.getColumnId().equals(TethysDataId.BOOLEAN)) {
+            myCell.repaintColumnCell(TethysDataId.XTRABOOL);
+        }
     }
 
     /**

@@ -27,7 +27,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Predicate;
 
 import javafx.beans.value.ObservableValue;
@@ -78,16 +81,6 @@ public class TethysFXTableManager<C, R>
     private final TethysFXTableCellFactory<C, R> theCellFactory;
 
     /**
-     * The Comparator.
-     */
-    private Comparator<R> theComparator;
-
-    /**
-     * The Filter.
-     */
-    private Predicate<R> theFilter;
-
-    /**
      * The Items.
      */
     private ObservableList<R> theItems;
@@ -133,6 +126,28 @@ public class TethysFXTableManager<C, R>
         theTable.setVisible(pVisible);
     }
 
+    @Override
+    public Iterator<R> itemIterator() {
+        return theItems == null
+                                ? Collections.emptyIterator()
+                                : theItems.iterator();
+    }
+
+    @Override
+    public Iterator<R> sortedIterator() {
+        return theSorted == null
+                                 ? Collections.emptyIterator()
+                                 : theSorted.iterator();
+    }
+
+    @Override
+    public Iterator<R> viewIterator() {
+        List<R> myItems = theTable.getItems();
+        return myItems == null
+                               ? Collections.emptyIterator()
+                               : myItems.iterator();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public TethysFXTableColumn<C, R, ?> getColumn(final C pId) {
@@ -149,14 +164,20 @@ public class TethysFXTableManager<C, R>
     }
 
     @Override
+    public void setHeader(final Predicate<R> pHeader) {
+        super.setHeader(pHeader);
+        setTheItems();
+    }
+
+    @Override
     public void setFilter(final Predicate<R> pFilter) {
-        theFilter = pFilter;
+        super.setFilter(pFilter);
         setTheItems();
     }
 
     @Override
     public void setComparator(final Comparator<R> pComparator) {
-        theComparator = pComparator;
+        super.setComparator(pComparator);
         setTheItems();
     }
 
@@ -171,14 +192,16 @@ public class TethysFXTableManager<C, R>
         /* If we have any items */
         if (myItems != null) {
             /* Apply sort if specified */
-            if (theComparator != null) {
-                myItems = myItems.sorted(theComparator);
+            Comparator<R> myComparator = getComparator();
+            if (myComparator != null) {
+                myItems = myItems.sorted(myComparator);
                 theSorted = myItems;
             }
 
             /* Apply filter if specified */
-            if (theFilter != null) {
-                myItems = myItems.filtered(theFilter);
+            Predicate<R> myFilter = getFilter();
+            if (myFilter != null) {
+                myItems = myItems.filtered(myFilter);
             }
         }
 

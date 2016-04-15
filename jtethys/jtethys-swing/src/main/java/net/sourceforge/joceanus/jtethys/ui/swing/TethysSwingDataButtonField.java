@@ -27,11 +27,13 @@ import java.awt.Rectangle;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
@@ -40,6 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconFi
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingStateIconButtonManager;
 
 /**
@@ -65,13 +68,39 @@ public final class TethysSwingDataButtonField {
          * @param pFactory the GUI factory
          */
         protected TethysSwingStateIconButtonField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, pFactory.newStateIconButton());
+            super(pFactory, pFactory.newStateIconButton(), new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pBase the icon manager
+         * @param pLabel the label
+         */
+        private TethysSwingStateIconButtonField(final TethysSwingGuiFactory pFactory,
+                                                final TethysSwingStateIconButtonManager<T, S> pBase,
+                                                final JLabel pLabel) {
+            super(pFactory, pBase, pLabel);
         }
 
         @SuppressWarnings("unchecked")
         @Override
         public TethysSwingStateIconButtonManager<T, S> getIconManager() {
             return (TethysSwingStateIconButtonManager<T, S>) super.getIconManager();
+        }
+
+        @Override
+        protected TethysSwingStateIconButtonField<T, S> cloneField(final JLabel pLabel) {
+            TethysSwingStateIconButtonManager<T, S> myClone = new TethysSwingStateIconButtonManager<>(getGuiFactory(), getIconManager());
+            return new TethysSwingStateIconButtonField<>(getGuiFactory(), myClone, pLabel);
+        }
+
+        /**
+         * Set the machine state.
+         * @param pState the state
+         */
+        protected void setMachineState(final S pState) {
+            getIconManager().setMachineState(pState);
         }
     }
 
@@ -93,32 +122,65 @@ public final class TethysSwingDataButtonField {
         private final JButton theButton;
 
         /**
+         * Are we editing a cell?
+         */
+        private boolean isCellEditing;
+
+        /**
          * Constructor.
          * @param pFactory the GUI factory
          */
         protected TethysSwingIconButtonField(final TethysSwingGuiFactory pFactory) {
-            this(pFactory, pFactory.newSimpleIconButton());
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingIconButtonField(final TethysSwingGuiFactory pFactory,
+                                           final JLabel pLabel) {
+            this(pFactory, pFactory.newSimpleIconButton(), pLabel);
         }
 
         /**
          * Constructor.
          * @param pFactory the GUI factory
          * @param pManager the manager
+         * @param pLabel the label
          */
         private TethysSwingIconButtonField(final TethysSwingGuiFactory pFactory,
-                                           final TethysSimpleIconButtonManager<T, JComponent, Icon> pManager) {
+                                           final TethysSimpleIconButtonManager<T, JComponent, Icon> pManager,
+                                           final JLabel pLabel) {
             /* Initialise underlying class */
-            super(pFactory, pManager.getNode());
+            super(pFactory, pManager.getNode(), pLabel);
 
             /* Store the manager and button */
             theManager = pManager;
             theButton = getEditControl();
 
             /* Set listener on manager */
-            pManager.getEventRegistrar().addEventListener(e -> {
-                setValue(theManager.getValue());
-                fireEvent(TethysUIEvent.NEWVALUE, e.getDetails());
-            });
+            TethysEventRegistrar<TethysUIEvent> myRegistrar = pManager.getEventRegistrar();
+            myRegistrar.addEventListener(this::handleEvent);
+        }
+
+        /**
+         * handle Icon Button event.
+         * @param pEvent the even
+         */
+        private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+            switch (pEvent.getEventId()) {
+                case NEWVALUE:
+                    setValue(theManager.getValue());
+                    fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
+                    break;
+                case EDITFOCUSLOST:
+                    haltCellEditing();
+                    break;
+                default:
+                    break;
+            }
         }
 
         @Override
@@ -143,7 +205,24 @@ public final class TethysSwingDataButtonField {
 
         @Override
         public void startCellEditing(final Rectangle pCell) {
+            isCellEditing = true;
             SwingUtilities.invokeLater(() -> theButton.doClick());
+        }
+
+        /**
+         * haltCellEditing.
+         */
+        private void haltCellEditing() {
+            if (isCellEditing) {
+                fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
+            }
+            isCellEditing = false;
+        }
+
+        @Override
+        protected TethysSwingIconButtonField<T> cloneField(final JLabel pLabel) {
+            TethysSwingSimpleIconButtonManager<T> myClone = new TethysSwingSimpleIconButtonManager<>(getGuiFactory(), getIconManager());
+            return new TethysSwingIconButtonField<>(getGuiFactory(), myClone, pLabel);
         }
     }
 
@@ -174,18 +253,30 @@ public final class TethysSwingDataButtonField {
          * @param pFactory the GUI factory
          */
         protected TethysSwingScrollButtonField(final TethysSwingGuiFactory pFactory) {
-            this(pFactory, pFactory.newScrollButton());
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingScrollButtonField(final TethysSwingGuiFactory pFactory,
+                                             final JLabel pLabel) {
+            this(pFactory, pFactory.newScrollButton(), pLabel);
         }
 
         /**
          * Constructor.
          * @param pFactory the GUI factory
          * @param pManager the manager
+         * @param pLabel the label
          */
         private TethysSwingScrollButtonField(final TethysSwingGuiFactory pFactory,
-                                             final TethysSwingScrollButtonManager<T> pManager) {
+                                             final TethysSwingScrollButtonManager<T> pManager,
+                                             final JLabel pLabel) {
             /* Initialise underlying class */
-            super(pFactory, pManager.getNode());
+            super(pFactory, pManager.getNode(), pLabel);
 
             /* Store the manager and button */
             theManager = pManager;
@@ -252,6 +343,11 @@ public final class TethysSwingDataButtonField {
             }
             isCellEditing = false;
         }
+
+        @Override
+        protected TethysSwingScrollButtonField<T> cloneField(final JLabel pLabel) {
+            return new TethysSwingScrollButtonField<>(getGuiFactory(), pLabel);
+        }
     }
 
     /**
@@ -275,18 +371,30 @@ public final class TethysSwingDataButtonField {
          * @param pFactory the GUI factory
          */
         protected TethysSwingDateButtonField(final TethysSwingGuiFactory pFactory) {
-            this(pFactory, pFactory.newDateButton());
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingDateButtonField(final TethysSwingGuiFactory pFactory,
+                                           final JLabel pLabel) {
+            this(pFactory, pFactory.newDateButton(), pLabel);
         }
 
         /**
          * Constructor.
          * @param pFactory the GUI factory
          * @param pManager the manager
+         * @param pLabel the label
          */
         private TethysSwingDateButtonField(final TethysSwingGuiFactory pFactory,
-                                           final TethysSwingDateButtonManager pManager) {
+                                           final TethysSwingDateButtonManager pManager,
+                                           final JLabel pLabel) {
             /* Initialise underlying class */
-            super(pFactory, pManager.getNode());
+            super(pFactory, pManager.getNode(), pLabel);
 
             /* Store the manager and button */
             theManager = pManager;
@@ -354,6 +462,11 @@ public final class TethysSwingDataButtonField {
             }
             isCellEditing = false;
         }
+
+        @Override
+        protected TethysSwingDateButtonField cloneField(final JLabel pLabel) {
+            return new TethysSwingDateButtonField(getGuiFactory(), pLabel);
+        }
     }
 
     /**
@@ -378,18 +491,30 @@ public final class TethysSwingDataButtonField {
          * @param pFactory the GUI factory
          */
         protected TethysSwingListButtonField(final TethysSwingGuiFactory pFactory) {
-            this(pFactory, pFactory.newListButton());
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingListButtonField(final TethysSwingGuiFactory pFactory,
+                                           final JLabel pLabel) {
+            this(pFactory, pFactory.newListButton(), pLabel);
         }
 
         /**
          * Constructor.
          * @param pFactory the GUI factory
          * @param pManager the manager
+         * @param pLabel the label
          */
         private TethysSwingListButtonField(final TethysSwingGuiFactory pFactory,
-                                           final TethysSwingListButtonManager<T> pManager) {
+                                           final TethysSwingListButtonManager<T> pManager,
+                                           final JLabel pLabel) {
             /* Initialise underlying class */
-            super(pFactory, pManager.getNode());
+            super(pFactory, pManager.getNode(), pLabel);
 
             /* Store the manager and button */
             theManager = pManager;
@@ -456,6 +581,11 @@ public final class TethysSwingDataButtonField {
                 fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
             }
             isCellEditing = false;
+        }
+
+        @Override
+        protected TethysSwingListButtonField<T> cloneField(final JLabel pLabel) {
+            return new TethysSwingListButtonField<>(getGuiFactory(), pLabel);
         }
     }
 }

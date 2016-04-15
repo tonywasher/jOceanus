@@ -27,17 +27,12 @@ package net.sourceforge.joceanus.jtethys.ui;
  */
 public enum TethysFieldAttribute {
     /**
-     * Standard Font.
+     * Numeric.
      */
-    STANDARD,
+    NUMERIC,
 
     /**
-     * FixedWidth Font.
-     */
-    FIXED,
-
-    /**
-     * SELECTED.
+     * Selected.
      */
     SELECTED,
 
@@ -47,12 +42,17 @@ public enum TethysFieldAttribute {
     CHANGED,
 
     /**
-     * Error.
+     * Disabled.
      */
-    ERROR,
+    DISABLED,
 
     /**
      * Alternate.
      */
-    ALTERNATE;
+    ALTERNATE,
+
+    /**
+     * Error flag.
+     */
+    ERROR;
 }

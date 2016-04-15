@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.TethysFXContextEvent;
 
@@ -60,9 +61,39 @@ public abstract class TethysFXDataTextField<T>
     protected static final int PADDING = 4;
 
     /**
+     * The dataField style.
+     */
+    private static final String STYLE_FIELD = TethysFXGuiFactory.CSS_STYLE_BASE + "-datafield";
+
+    /**
+     * The numeric style class.
+     */
+    private static final String STYLE_NUMERIC = STYLE_FIELD + "-numeric";
+
+    /**
+     * The selected style class.
+     */
+    private static final String STYLE_SELECTED = STYLE_FIELD + "-selected";
+
+    /**
+     * The changed style class.
+     */
+    private static final String STYLE_CHANGED = STYLE_FIELD + "-changed";
+
+    /**
+     * The disabled style class.
+     */
+    private static final String STYLE_DISABLED = STYLE_FIELD + "-disabled";
+
+    /**
      * The error style class.
      */
-    private static final String STYLE_ERROR = "-jtethys-datafield-error";
+    private static final String STYLE_ERROR = STYLE_FIELD + "-error";
+
+    /**
+     * The alternate style class.
+     */
+    private static final String STYLE_ALTERNATE = STYLE_FIELD + "-alternate";
 
     /**
      * The node.
@@ -103,6 +134,10 @@ public abstract class TethysFXDataTextField<T>
         theNode = new BorderPane();
         theLabel = new Label();
         theEditControl = (Control) pEditControl;
+
+        /* Declare the label and edit control to be dataField */
+        theLabel.getStyleClass().add(STYLE_FIELD);
+        theEditControl.getStyleClass().add(STYLE_FIELD);
 
         /* Set maximum widths for fields */
         theLabel.setMaxWidth(Integer.MAX_VALUE);
@@ -170,20 +205,6 @@ public abstract class TethysFXDataTextField<T>
         theNode.setVisible(pVisible);
     }
 
-    // @Override
-    // public void setTextFill(final Color pColor) {
-    // /* Apply font to the two nodes */
-    // theLabel.setTextFill(pColor);
-    // theEditControl.setStyle("-fx-text-inner-color: " +
-    // TethysFXGuiUtils.colorToHexString(pColor));
-    // }
-
-    // @Override
-    // public void setBackground(final Color pColor) {
-    // /* Apply colour to the label only */
-    // theLabel.setStyle("-fx-background-color: " + TethysFXGuiUtils.colorToHexString(pColor));
-    // }
-
     @Override
     public void showCmdButton(final boolean pShow) {
         /* Remove any button that is displaying */
@@ -224,6 +245,43 @@ public abstract class TethysFXDataTextField<T>
      * @param pCell the cell
      */
     public abstract void startCellEditing(final Node pCell);
+
+    @Override
+    public void setTheAttribute(final TethysFieldAttribute pAttr) {
+        if (!isAttributeSet(pAttr)) {
+            super.setTheAttribute(pAttr);
+            theLabel.getStyleClass().add(getStyleForAttribute(pAttr));
+        }
+    }
+
+    @Override
+    public void clearTheAttribute(final TethysFieldAttribute pAttr) {
+        if (isAttributeSet(pAttr)) {
+            super.clearTheAttribute(pAttr);
+            theLabel.getStyleClass().remove(getStyleForAttribute(pAttr));
+        }
+    }
+
+    /**
+     * Obtain the style-class for the attribute.
+     * @param pAttr the attribute
+     * @return the style class
+     */
+    private String getStyleForAttribute(final TethysFieldAttribute pAttr) {
+        switch (pAttr) {
+            case NUMERIC:
+                return STYLE_NUMERIC;
+            case SELECTED:
+                return STYLE_SELECTED;
+            case CHANGED:
+                return STYLE_CHANGED;
+            case DISABLED:
+                return STYLE_DISABLED;
+            case ALTERNATE:
+            default:
+                return STYLE_ALTERNATE;
+        }
+    }
 
     /**
      * TextField class.
@@ -368,13 +426,6 @@ public abstract class TethysFXDataTextField<T>
             return theControl.getConverter();
         }
 
-        // @Override
-        // public void setFont(final Font pFont) {
-        // /* Apply font to the two nodes */
-        // getLabel().setFont(pFont);
-        // theTextField.setFont(pFont);
-        // }
-
         /**
          * Process value.
          */
@@ -391,6 +442,7 @@ public abstract class TethysFXDataTextField<T>
                 ObservableList<String> myStyles = theTextField.getStyleClass();
                 if (!myStyles.contains(STYLE_ERROR)) {
                     myStyles.add(STYLE_ERROR);
+                    setTheAttribute(TethysFieldAttribute.ERROR);
                 }
 
                 /* else value was OK */
@@ -408,6 +460,7 @@ public abstract class TethysFXDataTextField<T>
             theErrorText = null;
             ObservableList<String> myStyles = theTextField.getStyleClass();
             myStyles.remove(STYLE_ERROR);
+            clearTheAttribute(TethysFieldAttribute.ERROR);
         }
 
         /**
@@ -466,6 +519,7 @@ public abstract class TethysFXDataTextField<T>
          */
         protected TethysFXShortTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysShortEditConverter(pFactory.getDataFormatter()));
+            setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 
@@ -480,6 +534,7 @@ public abstract class TethysFXDataTextField<T>
          */
         protected TethysFXIntegerTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysIntegerEditConverter(pFactory.getDataFormatter()));
+            setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 
@@ -494,6 +549,7 @@ public abstract class TethysFXDataTextField<T>
          */
         protected TethysFXLongTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysLongEditConverter(pFactory.getDataFormatter()));
+            setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 
@@ -512,6 +568,7 @@ public abstract class TethysFXDataTextField<T>
         protected TethysFXCurrencyTextFieldBase(final TethysFXGuiFactory pFactory,
                                                 final TethysMoneyEditConverterBase<T> pConverter) {
             super(pFactory, pConverter);
+            setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
 
         @Override
@@ -578,6 +635,7 @@ public abstract class TethysFXDataTextField<T>
          */
         protected TethysFXRateTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysRateEditConverter(pFactory.getDataFormatter()));
+            setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 
@@ -592,6 +650,7 @@ public abstract class TethysFXDataTextField<T>
          */
         protected TethysFXUnitsTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysUnitsEditConverter(pFactory.getDataFormatter()));
+            setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 
@@ -606,6 +665,7 @@ public abstract class TethysFXDataTextField<T>
          */
         protected TethysFXDilutionTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysDilutionEditConverter(pFactory.getDataFormatter()));
+            setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 
@@ -620,6 +680,7 @@ public abstract class TethysFXDataTextField<T>
          */
         protected TethysFXRatioTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysRatioEditConverter(pFactory.getDataFormatter()));
+            setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 }

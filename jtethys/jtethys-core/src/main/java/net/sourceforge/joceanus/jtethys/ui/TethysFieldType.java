@@ -129,7 +129,7 @@ public enum TethysFieldType {
     /**
      * Icon column width.
      */
-    private static final int WIDTH_ICON = 20;
+    private static final int WIDTH_ICON = 30;
 
     /**
      * Integer column width.

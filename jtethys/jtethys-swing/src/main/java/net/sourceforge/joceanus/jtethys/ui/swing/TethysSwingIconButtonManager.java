@@ -56,9 +56,21 @@ public final class TethysSwingIconButtonManager {
          * Constructor.
          * @param pFactory the GUI factory
          */
-        public TethysSwingSimpleIconButtonManager(final TethysSwingGuiFactory pFactory) {
+        protected TethysSwingSimpleIconButtonManager(final TethysSwingGuiFactory pFactory) {
             /* Initialise underlying class */
             super(pFactory);
+            theNode = super.getNode();
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pBase the base manager
+         */
+        protected TethysSwingSimpleIconButtonManager(final TethysSwingGuiFactory pFactory,
+                                                     final TethysSimpleIconButtonManager<T, JComponent, Icon> pBase) {
+            /* Initialise underlying class */
+            super(pFactory, pBase);
             theNode = super.getNode();
         }
 
@@ -134,9 +146,21 @@ public final class TethysSwingIconButtonManager {
          * Constructor.
          * @param pFactory the GUI factory
          */
-        public TethysSwingStateIconButtonManager(final TethysSwingGuiFactory pFactory) {
+        protected TethysSwingStateIconButtonManager(final TethysSwingGuiFactory pFactory) {
             /* Initialise underlying class */
             super(pFactory);
+            theNode = super.getNode();
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pBase the base manager
+         */
+        protected TethysSwingStateIconButtonManager(final TethysSwingGuiFactory pFactory,
+                                                    final TethysSwingStateIconButtonManager<T, S> pBase) {
+            /* Initialise underlying class */
+            super(pFactory, pBase);
             theNode = super.getNode();
         }
 

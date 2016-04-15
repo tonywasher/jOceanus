@@ -24,7 +24,9 @@ package net.sourceforge.joceanus.jtethys.ui;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
@@ -62,6 +64,36 @@ public abstract class TethysTableManager<C, R, N, I>
     private TethysTableColumn<C, R, N, I> theLastChild;
 
     /**
+     * The Header Predicate.
+     */
+    private Predicate<R> theHeader;
+
+    /**
+     * The Changed Predicate.
+     */
+    private BiPredicate<C, R> theChanged;
+
+    /**
+     * The Disabled Predicate.
+     */
+    private Predicate<R> theDisabled;
+
+    /**
+     * The Comparator.
+     */
+    private Comparator<R> theComparator;
+
+    /**
+     * The Combined Comparator.
+     */
+    private Comparator<R> theCombinedComparator;
+
+    /**
+     * The Filter.
+     */
+    private Predicate<R> theFilter;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
@@ -82,16 +114,128 @@ public abstract class TethysTableManager<C, R, N, I>
     }
 
     /**
+     * Set the header predicate.
+     * @param pHeader the header predicate
+     */
+    public void setHeader(final Predicate<R> pHeader) {
+        theHeader = pHeader;
+    }
+
+    /**
+     * Is the row a header?
+     * @param pRow the row
+     * @return true/false
+     */
+    public boolean isHeader(final R pRow) {
+        return theHeader == null
+                                 ? false
+                                 : theHeader.test(pRow);
+    }
+
+    /**
+     * Set the changed predicate.
+     * @param pChanged the changed predicate
+     */
+    public void setChanged(final BiPredicate<C, R> pChanged) {
+        theChanged = pChanged;
+    }
+
+    /**
+     * Is the cell changed?
+     * @param pId the column id
+     * @param pRow the row
+     * @return true/false
+     */
+    public boolean isChanged(final C pId,
+                             final R pRow) {
+        return theChanged == null
+                                  ? false
+                                  : theChanged.test(pId, pRow);
+    }
+
+    /**
+     * Set the disabled predicate.
+     * @param pDisabled the disabled predicate
+     */
+    public void setDisabled(final Predicate<R> pDisabled) {
+        theDisabled = pDisabled;
+    }
+
+    /**
+     * Is the row disabled?
+     * @param pRow the row
+     * @return true/false
+     */
+    public boolean isDisabled(final R pRow) {
+        return theDisabled == null
+                                   ? false
+                                   : theDisabled.test(pRow);
+    }
+
+    /**
      * Set the filter.
      * @param pFilter the filter
      */
-    public abstract void setFilter(final Predicate<R> pFilter);
+    public void setFilter(final Predicate<R> pFilter) {
+        theFilter = pFilter;
+    }
+
+    /**
+     * Obtain the filter.
+     * @return the filter
+     */
+    protected Predicate<R> getFilter() {
+        return theFilter;
+    }
 
     /**
      * Set the comparator.
      * @param pComparator the comparator
      */
-    public abstract void setComparator(final Comparator<R> pComparator);
+    public void setComparator(final Comparator<R> pComparator) {
+        theComparator = pComparator;
+    }
+
+    /**
+     * Obtain the comparator.
+     * @return the comparator
+     */
+    protected Comparator<R> getComparator() {
+        return (theComparator == null)
+                                       ? null
+                                       : (theHeader == null)
+                                                             ? theComparator
+                                                             : getCombinedComparator();
+    }
+
+    /**
+     * Obtain the combined comparator.
+     * @return the filter
+     */
+    private Comparator<R> getCombinedComparator() {
+        if (theCombinedComparator == null) {
+            theCombinedComparator = new CombinedComparator();
+        }
+        return theCombinedComparator;
+    }
+
+    /**
+     * Obtain an iterator over the unsorted items.
+     * @return the iterator.
+     */
+    public abstract Iterator<R> itemIterator();
+
+    /**
+     * Obtain an iterator over the sorted items.
+     * @return the iterator.
+     */
+    public abstract Iterator<R> sortedIterator();
+
+    /**
+     * Obtain an iterator over the sorted and filtered items.
+     * @return the iterator.
+     */
+    public abstract Iterator<R> viewIterator();
 
     /**
      * Cascade event.
@@ -451,6 +595,12 @@ public abstract class TethysTableManager<C, R, N, I>
      */
     public interface TethysTableCell<T, C, R, N, I> {
         /**
+         * Obtain the table.
+         * @return the column
+         */
+        TethysTableManager<C, R, N, I> getTable();
+
+        /**
          * Obtain the column.
          * @return the column
          */
@@ -491,5 +641,31 @@ public abstract class TethysTableManager<C, R, N, I>
          * @param pId the column id
          */
         void repaintColumnCell(final C pId);
+
+        /**
+         * Row changed during edit.
+         */
+        void repaintCellRow();
+    }
+
+    /**
+     * Header comparator.
+     */
+    private class CombinedComparator
+            implements Comparator<R> {
+        @Override
+        public int compare(final R pFirst,
+                           final R pSecond) {
+            /* Determine whether either item is a header */
+            boolean bFirst = theHeader.test(pFirst);
+            boolean bSecond = theHeader.test(pSecond);
+
+            /* Determine sort */
+            return (bFirst == bSecond)
+                                       ? theComparator.compare(pFirst, pSecond)
+                                       : bFirst
+                                                ? -1
+                                                : 1;
+        }
     }
 }

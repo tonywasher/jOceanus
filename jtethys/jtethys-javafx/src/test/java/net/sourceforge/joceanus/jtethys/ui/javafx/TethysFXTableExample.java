@@ -186,6 +186,10 @@ public class TethysFXTableExample
         TethysFXTableIntegerColumn<TethysDataId, TethysFXTableItem> myUpdatesColumn = theTable.declareIntegerColumn(TethysDataId.UPDATES);
         myUpdatesColumn.setCellValueFactory(p -> p.getValue().updatesProperty());
         myUpdatesColumn.setName("U");
+
+        /* Set Disabled indicator */
+        theTable.setChanged((c, r) -> c == TethysDataId.NAME && r.updatesProperty().getValue() > 0);
+        theTable.setDisabled(r -> r.booleanProperty().getValue());
     }
 
     /**
@@ -268,6 +272,10 @@ public class TethysFXTableExample
         TethysFXTableCell<TethysDataId, TethysFXTableItem, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
         TethysFXTableItem myRow = myCell.getActiveRow();
         myRow.incrementUpdates();
+        myCell.repaintColumnCell(TethysDataId.NAME);
+        if (myCell.getColumnId().equals(TethysDataId.BOOLEAN)) {
+            myCell.repaintCellRow();
+        }
     }
 
     /**

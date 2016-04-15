@@ -2,58 +2,72 @@
  * Base values.
  */
 .-jtethys {
-	-fx-font-family:Arial;
-	-fx-font-size:12; 
-	-fx-fill:Black;  
+  -fx-font-family:Arial;
+  -fx-font-size:12; 
+  -fx-fill:Black;  
 }
 
 /**
  * Table values.
  */
-.-jtethys-table .table-row-cell {
-	-fx-background-color:whitesmoke;
+.-jtethys .-jtethys-table .table-row-cell {
+  -fx-background-color:whitesmoke;
 }
 
-.-jtethys-table .table-row-cell:even:filled {
-	-fx-background-color:lavender;
+.-jtethys .-jtethys-table .table-row-cell .-jtethys-datafield-changed {
+  -fx-font-style: italic;
+  -fx-text-fill: magenta;
 }
 
-.-jtethys-table .table-row-cell:selected {
-	-fx-font-size:1.166667em; /* 14pt - 2 more than the default font */
-	-fx-font-weight:bold;
-	-fx-text-background-color:Black;  
+.-jtethys .-jtethys-table .table-row-cell .-jtethys-datafield-disabled {
+  -fx-font-style: italic;
+  -fx-text-fill: darkgray;
 }
+
+.-jtethys .-jtethys-table .table-row-cell:even:filled {
+  -fx-background-color:lavender;
+}
+
+.-jtethys .-jtethys-table .table-row-cell:selected {
+  -fx-font-size:1.166667em;  /* 14pt - 2 more than the default font */ 
+  -fx-font-weight:bold;
+  -fx-text-background-color:Black;  
+} 
 
 /**
  * Titled Pane values.
  */
-.-jtethys-titled-title {
+.-jtethys .-jtethys-titled-title {
   -fx-translate-x:  4;
   -fx-translate-y: -8;
   -fx-padding: 0 0 0 4;
   -fx-background-color: whitesmoke;
 }
 
-.-jtethys-titled-border {
+.-jtethys .-jtethys-titled-border {
   -fx-content-display: top;
   -fx-border-insets: 2 0 0 0;
   -fx-border-color: black;
   -fx-border-width: 1;
 }
 
-.-jtethys-titled-content {
+.-jtethys .-jtethys-titled-content {
   -fx-padding: 18 5 5 5;
 }
 
 /**
  * DataField Values
  */
-.-jtethys-datafield .jtethys-datafield-error {
-  -fx-control-inner-background: #DC381F;
-}
-
-.-jtethys-datafield .jtethys-datafield-numeric {
+.-jtethys .-jtethys-datafield .-jtethys-datafield-numeric {
   -fx-font-family: Courier;
   -fx-text-alignment: right;
 }
 
+.-jtethys .-jtethys-datafield .-jtethys-datafield-changed {
+  -fx-font-style: italic;
+  -fx-text-fill: magenta;
+}
+
+.-jtethys .-jtethys-datafield .-jtethys-datafield-error {
+  -fx-control-inner-background: #DC381F;
+}

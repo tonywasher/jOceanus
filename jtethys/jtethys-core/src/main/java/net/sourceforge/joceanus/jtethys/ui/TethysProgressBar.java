@@ -32,7 +32,7 @@ public abstract class TethysProgressBar<N, I>
     /**
      * Maximum Value for double.
      */
-    protected final static int MAX_DOUBLE_VALUE = 1000;
+    protected static final int MAX_DOUBLE_VALUE = 1000;
 
     /**
      * The id.

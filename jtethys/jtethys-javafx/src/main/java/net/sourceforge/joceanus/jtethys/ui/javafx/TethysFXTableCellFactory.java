@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.Currency;
+import java.util.List;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -49,6 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
+import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
@@ -80,6 +82,11 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXT
  */
 public class TethysFXTableCellFactory<C, R>
         implements TethysEventProvider<TethysUIEvent> {
+    /**
+     * The dummy style.
+     */
+    private static final String STYLE_DUMMY = "DummyStyle";
+
     /**
      * The Event Manager.
      */
@@ -350,6 +357,11 @@ public class TethysFXTableCellFactory<C, R>
         }
 
         @Override
+        public TethysFXTableManager<C, R> getTable() {
+            return theColumn.getTable();
+        }
+
+        @Override
         public TethysFXTableColumn<C, R, T> getColumn() {
             return theColumn;
         }
@@ -415,6 +427,16 @@ public class TethysFXTableCellFactory<C, R>
 
             /* Format the cell */
             if (!pEmpty) {
+                /* Access table details */
+                TethysFXTableManager<C, R> myTable = getTable();
+                C myId = getColumnId();
+                R myRow = getActiveRow();
+
+                /* Set changed and disabled attributes */
+                theControl.setTheAttributeState(TethysFieldAttribute.CHANGED, myTable.isChanged(myId, myRow));
+                theControl.setTheAttributeState(TethysFieldAttribute.DISABLED, myTable.isDisabled(myRow));
+
+                /* Allow further changes */
                 theEventManager.fireEvent(TethysUIEvent.CELLFORMAT, this);
             }
 
@@ -446,7 +468,8 @@ public class TethysFXTableCellFactory<C, R>
         @Override
         public void commitEdit(final T pNewValue) {
             /* Perform preCommitCheck */
-            if (preCommitHook(pNewValue)) {
+            if (!theControl.isAttributeSet(TethysFieldAttribute.ERROR)
+                && preCommitHook(pNewValue)) {
                 /* pass on the call */
                 super.commitEdit(pNewValue);
 
@@ -481,6 +504,14 @@ public class TethysFXTableCellFactory<C, R>
         public void repaintColumnCell(final C pId) {
             TethysFXTableManager<C, R> myTable = theColumn.getTable();
             myTable.repaintColumn(pId);
+        }
+
+        @Override
+        public void repaintCellRow() {
+            TableRow<?> myRow = getTableRow();
+            List<String> myClasses = myRow.getStyleClass();
+            myClasses.add(STYLE_DUMMY);
+            myClasses.remove(STYLE_DUMMY);
         }
     }
 

@@ -51,6 +51,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
+import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
@@ -340,31 +341,26 @@ public class TethysSwingTableCellFactory<C, R>
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pRenderer the render control
-         * @param pEditor the edit control
+         * @param pControl the edit control
          */
         protected TethysSwingTableCell(final TethysSwingTableColumn<C, R, T> pColumn,
-                                       final TethysSwingDataTextField<T> pRenderer,
-                                       final TethysSwingDataTextField<T> pEditor) {
+                                       final TethysSwingDataTextField<T> pControl) {
             /* Record the parameters */
-            this(pColumn, pRenderer, pEditor, null);
+            this(pColumn, pControl, null);
         }
 
         /**
          * Constructor.
          * @param pColumn the column
-         * @param pRenderer the render control
-         * @param pEditor the edit control
+         * @param pControl the edit control
          * @param pClass the field class
          */
         protected TethysSwingTableCell(final TethysSwingTableColumn<C, R, T> pColumn,
-                                       final TethysSwingDataTextField<T> pRenderer,
-                                       final TethysSwingDataTextField<T> pEditor,
+                                       final TethysSwingDataTextField<T> pControl,
                                        final Class<T> pClass) {
             /* Record the parameters */
             theColumn = pColumn;
-            theRenderControl = pRenderer;
-            theEditControl = pEditor;
+            theEditControl = pControl;
             theClass = pClass;
 
             /* Create the event manager */
@@ -373,6 +369,7 @@ public class TethysSwingTableCellFactory<C, R>
             /* Create the editor and renderer */
             theEditor = new TethysSwingTableCellEditor();
             theRenderer = new TethysSwingTableCellRenderer();
+            theRenderControl = pControl.cloneField(theRenderer);
         }
 
         @Override
@@ -390,6 +387,11 @@ public class TethysSwingTableCellFactory<C, R>
         @Override
         public R getActiveRow() {
             return theRow;
+        }
+
+        @Override
+        public TethysSwingTableManager<C, R> getTable() {
+            return theColumn.getTable();
         }
 
         @Override
@@ -430,15 +432,15 @@ public class TethysSwingTableCellFactory<C, R>
 
         @Override
         public TethysSwingDataTextField<T> getControl() {
-            return theRenderControl;
+            return theEditControl;
         }
 
         /**
-         * Obtain the edit control.
-         * @return the edit control
+         * Obtain the render control.
+         * @return the render control
          */
-        public TethysSwingDataTextField<T> getEditControl() {
-            return theEditControl;
+        protected TethysSwingDataTextField<T> getRenderControl() {
+            return theRenderControl;
         }
 
         /**
@@ -483,6 +485,13 @@ public class TethysSwingTableCellFactory<C, R>
             TethysSwingTableManager<C, R> myTable = theColumn.getTable();
             TethysSwingTableColumn<C, R, ?> myCol = myTable.getColumn(pId);
             myTable.getTableModel().fireTableCellUpdated(theRowIndex, myCol.getColumnIndex());
+        }
+
+        @Override
+        public void repaintCellRow() {
+            /* Note the the cell has been updated */
+            TethysSwingTableManager<C, R> myTable = theColumn.getTable();
+            myTable.getTableModel().fireTableRowUpdated(theRowIndex);
         }
 
         /**
@@ -544,7 +553,8 @@ public class TethysSwingTableCellFactory<C, R>
             @Override
             public boolean stopCellEditing() {
                 /* If we are OK with the value */
-                if (theEventManager.fireEvent(TethysUIEvent.CELLPRECOMMIT, TethysSwingTableCell.this)) {
+                if (!theEditControl.isAttributeSet(TethysFieldAttribute.ERROR)
+                    && theEventManager.fireEvent(TethysUIEvent.CELLPRECOMMIT, TethysSwingTableCell.this)) {
                     /* Pass call onwards */
                     boolean bComplete = super.stopCellEditing();
 
@@ -580,18 +590,30 @@ public class TethysSwingTableCellFactory<C, R>
                                                             final int pRow,
                                                             final int pCol) {
                 /* Store the location */
-                int myRow = pTable.convertRowIndexToModel(pRow);
-                setActiveRow(myRow);
+                int myRowIndex = pTable.convertRowIndexToModel(pRow);
+                setActiveRow(myRowIndex);
                 isSelected = pSelected;
+
+                /* Access table details */
+                TethysSwingTableManager<C, R> myTable = getTable();
+                C myId = getColumnId();
+                R myRow = getActiveRow();
+
+                /* Set changed and disabled attributes */
+                theRenderControl.setTheAttributeState(TethysFieldAttribute.CHANGED, myTable.isChanged(myId, myRow));
+                theRenderControl.setTheAttributeState(TethysFieldAttribute.DISABLED, myTable.isDisabled(myRow));
+                theRenderControl.setTheAttributeState(TethysFieldAttribute.SELECTED, pSelected);
+                theRenderControl.setTheAttributeState(TethysFieldAttribute.ALTERNATE, (myRowIndex & 1) == 0);
 
                 /* Format the cell */
                 theEventManager.fireEvent(TethysUIEvent.CELLFORMAT, TethysSwingTableCell.this);
 
                 /* Set details and stop editing */
                 theRenderControl.setValue(getCastValue(pValue));
+                theRenderControl.adjustField();
 
                 /* Return the label as the render item */
-                return theRenderControl.getLabel();
+                return this;
             }
         }
     }
@@ -610,17 +632,12 @@ public class TethysSwingTableCellFactory<C, R>
          */
         protected TethysSwingTableStringCell(final TethysSwingTableColumn<C, R, String> pColumn,
                                              final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newStringField(), pFactory.newStringField(), String.class);
+            super(pColumn, pFactory.newStringField(), String.class);
         }
 
         @Override
         public TethysSwingStringTextField getControl() {
             return (TethysSwingStringTextField) super.getControl();
-        }
-
-        @Override
-        public TethysSwingStringTextField getEditControl() {
-            return (TethysSwingStringTextField) super.getEditControl();
         }
     }
 
@@ -638,17 +655,12 @@ public class TethysSwingTableCellFactory<C, R>
          */
         protected TethysSwingTableShortCell(final TethysSwingTableColumn<C, R, Short> pColumn,
                                             final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newShortField(), pFactory.newShortField(), Short.class);
+            super(pColumn, pFactory.newShortField(), Short.class);
         }
 
         @Override
         public TethysSwingShortTextField getControl() {
             return (TethysSwingShortTextField) super.getControl();
-        }
-
-        @Override
-        public TethysSwingShortTextField getEditControl() {
-            return (TethysSwingShortTextField) super.getEditControl();
         }
     }
 
@@ -666,17 +678,12 @@ public class TethysSwingTableCellFactory<C, R>
          */
         protected TethysSwingTableIntegerCell(final TethysSwingTableColumn<C, R, Integer> pColumn,
                                               final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newIntegerField(), pFactory.newIntegerField(), Integer.class);
+            super(pColumn, pFactory.newIntegerField(), Integer.class);
         }
 
         @Override
         public TethysSwingIntegerTextField getControl() {
             return (TethysSwingIntegerTextField) super.getControl();
-        }
-
-        @Override
-        public TethysSwingIntegerTextField getEditControl() {
-            return (TethysSwingIntegerTextField) super.getEditControl();
         }
     }
 
@@ -694,17 +701,12 @@ public class TethysSwingTableCellFactory<C, R>
          */
         protected TethysSwingTableLongCell(final TethysSwingTableColumn<C, R, Long> pColumn,
                                            final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newLongField(), pFactory.newLongField(), Long.class);
+            super(pColumn, pFactory.newLongField(), Long.class);
         }
 
         @Override
         public TethysSwingLongTextField getControl() {
             return (TethysSwingLongTextField) super.getControl();
-        }
-
-        @Override
-        public TethysSwingLongTextField getEditControl() {
-            return (TethysSwingLongTextField) super.getEditControl();
         }
     }
 
@@ -723,7 +725,7 @@ public class TethysSwingTableCellFactory<C, R>
          */
         protected TethysSwingTableMoneyCell(final TethysSwingTableColumn<C, R, TethysMoney> pColumn,
                                             final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newMoneyField(), pFactory.newMoneyField(), TethysMoney.class);
+            super(pColumn, pFactory.newMoneyField(), TethysMoney.class);
         }
 
         @Override
@@ -732,13 +734,8 @@ public class TethysSwingTableCellFactory<C, R>
         }
 
         @Override
-        public TethysSwingMoneyTextField getEditControl() {
-            return (TethysSwingMoneyTextField) super.getEditControl();
-        }
-
-        @Override
         public void setDeemedCurrency(final Currency pCurrency) {
-            getEditControl().setDeemedCurrency(pCurrency);
+            getControl().setDeemedCurrency(pCurrency);
         }
     }
 
@@ -757,7 +754,7 @@ public class TethysSwingTableCellFactory<C, R>
          */
         protected TethysSwingTablePriceCell(final TethysSwingTableColumn<C, R, TethysPrice> pColumn,
                                             final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newPriceField(), pFactory.newPriceField(), TethysPrice.class);
+            super(pColumn, pFactory.newPriceField(), TethysPrice.class);
         }
 
         @Override
@@ -766,13 +763,8 @@ public class TethysSwingTableCellFactory<C, R>
         }
 
         @Override
-        public TethysSwingPriceTextField getEditControl() {
-            return (TethysSwingPriceTextField) super.getEditControl();
-        }
-
-        @Override
         public void setDeemedCurrency(final Currency pCurrency) {
-            getEditControl().setDeemedCurrency(pCurrency);
+            getControl().setDeemedCurrency(pCurrency);
         }
     }
 
@@ -790,17 +782,12 @@ public class TethysSwingTableCellFactory<C, R>
          */
         protected TethysSwingTableRateCell(final TethysSwingTableColumn<C, R, TethysRate> pColumn,
                                            final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newRateField(), pFactory.newRateField(), TethysRate.class);
+            super(pColumn, pFactory.newRateField(), TethysRate.class);
         }
 
         @Override
         public TethysSwingRateTextField getControl() {
             return (TethysSwingRateTextField) super.getControl();
-        }
-
-        @Override
-        public TethysSwingRateTextField getEditControl() {
-            return (TethysSwingRateTextField) super.getEditControl();
         }
     }
 
@@ -818,17 +805,12 @@ public class TethysSwingTableCellFactory<C, R>
          */
         protected TethysSwingTableUnitsCell(final TethysSwingTableColumn<C, R, TethysUnits> pColumn,
                                             final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newUnitsField(), pFactory.newUnitsField(), TethysUnits.class);
+            super(pColumn, pFactory.newUnitsField(), TethysUnits.class);
         }
 
         @Override
         public TethysSwingUnitsTextField getControl() {
             return (TethysSwingUnitsTextField) super.getControl();
-        }
-
-        @Override
-        public TethysSwingUnitsTextField getEditControl() {
-            return (TethysSwingUnitsTextField) super.getEditControl();
         }
     }
 
@@ -846,17 +828,12 @@ public class TethysSwingTableCellFactory<C, R>
          */
         protected TethysSwingTableDilutionCell(final TethysSwingTableColumn<C, R, TethysDilution> pColumn,
                                                final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newDilutionField(), pFactory.newDilutionField(), TethysDilution.class);
+            super(pColumn, pFactory.newDilutionField(), TethysDilution.class);
         }
 
         @Override
         public TethysSwingDilutionTextField getControl() {
             return (TethysSwingDilutionTextField) super.getControl();
-        }
-
-        @Override
-        public TethysSwingDilutionTextField getEditControl() {
-            return (TethysSwingDilutionTextField) super.getEditControl();
         }
     }
 
@@ -875,7 +852,7 @@ public class TethysSwingTableCellFactory<C, R>
          */
         protected TethysSwingTableDilutedPriceCell(final TethysSwingTableColumn<C, R, TethysDilutedPrice> pColumn,
                                                    final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newDilutedPriceField(), pFactory.newDilutedPriceField(), TethysDilutedPrice.class);
+            super(pColumn, pFactory.newDilutedPriceField(), TethysDilutedPrice.class);
         }
 
         @Override
@@ -884,13 +861,8 @@ public class TethysSwingTableCellFactory<C, R>
         }
 
         @Override
-        public TethysSwingDilutedPriceTextField getEditControl() {
-            return (TethysSwingDilutedPriceTextField) super.getEditControl();
-        }
-
-        @Override
         public void setDeemedCurrency(final Currency pCurrency) {
-            getEditControl().setDeemedCurrency(pCurrency);
+            getControl().setDeemedCurrency(pCurrency);
         }
     }
 
@@ -908,17 +880,12 @@ public class TethysSwingTableCellFactory<C, R>
          */
         protected TethysSwingTableRatioCell(final TethysSwingTableColumn<C, R, TethysRatio> pColumn,
                                             final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newRatioField(), pFactory.newRatioField(), TethysRatio.class);
+            super(pColumn, pFactory.newRatioField(), TethysRatio.class);
         }
 
         @Override
         public TethysSwingRatioTextField getControl() {
             return (TethysSwingRatioTextField) super.getControl();
-        }
-
-        @Override
-        public TethysSwingRatioTextField getEditControl() {
-            return (TethysSwingRatioTextField) super.getEditControl();
         }
     }
 
@@ -937,7 +904,7 @@ public class TethysSwingTableCellFactory<C, R>
          */
         protected TethysSwingTableDateCell(final TethysSwingTableColumn<C, R, TethysDate> pColumn,
                                            final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newDateField(), pFactory.newDateField(), TethysDate.class);
+            super(pColumn, pFactory.newDateField(), TethysDate.class);
             useDialog();
         }
 
@@ -947,13 +914,8 @@ public class TethysSwingTableCellFactory<C, R>
         }
 
         @Override
-        public TethysSwingDateButtonField getEditControl() {
-            return (TethysSwingDateButtonField) super.getEditControl();
-        }
-
-        @Override
         public TethysSwingDateButtonManager getDateManager() {
-            return getEditControl().getDateManager();
+            return getControl().getDateManager();
         }
     }
 
@@ -975,7 +937,7 @@ public class TethysSwingTableCellFactory<C, R>
         protected TethysSwingTableScrollCell(final TethysSwingTableColumn<C, R, T> pColumn,
                                              final TethysSwingGuiFactory pFactory,
                                              final Class<T> pClass) {
-            super(pColumn, pFactory.newScrollField(), pFactory.newScrollField(), pClass);
+            super(pColumn, pFactory.newScrollField(), pClass);
             useDialog();
         }
 
@@ -985,13 +947,8 @@ public class TethysSwingTableCellFactory<C, R>
         }
 
         @Override
-        public TethysSwingScrollButtonField<T> getEditControl() {
-            return (TethysSwingScrollButtonField<T>) super.getEditControl();
-        }
-
-        @Override
         public TethysSwingScrollButtonManager<T> getScrollManager() {
-            return getEditControl().getScrollManager();
+            return getControl().getScrollManager();
         }
     }
 
@@ -1013,7 +970,7 @@ public class TethysSwingTableCellFactory<C, R>
         protected TethysSwingTableListCell(final TethysSwingTableColumn<C, R, TethysItemList<T>> pColumn,
                                            final TethysSwingGuiFactory pFactory,
                                            final Class<T> pClass) {
-            super(pColumn, pFactory.newListField(), pFactory.newListField());
+            super(pColumn, pFactory.newListField());
             useDialog();
         }
 
@@ -1023,13 +980,8 @@ public class TethysSwingTableCellFactory<C, R>
         }
 
         @Override
-        public TethysSwingListButtonField<T> getEditControl() {
-            return (TethysSwingListButtonField<T>) super.getEditControl();
-        }
-
-        @Override
         public TethysSwingListButtonManager<T> getListManager() {
-            return getEditControl().getListManager();
+            return getControl().getListManager();
         }
 
         @SuppressWarnings("unchecked")
@@ -1057,7 +1009,7 @@ public class TethysSwingTableCellFactory<C, R>
         protected TethysSwingTableIconCell(final TethysSwingTableColumn<C, R, T> pColumn,
                                            final TethysSwingGuiFactory pFactory,
                                            final Class<T> pClass) {
-            super(pColumn, pFactory.newSimpleIconField(), pFactory.newSimpleIconField(), pClass);
+            super(pColumn, pFactory.newSimpleIconField(), pClass);
         }
 
         @Override
@@ -1066,13 +1018,8 @@ public class TethysSwingTableCellFactory<C, R>
         }
 
         @Override
-        public TethysSwingIconButtonField<T> getEditControl() {
-            return (TethysSwingIconButtonField<T>) super.getEditControl();
-        }
-
-        @Override
         public TethysSimpleIconButtonManager<T, JComponent, Icon> getIconManager() {
-            return getEditControl().getIconManager();
+            return getControl().getIconManager();
         }
     }
 
@@ -1095,7 +1042,7 @@ public class TethysSwingTableCellFactory<C, R>
         protected TethysSwingTableStateIconCell(final TethysSwingTableColumn<C, R, T> pColumn,
                                                 final TethysSwingGuiFactory pFactory,
                                                 final Class<T> pClass) {
-            super(pColumn, pFactory.newStateIconField(), pFactory.newStateIconField(), pClass);
+            super(pColumn, pFactory.newStateIconField(), pClass);
         }
 
         @SuppressWarnings("unchecked")
@@ -1104,15 +1051,39 @@ public class TethysSwingTableCellFactory<C, R>
             return (TethysSwingStateIconButtonField<T, S>) super.getControl();
         }
 
-        @SuppressWarnings("unchecked")
-        @Override
-        public TethysSwingStateIconButtonField<T, S> getEditControl() {
-            return (TethysSwingStateIconButtonField<T, S>) super.getEditControl();
-        }
-
         @Override
         public TethysSwingStateIconButtonManager<T, S> getIconManager() {
             return getControl().getIconManager();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected TethysSwingStateIconButtonField<T, S> getRenderControl() {
+            return (TethysSwingStateIconButtonField<T, S>) super.getRenderControl();
+        }
+
+        /**
+         * Obtain the render icon manager.
+         * @return the icon manager
+         */
+        private TethysSwingStateIconButtonManager<T, S> getRenderIconManager() {
+            return getRenderControl().getIconManager();
+        }
+
+        /**
+         * Set the edit machine state.
+         * @param pState the state
+         */
+        public void setEditMachineState(final S pState) {
+            getIconManager().setMachineState(pState);
+        }
+
+        /**
+         * Set the render machine state.
+         * @param pState the state
+         */
+        public void setRenderMachineState(final S pState) {
+            getRenderIconManager().setMachineState(pState);
         }
     }
 }

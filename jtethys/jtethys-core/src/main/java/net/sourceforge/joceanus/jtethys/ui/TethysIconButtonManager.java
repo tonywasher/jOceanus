@@ -237,12 +237,34 @@ public abstract class TethysIconButtonManager<T, N, I>
     public void progressToNextState() {
         /* Access next value */
         T myValue = getNewValueForValue(theValue);
+        if (valueChanged(myValue)) {
+            /* Set the value */
+            setValue(myValue);
 
-        /* Set the value */
-        setValue(myValue);
+            /* fire new Event */
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myValue);
+        } else {
+            notifyCancelled();
+        }
+    }
 
-        /* fire new Event */
-        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myValue);
+    /**
+     * notifyCancelled.
+     */
+    private void notifyCancelled() {
+        /* fire menu cancelled event */
+        theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST);
+    }
+
+    /**
+     * has value changed?
+     * @param pNew the new value
+     * @return true/false
+     */
+    private boolean valueChanged(final T pNew) {
+        return theValue == null
+                                ? pNew != null
+                                : !theValue.equals(pNew);
     }
 
     /**
@@ -281,14 +303,28 @@ public abstract class TethysIconButtonManager<T, N, I>
 
         /**
          * Constructor.
-         * @param pManager the GUI manager
+         * @param pFactory the GUI factory
          */
-        protected TethysSimpleIconButtonManager(final TethysGuiFactory<N, I> pManager) {
+        protected TethysSimpleIconButtonManager(final TethysGuiFactory<N, I> pFactory) {
             /* Initialise the underlying class */
-            super(pManager);
+            super(pFactory);
 
             /* Set a default mapSet */
             setMapSet(new IconMapSet<T, I>());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pBase the base icon manager
+         */
+        protected TethysSimpleIconButtonManager(final TethysGuiFactory<N, I> pFactory,
+                                                final TethysSimpleIconButtonManager<T, N, I> pBase) {
+            /* Initialise the underlying class */
+            super(pFactory);
+
+            /* Copy the map set */
+            setMapSet(pBase.getMapSet());
         }
 
         /**
@@ -446,14 +482,29 @@ public abstract class TethysIconButtonManager<T, N, I>
 
         /**
          * Constructor.
-         * @param pManager the GUI manager
+         * @param pFactory the GUI factory
          */
-        public TethysStateIconButtonManager(final TethysGuiFactory<N, I> pManager) {
+        protected TethysStateIconButtonManager(final TethysGuiFactory<N, I> pFactory) {
             /* Initialise the underlying class */
-            super(pManager);
+            super(pFactory);
 
             /* Allocate the maps */
             theStateMap = new HashMap<>();
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pBase the base icon manager
+         */
+        protected TethysStateIconButtonManager(final TethysGuiFactory<N, I> pFactory,
+                                               final TethysStateIconButtonManager<T, S, N, I> pBase) {
+            /* Initialise the underlying class */
+            super(pFactory, pBase);
+
+            /* Share the stateMap */
+            theStateMap = pBase.theStateMap;
+            stateSet = false;
         }
 
         /**
@@ -475,27 +526,23 @@ public abstract class TethysIconButtonManager<T, N, I>
                 return;
             }
 
-            /* If this is the initial state */
-            if (!stateSet) {
-                /* Register against default set */
-                theStateMap.put(pState, getMapSet());
+            /* Look for existing state */
+            IconMapSet<T, I> mySet = theStateMap.get(pState);
+
+            /* If this is a new state */
+            if (mySet == null) {
+                /* Use initial state or new state if already used */
+                mySet = stateSet
+                                 ? new IconMapSet<>()
+                                 : getMapSet();
                 stateSet = true;
 
-                /* Else this is a subsequent state */
-            } else {
-                /* Look for existing state */
-                IconMapSet<T, I> mySet = theStateMap.get(pState);
-
-                /* If this is a new state */
-                if (mySet == null) {
-                    /* Create the new state and record it */
-                    mySet = new IconMapSet<>();
-                    theStateMap.put(pState, mySet);
-                }
-
-                /* Switch to this set */
-                setMapSet(mySet);
+                /* Store the set into the map */
+                theStateMap.put(pState, mySet);
             }
+
+            /* Switch to this set */
+            setMapSet(mySet);
 
             /* register the map Set */
             theMachineState = pState;
@@ -506,7 +553,6 @@ public abstract class TethysIconButtonManager<T, N, I>
         public void clearMaps() {
             /* Reset state Maps */
             theStateMap.clear();
-            theStateMap.put(theMachineState, getMapSet());
 
             /* Clear the current map */
             super.clearMaps();

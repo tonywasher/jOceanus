@@ -23,7 +23,9 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -139,13 +141,42 @@ public class TethysSwingTableManager<C, R>
     }
 
     @Override
+    public void setHeader(final Predicate<R> pHeader) {
+        super.setHeader(pHeader);
+        theSorter.setComparator(getComparator());
+    }
+
+    @Override
+    public Iterator<R> itemIterator() {
+        return theItems == null
+                                ? Collections.emptyIterator()
+                                : theItems.iterator();
+    }
+
+    @Override
+    public Iterator<R> sortedIterator() {
+        return theItems == null
+                                ? Collections.emptyIterator()
+                                : theSorter.sortIterator();
+    }
+
+    @Override
+    public Iterator<R> viewIterator() {
+        return theItems == null
+                                ? Collections.emptyIterator()
+                                : theSorter.viewIterator();
+    }
+
+    @Override
     public void setFilter(final Predicate<R> pFilter) {
+        super.setFilter(pFilter);
         theSorter.setFilter(pFilter);
     }
 
     @Override
     public void setComparator(final Comparator<R> pComparator) {
-        theSorter.setComparator(pComparator);
+        super.setComparator(pComparator);
+        theSorter.setComparator(getComparator());
     }
 
     @SuppressWarnings("unchecked")
@@ -336,6 +367,14 @@ public class TethysSwingTableManager<C, R>
                                          final int pColIndex) {
             super.fireTableCellUpdated(pRowIndex, pColIndex);
             theSorter.reportMappingChanged();
+        }
+
+        /**
+         * Notify model that the row has been updated.
+         * @param pRowIndex the row index
+         */
+        protected void fireTableRowUpdated(final int pRowIndex) {
+            fireTableRowsUpdated(pRowIndex, pRowIndex);
         }
     }
 

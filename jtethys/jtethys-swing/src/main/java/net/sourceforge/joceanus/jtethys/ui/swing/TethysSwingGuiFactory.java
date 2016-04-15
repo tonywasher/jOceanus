@@ -54,11 +54,9 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.Te
 public class TethysSwingGuiFactory
         extends TethysGuiFactory<JComponent, Icon> {
     /**
-     * Constructor.
+     * The Field Adjuster.
      */
-    public TethysSwingGuiFactory() {
-        this(new TethysDataFormatter());
-    }
+    private final TethysSwingDataFieldAdjust theAdjuster;
 
     /**
      * Frame.
@@ -67,10 +65,18 @@ public class TethysSwingGuiFactory
 
     /**
      * Constructor.
+     */
+    public TethysSwingGuiFactory() {
+        this(new TethysDataFormatter());
+    }
+
+    /**
+     * Constructor.
      * @param pFormatter the formatter
      */
     public TethysSwingGuiFactory(final TethysDataFormatter pFormatter) {
         super(pFormatter);
+        theAdjuster = new TethysSwingDataFieldAdjust();
     }
 
     /**
@@ -79,6 +85,14 @@ public class TethysSwingGuiFactory
      */
     public void setFrame(final JFrame pFrame) {
         theFrame = pFrame;
+    }
+
+    /**
+     * Obtain the field adjuster.
+     * @return the field adjuster
+     */
+    protected TethysSwingDataFieldAdjust getFieldAdjuster() {
+        return theAdjuster;
     }
 
     @Override
