@@ -25,6 +25,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -63,8 +64,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.AnalysisColumnSet;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
@@ -270,7 +271,7 @@ public class TransactionTable
     /**
      * Analysis Selection panel.
      */
-    private final AnalysisSelect theSelect;
+    private final MoneyWiseAnalysisSelect<JComponent, Icon> theSelect;
 
     /**
      * The action buttons.
@@ -375,7 +376,7 @@ public class TransactionTable
         theAnalysisView = new AnalysisView(theView, theUpdateSet);
 
         /* Create the Analysis Selection */
-        theSelect = new AnalysisSelect(theView, theAnalysisView, theNewButton);
+        theSelect = new MoneyWiseAnalysisSelect<>(myFactory, theView, theAnalysisView, theNewButton);
 
         /* Create the action buttons */
         theActionButtons = new PrometheusSwingActionButtons(myFactory, theUpdateSet);
@@ -471,7 +472,7 @@ public class TransactionTable
      * Select Statement.
      * @param pSelect the selection
      */
-    protected void selectStatement(final StatementSelect pSelect) {
+    protected void selectStatement(final StatementSelect<JComponent, Icon> pSelect) {
         /* Update selection */
         theSelect.selectStatement(pSelect);
 
@@ -536,8 +537,10 @@ public class TransactionTable
     @Override
     public void setEnabled(final boolean bEnable) {
         /* Ensure that we are disabled whilst editing */
-        super.setEnabled(bEnable && !isItemEditing());
-        theNewButton.setEnabled(bEnable && !isItemEditing());
+        boolean myEnable = bEnable && !isItemEditing();
+        super.setEnabled(myEnable);
+        theSelect.setEnabled(myEnable);
+        theNewButton.setEnabled(myEnable);
     }
 
     /**

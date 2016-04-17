@@ -57,8 +57,7 @@ public class TethysSwingDateButtonManager
         super(pFactory);
         theNode = super.getNode();
 
-        /* Set down Arrow as the graphic */
-        getButton().setIcon(TethysSwingArrowIcon.DOWN);
+        /* Set narrow margin */
         ((JButton) getNode()).setMargin(new Insets(1, 1, 1, 1));
     }
 

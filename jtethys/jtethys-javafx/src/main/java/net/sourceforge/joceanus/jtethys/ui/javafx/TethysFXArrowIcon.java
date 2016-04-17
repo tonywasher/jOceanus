@@ -24,8 +24,10 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.awt.Point;
 
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
 
 /**
  * Arrow Icons.
@@ -110,5 +112,33 @@ public enum TethysFXArrowIcon {
 
         /* Return the arrow */
         return myArrow;
+    }
+
+    /**
+     * Obtain icon for id
+     * @param pId the id
+     * @return the icon
+     */
+    protected static Node getIconForId(final TethysArrowIconId pId) {
+        switch (pId) {
+            case UP:
+                return UP.getArrow();
+            case DOWN:
+                return DOWN.getArrow();
+            case LEFT:
+                return LEFT.getArrow();
+            case RIGHT:
+                return RIGHT.getArrow();
+            case DOUBLEUP:
+                return DOUBLEUP.getArrow();
+            case DOUBLEDOWN:
+                return DOUBLEDOWN.getArrow();
+            case DOUBLELEFT:
+                return DOUBLELEFT.getArrow();
+            case DOUBLERIGHT:
+                return DOUBLERIGHT.getArrow();
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }

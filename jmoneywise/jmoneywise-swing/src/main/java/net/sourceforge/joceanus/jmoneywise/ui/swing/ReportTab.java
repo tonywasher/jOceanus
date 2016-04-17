@@ -28,6 +28,7 @@ import java.awt.event.MouseEvent;
 import java.awt.print.PrinterAbortException;
 import java.awt.print.PrinterException;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -52,8 +53,8 @@ import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jmoneywise.reports.swing.SwingReportManager;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.ReportSelect;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseReportSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
@@ -65,8 +66,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
@@ -118,7 +119,7 @@ public class ReportTab
     /**
      * The Report selection Panel.
      */
-    private final ReportSelect theSelect;
+    private final MoneyWiseReportSelect<JComponent, Icon> theSelect;
 
     /**
      * The Spot Analysis Entry.
@@ -183,7 +184,7 @@ public class ReportTab
         theScroll.setViewportView(theEditor);
 
         /* Create the Report Selection panel */
-        theSelect = new ReportSelect(myFactory);
+        theSelect = new MoneyWiseReportSelect<>(myFactory);
 
         /* Create the error panel for this view */
         theError = new PrometheusSwingErrorPanel(myDataMgr, myDataReport);
@@ -362,9 +363,9 @@ public class ReportTab
      */
     private void handleGoToRequest(final TethysEvent<PrometheusDataEvent> pEvent) {
         /* Create the details of the report */
-        TethysSwingDateRangeSelector mySelect = theSelect.getDateRangeSelector();
+        TethysDateRangeSelector<JComponent, Icon> mySelect = theSelect.getDateRangeSelector();
         AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
-        StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
+        StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(mySelect, myFilter);
 
         /* Request the action */
         theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, new PrometheusGoToEvent(MainTab.ACTION_VIEWSTATEMENT, myStatement));

@@ -51,9 +51,6 @@ public class TethysFXDateButtonManager
         /* Initialise the super-class */
         super(pFactory);
         theNode = (Region) super.getNode();
-
-        /* Set down Arrow as the graphic */
-        getButton().setIcon(TethysFXArrowIcon.DOWN.getArrow());
     }
 
     @Override

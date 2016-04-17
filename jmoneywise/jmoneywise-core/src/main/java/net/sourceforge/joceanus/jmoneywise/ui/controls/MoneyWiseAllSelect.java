@@ -20,55 +20,49 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
+package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AllFilter;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 
 /**
  * All transactions Selection.
+ * @param <N> the node type
+ * @param <I> the Icon Type
  */
-public class AllSelect
-        implements AnalysisFilterSelection<JComponent> {
-    /**
-     * Id.
-     */
-    private final Integer theId;
-
+public class MoneyWiseAllSelect<N, I>
+        implements MoneyWiseAnalysisFilterSelection<N> {
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysBoxPaneManager<N, I> thePanel;
 
     /**
      * The filter.
      */
-    private final transient AllFilter theFilter;
+    private final AllFilter theFilter;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public AllSelect(final TethysSwingGuiFactory pFactory) {
+    protected MoneyWiseAllSelect(final TethysGuiFactory<N, I> pFactory) {
         /* Create the filter */
-        thePanel = new JPanel();
+        thePanel = pFactory.newHBoxPane();
         theFilter = AnalysisFilter.FILTER_ALL;
-        theId = pFactory.getNextId();
     }
 
     @Override
     public Integer getId() {
-        return theId;
+        return thePanel.getId();
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public N getNode() {
+        return thePanel.getNode();
     }
 
     @Override

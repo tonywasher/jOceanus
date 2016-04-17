@@ -51,10 +51,6 @@ public class TethysFXDateRangeSelector
         /* Initialise the underlying class */
         super(pFactory, pBaseIsStart);
 
-        /* Set the arrow icons */
-        getNextButton().setIcon(TethysFXArrowIcon.RIGHT.getArrow());
-        getPrevButton().setIcon(TethysFXArrowIcon.LEFT.getArrow());
-
         /* Record the Node and Create minimum width for panel */
         theNode = getControl().getNode();
         theNode.setMinWidth(MIN_WIDTH);
@@ -114,17 +110,5 @@ public class TethysFXDateRangeSelector
      */
     private void createWrapperPane() {
         theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), getControl().getNode());
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnable) {
-        /* Pass call on to node */
-        theNode.setDisable(!pEnable);
-
-        /* If we are enabling */
-        if (pEnable) {
-            /* Ensure correct values */
-            applyState();
-        }
     }
 }

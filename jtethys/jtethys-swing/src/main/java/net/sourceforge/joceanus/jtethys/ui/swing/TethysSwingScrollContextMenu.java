@@ -1225,6 +1225,7 @@ public class TethysSwingScrollContextMenu<T>
 
                 @Override
                 public void mouseClicked(final MouseEvent e) {
+                    setActive(false);
                     theContext.setSelectedItem(TethysSwingScrollMenuItem.this);
                 }
             });

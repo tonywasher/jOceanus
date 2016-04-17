@@ -47,9 +47,6 @@ public final class TethysFXListButtonManager<T>
         /* Initialise the underlying class */
         super(pFactory);
         theNode = (Region) super.getNode();
-
-        /* Set down Arrow as the graphic */
-        getButton().setIcon(TethysFXArrowIcon.DOWN.getArrow());
     }
 
     @Override

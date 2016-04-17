@@ -44,10 +44,6 @@ public class TethysSwingDateRangeSelector
         /* Initialise the underlying class */
         super(pFactory, pBaseIsStart);
 
-        /* Set the arrow icons */
-        getNextButton().setIcon(TethysSwingArrowIcon.RIGHT);
-        getPrevButton().setIcon(TethysSwingArrowIcon.LEFT);
-
         /* Create the full sub-panel */
         applyState();
     }
@@ -90,18 +86,6 @@ public class TethysSwingDateRangeSelector
      */
     private void createWrapperPane() {
         TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), getNode());
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnable) {
-        /* Pass call on to node */
-        getNode().setEnabled(pEnable);
-
-        /* If we are enabling */
-        if (pEnable) {
-            /* Ensure correct values */
-            applyState();
-        }
     }
 
     @Override

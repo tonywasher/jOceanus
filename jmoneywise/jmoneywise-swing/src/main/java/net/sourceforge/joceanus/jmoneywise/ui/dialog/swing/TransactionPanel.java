@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -71,7 +73,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionValidator;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.TransactionFilters;
@@ -153,7 +155,7 @@ public class TransactionPanel
     /**
      * Analysis selection panel.
      */
-    private final AnalysisSelect theAnalysisSelect;
+    private final MoneyWiseAnalysisSelect<JComponent, Icon> theAnalysisSelect;
 
     /**
      * The Tag Menu Builder.
@@ -208,7 +210,7 @@ public class TransactionPanel
                             final MetisFieldManager pFieldMgr,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final TransactionBuilder pBuilder,
-                            final AnalysisSelect pAnalysisSelect,
+                            final MoneyWiseAnalysisSelect<JComponent, Icon> pAnalysisSelect,
                             final PrometheusSwingErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);

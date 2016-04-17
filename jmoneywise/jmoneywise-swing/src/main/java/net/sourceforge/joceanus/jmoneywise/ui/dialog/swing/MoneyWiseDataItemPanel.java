@@ -28,13 +28,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.swing.MainTab;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -222,7 +225,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
             }
 
             /* Determine action */
-            StatementSelect myStatement = new StatementSelect(null, myFilter);
+            StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(null, myFilter);
             int myId = MainTab.ACTION_VIEWSTATEMENT;
 
             /* Build the item */

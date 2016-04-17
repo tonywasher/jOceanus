@@ -20,22 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
+package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
-import java.awt.Dimension;
 import java.util.Iterator;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -51,27 +40,26 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
+import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingArrowIcon;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * SpotPrice selection panel.
- * @author Tony Washer
+ * @param <N> the node type
+ * @param <I> the Icon Type
  */
-public class SpotPricesSelect
-        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
-    /**
-     * Strut width.
-     */
-    private static final int STRUT_WIDTH = 10;
-
+public class MoneyWiseSpotPricesSelect<N, I>
+        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<N> {
     /**
      * Text for Date Label.
      */
@@ -80,7 +68,7 @@ public class SpotPricesSelect
     /**
      * Text for Portfolio Label.
      */
-    private static final String NLS_PORT = MoneyWiseDataType.PORTFOLIO.getItemName() + MetisFieldElement.STR_COLON;
+    private static final String NLS_PORT = MoneyWiseDataType.PORTFOLIO.getItemName() + TethysLabel.STR_COLON;
 
     /**
      * Text for Show Closed.
@@ -103,11 +91,6 @@ public class SpotPricesSelect
     private static final String NLS_PREVTIP = MoneyWiseUIResource.SPOTPRICE_PREV.getValue();
 
     /**
-     * Id.
-     */
-    private final Integer theId;
-
-    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
@@ -115,7 +98,7 @@ public class SpotPricesSelect
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysBoxPaneManager<N, I> thePanel;
 
     /**
      * The data view.
@@ -125,37 +108,37 @@ public class SpotPricesSelect
     /**
      * The date button.
      */
-    private final TethysSwingDateButtonManager theDateButton;
+    private final TethysDateButtonManager<N, I> theDateButton;
 
     /**
      * The showClosed checkBox.
      */
-    private final JCheckBox theShowClosed;
+    private final TethysCheckBox<N, I> theShowClosed;
 
     /**
      * The next button.
      */
-    private final JButton theNext;
+    private final TethysButton<N, I> theNext;
 
     /**
      * The previous button.
      */
-    private final JButton thePrev;
+    private final TethysButton<N, I> thePrev;
 
     /**
      * The download button.
      */
-    private final TethysSwingButton theDownloadButton;
+    private final TethysButton<N, I> theDownloadButton;
 
     /**
      * The portfolio button.
      */
-    private final TethysSwingScrollButtonManager<PortfolioBucket> thePortButton;
+    private final TethysScrollButtonManager<PortfolioBucket, N, I> thePortButton;
 
     /**
      * The portfolio menu.
      */
-    private final TethysScrollMenu<PortfolioBucket, ?> thePortMenu;
+    private final TethysScrollMenu<PortfolioBucket, I> thePortMenu;
 
     /**
      * The Portfolio list.
@@ -184,70 +167,62 @@ public class SpotPricesSelect
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pView the data view
      */
-    public SpotPricesSelect(final View pView) {
+    public MoneyWiseSpotPricesSelect(final TethysGuiFactory<N, I> pFactory,
+                                     final View pView) {
         /* Store table and view details */
         theView = pView;
-
-        /* Access GUI Factory */
-        TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pView.getUtilitySet().getGuiFactory();
-        theId = myFactory.getNextId();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create Labels */
-        JLabel myDate = new JLabel(NLS_DATE);
-        JLabel myPort = new JLabel(NLS_PORT);
+        TethysLabel<N, I> myDate = pFactory.newLabel(NLS_DATE);
+        TethysLabel<N, I> myPort = pFactory.newLabel(NLS_PORT);
 
         /* Create the check box */
-        theShowClosed = new JCheckBox(NLS_CLOSED);
+        theShowClosed = pFactory.newCheckBox(NLS_CLOSED);
         theShowClosed.setSelected(doShowClosed);
 
         /* Create the DateButton */
-        theDateButton = myFactory.newDateButton();
+        theDateButton = pFactory.newDateButton();
 
         /* Create the Download Button */
-        theDownloadButton = myFactory.newButton();
+        theDownloadButton = pFactory.newButton();
         MoneyWiseIcon.configureDownloadIconButton(theDownloadButton);
 
         /* Create the Buttons */
-        theNext = new JButton(TethysSwingArrowIcon.RIGHT);
-        thePrev = new JButton(TethysSwingArrowIcon.LEFT);
-        theNext.setToolTipText(NLS_NEXTTIP);
-        thePrev.setToolTipText(NLS_PREVTIP);
+        theNext = pFactory.newButton();
+        theNext.setIcon(TethysArrowIconId.RIGHT);
+        theNext.setToolTip(NLS_NEXTTIP);
+        thePrev = pFactory.newButton();
+        thePrev.setIcon(TethysArrowIconId.LEFT);
+        thePrev.setToolTip(NLS_PREVTIP);
 
         /* Create the portfolio button */
-        thePortButton = myFactory.newScrollButton();
+        thePortButton = pFactory.newScrollButton();
 
         /* Create initial state */
         theState = new SpotPricesState();
 
         /* Create the panel */
-        thePanel = new JPanel();
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
-        thePanel.setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
+        thePanel = pFactory.newHBoxPane();
+        thePanel.setBorderTitle(NLS_TITLE);
 
         /* Define the layout */
-        thePanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        thePanel.add(myDate);
-        thePanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        thePanel.add(thePrev);
-        thePanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        thePanel.add(theDateButton.getNode());
-        thePanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        thePanel.add(theNext);
-        thePanel.add(Box.createHorizontalGlue());
-        thePanel.add(myPort);
-        thePanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        thePanel.add(thePortButton.getNode());
-        thePanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        thePanel.add(theShowClosed);
-        thePanel.add(Box.createHorizontalGlue());
-        thePanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        thePanel.add(theDownloadButton.getNode());
-        thePanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        thePanel.addNode(myDate);
+        thePanel.addNode(thePrev);
+        thePanel.addNode(theDateButton);
+        thePanel.addNode(theNext);
+        thePanel.addSpacer();
+        thePanel.addNode(myPort);
+        thePanel.addNode(thePortButton);
+        thePanel.addSpacer();
+        thePanel.addNode(theShowClosed);
+        thePanel.addSpacer();
+        thePanel.addNode(theDownloadButton);
 
         /* Initialise the data from the view */
         refreshData();
@@ -264,12 +239,12 @@ public class SpotPricesSelect
         myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPortfolioMenu());
         theDownloadButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
         theDateButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDate());
-        theShowClosed.addItemListener(e -> handleNewClosed());
-        theNext.addActionListener(e -> {
+        theShowClosed.getEventRegistrar().addEventListener(e -> handleNewClosed());
+        theNext.getEventRegistrar().addEventListener(e -> {
             theState.setNext();
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         });
-        thePrev.addActionListener(e -> {
+        thePrev.getEventRegistrar().addEventListener(e -> {
             theState.setPrev();
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         });
@@ -277,12 +252,12 @@ public class SpotPricesSelect
 
     @Override
     public Integer getId() {
-        return theId;
+        return thePanel.getId();
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public N getNode() {
+        return thePanel.getNode();
     }
 
     @Override
@@ -591,7 +566,7 @@ public class SpotPricesSelect
          * @param pButton the Button with the new date
          * @return true/false did a change occur
          */
-        private boolean setDate(final TethysSwingDateButtonManager pButton) {
+        private boolean setDate(final TethysDateButtonManager<N, I> pButton) {
             /* Adjust the date and build the new range */
             TethysDate myDate = new TethysDate(pButton.getSelectedDate());
             if (!MetisDifference.isEqual(myDate, theDate)) {

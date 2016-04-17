@@ -22,9 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
@@ -99,5 +96,5 @@ public abstract class JOceanusUtilitySet {
      * Obtain the GUI Factory.
      * @return the factory
      */
-    public abstract TethysGuiFactory<JComponent, Icon> getGuiFactory();
+    public abstract TethysGuiFactory<?, ?> getGuiFactory();
 }

@@ -20,21 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
+package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
-import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket;
@@ -50,18 +42,22 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Loan Analysis Selection.
+ * @param <N> the node type
+ * @param <I> the Icon Type
  */
-public class LoanAnalysisSelect
-        implements AnalysisFilterSelection<JComponent>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseLoanAnalysisSelect<N, I>
+        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Category Label.
      */
@@ -73,11 +69,6 @@ public class LoanAnalysisSelect
     private static final String NLS_LOAN = MoneyWiseDataType.LOAN.getItemName();
 
     /**
-     * Id.
-     */
-    private final Integer theId;
-
-    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
@@ -85,7 +76,27 @@ public class LoanAnalysisSelect
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysBoxPaneManager<N, I> thePanel;
+
+    /**
+     * The loan button.
+     */
+    private final TethysScrollButtonManager<LoanBucket, N, I> theLoanButton;
+
+    /**
+     * The category button.
+     */
+    private final TethysScrollButtonManager<LoanCategory, N, I> theCatButton;
+
+    /**
+     * Category menu.
+     */
+    private final TethysScrollMenu<LoanCategory, I> theCategoryMenu;
+
+    /**
+     * Loan menu.
+     */
+    private final TethysScrollMenu<LoanBucket, I> theLoanMenu;
 
     /**
      * The active category bucket list.
@@ -108,30 +119,10 @@ public class LoanAnalysisSelect
     private LoanState theSavePoint;
 
     /**
-     * The loan button.
-     */
-    private final TethysSwingScrollButtonManager<LoanBucket> theLoanButton;
-
-    /**
-     * The category button.
-     */
-    private final TethysSwingScrollButtonManager<LoanCategory> theCatButton;
-
-    /**
-     * Category menu.
-     */
-    private final TethysScrollMenu<LoanCategory, ?> theCategoryMenu;
-
-    /**
-     * Loan menu.
-     */
-    private final TethysScrollMenu<LoanBucket, ?> theLoanMenu;
-
-    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public LoanAnalysisSelect(final TethysSwingGuiFactory pFactory) {
+    protected MoneyWiseLoanAnalysisSelect(final TethysGuiFactory<N, I> pFactory) {
         /* Create the loan button */
         theLoanButton = pFactory.newScrollButton();
 
@@ -140,24 +131,19 @@ public class LoanAnalysisSelect
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
-        theId = pFactory.getNextId();
 
         /* Create the labels */
-        JLabel myCatLabel = new JLabel(NLS_CATEGORY + MetisFieldElement.STR_COLON);
-        JLabel myLoanLabel = new JLabel(NLS_LOAN + MetisFieldElement.STR_COLON);
+        TethysLabel<N, I> myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
+        TethysLabel<N, I> myLoanLabel = pFactory.newLabel(NLS_LOAN + TethysLabel.STR_COLON);
 
         /* Define the layout */
-        thePanel = new JPanel();
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
-        thePanel.add(Box.createHorizontalGlue());
-        thePanel.add(myCatLabel);
-        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        thePanel.add(theCatButton.getNode());
-        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE << 2, 0)));
-        thePanel.add(myLoanLabel);
-        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        thePanel.add(theLoanButton.getNode());
-        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel = pFactory.newHBoxPane();
+        thePanel.addSpacer();
+        thePanel.addNode(myCatLabel);
+        thePanel.addNode(theCatButton);
+        thePanel.addStrut();
+        thePanel.addNode(myLoanLabel);
+        thePanel.addNode(theLoanButton);
 
         /* Create initial state */
         theState = new LoanState();
@@ -178,12 +164,12 @@ public class LoanAnalysisSelect
 
     @Override
     public Integer getId() {
-        return theId;
+        return thePanel.getId();
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public N getNode() {
+        return thePanel.getNode();
     }
 
     @Override

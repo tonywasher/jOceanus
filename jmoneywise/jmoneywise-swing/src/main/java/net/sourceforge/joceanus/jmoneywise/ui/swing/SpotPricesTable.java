@@ -26,6 +26,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -50,8 +51,8 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseSpotPricesSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.SpotPricesSelect;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -73,6 +74,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * SpotPrices panel.
@@ -163,7 +165,7 @@ public class SpotPricesTable
     /**
      * The SpotPrices selection panel.
      */
-    private final SpotPricesSelect theSelect;
+    private final MoneyWiseSpotPricesSelect<JComponent, Icon> theSelect;
 
     /**
      * The action buttons.
@@ -222,8 +224,9 @@ public class SpotPricesTable
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the sub panels */
-        theSelect = new SpotPricesSelect(theView);
-        theActionButtons = new PrometheusSwingActionButtons(pView.getUtilitySet().getGuiFactory(), theUpdateSet);
+        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        theSelect = new MoneyWiseSpotPricesSelect<>(myFactory, theView);
+        theActionButtons = new PrometheusSwingActionButtons(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
         theError = new PrometheusSwingErrorPanel(myDataMgr, theDataPrice);

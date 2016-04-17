@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -36,7 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.threads.swing.LoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.swing.MoneyWiseStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.swing.WriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.AnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.MainWindow;
@@ -357,7 +358,7 @@ public class MainTab
      * Select a Statement.
      * @param pSelect the statement request
      */
-    private void selectStatement(final StatementSelect pSelect) {
+    private void selectStatement(final StatementSelect<JComponent, Icon> pSelect) {
         /* Pass through to the Register view */
         theRegister.selectStatement(pSelect);
 
@@ -488,7 +489,8 @@ public class MainTab
         switch (myEvent.getId()) {
             /* View the requested statement */
             case ACTION_VIEWSTATEMENT:
-                StatementSelect mySelect = myEvent.getDetails(StatementSelect.class);
+                @SuppressWarnings("unchecked")
+                StatementSelect<JComponent, Icon> mySelect = myEvent.getDetails(StatementSelect.class);
                 selectStatement(mySelect);
                 break;
 

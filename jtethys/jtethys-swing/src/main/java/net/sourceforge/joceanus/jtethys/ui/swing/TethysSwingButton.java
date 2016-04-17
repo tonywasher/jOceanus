@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
@@ -77,6 +78,11 @@ public class TethysSwingButton
     @Override
     public void setText(final String pText) {
         theButton.setText(pText);
+    }
+
+    @Override
+    public void setIcon(final TethysArrowIconId pIcon) {
+        setIcon(TethysSwingArrowIcon.getIconForId(pIcon));
     }
 
     @Override

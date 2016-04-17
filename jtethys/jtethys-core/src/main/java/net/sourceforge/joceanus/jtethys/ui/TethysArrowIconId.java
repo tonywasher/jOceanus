@@ -1,5 +1,5 @@
-/**
- * jMoneyWise: Finance Application
+/*******************************************************************************
+ * jTethys: Java Utilities
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,34 +20,49 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
-
-import javax.swing.JComponent;
-
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+package net.sourceforge.joceanus.jtethys.ui;
 
 /**
- * Analysis Filter Selection.
- * @param <N> The node type
+ * Arrow Icons.
  */
-public interface AnalysisFilterSelection<N>
-        extends TethysNode<JComponent> {
+public enum TethysArrowIconId {
     /**
-     * Is selection available?
-     * @return true/false
+     * Up Arrow.
      */
-    boolean isAvailable();
+    UP,
 
     /**
-     * Obtain analysis filter.
-     * @return the filter
+     * Down Arrow.
      */
-    AnalysisFilter<?, ?> getFilter();
+    DOWN,
 
     /**
-     * Set analysis filter.
-     * @param pFilter the filter
+     * Left Arrow.
      */
-    void setFilter(final AnalysisFilter<?, ?> pFilter);
+    LEFT,
+
+    /**
+     * Right Arrow.
+     */
+    RIGHT,
+
+    /**
+     * Double Up Arrow.
+     */
+    DOUBLEUP,
+
+    /**
+     * Double Down Arrow.
+     */
+    DOUBLEDOWN,
+
+    /**
+     * Double Left Arrow.
+     */
+    DOUBLELEFT,
+
+    /**
+     * Double Right Arrow.
+     */
+    DOUBLERIGHT;
 }

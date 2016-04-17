@@ -20,19 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
+package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
-import java.awt.Dimension;
 import java.util.Iterator;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
@@ -47,17 +39,21 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * TaxBasisAnalysis Selection.
+ * @param <N> the node type
+ * @param <I> the Icon Type
  */
-public class TaxBasisAnalysisSelect
-        implements AnalysisFilterSelection<JComponent>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseTaxBasisAnalysisSelect<N, I>
+        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for TaxBasis Label.
      */
@@ -74,11 +70,6 @@ public class TaxBasisAnalysisSelect
     private static final String NLS_ALL = "All";
 
     /**
-     * Id.
-     */
-    private final Integer theId;
-
-    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
@@ -86,7 +77,27 @@ public class TaxBasisAnalysisSelect
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysBoxPaneManager<N, I> thePanel;
+
+    /**
+     * The basis button.
+     */
+    private final TethysScrollButtonManager<TaxBasisBucket, N, I> theBasisButton;
+
+    /**
+     * The account button.
+     */
+    private final TethysScrollButtonManager<TaxBasisAccountBucket, N, I> theAccountButton;
+
+    /**
+     * Tax menu.
+     */
+    private final TethysScrollMenu<TaxBasisBucket, I> theTaxMenu;
+
+    /**
+     * Account menu.
+     */
+    private final TethysScrollMenu<TaxBasisAccountBucket, I> theAccountMenu;
 
     /**
      * The active tax basis bucket list.
@@ -104,54 +115,29 @@ public class TaxBasisAnalysisSelect
     private TaxBasisState theSavePoint;
 
     /**
-     * The basis button.
-     */
-    private final TethysSwingScrollButtonManager<TaxBasisBucket> theBasisButton;
-
-    /**
-     * The account button.
-     */
-    private final TethysSwingScrollButtonManager<TaxBasisAccountBucket> theAccountButton;
-
-    /**
-     * Tax menu.
-     */
-    private final TethysScrollMenu<TaxBasisBucket, ?> theTaxMenu;
-
-    /**
-     * Account menu.
-     */
-    private final TethysScrollMenu<TaxBasisAccountBucket, ?> theAccountMenu;
-
-    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public TaxBasisAnalysisSelect(final TethysSwingGuiFactory pFactory) {
+    protected MoneyWiseTaxBasisAnalysisSelect(final TethysGuiFactory<N, I> pFactory) {
         /* Create the buttons */
         theBasisButton = pFactory.newScrollButton();
         theAccountButton = pFactory.newScrollButton();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
-        theId = pFactory.getNextId();
 
         /* Create the labels */
-        JLabel myBasisLabel = new JLabel(NLS_BASIS + MetisFieldElement.STR_COLON);
-        JLabel myAccountLabel = new JLabel(NLS_ACCOUNT + MetisFieldElement.STR_COLON);
+        TethysLabel<N, I> myBasisLabel = pFactory.newLabel(NLS_BASIS + TethysLabel.STR_COLON);
+        TethysLabel<N, I> myAccountLabel = pFactory.newLabel(NLS_ACCOUNT + TethysLabel.STR_COLON);
 
         /* Define the layout */
-        thePanel = new JPanel();
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
-        thePanel.add(Box.createHorizontalGlue());
-        thePanel.add(myBasisLabel);
-        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        thePanel.add(theBasisButton.getNode());
-        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE << 2, 0)));
-        thePanel.add(myAccountLabel);
-        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        thePanel.add(theAccountButton.getNode());
-        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel = pFactory.newHBoxPane();
+        thePanel.addSpacer();
+        thePanel.addNode(myBasisLabel);
+        thePanel.addNode(theBasisButton);
+        thePanel.addStrut();
+        thePanel.addNode(myAccountLabel);
+        thePanel.addNode(theAccountButton);
 
         /* Create initial state */
         theState = new TaxBasisState();
@@ -172,12 +158,12 @@ public class TaxBasisAnalysisSelect
 
     @Override
     public Integer getId() {
-        return theId;
+        return thePanel.getId();
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public N getNode() {
+        return thePanel.getNode();
     }
 
     @Override

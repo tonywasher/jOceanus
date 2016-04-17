@@ -206,11 +206,13 @@ public abstract class TethysDateRangeSelector<N, I>
 
         /* Create the next button */
         theNextButton = pFactory.newButton();
+        theNextButton.setIcon(TethysArrowIconId.RIGHT);
         theNextButton.setToolTip(NLS_NEXTTIP);
         theNextButton.getEventRegistrar().addEventListener(e -> handleNextDate());
 
         /* Create the Previous button */
         thePrevButton = pFactory.newButton();
+        thePrevButton.setIcon(TethysArrowIconId.LEFT);
         thePrevButton.setToolTip(NLS_PREVTIP);
         thePrevButton.getEventRegistrar().addEventListener(e -> handlePreviousDate());
 
@@ -306,22 +308,6 @@ public abstract class TethysDateRangeSelector<N, I>
      * @param pHeight the height
      */
     public abstract void setPreferredHeight(final Integer pHeight);
-
-    /**
-     * Obtain the previous button.
-     * @return the previous button
-     */
-    protected TethysButton<N, I> getPrevButton() {
-        return thePrevButton;
-    }
-
-    /**
-     * Obtain the next button.
-     * @return the next button
-     */
-    protected TethysButton<N, I> getNextButton() {
-        return theNextButton;
-    }
 
     /**
      * Obtain the control.
@@ -472,6 +458,18 @@ public abstract class TethysDateRangeSelector<N, I>
     protected void handlePreviousDate() {
         theState.setPreviousDate();
         applyState();
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnable) {
+        /* Pass call on to node */
+        theControl.setEnabled(pEnable);
+
+        /* If we are enabling */
+        if (pEnable) {
+            /* Ensure correct values */
+            applyState();
+        }
     }
 
     /**

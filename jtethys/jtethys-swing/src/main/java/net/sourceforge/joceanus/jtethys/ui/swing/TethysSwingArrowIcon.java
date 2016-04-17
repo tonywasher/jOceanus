@@ -29,6 +29,8 @@ import java.awt.Point;
 
 import javax.swing.Icon;
 
+import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
+
 /**
  * Arrow Icons.
  */
@@ -142,5 +144,33 @@ public enum TethysSwingArrowIcon implements Icon {
     @Override
     public int getIconHeight() {
         return ICON_SIZE;
+    }
+
+    /**
+     * Obtain icon for id
+     * @param pId the id
+     * @return the icon
+     */
+    protected static Icon getIconForId(final TethysArrowIconId pId) {
+        switch (pId) {
+            case UP:
+                return UP;
+            case DOWN:
+                return DOWN;
+            case LEFT:
+                return LEFT;
+            case RIGHT:
+                return RIGHT;
+            case DOUBLEUP:
+                return DOUBLEUP;
+            case DOUBLEDOWN:
+                return DOUBLEDOWN;
+            case DOUBLELEFT:
+                return DOUBLELEFT;
+            case DOUBLERIGHT:
+                return DOUBLERIGHT;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }

@@ -176,4 +176,15 @@ public class TethysSwingBoxPaneManager
                                   ? Box.createHorizontalGlue()
                                   : Box.createVerticalGlue());
     }
+
+    @Override
+    public void addStrut() {
+        JPanel myPanel = new JPanel();
+        setLayout(myPanel);
+        myPanel.add(createStrut());
+        myPanel.add(createStrut());
+        myPanel.add(createStrut());
+        myPanel.add(createStrut());
+        thePanel.add(myPanel);
+    }
 }

@@ -95,8 +95,9 @@ public abstract class TethysDateButtonManager<N, I>
         theEventManager = new TethysEventManager<>();
         theButton = pFactory.newButton();
 
-        /* Note that the button should be Text and Icon */
+        /* Note that the button should be Text and Icon and set down Icon */
         theButton.setTextAndIcon();
+        theButton.setIcon(TethysArrowIconId.DOWN);
 
         /* Add listener for button */
         theButton.getEventRegistrar().addEventListener(e -> showDialog());
@@ -136,7 +137,7 @@ public abstract class TethysDateButtonManager<N, I>
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        theButton.setEnabled(!pEnabled);
+        theButton.setEnabled(pEnabled);
     }
 
     @Override

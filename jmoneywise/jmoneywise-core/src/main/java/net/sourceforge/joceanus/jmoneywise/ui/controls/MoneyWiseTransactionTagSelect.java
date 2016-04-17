@@ -20,19 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
+package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
-import java.awt.Dimension;
 import java.util.Iterator;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionTagBucket;
@@ -44,26 +36,25 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * TransactionTag Selection.
+ * @param <N> the node type
+ * @param <I> the Icon Type
  */
-public class TransactionTagSelect
-        implements AnalysisFilterSelection<JComponent>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseTransactionTagSelect<N, I>
+        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for TransactionTag Label.
      */
     private static final String NLS_TAG = MoneyWiseDataType.TRANSTAG.getItemName();
-
-    /**
-     * Id.
-     */
-    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -73,7 +64,17 @@ public class TransactionTagSelect
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysBoxPaneManager<N, I> thePanel;
+
+    /**
+     * The tag button.
+     */
+    private final TethysScrollButtonManager<TransactionTagBucket, N, I> theTagButton;
+
+    /**
+     * Tag menu.
+     */
+    private final TethysScrollMenu<TransactionTagBucket, I> theTagMenu;
 
     /**
      * The active transaction tag list.
@@ -91,38 +92,24 @@ public class TransactionTagSelect
     private TagState theSavePoint;
 
     /**
-     * The tag button.
-     */
-    private final TethysSwingScrollButtonManager<TransactionTagBucket> theTagButton;
-
-    /**
-     * Tag menu.
-     */
-    private final TethysScrollMenu<TransactionTagBucket, ?> theTagMenu;
-
-    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public TransactionTagSelect(final TethysSwingGuiFactory pFactory) {
+    protected MoneyWiseTransactionTagSelect(final TethysGuiFactory<N, I> pFactory) {
         /* Create the tags button */
         theTagButton = pFactory.newScrollButton();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
-        theId = pFactory.getNextId();
 
         /* Create the label */
-        JLabel myTagLabel = new JLabel(NLS_TAG + MetisFieldElement.STR_COLON);
+        TethysLabel<N, I> myTagLabel = pFactory.newLabel(NLS_TAG + TethysLabel.STR_COLON);
 
         /* Define the layout */
-        thePanel = new JPanel();
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
-        thePanel.add(Box.createHorizontalGlue());
-        thePanel.add(myTagLabel);
-        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        thePanel.add(theTagButton.getNode());
-        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel = pFactory.newHBoxPane();
+        thePanel.addSpacer();
+        thePanel.addNode(myTagLabel);
+        thePanel.addNode(theTagButton);
 
         /* Create initial state */
         theState = new TagState();
@@ -137,12 +124,12 @@ public class TransactionTagSelect
 
     @Override
     public Integer getId() {
-        return theId;
+        return thePanel.getId();
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public N getNode() {
+        return thePanel.getNode();
     }
 
     @Override

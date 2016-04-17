@@ -99,8 +99,9 @@ public abstract class TethysScrollButtonManager<T, N, I>
         theButton = pFactory.newButton();
         isFixedText = false;
 
-        /* Note that the button should be Text and Icon */
+        /* Note that the button should be Text and Icon and set down arrow icon */
         theButton.setTextAndIcon();
+        theButton.setIcon(TethysArrowIconId.DOWN);
 
         /* Set action handler */
         theButton.getEventRegistrar().addEventListener(e -> handleMenuRequest());

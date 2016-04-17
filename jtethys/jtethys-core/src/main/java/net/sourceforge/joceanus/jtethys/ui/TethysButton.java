@@ -162,6 +162,12 @@ public abstract class TethysButton<N, I>
      * Set icon for button.
      * @param pIcon the icon
      */
+    public abstract void setIcon(final TethysArrowIconId pIcon);
+
+    /**
+     * Set icon for button.
+     * @param pIcon the icon
+     */
     public abstract void setIcon(final I pIcon);
 
     /**

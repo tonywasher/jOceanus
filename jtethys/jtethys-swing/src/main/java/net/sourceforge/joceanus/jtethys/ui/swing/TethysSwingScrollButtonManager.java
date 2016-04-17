@@ -52,9 +52,6 @@ public final class TethysSwingScrollButtonManager<T>
         /* Initialise the underlying class */
         super(pFactory);
         theNode = super.getNode();
-
-        /* Set down Arrow as the graphic */
-        getButton().setIcon(TethysSwingArrowIcon.DOWN);
     }
 
     @Override

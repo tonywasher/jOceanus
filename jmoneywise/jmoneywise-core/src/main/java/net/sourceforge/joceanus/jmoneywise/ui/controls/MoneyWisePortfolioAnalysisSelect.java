@@ -20,19 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
+package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
-import java.awt.Dimension;
 import java.util.Iterator;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldElement;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
@@ -44,26 +36,25 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Portfolio Analysis Selection.
+ * @param <N> the node type
+ * @param <I> the Icon Type
  */
-public class PortfolioAnalysisSelect
-        implements AnalysisFilterSelection<JComponent>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWisePortfolioAnalysisSelect<N, I>
+        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Portfolio Label.
      */
     private static final String NLS_PORTFOLIO = MoneyWiseDataType.PORTFOLIO.getItemName();
-
-    /**
-     * Id.
-     */
-    private final Integer theId;
 
     /**
      * The Event Manager.
@@ -73,7 +64,17 @@ public class PortfolioAnalysisSelect
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysBoxPaneManager<N, I> thePanel;
+
+    /**
+     * The portfolio button.
+     */
+    private final TethysScrollButtonManager<PortfolioBucket, N, I> thePortButton;
+
+    /**
+     * Portfolio menu.
+     */
+    private final TethysScrollMenu<PortfolioBucket, I> thePortfolioMenu;
 
     /**
      * The active portfolio bucket list.
@@ -91,38 +92,24 @@ public class PortfolioAnalysisSelect
     private PortfolioState theSavePoint;
 
     /**
-     * The portfolio button.
-     */
-    private final TethysSwingScrollButtonManager<PortfolioBucket> thePortButton;
-
-    /**
-     * Portfolio menu.
-     */
-    private final TethysScrollMenu<PortfolioBucket, ?> thePortfolioMenu;
-
-    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public PortfolioAnalysisSelect(final TethysSwingGuiFactory pFactory) {
+    protected MoneyWisePortfolioAnalysisSelect(final TethysGuiFactory<N, I> pFactory) {
         /* Create the portfolio button */
         thePortButton = pFactory.newScrollButton();
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
-        theId = pFactory.getNextId();
 
         /* Create the labels */
-        JLabel myPortLabel = new JLabel(NLS_PORTFOLIO + MetisFieldElement.STR_COLON);
+        TethysLabel<N, I> myPortLabel = pFactory.newLabel(NLS_PORTFOLIO + TethysLabel.STR_COLON);
 
         /* Define the layout */
-        thePanel = new JPanel();
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
-        thePanel.add(Box.createHorizontalGlue());
-        thePanel.add(myPortLabel);
-        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        thePanel.add(thePortButton.getNode());
-        thePanel.add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        thePanel = pFactory.newHBoxPane();
+        thePanel.addSpacer();
+        thePanel.addNode(myPortLabel);
+        thePanel.addNode(thePortButton);
 
         /* Create initial state */
         theState = new PortfolioState();
@@ -139,12 +126,12 @@ public class PortfolioAnalysisSelect
 
     @Override
     public Integer getId() {
-        return theId;
+        return thePanel.getId();
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public N getNode() {
+        return thePanel.getNode();
     }
 
     @Override

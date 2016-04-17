@@ -30,6 +30,11 @@ package net.sourceforge.joceanus.jtethys.ui;
 public abstract class TethysLabel<N, I>
         implements TethysNode<N> {
     /**
+     * The colon indicator.
+     */
+    public static final String STR_COLON = ":";
+
+    /**
      * The id.
      */
     private final Integer theId;

@@ -152,6 +152,11 @@ public abstract class TethysBoxPaneManager<N, I>
     public abstract void addSpacer();
 
     /**
+     * Add strut.
+     */
+    public abstract void addStrut();
+
+    /**
      * Add Spacer Node.
      * @param pNode the node
      */

@@ -168,7 +168,14 @@ public class TethysFXBoxPaneManager
 
     @Override
     public void addSpacer() {
-        TethysFXSpacer mySpacer = new TethysFXSpacer();
+        TethysFXSpacer mySpacer = new TethysFXSpacer(true);
+        addSpacerNode(mySpacer);
+        theBoxPane.getChildren().add(mySpacer.getNode());
+    }
+
+    @Override
+    public void addStrut() {
+        TethysFXSpacer mySpacer = new TethysFXSpacer(false);
         addSpacerNode(mySpacer);
         theBoxPane.getChildren().add(mySpacer.getNode());
     }
@@ -185,13 +192,16 @@ public class TethysFXBoxPaneManager
 
         /**
          * Constructor.
+         * @param pExpand true/false
          */
-        private TethysFXSpacer() {
+        private TethysFXSpacer(final boolean pExpand) {
             theRegion = new Region();
             theRegion.setPrefWidth(getGap());
             theRegion.setPrefHeight(getGap());
-            HBox.setHgrow(theRegion, Priority.ALWAYS);
-            VBox.setVgrow(theRegion, Priority.ALWAYS);
+            if (pExpand) {
+                HBox.setHgrow(theRegion, Priority.ALWAYS);
+                VBox.setVgrow(theRegion, Priority.ALWAYS);
+            }
         }
 
         @Override
