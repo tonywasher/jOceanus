@@ -25,6 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog.swing;
 import java.awt.GridLayout;
 import java.util.Iterator;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -47,7 +49,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
@@ -66,7 +68,7 @@ public class PayeePanel
     /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<Payee> theFieldSet;
+    private final MetisFieldSet<Payee> theFieldSet;
 
     /**
      * Payee Type Button Field.
@@ -93,7 +95,7 @@ public class PayeePanel
     public PayeePanel(final TethysSwingGuiFactory pFactory,
                       final MetisFieldManager pFieldMgr,
                       final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                      final PrometheusSwingErrorPanel pError) {
+                      final PrometheusErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 

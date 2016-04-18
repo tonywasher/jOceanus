@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions.Prometh
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -37,18 +38,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <N> the node type
  * @param <I> the icon type
  */
-public abstract class PrometheusItemActions<N, I>
+public class PrometheusItemActions<N, I>
         implements TethysEventProvider<PrometheusUIEvent>, TethysNode<N> {
-    /**
-     * Strut width.
-     */
-    protected static final int STRUT_HEIGHT = PrometheusActionButtons.STRUT_LENGTH;
-
-    /**
-     * The Id.
-     */
-    private final Integer theId;
-
     /**
      * The Event Manager.
      */
@@ -60,32 +51,34 @@ public abstract class PrometheusItemActions<N, I>
     private final PrometheusItemEditParent theParent;
 
     /**
+     * The panel.
+     */
+    private final TethysBoxPaneManager<N, I> thePanel;
+
+    /**
      * The GoTo button.
      */
-    private TethysScrollButtonManager<PrometheusGoToEvent, N, I> theGoToButton;
+    private final TethysScrollButtonManager<PrometheusGoToEvent, N, I> theGoToButton;
 
     /**
      * The Edit button.
      */
-    private TethysButton<N, I> theEditButton;
+    private final TethysButton<N, I> theEditButton;
 
     /**
      * The Delete button.
      */
-    private TethysButton<N, I> theDeleteButton;
+    private final TethysButton<N, I> theDeleteButton;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pParent the parent
      */
-    protected PrometheusItemActions(final TethysGuiFactory<N, I> pFactory,
-                                    final PrometheusItemEditParent pParent) {
+    public PrometheusItemActions(final TethysGuiFactory<N, I> pFactory,
+                                 final PrometheusItemEditParent pParent) {
         /* Record the parent */
         theParent = pParent;
-
-        /* Record the id */
-        theId = pFactory.getNextId();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -100,6 +93,14 @@ public abstract class PrometheusItemActions<N, I>
         PrometheusIcon.configureEditIconButton(theEditButton);
         PrometheusIcon.configureDeleteIconButton(theDeleteButton);
 
+        /* Create the panel */
+        thePanel = pFactory.newVBoxPane();
+
+        /* Create the layout */
+        thePanel.addNode(theGoToButton);
+        thePanel.addNode(theEditButton);
+        thePanel.addNode(theDeleteButton);
+
         /* Add the listener for item changes */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theGoToButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theEventManager.fireEvent(PrometheusUIEvent.BUILDGOTO, e.getDetails()));
@@ -112,8 +113,13 @@ public abstract class PrometheusItemActions<N, I>
     }
 
     @Override
+    public N getNode() {
+        return thePanel.getNode();
+    }
+
+    @Override
     public Integer getId() {
-        return theId;
+        return thePanel.getId();
     }
 
     @Override
@@ -121,34 +127,12 @@ public abstract class PrometheusItemActions<N, I>
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Obtain the goTo button.
-     * @return the button
-     */
-    protected TethysScrollButtonManager<PrometheusGoToEvent, N, I> getGoToButton() {
-        return theGoToButton;
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
-    /**
-     * Obtain the undo button.
-     * @return the button
-     */
-    protected TethysButton<N, I> getEditButton() {
-        return theEditButton;
-    }
-
-    /**
-     * Obtain the reset button.
-     * @return the button
-     */
-    protected TethysButton<N, I> getDeleteButton() {
-        return theDeleteButton;
-    }
-
-    /**
-     * Set enabled.
-     * @param bEnabled the enabled status
-     */
+    @Override
     public void setEnabled(final boolean bEnabled) {
         /* If the table is locked clear the buttons */
         if (!bEnabled) {

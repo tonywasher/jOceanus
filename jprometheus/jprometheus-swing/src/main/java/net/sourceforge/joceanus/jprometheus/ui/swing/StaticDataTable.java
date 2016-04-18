@@ -25,7 +25,9 @@ package net.sourceforge.joceanus.jprometheus.ui.swing;
 import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -41,6 +43,7 @@ import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -102,7 +105,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * The Panel.
      */
-    private final TethysSwingEnablePanel thePanel;
+    private final JPanel thePanel;
 
     /**
      * The new button.
@@ -152,7 +155,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * The Error panel.
      */
-    private final PrometheusSwingErrorPanel theError;
+    private final PrometheusErrorPanel<JComponent, Icon> theError;
 
     /**
      * Constructor.
@@ -166,7 +169,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     public StaticDataTable(final DataControl<?, E> pControl,
                            final UpdateSet<E> pUpdateSet,
                            final JOceanusSwingUtilitySet pUtilitySet,
-                           final PrometheusSwingErrorPanel pError,
+                           final PrometheusErrorPanel<JComponent, Icon> pError,
                            final E pItemType,
                            final Class<L> pListClass) {
         /* initialise the underlying class */

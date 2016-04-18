@@ -166,7 +166,7 @@ public abstract class PrometheusIcons {
      * @return the scroll button
      */
     public static <T> JScrollButton<T> getNewScrollButton() {
-        JScrollButton<T> myButton = new JScrollButton<T>(ICON_NEW);
+        JScrollButton<T> myButton = new JScrollButton<>(ICON_NEW);
         myButton.setToolTipText(TIP_NEW);
         return myButton;
     }

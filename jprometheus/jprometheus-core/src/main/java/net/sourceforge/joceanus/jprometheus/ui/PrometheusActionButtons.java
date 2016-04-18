@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
  * @param <N> the node type
  * @param <I> the icon type
  */
-public abstract class PrometheusActionButtons<N, I>
+public class PrometheusActionButtons<N, I>
         implements TethysEventProvider<PrometheusUIEvent>, TethysNode<N> {
     /**
      * Strut width.
@@ -46,7 +46,7 @@ public abstract class PrometheusActionButtons<N, I>
     /**
      * Text for Box Title.
      */
-    protected static final String NLS_TITLE = PrometheusUIResource.ACTION_TITLE_SAVE.getValue();
+    private static final String NLS_TITLE = PrometheusUIResource.ACTION_TITLE_SAVE.getValue();
 
     /**
      * The Event Manager.
@@ -82,11 +82,21 @@ public abstract class PrometheusActionButtons<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      * @param pUpdateSet the update set
+     */
+    public PrometheusActionButtons(final TethysGuiFactory<N, I> pFactory,
+                                   final UpdateSet<?> pUpdateSet) {
+        this(pFactory, pUpdateSet, true);
+    }
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI factory
+     * @param pUpdateSet the update set
      * @param pHorizontal is this horizontal panel?
      */
-    protected PrometheusActionButtons(final TethysGuiFactory<N, I> pFactory,
-                                      final UpdateSet<?> pUpdateSet,
-                                      final boolean pHorizontal) {
+    public PrometheusActionButtons(final TethysGuiFactory<N, I> pFactory,
+                                   final UpdateSet<?> pUpdateSet,
+                                   final boolean pHorizontal) {
         /* Record the update set */
         theUpdateSet = pUpdateSet;
 
@@ -117,9 +127,9 @@ public abstract class PrometheusActionButtons<N, I>
         if (!pHorizontal) {
             thePanel.addNode(pFactory.newLabel(NLS_TITLE));
         }
-        thePanel.addNode(getCommitButton());
-        thePanel.addNode(getUndoButton());
-        thePanel.addNode(getResetButton());
+        thePanel.addNode(theCommitButton);
+        thePanel.addNode(theUndoButton);
+        thePanel.addNode(theResetButton);
 
         /* Set border if required */
         if (pHorizontal) {
@@ -143,30 +153,6 @@ public abstract class PrometheusActionButtons<N, I>
     @Override
     public TethysEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
-    }
-
-    /**
-     * Obtain the commit button.
-     * @return the button
-     */
-    protected TethysButton<N, I> getCommitButton() {
-        return theCommitButton;
-    }
-
-    /**
-     * Obtain the undo button.
-     * @return the button
-     */
-    protected TethysButton<N, I> getUndoButton() {
-        return theUndoButton;
-    }
-
-    /**
-     * Obtain the reset button.
-     * @return the button
-     */
-    protected TethysButton<N, I> getResetButton() {
-        return theResetButton;
     }
 
     @Override

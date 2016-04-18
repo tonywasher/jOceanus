@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jprometheus.ui;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -34,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
  * @param <N> the node type
  * @param <I> the icon type
  */
-public abstract class PrometheusItemEditActions<N, I>
+public class PrometheusItemEditActions<N, I>
         implements TethysEventProvider<PrometheusUIEvent>, TethysNode<N> {
     /**
      * ItemEditParent interface.
@@ -72,14 +73,9 @@ public abstract class PrometheusItemEditActions<N, I>
     }
 
     /**
-     * Strut width.
+     * The panel.
      */
-    protected static final int STRUT_HEIGHT = PrometheusActionButtons.STRUT_LENGTH;
-
-    /**
-     * The Id.
-     */
-    private final Integer theId;
+    private final TethysBoxPaneManager<N, I> thePanel;
 
     /**
      * The Event Manager.
@@ -116,13 +112,10 @@ public abstract class PrometheusItemEditActions<N, I>
      * @param pFactory the GUI factory
      * @param pParent the parent
      */
-    protected PrometheusItemEditActions(final TethysGuiFactory<N, I> pFactory,
-                                        final PrometheusItemEditParent pParent) {
+    public PrometheusItemEditActions(final TethysGuiFactory<N, I> pFactory,
+                                     final PrometheusItemEditParent pParent) {
         /* Record the parent */
         theParent = pParent;
-
-        /* Record the id */
-        theId = pFactory.getNextId();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -139,6 +132,15 @@ public abstract class PrometheusItemEditActions<N, I>
         PrometheusIcon.configureResetIconButton(theResetButton);
         PrometheusIcon.configureCancelIconButton(theCancelButton);
 
+        /* Create the panel */
+        thePanel = pFactory.newVBoxPane();
+
+        /* Create the layout */
+        thePanel.addNode(theCommitButton);
+        thePanel.addNode(theUndoButton);
+        thePanel.addNode(theResetButton);
+        thePanel.addNode(theCancelButton);
+
         /* Add the listener for item changes */
         theCommitButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.OK));
         theUndoButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.UNDO));
@@ -151,7 +153,7 @@ public abstract class PrometheusItemEditActions<N, I>
 
     @Override
     public Integer getId() {
-        return theId;
+        return thePanel.getId();
     }
 
     @Override
@@ -159,42 +161,17 @@ public abstract class PrometheusItemEditActions<N, I>
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Obtain the commit button.
-     * @return the button
-     */
-    protected TethysButton<N, I> getCommitButton() {
-        return theCommitButton;
+    @Override
+    public N getNode() {
+        return thePanel.getNode();
     }
 
-    /**
-     * Obtain the undo button.
-     * @return the button
-     */
-    protected TethysButton<N, I> getUndoButton() {
-        return theUndoButton;
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePanel.setVisible(pVisible);
     }
 
-    /**
-     * Obtain the reset button.
-     * @return the button
-     */
-    protected TethysButton<N, I> getResetButton() {
-        return theResetButton;
-    }
-
-    /**
-     * Obtain the cancel button.
-     * @return the button
-     */
-    protected TethysButton<N, I> getCancelButton() {
-        return theCancelButton;
-    }
-
-    /**
-     * Set enabled.
-     * @param bEnabled the enabled status
-     */
+    @Override
     public void setEnabled(final boolean bEnabled) {
         /* If the table is locked clear the buttons */
         if (!bEnabled) {

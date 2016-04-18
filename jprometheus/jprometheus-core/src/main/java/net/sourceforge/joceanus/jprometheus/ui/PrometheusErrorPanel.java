@@ -33,32 +33,48 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Error panel.
  * @param <N> the node type
+ * @param <I> the icon type
  */
-public abstract class PrometheusErrorPanel<N>
-        implements ErrorDisplay, TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Strut width.
-     */
-    protected static final int STRUT_WIDTH = 10;
-
+public class PrometheusErrorPanel<N, I>
+        implements ErrorDisplay, TethysEventProvider<PrometheusDataEvent>, TethysNode<N> {
     /**
      * Text for Clear Button.
      */
-    protected static final String NLS_CLEAR = PrometheusUIResource.ERROR_BUTTON_CLEAR.getValue();
+    private static final String NLS_CLEAR = PrometheusUIResource.ERROR_BUTTON_CLEAR.getValue();
 
     /**
      * Text for Box title.
      */
-    protected static final String NLS_TITLE = PrometheusUIResource.ERROR_TITLE.getValue();
+    private static final String NLS_TITLE = PrometheusUIResource.ERROR_TITLE.getValue();
 
     /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
+     * The Panel.
+     */
+    private final TethysBoxPaneManager<N, I> thePanel;
+
+    /**
+     * The error field.
+     */
+    private final TethysLabel<N, I> theErrorField;
+
+    /**
+     * The clear button.
+     */
+    private final TethysButton<N, I> theClearButton;
 
     /**
      * The data entry for the error.
@@ -72,11 +88,13 @@ public abstract class PrometheusErrorPanel<N>
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      * @param pManager the data manager
      * @param pParent the parent data entry
      */
-    protected PrometheusErrorPanel(final MetisViewerManager pManager,
-                                   final MetisViewerEntry pParent) {
+    public PrometheusErrorPanel(final TethysGuiFactory<N, I> pFactory,
+                                final MetisViewerManager pManager,
+                                final MetisViewerEntry pParent) {
         /* Create the error debug entry for this view */
         theDataError = pManager.newEntry(DataControl.DATA_ERROR);
         theDataError.addAsChildOf(pParent);
@@ -88,6 +106,38 @@ public abstract class PrometheusErrorPanel<N>
         /* Create the error list */
         theErrors = new DataErrorList<>();
         theDataError.setObject(theErrors);
+
+        /* Create the error field */
+        theErrorField = pFactory.newLabel();
+
+        /* Create the clear button */
+        theClearButton = pFactory.newButton();
+        theClearButton.setTextOnly();
+        theClearButton.setText(NLS_CLEAR);
+
+        /* Add the listener for item changes */
+        theClearButton.getEventRegistrar().addEventListener(e -> clearErrors());
+
+        /* Create the error panel */
+        thePanel = pFactory.newHBoxPane();
+        thePanel.setBorderTitle(NLS_TITLE);
+
+        /* Define the layout */
+        thePanel.addNode(theClearButton);
+        thePanel.addNode(theErrorField);
+
+        /* Set the Error panel to be red and invisible */
+        thePanel.setVisible(false);
+    }
+
+    @Override
+    public Integer getId() {
+        return thePanel.getId();
+    }
+
+    @Override
+    public N getNode() {
+        return thePanel.getNode();
     }
 
     @Override
@@ -95,11 +145,16 @@ public abstract class PrometheusErrorPanel<N>
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    public abstract N getNode();
+    @Override
+    public void setVisible(final boolean bVisible) {
+        thePanel.setVisible(bVisible);
+    }
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Pass on to important elements */
+        theClearButton.setEnabled(bEnabled);
+    }
 
     /**
      * Do we have an error?
@@ -134,7 +189,13 @@ public abstract class PrometheusErrorPanel<N>
      * Set error text for window.
      * @param pText the text
      */
-    protected abstract void setErrorText(final String pText);
+    private void setErrorText(final String pText) {
+        /* Set the string for the error field */
+        theErrorField.setText(pText);
+
+        /* Make the panel visible */
+        thePanel.setVisible(true);
+    }
 
     @Override
     public void setErrors(final DataErrorList<MetisExceptionWrapper> pExceptions) {
@@ -178,16 +239,4 @@ public abstract class PrometheusErrorPanel<N>
         /* Notify listeners */
         theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
-
-    /**
-     * Set visible status.
-     * @param bVisible true/false
-     */
-    public abstract void setVisible(final boolean bVisible);
-
-    /**
-     * Set enabled status.
-     * @param bEnabled true/false
-     */
-    public abstract void setEnabled(final boolean bEnabled);
 }

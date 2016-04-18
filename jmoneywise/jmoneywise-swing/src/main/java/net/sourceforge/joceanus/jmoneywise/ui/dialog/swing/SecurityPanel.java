@@ -25,6 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog.swing;
 import java.awt.GridLayout;
 import java.util.Iterator;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -53,7 +55,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
@@ -131,7 +133,7 @@ public class SecurityPanel
                          final View pView,
                          final MetisFieldManager pFieldMgr,
                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                         final PrometheusSwingErrorPanel pError) {
+                         final PrometheusErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 

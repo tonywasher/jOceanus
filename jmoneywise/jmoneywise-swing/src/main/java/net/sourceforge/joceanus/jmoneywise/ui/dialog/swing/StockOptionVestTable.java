@@ -25,7 +25,9 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog.swing;
 import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -44,12 +46,12 @@ import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest.StockOptionVestList;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -91,12 +93,12 @@ public class StockOptionVestTable
     /**
      * The error panel.
      */
-    private final PrometheusSwingErrorPanel theError;
+    private final PrometheusErrorPanel<JComponent, Icon> theError;
 
     /**
      * The panel.
      */
-    private final TethysSwingEnablePanel thePanel;
+    private final JPanel thePanel;
 
     /**
      * The Table Model.
@@ -138,7 +140,7 @@ public class StockOptionVestTable
     protected StockOptionVestTable(final TethysSwingGuiFactory pFactory,
                                    final MetisFieldManager pFieldMgr,
                                    final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                   final PrometheusSwingErrorPanel pError) {
+                                   final PrometheusErrorPanel<JComponent, Icon> pError) {
         /* initialise the underlying class */
         super(pFactory);
 

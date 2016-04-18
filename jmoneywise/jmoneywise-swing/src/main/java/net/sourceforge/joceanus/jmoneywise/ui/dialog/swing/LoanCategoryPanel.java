@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog.swing;
 
 import java.util.Iterator;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -40,7 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType.LoanCategoryTypeList;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -88,7 +90,7 @@ public class LoanCategoryPanel
     public LoanCategoryPanel(final TethysSwingGuiFactory pFactory,
                              final MetisFieldManager pFieldMgr,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                             final PrometheusSwingErrorPanel pError) {
+                             final PrometheusErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 

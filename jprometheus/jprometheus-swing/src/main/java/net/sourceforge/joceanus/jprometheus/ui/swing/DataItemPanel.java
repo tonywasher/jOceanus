@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jprometheus.ui.swing;
 import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
@@ -35,7 +36,10 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemActions;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
@@ -110,7 +114,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * The ErrorPanel.
      */
-    private final PrometheusSwingErrorPanel theError;
+    private final PrometheusErrorPanel<JComponent, Icon> theError;
 
     /**
      * The MainPanel.
@@ -120,12 +124,12 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * The Item Actions.
      */
-    private final PrometheusSwingItemActions theItemActions;
+    private final PrometheusItemActions<JComponent, Icon> theItemActions;
 
     /**
      * The Item Actions.
      */
-    private final PrometheusSwingItemEditActions theEditActions;
+    private final PrometheusItemEditActions<JComponent, Icon> theEditActions;
 
     /**
      * The Item.
@@ -163,7 +167,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     protected DataItemPanel(final TethysSwingGuiFactory pFactory,
                             final MetisFieldManager pFieldMgr,
                             final UpdateSet<E> pUpdateSet,
-                            final PrometheusSwingErrorPanel pError) {
+                            final PrometheusErrorPanel<JComponent, Icon> pError) {
         /* Store parameters */
         theUpdateSet = pUpdateSet;
         theError = pError;
@@ -186,8 +190,8 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
 
         /* create the action panels */
-        theItemActions = new PrometheusSwingItemActions(pFactory, this);
-        theEditActions = new PrometheusSwingItemEditActions(pFactory, this);
+        theItemActions = new PrometheusItemActions<>(pFactory, this);
+        theEditActions = new PrometheusItemEditActions<>(pFactory, this);
 
         /* Create listener */
         theUpdateSet.getEventRegistrar().addEventListener(e -> refreshAfterUpdate());

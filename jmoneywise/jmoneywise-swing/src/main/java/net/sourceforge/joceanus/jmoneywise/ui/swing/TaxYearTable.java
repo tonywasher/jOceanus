@@ -26,6 +26,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -50,6 +51,8 @@ import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TaxYearPanel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -58,8 +61,6 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
@@ -68,6 +69,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * TaxYear Table.
@@ -122,12 +124,12 @@ public class TaxYearTable
     /**
      * The error panel.
      */
-    private final PrometheusSwingErrorPanel theError;
+    private final PrometheusErrorPanel<JComponent, Icon> theError;
 
     /**
      * Action Buttons.
      */
-    private final PrometheusSwingActionButtons theActionButtons;
+    private final PrometheusActionButtons<JComponent, Icon> theActionButtons;
 
     /**
      * The data entry.
@@ -142,7 +144,7 @@ public class TaxYearTable
     /**
      * The panel.
      */
-    private final TethysSwingEnablePanel thePanel;
+    private final JPanel thePanel;
 
     /**
      * The TaxYear dialog.
@@ -167,6 +169,9 @@ public class TaxYearTable
         /* initialise the underlying class */
         super(pView.getUtilitySet().getGuiFactory());
 
+        /* Access the GUI Factory */
+        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+
         /* Record the view */
         theView = pView;
         theFieldMgr = theView.getFieldManager();
@@ -186,10 +191,10 @@ public class TaxYearTable
         theDataEntry.setObject(theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new PrometheusSwingErrorPanel(myDataMgr, theDataEntry);
+        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, theDataEntry);
 
         /* Create the action buttons */
-        theActionButtons = new PrometheusSwingActionButtons(pView.getUtilitySet().getGuiFactory(), theUpdateSet, false);
+        theActionButtons = new PrometheusActionButtons<>(pView.getUtilitySet().getGuiFactory(), theUpdateSet, false);
 
         /* Create the table model */
         TaxYearTableModel myModel = new TaxYearTableModel(this);
@@ -220,7 +225,7 @@ public class TaxYearTable
         thePanel.add(myMain, BorderLayout.CENTER);
 
         /* Create a TaxYear panel */
-        theActiveYear = new TaxYearPanel(pView.getUtilitySet().getGuiFactory(), theFieldMgr, theUpdateSet, theError);
+        theActiveYear = new TaxYearPanel(myFactory, theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveYear.getNode(), BorderLayout.PAGE_END);
 
         /* Hide the action buttons initially */

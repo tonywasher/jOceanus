@@ -26,10 +26,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
+import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -57,6 +56,7 @@ import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.LoanPanel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -65,13 +65,14 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
@@ -152,7 +153,7 @@ public class LoanTable
     /**
      * The error panel.
      */
-    private final PrometheusSwingErrorPanel theError;
+    private final PrometheusErrorPanel<JComponent, Icon> theError;
 
     /**
      * The Table Model.
@@ -167,17 +168,17 @@ public class LoanTable
     /**
      * The panel.
      */
-    private final TethysSwingEnablePanel thePanel;
+    private final JPanel thePanel;
 
     /**
      * The filter panel.
      */
-    private final TethysSwingEnablePanel theFilterPanel;
+    private final TethysSwingBoxPaneManager theFilterPanel;
 
     /**
      * The locked check box.
      */
-    private final JCheckBox theLockedCheckBox;
+    private final TethysSwingCheckBox theLockedCheckBox;
 
     /**
      * The new button.
@@ -207,9 +208,12 @@ public class LoanTable
      */
     public LoanTable(final SwingView pView,
                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                     final PrometheusSwingErrorPanel pError) {
+                     final PrometheusErrorPanel<JComponent, Icon> pError) {
         /* initialise the underlying class */
         super(pView.getUtilitySet().getGuiFactory());
+
+        /* Access the GUI Factory */
+        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
 
         /* Record the passed details */
         theView = pView;
@@ -240,21 +244,18 @@ public class LoanTable
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the CheckBox */
-        theLockedCheckBox = new JCheckBox(PROMPT_CLOSED);
+        theLockedCheckBox = myFactory.newCheckBox(PROMPT_CLOSED);
 
         /* Create new button */
-        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
         theNewButton = myFactory.newButton();
         PrometheusIcon.configureNewIconButton(theNewButton);
 
         /* Create the filter panel */
-        theFilterPanel = new TethysSwingEnablePanel();
-        theFilterPanel.setLayout(new BoxLayout(theFilterPanel, BoxLayout.X_AXIS));
-        theFilterPanel.add(Box.createHorizontalGlue());
-        theFilterPanel.add(theLockedCheckBox);
-        theFilterPanel.add(Box.createHorizontalGlue());
-        theFilterPanel.add(theNewButton.getNode());
-        theFilterPanel.add(Box.createRigidArea(new Dimension(AccountPanel.STRUT_WIDTH, 0)));
+        theFilterPanel = myFactory.newHBoxPane();
+        theFilterPanel.addSpacer();
+        theFilterPanel.addNode(theLockedCheckBox);
+        theFilterPanel.addSpacer();
+        theFilterPanel.addNode(theNewButton);
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
@@ -275,7 +276,7 @@ public class LoanTable
 
         /* Listen to swing events */
         theNewButton.getEventRegistrar().addEventListener(e -> theModel.addNewItem());
-        theLockedCheckBox.addItemListener(e -> setShowAll(theLockedCheckBox.isSelected()));
+        theLockedCheckBox.getEventRegistrar().addEventListener(e -> setShowAll(theLockedCheckBox.isSelected()));
     }
 
     @Override
@@ -287,7 +288,7 @@ public class LoanTable
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected TethysSwingEnablePanel getFilterPanel() {
+    protected TethysSwingBoxPaneManager getFilterPanel() {
         return theFilterPanel;
     }
 

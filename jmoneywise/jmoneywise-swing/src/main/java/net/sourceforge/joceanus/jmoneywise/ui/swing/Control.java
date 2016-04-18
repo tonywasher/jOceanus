@@ -30,12 +30,14 @@ import java.awt.Graphics2D;
 import java.awt.SplashScreen;
 import java.util.Properties;
 
-import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import javax.swing.SwingUtilities;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Main entry point for program.
@@ -146,11 +148,6 @@ public final class Control {
         renderSplashFrame();
 
         /* Build the GUI */
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI(myProfile);
-            }
-        });
+        SwingUtilities.invokeLater(() -> createAndShowGUI(myProfile));
     }
 }

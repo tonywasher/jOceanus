@@ -22,19 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
+import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldEnum;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
@@ -44,6 +37,8 @@ import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
@@ -58,9 +53,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCardPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
@@ -70,11 +68,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
  */
 public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
-    /**
-     * Strut width.
-     */
-    private static final int STRUT_WIDTH = 5;
-
     /**
      * Text for DataEntry Title.
      */
@@ -96,11 +89,6 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     private static final String NLS_DISABLED = PrometheusUIResource.STATIC_PROMPT_DISABLED.getValue();
 
     /**
-     * The Id.
-     */
-    private final Integer theId;
-
-    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
@@ -118,12 +106,12 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     /**
      * The Panel.
      */
-    private final JPanel thePanel;
+    private final TethysSwingBorderPaneManager thePanel;
 
     /**
      * The Selection Panel.
      */
-    private final JPanel theSelectionPanel;
+    private final TethysSwingBorderPaneManager theSelectionPanel;
 
     /**
      * The table card panel.
@@ -148,17 +136,17 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     /**
      * The disabled check box.
      */
-    private final JCheckBox theDisabledCheckBox;
+    private final TethysSwingCheckBox theDisabledCheckBox;
 
     /**
      * The error panel.
      */
-    private final PrometheusSwingErrorPanel theError;
+    private final PrometheusErrorPanel<JComponent, Icon> theError;
 
     /**
      * The action buttons panel.
      */
-    private final PrometheusSwingActionButtons theActionButtons;
+    private final PrometheusActionButtons<JComponent, Icon> theActionButtons;
 
     /**
      * The UpdateSet.
@@ -188,15 +176,14 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theControl = pControl;
         theUtilitySet = pUtilitySet;
 
-        /* Obtain GUI Factory and set id */
-        TethysSwingGuiFactory myGuiFactory = pUtilitySet.getGuiFactory();
-        theId = myGuiFactory.getNextId();
+        /* Obtain GUI Factory */
+        TethysSwingGuiFactory myFactory = pUtilitySet.getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the Panel */
-        thePanel = new TethysSwingEnablePanel();
+        thePanel = myFactory.newBorderPane();
 
         /* Build the Update set */
         theUpdateSet = new UpdateSet<>(pControl, pClass);
@@ -209,60 +196,50 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theDataEntry.setObject(theUpdateSet);
 
         /* Create the error panel */
-        theError = new PrometheusSwingErrorPanel(myDataMgr, theDataEntry);
+        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, theDataEntry);
 
         /* Create the action buttons panel */
-        theActionButtons = new PrometheusSwingActionButtons(myGuiFactory, theUpdateSet);
+        theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
 
         /* Create the panel list */
         thePanels = new ArrayList<>();
 
         /* Create selection button and label */
-        JLabel myLabel = new JLabel(NLS_DATA);
-        theSelectButton = myGuiFactory.newScrollButton();
+        TethysSwingLabel myLabel = myFactory.newLabel(NLS_DATA);
+        theSelectButton = myFactory.newScrollButton();
 
         /* Create the CheckBox */
-        theDisabledCheckBox = new JCheckBox(NLS_DISABLED);
+        theDisabledCheckBox = myFactory.newCheckBox(NLS_DISABLED);
 
         /* Create the selection panel */
-        theSelectionPanel = new TethysSwingEnablePanel();
-        theSelectionPanel.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
-        theSelectionPanel.setLayout(new BorderLayout());
-
-        /* Create the standard strut */
-        Dimension myStrutSize = new Dimension(STRUT_WIDTH, 0);
+        theSelectionPanel = myFactory.newBorderPane();
+        theSelectionPanel.setBorderTitle(NLS_SELECT);
 
         /* Create the new card panel */
-        theNewCard = myGuiFactory.newCardPane();
+        theNewCard = myFactory.newCardPane();
 
         /* Create the layout for the selection panel */
-        JPanel mySubPanel = new TethysSwingEnablePanel();
-        mySubPanel.setLayout(new BoxLayout(mySubPanel, BoxLayout.X_AXIS));
-        mySubPanel.add(Box.createRigidArea(myStrutSize));
-        mySubPanel.add(myLabel);
-        mySubPanel.add(Box.createRigidArea(myStrutSize));
-        mySubPanel.add(theSelectButton.getNode());
-        mySubPanel.add(Box.createRigidArea(myStrutSize));
-        mySubPanel.add(Box.createHorizontalGlue());
-        mySubPanel.add(theDisabledCheckBox);
-        mySubPanel.add(Box.createHorizontalGlue());
-        theSelectionPanel.add(mySubPanel, BorderLayout.CENTER);
-        theSelectionPanel.add(theNewCard.getNode(), BorderLayout.LINE_END);
+        TethysSwingBoxPaneManager mySubPanel = myFactory.newHBoxPane();
+        mySubPanel.addNode(myLabel);
+        mySubPanel.addNode(theSelectButton);
+        mySubPanel.addSpacer();
+        mySubPanel.addNode(theDisabledCheckBox);
+        mySubPanel.addSpacer();
+        theSelectionPanel.setCentre(mySubPanel);
+        theSelectionPanel.setEast(theNewCard);
 
         /* Create the header panel */
-        JPanel myHeader = new TethysSwingEnablePanel();
-        myHeader.setLayout(new BorderLayout());
-        myHeader.add(theSelectionPanel, BorderLayout.CENTER);
-        myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
-        myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
+        TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
+        myHeader.setCentre(theSelectionPanel);
+        myHeader.setNorth(theError);
+        myHeader.setEast(theActionButtons);
 
         /* Create the table card panel */
-        theTableCard = myGuiFactory.newCardPane();
+        theTableCard = myFactory.newCardPane();
 
         /* Now define the panel */
-        thePanel.setLayout(new BorderLayout());
-        thePanel.add(myHeader, BorderLayout.PAGE_START);
-        thePanel.add(theTableCard.getNode(), BorderLayout.CENTER);
+        thePanel.setNorth(myHeader);
+        thePanel.setCentre(theTableCard);
 
         /* Set visibility of new button */
         showNewButton();
@@ -274,7 +251,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handlePanelSelection());
         myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildDataMenu());
-        theDisabledCheckBox.addItemListener(e -> showDisabled(theDisabledCheckBox.isSelected()));
+        theDisabledCheckBox.getEventRegistrar().addEventListener(e -> showDisabled(theDisabledCheckBox.isSelected()));
         theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
         theError.getEventRegistrar().addEventListener(e -> handleErrorPanel());
         theDataMenu = theSelectButton.getMenu();
@@ -282,7 +259,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
 
     @Override
     public Integer getId() {
-        return theId;
+        return thePanel.getId();
     }
 
     @Override
@@ -292,7 +269,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
 
     @Override
     public JComponent getNode() {
-        return thePanel;
+        return thePanel.getNode();
     }
 
     @Override

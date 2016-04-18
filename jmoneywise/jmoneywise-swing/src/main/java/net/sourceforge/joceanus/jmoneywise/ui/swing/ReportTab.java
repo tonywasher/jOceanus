@@ -56,8 +56,8 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseReportSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -129,7 +129,7 @@ public class ReportTab
     /**
      * The Error Panel.
      */
-    private final PrometheusSwingErrorPanel theError;
+    private final PrometheusErrorPanel<JComponent, Icon> theError;
 
     /**
      * The Report Manager.
@@ -187,7 +187,7 @@ public class ReportTab
         theSelect = new MoneyWiseReportSelect<>(myFactory);
 
         /* Create the error panel for this view */
-        theError = new PrometheusSwingErrorPanel(myDataMgr, myDataReport);
+        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, myDataReport);
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();

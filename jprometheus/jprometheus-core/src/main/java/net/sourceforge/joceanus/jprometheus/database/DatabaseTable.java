@@ -433,7 +433,6 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
 
                 /* Execute the insert */
                 execute();
-                myCurr = null;
 
                 /* If we have no further space in the batch */
                 if (pBatch.isFull()) {

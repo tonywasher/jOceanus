@@ -53,14 +53,14 @@ import net.sourceforge.joceanus.jmoneywise.views.SpotExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.views.SpotExchangeRate.SpotExchangeList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.YQLDownloader;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
@@ -134,11 +134,6 @@ public class SpotRatesTable
     private final UpdateEntry<SpotExchangeRate, MoneyWiseDataType> theUpdateEntry;
 
     /**
-     * The exchange rates list.
-     */
-    private SpotExchangeList theRates;
-
-    /**
      * Table Model.
      */
     private final SpotViewModel theModel;
@@ -146,17 +141,12 @@ public class SpotRatesTable
     /**
      * The panel.
      */
-    private final TethysSwingEnablePanel thePanel;
+    private final JPanel thePanel;
 
     /**
      * The column model.
      */
     private final SpotViewColumnModel theColumns;
-
-    /**
-     * The selected date.
-     */
-    private TethysDate theDate;
 
     /**
      * The SpotRates selection panel.
@@ -166,7 +156,7 @@ public class SpotRatesTable
     /**
      * The action buttons.
      */
-    private final PrometheusSwingActionButtons theActionButtons;
+    private final PrometheusActionButtons<JComponent, Icon> theActionButtons;
 
     /**
      * The data entry.
@@ -176,7 +166,17 @@ public class SpotRatesTable
     /**
      * The error panel.
      */
-    private final PrometheusSwingErrorPanel theError;
+    private final PrometheusErrorPanel<JComponent, Icon> theError;
+
+    /**
+     * The exchange rates list.
+     */
+    private SpotExchangeList theRates;
+
+    /**
+     * The selected date.
+     */
+    private TethysDate theDate;
 
     /**
      * Constructor.
@@ -222,10 +222,10 @@ public class SpotRatesTable
         /* Create the sub panels */
         TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
         theSelect = new MoneyWiseSpotRatesSelect<>(myFactory, theView);
-        theActionButtons = new PrometheusSwingActionButtons(myFactory, theUpdateSet);
+        theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new PrometheusSwingErrorPanel(myDataMgr, theDataPrice);
+        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, theDataPrice);
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();

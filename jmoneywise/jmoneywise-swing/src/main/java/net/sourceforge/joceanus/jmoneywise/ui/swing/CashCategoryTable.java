@@ -27,10 +27,9 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.util.Iterator;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
@@ -54,6 +53,7 @@ import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.CashCategoryPanel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -62,7 +62,6 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -72,9 +71,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
@@ -140,7 +141,7 @@ public class CashCategoryTable
     /**
      * The error panel.
      */
-    private final PrometheusSwingErrorPanel theError;
+    private final PrometheusErrorPanel<JComponent, Icon> theError;
 
     /**
      * The table model.
@@ -155,12 +156,12 @@ public class CashCategoryTable
     /**
      * The panel.
      */
-    private final TethysSwingEnablePanel thePanel;
+    private final JPanel thePanel;
 
     /**
      * The filter panel.
      */
-    private final TethysSwingEnablePanel theFilterPanel;
+    private final TethysSwingBoxPaneManager theFilterPanel;
 
     /**
      * The select button.
@@ -205,7 +206,7 @@ public class CashCategoryTable
      */
     public CashCategoryTable(final SwingView pView,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                             final PrometheusSwingErrorPanel pError) {
+                             final PrometheusErrorPanel<JComponent, Icon> pError) {
         /* initialise the underlying class */
         super(pView.getUtilitySet().getGuiFactory());
 
@@ -242,20 +243,17 @@ public class CashCategoryTable
         PrometheusIcon.configureNewIconButton(theNewButton);
 
         /* Create the filter components */
-        JLabel myPrompt = new JLabel(TITLE_FILTER);
+        TethysSwingLabel myPrompt = myFactory.newLabel(TITLE_FILTER);
         theSelectButton = myFactory.newScrollButton();
         theSelectButton.setValue(null, FILTER_PARENTS);
 
         /* Create the filter panel */
-        theFilterPanel = new TethysSwingEnablePanel();
-        theFilterPanel.setLayout(new BoxLayout(theFilterPanel, BoxLayout.X_AXIS));
-        theFilterPanel.add(Box.createHorizontalGlue());
-        theFilterPanel.add(myPrompt);
-        theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
-        theFilterPanel.add(theSelectButton.getNode());
-        theFilterPanel.add(Box.createHorizontalGlue());
-        theFilterPanel.add(theNewButton.getNode());
-        theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
+        theFilterPanel = myFactory.newHBoxPane();
+        theFilterPanel.addSpacer();
+        theFilterPanel.addNode(myPrompt);
+        theFilterPanel.addNode(theSelectButton);
+        theFilterPanel.addSpacer();
+        theFilterPanel.addNode(theNewButton);
 
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
@@ -294,7 +292,7 @@ public class CashCategoryTable
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected TethysSwingEnablePanel getFilterPanel() {
+    protected TethysSwingBoxPaneManager getFilterPanel() {
         return theFilterPanel;
     }
 

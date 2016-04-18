@@ -22,15 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
@@ -46,11 +39,10 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
-import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -62,9 +54,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCardPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
@@ -93,11 +87,6 @@ public class AccountPanel
     private static final String NLS_DATA = MoneyWiseUIResource.ASSET_PROMPT_SELECT.getValue();
 
     /**
-     * The Id.
-     */
-    private final Integer theId;
-
-    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
@@ -110,7 +99,7 @@ public class AccountPanel
     /**
      * The Panel.
      */
-    private final TethysSwingEnablePanel thePanel;
+    private final TethysSwingBorderPaneManager thePanel;
 
     /**
      * The select button.
@@ -125,17 +114,12 @@ public class AccountPanel
     /**
      * The select panel.
      */
-    private final JPanel theSelectPanel;
+    private final TethysSwingBoxPaneManager theSelectPanel;
 
     /**
      * The filter card panel.
      */
     private final TethysSwingCardPaneManager<TethysNode<JComponent>> theFilterCardPanel;
-
-    /**
-     * The active panel.
-     */
-    private PanelName theActive;
 
     /**
      * Deposit Table.
@@ -185,17 +169,22 @@ public class AccountPanel
     /**
      * The error panel.
      */
-    private final PrometheusSwingErrorPanel theError;
+    private final PrometheusErrorPanel<JComponent, Icon> theError;
 
     /**
      * The action buttons panel.
      */
-    private final PrometheusSwingActionButtons theActionButtons;
+    private final PrometheusActionButtons<JComponent, Icon> theActionButtons;
 
     /**
      * Are we refreshing?
      */
     private boolean isRefreshing;
+
+    /**
+     * The active panel.
+     */
+    private PanelName theActive;
 
     /**
      * Constructor.
@@ -207,7 +196,6 @@ public class AccountPanel
 
         /* Access GUI Factory */
         TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
-        theId = myFactory.getNextId();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -216,7 +204,7 @@ public class AccountPanel
         theUpdateSet = new UpdateSet<>(pView, MoneyWiseDataType.class);
 
         /* Create the Panel */
-        thePanel = new TethysSwingEnablePanel();
+        thePanel = myFactory.newBorderPane();
 
         /* Create the top level debug entry for this view */
         MetisViewerManager myDataMgr = pView.getViewerManager();
@@ -226,10 +214,10 @@ public class AccountPanel
         theDataEntry.setObject(theUpdateSet);
 
         /* Create the error panel */
-        theError = new PrometheusSwingErrorPanel(myDataMgr, theDataEntry);
+        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, theDataEntry);
 
         /* Create the action buttons panel */
-        theActionButtons = new PrometheusSwingActionButtons(myFactory, theUpdateSet);
+        theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
 
         /* Create the table panels */
         thePayeeTable = new PayeeTable(pView, theUpdateSet, theError);
@@ -241,7 +229,7 @@ public class AccountPanel
         theOptionTable = new StockOptionTable(pView, theUpdateSet, theError);
 
         /* Create selection button and label */
-        JLabel myLabel = new JLabel(NLS_DATA);
+        TethysSwingLabel myLabel = myFactory.newLabel(NLS_DATA);
         theSelectButton = myFactory.newScrollButton();
         buildSelectMenu();
 
@@ -272,34 +260,25 @@ public class AccountPanel
         theFilterCardPanel.addCard(PanelName.OPTIONS.toString(), theOptionTable.getFilterPanel());
 
         /* Create the selection panel */
-        theSelectPanel = new TethysSwingEnablePanel();
-        theSelectPanel.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
+        theSelectPanel = myFactory.newHBoxPane();
+        theSelectPanel.setBorderTitle(NLS_SELECT);
 
         /* Create the layout for the selection panel */
-        theSelectPanel.setLayout(new BoxLayout(theSelectPanel, BoxLayout.X_AXIS));
-        theSelectPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        theSelectPanel.add(myLabel);
-        theSelectPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        theSelectPanel.add(theSelectButton.getNode());
-        theSelectPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        theSelectPanel.add(Box.createHorizontalGlue());
-        theSelectPanel.add(theFilterCardPanel.getNode());
-        theSelectPanel.add(Box.createHorizontalGlue());
-        theSelectPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        theSelectPanel.setPreferredSize(new Dimension(JDataTable.WIDTH_PANEL, CategoryPanel.PANEL_PAD));
-        theSelectPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, CategoryPanel.PANEL_PAD));
+        theSelectPanel.addNode(myLabel);
+        theSelectPanel.addNode(theSelectButton);
+        theSelectPanel.addSpacer();
+        theSelectPanel.addNode(theFilterCardPanel);
+        theSelectPanel.addSpacer();
 
         /* Create the header panel */
-        JPanel myHeader = new TethysSwingEnablePanel();
-        myHeader.setLayout(new BorderLayout());
-        myHeader.add(theSelectPanel, BorderLayout.CENTER);
-        myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
-        myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
+        TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
+        myHeader.setCentre(theSelectPanel);
+        myHeader.setNorth(theError);
+        myHeader.setEast(theActionButtons);
 
         /* Now define the panel */
-        thePanel.setLayout(new BorderLayout());
-        thePanel.add(myHeader, BorderLayout.PAGE_START);
-        thePanel.add(theCardPanel.getNode(), BorderLayout.CENTER);
+        thePanel.setNorth(myHeader);
+        thePanel.setCentre(theCardPanel);
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
@@ -319,7 +298,7 @@ public class AccountPanel
 
     @Override
     public Integer getId() {
-        return theId;
+        return thePanel.getId();
     }
 
     @Override
@@ -342,7 +321,7 @@ public class AccountPanel
 
     @Override
     public JComponent getNode() {
-        return thePanel;
+        return thePanel.getNode();
     }
 
     @Override

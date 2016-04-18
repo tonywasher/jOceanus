@@ -47,6 +47,7 @@ public class DataValues<E extends Enum<E>> {
      * Interface for an infoSet item.
      * @param <E> the data type enum class
      */
+    @FunctionalInterface
     public interface InfoSetItem<E extends Enum<E>> {
         /**
          * Obtain infoSet.
@@ -185,7 +186,7 @@ public class DataValues<E extends Enum<E>> {
                         DataInfo<?, ?, ?, ?, E> myItem = (DataInfo<?, ?, ?, ?, E>) myCurr;
 
                         /* Add item to the list */
-                        InfoItem<E> myInfo = new InfoItem<E>(myItem);
+                        InfoItem<E> myInfo = new InfoItem<>(myItem);
                         theInfoItems.add(myInfo);
                     }
                 }

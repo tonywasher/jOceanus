@@ -57,14 +57,14 @@ import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.YQLDownloader;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
@@ -133,11 +133,6 @@ public class SpotPricesTable
     private final UpdateEntry<SpotSecurityPrice, MoneyWiseDataType> theUpdateEntry;
 
     /**
-     * The account price list.
-     */
-    private SpotSecurityList thePrices;
-
-    /**
      * Table Model.
      */
     private final SpotViewModel theModel;
@@ -145,12 +140,37 @@ public class SpotPricesTable
     /**
      * The panel.
      */
-    private final TethysSwingEnablePanel thePanel;
+    private final JPanel thePanel;
 
     /**
      * The column model.
      */
     private final SpotViewColumnModel theColumns;
+
+    /**
+     * The SpotPrices selection panel.
+     */
+    private final MoneyWiseSpotPricesSelect<JComponent, Icon> theSelect;
+
+    /**
+     * The action buttons.
+     */
+    private final PrometheusActionButtons<JComponent, Icon> theActionButtons;
+
+    /**
+     * The data entry.
+     */
+    private final MetisViewerEntry theDataPrice;
+
+    /**
+     * The error panel.
+     */
+    private final PrometheusErrorPanel<JComponent, Icon> theError;
+
+    /**
+     * The account price list.
+     */
+    private SpotSecurityList thePrices;
 
     /**
      * The selected date.
@@ -161,26 +181,6 @@ public class SpotPricesTable
      * The Portfolio.
      */
     private Portfolio thePortfolio;
-
-    /**
-     * The SpotPrices selection panel.
-     */
-    private final MoneyWiseSpotPricesSelect<JComponent, Icon> theSelect;
-
-    /**
-     * The action buttons.
-     */
-    private final PrometheusSwingActionButtons theActionButtons;
-
-    /**
-     * The data entry.
-     */
-    private final MetisViewerEntry theDataPrice;
-
-    /**
-     * The error panel.
-     */
-    private final PrometheusSwingErrorPanel theError;
 
     /**
      * Constructor.
@@ -226,10 +226,10 @@ public class SpotPricesTable
         /* Create the sub panels */
         TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
         theSelect = new MoneyWiseSpotPricesSelect<>(myFactory, theView);
-        theActionButtons = new PrometheusSwingActionButtons(myFactory, theUpdateSet);
+        theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new PrometheusSwingErrorPanel(myDataMgr, theDataPrice);
+        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, theDataPrice);
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();

@@ -25,9 +25,9 @@ package net.sourceforge.joceanus.jmoneywise.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagLis
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TransactionTagPanel;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -54,11 +55,11 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusSwingErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
@@ -106,7 +107,7 @@ public class TransactionTagTable
     /**
      * The error panel.
      */
-    private final PrometheusSwingErrorPanel theError;
+    private final PrometheusErrorPanel<JComponent, Icon> theError;
 
     /**
      * The Table Model.
@@ -121,12 +122,12 @@ public class TransactionTagTable
     /**
      * The panel.
      */
-    private final TethysSwingEnablePanel thePanel;
+    private final JPanel thePanel;
 
     /**
      * The filter panel.
      */
-    private final TethysSwingEnablePanel theFilterPanel;
+    private final TethysSwingBoxPaneManager theFilterPanel;
 
     /**
      * The new button.
@@ -156,7 +157,7 @@ public class TransactionTagTable
      */
     public TransactionTagTable(final SwingView pView,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                               final PrometheusSwingErrorPanel pError) {
+                               final PrometheusErrorPanel<JComponent, Icon> pError) {
         /* initialise the underlying class */
         super(pView.getUtilitySet().getGuiFactory());
 
@@ -202,11 +203,9 @@ public class TransactionTagTable
         thePanel.add(theActiveTag.getNode(), BorderLayout.PAGE_END);
 
         /* Create a dummy filter panel */
-        theFilterPanel = new TethysSwingEnablePanel();
-        theFilterPanel.setLayout(new BoxLayout(theFilterPanel, BoxLayout.X_AXIS));
-        theFilterPanel.add(Box.createHorizontalGlue());
-        theFilterPanel.add(theNewButton.getNode());
-        theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
+        theFilterPanel = myFactory.newHBoxPane();
+        theFilterPanel.addSpacer();
+        theFilterPanel.addNode(theNewButton);
 
         /* Create the selection model */
         theSelectionModel = new JDataTableSelection<>(this, theActiveTag);
@@ -229,7 +228,7 @@ public class TransactionTagTable
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected TethysSwingEnablePanel getFilterPanel() {
+    protected TethysSwingBoxPaneManager getFilterPanel() {
         return theFilterPanel;
     }
 
