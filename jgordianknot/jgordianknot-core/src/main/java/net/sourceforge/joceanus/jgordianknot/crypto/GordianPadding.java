@@ -23,33 +23,31 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 /**
- * Factory Type.
+ * Padding Modes. Available algorithms.
  */
-public enum GordianFactoryType {
+public enum GordianPadding {
     /**
-     * BouncyCastle.
+     * CTS Padding.
      */
-    BC,
-
-    /**
-     * JCA.
-     */
-    JCA;
+    CTS,
 
     /**
-     * The String name.
+     * ISO7816-4 Padding.
      */
-    private String theName;
+    ISO7816D4,
 
-    @Override
-    public String toString() {
-        /* If we have not yet loaded the name */
-        if (theName == null) {
-            /* Load the name */
-            theName = GordianCryptoResource.getKeyForFactoryType(this).getValue();
-        }
+    /**
+     * X9.23 Padding.
+     */
+    X923,
 
-        /* return the name */
-        return theName;
-    }
+    /**
+     * PKCS7 Padding.
+     */
+    PKCS7,
+
+    /**
+     * No Padding.
+     */
+    NONE;
 }

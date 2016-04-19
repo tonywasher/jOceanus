@@ -354,7 +354,9 @@ public final class GordianMultiCipher {
             GordianCipher<GordianSymKeyType> myCipher = getCipher(myKeyType, i);
 
             /* Initialise the cipher */
-            byte[] myIV = getShiftedVector(myKeyType, pIV);
+            byte[] myIV = myCipher.getMode().needsIV()
+                                                       ? getShiftedVector(myKeyType, pIV)
+                                                       : null;
             myCipher.initCipher(theKeyMap.get(myKeyType), myIV, pEncrypt);
 
             /* Place into correct location */
@@ -604,12 +606,12 @@ public final class GordianMultiCipher {
         private final GordianKey<GordianSymKeyType> theKey;
 
         /**
-         * CBC Cipher (padding).
+         * ECB Cipher (padding).
          */
         private final GordianCipher<GordianSymKeyType> theInitCipher;
 
         /**
-         * CBC Cipher (noPadding).
+         * ECB Cipher (noPadding).
          */
         private final GordianCipher<GordianSymKeyType> theMidCipher;
 
@@ -634,9 +636,9 @@ public final class GordianMultiCipher {
             GordianSymKeyType myKeyType = theKey.getKeyType();
 
             /* Create the standard ciphers */
-            theInitCipher = theFactory.createSymKeyCipher(myKeyType, GordianCipherMode.CBC, true);
-            theFinalCipher = theFactory.createSymKeyCipher(myKeyType, GordianCipherMode.SIC, false);
-            theMidCipher = theFactory.createSymKeyCipher(myKeyType, GordianCipherMode.CBC, false);
+            theInitCipher = theFactory.createSymKeyCipher(myKeyType, GordianCipherMode.ECB, GordianPadding.ISO7816D4);
+            theMidCipher = theFactory.createSymKeyCipher(myKeyType, GordianCipherMode.ECB, GordianPadding.NONE);
+            theFinalCipher = theFactory.createSymKeyCipher(myKeyType, GordianCipherMode.SIC, GordianPadding.NONE);
 
             /* Create the wrap cipher */
             theWrapCipher = theFactory.createWrapCipher(myKeyType);

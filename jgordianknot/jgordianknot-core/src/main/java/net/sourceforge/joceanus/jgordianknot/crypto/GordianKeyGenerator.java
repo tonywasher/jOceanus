@@ -145,7 +145,7 @@ public abstract class GordianKeyGenerator<T> {
         myMac.initMac(pSecret);
 
         /* while we need to generate more bytes */
-        ByteArrayInteger mySection = new ByteArrayInteger();
+        GordianByteArrayInteger mySection = new GordianByteArrayInteger();
         while (myBuilt < myKeyLen) {
             /* Build the key part */
             byte[] myKeyPart = buildCipherSection(myMac, mySection.iterate(), pInitVector);

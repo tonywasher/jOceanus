@@ -56,6 +56,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPublicKey;
@@ -562,8 +563,7 @@ public class GordianTestSuite {
             if (mySymKeyPredicate.test(myType)) {
                 GordianKeyGenerator<GordianSymKeyType> mySymGenerator = myFactory.getKeyGenerator(myType);
                 GordianKey<GordianSymKeyType> mySymKey = mySymGenerator.generateKey();
-                GordianCipher<GordianSymKeyType> myCipher = myFactory.createSymKeyCipher(myType, GordianCipherMode.SIC, false);
-                myCipher.initCipher(mySymKey);
+                checkCipherModes(myFactory, mySymKey);
             }
         }
 
@@ -576,5 +576,53 @@ public class GordianTestSuite {
                 myCipher.initCipher(myStreamKey);
             }
         }
+    }
+
+    /**
+     * Check cipher modes. final GordianFactory pFactory,
+     * @param pFactory the factory
+     * @param pKey the key
+     * @throws OceanusException on error
+     */
+    private void checkCipherModes(final GordianFactory pFactory,
+                                  final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
+        for (GordianCipherMode myMode : GordianCipherMode.values()) {
+            checkCipherPadding(pFactory, pKey, myMode);
+        }
+    }
+
+    /**
+     * Check cipher modes.
+     * @param pFactory the factory
+     * @param pKey the key
+     * @param pMode the mode
+     * @throws OceanusException on error
+     */
+    private void checkCipherPadding(final GordianFactory pFactory,
+                                    final GordianKey<GordianSymKeyType> pKey,
+                                    final GordianCipherMode pMode) throws OceanusException {
+        if (pMode.allowsPadding()) {
+            for (GordianPadding myPadding : GordianPadding.values()) {
+                checkCipher(pFactory, pKey, pMode, myPadding);
+            }
+        } else {
+            checkCipher(pFactory, pKey, pMode, GordianPadding.NONE);
+        }
+    }
+
+    /**
+     * Check cipher modes.
+     * @param pFactory the factory
+     * @param pKey the key
+     * @param pMode the mode
+     * @param pPadding the padding
+     * @throws OceanusException on error
+     */
+    private void checkCipher(final GordianFactory pFactory,
+                             final GordianKey<GordianSymKeyType> pKey,
+                             final GordianCipherMode pMode,
+                             final GordianPadding pPadding) throws OceanusException {
+        GordianCipher<GordianSymKeyType> myCipher = pFactory.createSymKeyCipher(pKey.getKeyType(), pMode, pPadding);
+        myCipher.initCipher(pKey);
     }
 }

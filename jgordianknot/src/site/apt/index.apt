@@ -52,6 +52,8 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
   The following modes are available for the above keys
 
+    * ECB
+
     * CBC
  
     * OFB
@@ -59,6 +61,18 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
     * CFB
 
     * SIC (CTR)
+
+  The following paddings are available for ECB and CBC modes
+
+    * CTS
+
+    * ISO7816-4
+ 
+    * PKCS7
+
+    * X9.63
+
+    * NONE (used for all modes other than ECB/CBC)
 
   The following Stream Key algorithms are supported (bracketed versions used for restricted keys).
 
@@ -73,6 +87,8 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
     * VMPC 
 
     * ISAAC 
+
+    * RC4 
 
     * Grain128 (restricted keys)
 
@@ -110,8 +126,8 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
 ZipFile support
 
-  In addition to Encryption services, JGordianKnot also provides support for to creating and reading encrypted ZipFiles.
-This is built on top of the Java ZipFile support and utilises the encryption facilities of JGordianKnot to encrypt and
+  In addition to Encryption services, jGordianKnot also provides support for to creating and reading encrypted ZipFiles.
+This is built on top of the Java ZipFile support and utilises the encryption facilities of jGordianKnot to encrypt and
 decrypt each file entry. LZMA compression is also provided (based on the 7-Zip LZMA SDK), which provides significantly
 improved compression over the Deflation standard Java method.
 
@@ -120,9 +136,9 @@ improved compression over the Deflation standard Java method.
      [[1]] Digest is calculated on the plain text
      [[2]] LZMA compression is performed
      [[3]] StreamKey encryption is performed
-     [[4]] (N-1)*SymKey CBC encryption (all with ISO7816-4 padding)
+     [[4]] (N-1)*SymKey ECB encryption (first with ISO7816-4 padding, remainder with NONE(CTS for ThreeFish))
      [[5]] SymKey SIC encryption 
-     [[6]] HMac calculated on encrypted data
+     [[6]] Mac calculated on encrypted data
 	
   The ZipFile directory is additionally encrypted, so as to restrict information leakage.
 

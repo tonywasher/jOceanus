@@ -31,6 +31,7 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -53,7 +54,7 @@ public final class BouncyStreamKeyCipher
     protected BouncyStreamKeyCipher(final BouncyFactory pFactory,
                                     final GordianStreamKeyType pKeyType,
                                     final StreamCipher pCipher) {
-        super(pFactory, pKeyType, null, false);
+        super(pFactory, pKeyType, null, GordianPadding.NONE);
         theCipher = pCipher;
     }
 

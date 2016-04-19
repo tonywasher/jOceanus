@@ -385,13 +385,13 @@ public abstract class GordianFactory {
      * create GordianSymCipher.
      * @param pKeyType the KeyType
      * @param pMode the cipher mode
-     * @param pPadding use padding true/false
+     * @param pPadding the padding mode
      * @return the new Cipher
      * @throws OceanusException on error
      */
     public abstract GordianCipher<GordianSymKeyType> createSymKeyCipher(final GordianSymKeyType pKeyType,
                                                                         final GordianCipherMode pMode,
-                                                                        final boolean pPadding) throws OceanusException;
+                                                                        final GordianPadding pPadding) throws OceanusException;
 
     /**
      * Obtain predicate for supported SymKeyTypes.
@@ -448,6 +448,12 @@ public abstract class GordianFactory {
      * @throws OceanusException on error
      */
     public abstract GordianWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException;
+
+    /**
+     * Obtain predicate for signature DigestTypes.
+     * @return the predicate
+     */
+    public abstract Predicate<GordianDigestType> signatureDigests();
 
     /**
      * Create signer.

@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 /**
  * Resource IDs for Cryptographic package.
  */
-public enum CryptoResource implements TethysResourceId {
+public enum GordianCryptoResource implements TethysResourceId {
     /**
      * Factory BC.
      */
@@ -214,7 +214,7 @@ public enum CryptoResource implements TethysResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    CryptoResource(final String pKeyName) {
+    GordianCryptoResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

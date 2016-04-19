@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -62,7 +63,7 @@ public final class JcaCipher<T>
     protected JcaCipher(final JcaFactory pFactory,
                         final T pKeyType,
                         final GordianCipherMode pMode,
-                        final boolean pPadding,
+                        final GordianPadding pPadding,
                         final Cipher pCipher) {
         super(pFactory, pKeyType, pMode, pPadding);
         theCipher = pCipher;
@@ -98,7 +99,9 @@ public final class JcaCipher<T>
         T myType = getKeyType();
         return myType instanceof GordianStreamKeyType
                                                       ? ((GordianStreamKeyType) myType).getIVLength()
-                                                      : theCipher.getBlockSize();
+                                                      : getMode().needsIV()
+                                                                            ? theCipher.getBlockSize()
+                                                                            : 0;
     }
 
     @Override

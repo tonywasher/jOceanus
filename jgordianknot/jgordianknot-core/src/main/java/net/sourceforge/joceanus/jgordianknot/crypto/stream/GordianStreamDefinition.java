@@ -34,10 +34,11 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Stream definition.
@@ -300,11 +301,11 @@ public final class GordianStreamDefinition {
         CipherDef myDef = new CipherDef(pKeySet, (int) theTypeId);
         GordianSymKeyType myType = myDef.theKeyType;
         GordianCipherMode myMode = myDef.theMode;
-        boolean isPadded = myDef.isPadded;
+        GordianPadding myPadding = myDef.thePadding;
 
         /* Generate the Cipher */
         GordianFactory myFactory = pKeySet.getFactory();
-        GordianCipher<GordianSymKeyType> myCipher = myFactory.createSymKeyCipher(myType, myMode, isPadded);
+        GordianCipher<GordianSymKeyType> myCipher = myFactory.createSymKeyCipher(myType, myMode, myPadding);
         GordianKey<GordianSymKeyType> myKey = pKeySet.deriveKey(theTypeDefinition, myType);
         myCipher.initCipher(myKey, theInitVector, false);
 
@@ -361,7 +362,7 @@ public final class GordianStreamDefinition {
         /**
          * The Padding.
          */
-        private final boolean isPadded;
+        private final GordianPadding thePadding;
 
         /**
          * Constructor.
@@ -380,7 +381,7 @@ public final class GordianStreamDefinition {
             /* Store values */
             theKeyType = pKeySet.deriveTypeFromExternalId(myKeyId, GordianSymKeyType.class);
             theMode = pKeySet.deriveTypeFromExternalId(myModeId, GordianCipherMode.class);
-            isPadded = myId != 0;
+            thePadding = pKeySet.deriveTypeFromExternalId(myId, GordianPadding.class);
         }
 
         /**
@@ -394,9 +395,7 @@ public final class GordianStreamDefinition {
         protected static int deriveExternalId(final GordianKeySet pKeySet,
                                               final GordianCipher<?> pCipher) throws OceanusException {
             /* Determine the id */
-            int myId = pCipher.isPadded()
-                                          ? 1
-                                          : 0;
+            int myId = pKeySet.deriveExternalIdForType(pCipher.getPadding());
             myId <<= TethysDataConverter.NYBBLE_SHIFT;
             myId += pKeySet.deriveExternalIdForType(pCipher.getMode());
             myId <<= TethysDataConverter.NYBBLE_SHIFT;
@@ -420,7 +419,7 @@ public final class GordianStreamDefinition {
         STREAM(2),
 
         /**
-         * DIGEST.
+         * Digest.
          */
         DIGEST(3),
 

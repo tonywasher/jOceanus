@@ -81,7 +81,7 @@ public enum GordianDigestType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = CryptoResource.getKeyForDigest(this).getValue();
+            theName = GordianCryptoResource.getKeyForDigest(this).getValue();
         }
 
         /* return the name */

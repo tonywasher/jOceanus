@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -57,7 +58,7 @@ public final class BouncySymKeyCipher
     protected BouncySymKeyCipher(final BouncyFactory pFactory,
                                  final GordianSymKeyType pKeyType,
                                  final GordianCipherMode pMode,
-                                 final boolean pPadding,
+                                 final GordianPadding pPadding,
                                  final BufferedBlockCipher pCipher) {
         super(pFactory, pKeyType, pMode, pPadding);
         theCipher = pCipher;
@@ -70,10 +71,16 @@ public final class BouncySymKeyCipher
 
     @Override
     public void initCipher(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
-        /* Create a random IV */
-        int myLen = theCipher.getBlockSize();
-        byte[] myIV = new byte[myLen];
-        getRandom().nextBytes(myIV);
+        /* IV bytes */
+        byte[] myIV = null;
+
+        /* If we need an IV */
+        if (getMode().needsIV()) {
+            /* Create a random IV */
+            int myLen = theCipher.getBlockSize();
+            myIV = new byte[myLen];
+            getRandom().nextBytes(myIV);
+        }
 
         /* initialise with this IV */
         initCipher(pKey, myIV, true);
@@ -86,15 +93,20 @@ public final class BouncySymKeyCipher
         /* Access and validate the key */
         BouncyKey<GordianSymKeyType> myKey = BouncyKey.accessKey(pKey);
         checkValidKey(pKey);
+        boolean useIV = getMode().needsIV();
 
         /* Initialise the cipher */
         CipherParameters myParms = new KeyParameter(myKey.getKey());
-        myParms = new ParametersWithIV(myParms, pIV);
+        if (useIV) {
+            myParms = new ParametersWithIV(myParms, pIV);
+        }
         theCipher.init(pEncrypt, myParms);
 
         /* Store key and initVector */
         setKey(pKey);
-        setInitVector(pIV);
+        setInitVector(useIV
+                            ? pIV
+                            : null);
     }
 
     @Override

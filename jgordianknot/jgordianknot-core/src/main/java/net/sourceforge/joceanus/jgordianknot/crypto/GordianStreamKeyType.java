@@ -57,6 +57,11 @@ public enum GordianStreamKeyType {
     ISAAC(0),
 
     /**
+     * RC4.
+     */
+    RC4(0),
+
+    /**
      * Grain.
      */
     GRAIN(12);
@@ -92,7 +97,7 @@ public enum GordianStreamKeyType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = CryptoResource.getKeyForStream(this).getValue();
+            theName = GordianCryptoResource.getKeyForStream(this).getValue();
         }
 
         /* return the name */

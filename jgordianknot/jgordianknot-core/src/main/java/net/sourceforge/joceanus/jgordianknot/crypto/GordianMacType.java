@@ -66,7 +66,7 @@ public enum GordianMacType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = CryptoResource.getKeyForMac(this).getValue();
+            theName = GordianCryptoResource.getKeyForMac(this).getValue();
         }
 
         /* return the name */

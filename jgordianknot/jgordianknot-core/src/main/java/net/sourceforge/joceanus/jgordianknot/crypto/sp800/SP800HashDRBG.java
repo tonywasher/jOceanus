@@ -48,7 +48,7 @@ import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.drbg.SP80090DRBG;
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.ByteArrayInteger;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianByteArrayInteger;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -106,17 +106,17 @@ public final class SP800HashDRBG
     /**
      * The Variable Hash.
      */
-    private ByteArrayInteger theV;
+    private GordianByteArrayInteger theV;
 
     /**
      * The Constant Hash.
      */
-    private ByteArrayInteger theC;
+    private GordianByteArrayInteger theC;
 
     /**
      * The ReSeed Counter.
      */
-    private ByteArrayInteger theReseedCounter;
+    private GordianByteArrayInteger theReseedCounter;
 
     /**
      * Construct a SP800-90A Hash DRBG.
@@ -143,7 +143,7 @@ public final class SP800HashDRBG
         theC = hashDerive(myTempH, SEED_LENGTH);
 
         /* Initialise reSeed counter */
-        theReseedCounter = new ByteArrayInteger(TethysDataConverter.BYTES_LONG);
+        theReseedCounter = new GordianByteArrayInteger(TethysDataConverter.BYTES_LONG);
         theReseedCounter.iterate();
     }
 
@@ -227,7 +227,7 @@ public final class SP800HashDRBG
         int myLen = pNumBits >> BIT_SHIFT;
 
         /* Allocate counters */
-        ByteArrayInteger myData = new ByteArrayInteger(pInputBytes);
+        GordianByteArrayInteger myData = new GordianByteArrayInteger(pInputBytes);
         byte[] myOutput = new byte[myLen];
 
         /* while we need to generate more bytes */
@@ -261,7 +261,7 @@ public final class SP800HashDRBG
      * @param pSeedLength the length of seed required
      * @return the new hash as a counter
      */
-    private ByteArrayInteger hashDerive(final byte[] pSeedMaterial,
+    private GordianByteArrayInteger hashDerive(final byte[] pSeedMaterial,
                                         final int pSeedLength) {
         /* Determine sizes */
         int mySize = theDigest.getDigestSize();
@@ -307,7 +307,7 @@ public final class SP800HashDRBG
         }
 
         /* Return byte array counter */
-        return new ByteArrayInteger(myOutput);
+        return new GordianByteArrayInteger(myOutput);
     }
 
     @Override

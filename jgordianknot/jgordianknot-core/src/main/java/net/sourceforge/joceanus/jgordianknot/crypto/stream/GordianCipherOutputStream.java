@@ -133,7 +133,7 @@ public class GordianCipherOutputStream<T>
 
             /* Catch exceptions */
         } catch (OceanusException e) {
-            throw new IOException(e);
+            throw new IOException(theCipher.getKeyType().toString(), e);
         }
     }
 }

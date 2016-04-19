@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPublicKey;
@@ -104,6 +105,11 @@ public final class JcaFactory
      * Predicate for all standard symKeyTypes.
      */
     private final Predicate<GordianSymKeyType> theStdSymPredicate = p -> p.validForRestriction(isRestricted()) && p.isStdBlock();
+
+    /**
+     * Predicate for all signature digests.
+     */
+    private static final Predicate<GordianDigestType> PREDICATE_SIGNDIGESTS = p -> p == GordianDigestType.SHA2;
 
     /**
      * Cache for KeyGenerators.
@@ -229,10 +235,22 @@ public final class JcaFactory
     @Override
     public JcaCipher<GordianSymKeyType> createSymKeyCipher(final GordianSymKeyType pKeyType,
                                                            final GordianCipherMode pMode,
-                                                           final boolean pPadding) throws OceanusException {
+                                                           final GordianPadding pPadding) throws OceanusException {
         /* Check validity of SymKey */
         if (!supportedSymKeys().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
+        }
+
+        /* Check validity of Mode */
+        if (pMode == null) {
+            throw new GordianDataException(getInvalidText(pMode));
+        }
+
+        /* Check validity of Padding */
+        if (pPadding == null
+            || (!GordianPadding.NONE.equals(pPadding)
+                && !pMode.allowsPadding())) {
+            throw new GordianDataException(getInvalidText(pPadding));
         }
 
         /* Create the cipher */
@@ -249,7 +267,7 @@ public final class JcaFactory
 
         /* Create the cipher */
         Cipher myJavaCipher = getJavaCipher(pKeyType);
-        return new JcaCipher<>(this, pKeyType, null, false, myJavaCipher);
+        return new JcaCipher<>(this, pKeyType, null, GordianPadding.NONE, myJavaCipher);
     }
 
     @Override
@@ -265,13 +283,23 @@ public final class JcaFactory
         }
 
         /* Create the cipher */
-        JcaCipher<GordianSymKeyType> myJcaCipher = createSymKeyCipher(pKeyType, GordianCipherMode.CBC, false);
+        JcaCipher<GordianSymKeyType> myJcaCipher = createSymKeyCipher(pKeyType, GordianCipherMode.CBC, GordianPadding.NONE);
         return new JcaWrapCipher(this, myJcaCipher);
+    }
+
+    @Override
+    public Predicate<GordianDigestType> signatureDigests() {
+        return PREDICATE_SIGNDIGESTS;
     }
 
     @Override
     public GordianSigner createSigner(final GordianPrivateKey pPrivateKey,
                                       final GordianDigestType pDigestType) throws OceanusException {
+        /* Check validity of Digest */
+        if (!signatureDigests().test(pDigestType)) {
+            throw new GordianDataException(getInvalidText(pDigestType));
+        }
+
         /* Create the signer */
         return getJcaSigner((JcaPrivateKey) pPrivateKey);
     }
@@ -279,6 +307,11 @@ public final class JcaFactory
     @Override
     public GordianValidator createValidator(final GordianPublicKey pPublicKey,
                                             final GordianDigestType pDigestType) throws OceanusException {
+        /* Check validity of Digest */
+        if (!signatureDigests().test(pDigestType)) {
+            throw new GordianDataException(getInvalidText(pDigestType));
+        }
+
         /* Create the validator */
         return getJcaValidator((JcaPublicKey) pPublicKey);
     }
@@ -385,7 +418,7 @@ public final class JcaFactory
      */
     private static Cipher getJavaCipher(final GordianSymKeyType pKeyType,
                                         final GordianCipherMode pMode,
-                                        final boolean pPadding) throws OceanusException {
+                                        final GordianPadding pPadding) throws OceanusException {
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(getSymKeyAlgorithm(pKeyType));
         myBuilder.append(ALGO_SEP);
@@ -514,7 +547,7 @@ public final class JcaFactory
     private static String getHMacAlgorithm(final GordianDigestType pDigestType) throws OceanusException {
         return GordianDigestType.KECCAK.equals(pDigestType)
                                                             ? "HMacKECCAK512"
-                                                            : JcaDigest.getAlgorithm(pDigestType);
+                                                            : "HMac" + JcaDigest.getAlgorithm(pDigestType);
     }
 
     /**
@@ -600,6 +633,7 @@ public final class JcaFactory
      */
     private static String getCipherModeAlgorithm(final GordianCipherMode pMode) throws OceanusException {
         switch (pMode) {
+            case ECB:
             case OFB:
             case SIC:
             case CBC:
@@ -615,10 +649,20 @@ public final class JcaFactory
      * @param pPadding use padding true/false
      * @return the Algorithm
      */
-    private static String getPaddingAlgorithm(final boolean pPadding) {
-        return pPadding
-                        ? "ISO7816-4Padding"
-                        : "NoPadding";
+    private static String getPaddingAlgorithm(final GordianPadding pPadding) {
+        switch (pPadding) {
+            case CTS:
+                return "withCTS";
+            case X923:
+                return "X923Padding";
+            case PKCS7:
+                return "PKCS7Padding";
+            case ISO7816D4:
+                return "ISO7816-4Padding";
+            case NONE:
+            default:
+                return "NoPadding";
+        }
     }
 
     /**

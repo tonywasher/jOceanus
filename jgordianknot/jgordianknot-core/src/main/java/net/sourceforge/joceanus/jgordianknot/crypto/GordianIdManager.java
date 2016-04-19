@@ -369,9 +369,9 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain macType from external MacId.
+     * Obtain cipherMode from external ModeId.
      * @param pId the external id
-     * @return the macType
+     * @return the mode
      * @throws OceanusException on error
      */
     private static GordianCipherMode deriveCipherModeFromExternalId(final int pId) throws OceanusException {
@@ -381,6 +381,31 @@ public class GordianIdManager {
             }
         }
         throw new GordianDataException("Invalid modeId: " + pId);
+    }
+
+    /**
+     * Obtain external Padding.
+     * @param pPadding the padding
+     * @return the external id
+     * @throws OceanusException on error
+     */
+    protected int deriveExternalIdFromPadding(final GordianPadding pPadding) throws OceanusException {
+        return pPadding.ordinal();
+    }
+
+    /**
+     * Obtain padding from external PaddingId.
+     * @param pId the external id
+     * @return the padding
+     * @throws OceanusException on error
+     */
+    private static GordianPadding derivePaddingFromExternalId(final int pId) throws OceanusException {
+        for (GordianPadding myPadding : GordianPadding.values()) {
+            if (myPadding.ordinal() == pId) {
+                return myPadding;
+            }
+        }
+        throw new GordianDataException("Invalid paddingId: " + pId);
     }
 
     /**
@@ -408,6 +433,9 @@ public class GordianIdManager {
         if (GordianCipherMode.class.equals(pTypeClass)) {
             return pTypeClass.cast(deriveCipherModeFromExternalId(pId));
         }
+        if (GordianPadding.class.equals(pTypeClass)) {
+            return pTypeClass.cast(derivePaddingFromExternalId(pId));
+        }
         throw new GordianDataException("Invalid class: " + pTypeClass.getCanonicalName());
     }
 
@@ -433,6 +461,9 @@ public class GordianIdManager {
         }
         if (GordianCipherMode.class.isInstance(pType)) {
             return deriveExternalIdFromCipherMode((GordianCipherMode) pType);
+        }
+        if (GordianPadding.class.isInstance(pType)) {
+            return deriveExternalIdFromPadding((GordianPadding) pType);
         }
         throw new GordianDataException("Invalid type: " + pType);
     }

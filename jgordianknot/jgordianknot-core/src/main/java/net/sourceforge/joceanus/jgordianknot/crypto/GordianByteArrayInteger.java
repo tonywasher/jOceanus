@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  * Simple class that handles a byte array as an integer housing an integer of max value 2
  * <sup>8n</sup> where n is the length of the byte array.
  */
-public final class ByteArrayInteger {
+public final class GordianByteArrayInteger {
     /**
      * The default counter length.
      */
@@ -49,7 +49,7 @@ public final class ByteArrayInteger {
     /**
      * Constructor.
      */
-    public ByteArrayInteger() {
+    public GordianByteArrayInteger() {
         /* use default length */
         this(COUNTER_LEN);
     }
@@ -58,7 +58,7 @@ public final class ByteArrayInteger {
      * Constructor.
      * @param pLen the length of the counter
      */
-    public ByteArrayInteger(final int pLen) {
+    public GordianByteArrayInteger(final int pLen) {
         /* initialise the buffer */
         theBuffer = new byte[pLen];
         theLength = pLen;
@@ -69,7 +69,7 @@ public final class ByteArrayInteger {
      * Constructor.
      * @param pSource the source byte array
      */
-    public ByteArrayInteger(final byte[] pSource) {
+    public GordianByteArrayInteger(final byte[] pSource) {
         /* initialise the buffer */
         theLength = pSource.length;
         theBuffer = new byte[theLength];

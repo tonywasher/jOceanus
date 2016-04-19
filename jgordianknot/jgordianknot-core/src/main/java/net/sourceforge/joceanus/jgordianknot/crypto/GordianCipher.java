@@ -51,7 +51,7 @@ public abstract class GordianCipher<T> {
     /**
      * IsPadded?
      */
-    private final boolean isPadded;
+    private final GordianPadding thePadding;
 
     /**
      * Key.
@@ -73,10 +73,10 @@ public abstract class GordianCipher<T> {
     protected GordianCipher(final GordianFactory pFactory,
                             final T pKeyType,
                             final GordianCipherMode pMode,
-                            final boolean pPadding) {
+                            final GordianPadding pPadding) {
         theKeyType = pKeyType;
         theMode = pMode;
-        isPadded = pPadding;
+        thePadding = pPadding;
         theRandom = pFactory.getRandom();
     }
 
@@ -100,8 +100,8 @@ public abstract class GordianCipher<T> {
      * is the cipher padded?
      * @return true/false
      */
-    public boolean isPadded() {
-        return isPadded;
+    public GordianPadding getPadding() {
+        return thePadding;
     }
 
     /**

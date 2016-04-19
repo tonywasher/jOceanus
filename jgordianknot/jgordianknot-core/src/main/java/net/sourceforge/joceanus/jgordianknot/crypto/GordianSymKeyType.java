@@ -107,7 +107,7 @@ public enum GordianSymKeyType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = CryptoResource.getKeyForSym(this).getValue();
+            theName = GordianCryptoResource.getKeyForSym(this).getValue();
         }
 
         /* return the name */

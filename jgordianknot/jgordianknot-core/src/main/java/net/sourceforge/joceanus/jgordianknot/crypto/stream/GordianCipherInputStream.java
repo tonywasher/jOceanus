@@ -105,10 +105,12 @@ public class GordianCipherInputStream<T>
                 setEOFSeen();
 
                 /* Make sure the buffer is large enough */
-                checkBufferLength(0);
+                iNumBytes = checkBufferLength(0);
 
-                /* Finish the decryption */
-                iNumBytes = theCipher.finish(theBuffer, 0);
+                /* Finish the decryption if there is work to do */
+                if (iNumBytes > 0) {
+                    iNumBytes = theCipher.finish(theBuffer, 0);
+                }
 
                 /* else we have bytes to process */
             } else {

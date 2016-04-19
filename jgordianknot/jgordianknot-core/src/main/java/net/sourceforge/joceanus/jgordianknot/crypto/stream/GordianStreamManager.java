@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -149,22 +150,33 @@ public final class GordianStreamManager {
 
         /* Generate a list of encryption types */
         List<GordianKey<GordianSymKeyType>> mySymKeys = myFactory.generateRandomSymKeyList();
-        GordianCipherMode myMode = GordianCipherMode.SIC;
-        boolean isPadded = false;
+        boolean bFirst = true;
 
         /* For each encryption key */
         Iterator<GordianKey<GordianSymKeyType>> myIterator = mySymKeys.iterator();
         while (myIterator.hasNext()) {
             GordianKey<GordianSymKeyType> myKey = myIterator.next();
+            boolean bLast = !myIterator.hasNext();
+
+            /* Determine mode and padding */
+            GordianCipherMode myMode = bFirst
+                                              ? GordianCipherMode.SIC
+                                              : GordianCipherMode.ECB;
+            GordianPadding myPadding = bFirst
+                                              ? GordianPadding.NONE
+                                              : bLast
+                                                      ? GordianPadding.ISO7816D4
+                                                      : myKey.getKeyType().isStdBlock()
+                                                                                        ? GordianPadding.NONE
+                                                                                        : GordianPadding.CTS;
 
             /* Build the cipher stream */
-            GordianCipher<GordianSymKeyType> mySymCipher = myFactory.createSymKeyCipher(myKey.getKeyType(), myMode, isPadded);
+            GordianCipher<GordianSymKeyType> mySymCipher = myFactory.createSymKeyCipher(myKey.getKeyType(), myMode, myPadding);
             mySymCipher.initCipher(myKey);
             myCurrent = new GordianCipherOutputStream<GordianSymKeyType>(mySymCipher, myCurrent);
 
-            /* Switch to CBC mode */
-            myMode = GordianCipherMode.CBC;
-            isPadded = true;
+            /* Note that this is no longer the first */
+            bFirst = false;
         }
 
         /* Create the encryption stream for a stream key */

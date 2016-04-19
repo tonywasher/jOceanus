@@ -49,6 +49,7 @@ import org.bouncycastle.crypto.engines.HC128Engine;
 import org.bouncycastle.crypto.engines.HC256Engine;
 import org.bouncycastle.crypto.engines.ISAACEngine;
 import org.bouncycastle.crypto.engines.NoekeonEngine;
+import org.bouncycastle.crypto.engines.RC4Engine;
 import org.bouncycastle.crypto.engines.RC6Engine;
 import org.bouncycastle.crypto.engines.SEEDEngine;
 import org.bouncycastle.crypto.engines.SM4Engine;
@@ -66,11 +67,14 @@ import org.bouncycastle.crypto.macs.SkeinMac;
 import org.bouncycastle.crypto.macs.VMPCMac;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.modes.CFBBlockCipher;
+import org.bouncycastle.crypto.modes.CTSBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.OFBBlockCipher;
 import org.bouncycastle.crypto.modes.SICBlockCipher;
 import org.bouncycastle.crypto.paddings.ISO7816d4Padding;
+import org.bouncycastle.crypto.paddings.PKCS7Padding;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.crypto.paddings.X923Padding;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
@@ -81,6 +85,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPublicKey;
@@ -152,6 +157,11 @@ public final class BouncyFactory
      * Predicate for all standard symKeyTypes.
      */
     private final Predicate<GordianSymKeyType> theStdSymPredicate = p -> p.validForRestriction(isRestricted()) && p.isStdBlock();
+
+    /**
+     * Predicate for all signature digests.
+     */
+    private static final Predicate<GordianDigestType> PREDICATE_SIGNDIGESTS = p -> true;
 
     /**
      * Cache for KeyGenerators.
@@ -258,10 +268,22 @@ public final class BouncyFactory
     @Override
     public BouncySymKeyCipher createSymKeyCipher(final GordianSymKeyType pKeyType,
                                                  final GordianCipherMode pMode,
-                                                 final boolean pPadding) throws OceanusException {
+                                                 final GordianPadding pPadding) throws OceanusException {
         /* Check validity of SymKey */
         if (!supportedSymKeys().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
+        }
+
+        /* Check validity of Mode */
+        if (pMode == null) {
+            throw new GordianDataException(getInvalidText(pMode));
+        }
+
+        /* Check validity of Padding */
+        if (pPadding == null
+            || (!GordianPadding.NONE.equals(pPadding)
+                && !pMode.allowsPadding())) {
+            throw new GordianDataException(getInvalidText(pPadding));
         }
 
         /* Create the cipher */
@@ -304,13 +326,23 @@ public final class BouncyFactory
         }
 
         /* Create the cipher */
-        BouncySymKeyCipher myBCCipher = createSymKeyCipher(pKeyType, GordianCipherMode.CBC, false);
+        BouncySymKeyCipher myBCCipher = createSymKeyCipher(pKeyType, GordianCipherMode.CBC, GordianPadding.NONE);
         return new BouncyWrapCipher(this, myBCCipher);
+    }
+
+    @Override
+    public Predicate<GordianDigestType> signatureDigests() {
+        return PREDICATE_SIGNDIGESTS;
     }
 
     @Override
     public GordianSigner createSigner(final GordianPrivateKey pPrivateKey,
                                       final GordianDigestType pDigestType) throws OceanusException {
+        /* Check validity of Digest */
+        if (!signatureDigests().test(pDigestType)) {
+            throw new GordianDataException(getInvalidText(pDigestType));
+        }
+
         /* Create the signer */
         return getBCSigner((BouncyPrivateKey) pPrivateKey, createDigest(pDigestType));
     }
@@ -318,6 +350,11 @@ public final class BouncyFactory
     @Override
     public GordianValidator createValidator(final GordianPublicKey pPublicKey,
                                             final GordianDigestType pDigestType) throws OceanusException {
+        /* Check validity of Digest */
+        if (!signatureDigests().test(pDigestType)) {
+            throw new GordianDataException(getInvalidText(pDigestType));
+        }
+
         /* Create the validator */
         return getBCValidator((BouncyPublicKey) pPublicKey, createDigest(pDigestType));
     }
@@ -475,7 +512,7 @@ public final class BouncyFactory
      */
     private static BufferedBlockCipher getBCBlockCipher(final GordianSymKeyType pKeyType,
                                                         final GordianCipherMode pMode,
-                                                        final boolean pPadding) throws OceanusException {
+                                                        final GordianPadding pPadding) throws OceanusException {
         /* Build the cipher */
         BlockCipher myEngine = getBCSymEngine(pKeyType);
         BlockCipher myMode = getBCSymModeCipher(myEngine, pMode);
@@ -506,6 +543,8 @@ public final class BouncyFactory
                 return new Grain128Engine();
             case ISAAC:
                 return new ISAACEngine();
+            case RC4:
+                return new RC4Engine();
             default:
                 throw new GordianDataException(getInvalidText(pKeyType));
         }
@@ -569,6 +608,8 @@ public final class BouncyFactory
     private static BlockCipher getBCSymModeCipher(final BlockCipher pEngine,
                                                   final GordianCipherMode pMode) throws OceanusException {
         switch (pMode) {
+            case ECB:
+                return pEngine;
             case CBC:
                 return new CBCBlockCipher(pEngine);
             case SIC:
@@ -589,10 +630,20 @@ public final class BouncyFactory
      * @return the Cipher
      */
     private static BufferedBlockCipher getBCSymBufferedCipher(final BlockCipher pEngine,
-                                                              final boolean pPadding) {
-        return pPadding
-                        ? new PaddedBufferedBlockCipher(pEngine, new ISO7816d4Padding())
-                        : new BufferedBlockCipher(pEngine);
+                                                              final GordianPadding pPadding) {
+        switch (pPadding) {
+            case CTS:
+                return new CTSBlockCipher(pEngine);
+            case X923:
+                return new PaddedBufferedBlockCipher(pEngine, new X923Padding());
+            case PKCS7:
+                return new PaddedBufferedBlockCipher(pEngine, new PKCS7Padding());
+            case ISO7816D4:
+                return new PaddedBufferedBlockCipher(pEngine, new ISO7816d4Padding());
+            case NONE:
+            default:
+                return new BufferedBlockCipher(pEngine);
+        }
     }
 
     /**

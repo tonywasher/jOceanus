@@ -48,7 +48,7 @@ import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.drbg.SP80090DRBG;
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.ByteArrayInteger;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianByteArrayInteger;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -90,7 +90,7 @@ public final class SP800HMacDRBG
     /**
      * The ReSeed Counter.
      */
-    private ByteArrayInteger theReseedCounter;
+    private GordianByteArrayInteger theReseedCounter;
 
     /**
      * The Key.
@@ -131,7 +131,7 @@ public final class SP800HMacDRBG
         updateState(mySeed);
 
         /* Initialise reSeed counter */
-        theReseedCounter = new ByteArrayInteger(TethysDataConverter.BYTES_LONG);
+        theReseedCounter = new GordianByteArrayInteger(TethysDataConverter.BYTES_LONG);
         theReseedCounter.iterate();
     }
 

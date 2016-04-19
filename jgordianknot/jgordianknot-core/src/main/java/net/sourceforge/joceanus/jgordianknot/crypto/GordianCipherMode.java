@@ -27,22 +27,56 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
  */
 public enum GordianCipherMode {
     /**
+     * ECB Mode.
+     */
+    ECB(true),
+
+    /**
      * CBC Mode.
      */
-    CBC,
+    CBC(true),
 
     /**
      * SIC(CTR) Mode.
      */
-    SIC,
+    SIC(false),
 
     /**
      * CFB Mode.
      */
-    CFB,
+    CFB(false),
 
     /**
      * OFB Mode.
      */
-    OFB;
+    OFB(false);
+
+    /**
+     * Allows padding.
+     */
+    private final boolean allowsPadding;
+
+    /**
+     * Constructor.
+     * @param pPadding is padding allowed?
+     */
+    GordianCipherMode(final boolean pPadding) {
+        allowsPadding = pPadding;
+    }
+
+    /**
+     * Does the mode allow padding?
+     * @return true/false
+     */
+    public boolean allowsPadding() {
+        return allowsPadding;
+    }
+
+    /**
+     * Does the mode need an IV?
+     * @return true/false
+     */
+    public boolean needsIV() {
+        return this != ECB;
+    }
 }
