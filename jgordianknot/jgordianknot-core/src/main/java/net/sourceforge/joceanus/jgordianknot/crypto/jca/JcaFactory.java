@@ -242,7 +242,7 @@ public final class JcaFactory
         }
 
         /* Check validity of Mode */
-        if (pMode == null) {
+        if ((pMode == null) || pMode.isAAD()) {
             throw new GordianDataException(getInvalidText(pMode));
         }
 
@@ -256,6 +256,24 @@ public final class JcaFactory
         /* Create the cipher */
         Cipher myBCCipher = getJavaCipher(pKeyType, pMode, pPadding);
         return new JcaCipher<>(this, pKeyType, pMode, pPadding, myBCCipher);
+    }
+
+    @Override
+    public JcaAADCipher createAADCipher(final GordianSymKeyType pKeyType,
+                                        final GordianCipherMode pMode) throws OceanusException {
+        /* Check validity of SymKey */
+        if (!standardSymKeys().test(pKeyType)) {
+            throw new GordianDataException(getInvalidText(pKeyType));
+        }
+
+        /* Check validity of Mode */
+        if ((pMode == null) || !pMode.isAAD()) {
+            throw new GordianDataException(getInvalidText(pMode));
+        }
+
+        /* Create the cipher */
+        Cipher myBCCipher = getJavaCipher(pKeyType, pMode, GordianPadding.NONE);
+        return new JcaAADCipher(this, pKeyType, pMode, myBCCipher);
     }
 
     @Override
@@ -638,6 +656,10 @@ public final class JcaFactory
             case SIC:
             case CBC:
             case CFB:
+            case EAX:
+            case CCM:
+            case GCM:
+            case OCB:
                 return pMode.name();
             default:
                 throw new GordianDataException(getInvalidText(pMode));

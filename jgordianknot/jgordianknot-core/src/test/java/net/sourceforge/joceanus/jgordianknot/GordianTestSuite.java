@@ -40,6 +40,7 @@ import java.util.function.Predicate;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAADCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
@@ -605,13 +606,15 @@ public class GordianTestSuite {
             for (GordianPadding myPadding : GordianPadding.values()) {
                 checkCipher(pFactory, pKey, pMode, myPadding);
             }
-        } else {
+        } else if (!pMode.isAAD()) {
             checkCipher(pFactory, pKey, pMode, GordianPadding.NONE);
+        } else if (pKey.getKeyType().isStdBlock()) {
+            checkAADCipher(pFactory, pKey, pMode);
         }
     }
 
     /**
-     * Check cipher modes.
+     * Check cipher mode/padding.
      * @param pFactory the factory
      * @param pKey the key
      * @param pMode the mode
@@ -623,6 +626,20 @@ public class GordianTestSuite {
                              final GordianCipherMode pMode,
                              final GordianPadding pPadding) throws OceanusException {
         GordianCipher<GordianSymKeyType> myCipher = pFactory.createSymKeyCipher(pKey.getKeyType(), pMode, pPadding);
+        myCipher.initCipher(pKey);
+    }
+
+    /**
+     * Check AAD cipher mode.
+     * @param pFactory the factory
+     * @param pKey the key
+     * @param pMode the mode
+     * @throws OceanusException on error
+     */
+    private void checkAADCipher(final GordianFactory pFactory,
+                                final GordianKey<GordianSymKeyType> pKey,
+                                final GordianCipherMode pMode) throws OceanusException {
+        GordianAADCipher myCipher = pFactory.createAADCipher(pKey.getKeyType(), pMode);
         myCipher.initCipher(pKey);
     }
 }

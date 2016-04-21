@@ -49,7 +49,27 @@ public enum GordianCipherMode {
     /**
      * OFB Mode.
      */
-    OFB(false);
+    OFB(false),
+
+    /**
+     * EAX Mode.
+     */
+    EAX(false, true),
+
+    /**
+     * CCM Mode.
+     */
+    CCM(false, true),
+
+    /**
+     * GCM Mode.
+     */
+    GCM(false, true),
+
+    /**
+     * OCB Mode.
+     */
+    OCB(false, true);
 
     /**
      * Allows padding.
@@ -57,11 +77,27 @@ public enum GordianCipherMode {
     private final boolean allowsPadding;
 
     /**
+     * is AAD.
+     */
+    private final boolean isAAD;
+
+    /**
      * Constructor.
      * @param pPadding is padding allowed?
      */
     GordianCipherMode(final boolean pPadding) {
+        this(pPadding, false);
+    }
+
+    /**
+     * Constructor.
+     * @param pPadding is padding allowed?
+     * @param pAAD is this an AAD mode?
+     */
+    GordianCipherMode(final boolean pPadding,
+                      final boolean pAAD) {
         allowsPadding = pPadding;
+        isAAD = pAAD;
     }
 
     /**
@@ -70,6 +106,14 @@ public enum GordianCipherMode {
      */
     public boolean allowsPadding() {
         return allowsPadding;
+    }
+
+    /**
+     * Is this an AAD mode?
+     * @return true/false
+     */
+    public boolean isAAD() {
+        return isAAD;
     }
 
     /**

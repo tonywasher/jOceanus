@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Class for assembling/disassembling KeySetHashes.
@@ -38,9 +38,9 @@ public final class GordianKeySetHashRecipe {
     private static final int NUM_DIGESTS = 3;
 
     /**
-     * KeyBytes length.
+     * Recipe length (Integer).
      */
-    private static final int KEYBYTES_LEN = 2;
+    private static final int RECIPELEN = Integer.BYTES;
 
     /**
      * Hash margins.
@@ -50,7 +50,7 @@ public final class GordianKeySetHashRecipe {
     /**
      * InitVector length.
      */
-    protected static final int INITVECTOR_LEN = 32;
+    protected static final int INITVECTORLEN = 32;
 
     /**
      * The Recipe.
@@ -81,16 +81,13 @@ public final class GordianKeySetHashRecipe {
         /* Access the secureRandom */
         SecureRandom myRandom = pFactory.getRandom();
 
-        /* Create the Random Key */
-        theRecipe = new byte[KEYBYTES_LEN];
-
         /* Create the Initialisation vector */
-        theInitVector = new byte[INITVECTOR_LEN];
+        theInitVector = new byte[INITVECTORLEN];
         myRandom.nextBytes(theInitVector);
 
         /* Allocate new set of parameters */
         theParams = new HashParameters(pFactory);
-        theParams.buildRecipe(pFactory, theRecipe);
+        theRecipe = theParams.getRecipe();
         theHash = null;
     }
 
@@ -107,12 +104,12 @@ public final class GordianKeySetHashRecipe {
         /* Determine hash length */
         int myLen = pExternal.length;
         int myHashLen = myLen
-                        - KEYBYTES_LEN
-                        - INITVECTOR_LEN;
+                        - RECIPELEN
+                        - INITVECTORLEN;
 
         /* Create the byte arrays */
-        theRecipe = new byte[KEYBYTES_LEN];
-        theInitVector = new byte[INITVECTOR_LEN];
+        theRecipe = new byte[RECIPELEN];
+        theInitVector = new byte[INITVECTORLEN];
         theHash = new byte[myHashLen];
 
         /* Determine offset position */
@@ -121,14 +118,14 @@ public final class GordianKeySetHashRecipe {
                                       - HASH_MARGIN);
 
         /* Copy Data into buffers */
-        System.arraycopy(pExternal, 0, theRecipe, 0, KEYBYTES_LEN);
-        System.arraycopy(pExternal, KEYBYTES_LEN, theHash, 0, myOffSet);
+        System.arraycopy(pExternal, 0, theHash, 0, myOffSet);
+        System.arraycopy(pExternal, myOffSet, theRecipe, 0, RECIPELEN);
         System.arraycopy(pExternal, myOffSet
-                                    + KEYBYTES_LEN, theInitVector, 0, INITVECTOR_LEN);
+                                    + RECIPELEN, theInitVector, 0, INITVECTORLEN);
         System.arraycopy(pExternal, myOffSet
-                                    + KEYBYTES_LEN
-                                    + INITVECTOR_LEN, theHash, myOffSet, myHashLen
-                                                                         - myOffSet);
+                                    + RECIPELEN
+                                    + INITVECTORLEN, theHash, myOffSet, myHashLen
+                                                                        - myOffSet);
 
         /* Allocate new set of parameters */
         theParams = new HashParameters(pFactory, theRecipe);
@@ -192,12 +189,12 @@ public final class GordianKeySetHashRecipe {
      * @param pHash the calculated hash
      * @return the external form
      */
-    public byte[] buildExternal(final int pPassLength,
-                                final byte[] pHash) {
+    protected byte[] buildExternal(final int pPassLength,
+                                   final byte[] pHash) {
         /* Allocate the new buffer */
         int myHashLen = pHash.length;
-        int myLen = KEYBYTES_LEN
-                    + INITVECTOR_LEN
+        int myLen = RECIPELEN
+                    + INITVECTORLEN
                     + myHashLen;
         byte[] myBuffer = new byte[myLen];
 
@@ -207,14 +204,14 @@ public final class GordianKeySetHashRecipe {
                                       - HASH_MARGIN);
 
         /* Copy Data into buffer */
-        System.arraycopy(theRecipe, 0, myBuffer, 0, KEYBYTES_LEN);
-        System.arraycopy(pHash, 0, myBuffer, KEYBYTES_LEN, myOffSet);
+        System.arraycopy(pHash, 0, myBuffer, 0, myOffSet);
+        System.arraycopy(theRecipe, 0, myBuffer, myOffSet, RECIPELEN);
         System.arraycopy(theInitVector, 0, myBuffer, myOffSet
-                                                     + KEYBYTES_LEN, INITVECTOR_LEN);
+                                                     + RECIPELEN, INITVECTORLEN);
         System.arraycopy(pHash, myOffSet, myBuffer, myOffSet
-                                                    + KEYBYTES_LEN
-                                                    + INITVECTOR_LEN, myHashLen
-                                                                      - myOffSet);
+                                                    + RECIPELEN
+                                                    + INITVECTORLEN, myHashLen
+                                                                     - myOffSet);
 
         /* return the external format */
         return myBuffer;
@@ -225,19 +222,14 @@ public final class GordianKeySetHashRecipe {
      */
     private static final class HashParameters {
         /**
-         * The Prime Digest type.
+         * The Recipe.
          */
-        private final GordianDigestType thePrimeDigest;
+        private final byte[] theRecipe;
 
         /**
-         * The Alternate Digest type.
+         * The Digest types.
          */
-        private final GordianDigestType theAlternateDigest;
-
-        /**
-         * The Secret Digest type.
-         */
-        private final GordianDigestType theSecretDigest;
+        private final GordianDigestType[] theDigests;
 
         /**
          * The Adjustment.
@@ -250,18 +242,17 @@ public final class GordianKeySetHashRecipe {
          * @throws OceanusException on error
          */
         private HashParameters(final GordianFactory pFactory) throws OceanusException {
-            /* Obtain Digest list */
+            /* Obtain Id manager and random */
             GordianIdManager myManager = pFactory.getIdManager();
-            GordianDigestType[] myDigests = myManager.generateRandomDigestTypes(NUM_DIGESTS, pFactory.supportedDigests());
-
-            /* Store Digest types */
-            thePrimeDigest = myDigests[0];
-            theAlternateDigest = myDigests[1];
-            theSecretDigest = myDigests[2];
-
-            /* Access random adjustment value */
             SecureRandom myRandom = pFactory.getRandom();
-            theAdjust = myRandom.nextInt(TethysDataConverter.NYBBLE_MASK + 1);
+
+            /* Generate recipe and derive digestTypes */
+            int mySeed = myRandom.nextInt();
+            theRecipe = TethysDataConverter.integerToByteArray(mySeed);
+            theDigests = myManager.deriveDigestTypesFromSeed(mySeed, NUM_DIGESTS);
+
+            /* Derive random adjustment value */
+            theAdjust = (mySeed >> (Short.SIZE + Byte.SIZE)) & TethysDataConverter.NYBBLE_MASK;
         }
 
         /**
@@ -275,41 +266,21 @@ public final class GordianKeySetHashRecipe {
             /* Obtain Id manager */
             GordianIdManager myManager = pFactory.getIdManager();
 
-            /* Access prime and alternate digests */
-            int i = 0;
-            byte myValue = pRecipe[i++];
-            int myId = (myValue >> TethysDataConverter.NYBBLE_SHIFT)
-                       & TethysDataConverter.NYBBLE_MASK;
-            thePrimeDigest = myManager.deriveDigestTypeFromExternalId(myId);
-            myId = myValue
-                   & TethysDataConverter.NYBBLE_MASK;
-            theAlternateDigest = myManager.deriveDigestTypeFromExternalId(myId);
+            /* Store recipe and derive symKeyTypes */
+            theRecipe = pRecipe;
+            int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
+            theDigests = myManager.deriveDigestTypesFromSeed(mySeed, NUM_DIGESTS);
 
-            /* Access secret and cipher digests */
-            myValue = pRecipe[i];
-            myId = (myValue >> TethysDataConverter.NYBBLE_SHIFT)
-                   & TethysDataConverter.NYBBLE_MASK;
-            theSecretDigest = myManager.deriveDigestTypeFromExternalId(myId);
-            theAdjust = myValue
-                        & TethysDataConverter.NYBBLE_MASK;
+            /* Derive random adjustment value */
+            theAdjust = (mySeed >> (Short.SIZE + Byte.SIZE)) & TethysDataConverter.NYBBLE_MASK;
         }
 
         /**
-         * Construct the external recipe.
-         * @param pFactory the factory
-         * @param pRecipe the recipe bytes to build
-         * @throws OceanusException on error
+         * Obtain the Recipe.
+         * @return the recipe
          */
-        private void buildRecipe(final GordianFactory pFactory,
-                                 final byte[] pRecipe) throws OceanusException {
-            /* Obtain Id manager */
-            GordianIdManager myManager = pFactory.getIdManager();
-
-            /* Build the recipe */
-            int i = 0;
-            pRecipe[i++] = (byte) ((myManager.deriveExternalIdFromDigestType(thePrimeDigest) << TethysDataConverter.NYBBLE_SHIFT)
-                                   + myManager.deriveExternalIdFromDigestType(theAlternateDigest));
-            pRecipe[i] = (byte) ((myManager.deriveExternalIdFromDigestType(theSecretDigest) << TethysDataConverter.NYBBLE_SHIFT) + theAdjust);
+        private byte[] getRecipe() {
+            return theRecipe;
         }
 
         /**
@@ -317,7 +288,7 @@ public final class GordianKeySetHashRecipe {
          * @return the digest type
          */
         public GordianDigestType getPrimeDigest() {
-            return thePrimeDigest;
+            return theDigests[0];
         }
 
         /**
@@ -325,7 +296,7 @@ public final class GordianKeySetHashRecipe {
          * @return the digest type
          */
         public GordianDigestType getAlternateDigest() {
-            return theAlternateDigest;
+            return theDigests[1];
         }
 
         /**
@@ -333,7 +304,7 @@ public final class GordianKeySetHashRecipe {
          * @return the digest type
          */
         public GordianDigestType getSecretDigest() {
-            return theSecretDigest;
+            return theDigests[2];
         }
 
         /**

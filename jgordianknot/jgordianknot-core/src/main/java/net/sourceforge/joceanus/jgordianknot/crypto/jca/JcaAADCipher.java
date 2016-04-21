@@ -20,67 +20,61 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.crypto.bc;
+package net.sourceforge.joceanus.jgordianknot.crypto.jca;
 
-import org.bouncycastle.crypto.BufferedBlockCipher;
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.DataLengthException;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.spec.AlgorithmParameterSpec;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SecretKey;
+import javax.crypto.ShortBufferException;
+import javax.crypto.spec.IvParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAADCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Cipher for BouncyCastle Symmetric Ciphers.
+ * Cipher for JCA BouncyCastle AAD Ciphers.
  */
-public final class BouncySymKeyCipher
-        extends GordianCipher<GordianSymKeyType> {
+public class JcaAADCipher
+        extends GordianAADCipher {
     /**
      * Cipher.
      */
-    private final BufferedBlockCipher theCipher;
+    private final Cipher theCipher;
 
     /**
      * Constructor.
      * @param pFactory the Security Factory
      * @param pKeyType the keyType
      * @param pMode the cipher mode
-     * @param pPadding the padding
      * @param pCipher the cipher
      */
-    protected BouncySymKeyCipher(final BouncyFactory pFactory,
-                                 final GordianSymKeyType pKeyType,
-                                 final GordianCipherMode pMode,
-                                 final GordianPadding pPadding,
-                                 final BufferedBlockCipher pCipher) {
-        super(pFactory, pKeyType, pMode, pPadding);
+    protected JcaAADCipher(final JcaFactory pFactory,
+                           final GordianSymKeyType pKeyType,
+                           final GordianCipherMode pMode,
+                           final Cipher pCipher) {
+        super(pFactory, pKeyType, pMode);
         theCipher = pCipher;
     }
 
     @Override
-    public BouncyKey<GordianSymKeyType> getKey() {
-        return (BouncyKey<GordianSymKeyType>) super.getKey();
+    public JcaKey<GordianSymKeyType> getKey() {
+        return (JcaKey<GordianSymKeyType>) super.getKey();
     }
 
     @Override
     public void initCipher(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
-        /* IV bytes */
-        byte[] myIV = null;
-
-        /* If we need an IV */
-        if (getMode().needsIV()) {
-            /* Create a random IV */
-            int myLen = theCipher.getBlockSize();
-            myIV = new byte[myLen];
-            getRandom().nextBytes(myIV);
-        }
+        /* Create a random IV */
+        byte[] myIV = new byte[AADIVLEN];
+        getRandom().nextBytes(myIV);
 
         /* initialise with this IV */
         initCipher(pKey, myIV, true);
@@ -91,22 +85,24 @@ public final class BouncySymKeyCipher
                            final byte[] pIV,
                            final boolean pEncrypt) throws OceanusException {
         /* Access and validate the key */
-        BouncyKey<GordianSymKeyType> myKey = BouncyKey.accessKey(pKey);
+        JcaKey<GordianSymKeyType> myJcaKey = JcaKey.accessKey(pKey);
         checkValidKey(pKey);
-        boolean useIV = getMode().needsIV();
 
-        /* Initialise the cipher */
-        CipherParameters myParms = new KeyParameter(myKey.getKey());
-        if (useIV) {
-            myParms = new ParametersWithIV(myParms, pIV);
+        /* Access details */
+        int myMode = pEncrypt
+                              ? Cipher.ENCRYPT_MODE
+                              : Cipher.DECRYPT_MODE;
+        SecretKey myKey = myJcaKey.getKey();
+
+        /* Protect against exceptions */
+        try {
+            /* Initialise as required */
+            AlgorithmParameterSpec myParms = new IvParameterSpec(pIV);
+            theCipher.init(myMode, myKey, myParms);
+        } catch (InvalidKeyException
+                | InvalidAlgorithmParameterException e) {
+            throw new GordianCryptoException("Failed to initialise cipher", e);
         }
-        theCipher.init(pEncrypt, myParms);
-
-        /* Store key and initVector */
-        setKey(pKey);
-        setInitVector(useIV
-                            ? pIV
-                            : null);
     }
 
     @Override
@@ -123,12 +119,26 @@ public final class BouncySymKeyCipher
         /* Protect against exceptions */
         try {
             /* Process the bytes */
-            return theCipher.processBytes(pBytes, pOffset, pLength, pOutput, pOutOffset);
+            return theCipher.update(pBytes, pOffset, pLength, pOutput, pOutOffset);
 
             /* Handle exceptions */
-        } catch (DataLengthException
-                | IllegalStateException e) {
+        } catch (ShortBufferException e) {
             throw new GordianCryptoException("Failed to process bytes", e);
+        }
+    }
+
+    @Override
+    public void updateAAD(final byte[] pBytes,
+                          final int pOffset,
+                          final int pLength) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Process the bytes */
+            theCipher.updateAAD(pBytes, pOffset, pLength);
+
+            /* Handle exceptions */
+        } catch (IllegalStateException e) {
+            throw new GordianCryptoException("Failed to process AAD bytes", e);
         }
     }
 
@@ -141,9 +151,9 @@ public final class BouncySymKeyCipher
             return theCipher.doFinal(pOutput, pOutOffset);
 
             /* Handle exceptions */
-        } catch (DataLengthException
-                | IllegalStateException
-                | InvalidCipherTextException e) {
+        } catch (ShortBufferException
+                | IllegalBlockSizeException
+                | BadPaddingException e) {
             throw new GordianCryptoException("Failed to finish operation", e);
         }
     }

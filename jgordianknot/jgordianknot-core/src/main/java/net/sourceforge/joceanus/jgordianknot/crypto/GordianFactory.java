@@ -55,6 +55,11 @@ public abstract class GordianFactory {
     protected static final int BIG_KEYLEN = 256;
 
     /**
+     * Initialisation Vector size (128/8).
+     */
+    protected static final int IVSIZE = 16;
+
+    /**
      * The number of seed bytes.
      */
     private static final int SEED_SIZE = 32;
@@ -102,9 +107,6 @@ public abstract class GordianFactory {
             myDigest.update(TethysDataConverter.stringToByteArray(myPhrase));
         }
         thePersonalisation = myDigest.finish();
-
-        /* Create the Id Manager */
-        theIdManager = new GordianIdManager(this);
     }
 
     /**
@@ -160,6 +162,9 @@ public abstract class GordianFactory {
      * @return the idManager
      */
     protected GordianIdManager getIdManager() {
+        if (theIdManager == null) {
+            theIdManager = new GordianIdManager(this);
+        }
         return theIdManager;
     }
 
@@ -177,7 +182,7 @@ public abstract class GordianFactory {
      */
     protected void setSecureRandom(final SecureRandom pRandom) {
         theRandom = pRandom;
-        theIdManager.setSecureRandom(pRandom);
+        getIdManager().setSecureRandom(pRandom);
     }
 
     /**
@@ -255,7 +260,7 @@ public abstract class GordianFactory {
      * @throws OceanusException on error
      */
     public GordianDigest generateRandomDigest() throws OceanusException {
-        GordianDigestType myType = theIdManager.generateRandomDigestType(supportedDigests());
+        GordianDigestType myType = getIdManager().generateRandomDigestType();
         return createDigest(myType);
     }
 
@@ -280,7 +285,7 @@ public abstract class GordianFactory {
      */
     public GordianMac generateRandomMac() throws OceanusException {
         /* Determine a random specification */
-        GordianMacSpec mySpec = generateRandomMacSpec();
+        GordianMacSpec mySpec = getIdManager().generateRandomMacSpec();
 
         /* Determine a random key */
         GordianKeyGenerator<GordianMacSpec> myGenerator = getKeyGenerator(mySpec);
@@ -292,25 +297,6 @@ public abstract class GordianFactory {
 
         /* Return it */
         return myMac;
-    }
-
-    /**
-     * generate random GordianMacSpec.
-     * @return the new MacSpec
-     */
-    private GordianMacSpec generateRandomMacSpec() {
-        GordianMacType myMacType = theIdManager.generateRandomMacType(supportedMacs());
-        switch (myMacType) {
-            case HMAC:
-                GordianDigestType myDigestType = theIdManager.generateRandomDigestType(supportedDigests());
-                return new GordianMacSpec(myMacType, myDigestType);
-            case POLY1305:
-            case GMAC:
-                GordianSymKeyType mySymType = theIdManager.generateRandomSymKeyType(standardSymKeys());
-                return new GordianMacSpec(myMacType, mySymType);
-            default:
-                return new GordianMacSpec(myMacType);
-        }
     }
 
     /**
@@ -351,7 +337,7 @@ public abstract class GordianFactory {
      */
     public GordianKey<GordianSymKeyType> generateRandomSymKey() throws OceanusException {
         /* Determine a random keyType */
-        GordianSymKeyType myType = theIdManager.generateRandomSymKeyType(supportedSymKeys());
+        GordianSymKeyType myType = getIdManager().generateRandomSymKeyType();
 
         /* Generate a random key */
         GordianKeyGenerator<GordianSymKeyType> myGenerator = getKeyGenerator(myType);
@@ -366,7 +352,7 @@ public abstract class GordianFactory {
     public List<GordianKey<GordianSymKeyType>> generateRandomSymKeyList() throws OceanusException {
         /* Determine a random set of keyType */
         int myCount = getNumCipherSteps();
-        GordianSymKeyType[] myTypes = theIdManager.generateRandomSymKeyTypes(myCount, supportedSymKeys());
+        GordianSymKeyType[] myTypes = getIdManager().generateRandomSymKeyTypes(myCount);
 
         /* Loop through the keys */
         List<GordianKey<GordianSymKeyType>> myKeyList = new ArrayList<>();
@@ -406,11 +392,21 @@ public abstract class GordianFactory {
     public abstract Predicate<GordianSymKeyType> standardSymKeys();
 
     /**
+     * create GordianAADCipher.
+     * @param pKeyType the KeyType
+     * @param pMode the cipher mode
+     * @return the new Cipher
+     * @throws OceanusException on error
+     */
+    public abstract GordianAADCipher createAADCipher(final GordianSymKeyType pKeyType,
+                                                     final GordianCipherMode pMode) throws OceanusException;
+
+    /**
      * generate random GordianStreamKeyType.
      * @return the new StreamKeyType
      */
     public GordianStreamKeyType generateRandomStreamKeyType() {
-        return theIdManager.generateRandomStreamKeyType(supportedStreamKeys());
+        return getIdManager().generateRandomStreamKeyType();
     }
 
     /**
@@ -420,7 +416,7 @@ public abstract class GordianFactory {
      */
     public GordianKey<GordianStreamKeyType> generateRandomStreamKey() throws OceanusException {
         /* Determine a random keyType */
-        GordianStreamKeyType myType = theIdManager.generateRandomStreamKeyType(supportedStreamKeys());
+        GordianStreamKeyType myType = generateRandomStreamKeyType();
 
         /* Generate a random key */
         GordianKeyGenerator<GordianStreamKeyType> myGenerator = getKeyGenerator(myType);

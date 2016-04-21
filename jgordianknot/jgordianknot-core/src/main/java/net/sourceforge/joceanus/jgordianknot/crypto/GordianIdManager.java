@@ -40,24 +40,29 @@ public class GordianIdManager {
     private static final int LOC_SYM = 5;
 
     /**
+     * The Standard Symmetric personalisation location.
+     */
+    private static final int LOC_STDSYM = 7;
+
+    /**
      * The Stream personalisation location.
      */
-    private static final int LOC_STREAM = 7;
+    private static final int LOC_STREAM = 11;
 
     /**
      * The Digest personalisation location.
      */
-    private static final int LOC_DIGEST = 11;
+    private static final int LOC_DIGEST = 13;
 
     /**
      * The Mac personalisation location.
      */
-    private static final int LOC_MAC = 13;
+    private static final int LOC_MAC = 17;
 
     /**
      * The Cipher personalisation location.
      */
-    private static final int LOC_CIPHER = 17;
+    private static final int LOC_CIPHER = 19;
 
     /**
      * The SecureRandom.
@@ -85,6 +90,11 @@ public class GordianIdManager {
     private final GordianSymKeyType[] theSymKeys;
 
     /**
+     * The list of Standard Symmetric Keys.
+     */
+    private final GordianSymKeyType[] theStdSymKeys;
+
+    /**
      * The list of Stream Keys.
      */
     private final GordianStreamKeyType[] theStreamKeys;
@@ -108,11 +118,12 @@ public class GordianIdManager {
         thePersonalisation = pFactory.getPersonalisation();
         thePersonalLen = thePersonalisation.length;
 
-        /* Create shuffled lists */
-        theSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_SYM);
-        theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), LOC_STREAM);
-        theDigests = shuffleTypes(GordianDigestType.values(), LOC_DIGEST);
-        theMacs = shuffleTypes(GordianMacType.values(), LOC_MAC);
+        /* Create shuffled and filtered lists */
+        theSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_SYM, pFactory.supportedSymKeys());
+        theStdSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_STDSYM, pFactory.standardSymKeys());
+        theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), LOC_STREAM, pFactory.supportedStreamKeys());
+        theDigests = shuffleTypes(GordianDigestType.values(), LOC_DIGEST, pFactory.supportedDigests());
+        theMacs = shuffleTypes(GordianMacType.values(), LOC_MAC, pFactory.supportedMacs());
 
         /* Determine the cipher indentation */
         theCipherIndent = getPersonalisedByte(LOC_CIPHER) & TethysDataConverter.NYBBLE_MASK;
@@ -136,12 +147,23 @@ public class GordianIdManager {
 
     /**
      * Obtain random SymKeyType.
-     * @param pPredicate the predicate to determine whether a type is valid
      * @return the random symKeyType
      */
-    protected GordianSymKeyType generateRandomSymKeyType(final Predicate<GordianSymKeyType> pPredicate) {
+    protected GordianSymKeyType generateRandomSymKeyType() {
         /* Determine a random symKey */
-        GordianSymKeyType[] mySymKey = getRandomTypes(theSymKeys, 1, pPredicate);
+        GordianSymKeyType[] mySymKey = getRandomTypes(theSymKeys, 1);
+
+        /* Return the single SymKeyType */
+        return mySymKey[0];
+    }
+
+    /**
+     * Obtain random standard SymKeyType.
+     * @return the random symKeyType
+     */
+    private GordianSymKeyType generateRandomStdSymKeyType() {
+        /* Determine a random symKey */
+        GordianSymKeyType[] mySymKey = getRandomTypes(theStdSymKeys, 1);
 
         /* Return the single SymKeyType */
         return mySymKey[0];
@@ -150,13 +172,24 @@ public class GordianIdManager {
     /**
      * Obtain set of random SymKeyTypes.
      * @param pCount the count
-     * @param pPredicate the predicate to determine whether a type is valid
      * @return the random symKeyTypes
      */
-    protected GordianSymKeyType[] generateRandomSymKeyTypes(final int pCount,
-                                                            final Predicate<GordianSymKeyType> pPredicate) {
+    protected GordianSymKeyType[] generateRandomSymKeyTypes(final int pCount) {
         /* Determine random symKeyTypes */
-        return getRandomTypes(theSymKeys, pCount, pPredicate);
+        return getRandomTypes(theSymKeys, pCount);
+    }
+
+    /**
+     * Derive set of standard SymKeyTypes from seed.
+     * @param pSeed the seed
+     * @param pCount the count
+     * @return the symKeyTypes
+     */
+    protected GordianSymKeyType[] deriveSymKeyTypesFromSeed(final int pSeed,
+                                                            final int pCount) {
+        GordianSymKeyType[] myResult = Arrays.copyOf(theStdSymKeys, pCount);
+        getSeededTypes(theStdSymKeys, myResult, pSeed);
+        return myResult;
     }
 
     /**
@@ -180,13 +213,32 @@ public class GordianIdManager {
     }
 
     /**
+     * Obtain symKeyType from external standard SymKeyId.
+     * @param pId the external id
+     * @return the symKeyType
+     * @throws OceanusException on error
+     */
+    private GordianSymKeyType deriveStdSymKeyTypeFromExternalId(final int pId) throws OceanusException {
+        return deriveTypeFromExternalId(pId, theStdSymKeys);
+    }
+
+    /**
+     * Obtain external SymKeyId.
+     * @param pKey the symKeyType
+     * @return the external id
+     * @throws OceanusException on error
+     */
+    private int deriveExternalIdFromStdSymKeyType(final GordianSymKeyType pKey) throws OceanusException {
+        return deriveExternalIdFromType(pKey, theStdSymKeys);
+    }
+
+    /**
      * Obtain random StreamKeyType.
-     * @param pPredicate the predicate to determine whether a type is valid
      * @return the random streamKeyType
      */
-    protected GordianStreamKeyType generateRandomStreamKeyType(final Predicate<GordianStreamKeyType> pPredicate) {
+    protected GordianStreamKeyType generateRandomStreamKeyType() {
         /* Determine a random streamKeyType */
-        GordianStreamKeyType[] myStreamKey = getRandomTypes(theStreamKeys, 1, pPredicate);
+        GordianStreamKeyType[] myStreamKey = getRandomTypes(theStreamKeys, 1);
 
         /* Return the single StreamKeyType */
         return myStreamKey[0];
@@ -198,7 +250,7 @@ public class GordianIdManager {
      * @return the streamKeyType
      * @throws OceanusException on error
      */
-    protected GordianStreamKeyType deriveStreamKeyTypeFromExternalId(final int pId) throws OceanusException {
+    private GordianStreamKeyType deriveStreamKeyTypeFromExternalId(final int pId) throws OceanusException {
         return deriveTypeFromExternalId(pId, theStreamKeys);
     }
 
@@ -208,47 +260,33 @@ public class GordianIdManager {
      * @return the external id
      * @throws OceanusException on error
      */
-    protected int deriveExternalIdFromStreamKeyType(final GordianStreamKeyType pKey) throws OceanusException {
+    private int deriveExternalIdFromStreamKeyType(final GordianStreamKeyType pKey) throws OceanusException {
         return deriveExternalIdFromType(pKey, theStreamKeys);
     }
 
     /**
      * Obtain random DigestType.
-     * @param pPredicate the predicate to determine whether a type is valid
      * @return the random digestType
      */
-    protected GordianDigestType generateRandomDigestType(final Predicate<GordianDigestType> pPredicate) {
+    protected GordianDigestType generateRandomDigestType() {
         /* Determine a random digestType */
-        GordianDigestType[] myDigest = getRandomTypes(theDigests, 1, pPredicate);
+        GordianDigestType[] myDigest = getRandomTypes(theDigests, 1);
 
         /* Return the single digestType */
         return myDigest[0];
     }
 
     /**
-     * Obtain seeded DigestType.
-     * @param pSeed the seed for the digest type
-     * @param pPredicate the predicate to determine whether a type is valid
-     * @return the random digestType
-     */
-    protected GordianDigestType getSeededDigestType(final int pSeed,
-                                                    final Predicate<GordianDigestType> pPredicate) {
-        /* Determine the seeded digestType */
-        GordianDigestType[] myDigest = getSeededTypes(theDigests, 1, pSeed, pPredicate);
-
-        /* Return the single digestType */
-        return myDigest[0];
-    }
-
-    /**
-     * Obtain set of random DigestTypes.
+     * Derive set of standard DigestTypes from seed.
+     * @param pSeed the seed
      * @param pCount the count
-     * @param pPredicate the predicate to determine whether a type is valid
-     * @return the random digestTypes
+     * @return the digestTypes
      */
-    protected GordianDigestType[] generateRandomDigestTypes(final int pCount,
-                                                            final Predicate<GordianDigestType> pPredicate) {
-        return getRandomTypes(theDigests, pCount, pPredicate);
+    protected GordianDigestType[] deriveDigestTypesFromSeed(final int pSeed,
+                                                            final int pCount) {
+        GordianDigestType[] myResult = Arrays.copyOf(theDigests, pCount);
+        getSeededTypes(theDigests, myResult, pSeed);
+        return myResult;
     }
 
     /**
@@ -272,13 +310,31 @@ public class GordianIdManager {
     }
 
     /**
+     * generate random GordianMacSpec.
+     * @return the new MacSpec
+     */
+    protected GordianMacSpec generateRandomMacSpec() {
+        GordianMacType myMacType = generateRandomMacType();
+        switch (myMacType) {
+            case HMAC:
+                GordianDigestType myDigestType = generateRandomDigestType();
+                return new GordianMacSpec(myMacType, myDigestType);
+            case POLY1305:
+            case GMAC:
+                GordianSymKeyType mySymType = generateRandomStdSymKeyType();
+                return new GordianMacSpec(myMacType, mySymType);
+            default:
+                return new GordianMacSpec(myMacType);
+        }
+    }
+
+    /**
      * Obtain random MacType.
-     * @param pPredicate the predicate to determine whether a type is valid
      * @return the random macType
      */
-    protected GordianMacType generateRandomMacType(final Predicate<GordianMacType> pPredicate) {
+    private GordianMacType generateRandomMacType() {
         /* Determine a random digest */
-        GordianMacType[] myMac = getRandomTypes(theMacs, 1, pPredicate);
+        GordianMacType[] myMac = getRandomTypes(theMacs, 1);
 
         /* Return the single macType */
         return myMac[0];
@@ -290,7 +346,7 @@ public class GordianIdManager {
      * @return the macSpec
      * @throws OceanusException on error
      */
-    protected GordianMacSpec deriveMacSpecFromExternalId(final int pId) throws OceanusException {
+    private GordianMacSpec deriveMacSpecFromExternalId(final int pId) throws OceanusException {
         /* Isolate id Components */
         int myId = pId & TethysDataConverter.NYBBLE_MASK;
         int myCode = pId >> TethysDataConverter.NYBBLE_SHIFT;
@@ -304,7 +360,7 @@ public class GordianIdManager {
                 return new GordianMacSpec(myMacType, deriveDigestTypeFromExternalId(myCode));
             case GMAC:
             case POLY1305:
-                return new GordianMacSpec(myMacType, deriveSymKeyTypeFromExternalId(myCode));
+                return new GordianMacSpec(myMacType, deriveStdSymKeyTypeFromExternalId(myCode));
             default:
                 return new GordianMacSpec(myMacType);
         }
@@ -326,7 +382,7 @@ public class GordianIdManager {
      * @return the external id
      * @throws OceanusException on error
      */
-    protected int deriveExternalIdFromMacSpec(final GordianMacSpec pMacSpec) throws OceanusException {
+    private int deriveExternalIdFromMacSpec(final GordianMacSpec pMacSpec) throws OceanusException {
         /* Determine base code */
         GordianMacType myMacType = pMacSpec.getMacType();
         int myCode = deriveExternalIdFromMacType(myMacType);
@@ -338,7 +394,7 @@ public class GordianIdManager {
                 break;
             case GMAC:
             case POLY1305:
-                myCode += deriveExternalIdFromSymKeyType(pMacSpec.getKeyType()) << TethysDataConverter.NYBBLE_SHIFT;
+                myCode += deriveExternalIdFromStdSymKeyType(pMacSpec.getKeyType()) << TethysDataConverter.NYBBLE_SHIFT;
                 break;
             default:
                 break;
@@ -521,7 +577,8 @@ public class GordianIdManager {
      * @return the shuffled types
      */
     private <E extends Enum<E>> E[] shuffleTypes(final E[] pTypes,
-                                                 final int pIndex) {
+                                                 final int pIndex,
+                                                 final Predicate<E> pFilter) {
         /* Access input length */
         int myNumTypes = pTypes.length;
         int myLen = myNumTypes;
@@ -533,20 +590,38 @@ public class GordianIdManager {
         int mySeed = getPersonalisedInteger(pIndex);
 
         /* Loop through the types */
+        int myNumAvailable = 0;
         for (int i = 0; i < myLen; i++) {
             /* Access the next element index */
             int myIndex = mySeed % myNumTypes;
 
-            /* If we need to shift the item */
-            if (myIndex != 0) {
-                /* Access items to swap */
-                int myLoc = i + myIndex;
-                E myType = myTypes[myLoc];
-                E myBase = myTypes[i];
+            /* Access the value */
+            int myLoc = myNumAvailable + myIndex;
+            E myType = myTypes[myLoc];
 
-                /* Swap them */
-                myTypes[i] = myType;
-                myTypes[myLoc] = myBase;
+            /* If this is a valid selection */
+            if (pFilter.test(myType)) {
+                /* If we need to shift the item */
+                if (myIndex != 0) {
+                    /* Swap value into place */
+                    E myCurr = myTypes[myNumAvailable];
+                    myTypes[myNumAvailable] = myType;
+                    myTypes[myLoc] = myCurr;
+                }
+
+                /* Increment available count */
+                myNumAvailable++;
+
+                /* else we are not interested in this item */
+            } else {
+                /* If we need to shift the item */
+                if (myIndex != myNumTypes - 1) {
+                    /* Swap value out to end */
+                    int myLast = myNumAvailable + myNumTypes - 1;
+                    E myCurr = myTypes[myLast];
+                    myTypes[myLast] = myType;
+                    myTypes[myLoc] = myCurr;
+                }
             }
 
             /* Adjust for next iteration */
@@ -554,8 +629,8 @@ public class GordianIdManager {
             myNumTypes--;
         }
 
-        /* Return the shuffled types */
-        return myTypes;
+        /* Return the shuffled and filtered types */
+        return Arrays.copyOf(myTypes, myNumAvailable);
     }
 
     /**
@@ -563,32 +638,30 @@ public class GordianIdManager {
      * @param <E> the data type
      * @param pTypes the source types.
      * @param pCount the count of types to be returned
-     * @param pPredicate the predicate to determine whether a type is valid
      * @return the subSet of types
      */
     private <E extends Enum<E>> E[] getRandomTypes(final E[] pTypes,
-                                                   final int pCount,
-                                                   final Predicate<E> pPredicate) {
+                                                   final int pCount) {
         /* Use a random seed */
-        return getSeededTypes(pTypes, pCount, theRandom.nextInt(), pPredicate);
+        E[] myResult = Arrays.copyOf(pTypes, pCount);
+        getSeededTypes(pTypes, myResult, theRandom.nextInt());
+        return myResult;
     }
 
     /**
      * Obtain seeded subSet of Types.
      * @param <E> the data type
      * @param pTypes the source types.
-     * @param pCount the count of types to be returned
+     * @param pSelected the array of selected types to be filled in
      * @param pSeed the seed for the types
-     * @param pPredicate the predicate to determine whether a type is valid
-     * @return the subSet of types
+     * @return the remaining seed
      */
-    private static <E extends Enum<E>> E[] getSeededTypes(final E[] pTypes,
-                                                          final int pCount,
-                                                          final int pSeed,
-                                                          final Predicate<E> pPredicate) {
+    private static <E extends Enum<E>> int getSeededTypes(final E[] pTypes,
+                                                          final E[] pSelected,
+                                                          final int pSeed) {
         /* Access lengths */
         int myTotalTypes = pTypes.length;
-        int myNumTypes = pCount;
+        int myNumTypes = pSelected.length;
 
         /* Allocate a copy of the types */
         E[] mySelection = Arrays.copyOf(pTypes, myTotalTypes);
@@ -608,30 +681,16 @@ public class GordianIdManager {
             int myLoc = myNumSelected + iIndex;
             E myType = mySelection[myLoc];
 
-            /* If this is a valid selection */
-            if (pPredicate.test(myType)) {
-                /* If we need to shift the item */
-                if (iIndex != 0) {
-                    /* Swap value into place */
-                    E myCurr = mySelection[myNumSelected];
-                    mySelection[myNumSelected] = myType;
-                    mySelection[myLoc] = myCurr;
-                }
-
-                /* Increment selection count */
-                myNumSelected++;
-
-                /* else we are not interested in this item */
-            } else {
-                /* If we need to shift the item */
-                if (iIndex != myTotalTypes - 1) {
-                    /* Swap value out to end */
-                    int myLast = myNumSelected + myTotalTypes - 1;
-                    E myCurr = mySelection[myLast];
-                    mySelection[myLast] = myType;
-                    mySelection[myLoc] = myCurr;
-                }
+            /* If we need to shift the item */
+            if (iIndex != 0) {
+                /* Swap value into place */
+                E myCurr = mySelection[myNumSelected];
+                mySelection[myNumSelected] = myType;
+                mySelection[myLoc] = myCurr;
             }
+
+            /* Increment selection count */
+            myNumSelected++;
 
             /* Adjust for next iteration */
             mySeed /= myTotalTypes;
@@ -649,8 +708,11 @@ public class GordianIdManager {
             throw new IllegalStateException("Insufficient available types");
         }
 
+        /* Fill in the results array */
+        System.arraycopy(mySelection, 0, pSelected, 0, myNumTypes);
+
         /* Return the results */
-        return Arrays.copyOf(mySelection, myNumTypes);
+        return mySeed;
     }
 
     /**

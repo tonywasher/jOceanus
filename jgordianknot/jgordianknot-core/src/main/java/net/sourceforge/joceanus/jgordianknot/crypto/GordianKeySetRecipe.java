@@ -33,19 +33,19 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  */
 public final class GordianKeySetRecipe {
     /**
+     * Recipe length (Integer).
+     */
+    protected static final int RECIPELEN = Integer.BYTES;
+
+    /**
      * Initialisation Vector size (128/8).
      */
-    protected static final int IVSIZE = 16;
+    private static final int IVSIZE = GordianFactory.IVSIZE;
 
     /**
-     * IV margins.
+     * Margins.
      */
-    private static final int IV_MARGIN = 4;
-
-    /**
-     * No IV flag.
-     */
-    private static final byte NOIV_FLAG = Byte.MIN_VALUE;
+    private static final int IMBED_MARGIN = 4;
 
     /**
      * The Recipe.
@@ -65,7 +65,7 @@ public final class GordianKeySetRecipe {
     /**
      * The KeySet Parameters.
      */
-    private final KeySetParameters theParams;
+    private final GordianKeySetParameters theParams;
 
     /**
      * Constructor for random choices.
@@ -75,89 +75,69 @@ public final class GordianKeySetRecipe {
      */
     protected GordianKeySetRecipe(final GordianFactory pFactory,
                                   final boolean pCreateIV) throws OceanusException {
-        /* Obtain the secureRandom and the cipher steps */
-        SecureRandom myRandom = pFactory.getRandom();
-        int myCipherSteps = pFactory.getNumCipherSteps();
-
-        /* Create the Recipe Bytes */
-        int myLen = 1 + (myCipherSteps >> 1);
-        theRecipe = new byte[myLen];
+        /* Allocate new set of parameters */
+        theParams = new GordianKeySetParameters(pFactory);
+        theRecipe = theParams.getRecipe();
+        theBytes = null;
 
         /* Create the Initialisation vector if required */
         if (pCreateIV) {
+            /* Obtain the secureRandom and the cipher steps */
+            SecureRandom myRandom = pFactory.getRandom();
+
             theInitVector = new byte[IVSIZE];
             myRandom.nextBytes(theInitVector);
         } else {
             theInitVector = null;
         }
-
-        /* Allocate new set of parameters */
-        theParams = new KeySetParameters(pFactory);
-        theParams.buildRecipe(pFactory, theRecipe);
-        theBytes = null;
     }
 
     /**
      * Constructor for external form parse.
      * @param pFactory the factory
      * @param pExternal the external form
+     * @param pHasIV derive an IV
      * @throws OceanusException on error
      */
     protected GordianKeySetRecipe(final GordianFactory pFactory,
-                                  final byte[] pExternal) throws OceanusException {
-        /* Determine whether we have an IV */
-        byte myStart = pExternal[0];
-        boolean hasIV = (myStart & NOIV_FLAG) == 0;
-        myStart &= ~NOIV_FLAG;
-
-        /* Determine number of cipher steps */
-        int myCipherSteps = (myStart >> TethysDataConverter.NYBBLE_SHIFT)
-                            & TethysDataConverter.NYBBLE_MASK;
-
+                                  final byte[] pExternal,
+                                  final boolean pHasIV) throws OceanusException {
         /* Determine data length */
-        int myRecipeLen = 1 + (myCipherSteps >> 1);
+        int myRecipeLen = RECIPELEN;
         int myLen = pExternal.length;
         int myDataLen = myLen
                         - myRecipeLen;
 
         /* If we are using an IV */
-        if (hasIV) {
-            /* Allocate buffers */
+        if (pHasIV) {
+            /* Adjust DataLen */
             myDataLen -= IVSIZE;
-            theRecipe = new byte[myRecipeLen];
-            theInitVector = new byte[IVSIZE];
-            theBytes = new byte[myDataLen];
-
-            /* Determine offset position */
-            int myOffSet = getCipherIndentation(pFactory, myDataLen);
-
-            /* Copy Data into buffers */
-            System.arraycopy(pExternal, 0, theRecipe, 0, myRecipeLen);
-            System.arraycopy(pExternal, myRecipeLen, theBytes, 0, myOffSet);
-            System.arraycopy(pExternal, myOffSet
-                                        + myRecipeLen, theInitVector, 0, IVSIZE);
-            System.arraycopy(pExternal, myOffSet
-                                        + myRecipeLen
-                                        + IVSIZE, theBytes, myOffSet, myDataLen
-                                                                      - myOffSet);
-
-            /* else there is no IV */
-        } else {
-            /* Allocate buffers */
-            theRecipe = new byte[myRecipeLen];
-            theInitVector = null;
-            theBytes = new byte[myDataLen];
-
-            /* Copy Data into buffers */
-            System.arraycopy(pExternal, 0, theRecipe, 0, myRecipeLen);
-            System.arraycopy(pExternal, myRecipeLen, theBytes, 0, myDataLen);
-
-            /* Clear the flag */
-            theRecipe[0] &= ~NOIV_FLAG;
         }
 
+        /* Allocate buffers */
+        theRecipe = new byte[myRecipeLen];
+        theInitVector = pHasIV
+                               ? new byte[IVSIZE]
+                               : null;
+        theBytes = new byte[myDataLen];
+
+        /* Determine offset position */
+        int myOffSet = getCipherIndentation(pFactory, myDataLen);
+
+        /* Copy Data into buffers */
+        System.arraycopy(pExternal, 0, theBytes, 0, myOffSet);
+        System.arraycopy(pExternal, myOffSet, theRecipe, 0, myRecipeLen);
+        if (pHasIV) {
+            System.arraycopy(pExternal, myOffSet
+                                        + myRecipeLen, theInitVector, 0, IVSIZE);
+            myRecipeLen += IVSIZE;
+        }
+        System.arraycopy(pExternal, myOffSet
+                                    + myRecipeLen, theBytes, myOffSet, myDataLen
+                                                                       - myOffSet);
+
         /* Allocate new set of parameters */
-        theParams = new KeySetParameters(pFactory, theRecipe);
+        theParams = new GordianKeySetParameters(pFactory, theRecipe);
     }
 
     /**
@@ -170,9 +150,9 @@ public final class GordianKeySetRecipe {
                                             final int pDataLen) {
         GordianIdManager myManager = pFactory.getIdManager();
         int myOffSet = myManager.getCipherIndentation();
-        myOffSet += IV_MARGIN;
+        myOffSet += IMBED_MARGIN;
         return Math.min(myOffSet, pDataLen
-                                  - IV_MARGIN);
+                                  - IMBED_MARGIN);
     }
 
     /**
@@ -213,66 +193,67 @@ public final class GordianKeySetRecipe {
                                    final byte[] pData) {
         /* Determine lengths */
         boolean useIV = theInitVector != null;
-        int myRecipeLen = theRecipe.length;
+        int myRecipeLen = RECIPELEN;
         int myDataLen = pData.length;
         int myLen = myRecipeLen
                     + myDataLen;
 
         /* If we have an IV */
         if (useIV) {
-            /* Allocate the new buffer */
+            /* Increase the buffer size */
             myLen += IVSIZE;
-            byte[] myBuffer = new byte[myLen];
+        }
 
-            /* Determine offset position */
-            int myOffSet = getCipherIndentation(pFactory, myDataLen);
+        /* Allocate the buffer */
+        byte[] myBuffer = new byte[myLen];
 
-            /* Copy Data into buffer */
-            System.arraycopy(theRecipe, 0, myBuffer, 0, myRecipeLen);
-            System.arraycopy(pData, 0, myBuffer, myRecipeLen, myOffSet);
+        /* Determine offset position */
+        int myOffSet = getCipherIndentation(pFactory, myDataLen);
+
+        /* Copy Data into buffer */
+        System.arraycopy(pData, 0, myBuffer, 0, myOffSet);
+        System.arraycopy(theRecipe, 0, myBuffer, myOffSet, myRecipeLen);
+        if (useIV) {
             System.arraycopy(theInitVector, 0, myBuffer, myOffSet
                                                          + myRecipeLen, IVSIZE);
-            System.arraycopy(pData, myOffSet, myBuffer, myOffSet
-                                                        + myRecipeLen
-                                                        + IVSIZE, myDataLen
-                                                                  - myOffSet);
-            /* return the external format */
-            return myBuffer;
-
-            /* Else we have No IV */
-        } else {
-            /* Allocate the buffer */
-            byte[] myBuffer = new byte[myLen];
-
-            /* Build the buffer */
-            System.arraycopy(theRecipe, 0, myBuffer, 0, myRecipeLen);
-            System.arraycopy(pData, 0, myBuffer, myRecipeLen, myDataLen);
-
-            /* Mark the buffer */
-            myBuffer[0] |= NOIV_FLAG;
-
-            /* return the external format */
-            return myBuffer;
+            myRecipeLen += IVSIZE;
         }
+        System.arraycopy(pData, myOffSet, myBuffer, myOffSet
+                                                    + myRecipeLen, myDataLen
+                                                                   - myOffSet);
+
+        /* return the external format */
+        return myBuffer;
     }
 
     /**
      * The parameters class.
      */
-    private static final class KeySetParameters {
+    protected static final class GordianKeySetParameters {
+        /**
+         * The Recipe.
+         */
+        private final byte[] theRecipe;
+
         /**
          * The CipherSet.
          */
         private final GordianSymKeyType[] theSymKeyTypes;
 
         /**
-         * Construct the parameters from random key.
+         * Construct the parameters from random.
          * @param pFactory the factory
          * @throws OceanusException on error
          */
-        private KeySetParameters(final GordianFactory pFactory) throws OceanusException {
+        private GordianKeySetParameters(final GordianFactory pFactory) throws OceanusException {
+            /* Obtain Id manager and random */
             GordianIdManager myManager = pFactory.getIdManager();
-            theSymKeyTypes = myManager.generateRandomSymKeyTypes(pFactory.getNumCipherSteps(), pFactory.standardSymKeys());
+            SecureRandom myRandom = pFactory.getRandom();
+
+            /* Generate recipe and derive symKeyTypes */
+            int mySeed = myRandom.nextInt();
+            theRecipe = TethysDataConverter.integerToByteArray(mySeed);
+            theSymKeyTypes = myManager.deriveSymKeyTypesFromSeed(mySeed, pFactory.getNumCipherSteps());
         }
 
         /**
@@ -281,32 +262,15 @@ public final class GordianKeySetRecipe {
          * @param pRecipe the recipe bytes
          * @throws OceanusException on error
          */
-        private KeySetParameters(final GordianFactory pFactory,
-                                 final byte[] pRecipe) throws OceanusException {
+        private GordianKeySetParameters(final GordianFactory pFactory,
+                                        final byte[] pRecipe) throws OceanusException {
             /* Obtain Id manager */
             GordianIdManager myManager = pFactory.getIdManager();
 
-            /* Determine number of cipher steps */
-            int myCipherSteps = (pRecipe[0] >> TethysDataConverter.NYBBLE_SHIFT)
-                                & TethysDataConverter.NYBBLE_MASK;
-
-            /* Allocate the key types */
-            int i = 0;
-            int j = 0;
-            theSymKeyTypes = new GordianSymKeyType[myCipherSteps];
-            int myId = pRecipe[j++]
-                       & TethysDataConverter.NYBBLE_MASK;
-            theSymKeyTypes[i++] = myManager.deriveSymKeyTypeFromExternalId(myId);
-            while (i < myCipherSteps) {
-                myId = (pRecipe[j] >> TethysDataConverter.NYBBLE_SHIFT)
-                       & TethysDataConverter.NYBBLE_MASK;
-                theSymKeyTypes[i++] = myManager.deriveSymKeyTypeFromExternalId(myId);
-                if (i < myCipherSteps) {
-                    myId = pRecipe[j++]
-                           & TethysDataConverter.NYBBLE_MASK;
-                    theSymKeyTypes[i++] = myManager.deriveSymKeyTypeFromExternalId(myId);
-                }
-            }
+            /* Store recipe and derive symKeyTypes */
+            theRecipe = pRecipe;
+            int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
+            theSymKeyTypes = myManager.deriveSymKeyTypesFromSeed(mySeed, pFactory.getNumCipherSteps());
         }
 
         /**
@@ -318,29 +282,11 @@ public final class GordianKeySetRecipe {
         }
 
         /**
-         * Construct the external recipe.
-         * @param pFactory the factory
-         * @param pRecipe the recipe bytes to build
-         * @throws OceanusException on error
+         * Obtain the Recipe.
+         * @return the recipe
          */
-        private void buildRecipe(final GordianFactory pFactory,
-                                 final byte[] pRecipe) throws OceanusException {
-            /* Obtain Id manager */
-            GordianIdManager myManager = pFactory.getIdManager();
-
-            /* Build the key bytes */
-            int myNumCiphers = theSymKeyTypes.length;
-            int i = 0;
-            int j = 0;
-            pRecipe[i++] = (byte) ((myNumCiphers << TethysDataConverter.NYBBLE_SHIFT) + myManager.deriveExternalIdFromSymKeyType(theSymKeyTypes[j++]));
-            while (j < myNumCiphers) {
-                int myByte = myManager.deriveExternalIdFromSymKeyType(theSymKeyTypes[j++]);
-                myByte <<= TethysDataConverter.NYBBLE_SHIFT;
-                if (j < myNumCiphers) {
-                    myByte += myManager.deriveExternalIdFromSymKeyType(theSymKeyTypes[j++]);
-                }
-                pRecipe[i++] = (byte) myByte;
-            }
+        private byte[] getRecipe() {
+            return theRecipe;
         }
     }
 }

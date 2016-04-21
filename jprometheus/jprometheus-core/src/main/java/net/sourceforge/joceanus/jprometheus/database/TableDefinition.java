@@ -442,7 +442,7 @@ public class TableDefinition {
                                            final int pLength) {
         /* Create the new binary column */
         BinaryColumn myColumn = new BinaryColumn(this, pId, GordianKeySet.getEncryptionOverhead()
-                                                            + GordianKeySet.getEncryptionLength(2 * pLength));
+                                                            + GordianKeySet.getEncryptionLength(pLength));
 
         /* Add it to the list and return it */
         theList.add(myColumn);

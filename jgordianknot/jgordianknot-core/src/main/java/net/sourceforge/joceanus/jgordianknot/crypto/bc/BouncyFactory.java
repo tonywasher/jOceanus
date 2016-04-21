@@ -65,10 +65,14 @@ import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SkeinMac;
 import org.bouncycastle.crypto.macs.VMPCMac;
+import org.bouncycastle.crypto.modes.AEADBlockCipher;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
+import org.bouncycastle.crypto.modes.CCMBlockCipher;
 import org.bouncycastle.crypto.modes.CFBBlockCipher;
 import org.bouncycastle.crypto.modes.CTSBlockCipher;
+import org.bouncycastle.crypto.modes.EAXBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
+import org.bouncycastle.crypto.modes.OCBBlockCipher;
 import org.bouncycastle.crypto.modes.OFBBlockCipher;
 import org.bouncycastle.crypto.modes.SICBlockCipher;
 import org.bouncycastle.crypto.paddings.ISO7816d4Padding;
@@ -289,6 +293,24 @@ public final class BouncyFactory
         /* Create the cipher */
         BufferedBlockCipher myBCCipher = getBCBlockCipher(pKeyType, pMode, pPadding);
         return new BouncySymKeyCipher(this, pKeyType, pMode, pPadding, myBCCipher);
+    }
+
+    @Override
+    public BouncyAADCipher createAADCipher(final GordianSymKeyType pKeyType,
+                                           final GordianCipherMode pMode) throws OceanusException {
+        /* Check validity of SymKey */
+        if (!standardSymKeys().test(pKeyType)) {
+            throw new GordianDataException(getInvalidText(pKeyType));
+        }
+
+        /* Check validity of Mode */
+        if (pMode == null) {
+            throw new GordianDataException(getInvalidText(pMode));
+        }
+
+        /* Create the cipher */
+        AEADBlockCipher myBCCipher = getBCAADCipher(pKeyType, pMode);
+        return new BouncyAADCipher(this, pKeyType, pMode, myBCCipher);
     }
 
     @Override
@@ -618,6 +640,29 @@ public final class BouncyFactory
                 return new CFBBlockCipher(pEngine, pEngine.getBlockSize());
             case OFB:
                 return new OFBBlockCipher(pEngine, pEngine.getBlockSize());
+            default:
+                throw new GordianDataException(getInvalidText(pMode));
+        }
+    }
+
+    /**
+     * Create the BouncyCastle Buffered Cipher.
+     * @param pKeyType the keyType
+     * @param pMode the cipher mode
+     * @return the Cipher
+     * @throws OceanusException on error
+     */
+    private static AEADBlockCipher getBCAADCipher(final GordianSymKeyType pKeyType,
+                                                  final GordianCipherMode pMode) throws OceanusException {
+        switch (pMode) {
+            case EAX:
+                return new EAXBlockCipher(getBCSymEngine(pKeyType));
+            case CCM:
+                return new CCMBlockCipher(getBCSymEngine(pKeyType));
+            case GCM:
+                return new GCMBlockCipher(getBCSymEngine(pKeyType));
+            case OCB:
+                return new OCBBlockCipher(getBCSymEngine(pKeyType), getBCSymEngine(pKeyType));
             default:
                 throw new GordianDataException(getInvalidText(pMode));
         }

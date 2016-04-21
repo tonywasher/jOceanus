@@ -68,7 +68,7 @@ public abstract class GordianCipher<T> {
      * @param pFactory the Security Factory
      * @param pKeyType the keyType
      * @param pMode the cipher mode
-     * @param pPadding is the cipher padded true/false?
+     * @param pPadding the padding
      */
     protected GordianCipher(final GordianFactory pFactory,
                             final T pKeyType,

@@ -28,8 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Hash from which to derive KeySet.
@@ -43,7 +43,7 @@ public final class GordianKeySetHash {
     /**
      * Hash size for password hash.
      */
-    public static final int HASHSIZE = 98;
+    public static final int HASHSIZE = 100;
 
     /**
      * Hash Recipe.

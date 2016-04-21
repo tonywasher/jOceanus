@@ -36,7 +36,7 @@ public final class GordianKeySet {
     /**
      * Initialisation Vector size.
      */
-    private static final int IVSIZE = GordianKeySetRecipe.IVSIZE;
+    private static final int IVSIZE = GordianFactory.IVSIZE;
 
     /**
      * Maximum number of encryption steps.
@@ -46,12 +46,8 @@ public final class GordianKeySet {
     /**
      * Maximum wrapped KeySize.
      */
-    public static final int WRAPPED_KEYSIZE = wrapKeyBytes(MAXSTEPS);
-
-    /**
-     * Key Id byte allowance.
-     */
-    private static final int KEYIDLEN = numKeyBytes(MAXSTEPS);
+    public static final int WRAPPED_KEYSIZE = GordianFactory.BIG_KEYLEN
+                                              + GordianKeySetRecipe.RECIPELEN;
 
     /**
      * The factory.
@@ -123,27 +119,7 @@ public final class GordianKeySet {
      * @return the encryption overhead
      */
     public static int getEncryptionOverhead() {
-        return IVSIZE + KEYIDLEN;
-    }
-
-    /**
-     * Determine length of bytes to encode the number of keys.
-     * @param pNumKeys the number of keys
-     * @return the number of key bytes
-     */
-    private static int numKeyBytes(final int pNumKeys) {
-        return 1 + (pNumKeys / 2);
-    }
-
-    /**
-     * Determine length of bytes to wrap the number of keys.
-     * @param pNumKeys the number of keys
-     * @return the number of key bytes
-     */
-    private static int wrapKeyBytes(final int pNumKeys) {
-        return GordianFactory.BIG_KEYLEN
-               + numKeyBytes(pNumKeys)
-               + (pNumKeys * (IVSIZE >> 1));
+        return IVSIZE + GordianKeySetRecipe.RECIPELEN;
     }
 
     /**
@@ -174,7 +150,7 @@ public final class GordianKeySet {
      */
     public byte[] decryptBytes(final byte[] pBytes) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pBytes);
+        GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pBytes, true);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
         byte[] myVector = myRecipe.getInitVector();
         byte[] myBytes = myRecipe.getBytes();
@@ -213,7 +189,7 @@ public final class GordianKeySet {
     public <T> GordianKey<T> deriveKey(final byte[] pKeySpec,
                                        final T pKeyType) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pKeySpec);
+        GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pKeySpec, false);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
         byte[] myBytes = myRecipe.getBytes();
 
@@ -249,7 +225,7 @@ public final class GordianKeySet {
     public GordianPrivateKey deriveKey(final byte[] pKeySpec,
                                        final GordianAsymKeyType pKeyType) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pKeySpec);
+        GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pKeySpec, false);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
         byte[] myBytes = myRecipe.getBytes();
 

@@ -22,45 +22,42 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
-import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.modes.AEADBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAADCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Cipher for BouncyCastle Symmetric Ciphers.
+ * Cipher for BouncyCastle AAD Symmetric Ciphers.
  */
-public final class BouncySymKeyCipher
-        extends GordianCipher<GordianSymKeyType> {
+public class BouncyAADCipher
+        extends GordianAADCipher {
     /**
      * Cipher.
      */
-    private final BufferedBlockCipher theCipher;
+    private final AEADBlockCipher theCipher;
 
     /**
      * Constructor.
      * @param pFactory the Security Factory
      * @param pKeyType the keyType
      * @param pMode the cipher mode
-     * @param pPadding the padding
      * @param pCipher the cipher
      */
-    protected BouncySymKeyCipher(final BouncyFactory pFactory,
-                                 final GordianSymKeyType pKeyType,
-                                 final GordianCipherMode pMode,
-                                 final GordianPadding pPadding,
-                                 final BufferedBlockCipher pCipher) {
-        super(pFactory, pKeyType, pMode, pPadding);
+    protected BouncyAADCipher(final BouncyFactory pFactory,
+                              final GordianSymKeyType pKeyType,
+                              final GordianCipherMode pMode,
+                              final AEADBlockCipher pCipher) {
+        super(pFactory, pKeyType, pMode);
         theCipher = pCipher;
     }
 
@@ -71,16 +68,9 @@ public final class BouncySymKeyCipher
 
     @Override
     public void initCipher(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
-        /* IV bytes */
-        byte[] myIV = null;
-
-        /* If we need an IV */
-        if (getMode().needsIV()) {
-            /* Create a random IV */
-            int myLen = theCipher.getBlockSize();
-            myIV = new byte[myLen];
-            getRandom().nextBytes(myIV);
-        }
+        /* Create a random IV */
+        byte[] myIV = new byte[AADIVLEN];
+        getRandom().nextBytes(myIV);
 
         /* initialise with this IV */
         initCipher(pKey, myIV, true);
@@ -93,20 +83,15 @@ public final class BouncySymKeyCipher
         /* Access and validate the key */
         BouncyKey<GordianSymKeyType> myKey = BouncyKey.accessKey(pKey);
         checkValidKey(pKey);
-        boolean useIV = getMode().needsIV();
 
         /* Initialise the cipher */
         CipherParameters myParms = new KeyParameter(myKey.getKey());
-        if (useIV) {
-            myParms = new ParametersWithIV(myParms, pIV);
-        }
+        myParms = new ParametersWithIV(myParms, pIV);
         theCipher.init(pEncrypt, myParms);
 
         /* Store key and initVector */
         setKey(pKey);
-        setInitVector(useIV
-                            ? pIV
-                            : null);
+        setInitVector(pIV);
     }
 
     @Override
@@ -129,6 +114,22 @@ public final class BouncySymKeyCipher
         } catch (DataLengthException
                 | IllegalStateException e) {
             throw new GordianCryptoException("Failed to process bytes", e);
+        }
+    }
+
+    @Override
+    public void updateAAD(final byte[] pBytes,
+                          final int pOffset,
+                          final int pLength) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Process the bytes */
+            theCipher.processAADBytes(pBytes, pOffset, pLength);
+
+            /* Handle exceptions */
+        } catch (DataLengthException
+                | IllegalStateException e) {
+            throw new GordianCryptoException("Failed to process AAD bytes", e);
         }
     }
 
