@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXStateIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXDilutionTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXIntegerTextField;
@@ -174,6 +175,11 @@ public class TethysFXGuiFactory
     }
 
     @Override
+    public TethysFXPasswordField newPasswordField() {
+        return new TethysFXPasswordField(this);
+    }
+
+    @Override
     public TethysFXHTMLManager newHTMLManager() {
         return new TethysFXHTMLManager(this);
     }
@@ -246,6 +252,11 @@ public class TethysFXGuiFactory
     @Override
     public TethysFXStringTextField newStringField() {
         return new TethysFXStringTextField(this);
+    }
+
+    @Override
+    public TethysFXCharArrayTextField newCharArrayField() {
+        return new TethysFXCharArrayTextField(this);
     }
 
     @Override

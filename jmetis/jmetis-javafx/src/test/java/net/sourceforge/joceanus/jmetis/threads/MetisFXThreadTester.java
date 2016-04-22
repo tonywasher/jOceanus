@@ -22,17 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadStatusManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXButton;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
  * Thread Manager Tester.
@@ -40,24 +38,14 @@ import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
 public class MetisFXThreadTester
         extends Application {
     /**
-     * The default height.
-     */
-    private static final int DEFAULT_HEIGHT = 620;
-
-    /**
-     * The default width.
-     */
-    private static final int DEFAULT_WIDTH = 400;
-
-    /**
-     * Logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetisFXThreadTester.class);
-
-    /**
      * ViewerManager.
      */
     // private final MetisFXViewerManager theViewerMgr;
+
+    /**
+     * GUI factory.
+     */
+    private final TethysFXGuiFactory theGuiFactory;
 
     /**
      * ThreadManager.
@@ -67,37 +55,49 @@ public class MetisFXThreadTester
     /**
      * Launch button.
      */
-    private final Button theLaunchButton;
+    private final TethysFXButton theLaunchButton;
 
     /**
      * Debug button.
      */
-    private final Button theDebugButton;
+    private final TethysFXButton theDebugButton;
 
     /**
      * the status panel.
      */
-    private final Node theStatusPanel;
+    private final MetisFXThreadStatusManager theStatusPanel;
 
     /**
      * the main panel.
      */
-    private final BorderPane theMainPanel;
+    private final TethysFXBorderPaneManager theMainPanel;
+
+    /**
+     * the stage.
+     */
+    private Stage theStage;
 
     /**
      * Constructor.
      */
     public MetisFXThreadTester() {
-        /* Create button */
-        theLaunchButton = new Button("Launch");
-        theDebugButton = new Button("Debug");
+        /* Create factory */
+        theGuiFactory = new TethysFXGuiFactory();
+
+        /* Create buttons */
+        theLaunchButton = theGuiFactory.newButton();
+        theLaunchButton.setTextOnly();
+        theLaunchButton.setText("Launch");
+        theDebugButton = theGuiFactory.newButton();
+        theDebugButton.setTextOnly();
+        theDebugButton.setText("Debug");
 
         /* Create the Managers */
         // MetisFieldManager myFieldMgr = new MetisFieldManager(new MetisFieldConfig());
         // theViewerMgr = new MetisFXViewerManager(myFieldMgr);
-        theThreadMgr = null; // new MetisFXThreadManager(theViewerMgr);
-        theStatusPanel = null; // theThreadMgr.getNode();
-        theMainPanel = new BorderPane();
+        theThreadMgr = new MetisFXThreadManager(null, theGuiFactory);
+        theStatusPanel = theThreadMgr.getStatusManager();
+        theMainPanel = theGuiFactory.newBorderPane();
     }
 
     /**
@@ -110,15 +110,20 @@ public class MetisFXThreadTester
 
     @Override
     public void start(final Stage pStage) {
+        /* Record the stage */
+        theStage = pStage;
+
         /* Build the panel */
-        theThreadMgr.setStage(pStage);
         buildPanel();
 
         /* Create scene */
-        Scene myScene = new Scene(new Group());
-        ((Group) myScene.getRoot()).getChildren().addAll(theMainPanel);
+        Scene myScene = new Scene(theMainPanel.getNode());
         pStage.setTitle("MetisFXThread Demo");
         pStage.setScene(myScene);
+
+        /* Configure factory */
+        theGuiFactory.setStage(pStage);
+        theGuiFactory.applyStyleSheets(myScene);
         pStage.show();
     }
 
@@ -126,21 +131,31 @@ public class MetisFXThreadTester
      * Build the panel.
      */
     private void buildPanel() {
-        /* Create borderPane for the window */
-        BorderPane myButtons = new BorderPane();
-        myButtons.setLeft(theLaunchButton);
-        myButtons.setRight(theDebugButton);
+        /* Create boxPane for the buttons */
+        TethysFXBoxPaneManager myButtons = theGuiFactory.newHBoxPane();
+        myButtons.addNode(theLaunchButton);
+        myButtons.addSpacer();
+        myButtons.addNode(theDebugButton);
+
+        /* Create boxPane for the window */
+        TethysFXBoxPaneManager myBox = theGuiFactory.newVBoxPane();
+        myBox.addSpacer();
+        myBox.addNode(myButtons);
+        myBox.addSpacer();
 
         /* Create borderPane for the window */
-        theMainPanel.setCenter(myButtons);
-        theMainPanel.setPrefWidth(DEFAULT_WIDTH);
-        theMainPanel.setPrefHeight(DEFAULT_HEIGHT);
+        theMainPanel.setCentre(myBox);
+        theMainPanel.setBorderPadding(5);
+
+        /* Set the status panel */
+        theMainPanel.setNorth(theStatusPanel);
+        theGuiFactory.setNodeVisible(theStatusPanel, false);
 
         /* Create thread status change handler */
         theThreadMgr.getEventRegistrar().addEventListener(e -> handleThreadChange());
 
         /* handle launch thread */
-        theLaunchButton.setOnAction(e -> launchThread());
+        theLaunchButton.getEventRegistrar().addEventListener(e -> launchThread());
     }
 
     /**
@@ -148,12 +163,13 @@ public class MetisFXThreadTester
      */
     private void handleThreadChange() {
         if (theThreadMgr.hasWorker()) {
-            theLaunchButton.setDisable(true);
-            theMainPanel.setTop(theStatusPanel);
+            theLaunchButton.setEnabled(false);
+            theGuiFactory.setNodeVisible(theStatusPanel, true);
         } else {
-            theLaunchButton.setDisable(false);
-            theStatusPanel.setOnTouchPressed(null);
+            theLaunchButton.setEnabled(true);
+            theGuiFactory.setNodeVisible(theStatusPanel, false);
         }
+        theStage.sizeToScene();
     }
 
     /**

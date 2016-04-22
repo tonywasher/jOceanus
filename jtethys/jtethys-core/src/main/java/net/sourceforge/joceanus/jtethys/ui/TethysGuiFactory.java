@@ -219,6 +219,12 @@ public abstract class TethysGuiFactory<N, I> {
     public abstract TethysDateRangeSelector<N, I> newDateRangeSelector(final boolean pBaseIsStart);
 
     /**
+     * Obtain a new passwordField.
+     * @return the new field
+     */
+    public abstract TethysPasswordField<N, I> newPasswordField();
+
+    /**
      * Obtain a new HTML manager.
      * @return the new manager
      */
@@ -310,6 +316,12 @@ public abstract class TethysGuiFactory<N, I> {
      * @return the new field
      */
     public abstract TethysDataEditField<String, N, I> newStringField();
+
+    /**
+     * Obtain a new charArray data field.
+     * @return the new field
+     */
+    public abstract TethysDataEditField<char[], N, I> newCharArrayField();
 
     /**
      * Obtain a new short data field.

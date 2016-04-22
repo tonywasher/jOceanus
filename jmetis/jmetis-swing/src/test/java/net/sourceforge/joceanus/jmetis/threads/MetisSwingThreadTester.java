@@ -22,16 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.HeadlessException;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
@@ -41,31 +35,26 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadStatusManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Thread Manager Tester.
  */
 public class MetisSwingThreadTester {
     /**
-     * The default height.
-     */
-    private static final int DEFAULT_HEIGHT = 620;
-
-    /**
-     * The default width.
-     */
-    private static final int DEFAULT_WIDTH = 400;
-
-    /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MetisSwingThreadTester.class);
 
     /**
-     * Frame.
+     * GUI factory.
      */
-    private final JFrame theFrame;
+    private final TethysSwingGuiFactory theGuiFactory;
 
     /**
      * ViewerManager.
@@ -80,32 +69,50 @@ public class MetisSwingThreadTester {
     /**
      * Launch button.
      */
-    private final JButton theLaunchButton;
+    private final TethysSwingButton theLaunchButton;
 
     /**
      * Debug button.
      */
-    private final JButton theDebugButton;
+    private final TethysSwingButton theDebugButton;
+
+    /**
+     * the status panel.
+     */
+    private final MetisSwingThreadStatusManager theStatusPanel;
 
     /**
      * the main panel.
      */
-    private final JComponent theStatusPanel;
+    private final TethysSwingBorderPaneManager theMainPanel;
+
+    /**
+     * Frame.
+     */
+    private final JFrame theFrame;
 
     /**
      * Constructor.
      */
     public MetisSwingThreadTester() {
-        /* Create button */
-        theLaunchButton = new JButton("Launch");
-        theDebugButton = new JButton("Debug");
+        /* Create factory */
+        theGuiFactory = new TethysSwingGuiFactory();
+
+        /* Create buttons */
+        theLaunchButton = theGuiFactory.newButton();
+        theLaunchButton.setTextOnly();
+        theLaunchButton.setText("Launch");
+        theDebugButton = theGuiFactory.newButton();
+        theDebugButton.setTextOnly();
+        theDebugButton.setText("Debug");
 
         /* Create the Managers */
         theFrame = new JFrame("MetisSwingThread Demo");
         MetisFieldManager myFieldMgr = new MetisFieldManager(new MetisFieldConfig());
         theViewerMgr = new MetisSwingViewerManager(myFieldMgr);
-        theThreadMgr = new MetisSwingThreadManager(theFrame, theViewerMgr);
-        theStatusPanel = theThreadMgr.getNode();
+        theThreadMgr = new MetisSwingThreadManager(theViewerMgr, theGuiFactory);
+        theStatusPanel = theThreadMgr.getStatusManager();
+        theMainPanel = theGuiFactory.newBorderPane();
     }
 
     /**
@@ -131,7 +138,7 @@ public class MetisSwingThreadTester {
             JFrame myFrame = myThread.theFrame;
 
             /* Build the panel */
-            JPanel myPanel = myThread.buildPanel();
+            JComponent myPanel = myThread.buildPanel();
 
             /* Attach the panel to the frame */
             myPanel.setOpaque(true);
@@ -151,30 +158,34 @@ public class MetisSwingThreadTester {
      * Build the panel.
      * @return the panel
      */
-    private JPanel buildPanel() {
-        /* Create borderPane for the window */
-        JPanel myButtons = new JPanel();
-        myButtons.setLayout(new BoxLayout(myButtons, BoxLayout.X_AXIS));
-        myButtons.add(theLaunchButton);
-        myButtons.add(Box.createHorizontalGlue());
-        myButtons.add(theDebugButton);
+    private JComponent buildPanel() {
+        TethysSwingBoxPaneManager myButtons = theGuiFactory.newHBoxPane();
+        myButtons.addNode(theLaunchButton);
+        myButtons.addSpacer();
+        myButtons.addNode(theDebugButton);
+
+        /* Create boxPane for the window */
+        TethysSwingBoxPaneManager myBox = theGuiFactory.newVBoxPane();
+        myBox.addSpacer();
+        myBox.addNode(myButtons);
+        myBox.addSpacer();
 
         /* Create borderPane for the window */
-        JPanel myMain = new JPanel();
-        myMain.setLayout(new BorderLayout());
-        myMain.add(myButtons, BorderLayout.CENTER);
-        myMain.add(theStatusPanel, BorderLayout.PAGE_START);
-        myMain.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
-        theStatusPanel.setVisible(false);
+        theMainPanel.setCentre(myBox);
+        theMainPanel.setBorderPadding(5);
+
+        /* Set the status panel */
+        theMainPanel.setNorth(theStatusPanel);
+        theGuiFactory.setNodeVisible(theStatusPanel, false);
 
         /* Create thread status change handler */
         theThreadMgr.getEventRegistrar().addEventListener(e -> handleThreadChange());
 
         /* handle launch thread */
-        theLaunchButton.addActionListener(e -> launchThread());
+        theLaunchButton.getEventRegistrar().addEventListener(e -> launchThread());
 
-        /* Return the panel */
-        return myMain;
+        /* Return the node */
+        return theMainPanel.getNode();
     }
 
     /**
@@ -183,11 +194,12 @@ public class MetisSwingThreadTester {
     private void handleThreadChange() {
         if (theThreadMgr.hasWorker()) {
             theLaunchButton.setEnabled(false);
-            theStatusPanel.setVisible(true);
+            theGuiFactory.setNodeVisible(theStatusPanel, true);
         } else {
             theLaunchButton.setEnabled(true);
-            theStatusPanel.setVisible(false);
+            theGuiFactory.setNodeVisible(theStatusPanel, false);
         }
+        theFrame.pack();
     }
 
     /**

@@ -26,6 +26,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.paint.Color;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 
@@ -68,6 +69,11 @@ public class TethysFXLabel
     @Override
     public void setText(final String pText) {
         theLabel.setText(pText);
+    }
+
+    @Override
+    public void setErrorText() {
+        theLabel.setTextFill(Color.RED);
     }
 
     @Override
@@ -133,6 +139,11 @@ public class TethysFXLabel
             default:
                 return Pos.BOTTOM_RIGHT;
         }
+    }
+
+    @Override
+    public Integer getWidth() {
+        return (int) theLabel.getWidth();
     }
 
     @Override

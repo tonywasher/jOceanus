@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import java.util.Arrays;
 import java.util.Currency;
 import java.util.EnumMap;
 import java.util.Map;
@@ -308,6 +309,11 @@ public abstract class TethysDataEditField<T, N, I>
         private final TethysDataEditConverter<T> theConverter;
 
         /**
+         * The vase value.
+         */
+        private T theValue;
+
+        /**
          * The display text.
          */
         private String theDisplay;
@@ -346,6 +352,9 @@ public abstract class TethysDataEditField<T, N, I>
          * @return the edit text.
          */
         public String getEditText() {
+            if (theEdit == null) {
+                theEdit = theConverter.formatEditValue(theValue);
+            }
             return theEdit;
         }
 
@@ -415,10 +424,9 @@ public abstract class TethysDataEditField<T, N, I>
                                         ? null
                                         : theConverter.formatDisplayValue(pValue);
 
-            /* Obtain edit text */
-            theEdit = pValue == null
-                                     ? null
-                                     : theConverter.formatEditValue(pValue);
+            /* Initialise edit text */
+            theValue = pValue;
+            theEdit = null;
 
             /* Store the value */
             theField.setTheValue(pValue);
@@ -448,6 +456,41 @@ public abstract class TethysDataEditField<T, N, I>
         @Override
         public String parseEditedValue(final String pValue) {
             return pValue;
+        }
+    }
+
+    /**
+     * CharArrayEditConverter class.
+     */
+    public static class TethysCharArrayEditConverter
+            implements TethysDataEditConverter<char[]> {
+        @Override
+        public boolean rightAlignFields() {
+            return false;
+        }
+
+        @Override
+        public String formatDisplayValue(final char[] pValue) {
+            if (pValue == null) {
+                return null;
+            }
+            char[] myArray = new char[pValue.length];
+            Arrays.fill(myArray, '*');
+            return new String(myArray);
+        }
+
+        @Override
+        public String formatEditValue(final char[] pValue) {
+            return pValue == null
+                                  ? null
+                                  : new String(pValue);
+        }
+
+        @Override
+        public char[] parseEditedValue(final String pValue) {
+            return pValue == null
+                                  ? null
+                                  : pValue.toCharArray();
         }
     }
 

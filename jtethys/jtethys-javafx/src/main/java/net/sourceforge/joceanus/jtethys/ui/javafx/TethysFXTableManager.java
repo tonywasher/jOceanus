@@ -215,6 +215,11 @@ public class TethysFXTableManager<C, R>
     }
 
     @Override
+    public TethysFXTableCharArrayColumn<C, R> declareCharArrayColumn(final C pId) {
+        return new TethysFXTableCharArrayColumn<>(this, pId);
+    }
+
+    @Override
     public TethysFXTableShortColumn<C, R> declareShortColumn(final C pId) {
         return new TethysFXTableShortColumn<>(this, pId);
     }
@@ -387,6 +392,25 @@ public class TethysFXTableManager<C, R>
                                             final C pId) {
             super(pTable, pId, TethysFieldType.STRING);
             declareCellFactory(getTable().theCellFactory.stringCellFactory(this));
+        }
+    }
+
+    /**
+     * CharArray Column.
+     * @param <C> the column identity
+     * @param <R> the table item class
+     */
+    public static class TethysFXTableCharArrayColumn<C, R>
+            extends TethysFXTableColumn<C, R, char[]> {
+        /**
+         * Constructor.
+         * @param pTable the table
+         * @param pId the id
+         */
+        protected TethysFXTableCharArrayColumn(final TethysFXTableManager<C, R> pTable,
+                                               final C pId) {
+            super(pTable, pId, TethysFieldType.CHARARRAY);
+            declareCellFactory(getTable().theCellFactory.charArrayCellFactory(this));
         }
     }
 

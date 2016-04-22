@@ -283,6 +283,13 @@ public abstract class TethysTableManager<C, R, N, I>
     public abstract TethysTableColumn<C, R, N, I> declareStringColumn(final C pId);
 
     /**
+     * Declare charArray column.
+     * @param pId the column id
+     * @return the column
+     */
+    public abstract TethysTableColumn<C, R, N, I> declareCharArrayColumn(final C pId);
+
+    /**
      * Declare short column.
      * @param pId the column id
      * @return the column

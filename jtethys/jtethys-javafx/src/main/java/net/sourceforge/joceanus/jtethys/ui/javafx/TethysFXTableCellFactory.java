@@ -61,6 +61,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXStateIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXDilutionTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXIntegerTextField;
@@ -118,6 +119,15 @@ public class TethysFXTableCellFactory<C, R>
      */
     protected Callback<TableColumn<R, String>, TableCell<R, String>> stringCellFactory(final TethysFXTableColumn<C, R, String> pColumn) {
         return e -> listenToCell(new TethysFXTableStringCell<>(pColumn, theGuiFactory));
+    }
+
+    /**
+     * Obtain CharArray Cell Factory.
+     * @param pColumn the column
+     * @return the charArray cell factory
+     */
+    protected Callback<TableColumn<R, char[]>, TableCell<R, char[]>> charArrayCellFactory(final TethysFXTableColumn<C, R, char[]> pColumn) {
+        return e -> listenToCell(new TethysFXTableCharArrayCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -535,6 +545,29 @@ public class TethysFXTableCellFactory<C, R>
         @Override
         public TethysFXStringTextField getControl() {
             return (TethysFXStringTextField) super.getControl();
+        }
+    }
+
+    /**
+     * CharArray Cell.
+     * @param <C> the column identity
+     * @param <R> the table item class
+     */
+    public static class TethysFXTableCharArrayCell<C, R>
+            extends TethysFXTableCell<C, R, char[]> {
+        /**
+         * Constructor.
+         * @param pColumn the column
+         * @param pFactory the GUI Factory
+         */
+        protected TethysFXTableCharArrayCell(final TethysFXTableColumn<C, R, char[]> pColumn,
+                                             final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newCharArrayField(), char[].class);
+        }
+
+        @Override
+        public TethysFXCharArrayTextField getControl() {
+            return (TethysFXCharArrayTextField) super.getControl();
         }
     }
 

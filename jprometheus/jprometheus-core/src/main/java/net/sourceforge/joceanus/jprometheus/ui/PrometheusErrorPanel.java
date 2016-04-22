@@ -109,6 +109,7 @@ public class PrometheusErrorPanel<N, I>
 
         /* Create the error field */
         theErrorField = pFactory.newLabel();
+        theErrorField.setErrorText();
 
         /* Create the clear button */
         theClearButton = pFactory.newButton();

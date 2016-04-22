@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -67,6 +68,11 @@ public class TethysSwingLabel
     @Override
     public void setText(final String pText) {
         theLabel.setText(pText);
+    }
+
+    @Override
+    public void setErrorText() {
+        theLabel.setForeground(Color.RED);
     }
 
     @Override
@@ -150,6 +156,11 @@ public class TethysSwingLabel
             default:
                 return SwingConstants.BOTTOM;
         }
+    }
+
+    @Override
+    public Integer getWidth() {
+        return theLabel.getWidth();
     }
 
     @Override

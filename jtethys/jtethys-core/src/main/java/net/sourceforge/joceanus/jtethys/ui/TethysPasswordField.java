@@ -22,17 +22,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+
 /**
- * Label.
+ * Password Field.
  * @param <N> the node type
  * @param <I> the icon type
  */
-public abstract class TethysLabel<N, I>
-        implements TethysNode<N> {
+public abstract class TethysPasswordField<N, I>
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
-     * The colon indicator.
+     * Event Manager.
      */
-    public static final String STR_COLON = ":";
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The id.
@@ -53,8 +57,9 @@ public abstract class TethysLabel<N, I>
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysLabel(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysPasswordField(final TethysGuiFactory<N, I> pFactory) {
         theId = pFactory.getNextId();
+        theEventManager = new TethysEventManager<>();
     }
 
     @Override
@@ -62,11 +67,10 @@ public abstract class TethysLabel<N, I>
         return theId;
     }
 
-    /**
-     * Set Text.
-     * @param pText the text
-     */
-    public abstract void setText(final String pText);
+    @Override
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
 
     /**
      * Obtain the Border Padding.
@@ -101,17 +105,6 @@ public abstract class TethysLabel<N, I>
     }
 
     /**
-     * Set error text colour.
-     */
-    public abstract void setErrorText();
-
-    /**
-     * Obtain the width.
-     * @return the width
-     */
-    public abstract Integer getWidth();
-
-    /**
      * Set the Preferred Width.
      * @param pWidth the width
      */
@@ -124,8 +117,21 @@ public abstract class TethysLabel<N, I>
     public abstract void setPreferredHeight(final Integer pHeight);
 
     /**
-     * Set Alignment.
-     * @param pAlign the alignment
+     * set password.
+     * @param pPassword the password.
      */
-    public abstract void setAlignment(final TethysAlignment pAlign);
+    public abstract void setPassword(final char[] pPassword);
+
+    /**
+     * Obtain the password
+     * @return the password
+     */
+    public abstract char[] getPassword();
+
+    /**
+     * fire Event.
+     */
+    protected void fireEvent() {
+        theEventManager.fireEvent(TethysUIEvent.PRESSED);
+    }
 }

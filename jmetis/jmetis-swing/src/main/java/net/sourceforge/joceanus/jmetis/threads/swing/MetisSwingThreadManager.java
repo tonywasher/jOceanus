@@ -22,26 +22,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads.swing;
 
-import java.awt.Component;
-
+import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatus;
-import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingFileSelector;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Swing Thread manager.
  */
 public class MetisSwingThreadManager
-        extends MetisThreadManager<JComponent> {
-    /**
-     * The Parent.
-     */
-    private final Component theParent;
-
+        extends MetisThreadManager<JComponent, Icon> {
     /**
      * The Active worker.
      */
@@ -49,13 +43,12 @@ public class MetisSwingThreadManager
 
     /**
      * Constructor.
-     * @param pParent the parent
      * @param pViewerManager the viewer manager
+     * @param pFactory the GUI factory
      */
-    public MetisSwingThreadManager(final Component pParent,
-                                   final MetisSwingViewerManager pViewerManager) {
-        super(pViewerManager, new MetisSwingThreadStatusManager());
-        theParent = pParent;
+    public MetisSwingThreadManager(final MetisViewerManager pViewerManager,
+                                   final TethysSwingGuiFactory pFactory) {
+        super(pViewerManager, new MetisSwingThreadStatusManager(pFactory));
     }
 
     @Override
@@ -66,7 +59,7 @@ public class MetisSwingThreadManager
     }
 
     @Override
-    protected MetisSwingThreadStatusManager getStatusManager() {
+    public MetisSwingThreadStatusManager getStatusManager() {
         return (MetisSwingThreadStatusManager) super.getStatusManager();
     }
 
@@ -132,10 +125,5 @@ public class MetisSwingThreadManager
         /* cancel the thread */
         theWorker.cancel(true);
         theWorker.interruptForCancel();
-    }
-
-    @Override
-    public TethysSwingFileSelector getFileSelector() {
-        return new TethysSwingFileSelector(theParent);
     }
 }

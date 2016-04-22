@@ -27,18 +27,17 @@ import java.util.concurrent.Executors;
 
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 
 /**
  * Thread Manager.
  * @param <N> the node type
+ * @param <I> the icon type
  */
-public abstract class MetisThreadManager<N>
+public abstract class MetisThreadManager<N, I>
         implements TethysEventProvider<MetisThreadEvent> {
     /**
      * Default Reporting Steps.
@@ -58,7 +57,7 @@ public abstract class MetisThreadManager<N>
     /**
      * The StatusManager.
      */
-    private final MetisThreadStatusManager<N> theStatusManager;
+    private final MetisThreadStatusManager<N, I> theStatusManager;
 
     /**
      * The Active thread.
@@ -73,17 +72,17 @@ public abstract class MetisThreadManager<N>
     /**
      * The Thread Viewer Entry.
      */
-    private final MetisViewerEntry theThreadEntry;
+    // private final MetisViewerEntry theThreadEntry;
 
     /**
      * The Profile Viewer Entry.
      */
-    private final MetisViewerEntry theProfileEntry;
+    // private final MetisViewerEntry theProfileEntry;
 
     /**
      * The Error Viewer Entry.
      */
-    private final MetisViewerEntry theErrorEntry;
+    // private final MetisViewerEntry theErrorEntry;
 
     /**
      * The Active Profile.
@@ -106,7 +105,7 @@ public abstract class MetisThreadManager<N>
      * @param pStatusManager the status manager
      */
     protected MetisThreadManager(final MetisViewerManager pViewerManager,
-                                 final MetisThreadStatusManager<N> pStatusManager) {
+                                 final MetisThreadStatusManager<N, I> pStatusManager) {
         /* Store the parameters */
         theStatusManager = pStatusManager;
         theStatusManager.setThreadManager(this);
@@ -121,19 +120,19 @@ public abstract class MetisThreadManager<N>
         theStatus = new MetisThreadStatus();
 
         /* Create the thread entry */
-        theThreadEntry = pViewerManager.newEntry("Thread");
-        theThreadEntry.addAsRootChild();
+        // theThreadEntry = pViewerManager.newEntry("Thread");
+        // theThreadEntry.addAsRootChild();
 
         /* Create the profile entry */
-        theProfileEntry = pViewerManager.newEntry("Profile");
-        theProfileEntry.addAsChildOf(theThreadEntry);
+        // theProfileEntry = pViewerManager.newEntry("Profile");
+        // theProfileEntry.addAsChildOf(theThreadEntry);
 
         /* Create the error entry */
-        theErrorEntry = pViewerManager.newEntry("Error");
-        theErrorEntry.addAsChildOf(theThreadEntry);
+        // theErrorEntry = pViewerManager.newEntry("Error");
+        // theErrorEntry.addAsChildOf(theThreadEntry);
 
         /* Hide the thread entry */
-        theThreadEntry.hideEntry();
+        // theThreadEntry.hideEntry();
     }
 
     @Override
@@ -145,7 +144,7 @@ public abstract class MetisThreadManager<N>
      * Obtain the status manager.
      * @return the status Manager
      */
-    protected MetisThreadStatusManager<N> getStatusManager() {
+    protected MetisThreadStatusManager<N, I> getStatusManager() {
         return theStatusManager;
     }
 
@@ -193,7 +192,7 @@ public abstract class MetisThreadManager<N>
         theThread = pThread;
 
         /* Show the thread entry */
-        theThreadEntry.showPrimeEntry();
+        // theThreadEntry.showPrimeEntry();
 
         /* Note that thread has started */
         theEventManager.fireEvent(MetisThreadEvent.THREADSTART);
@@ -213,7 +212,7 @@ public abstract class MetisThreadManager<N>
     protected void threadCompleted() {
         /* Remove reference */
         theThread = null;
-        theThreadEntry.hideEntry();
+        // theThreadEntry.hideEntry();
 
         /* Note that thread has completed */
         theEventManager.fireEvent(MetisThreadEvent.THREADEND);
@@ -347,11 +346,11 @@ public abstract class MetisThreadManager<N>
         theProfile = new MetisProfile(pTask);
 
         /* Update the Viewer entry */
-        theProfileEntry.setObject(theProfile);
+        // theProfileEntry.setObject(theProfile);
 
         /* Clear errors */
         theError = null;
-        theErrorEntry.hideEntry();
+        // theErrorEntry.hideEntry();
     }
 
     /**
@@ -359,7 +358,7 @@ public abstract class MetisThreadManager<N>
      */
     protected void endTask() {
         theProfile.end();
-        theProfileEntry.setFocus();
+        // theProfileEntry.setFocus();
     }
 
     /**
@@ -371,9 +370,9 @@ public abstract class MetisThreadManager<N>
         theError = new MetisExceptionWrapper(pException);
 
         /* Report to manager */
-        theErrorEntry.setObject(theError);
-        theErrorEntry.showEntry();
-        theErrorEntry.setFocus();
+        // theErrorEntry.setObject(theError);
+        // theErrorEntry.showEntry();
+        // theErrorEntry.setFocus();
     }
 
     /**
@@ -393,10 +392,4 @@ public abstract class MetisThreadManager<N>
                                   ? null
                                   : theProfile.getActiveTask();
     }
-
-    /**
-     * Obtain a file selector.
-     * @return the selector.
-     */
-    public abstract TethysFileSelector getFileSelector();
 }

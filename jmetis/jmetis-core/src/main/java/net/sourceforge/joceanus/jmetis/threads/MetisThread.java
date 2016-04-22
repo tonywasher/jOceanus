@@ -41,7 +41,7 @@ public interface MetisThread<T> {
      * @return the result
      * @throws OceanusException on error
      */
-    T performTask(final MetisThreadManager<?> pManager) throws OceanusException;
+    T performTask(final MetisThreadManager<?, ?> pManager) throws OceanusException;
 
     /**
      * process result.

@@ -62,6 +62,7 @@ public class TethysSwingGridPaneManager
      * @param pFactory the GUI factory
      */
     protected TethysSwingGridPaneManager(final TethysSwingGuiFactory pFactory) {
+        /* Initialise the panel */
         super(pFactory);
         thePanel = new JPanel();
         theLayout = new GridBagLayout();
@@ -135,6 +136,7 @@ public class TethysSwingGridPaneManager
         GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
         if (myConstraints != null) {
             myConstraints.anchor = determineAlignment(pAlign);
+            myConstraints.fill = GridBagConstraints.VERTICAL;
             theLayout.setConstraints(pNode.getNode(), myConstraints);
         }
     }

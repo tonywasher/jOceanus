@@ -62,6 +62,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.Teth
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingStateIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutionTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingIntegerTextField;
@@ -114,6 +115,15 @@ public class TethysSwingTableCellFactory<C, R>
      */
     protected TethysSwingTableCell<C, R, String> stringCell(final TethysSwingTableColumn<C, R, String> pColumn) {
         return listenToCell(new TethysSwingTableStringCell<>(pColumn, theGuiFactory));
+    }
+
+    /**
+     * Obtain charArray Cell.
+     * @param pColumn the column
+     * @return the charArray cell
+     */
+    protected TethysSwingTableCell<C, R, char[]> charArrayCell(final TethysSwingTableColumn<C, R, char[]> pColumn) {
+        return listenToCell(new TethysSwingTableCharArrayCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -638,6 +648,29 @@ public class TethysSwingTableCellFactory<C, R>
         @Override
         public TethysSwingStringTextField getControl() {
             return (TethysSwingStringTextField) super.getControl();
+        }
+    }
+
+    /**
+     * CharArray Cell.
+     * @param <C> the column identity
+     * @param <R> the table item class
+     */
+    public static class TethysSwingTableCharArrayCell<C, R>
+            extends TethysSwingTableCell<C, R, char[]> {
+        /**
+         * Constructor.
+         * @param pColumn the column
+         * @param pFactory the GUI Factory
+         */
+        protected TethysSwingTableCharArrayCell(final TethysSwingTableColumn<C, R, char[]> pColumn,
+                                                final TethysSwingGuiFactory pFactory) {
+            super(pColumn, pFactory.newCharArrayField(), char[].class);
+        }
+
+        @Override
+        public TethysSwingCharArrayTextField getControl() {
+            return (TethysSwingCharArrayTextField) super.getControl();
         }
     }
 

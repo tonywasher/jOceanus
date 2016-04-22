@@ -113,6 +113,7 @@ public class TethysFXGridPaneManager
     public void setCellAlignment(final TethysNode<Node> pNode,
                                  final TethysAlignment pAlign) {
         Node myNode = pNode.getNode();
+        GridPane.setFillWidth(myNode, false);
         GridPane.setHalignment(myNode, determineHAlignment(pAlign));
         GridPane.setValignment(myNode, determineVAlignment(pAlign));
     }

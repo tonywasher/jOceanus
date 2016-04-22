@@ -32,6 +32,11 @@ public enum TethysFieldType {
     STRING,
 
     /**
+     * Character Array.
+     */
+    CHARARRAY,
+
+    /**
      * Short.
      */
     SHORT,

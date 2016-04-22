@@ -50,7 +50,7 @@ public class MetisFXThread<T>
     /**
      * The status counter.
      */
-    private Integer theCounter;
+    private int theCounter;
 
     /**
      * The result.

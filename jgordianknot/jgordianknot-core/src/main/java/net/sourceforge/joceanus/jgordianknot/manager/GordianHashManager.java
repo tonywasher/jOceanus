@@ -46,17 +46,17 @@ public abstract class GordianHashManager {
     /**
      * Text for Password title.
      */
-    private static final String NLS_TITLEPASS = MgrResource.TITLE_PASSWORD.getValue();
+    private static final String NLS_TITLEPASS = GordianMgrResource.TITLE_PASSWORD.getValue();
 
     /**
      * Text for New Password title.
      */
-    private static final String NLS_TITLENEWPASS = MgrResource.TITLE_NEWPASS.getValue();
+    private static final String NLS_TITLENEWPASS = GordianMgrResource.TITLE_NEWPASS.getValue();
 
     /**
      * Text for Bad Password Error.
      */
-    private static final String NLS_ERRORPASS = MgrResource.ERROR_BADPASS.getValue();
+    private static final String NLS_ERRORPASS = GordianMgrResource.ERROR_BADPASS.getValue();
 
     /**
      * Security factory.

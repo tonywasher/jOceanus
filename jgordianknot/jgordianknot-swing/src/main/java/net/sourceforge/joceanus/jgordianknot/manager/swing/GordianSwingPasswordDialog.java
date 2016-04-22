@@ -22,157 +22,38 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.manager.swing;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jgordianknot.manager.MgrResource;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianPasswordDialog;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
  */
 public class GordianSwingPasswordDialog
-        implements ActionListener {
-    /**
-     * Dialog.
-     */
-    private final JDialog theDialog;
-
-    /**
-     * Minimum password length.
-     */
-    private static final int MIN_PASSWORD_LEN = 8;
-
-    /**
-     * password field width.
-     */
-    private static final int PASSWORD_FIELD_LEN = 30;
-
-    /**
-     * Number of columns.
-     */
-    private static final int NUM_COLS = 3;
-
-    /**
-     * adding width.
-     */
-    private static final int PADDING_SIZE = 5;
-
-    /**
-     * Text for Password Label.
-     */
-    private static final String NLS_PASSWORD = MgrResource.LABEL_PASSWORD.getValue();
-
-    /**
-     * Text for Confirm Label.
-     */
-    private static final String NLS_CONFIRM = MgrResource.LABEL_CONFIRM.getValue();
-
-    /**
-     * Text for OK Button.
-     */
-    private static final String NLS_OK = MgrResource.BUTTON_OK.getValue();
-
-    /**
-     * Text for Cancel Button.
-     */
-    private static final String NLS_CANCEL = MgrResource.BUTTON_CANCEL.getValue();
-
-    /**
-     * Text for Error Panel.
-     */
-    private static final String NLS_ERROR = MgrResource.TITLE_ERROR.getValue();
-
-    /**
-     * Text for Error Panel.
-     */
-    private static final String NLS_CONFIRMERROR = MgrResource.ERROR_CONFIRM.getValue();
-
-    /**
-     * Text for Error Panel.
-     */
-    private static final String NLS_LENGTHERR1 = MgrResource.ERROR_LENGTH1.getValue();
-
-    /**
-     * Text for Error Panel.
-     */
-    private static final String NLS_LENGTHERR2 = MgrResource.ERROR_LENGTH2.getValue();
-
+        extends GordianPasswordDialog<JComponent, Icon> {
     /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(GordianSwingPasswordDialog.class);
 
     /**
-     * Obtained password.
+     * Dialog.
      */
-    private char[] thePassword = null;
-
-    /**
-     * Confirmation password.
-     */
-    private char[] theConfirm = null;
-
-    /**
-     * OK Button.
-     */
-    private final JButton theOKButton;
-
-    /**
-     * Cancel Button.
-     */
-    private final JButton theCancelButton;
-
-    /**
-     * Error field.
-     */
-    private final JLabel theErrorField;
-
-    /**
-     * Password field.
-     */
-    private final JPasswordField thePassField;
-
-    /**
-     * The error panel.
-     */
-    private JPanel theError = null;
-
-    /**
-     * Confirmation field.
-     */
-    private final JPasswordField theConfirmField;
-
-    /**
-     * Is the password set.
-     */
-    private boolean isPasswordSet = false;
-
-    /**
-     * Do we need to confirm the password.
-     */
-    private final boolean needConfirm;
+    private final JDialog theDialog;
 
     /**
      * Constructor.
@@ -183,165 +64,40 @@ public class GordianSwingPasswordDialog
     public GordianSwingPasswordDialog(final JFrame pParent,
                                       final String pTitle,
                                       final boolean pNeedConfirm) {
+        /* Initialise underlying class */
+        super(new TethysSwingGuiFactory(), pNeedConfirm);
+
         /* Initialise the dialog (this calls dialogInit) */
         theDialog = new JDialog(pParent, pTitle, true);
 
-        /* Store the parameters */
-        needConfirm = pNeedConfirm;
-
-        /* Create the components */
-        JLabel myPassLabel = new JLabel(NLS_PASSWORD, SwingConstants.TRAILING);
-        JLabel myConfLabel = new JLabel(NLS_CONFIRM, SwingConstants.TRAILING);
-        thePassField = new JPasswordField("", PASSWORD_FIELD_LEN);
-        theConfirmField = new JPasswordField("", PASSWORD_FIELD_LEN);
-        theOKButton = new JButton(NLS_OK);
-        theCancelButton = new JButton(NLS_CANCEL);
-        theErrorField = new JLabel();
-
-        /* Add the listener for item changes */
-        theOKButton.addActionListener(this);
-        theCancelButton.addActionListener(this);
-        thePassField.addActionListener(this);
-        theConfirmField.addActionListener(this);
-
-        /* Create the error panel */
-        theError = new JPanel();
-        theError.setBorder(BorderFactory.createTitledBorder(NLS_ERROR));
-        theError.add(theErrorField);
-
-        /* Set the Error panel to be red and invisible */
-        theErrorField.setForeground(Color.red);
-        theError.setVisible(false);
-
-        /* Create the panel */
-        JPanel myForm = new JPanel();
-
-        /* Layout the password panel */
-        SpringLayout mySpring = new SpringLayout();
-        int myNumRows = 1;
-        myForm.setLayout(mySpring);
-        myForm.add(myPassLabel);
-        myForm.add(thePassField);
-        myForm.add(theOKButton);
-        if (needConfirm) {
-            myNumRows++;
-            myForm.add(myConfLabel);
-            myForm.add(theConfirmField);
-            myForm.add(theCancelButton);
-        }
-        TethysSwingSpringUtilities.makeCompactGrid(myForm, mySpring, myNumRows, NUM_COLS, PADDING_SIZE);
-
-        /* Layout the panel */
-        JPanel myPanel = new JPanel();
-        myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.Y_AXIS));
-        myPanel.add(myForm);
-        myPanel.add(theError);
-        if (needConfirm) {
+        /* If we are confirming */
+        if (pNeedConfirm) {
             /* Set a focus traversal policy */
-            myPanel.setFocusTraversalPolicy(new TraversalPolicy());
-            myPanel.setFocusCycleRoot(true);
+            JComponent myNode = getContainer().getNode();
+            myNode.setFocusTraversalPolicy(new TraversalPolicy());
+            myNode.setFocusTraversalPolicyProvider(true);
         }
 
         /* Set this to be the main panel */
-        theDialog.add(myPanel);
+        theDialog.add(getContainer().getNode());
         theDialog.pack();
 
         /* Set the relative location */
         theDialog.setLocationRelativeTo(pParent);
     }
 
-    /**
-     * Obtain the password.
-     * @return the password
-     */
-    protected char[] getPassword() {
-        return thePassword;
-    }
-
-    /**
-     * Is the password set.
-     * @return true/false
-     */
-    public boolean isPasswordSet() {
-        return isPasswordSet;
-    }
-
-    /**
-     * Release resources.
-     */
-    public void release() {
-        if (thePassword != null) {
-            Arrays.fill(thePassword, (char) 0);
-        }
-        if (theConfirm != null) {
-            Arrays.fill(theConfirm, (char) 0);
-        }
+    @Override
+    protected TethysSwingBorderPaneManager getContainer() {
+        return (TethysSwingBorderPaneManager) super.getContainer();
     }
 
     @Override
-    public void actionPerformed(final ActionEvent evt) {
-        Object o = evt.getSource();
-
-        /* If this event relates to the OK box or the password field */
-        if ((theOKButton.equals(o))
-            || (thePassField.equals(o))
-            || (theConfirmField.equals(o))) {
-            /* Access the password */
-            thePassword = thePassField.getPassword();
-
-            /* Access the confirm password */
-            theConfirm = theConfirmField.getPassword();
-
-            /* If we need to confirm the password */
-            if (needConfirm) {
-                /* If the password is less than the minimum length */
-                if (thePassword.length < MIN_PASSWORD_LEN) {
-                    /* Set error and return */
-                    setError(NLS_LENGTHERR1
-                             + " "
-                             + MIN_PASSWORD_LEN
-                             + " "
-                             + NLS_LENGTHERR2);
-                    return;
-                }
-
-                /* If the confirm password does not match */
-                if (!Arrays.equals(thePassword, theConfirm)) {
-                    /* Set error and return */
-                    setError(NLS_CONFIRMERROR);
-                    return;
-                }
-            }
-
-            /* Note that we have set the password */
-            isPasswordSet = true;
-
-            /* Close the dialog */
-            theDialog.setVisible(false);
-
-            /* else if this event relates to the Cancel button */
-        } else if (theCancelButton.equals(o)) {
-            /* Note that we have set the password */
-            isPasswordSet = false;
-
-            /* Close the dialog */
-            theDialog.setVisible(false);
-        }
+    protected void closeDialog() {
+        theDialog.setVisible(false);
     }
 
-    /**
-     * set the error.
-     * @param pError the error to display
-     */
-    public void setError(final String pError) {
-        /* Set the string to the error field */
-        theErrorField.setText(pError);
-
-        /* Show that we need to update the password */
-        isPasswordSet = false;
-
-        /* Set the error panel to visible */
-        theError.setVisible(true);
+    @Override
+    protected void reSizeDialog() {
         theDialog.pack();
     }
 
@@ -387,17 +143,17 @@ public class GordianSwingPasswordDialog
         public Component getComponentAfter(final Container pRoot,
                                            final Component pCurrent) {
             /* Handle field order */
-            if (thePassField.equals(pCurrent)) {
-                return theConfirmField;
+            if (pCurrent.equals(getPasswordNode())) {
+                return getConfirmNode();
             }
-            if (theConfirmField.equals(pCurrent)) {
-                return theOKButton;
+            if (pCurrent.equals(getConfirmNode())) {
+                return getOKButtonNode();
             }
-            if (theOKButton.equals(pCurrent)) {
-                return theCancelButton;
+            if (pCurrent.equals(getOKButtonNode())) {
+                return getCancelButtonNode();
             }
-            if (theCancelButton.equals(pCurrent)) {
-                return thePassField;
+            if (pCurrent.equals(getCancelButtonNode())) {
+                return getPasswordNode();
             }
 
             /* Return a default value */
@@ -408,17 +164,17 @@ public class GordianSwingPasswordDialog
         public Component getComponentBefore(final Container pRoot,
                                             final Component pCurrent) {
             /* Handle field order */
-            if (thePassField.equals(pCurrent)) {
-                return theCancelButton;
+            if (pCurrent.equals(getPasswordNode())) {
+                return getCancelButtonNode();
             }
-            if (theConfirmField.equals(pCurrent)) {
-                return thePassField;
+            if (pCurrent.equals(getConfirmNode())) {
+                return getPasswordNode();
             }
-            if (theOKButton.equals(pCurrent)) {
-                return theConfirmField;
+            if (pCurrent.equals(getOKButtonNode())) {
+                return getConfirmNode();
             }
-            if (theCancelButton.equals(pCurrent)) {
-                return theOKButton;
+            if (pCurrent.equals(getCancelButtonNode())) {
+                return getOKButtonNode();
             }
 
             /* Return a default value */
@@ -427,20 +183,17 @@ public class GordianSwingPasswordDialog
 
         @Override
         public Component getDefaultComponent(final Container pRoot) {
-            /* Return the first component */
             return getFirstComponent(pRoot);
         }
 
         @Override
         public Component getFirstComponent(final Container pRoot) {
-            /* Return the password field */
-            return thePassField;
+            return getPasswordNode();
         }
 
         @Override
         public Component getLastComponent(final Container pRoot) {
-            /* Return the password field */
-            return theCancelButton;
+            return getCancelButtonNode();
         }
     }
 }

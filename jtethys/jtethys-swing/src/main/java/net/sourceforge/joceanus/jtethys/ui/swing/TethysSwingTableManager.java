@@ -237,6 +237,11 @@ public class TethysSwingTableManager<C, R>
     }
 
     @Override
+    public TethysSwingTableCharArrayColumn<C, R> declareCharArrayColumn(final C pId) {
+        return new TethysSwingTableCharArrayColumn<>(this, pId);
+    }
+
+    @Override
     public TethysSwingTableShortColumn<C, R> declareShortColumn(final C pId) {
         return new TethysSwingTableShortColumn<>(this, pId);
     }
@@ -563,6 +568,25 @@ public class TethysSwingTableManager<C, R>
                                                final C pId) {
             super(pTable, pId, TethysFieldType.STRING);
             declareCell(getTable().theCellFactory.stringCell(this));
+        }
+    }
+
+    /**
+     * CharArray Column.
+     * @param <C> the column identity
+     * @param <R> the table item class
+     */
+    public static class TethysSwingTableCharArrayColumn<C, R>
+            extends TethysSwingTableColumn<C, R, char[]> {
+        /**
+         * Constructor.
+         * @param pTable the table
+         * @param pId the id
+         */
+        protected TethysSwingTableCharArrayColumn(final TethysSwingTableManager<C, R> pTable,
+                                                  final C pId) {
+            super(pTable, pId, TethysFieldType.CHARARRAY);
+            declareCell(getTable().theCellFactory.charArrayCell(this));
         }
     }
 

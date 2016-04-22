@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.Teth
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingStateIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutionTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingIntegerTextField;
@@ -165,6 +166,11 @@ public class TethysSwingGuiFactory
     }
 
     @Override
+    public TethysSwingPasswordField newPasswordField() {
+        return new TethysSwingPasswordField(this);
+    }
+
+    @Override
     public TethysSwingHTMLManager newHTMLManager() {
         return new TethysSwingHTMLManager(this);
     }
@@ -237,6 +243,11 @@ public class TethysSwingGuiFactory
     @Override
     public TethysSwingStringTextField newStringField() {
         return new TethysSwingStringTextField(this);
+    }
+
+    @Override
+    public TethysSwingCharArrayTextField newCharArrayField() {
+        return new TethysSwingCharArrayTextField(this);
     }
 
     @Override
