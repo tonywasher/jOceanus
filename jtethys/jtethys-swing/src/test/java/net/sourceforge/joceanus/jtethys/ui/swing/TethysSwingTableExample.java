@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableStateIconCell;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutionColumn;
@@ -218,6 +219,11 @@ public class TethysSwingTableExample {
         TethysSwingTableListColumn<TethysDataId, TethysSwingTableItem, TethysListId> myListColumn = theTable.declareListColumn(TethysDataId.LIST, TethysListId.class);
         myListColumn.setCellValueFactory(p -> p.getList());
         myListColumn.setCellCommitFactory((p, v) -> p.setList(v));
+
+        /* Create the password column */
+        TethysSwingTableCharArrayColumn<TethysDataId, TethysSwingTableItem> myPassColumn = theTable.declareCharArrayColumn(TethysDataId.PASSWORD);
+        myPassColumn.setCellValueFactory(p -> p.getPassword());
+        myPassColumn.setCellCommitFactory((p, v) -> p.setPassword(v));
 
         /* Create the updates column */
         TethysSwingTableIntegerColumn<TethysDataId, TethysSwingTableItem> myUpdatesColumn = theTable.declareIntegerColumn(TethysDataId.UPDATES);

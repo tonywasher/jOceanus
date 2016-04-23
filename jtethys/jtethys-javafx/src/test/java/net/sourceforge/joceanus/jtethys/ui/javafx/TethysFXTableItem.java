@@ -47,6 +47,11 @@ public class TethysFXTableItem {
     private final ObjectProperty<String> theName = new SimpleObjectProperty<>(this, TethysDataId.NAME.toString());
 
     /**
+     * Password property.
+     */
+    private final ObjectProperty<char[]> thePassword = new SimpleObjectProperty<>(this, TethysDataId.PASSWORD.toString());
+
+    /**
      * Boolean property.
      */
     private final ObjectProperty<Boolean> theBoolean = new SimpleObjectProperty<>(this, TethysDataId.BOOLEAN.toString());
@@ -156,6 +161,14 @@ public class TethysFXTableItem {
      */
     public ObjectProperty<String> nameProperty() {
         return theName;
+    }
+
+    /**
+     * Obtain the password property.
+     * @return the password property
+     */
+    public ObjectProperty<char[]> passwordProperty() {
+        return thePassword;
     }
 
     /**

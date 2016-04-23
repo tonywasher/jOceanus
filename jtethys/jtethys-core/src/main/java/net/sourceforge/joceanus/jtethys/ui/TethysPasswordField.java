@@ -34,6 +34,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 public abstract class TethysPasswordField<N, I>
         implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
+     * The Bullet character.
+     */
+    protected static final char BULLET = '\u2022';
+
+    /**
      * Event Manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;

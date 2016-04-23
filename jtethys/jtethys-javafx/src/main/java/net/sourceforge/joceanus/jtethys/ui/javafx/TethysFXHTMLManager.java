@@ -117,6 +117,7 @@ public class TethysFXHTMLManager
 
     @Override
     public void setVisible(final boolean pVisible) {
+        theWebView.setManaged(pVisible);
         theWebView.setVisible(pVisible);
     }
 

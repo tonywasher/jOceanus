@@ -43,13 +43,26 @@ public class TethysSwingBorderPaneManager
     private final JPanel thePanel;
 
     /**
+     * The BorderLayout.
+     */
+    private final BorderLayout theLayout;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
     protected TethysSwingBorderPaneManager(final TethysSwingGuiFactory pFactory) {
+        /* Initialise underlying class */
         super(pFactory);
+
+        /* Create the layout */
+        theLayout = new BorderLayout();
+        theLayout.setHgap(getHGap());
+        theLayout.setVgap(getVGap());
+
+        /* Create the panel */
         thePanel = new JPanel();
-        thePanel.setLayout(new BorderLayout());
+        thePanel.setLayout(theLayout);
     }
 
     @Override
@@ -60,6 +73,18 @@ public class TethysSwingBorderPaneManager
     @Override
     public void setVisible(final boolean pVisible) {
         thePanel.setVisible(pVisible);
+    }
+
+    @Override
+    public void setHGap(final Integer pGap) {
+        super.setHGap(pGap);
+        theLayout.setHgap(getHGap());
+    }
+
+    @Override
+    public void setVGap(final Integer pGap) {
+        super.setVGap(pGap);
+        theLayout.setVgap(getVGap());
     }
 
     @Override

@@ -149,7 +149,7 @@ public class MetisFXThreadTester
 
         /* Set the status panel */
         theMainPanel.setNorth(theStatusPanel);
-        theGuiFactory.setNodeVisible(theStatusPanel, false);
+        theStatusPanel.setVisible(false);
 
         /* Create thread status change handler */
         theThreadMgr.getEventRegistrar().addEventListener(e -> handleThreadChange());
@@ -164,10 +164,10 @@ public class MetisFXThreadTester
     private void handleThreadChange() {
         if (theThreadMgr.hasWorker()) {
             theLaunchButton.setEnabled(false);
-            theGuiFactory.setNodeVisible(theStatusPanel, true);
+            theStatusPanel.setVisible(true);
         } else {
             theLaunchButton.setEnabled(true);
-            theGuiFactory.setNodeVisible(theStatusPanel, false);
+            theStatusPanel.setVisible(false);
         }
         theStage.sizeToScene();
     }

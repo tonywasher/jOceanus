@@ -475,7 +475,7 @@ public abstract class TethysDataEditField<T, N, I>
                 return null;
             }
             char[] myArray = new char[pValue.length];
-            Arrays.fill(myArray, '*');
+            Arrays.fill(myArray, TethysPasswordField.BULLET);
             return new String(myArray);
         }
 

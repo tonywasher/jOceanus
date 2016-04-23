@@ -46,6 +46,11 @@ public class TethysScrollUITestHelper<N, I> {
     private static final int MAX_ITEMS = 4;
 
     /**
+     * The default password value.
+     */
+    public static final char[] PASS_DEF = "Password".toCharArray();
+
+    /**
      * The default short value.
      */
     public static final short SHORT_DEF = 3;

@@ -32,6 +32,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysSlider;
 public class TethysFXSlider
         extends TethysSlider<Node, Node> {
     /**
+     * The slider style.
+     */
+    private static final String STYLE_SLIDER = TethysFXGuiFactory.CSS_STYLE_BASE + "-slider";
+
+    /**
      * The node.
      */
     private Node theNode;
@@ -52,6 +57,7 @@ public class TethysFXSlider
         theNode = theSlider;
         theSlider.setMin(0);
         theSlider.setShowTickMarks(true);
+        theSlider.getStyleClass().add(STYLE_SLIDER);
 
         /* Handle events */
         theSlider.valueProperty().addListener(e -> {
@@ -73,6 +79,7 @@ public class TethysFXSlider
 
     @Override
     public void setVisible(final boolean pVisible) {
+        theNode.setManaged(pVisible);
         theNode.setVisible(pVisible);
     }
 

@@ -78,6 +78,7 @@ public final class TethysFXIconButtonManager {
 
         @Override
         public void setVisible(final boolean pVisible) {
+            theNode.setManaged(pVisible);
             theNode.setVisible(pVisible);
         }
 
@@ -152,6 +153,7 @@ public final class TethysFXIconButtonManager {
 
         @Override
         public void setVisible(final boolean pVisible) {
+            theNode.setManaged(pVisible);
             theNode.setVisible(pVisible);
         }
 

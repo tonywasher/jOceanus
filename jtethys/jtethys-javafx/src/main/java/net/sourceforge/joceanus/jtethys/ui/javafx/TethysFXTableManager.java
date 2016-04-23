@@ -123,6 +123,7 @@ public class TethysFXTableManager<C, R>
 
     @Override
     public void setVisible(final boolean pVisible) {
+        theTable.setManaged(pVisible);
         theTable.setVisible(pVisible);
     }
 

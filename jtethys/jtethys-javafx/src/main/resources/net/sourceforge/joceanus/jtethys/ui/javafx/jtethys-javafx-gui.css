@@ -71,3 +71,10 @@
 .-jtethys .-jtethys-datafield .-jtethys-datafield-error {
   -fx-control-inner-background: #DC381F;
 }
+
+/**
+ * ProgressBar values.
+ */
+.-jtethys .-jtethys-progressbar {
+  -fx-accent: limegreen;
+}

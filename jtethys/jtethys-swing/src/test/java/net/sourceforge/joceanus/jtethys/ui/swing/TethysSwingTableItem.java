@@ -44,6 +44,11 @@ public class TethysSwingTableItem {
     private String theName;
 
     /**
+     * Password property.
+     */
+    private char[] thePassword;
+
+    /**
      * Boolean property.
      */
     private Boolean theBoolean;
@@ -156,11 +161,27 @@ public class TethysSwingTableItem {
     }
 
     /**
-     * Set the scroll property.
+     * Set the name property.
      * @param pValue the new value
      */
     public void setName(final String pValue) {
         theName = pValue;
+    }
+
+    /**
+     * Obtain the password property.
+     * @return the password property
+     */
+    public char[] getPassword() {
+        return thePassword;
+    }
+
+    /**
+     * Set the password property.
+     * @param pValue the new value
+     */
+    public void setPassword(final char[] pValue) {
+        thePassword = pValue;
     }
 
     /**

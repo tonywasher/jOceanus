@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableCell;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutionColumn;
@@ -181,6 +182,10 @@ public class TethysFXTableExample
         /* Create the list column */
         TethysFXTableListColumn<TethysDataId, TethysFXTableItem, TethysListId> myListColumn = theTable.declareListColumn(TethysDataId.LIST, TethysListId.class);
         myListColumn.setCellValueFactory(p -> p.getValue().listProperty());
+
+        /* Create the password column */
+        TethysFXTableCharArrayColumn<TethysDataId, TethysFXTableItem> myPassColumn = theTable.declareCharArrayColumn(TethysDataId.PASSWORD);
+        myPassColumn.setCellValueFactory(p -> p.getValue().passwordProperty());
 
         /* Create the updates column */
         TethysFXTableIntegerColumn<TethysDataId, TethysFXTableItem> myUpdatesColumn = theTable.declareIntegerColumn(TethysDataId.UPDATES);

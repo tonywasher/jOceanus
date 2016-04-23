@@ -36,6 +36,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory.TethysParentNode;
 public abstract class TethysBorderPaneManager<N, I>
         implements TethysNode<N>, TethysParentNode<N> {
     /**
+     * Border Gap default.
+     */
+    private static final int BORDER_GAP = 4;
+
+    /**
      * The GUI Factory.
      */
     private final TethysGuiFactory<N, I> theGuiFactory;
@@ -56,6 +61,16 @@ public abstract class TethysBorderPaneManager<N, I>
     private String theTitle;
 
     /**
+     * The Horizontal Gap.
+     */
+    private Integer theHGap;
+
+    /**
+     * The Vertical Gap.
+     */
+    private Integer theVGap;
+
+    /**
      * Id Map.
      */
     private final Map<Integer, TethysBorderLocation> theIdMap;
@@ -74,6 +89,8 @@ public abstract class TethysBorderPaneManager<N, I>
         theId = theGuiFactory.getNextId();
         theIdMap = new HashMap<>();
         theNodeMap = new EnumMap<>(TethysBorderLocation.class);
+        theHGap = BORDER_GAP;
+        theVGap = BORDER_GAP;
     }
 
     @Override
@@ -111,6 +128,38 @@ public abstract class TethysBorderPaneManager<N, I>
      */
     public void setBorderTitle(final String pTitle) {
         theTitle = pTitle;
+    }
+
+    /**
+     * Obtain the Horizontal Grid Gap.
+     * @return the GridGap.
+     */
+    protected Integer getHGap() {
+        return theHGap;
+    }
+
+    /**
+     * Obtain the Vertical Grid Gap.
+     * @return the GridGap.
+     */
+    protected Integer getVGap() {
+        return theVGap;
+    }
+
+    /**
+     * Set the Horizontal Grid Gap.
+     * @param pGap the GridGap.
+     */
+    public void setHGap(final Integer pGap) {
+        theHGap = pGap;
+    }
+
+    /**
+     * Set the Vertical Grid Gap.
+     * @param pGap the GridGap.
+     */
+    public void setVGap(final Integer pGap) {
+        theVGap = pGap;
     }
 
     /**

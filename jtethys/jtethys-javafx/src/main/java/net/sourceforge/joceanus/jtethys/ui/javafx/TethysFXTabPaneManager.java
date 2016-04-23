@@ -75,6 +75,7 @@ public class TethysFXTabPaneManager
 
     @Override
     public void setVisible(final boolean pVisible) {
+        theNode.setManaged(pVisible);
         theNode.setVisible(pVisible);
     }
 

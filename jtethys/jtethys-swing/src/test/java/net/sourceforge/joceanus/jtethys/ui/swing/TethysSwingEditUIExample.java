@@ -51,6 +51,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.Teth
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutionTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingIntegerTextField;
@@ -101,6 +102,11 @@ public class TethysSwingEditUIExample {
      * The string edit field.
      */
     private final TethysSwingStringTextField theStringField;
+
+    /**
+     * The password edit field.
+     */
+    private final TethysSwingCharArrayTextField thePassField;
 
     /**
      * The short edit field.
@@ -235,6 +241,7 @@ public class TethysSwingEditUIExample {
         /* Create resources */
         theStringField = theGuiFactory.newStringField();
         theStringField.showCmdButton(true);
+        thePassField = theGuiFactory.newCharArrayField();
         theShortField = theGuiFactory.newShortField();
         theIntegerField = theGuiFactory.newIntegerField();
         theLongField = theGuiFactory.newLongField();
@@ -346,6 +353,16 @@ public class TethysSwingEditUIExample {
         myGrid.newRow();
         theStringField.getEventRegistrar().addEventListener(e -> processActionEvent(theStringField, e));
         theStringField.setValue("Test");
+
+        /* Create Password field line */
+        myLabel = theGuiFactory.newLabel("Password:");
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(thePassField);
+        myGrid.allowCellGrowth(thePassField);
+        myGrid.newRow();
+        thePassField.getEventRegistrar().addEventListener(e -> processActionEvent(thePassField, e));
+        thePassField.setValue(TethysScrollUITestHelper.PASS_DEF);
 
         /* Create Short field line */
         myLabel = theGuiFactory.newLabel("Short:");
@@ -571,6 +588,7 @@ public class TethysSwingEditUIExample {
     private void setEditMode(final boolean pDoEdit) {
         /* Set the editable indication */
         theStringField.setEditable(pDoEdit);
+        thePassField.setEditable(pDoEdit);
         theShortField.setEditable(pDoEdit);
         theIntegerField.setEditable(pDoEdit);
         theLongField.setEditable(pDoEdit);
@@ -643,6 +661,8 @@ public class TethysSwingEditUIExample {
         /* Record results */
         if (pResults instanceof String) {
             theValue.setText((String) pResults);
+        } else if (pResults instanceof char[]) {
+            theValue.setText(new String((char[]) pResults));
         } else if (pResults instanceof Short) {
             theValue.setText(theDecimalFormatter.formatShort((Short) pResults));
         } else if (pResults instanceof Integer) {

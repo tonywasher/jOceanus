@@ -32,6 +32,11 @@ public enum TethysDataId {
     NAME("Name"),
 
     /**
+     * Password.
+     */
+    PASSWORD("Password"),
+
+    /**
      * Date.
      */
     DATE("Date"),

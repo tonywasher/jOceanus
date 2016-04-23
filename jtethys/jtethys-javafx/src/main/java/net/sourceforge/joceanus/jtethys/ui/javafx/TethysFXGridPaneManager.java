@@ -66,6 +66,7 @@ public class TethysFXGridPaneManager
 
     @Override
     public void setVisible(final boolean pVisible) {
+        theNode.setManaged(pVisible);
         theNode.setVisible(pVisible);
     }
 
@@ -78,7 +79,7 @@ public class TethysFXGridPaneManager
     @Override
     public void setVGap(final Integer pGap) {
         super.setVGap(pGap);
-        theGridPane.setVgap(getHGap());
+        theGridPane.setVgap(getVGap());
     }
 
     @Override
