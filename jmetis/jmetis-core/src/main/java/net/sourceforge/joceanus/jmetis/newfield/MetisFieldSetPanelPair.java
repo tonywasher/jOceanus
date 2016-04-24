@@ -29,14 +29,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanel.MetisFieldSetPanelItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyField;
+import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
@@ -46,11 +45,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 /**
  * FieldSet Panel Pair.
  * @param <N> the node type
- * @param <F> the font type
- * @param <C> the colour type
  * @param <I> the icon type
  */
-public abstract class MetisFieldSetPanelPair<N, F, C, I>
+public class MetisFieldSetPanelPair<N, I>
         implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The GUI Factory.
@@ -58,39 +55,29 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
     private final TethysGuiFactory<N, I> theGuiFactory;
 
     /**
-     * The Id.
-     */
-    private final Integer theId;
-
-    /**
      * The event manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
-     * The fieldSet attributes.
-     */
-    private final MetisFieldAttributeSet<C, F> theAttributes;
-
-    /**
-     * The formatter.
-     */
-    private final MetisDataFormatter theFormatter;
-
-    /**
      * The field map.
      */
-    private final Map<MetisField, MetisFieldSetPanelItem<?, N, F, C, I>> theFieldMap;
+    private final Map<MetisField, MetisFieldSetPanelItem<?, N, I>> theFieldMap;
+
+    /**
+     * The Node.
+     */
+    private final TethysGridPaneManager<N, I> theNode;
 
     /**
      * The main panel.
      */
-    private MetisFieldSetPanel<N, F, C, I> theMainPanel;
+    private final MetisFieldSetPanel<N, I> theMainPanel;
 
     /**
      * The tab manager.
      */
-    private TethysTabPaneManager<N, I> theTabManager;
+    private final TethysTabPaneManager<N, I> theTabManager;
 
     /**
      * The list of subPanels.
@@ -105,27 +92,47 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pAttributes the attribute set
-     * @param pFormatter the data formatter
      */
-    protected MetisFieldSetPanelPair(final TethysGuiFactory<N, I> pFactory,
-                                     final MetisFieldAttributeSet<C, F> pAttributes,
-                                     final MetisDataFormatter pFormatter) {
+    public MetisFieldSetPanelPair(final TethysGuiFactory<N, I> pFactory) {
         /* Store parameters */
         theGuiFactory = pFactory;
-        theAttributes = pAttributes;
-        theFormatter = pFormatter;
-        theId = theGuiFactory.getNextId();
 
         /* Allocate fields */
         theFieldMap = new HashMap<>();
         theEventManager = new TethysEventManager<>();
         theSubPanelList = new ArrayList<>();
+
+        /* Create the panels */
+        theTabManager = theGuiFactory.newTabPane();
+        theMainPanel = new MetisFieldSetPanel<>(this);
+        addListeners(theMainPanel);
+
+        /* Create the new node */
+        theNode = theGuiFactory.newGridPane();
+        theNode.addCell(theMainPanel);
+        theNode.allowCellGrowth(theMainPanel);
+        theNode.addCell(theTabManager);
+        theNode.allowCellGrowth(theTabManager);
     }
 
     @Override
     public Integer getId() {
-        return theId;
+        return theNode.getId();
+    }
+
+    @Override
+    public N getNode() {
+        return theNode.getNode();
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setVisible(pVisible);
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theNode.setEnabled(pEnabled);
     }
 
     @Override
@@ -142,78 +149,33 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
     }
 
     /**
+     * Obtain the main panel.
+     * @return the main panel
+     */
+    public MetisFieldSetPanel<N, I> getMainPanel() {
+        return theMainPanel;
+    }
+
+    /**
      * Add a subPanel.
      * @param pName the name of the subPanel
      * @return the subPanel
      */
-    public abstract MetisFieldSetPanel<N, F, C, I> addSubPanel(final String pName);
-
-    /**
-     * Obtain the attributes.
-     * @return the attributes
-     */
-    public MetisFieldAttributeSet<C, F> getAttributeSet() {
-        return theAttributes;
-    }
-
-    /**
-     * Obtain the formatter.
-     * @return the formatter
-     */
-    public MetisDataFormatter getFormatter() {
-        return theFormatter;
+    public MetisFieldSetPanel<N, I> addSubPanel(final String pName) {
+        /* Create a new subPanel and add to tab manager */
+        MetisFieldSetPanel<N, I> myPanel = new MetisFieldSetPanel<>(this);
+        TethysTabItem<N, I> myItem = theTabManager.addTabItem(pName, myPanel);
+        theSubPanelList.add(new SubPanelRegistration(myItem, myPanel));
+        addListeners(myPanel);
+        return myPanel;
     }
 
     /**
      * Obtain the fieldSet map.
      * @return the fieldSet map
      */
-    protected Map<MetisField, MetisFieldSetPanelItem<?, N, F, C, I>> getFieldMap() {
+    protected Map<MetisField, MetisFieldSetPanelItem<?, N, I>> getFieldMap() {
         return theFieldMap;
-    }
-
-    /**
-     * Obtain the main panel.
-     * @return the main panel
-     */
-    public MetisFieldSetPanel<N, F, C, I> getMainPanel() {
-        return theMainPanel;
-    }
-
-    /**
-     * Declare the main panel.
-     * @param pPanel the main panel
-     */
-    protected void declareMainPanel(final MetisFieldSetPanel<N, F, C, I> pPanel) {
-        theMainPanel = pPanel;
-        addListeners(pPanel);
-    }
-
-    /**
-     * Obtain the main panel.
-     * @return the main panel
-     */
-    protected TethysTabPaneManager<N, I> getTabManager() {
-        return theTabManager;
-    }
-
-    /**
-     * Declare the tab manager.
-     * @param pManager the tab manager
-     */
-    protected void declareTabManager(final TethysTabPaneManager<N, I> pManager) {
-        theTabManager = pManager;
-    }
-
-    /**
-     * Declare a sub panel.
-     * @param pTabItem the tab item
-     * @param pPanel the sub panel
-     */
-    protected void declareSubPanel(final TethysTabItem<N, I> pTabItem,
-                                   final MetisFieldSetPanel<N, F, C, I> pPanel) {
-        theSubPanelList.add(new SubPanelRegistration(pTabItem, pPanel));
-        addListeners(pPanel);
     }
 
     /**
@@ -228,7 +190,7 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
         Iterator<SubPanelRegistration> myIterator = theSubPanelList.iterator();
         while (myIterator.hasNext()) {
             SubPanelRegistration myReg = myIterator.next();
-            myReg.thePanel.setItem(pItem);
+            myReg.setItem(pItem);
         }
     }
 
@@ -262,8 +224,8 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
             SubPanelRegistration myReg = myIterator.next();
 
             /* refresh subPanel and adjust visibility */
-            boolean hasSubVisible = myReg.thePanel.refreshItem();
-            myReg.theTabItem.setVisible(hasSubVisible);
+            boolean hasSubVisible = myReg.refreshItem();
+            myReg.setTabVisible(hasSubVisible);
 
             /* Combine states */
             hasVisible |= hasSubVisible;
@@ -290,15 +252,9 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
             Iterator<SubPanelRegistration> myIterator = theSubPanelList.iterator();
             while (myIterator.hasNext()) {
                 SubPanelRegistration myReg = myIterator.next();
-                myReg.thePanel.setEditable(pEditable);
+                myReg.setEditable(pEditable);
             }
         }
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        theMainPanel.setEnabled(pEnabled);
-        theTabManager.setEnabled(pEnabled);
     }
 
     /**
@@ -309,7 +265,7 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
     public void setReadOnlyField(final MetisField pField,
                                  final boolean pReadOnly) {
         /* Look up the field */
-        MetisFieldSetPanelItem<?, N, F, C, I> myChild = theFieldMap.get(pField);
+        MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
         if (myChild != null) {
             /* Pass the call on */
             myChild.setReadOnly(pReadOnly);
@@ -324,7 +280,7 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
     public void setDeemedCurrency(final MetisField pField,
                                   final Currency pCurrency) {
         /* Look up the field and check that it is a currency item */
-        MetisFieldSetPanelItem<?, N, F, C, I> myChild = theFieldMap.get(pField);
+        MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
         if ((myChild != null)
             && myChild instanceof TethysCurrencyField) {
             /* Set the currency */
@@ -340,7 +296,7 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
     public void showCmdButton(final MetisField pField,
                               final boolean pShow) {
         /* Look up the field */
-        MetisFieldSetPanelItem<?, N, F, C, I> myChild = theFieldMap.get(pField);
+        MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
         if (myChild != null) {
             /* Pass the call on */
             myChild.showCmdButton(pShow);
@@ -358,7 +314,7 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
         Iterator<SubPanelRegistration> myIterator = theSubPanelList.iterator();
         while (myIterator.hasNext()) {
             SubPanelRegistration myReg = myIterator.next();
-            myReg.thePanel.adjustLabelWidth();
+            myReg.adjustLabelWidth();
         }
     }
 
@@ -366,7 +322,7 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
      * Add listeners.
      * @param pPanel the panel
      */
-    private void addListeners(final MetisFieldSetPanel<N, F, C, I> pPanel) {
+    private void addListeners(final MetisFieldSetPanel<N, I> pPanel) {
         TethysEventRegistrar<TethysUIEvent> myRegistrar = pPanel.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, theEventManager::cascadeEvent);
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, theEventManager::cascadeEvent);
@@ -386,7 +342,7 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
         /**
          * The panel.
          */
-        private final MetisFieldSetPanel<N, F, C, I> thePanel;
+        private final MetisFieldSetPanel<N, I> thePanel;
 
         /**
          * Constructor.
@@ -394,9 +350,48 @@ public abstract class MetisFieldSetPanelPair<N, F, C, I>
          * @param pPanel the sub panel
          */
         private SubPanelRegistration(final TethysTabItem<N, I> pTabItem,
-                                     final MetisFieldSetPanel<N, F, C, I> pPanel) {
+                                     final MetisFieldSetPanel<N, I> pPanel) {
             theTabItem = pTabItem;
             thePanel = pPanel;
+        }
+
+        /**
+         * Set tab visibility.
+         * @param pVisible the visible state
+         */
+        private void setTabVisible(final boolean pVisible) {
+            theTabItem.setVisible(pVisible);
+        }
+
+        /**
+         * Set the item.
+         * @param pItem the item to set
+         */
+        private void setItem(final MetisFieldSetItem pItem) {
+            thePanel.setItem(pItem);
+        }
+
+        /**
+         * Refresh item.
+         * @return has visible fields true/false
+         */
+        private boolean refreshItem() {
+            return thePanel.refreshItem();
+        }
+
+        /**
+         * Set editable state.
+         * @param pEditable the editable state
+         */
+        private void setEditable(final boolean pEditable) {
+            thePanel.setEditable(pEditable);
+        }
+
+        /**
+         * Adjust label width.
+         */
+        private void adjustLabelWidth() {
+            thePanel.adjustLabelWidth();
         }
     }
 }

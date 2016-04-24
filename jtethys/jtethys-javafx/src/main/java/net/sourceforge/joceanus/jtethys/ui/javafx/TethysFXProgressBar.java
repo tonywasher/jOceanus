@@ -39,6 +39,11 @@ public class TethysFXProgressBar
     private static final String STYLE_PROGRESS = TethysFXGuiFactory.CSS_STYLE_BASE + "-progressbar";
 
     /**
+     * Factor for percentage.
+     */
+    private static final int PERCENT_FACTOR = 100;
+
+    /**
      * The node.
      */
     private Node theNode;
@@ -102,7 +107,7 @@ public class TethysFXProgressBar
     @Override
     public void setProgress(final double pValue) {
         theProgress.setProgress(pValue);
-        thePercent.setText(String.format("%.0f%%", Math.ceil(pValue * 100)));
+        thePercent.setText(String.format("%.0f%%", Math.ceil(pValue * PERCENT_FACTOR)));
     }
 
     @Override
