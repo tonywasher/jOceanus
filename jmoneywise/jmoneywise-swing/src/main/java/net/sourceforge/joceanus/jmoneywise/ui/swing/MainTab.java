@@ -45,7 +45,6 @@ import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
@@ -203,7 +202,7 @@ public class MainTab
     protected TethysHelpModule getHelpModule() throws OceanusException {
         try {
             return new MoneyWiseHelp();
-        } catch (TethysHelpException e) {
+        } catch (OceanusException e) {
             throw new JMoneyWiseIOException("Unable to load help", e);
         }
     }

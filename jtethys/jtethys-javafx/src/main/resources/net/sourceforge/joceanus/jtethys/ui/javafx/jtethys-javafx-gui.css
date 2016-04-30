@@ -2,9 +2,19 @@
  * Base values.
  */
 .-jtethys {
-  -fx-font-family:Arial;
-  -fx-font-size:12; 
-  -fx-fill:Black;  
+  /* Colours */
+  -jtethys-standard-color: black;
+  -jtethys-zebra-color: lavender;
+  -jtethys-changed-color: magenta;
+  -jtethys-disabled-color: darkgray;
+  -jtethys-background-color: whitesmoke;
+  -jtethys-error-color: #DC381F;
+  -jtethys-progress-color: limegreen;
+
+  /* Fonts */	
+  -fx-font-family: Arial;
+  -fx-font-size: 12; 
+  -fx-fill: -jtethys-standard-color;    
 }
 
 /**
@@ -16,22 +26,22 @@
 
 .-jtethys .-jtethys-table .table-row-cell .-jtethys-datafield-changed {
   -fx-font-style: italic;
-  -fx-text-fill: magenta;
+  -fx-text-fill: -jtethys-changed-color;
 }
 
 .-jtethys .-jtethys-table .table-row-cell .-jtethys-datafield-disabled {
   -fx-font-style: italic;
-  -fx-text-fill: darkgray;
+  -fx-text-fill: -jtethys-disabled-color;
 }
 
 .-jtethys .-jtethys-table .table-row-cell:even:filled {
-  -fx-background-color:lavender;
+  -fx-background-color: -jtethys-zebra-color;
 }
 
 .-jtethys .-jtethys-table .table-row-cell:selected {
-  -fx-font-size:1.166667em;  /* 14pt - 2 more than the default font */ 
-  -fx-font-weight:bold;
-  -fx-text-background-color:Black;  
+  -fx-font-size: 1.166667em;  /* 14pt - 2 more than the default font */ 
+  -fx-font-weight: bold;
+  -fx-text-background-color: -jtethys-standard-color;  
 } 
 
 /**
@@ -41,7 +51,7 @@
   -fx-translate-x:  4;
   -fx-translate-y: -8;
   -fx-padding: 0 0 0 4;
-  -fx-background-color: whitesmoke;
+  -fx-background-color: -jtethys-background-color;
 }
 
 .-jtethys .-jtethys-titled-border {
@@ -65,16 +75,16 @@
 
 .-jtethys .-jtethys-datafield .-jtethys-datafield-changed {
   -fx-font-style: italic;
-  -fx-text-fill: magenta;
+  -fx-text-fill: -jtethys-changed-color;
 }
 
 .-jtethys .-jtethys-datafield .-jtethys-datafield-error {
-  -fx-control-inner-background: #DC381F;
+  -fx-control-inner-background: -jtethys-error-color;
 }
 
 /**
  * ProgressBar values.
  */
 .-jtethys .-jtethys-progressbar {
-  -fx-accent: limegreen;
+  -fx-accent: -jtethys-progress-color;
 }

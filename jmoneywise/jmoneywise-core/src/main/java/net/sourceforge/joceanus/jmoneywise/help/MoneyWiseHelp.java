@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.help;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 
 /**
@@ -34,9 +34,9 @@ public class MoneyWiseHelp
         extends TethysHelpModule {
     /**
      * Constructor.
-     * @throws TethysHelpException on error
+     * @throws OceanusException on error
      */
-    public MoneyWiseHelp() throws TethysHelpException {
+    public MoneyWiseHelp() throws OceanusException {
         /* Initialise the underlying module */
         super(MoneyWiseHelp.class, "MoneyWise Help");
 
@@ -52,5 +52,8 @@ public class MoneyWiseHelp
 
         /* Load help pages */
         loadHelpPages();
+
+        /* Load the CSS */
+        loadCSS("MoneyWiseHelp.css");
     }
 }

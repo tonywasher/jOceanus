@@ -57,23 +57,44 @@ public abstract class TethysHTMLManager<N, I>
     private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
+     * The ValueSet.
+     */
+    private final TethysValueSet theValueSet;
+
+    /**
      * The Current reference.
      */
     private String theCurrentRef;
 
     /**
-     * Are we waiting for a page to be loaded?
+     * CSS Base.
      */
-    private boolean waitingForPage;
+    private String theCSSBase;
+
+    /**
+     * CSS Processed.
+     */
+    private String theCSSProcessed;
+
+    /**
+     * HTML String.
+     */
+    private String theHTMLString;
 
     /**
      * Constructor.
      * @param pFactory the GUI Factory
      */
     protected TethysHTMLManager(final TethysGuiFactory<N, I> pFactory) {
+        /* Build standard fields */
         theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
-        waitingForPage = false;
+
+        /* Obtain the valueSet */
+        theValueSet = pFactory.getValueSet();
+
+        /* Listen to valueSet changes */
+        theValueSet.getEventRegistrar().addEventListener(e -> processCSS());
     }
 
     @Override
@@ -84,6 +105,22 @@ public abstract class TethysHTMLManager<N, I>
     @Override
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Obtain the HTML String
+     * @return the string
+     */
+    protected String getHTMLString() {
+        return theHTMLString;
+    }
+
+    /**
+     * Obtain the processed CSS
+     * @return the CSS
+     */
+    protected String getProcessedCSS() {
+        return theCSSProcessed;
     }
 
     /**
@@ -110,19 +147,16 @@ public abstract class TethysHTMLManager<N, I>
             }
         }
 
-        /* If we need to switch pages */
-        if ((myRef != null)
-            && !myRef.equals(theCurrentRef)) {
-            /* Request load of page */
-            waitingForPage = true;
-            loadNewPage(myRef);
+        /* Check whether we need to switch pages */
+        boolean needSwitch = (myRef != null)
+                             && !myRef.equals(theCurrentRef);
 
-            /* If we did not load a fresh page */
-            if (waitingForPage) {
-                /* Don't attempt to scroll to internal reference */
-                myInternal = null;
-                LOGGER.error("Failed to load page <" + myRef + ">");
-            }
+        /* If we failed to switch pages */
+        if (needSwitch
+            && !loadNewPage(myRef)) {
+            /* Don't attempt to scroll to internal reference */
+            myInternal = null;
+            LOGGER.error("Failed to load page <" + myRef + ">");
         }
 
         /* If we have an internal reference */
@@ -139,9 +173,50 @@ public abstract class TethysHTMLManager<N, I>
      */
     public void setHTMLContent(final String pHTMLString,
                                final String pReference) {
-        /* Store the reference */
+        /* Store the reference and string */
         theCurrentRef = pReference;
-        waitingForPage = false;
+        theHTMLString = pHTMLString;
+
+        /* load the content */
+        loadHTMLContent(theHTMLString);
+    }
+
+    /**
+     * Load HTML Contents.
+     * @param pHTMLString the HTML content.
+     */
+    protected abstract void loadHTMLContent(final String pHTMLString);
+
+    /**
+     * Load CSS Contents.
+     */
+    protected abstract void loadCSSContents();
+
+    /**
+     * Set the CSS.
+     * @param pStyleSheet the CSS content.
+     */
+    public void setCSSContent(final String pStyleSheet) {
+        /* Store the base sheet */
+        theCSSBase = pStyleSheet;
+        theCSSProcessed = null;
+
+        /* Process the CSS */
+        processCSS();
+    }
+
+    /**
+     * Process the CSS.
+     */
+    protected void processCSS() {
+        /* If we have a styleSheet */
+        if (theCSSBase != null) {
+            /* Process the CSS */
+            theCSSProcessed = theValueSet.resolveValues(theCSSBase);
+        }
+
+        /* reLoad the CSS */
+        loadCSSContents();
     }
 
     /**
@@ -153,8 +228,9 @@ public abstract class TethysHTMLManager<N, I>
     /**
      * Load new page.
      * @param pPageRef the page reference
+     * @param was new page loaded? true/false
      */
-    private void loadNewPage(final String pPageRef) {
-        theEventManager.fireEvent(TethysUIEvent.BUILDPAGE, pPageRef);
+    private boolean loadNewPage(final String pPageRef) {
+        return !theEventManager.fireEvent(TethysUIEvent.BUILDPAGE, pPageRef);
     }
 }

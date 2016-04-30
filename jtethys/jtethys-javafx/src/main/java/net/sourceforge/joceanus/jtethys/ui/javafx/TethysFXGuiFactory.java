@@ -22,12 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXListButtonField;
@@ -69,6 +74,11 @@ public class TethysFXGuiFactory
     private static final String CSS_STYLE = TethysFXGuiFactory.class.getResource(CSS_STYLE_NAME).toExternalForm();
 
     /**
+     * Scenes.
+     */
+    private final List<Scene> theScenes;
+
+    /**
      * Stage.
      */
     private Stage theStage;
@@ -85,16 +95,76 @@ public class TethysFXGuiFactory
      * @param pFormatter the formatter
      */
     public TethysFXGuiFactory(final TethysDataFormatter pFormatter) {
+        /* Initialise class */
         super(pFormatter);
+        theScenes = new ArrayList<>();
+
+        /* Add value listener */
+        getValueSet().getEventRegistrar().addEventListener(e -> applyValuesToScenes());
     }
 
     /**
-     * Apply stylesheets.
+     * Register scene.
      * @param pScene the scene
      */
-    public void applyStyleSheets(final Scene pScene) {
+    public void registerScene(final Scene pScene) {
+        /* Configure the scene */
         pScene.getStylesheets().add(CSS_STYLE);
         pScene.getRoot().getStyleClass().add(CSS_STYLE_BASE);
+
+        /* Add the scene to the list */
+        theScenes.add(pScene);
+
+        /* Apply the colourSet */
+        pScene.getRoot().setStyle(buildStandardColors());
+    }
+
+    /**
+     * Build standard colours.
+     * @return the standard colours
+     */
+    private String buildStandardColors() {
+        /* Allocate a string builder */
+        StringBuilder myBuilder = new StringBuilder();
+
+        /* Create the default colour values */
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_STANDARD);
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_ERROR);
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_BACKGROUND);
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_DISABLED);
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_ZEBRA);
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_CHANGED);
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_PROGRESS);
+
+        /* Return the string */
+        return myBuilder.toString();
+    }
+
+    /**
+     * Add value to buffer.
+     * @param pBuffer the buffer
+     * @param pName the value name
+     */
+    private void addValueToBuffer(final StringBuilder pBuffer,
+                                  final String pName) {
+        /* Add the name */
+        pBuffer.append(pName);
+        pBuffer.append(":");
+        pBuffer.append(getValueSet().getValueForKey(pName));
+        pBuffer.append(";");
+    }
+
+    /**
+     * Register scene.
+     */
+    private void applyValuesToScenes() {
+        /* Loop through the scenes */
+        String myValues = buildStandardColors();
+        Iterator<Scene> myIterator = theScenes.iterator();
+        while (myIterator.hasNext()) {
+            Scene myScene = myIterator.next();
+            myScene.getRoot().setStyle(myValues);
+        }
     }
 
     /**
@@ -180,6 +250,11 @@ public class TethysFXGuiFactory
     }
 
     @Override
+    public TethysFXColorPicker newColorPicker() {
+        return new TethysFXColorPicker(this);
+    }
+
+    @Override
     public TethysFXHTMLManager newHTMLManager() {
         return new TethysFXHTMLManager(this);
     }
@@ -212,6 +287,11 @@ public class TethysFXGuiFactory
     @Override
     public TethysFXSlider newSlider() {
         return new TethysFXSlider(this);
+    }
+
+    @Override
+    public <T> TethysFXMenuBarManager<T> newMenuBar() {
+        return new TethysFXMenuBarManager<>();
     }
 
     @Override

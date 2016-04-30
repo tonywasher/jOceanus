@@ -35,11 +35,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 public class TethysEventManager<E extends Enum<E>>
         implements TethysEventProvider<E> {
     /**
-     * Default action Id.
-     */
-    public static final int ACTIONID_ANY = -1;
-
-    /**
      * The Next managerId.
      */
     private static final AtomicInteger NEXT_ID = new AtomicInteger(1);
@@ -108,7 +103,7 @@ public class TethysEventManager<E extends Enum<E>>
         /* Lazily create the event */
         TethysEvent<E> myEvent = null;
 
-        /* Loop backwards through the list to notify most recently registered first */
+        /* Loop backwards through the list */
         ListIterator<TethysEventRegistration<E>> myIterator = theRegistrar.reverseIterator();
         while (myIterator.hasPrevious()) {
             TethysEventRegistration<E> myReg = myIterator.previous();

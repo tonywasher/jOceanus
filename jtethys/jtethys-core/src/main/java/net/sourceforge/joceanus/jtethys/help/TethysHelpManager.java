@@ -147,6 +147,12 @@ public abstract class TethysHelpManager<N, I>
         /* Access the Help entries and list */
         List<TethysHelpEntry> myEntries = pModule.getHelpEntries();
 
+        /* Declare CSS */
+        String myCSS = pModule.getCSS();
+        if (myCSS != null) {
+            theHtml.setCSSContent(myCSS);
+        }
+
         /* Create the tree */
         createTree(pModule.getTitle(), myEntries);
     }

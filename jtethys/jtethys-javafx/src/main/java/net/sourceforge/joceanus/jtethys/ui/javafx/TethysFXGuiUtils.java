@@ -43,6 +43,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Window;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
@@ -73,17 +74,7 @@ public final class TethysFXGuiUtils {
     /**
      * RGB header.
      */
-    private static final String RGB_HDR = "rgb(";
-
-    /**
-     * RGB separator.
-     */
-    private static final String RGB_SEP = "%,";
-
-    /**
-     * RGB trailer.
-     */
-    private static final String RGB_TRLR = "%)";
+    private static final String RGB_HDR = "#";
 
     /**
      * private constructor.
@@ -100,13 +91,38 @@ public final class TethysFXGuiUtils {
         /* Return the string */
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(RGB_HDR);
-        myBuilder.append(pValue.getRed());
-        myBuilder.append(RGB_SEP);
-        myBuilder.append(pValue.getGreen());
-        myBuilder.append(RGB_SEP);
-        myBuilder.append(pValue.getBlue());
-        myBuilder.append(RGB_TRLR);
+        appendColorPart(myBuilder, pValue.getRed());
+        appendColorPart(myBuilder, pValue.getGreen());
+        appendColorPart(myBuilder, pValue.getBlue());
         return myBuilder.toString();
+    }
+
+    /**
+     * format a colour part.
+     * @param pBuilder the string builder
+     * @param pValue the value
+     */
+    private static void appendColorPart(final StringBuilder pBuilder,
+                                        final double pValue) {
+        /* Convert to integer */
+        int myMax = TethysDataConverter.BYTE_MASK + 1;
+        int myValue = (int) (pValue * myMax);
+
+        /* Handle boundary issue */
+        if (myValue == myMax) {
+            myValue--;
+        }
+
+        /* Format the high nibble */
+        int myDigit = myValue >>> TethysDataConverter.NYBBLE_SHIFT;
+        char myChar = Character.forDigit(myDigit, TethysDataConverter.HEX_RADIX);
+        pBuilder.append(myChar);
+
+        /* Access the low nibble */
+        myDigit = myValue
+                  & TethysDataConverter.NYBBLE_MASK;
+        myChar = Character.forDigit(myDigit, TethysDataConverter.HEX_RADIX);
+        pBuilder.append(myChar);
     }
 
     /**

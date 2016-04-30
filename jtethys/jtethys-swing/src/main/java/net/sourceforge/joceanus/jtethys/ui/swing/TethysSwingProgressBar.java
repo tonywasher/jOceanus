@@ -38,6 +38,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysProgressBar;
 public class TethysSwingProgressBar
         extends TethysProgressBar<JComponent, Icon> {
     /**
+     * Field Adjuster.
+     */
+    private final TethysSwingDataFieldAdjust theAdjuster;
+
+    /**
      * Progress Bar.
      */
     private final JProgressBar theProgress;
@@ -47,12 +52,23 @@ public class TethysSwingProgressBar
      * @param pFactory the GUI Factory
      */
     protected TethysSwingProgressBar(final TethysSwingGuiFactory pFactory) {
+        /* Initialise underlying class */
         super(pFactory);
+
+        /* Create the progress bar */
         theProgress = new JProgressBar();
         theProgress.setMinimum(0);
         theProgress.setStringPainted(true);
-        theProgress.setForeground(Color.green);
         theProgress.setUI(new ProgressUI());
+
+        /* Obtain the field adjuster */
+        theAdjuster = pFactory.getFieldAdjuster();
+
+        /* Listen to valueSet changes */
+        pFactory.getValueSet().getEventRegistrar().addEventListener(e -> setProgressColour());
+
+        /* Set the colour */
+        setProgressColour();
     }
 
     @Override
@@ -113,6 +129,13 @@ public class TethysSwingProgressBar
      */
     private void createWrapperPane() {
         TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), theProgress);
+    }
+
+    /**
+     * Set the progress colour
+     */
+    private void setProgressColour() {
+        theProgress.setForeground(theAdjuster.getProgressColor());
     }
 
     /**

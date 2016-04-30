@@ -22,8 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.resource;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
+import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataException;
 
 /**
  * Resource Builder.
@@ -145,5 +153,46 @@ public final class TethysResourceBuilder {
         myBuilder.append(':');
         myBuilder.append(pId.name());
         return myBuilder.toString();
+    }
+
+    /**
+     * Load resource file to String.
+     * @param pClass the class to use to load the resource
+     * @param pName the name of the resource relative to the class
+     * @return the loaded resource
+     * @throws OceanusException on error
+     */
+    public static String loadResourceToString(final Class<?> pClass,
+                                              final String pName) throws OceanusException {
+        /* Reset the builder */
+        StringBuilder myBuilder = new StringBuilder();
+
+        /* Protect against exceptions */
+        try (InputStream myStream = pClass.getResourceAsStream(pName);
+             InputStreamReader myInputReader = new InputStreamReader(myStream, StandardCharsets.UTF_8);
+             BufferedReader myReader = new BufferedReader(myInputReader)) {
+
+            /* Read the header entry */
+            for (;;) {
+                /* Read next line */
+                String myLine = myReader.readLine();
+                if (myLine == null) {
+                    break;
+                }
+
+                /* Add to the string buffer */
+                myBuilder.append(myLine);
+                myBuilder.append('\n');
+            }
+
+            /* Build the string */
+            return myBuilder.toString();
+
+            /* Catch exceptions */
+        } catch (IOException e) {
+            /* Throw an exception */
+            throw new TethysDataException("Failed to load resource "
+                                          + pName, e);
+        }
     }
 }

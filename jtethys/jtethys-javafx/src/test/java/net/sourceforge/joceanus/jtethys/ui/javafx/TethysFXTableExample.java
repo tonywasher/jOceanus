@@ -307,7 +307,7 @@ public class TethysFXTableExample
         /* Create scene */
         BorderPane myPane = new BorderPane();
         Scene myScene = new Scene(myPane);
-        theGuiFactory.applyStyleSheets(myScene);
+        theGuiFactory.registerScene(myScene);
         myPane.setCenter(theTable.getNode());
         pStage.setTitle("JavaFXTable Demo");
         pStage.setScene(myScene);

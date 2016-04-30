@@ -305,7 +305,7 @@ public class TethysFXScrollUIExample
 
         /* Create scene */
         Scene myScene = new Scene(myGrid.getNode());
-        theGuiFactory.applyStyleSheets(myScene);
+        theGuiFactory.registerScene(myScene);
         pStage.setTitle("JavaFXScroll Demo");
         pStage.setScene(myScene);
         pStage.show();

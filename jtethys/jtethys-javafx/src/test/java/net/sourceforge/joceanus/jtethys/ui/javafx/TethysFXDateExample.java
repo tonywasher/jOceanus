@@ -117,7 +117,7 @@ public class TethysFXDateExample
     public void start(final Stage pStage) {
         TethysFXGridPaneManager myGrid = makePanel();
         Scene myScene = new Scene(myGrid.getNode());
-        theGuiFactory.applyStyleSheets(myScene);
+        theGuiFactory.registerScene(myScene);
         pStage.setTitle("TethysDate JavaFX Demo");
         pStage.setScene(myScene);
         pStage.show();

@@ -28,20 +28,39 @@ import java.awt.Font;
 import javax.swing.JLabel;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
+import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 
 /**
  * Class to set Font, Colour, and Background for label according to the FieldAttributes.
  */
 public class TethysSwingDataFieldAdjust {
     /**
+     * The valueSet.
+     */
+    private final TethysValueSet theValueSet;
+
+    /**
      * Font Set.
      */
-    private final TethysSwingFontSet theFontSet = new TethysSwingFontSet();
+    private TethysSwingFontSet theFontSet;
 
     /**
      * Colour Set.
      */
-    private final TethysSwingColorSet theColorSet = new TethysSwingColorSet();
+    private TethysSwingColorSet theColorSet;
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI factory
+     */
+    protected TethysSwingDataFieldAdjust(final TethysSwingGuiFactory pFactory) {
+        /* Access the value set */
+        theValueSet = pFactory.getValueSet();
+        theValueSet.getEventRegistrar().addEventListener(e -> buildSets());
+
+        /* build the initial sets */
+        buildSets();
+    }
 
     /**
      * Adjust field.
@@ -94,34 +113,30 @@ public class TethysSwingDataFieldAdjust {
      * Get error colour.
      * @return the error colour
      */
-    public Color getErrorColor() {
+    protected Color getErrorColor() {
         return theColorSet.theError;
+    }
+
+    /**
+     * Get progress colour.
+     * @return the progress colour
+     */
+    protected Color getProgressColor() {
+        return theColorSet.theProgress;
+    }
+
+    /**
+     * Build the Sets.
+     */
+    private void buildSets() {
+        theFontSet = new TethysSwingFontSet(theValueSet);
+        theColorSet = new TethysSwingColorSet(theValueSet);
     }
 
     /**
      * Font Set.
      */
     private static final class TethysSwingFontSet {
-        /**
-         * Standard Font pitch.
-         */
-        private static final int PITCH_STD = 12;
-
-        /**
-         * Bold Font pitch.
-         */
-        private static final int PITCH_BOLD = PITCH_STD + 2;
-
-        /**
-         * Value Font.
-         */
-        private static final String FONTFACE_VALUE = "Arial";
-
-        /**
-         * Numeric Font.
-         */
-        private static final String FONTFACE_NUMERIC = "Courier";
-
         /**
          * The standard font.
          */
@@ -164,16 +179,27 @@ public class TethysSwingDataFieldAdjust {
 
         /**
          * Constructor.
+         * @param pValueSet the value Set
          */
-        private TethysSwingFontSet() {
-            theStandard = new Font(FONTFACE_VALUE, Font.PLAIN, PITCH_STD);
-            theNumeric = new Font(FONTFACE_NUMERIC, Font.PLAIN, PITCH_STD);
-            theChanged = new Font(FONTFACE_VALUE, Font.ITALIC, PITCH_STD);
-            theChangedNumeric = new Font(FONTFACE_NUMERIC, Font.ITALIC, PITCH_STD);
-            theBoldStandard = new Font(FONTFACE_VALUE, Font.BOLD, PITCH_BOLD);
-            theBoldNumeric = new Font(FONTFACE_NUMERIC, Font.BOLD, PITCH_BOLD);
-            theBoldChanged = new Font(FONTFACE_VALUE, Font.BOLD + Font.ITALIC, PITCH_BOLD);
-            theBoldChangedNumeric = new Font(FONTFACE_NUMERIC, Font.BOLD + Font.ITALIC, PITCH_BOLD);
+        private TethysSwingFontSet(final TethysValueSet pValueSet) {
+            /* Access values */
+            String myValueFont = pValueSet.getValueForKey(TethysValueSet.TETHYS_FONT_STANDARD);
+            String myNumericFont = pValueSet.getValueForKey(TethysValueSet.TETHYS_FONT_NUMERIC);
+            String myPitch = pValueSet.getValueForKey(TethysValueSet.TETHYS_FONT_PITCH);
+
+            /* Determine pitches */
+            int myBasePitch = Integer.valueOf(myPitch);
+            int myBoldPitch = myBasePitch + 2;
+
+            /* Build fonts */
+            theStandard = new Font(myValueFont, Font.PLAIN, myBasePitch);
+            theNumeric = new Font(myNumericFont, Font.PLAIN, myBasePitch);
+            theChanged = new Font(myValueFont, Font.ITALIC, myBasePitch);
+            theChangedNumeric = new Font(myNumericFont, Font.ITALIC, myBasePitch);
+            theBoldStandard = new Font(myValueFont, Font.BOLD, myBoldPitch);
+            theBoldNumeric = new Font(myNumericFont, Font.BOLD, myBoldPitch);
+            theBoldChanged = new Font(myValueFont, Font.BOLD + Font.ITALIC, myBoldPitch);
+            theBoldChangedNumeric = new Font(myNumericFont, Font.BOLD + Font.ITALIC, myBoldPitch);
         }
     }
 
@@ -181,36 +207,6 @@ public class TethysSwingDataFieldAdjust {
      * Colour Set.
      */
     private static final class TethysSwingColorSet {
-        /**
-         * Standard default.
-         */
-        private static final String DEFAULT_STANDARD = "#000000";
-
-        /**
-         * Changed default.
-         */
-        private static final String DEFAULT_CHANGED = "#8b008b";
-
-        /**
-         * Error default.
-         */
-        private static final String DEFAULT_ERROR = "#ff0000";
-
-        /**
-         * Zebra default.
-         */
-        private static final String DEFAULT_ZEBRA = "#e3e4fa";
-
-        /**
-         * Disabled default.
-         */
-        private static final String DEFAULT_DISABLED = "#778899";
-
-        /**
-         * Background default.
-         */
-        private static final String DEFAULT_BACKGROUND = "#f5f5f5";
-
         /**
          * The standard colour.
          */
@@ -242,15 +238,22 @@ public class TethysSwingDataFieldAdjust {
         private final Color theBackground;
 
         /**
-         * Constructor.
+         * The progress colour.
          */
-        private TethysSwingColorSet() {
-            theStandard = Color.decode(DEFAULT_STANDARD);
-            theChanged = Color.decode(DEFAULT_CHANGED);
-            theError = Color.decode(DEFAULT_ERROR);
-            theZebra = Color.decode(DEFAULT_ZEBRA);
-            theDisabled = Color.decode(DEFAULT_DISABLED);
-            theBackground = Color.decode(DEFAULT_BACKGROUND);
+        private final Color theProgress;
+
+        /**
+         * Constructor.
+         * @param pValueSet the value Set
+         */
+        private TethysSwingColorSet(final TethysValueSet pValueSet) {
+            theStandard = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_STANDARD));
+            theChanged = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_CHANGED));
+            theError = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_ERROR));
+            theZebra = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_ZEBRA));
+            theDisabled = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_DISABLED));
+            theBackground = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_BACKGROUND));
+            theProgress = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_PROGRESS));
         }
     }
 }

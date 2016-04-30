@@ -71,17 +71,17 @@ public abstract class MetisPreferenceSet
     /**
      * The Preference node for this set.
      */
-    private Preferences theHandle = null;
+    private Preferences theHandle;
 
     /**
      * The map of preferences.
      */
-    private Map<String, MetisPreferenceItem> theMap = null;
+    private Map<String, MetisPreferenceItem> theMap;
 
     /**
      * The list of preferences that have a value on initialisation.
      */
-    private String[] theActive = null;
+    private String[] theActive;
 
     /**
      * Constructor.
@@ -559,17 +559,17 @@ public abstract class MetisPreferenceSet
         /**
          * preference Value.
          */
-        private Object theValue = null;
+        private Object theValue;
 
         /**
          * New preference Value.
          */
-        private Object theNewValue = null;
+        private Object theNewValue;
 
         /**
          * Is there a change to the preference.
          */
-        private boolean isChanged = false;
+        private boolean isChanged;
 
         /**
          * Constructor.
@@ -971,12 +971,12 @@ public abstract class MetisPreferenceSet
         /**
          * The enum class.
          */
-        private Class<E> theClass = null;
+        private final Class<E> theClass;
 
         /**
          * The enum values.
          */
-        private E[] theValues = null;
+        private final E[] theValues;
 
         /**
          * Constructor.

@@ -36,7 +36,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
@@ -126,11 +125,11 @@ public class TestFXHelpWindow
             extends TethysHelpModule {
         /**
          * Constructor.
-         * @throws TethysHelpException on error
+         * @throws OceanusException on error
          */
-        public TestHelp() throws TethysHelpException {
+        public TestHelp() throws OceanusException {
             /* Initialise the underlying module */
-            super(TestFXHelpWindow.class, "Test Help System");
+            super(TethysHelpModule.class, "Test Help System");
 
             /* Create accounts tree */
             TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
@@ -144,6 +143,9 @@ public class TestFXHelpWindow
 
             /* Load help pages */
             loadHelpPages();
+
+            /* Load the CSS */
+            loadCSS("TethysHelp.css");
         }
     }
 }

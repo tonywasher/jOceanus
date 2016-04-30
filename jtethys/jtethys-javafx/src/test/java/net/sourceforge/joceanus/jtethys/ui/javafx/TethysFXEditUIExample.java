@@ -273,7 +273,7 @@ public class TethysFXEditUIExample
         /* Create scene */
         BorderPane myPane = new BorderPane();
         Scene myScene = new Scene(myPane);
-        theGuiFactory.applyStyleSheets(myScene);
+        theGuiFactory.registerScene(myScene);
         myPane.setCenter(myMain);
         pStage.setTitle("JavaFXEdit Demo");
         pStage.setScene(myScene);

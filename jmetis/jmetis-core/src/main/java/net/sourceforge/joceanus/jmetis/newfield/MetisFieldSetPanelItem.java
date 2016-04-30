@@ -140,7 +140,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
         /* Create the label */
         theLabel = myGuiFactory.newLabel();
-        theLabel.setText(pField.getName() + ":");
+        theLabel.setText(pField.getName() + TethysLabel.STR_COLON);
         theLabel.setAlignment(TethysAlignment.EAST);
 
         /* Create the Node */
@@ -535,7 +535,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
     }
 
     /**
-     * Dilutiontem.
+     * DilutionItem.
      * @param <N> the node type
      * @param <I> the icon type
      */

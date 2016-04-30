@@ -84,8 +84,7 @@ public class GordianFXPasswordDialog
 
         /* Sort out factory */
         TethysFXGuiFactory myFactory = getFactory();
-        myFactory.setStage(theStage);
-        myFactory.applyStyleSheets(myScene);
+        myFactory.registerScene(myScene);
     }
 
     @Override

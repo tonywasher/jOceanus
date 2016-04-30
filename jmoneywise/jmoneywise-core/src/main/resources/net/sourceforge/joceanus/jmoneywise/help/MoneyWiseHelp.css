@@ -1,0 +1,14 @@
+body {
+	font-family: ${-jtethys-font-standard};	
+	font-size: ${-jtethys-font-pitch};	
+	color: ${-jtethys-color-standard};
+	margins: 4px;	
+}
+
+h1,h2 {
+	align: center;
+}
+
+dt {
+	color: ${-jtethys-color-data};
+}

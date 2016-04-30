@@ -22,27 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.help;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 
 /**
  * The help module that is implemented by each Help System.
  */
 public abstract class TethysHelpModule {
-    /**
-     * Byte encoding.
-     */
-    private static final String ENCODING = "UTF-8";
-
-    /**
-     * The Buffer length.
-     */
-    private static final int BUFFER_LEN = 10000;
-
     /**
      * The Hash prime.
      */
@@ -69,7 +58,7 @@ public abstract class TethysHelpModule {
     private final List<TethysHelpEntry> theEntries;
 
     /**
-     * The title of the Help System.
+     * The class of the Help System.
      */
     private final Class<?> theClass;
 
@@ -77,6 +66,11 @@ public abstract class TethysHelpModule {
      * The title of the Help System.
      */
     private final String theTitle;
+
+    /**
+     * The CSS of the help system.
+     */
+    private String theCSS;
 
     /**
      * The initial entry of the help system.
@@ -87,10 +81,9 @@ public abstract class TethysHelpModule {
      * Constructor.
      * @param pClass the class representing the resource
      * @param pTitle the title
-     * @throws TethysHelpException on error
      */
     public TethysHelpModule(final Class<?> pClass,
-                            final String pTitle) throws TethysHelpException {
+                            final String pTitle) {
         /* Store parameters */
         theClass = pClass;
         theTitle = pTitle;
@@ -111,7 +104,7 @@ public abstract class TethysHelpModule {
      * Obtain the initial name.
      * @return the initial name
      */
-    public String getInitialName() {
+    protected String getInitialName() {
         return theInitial;
     }
 
@@ -119,8 +112,16 @@ public abstract class TethysHelpModule {
      * Obtain the title.
      * @return the title
      */
-    public String getTitle() {
+    protected String getTitle() {
         return theTitle;
+    }
+
+    /**
+     * Obtain the CSS.
+     * @return the CSS
+     */
+    protected String getCSS() {
+        return theCSS;
     }
 
     /**
@@ -187,55 +188,36 @@ public abstract class TethysHelpModule {
 
     /**
      * Load Help entries from the file system.
-     * @throws TethysHelpException on error
+     * @throws OceanusException on error
      */
-    protected void loadHelpPages() throws TethysHelpException {
+    protected void loadHelpPages() throws OceanusException {
         loadHelpPages(theEntries);
+    }
+
+    /**
+     * Load CSS.
+     * @param pName the name of the CSS
+     * @throws OceanusException on error
+     */
+    protected void loadCSS(final String pName) throws OceanusException {
+        theCSS = TethysResourceBuilder.loadResourceToString(theClass, pName);
     }
 
     /**
      * Load Help entries from the file system.
      * @param pEntries the Help Entries
-     * @throws TethysHelpException on error
+     * @throws OceanusException on error
      */
-    private void loadHelpPages(final List<TethysHelpEntry> pEntries) throws TethysHelpException {
-        /* Allocate a string builder */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-
+    private void loadHelpPages(final List<TethysHelpEntry> pEntries) throws OceanusException {
         /* Loop through the entities */
         for (TethysHelpEntry myEntry : pEntries) {
             /* If we have a file name */
             if (myEntry.getFileName() != null) {
                 /* Reset the builder */
-                myBuilder.setLength(0);
+                String myPage = TethysResourceBuilder.loadResourceToString(theClass, myEntry.getFileName());
 
-                /* Protect against exceptions */
-                try (InputStream myStream = theClass.getResourceAsStream(myEntry.getFileName());
-                     InputStreamReader myInputReader = new InputStreamReader(myStream, ENCODING);
-                     BufferedReader myReader = new BufferedReader(myInputReader)) {
-
-                    /* Read the header entry */
-                    for (;;) {
-                        /* Read next line */
-                        String myLine = myReader.readLine();
-                        if (myLine == null) {
-                            break;
-                        }
-
-                        /* Add to the string buffer */
-                        myBuilder.append(myLine);
-                        myBuilder.append('\n');
-                    }
-
-                    /* Set the HTML for the entry */
-                    myEntry.setHtml(myBuilder.toString());
-
-                    /* Catch exceptions */
-                } catch (IOException e) {
-                    /* Throw an exception */
-                    throw new TethysHelpException("Failed to load help file "
-                                                  + myEntry.getName(), e);
-                }
+                /* Set the HTML for the entry */
+                myEntry.setHtml(myPage);
             }
 
             /* If we have children */

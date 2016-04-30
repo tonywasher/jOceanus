@@ -55,6 +55,11 @@ public abstract class TethysGuiFactory<N, I> {
     private final TethysDataFormatter theFormatter;
 
     /**
+     * ValueSet.
+     */
+    private final TethysValueSet theValueSet;
+
+    /**
      * The node Map.
      */
     private final Map<Integer, TethysParentNode<N>> theParentMap;
@@ -81,6 +86,7 @@ public abstract class TethysGuiFactory<N, I> {
     protected TethysGuiFactory(final TethysDataFormatter pFormatter) {
         theFormatter = pFormatter;
         theParentMap = new HashMap<>();
+        theValueSet = new TethysValueSet();
     }
 
     /**
@@ -89,6 +95,14 @@ public abstract class TethysGuiFactory<N, I> {
      */
     public TethysDataFormatter getDataFormatter() {
         return theFormatter;
+    }
+
+    /**
+     * Obtain the valueSet.
+     * @return the valueSet
+     */
+    public TethysValueSet getValueSet() {
+        return theValueSet;
     }
 
     /**
@@ -225,6 +239,12 @@ public abstract class TethysGuiFactory<N, I> {
     public abstract TethysPasswordField<N, I> newPasswordField();
 
     /**
+     * Obtain a new colorPicker.
+     * @return the new picker
+     */
+    public abstract TethysColorPicker<N, I> newColorPicker();
+
+    /**
      * Obtain a new HTML manager.
      * @return the new manager
      */
@@ -267,6 +287,13 @@ public abstract class TethysGuiFactory<N, I> {
      * @return the new slider
      */
     public abstract TethysSlider<N, I> newSlider();
+
+    /**
+     * Obtain a new menuBar manager.
+     * @param <T> the item type
+     * @return the new manager
+     */
+    public abstract <T> TethysMenuBarManager<T, N> newMenuBar();
 
     /**
      * Obtain a new tabPane manager.

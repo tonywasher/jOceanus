@@ -110,6 +110,10 @@ public abstract class TethysSplitTreeManager<T, N, I>
         if (!theTreeManager.lookUpAndSelectItem(myRef)) {
             /* Cascade the event to perform further lookup */
             theEventManager.cascadeEvent(pEvent);
+
+            /* Consume event if honoured */
+        } else {
+            pEvent.consume();
         }
     }
 }

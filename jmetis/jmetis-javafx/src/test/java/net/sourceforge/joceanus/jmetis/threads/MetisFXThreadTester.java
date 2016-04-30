@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.threads;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
@@ -82,7 +83,7 @@ public class MetisFXThreadTester
      */
     public MetisFXThreadTester() {
         /* Create factory */
-        theGuiFactory = new TethysFXGuiFactory();
+        theGuiFactory = new TethysFXGuiFactory(new MetisDataFormatter());
 
         /* Create buttons */
         theLaunchButton = theGuiFactory.newButton();
@@ -123,7 +124,7 @@ public class MetisFXThreadTester
 
         /* Configure factory */
         theGuiFactory.setStage(pStage);
-        theGuiFactory.applyStyleSheets(myScene);
+        theGuiFactory.registerScene(myScene);
         pStage.show();
     }
 

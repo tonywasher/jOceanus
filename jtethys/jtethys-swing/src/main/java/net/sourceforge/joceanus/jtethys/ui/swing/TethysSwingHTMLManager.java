@@ -34,6 +34,7 @@ import javax.swing.text.Document;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
+import javax.swing.text.html.StyleSheet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,21 @@ public class TethysSwingHTMLManager
     private final JEditorPane theEditor;
 
     /**
+     * HTMLEditorKit.
+     */
+    private final HTMLEditorKit theEditorKit;
+
+    /**
+     * Base StyleSheet.
+     */
+    private final StyleSheet theBaseStyleSheet;
+
+    /**
+     * Modifications StyleSheet.
+     */
+    private StyleSheet theModifiedStyleSheet;
+
+    /**
      * Constructor.
      * @param pFactory the GUI Factory
      */
@@ -69,11 +85,12 @@ public class TethysSwingHTMLManager
         theEditor.setEditable(false);
 
         /* Add an editor kit to the editor */
-        HTMLEditorKit myKit = new HTMLEditorKit();
-        theEditor.setEditorKit(myKit);
+        theEditorKit = new HTMLEditorKit();
+        theEditor.setEditorKit(theEditorKit);
+        theBaseStyleSheet = theEditorKit.getStyleSheet();
 
         /* Create the document for the window */
-        Document myDoc = myKit.createDefaultDocument();
+        Document myDoc = theEditorKit.createDefaultDocument();
         theEditor.setDocument(myDoc);
 
         /* Add hyperLink listener */
@@ -96,15 +113,32 @@ public class TethysSwingHTMLManager
     }
 
     @Override
-    public void setHTMLContent(final String pHTMLString,
-                               final String pReference) {
-        /* Pass call on to store the reference */
-        super.setHTMLContent(pHTMLString, pReference);
-
+    protected void loadHTMLContent(final String pHTMLString) {
         /* Set the help text */
         theEditor.setText(pHTMLString);
         theEditor.setCaretPosition(0);
         theEditor.requestFocusInWindow();
+    }
+
+    @Override
+    protected void loadCSSContents() {
+        /* If there is already a styleSheet */
+        if (theModifiedStyleSheet != null) {
+            /* Remove it */
+            theBaseStyleSheet.removeStyleSheet(theModifiedStyleSheet);
+            theModifiedStyleSheet = null;
+        }
+
+        /* If we have any additional rules */
+        String myCSS = getProcessedCSS();
+        if (myCSS != null) {
+            /* Create the styleSheet */
+            theModifiedStyleSheet = new StyleSheet();
+            theModifiedStyleSheet.addRule(myCSS);
+
+            /* Load into the editor */
+            theBaseStyleSheet.addStyleSheet(theModifiedStyleSheet);
+        }
     }
 
     @Override

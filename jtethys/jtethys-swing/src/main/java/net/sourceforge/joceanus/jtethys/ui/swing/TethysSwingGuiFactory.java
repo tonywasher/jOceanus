@@ -77,7 +77,7 @@ public class TethysSwingGuiFactory
      */
     public TethysSwingGuiFactory(final TethysDataFormatter pFormatter) {
         super(pFormatter);
-        theAdjuster = new TethysSwingDataFieldAdjust();
+        theAdjuster = new TethysSwingDataFieldAdjust(this);
     }
 
     /**
@@ -171,6 +171,11 @@ public class TethysSwingGuiFactory
     }
 
     @Override
+    public TethysSwingColorPicker newColorPicker() {
+        return new TethysSwingColorPicker(this);
+    }
+
+    @Override
     public TethysSwingHTMLManager newHTMLManager() {
         return new TethysSwingHTMLManager(this);
     }
@@ -203,6 +208,11 @@ public class TethysSwingGuiFactory
     @Override
     public TethysSwingSlider newSlider() {
         return new TethysSwingSlider(this);
+    }
+
+    @Override
+    public <T> TethysSwingMenuBarManager<T> newMenuBar() {
+        return new TethysSwingMenuBarManager<>();
     }
 
     @Override

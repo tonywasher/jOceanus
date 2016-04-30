@@ -119,6 +119,9 @@ public class TethysSwingTableManager<C, R>
         /* Listen to factory */
         theCellFactory.getEventRegistrar().addEventListener(this::cascadeEvent);
 
+        /* Listen to the valueSet */
+        pFactory.getValueSet().getEventRegistrar().addEventListener(e -> theModel.fireTableDataChanged());
+
         /* Create the scrollPane */
         theScroll = new JScrollPane();
         theScroll.setViewportView(theTable);

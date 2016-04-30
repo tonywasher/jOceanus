@@ -62,7 +62,7 @@ public class TethysEventRegistrar<E extends Enum<E>> {
     /**
      * The list of registrations.
      */
-    private volatile List<TethysEventRegistration<E>> theRegistrations = null;
+    private volatile List<TethysEventRegistration<E>> theRegistrations;
 
     /**
      * The Next registrationId.

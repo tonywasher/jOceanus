@@ -28,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
@@ -54,6 +55,16 @@ public class TethysFXHTMLManager
      * Click event type.
      */
     private static final String EVENT_TYPE_CLICK = "click";
+
+    /**
+     * Head element name.
+     */
+    private static final String ELEMENT_HEAD = "head";
+
+    /**
+     * Style element name.
+     */
+    private static final String ELEMENT_STYLE = "style";
 
     /**
      * Anchor element name.
@@ -122,13 +133,15 @@ public class TethysFXHTMLManager
     }
 
     @Override
-    public void setHTMLContent(final String pHTMLString,
-                               final String pReference) {
-        /* Pass call on to store the reference */
-        super.setHTMLContent(pHTMLString, pReference);
-
+    protected void loadHTMLContent(final String pHTMLString) {
         /* Load the content */
         theWebEngine.loadContent(pHTMLString);
+    }
+
+    @Override
+    protected void loadCSSContents() {
+        /* reLoad the content */
+        loadHTMLContent(getHTMLString());
     }
 
     @Override
@@ -233,12 +246,27 @@ public class TethysFXHTMLManager
      */
     private void attachListenerToDoc() {
         /* LookUp all anchor elements in the HTML */
-        Document doc = theWebEngine.getDocument();
-        NodeList nodeList = doc.getElementsByTagName(ELEMENT_ANCHOR);
+        Document myDoc = theWebEngine.getDocument();
+
+        /* If we have CSS to add */
+        String myCSS = getProcessedCSS();
+        if (myCSS != null) {
+            /* Create the style element */
+            Element myElement = myDoc.createElement(ELEMENT_STYLE);
+            Text myContent = myDoc.createTextNode(myCSS);
+            myElement.appendChild(myContent);
+
+            /* Obtain the head and add a style element */
+            NodeList headList = myDoc.getElementsByTagName(ELEMENT_HEAD);
+            if (headList.getLength() > 0) {
+                headList.item(0).appendChild(myElement);
+            }
+        }
 
         /* Attach the listener to listen for clicks */
+        NodeList nodeList = myDoc.getElementsByTagName(ELEMENT_ANCHOR);
         for (int i = 0; i < nodeList.getLength(); i++) {
-            /* Only listen to anchors that contain an href */
+            /* Only listen to anchors that contain an HRef */
             org.w3c.dom.Node myNode = nodeList.item(i);
             NamedNodeMap myAttrMap = myNode.getAttributes();
             if (myAttrMap.getNamedItem(ATTR_REF) != null) {
