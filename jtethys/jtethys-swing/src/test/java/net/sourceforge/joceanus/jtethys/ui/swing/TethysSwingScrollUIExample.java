@@ -109,6 +109,11 @@ public class TethysSwingScrollUIExample {
     private final TethysSwingDateButtonManager theDateButtonMgr;
 
     /**
+     * The colour picker.
+     */
+    private final TethysSwingColorPicker theColorPicker;
+
+    /**
      * The selected context value.
      */
     private final TethysSwingLabel theContextValue;
@@ -139,6 +144,11 @@ public class TethysSwingScrollUIExample {
     private final TethysSwingLabel theListValues;
 
     /**
+     * The colour value.
+     */
+    private final TethysSwingLabel theColorValue;
+
+    /**
      * Constructor.
      */
     public TethysSwingScrollUIExample() {
@@ -156,12 +166,14 @@ public class TethysSwingScrollUIExample {
         theStateButtonMgr = theGuiFactory.newScrollButton();
         theListButtonMgr = theGuiFactory.newListButton();
         theDateButtonMgr = theGuiFactory.newDateButton();
+        theColorPicker = theGuiFactory.newColorPicker();
         theContextValue = theGuiFactory.newLabel();
         theScrollValue = theGuiFactory.newLabel();
         theDateValue = theGuiFactory.newLabel();
         theSimpleIconValue = theGuiFactory.newLabel();
         theStateIconValue = theGuiFactory.newLabel();
         theListValues = theGuiFactory.newLabel();
+        theColorValue = theGuiFactory.newLabel();
     }
 
     /**
@@ -335,6 +347,21 @@ public class TethysSwingScrollUIExample {
             setStateIconValue(theStateIconButtonMgr.getValue());
         });
 
+        /* Create colour picker line */
+        theColorPicker.setBorderTitle("ColorPicker");
+        theColorValue.setBorderTitle("ColorValue");
+        theColorValue.setAlignment(TethysAlignment.CENTRE);
+        theColorValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
+        myGrid.addCell(theColorPicker);
+        myGrid.addCell(theColorValue);
+        myGrid.allowCellGrowth(theColorValue);
+        myGrid.newRow();
+
+        /* Add listener */
+        theColorPicker.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            setColorValue(e.getDetails(String.class));
+        });
+
         /* Configure the grid */
         myGrid.setBorderPadding(3);
 
@@ -395,5 +422,14 @@ public class TethysSwingScrollUIExample {
     private void setStateIconValue(final Boolean pValue) {
         /* Record the value */
         theStateIconValue.setText(theStateButtonMgr.getValue().toString() + ":" + Boolean.toString(pValue));
+    }
+
+    /**
+     * Set the colour value.
+     * @param pValue the value to set
+     */
+    private void setColorValue(final String pValue) {
+        /* Record the value */
+        theColorValue.setText(pValue);
     }
 }

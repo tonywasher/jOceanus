@@ -27,6 +27,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
@@ -385,6 +387,106 @@ public final class TethysFXDataButtonField {
 
             /* Show the dialog */
             myDialog.showDialogUnderNode(pCell);
+        }
+
+        /**
+         * haltCellEditing.
+         */
+        private void haltCellEditing() {
+            if (isCellEditing) {
+                fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
+            }
+            isCellEditing = false;
+        }
+    }
+
+    /**
+     * ColourButtonField class.
+     */
+    public static class TethysFXColorButtonField
+            extends TethysFXDataTextField<String> {
+        /**
+         * The colour picker.
+         */
+        private final TethysFXColorPicker thePicker;
+
+        /**
+         * Are we editing a cell?
+         */
+        private boolean isCellEditing;
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         */
+        protected TethysFXColorButtonField(final TethysFXGuiFactory pFactory) {
+            this(pFactory, pFactory.newColorPicker());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pPicker the picker
+         */
+        private TethysFXColorButtonField(final TethysFXGuiFactory pFactory,
+                                         final TethysFXColorPicker pPicker) {
+            /* Initialise underlying class */
+            super(pFactory, pPicker.getNode());
+
+            /* Store the picker */
+            thePicker = pPicker;
+
+            /* Set padding */
+            getLabel().setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
+
+            /* Set listener on picker */
+            pPicker.getEventRegistrar().addEventListener(this::handleEvent);
+
+            /* Configure the label */
+            getLabel().setContentDisplay(ContentDisplay.LEFT);
+        }
+
+        /**
+         * handle Date Button event.
+         * @param pEvent the even
+         */
+        private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+            switch (pEvent.getEventId()) {
+                case NEWVALUE:
+                    setValue(thePicker.getValue());
+                    fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
+                    break;
+                case EDITFOCUSLOST:
+                    haltCellEditing();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        protected Button getEditControl() {
+            return (Button) super.getEditControl();
+        }
+
+        @Override
+        public void setValue(final String pValue) {
+            /* Store the value */
+            super.setValue(pValue);
+
+            /* Declare value to the manager */
+            thePicker.setValue(pValue);
+
+            /* Configure the label */
+            Label myLabel = getLabel();
+            myLabel.setText(pValue);
+            myLabel.setGraphic(thePicker.getSwatch());
+        }
+
+        @Override
+        public void startCellEditing(final Node pCell) {
+            /* Note editing */
+            isCellEditing = true;
         }
 
         /**

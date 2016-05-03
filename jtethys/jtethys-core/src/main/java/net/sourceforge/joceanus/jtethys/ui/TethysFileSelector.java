@@ -118,6 +118,19 @@ public abstract class TethysFileSelector {
     }
 
     /**
+     * Set the initial file.
+     * @param pFile the file
+     */
+    public void setInitialFile(final File pFile) {
+        theInitialDir = pFile == null
+                                      ? null
+                                      : pFile.getParentFile();
+        theInitialFileName = pFile == null
+                                           ? null
+                                           : pFile.getName();
+    }
+
+    /**
      * Set the extension.
      * @param pExt the extension
      */

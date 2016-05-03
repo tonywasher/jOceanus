@@ -22,17 +22,22 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysColorPicker;
@@ -77,6 +82,10 @@ public class TethysSwingColorPicker
         theButton = new JButton();
         theNode = theButton;
         theChooser = new JColorChooser();
+        theChooser.setPreviewPanel(new JPanel());
+
+        /* Add listener for selection */
+        theChooser.getSelectionModel().addChangeListener(e -> handleSelection());
 
         /* Configure the button */
         theButton.addActionListener(e -> handleDialog());
@@ -121,6 +130,14 @@ public class TethysSwingColorPicker
         return theColour;
     }
 
+    /**
+     * Obtain a swatch of the selected colour.
+     * @return the swatch
+     */
+    public Icon getSwatch() {
+        return new TethysSwatch(theColour);
+    }
+
     @Override
     public void setPreferredWidth(final Integer pWidth) {
         Dimension myDim = theNode.getPreferredSize();
@@ -161,8 +178,16 @@ public class TethysSwingColorPicker
         /* If the dialog has not yet been created */
         if (theDialog == null) {
             /* Create the new dialog */
-            theDialog = JColorChooser.createDialog(theButton, "Choose", true,
-                    theChooser, e -> handleSelection(), null);
+            theDialog = new JDialog();
+            theDialog.setUndecorated(true);
+            JPanel myPanel = new JPanel(new BorderLayout());
+            myPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+            myPanel.add(theChooser, BorderLayout.CENTER);
+            theDialog.setContentPane(myPanel);
+            theDialog.pack();
+
+            /* Create focus listener */
+            theDialog.addWindowFocusListener(new DialogFocus());
         }
 
         /* Set the active colour */
@@ -185,6 +210,22 @@ public class TethysSwingColorPicker
         theColour = theChooser.getColor();
         handleNewValue(TethysSwingGuiUtils.colorToHexString(theColour));
         updateButton();
+        theDialog.setVisible(false);
+    }
+
+    /**
+     * Handle loss of focus.
+     */
+    private class DialogFocus
+            extends WindowAdapter {
+        @Override
+        public void windowLostFocus(final WindowEvent e) {
+            /* Hide the dialog */
+            theDialog.setVisible(false);
+
+            /* Note that no selection has been made */
+            handleFocusLoss();
+        }
     }
 
     /**
@@ -206,7 +247,7 @@ public class TethysSwingColorPicker
          * Constructor.
          * @param pColor the colour.
          */
-        public TethysSwatch(final Color pColor) {
+        private TethysSwatch(final Color pColor) {
             theColor = pColor;
         }
 

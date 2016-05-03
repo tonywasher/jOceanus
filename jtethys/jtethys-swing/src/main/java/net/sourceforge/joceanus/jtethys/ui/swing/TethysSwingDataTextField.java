@@ -77,7 +77,7 @@ public abstract class TethysSwingDataTextField<T>
     private final TethysSwingGuiFactory theGuiFactory;
 
     /**
-     * The error colour.
+     * The adjuster.
      */
     private final TethysSwingDataFieldAdjust theAdjuster;
 
@@ -264,7 +264,7 @@ public abstract class TethysSwingDataTextField<T>
      * Adjust data field.
      */
     public void adjustField() {
-        theAdjuster.adjustField(this, theLabel);
+        theAdjuster.adjustField(this);
     }
 
     /**

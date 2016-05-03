@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXListButtonField;
@@ -150,6 +151,11 @@ public class TethysFXEditUIExample
     private final TethysFXRatioTextField theRatioField;
 
     /**
+     * The colour edit field.
+     */
+    private final TethysFXColorButtonField theColorField;
+
+    /**
      * The icon button manager.
      */
     private final TethysSimpleIconButtonManager<Boolean, ?, ?> theIconButtonMgr;
@@ -248,6 +254,7 @@ public class TethysFXEditUIExample
         theValue = theGuiFactory.newLabel();
 
         /* Create button fields */
+        theColorField = theGuiFactory.newColorField();
         theScrollField = theGuiFactory.newScrollField();
         theScrollButtonMgr = theScrollField.getScrollManager();
         theDateField = theGuiFactory.newDateField();
@@ -436,6 +443,16 @@ public class TethysFXEditUIExample
         myGrid.newRow();
         theDilutedPriceField.getEventRegistrar().addEventListener(e -> processActionEvent(theDilutedPriceField, e));
 
+        /* Create ColorButton field line */
+        myLabel = theGuiFactory.newLabel("ColorButton:");
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.addCell(theColorField);
+        myGrid.allowCellGrowth(theColorField);
+        myGrid.newRow();
+        theColorField.getEventRegistrar().addEventListener(e -> processActionEvent(theColorField, e));
+        theColorField.setValue("#000000");
+
         /* Create ScrollButton field line */
         myLabel = theGuiFactory.newLabel("ScrollButton:");
         myGrid.addCell(myLabel);
@@ -572,6 +589,7 @@ public class TethysFXEditUIExample
         theRatioField.setEditable(pDoEdit);
         theDilutionField.setEditable(pDoEdit);
         theDilutedPriceField.setEditable(pDoEdit);
+        theColorField.setEditable(pDoEdit);
         theScrollField.setEditable(pDoEdit);
         theDateField.setEditable(pDoEdit);
         theIconField.setEditable(pDoEdit);

@@ -29,6 +29,7 @@ import javax.swing.JFrame;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingListButtonField;
@@ -251,6 +252,11 @@ public class TethysSwingGuiFactory
     }
 
     @Override
+    public TethysSwingScrollPaneManager newScrollPane() {
+        return new TethysSwingScrollPaneManager(this);
+    }
+
+    @Override
     public TethysSwingStringTextField newStringField() {
         return new TethysSwingStringTextField(this);
     }
@@ -333,6 +339,11 @@ public class TethysSwingGuiFactory
     @Override
     public <T, S> TethysSwingStateIconButtonField<T, S> newStateIconField() {
         return new TethysSwingStateIconButtonField<>(this);
+    }
+
+    @Override
+    public TethysSwingColorButtonField newColorField() {
+        return new TethysSwingColorButtonField(this);
     }
 
     @Override

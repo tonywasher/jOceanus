@@ -339,6 +339,12 @@ public abstract class TethysGuiFactory<N, I> {
     public abstract TethysGridPaneManager<N, I> newGridPane();
 
     /**
+     * Obtain a new scrollPane manager.
+     * @return the new manager
+     */
+    public abstract TethysScrollPaneManager<N, I> newScrollPane();
+
+    /**
      * Obtain a new string data field.
      * @return the new field
      */
@@ -444,6 +450,12 @@ public abstract class TethysGuiFactory<N, I> {
      * @return the new field
      */
     public abstract <T, S> TethysDataEditField<T, N, I> newStateIconField();
+
+    /**
+     * Obtain a new colour data field.
+     * @return the new field
+     */
+    public abstract TethysDataEditField<String, N, I> newColorField();
 
     /**
      * Obtain a new table.

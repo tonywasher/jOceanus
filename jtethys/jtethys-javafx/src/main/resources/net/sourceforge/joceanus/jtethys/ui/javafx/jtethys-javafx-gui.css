@@ -88,3 +88,12 @@
 .-jtethys .-jtethys-progressbar {
   -fx-accent: -jtethys-progress-color;
 }
+
+/**
+ * CheckBox values.
+ */
+.-jtethys .-jtethys-checkbox .-jtethys-checkbox-changed {
+  -fx-font-style: italic;
+  -fx-text-fill: -jtethys-changed-color;
+}
+

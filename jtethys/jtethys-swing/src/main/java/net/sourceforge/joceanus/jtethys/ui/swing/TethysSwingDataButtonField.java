@@ -470,6 +470,119 @@ public final class TethysSwingDataButtonField {
     }
 
     /**
+     * ColorButtonField class.
+     */
+    public static class TethysSwingColorButtonField
+            extends TethysSwingDataTextField<String> {
+        /**
+         * The colour picker.
+         */
+        private final TethysSwingColorPicker thePicker;
+
+        /**
+         * Are we editing a cell?
+         */
+        private boolean isCellEditing;
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         */
+        protected TethysSwingColorButtonField(final TethysSwingGuiFactory pFactory) {
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingColorButtonField(final TethysSwingGuiFactory pFactory,
+                                            final JLabel pLabel) {
+            this(pFactory, pFactory.newColorPicker(), pLabel);
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pPicker the picker
+         * @param pLabel the label
+         */
+        private TethysSwingColorButtonField(final TethysSwingGuiFactory pFactory,
+                                            final TethysSwingColorPicker pPicker,
+                                            final JLabel pLabel) {
+            /* Initialise underlying class */
+            super(pFactory, pPicker.getNode(), pLabel);
+
+            /* Store the picker */
+            thePicker = pPicker;
+
+            /* Set listener on picker */
+            pPicker.getEventRegistrar().addEventListener(this::handleEvent);
+
+            /* Configure the label */
+            getLabel().setHorizontalTextPosition(SwingConstants.RIGHT);
+        }
+
+        /**
+         * handle Date Button event.
+         * @param pEvent the even
+         */
+        private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+            switch (pEvent.getEventId()) {
+                case NEWVALUE:
+                    setValue(thePicker.getValue());
+                    fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
+                    break;
+                case EDITFOCUSLOST:
+                    haltCellEditing();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public JButton getEditControl() {
+            return (JButton) super.getEditControl();
+        }
+
+        @Override
+        public void setValue(final String pValue) {
+            /* Store the value */
+            super.setValue(pValue);
+
+            /* Declare value to the manager */
+            thePicker.setValue(pValue);
+
+            /* Configure the label */
+            JLabel myLabel = getLabel();
+            myLabel.setText(pValue);
+            myLabel.setIcon(thePicker.getSwatch());
+        }
+
+        @Override
+        public void startCellEditing(final Rectangle pCell) {
+            isCellEditing = true;
+        }
+
+        /**
+         * haltCellEditing.
+         */
+        private void haltCellEditing() {
+            if (isCellEditing) {
+                fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
+            }
+            isCellEditing = false;
+        }
+
+        @Override
+        protected TethysSwingColorButtonField cloneField(final JLabel pLabel) {
+            return new TethysSwingColorButtonField(getGuiFactory(), pLabel);
+        }
+    }
+
+    /**
      * ListButtonField class.
      * @param <T> the data type
      */

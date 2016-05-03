@@ -25,86 +25,74 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.awt.Dimension;
 
 import javax.swing.Icon;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
 
 /**
- * Swing checkBox.
+ * javaFX Scroll Pane Manager.
  */
-public class TethysSwingCheckBox
-        extends TethysCheckBox<JComponent, Icon> {
+public class TethysSwingScrollPaneManager
+        extends TethysScrollPaneManager<JComponent, Icon> {
     /**
      * The node.
      */
-    private JComponent theNode;
+    private final JScrollPane theScrollPane;
 
     /**
-     * CheckBox.
+     * Content.
      */
-    private final JCheckBox theCheckBox;
-
-    /**
-     * The adjuster.
-     */
-    private final TethysSwingDataFieldAdjust theAdjuster;
+    private TethysNode<JComponent> theContent;
 
     /**
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysSwingCheckBox(final TethysSwingGuiFactory pFactory) {
+    protected TethysSwingScrollPaneManager(final TethysSwingGuiFactory pFactory) {
         super(pFactory);
-        theAdjuster = pFactory.getFieldAdjuster();
-        theCheckBox = new JCheckBox();
-        theNode = theCheckBox;
-        theCheckBox.addActionListener(e -> handleSelected(theCheckBox.isSelected()));
+        theScrollPane = new JScrollPane();
     }
 
     @Override
     public JComponent getNode() {
-        return theNode;
+        return theScrollPane;
     }
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        theCheckBox.setEnabled(pEnabled);
+        theScrollPane.setEnabled(pEnabled);
+        if (theContent != null) {
+            theContent.setEnabled(pEnabled);
+        }
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theNode.setVisible(pVisible);
+        theScrollPane.setVisible(pVisible);
     }
 
     @Override
-    public void setText(final String pText) {
-        theCheckBox.setText(pText);
-    }
-
-    @Override
-    public void setSelected(final boolean pSelected) {
-        super.setSelected(pSelected);
-        theCheckBox.setSelected(pSelected);
-    }
-
-    @Override
-    public void setChanged(final boolean pChanged) {
-        theAdjuster.adjustCheckBox(this, pChanged);
+    public void setContent(final TethysNode<JComponent> pNode) {
+        theContent = pNode;
+        theScrollPane.setViewportView(pNode == null
+                                                    ? null
+                                                    : pNode.getNode());
     }
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        Dimension myDim = theNode.getPreferredSize();
+        Dimension myDim = theScrollPane.getPreferredSize();
         myDim = new Dimension(pWidth, myDim.height);
-        theNode.setPreferredSize(myDim);
+        theScrollPane.setPreferredSize(myDim);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        Dimension myDim = theNode.getPreferredSize();
+        Dimension myDim = theScrollPane.getPreferredSize();
         myDim = new Dimension(myDim.width, pHeight);
-        theNode.setPreferredSize(myDim);
+        theScrollPane.setPreferredSize(myDim);
     }
 
     @Override
@@ -123,6 +111,6 @@ public class TethysSwingCheckBox
      * create wrapper pane.
      */
     private void createWrapperPane() {
-        theNode = TethysSwingGuiUtils.addPanelBorder(getBorderTitle(), getBorderPadding(), theCheckBox);
+        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), theScrollPane);
     }
 }

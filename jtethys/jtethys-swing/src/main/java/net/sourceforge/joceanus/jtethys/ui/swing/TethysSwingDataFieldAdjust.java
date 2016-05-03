@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.awt.Color;
 import java.awt.Font;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
@@ -65,16 +66,18 @@ public class TethysSwingDataFieldAdjust {
     /**
      * Adjust field.
      * @param pDataField the dataField
-     * @param pLabel the label to adjust
      */
-    public void adjustField(final TethysSwingDataTextField<?> pDataField,
-                            final JLabel pLabel) {
+    protected void adjustField(final TethysSwingDataTextField<?> pDataField) {
         /* Determine the flags */
         boolean isNumeric = pDataField.isAttributeSet(TethysFieldAttribute.NUMERIC);
         boolean isSelected = pDataField.isAttributeSet(TethysFieldAttribute.SELECTED);
         boolean isChanged = pDataField.isAttributeSet(TethysFieldAttribute.CHANGED);
         boolean isDisabled = pDataField.isAttributeSet(TethysFieldAttribute.DISABLED);
         boolean isAlternate = pDataField.isAttributeSet(TethysFieldAttribute.ALTERNATE);
+
+        /* Obtain the label and the edit control */
+        JLabel myLabel = pDataField.getLabel();
+        JComponent myControl = pDataField.getEditControl();
 
         /* Determine the font */
         Font myFont = isNumeric
@@ -92,7 +95,8 @@ public class TethysSwingDataFieldAdjust {
                                             : isSelected
                                                          ? theFontSet.theBoldStandard
                                                          : theFontSet.theStandard;
-        pLabel.setFont(myFont);
+        myLabel.setFont(myFont);
+        myControl.setFont(myFont);
 
         /* Determine the foreground */
         Color myForeground = isChanged
@@ -100,13 +104,37 @@ public class TethysSwingDataFieldAdjust {
                                        : isDisabled
                                                     ? theColorSet.theDisabled
                                                     : theColorSet.theStandard;
-        pLabel.setForeground(myForeground);
+        myLabel.setForeground(myForeground);
+        myControl.setForeground(myForeground);
 
-        /* Determine the background */
+        /* Determine the background (don't set the control) */
         Color myBackground = isAlternate
                                          ? theColorSet.theZebra
                                          : theColorSet.theBackground;
-        pLabel.setBackground(myBackground);
+        myLabel.setBackground(myBackground);
+    }
+
+    /**
+     * Adjust checkBox.
+     * @param pCheckBox the checkBox
+     * @param pChanged is the checkBox changed?
+     */
+    protected void adjustCheckBox(final TethysSwingCheckBox pCheckBox,
+                                  final boolean pChanged) {
+        /* Access the component */
+        JComponent myBox = pCheckBox.getNode();
+
+        /* Determine the font */
+        Font myFont = pChanged
+                               ? theFontSet.theChanged
+                               : theFontSet.theStandard;
+        myBox.setFont(myFont);
+
+        /* Determine the foreground */
+        Color myForeground = pChanged
+                                      ? theColorSet.theChanged
+                                      : theColorSet.theStandard;
+        myBox.setForeground(myForeground);
     }
 
     /**
@@ -188,7 +216,7 @@ public class TethysSwingDataFieldAdjust {
             String myPitch = pValueSet.getValueForKey(TethysValueSet.TETHYS_FONT_PITCH);
 
             /* Determine pitches */
-            int myBasePitch = Integer.valueOf(myPitch);
+            int myBasePitch = Integer.parseInt(myPitch);
             int myBoldPitch = myBasePitch + 2;
 
             /* Build fonts */

@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXListButtonField;
@@ -330,6 +331,11 @@ public class TethysFXGuiFactory
     }
 
     @Override
+    public TethysFXScrollPaneManager newScrollPane() {
+        return new TethysFXScrollPaneManager(this);
+    }
+
+    @Override
     public TethysFXStringTextField newStringField() {
         return new TethysFXStringTextField(this);
     }
@@ -412,6 +418,11 @@ public class TethysFXGuiFactory
     @Override
     public <T, S> TethysFXStateIconButtonField<T, S> newStateIconField() {
         return new TethysFXStateIconButtonField<>(this);
+    }
+
+    @Override
+    public TethysFXColorButtonField newColorField() {
+        return new TethysFXColorButtonField(this);
     }
 
     @Override

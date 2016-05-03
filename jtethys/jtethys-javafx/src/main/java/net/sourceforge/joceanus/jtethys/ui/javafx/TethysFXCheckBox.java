@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import java.util.List;
+
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.Region;
@@ -32,6 +34,16 @@ import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
  */
 public class TethysFXCheckBox
         extends TethysCheckBox<Node, Node> {
+    /**
+     * The dataField style.
+     */
+    private static final String STYLE_CHECKBOX = TethysFXGuiFactory.CSS_STYLE_BASE + "-checkbox";
+
+    /**
+     * The changed style class.
+     */
+    private static final String STYLE_CHANGED = STYLE_CHECKBOX + "-changed";
+
     /**
      * The node.
      */
@@ -51,6 +63,9 @@ public class TethysFXCheckBox
         theCheckBox = new CheckBox();
         theNode = theCheckBox;
         theCheckBox.selectedProperty().addListener((v, o, n) -> handleSelected(n));
+
+        /* Declare the CheckBox style */
+        theCheckBox.getStyleClass().add(STYLE_CHECKBOX);
     }
 
     @Override
@@ -78,6 +93,15 @@ public class TethysFXCheckBox
     public void setSelected(final boolean pSelected) {
         super.setSelected(pSelected);
         theCheckBox.setSelected(pSelected);
+    }
+
+    @Override
+    public void setChanged(final boolean pChanged) {
+        List<String> myStyles = theCheckBox.getStyleClass();
+        myStyles.remove(STYLE_CHANGED);
+        if (pChanged) {
+            myStyles.add(STYLE_CHANGED);
+        }
     }
 
     @Override

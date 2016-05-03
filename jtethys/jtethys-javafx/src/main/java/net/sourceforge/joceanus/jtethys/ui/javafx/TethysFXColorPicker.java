@@ -26,6 +26,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import net.sourceforge.joceanus.jtethys.ui.TethysColorPicker;
 
 /**
@@ -60,6 +61,9 @@ public class TethysFXColorPicker
 
         /* Listen to colour selection */
         thePicker.setOnAction(e -> handleSelection());
+
+        /* Set as button */
+        thePicker.getStyleClass().add(ColorPicker.STYLE_CLASS_BUTTON);
     }
 
     @Override
@@ -82,6 +86,7 @@ public class TethysFXColorPicker
     public void setValue(final String pValue) {
         super.setValue(pValue);
         theColour = Color.web(pValue);
+        thePicker.setValue(theColour);
     }
 
     /**
@@ -90,6 +95,14 @@ public class TethysFXColorPicker
      */
     public Color getColour() {
         return theColour;
+    }
+
+    /**
+     * Obtain a swatch of the selected colour.
+     * @return the swatch
+     */
+    public Rectangle getSwatch() {
+        return new TethysSwatch(theColour);
     }
 
     @Override
@@ -128,5 +141,28 @@ public class TethysFXColorPicker
         /* Obtain colour selection */
         theColour = thePicker.getValue();
         handleNewValue(TethysFXGuiUtils.colorToHexString(theColour));
+    }
+
+    /**
+     * A Swatch graphic.
+     */
+    private static final class TethysSwatch
+            extends Rectangle {
+        /**
+         * The Swatch size.
+         */
+        private static final int SWATCH_SIZE = 14;
+
+        /**
+         * Constructor.
+         * @param pColor the colour.
+         */
+        private TethysSwatch(final Color pColor) {
+            /* Specify colours */
+            setStroke(Color.BLACK);
+            setFill(pColor);
+            setWidth(SWATCH_SIZE);
+            setHeight(SWATCH_SIZE);
+        }
     }
 }

@@ -160,4 +160,11 @@ public abstract class TethysColorPicker<N, I>
                                 ? pNew != null
                                 : !theValue.equals(pNew);
     }
+
+    /**
+     * handle focus loss.
+     */
+    protected void handleFocusLoss() {
+        theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
+    }
 }
