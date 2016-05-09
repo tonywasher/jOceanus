@@ -532,7 +532,8 @@ public abstract class TethysFXDataTextField<T>
      * FXShortTextField class.
      */
     public static class TethysFXShortTextField
-            extends TethysFXTextEditField<Short> {
+            extends TethysFXTextEditField<Short>
+            implements TethysRangedField<Short> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -541,13 +542,24 @@ public abstract class TethysFXDataTextField<T>
             super(pFactory, new TethysShortEditConverter(pFactory.getDataFormatter()));
             setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void setValueRange(final Short pMinimum,
+                                  final Short pMaximum) {
+            TethysDataEditConverter<Short> myConverter = getConverter();
+            if (myConverter instanceof TethysRangedField) {
+                ((TethysRangedField<Short>) myConverter).setValueRange(pMinimum, pMaximum);
+            }
+        }
     }
 
     /**
      * FXIntegerTextField class.
      */
     public static class TethysFXIntegerTextField
-            extends TethysFXTextEditField<Integer> {
+            extends TethysFXTextEditField<Integer>
+            implements TethysRangedField<Integer> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -556,13 +568,24 @@ public abstract class TethysFXDataTextField<T>
             super(pFactory, new TethysIntegerEditConverter(pFactory.getDataFormatter()));
             setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void setValueRange(final Integer pMinimum,
+                                  final Integer pMaximum) {
+            TethysDataEditConverter<Integer> myConverter = getConverter();
+            if (myConverter instanceof TethysRangedField) {
+                ((TethysRangedField<Integer>) myConverter).setValueRange(pMinimum, pMaximum);
+            }
+        }
     }
 
     /**
      * FXLongTextField class.
      */
     public static class TethysFXLongTextField
-            extends TethysFXTextEditField<Long> {
+            extends TethysFXTextEditField<Long>
+            implements TethysRangedField<Long> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -570,6 +593,16 @@ public abstract class TethysFXDataTextField<T>
         protected TethysFXLongTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysLongEditConverter(pFactory.getDataFormatter()));
             setTheAttribute(TethysFieldAttribute.NUMERIC);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void setValueRange(final Long pMinimum,
+                                  final Long pMaximum) {
+            TethysDataEditConverter<Long> myConverter = getConverter();
+            if (myConverter instanceof TethysRangedField) {
+                ((TethysRangedField<Long>) myConverter).setValueRange(pMinimum, pMaximum);
+            }
         }
     }
 
@@ -606,7 +639,8 @@ public abstract class TethysFXDataTextField<T>
      * FXMoneyTextField class.
      */
     public static class TethysFXMoneyTextField
-            extends TethysFXCurrencyTextFieldBase<TethysMoney> {
+            extends TethysFXCurrencyTextFieldBase<TethysMoney>
+            implements TethysRangedField<TethysMoney> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -614,13 +648,24 @@ public abstract class TethysFXDataTextField<T>
         protected TethysFXMoneyTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysMoneyEditConverter(pFactory.getDataFormatter()));
         }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void setValueRange(final TethysMoney pMinimum,
+                                  final TethysMoney pMaximum) {
+            TethysDataEditConverter<TethysMoney> myConverter = getConverter();
+            if (myConverter instanceof TethysRangedField) {
+                ((TethysRangedField<TethysMoney>) myConverter).setValueRange(pMinimum, pMaximum);
+            }
+        }
     }
 
     /**
      * FXPriceTextField class.
      */
     public static class TethysFXPriceTextField
-            extends TethysFXCurrencyTextFieldBase<TethysPrice> {
+            extends TethysFXCurrencyTextFieldBase<TethysPrice>
+            implements TethysRangedField<TethysPrice> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -628,13 +673,24 @@ public abstract class TethysFXDataTextField<T>
         protected TethysFXPriceTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysPriceEditConverter(pFactory.getDataFormatter()));
         }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void setValueRange(final TethysPrice pMinimum,
+                                  final TethysPrice pMaximum) {
+            TethysDataEditConverter<TethysPrice> myConverter = getConverter();
+            if (myConverter instanceof TethysRangedField) {
+                ((TethysRangedField<TethysPrice>) myConverter).setValueRange(pMinimum, pMaximum);
+            }
+        }
     }
 
     /**
      * FXDilutedPriceTextField class.
      */
     public static class TethysFXDilutedPriceTextField
-            extends TethysFXCurrencyTextFieldBase<TethysDilutedPrice> {
+            extends TethysFXCurrencyTextFieldBase<TethysDilutedPrice>
+            implements TethysRangedField<TethysDilutedPrice> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -642,13 +698,24 @@ public abstract class TethysFXDataTextField<T>
         protected TethysFXDilutedPriceTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysDilutedPriceEditConverter(pFactory.getDataFormatter()));
         }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void setValueRange(final TethysDilutedPrice pMinimum,
+                                  final TethysDilutedPrice pMaximum) {
+            TethysDataEditConverter<TethysDilutedPrice> myConverter = getConverter();
+            if (myConverter instanceof TethysRangedField) {
+                ((TethysRangedField<TethysDilutedPrice>) myConverter).setValueRange(pMinimum, pMaximum);
+            }
+        }
     }
 
     /**
      * FXRateTextField class.
      */
     public static class TethysFXRateTextField
-            extends TethysFXTextEditField<TethysRate> {
+            extends TethysFXTextEditField<TethysRate>
+            implements TethysRangedField<TethysRate> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -657,13 +724,24 @@ public abstract class TethysFXDataTextField<T>
             super(pFactory, new TethysRateEditConverter(pFactory.getDataFormatter()));
             setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void setValueRange(final TethysRate pMinimum,
+                                  final TethysRate pMaximum) {
+            TethysDataEditConverter<TethysRate> myConverter = getConverter();
+            if (myConverter instanceof TethysRangedField) {
+                ((TethysRangedField<TethysRate>) myConverter).setValueRange(pMinimum, pMaximum);
+            }
+        }
     }
 
     /**
      * FXUnitsTextField class.
      */
     public static class TethysFXUnitsTextField
-            extends TethysFXTextEditField<TethysUnits> {
+            extends TethysFXTextEditField<TethysUnits>
+            implements TethysRangedField<TethysUnits> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -672,13 +750,24 @@ public abstract class TethysFXDataTextField<T>
             super(pFactory, new TethysUnitsEditConverter(pFactory.getDataFormatter()));
             setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void setValueRange(final TethysUnits pMinimum,
+                                  final TethysUnits pMaximum) {
+            TethysDataEditConverter<TethysUnits> myConverter = getConverter();
+            if (myConverter instanceof TethysRangedField) {
+                ((TethysRangedField<TethysUnits>) myConverter).setValueRange(pMinimum, pMaximum);
+            }
+        }
     }
 
     /**
      * FXDilutionTextField class.
      */
     public static class TethysFXDilutionTextField
-            extends TethysFXTextEditField<TethysDilution> {
+            extends TethysFXTextEditField<TethysDilution>
+            implements TethysRangedField<TethysDilution> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -687,13 +776,24 @@ public abstract class TethysFXDataTextField<T>
             super(pFactory, new TethysDilutionEditConverter(pFactory.getDataFormatter()));
             setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void setValueRange(final TethysDilution pMinimum,
+                                  final TethysDilution pMaximum) {
+            TethysDataEditConverter<TethysDilution> myConverter = getConverter();
+            if (myConverter instanceof TethysRangedField) {
+                ((TethysRangedField<TethysDilution>) myConverter).setValueRange(pMinimum, pMaximum);
+            }
+        }
     }
 
     /**
      * FXRatioTextField class.
      */
     public static class TethysFXRatioTextField
-            extends TethysFXTextEditField<TethysRatio> {
+            extends TethysFXTextEditField<TethysRatio>
+            implements TethysRangedField<TethysRatio> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -701,6 +801,16 @@ public abstract class TethysFXDataTextField<T>
         protected TethysFXRatioTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysRatioEditConverter(pFactory.getDataFormatter()));
             setTheAttribute(TethysFieldAttribute.NUMERIC);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void setValueRange(final TethysRatio pMinimum,
+                                  final TethysRatio pMaximum) {
+            TethysDataEditConverter<TethysRatio> myConverter = getConverter();
+            if (myConverter instanceof TethysRangedField) {
+                ((TethysRangedField<TethysRatio>) myConverter).setValueRange(pMinimum, pMaximum);
+            }
         }
     }
 }

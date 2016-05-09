@@ -52,7 +52,7 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The worker thread.
      */
-    private ThreadStatusControl theThread = null;
+    private ThreadStatusControl theThread;
 
     /**
      * The status data.
@@ -326,7 +326,7 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
          * @param pManager the preference manager
          * @throws OceanusException on error
          */
-        protected PrometheusThreadStatusPreferences(final MetisPreferenceManager pManager) throws OceanusException {
+        public PrometheusThreadStatusPreferences(final MetisPreferenceManager pManager) throws OceanusException {
             super(pManager);
             defineIntegerPreference(PrometheusThreadStatusPreferenceKey.REPSTEPS, DEFAULT_REPSTEPS);
             setName(PrometheusPreferenceResource.THDPREF_PREFNAME.getValue());

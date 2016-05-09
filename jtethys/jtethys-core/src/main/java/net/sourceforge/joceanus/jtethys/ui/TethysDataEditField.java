@@ -503,7 +503,7 @@ public abstract class TethysDataEditField<T, N, I>
      * NumberEditConverter class.
      * @param <T> the
      */
-    public abstract static class TethysNumberEditConverter<T>
+    public abstract static class TethysNumberEditConverter<T extends Comparable<? super T>>
             implements TethysDataEditConverter<T> {
         /**
          * Decimal formatter.
@@ -514,6 +514,16 @@ public abstract class TethysDataEditField<T, N, I>
          * Decimal parser.
          */
         private final TethysDecimalParser theParser;
+
+        /**
+         * Minimum value.
+         */
+        private T theMinimum;
+
+        /**
+         * Decimal parser.
+         */
+        private T theMaximum;
 
         /**
          * Constructor.
@@ -551,6 +561,40 @@ public abstract class TethysDataEditField<T, N, I>
                                   ? null
                                   : pValue.toString();
         }
+
+        /**
+         * Set value range.
+         * @param pMinimum the minimum value
+         * @param pMaximum the maximum value
+         */
+        public void setValueRange(final T pMinimum,
+                                  final T pMaximum) {
+            /* Store minimum and maximum */
+            theMinimum = pMinimum;
+            theMaximum = pMaximum;
+        }
+
+        /**
+         * Check the value range
+         * @param pValue the value
+         * @throws IllegalArgumentException on range error
+         */
+        protected void checkValue(final T pValue) {
+            /* Check against minimum */
+            boolean bOK = theMinimum == null
+                          || theMinimum.compareTo(pValue) <= 0;
+
+            /* Check against maximum */
+            if (bOK) {
+                bOK = theMaximum == null
+                      || theMaximum.compareTo(pValue) >= 0;
+            }
+
+            /* Reject failed */
+            if (!bOK) {
+                throw new IllegalArgumentException("Out of Range");
+            }
+        }
     }
 
     /**
@@ -560,7 +604,7 @@ public abstract class TethysDataEditField<T, N, I>
             extends TethysNumberEditConverter<Short> {
         /**
          * Constructor.
-         * @param pFormatter the dat formatter
+         * @param pFormatter the data formatter
          */
         public TethysShortEditConverter(final TethysDataFormatter pFormatter) {
             super(pFormatter);
@@ -573,7 +617,9 @@ public abstract class TethysDataEditField<T, N, I>
 
         @Override
         public Short parseEditedValue(final String pValue) {
-            return getParser().parseShortValue(pValue);
+            Short myValue = getParser().parseShortValue(pValue);
+            checkValue(myValue);
+            return myValue;
         }
     }
 
@@ -597,7 +643,9 @@ public abstract class TethysDataEditField<T, N, I>
 
         @Override
         public Integer parseEditedValue(final String pValue) {
-            return getParser().parseIntegerValue(pValue);
+            Integer myValue = getParser().parseIntegerValue(pValue);
+            checkValue(myValue);
+            return myValue;
         }
     }
 
@@ -621,7 +669,9 @@ public abstract class TethysDataEditField<T, N, I>
 
         @Override
         public Long parseEditedValue(final String pValue) {
-            return getParser().parseLongValue(pValue);
+            Long myValue = getParser().parseLongValue(pValue);
+            checkValue(myValue);
+            return myValue;
         }
     }
 
@@ -645,7 +695,9 @@ public abstract class TethysDataEditField<T, N, I>
 
         @Override
         public TethysRate parseEditedValue(final String pValue) {
-            return getParser().parseRateValue(pValue);
+            TethysRate myValue = getParser().parseRateValue(pValue);
+            checkValue(myValue);
+            return myValue;
         }
     }
 
@@ -669,7 +721,9 @@ public abstract class TethysDataEditField<T, N, I>
 
         @Override
         public TethysUnits parseEditedValue(final String pValue) {
-            return getParser().parseUnitsValue(pValue);
+            TethysUnits myValue = getParser().parseUnitsValue(pValue);
+            checkValue(myValue);
+            return myValue;
         }
     }
 
@@ -693,7 +747,9 @@ public abstract class TethysDataEditField<T, N, I>
 
         @Override
         public TethysDilution parseEditedValue(final String pValue) {
-            return getParser().parseDilutionValue(pValue);
+            TethysDilution myValue = getParser().parseDilutionValue(pValue);
+            checkValue(myValue);
+            return myValue;
         }
     }
 
@@ -717,7 +773,9 @@ public abstract class TethysDataEditField<T, N, I>
 
         @Override
         public TethysRatio parseEditedValue(final String pValue) {
-            return getParser().parseRatioValue(pValue);
+            TethysRatio myValue = getParser().parseRatioValue(pValue);
+            checkValue(myValue);
+            return myValue;
         }
     }
 
@@ -731,6 +789,21 @@ public abstract class TethysDataEditField<T, N, I>
          * @param pCurrency the currency
          */
         void setDeemedCurrency(final Currency pCurrency);
+    }
+
+    /**
+     * Ranged Field interface.
+     * @param <T> the data type
+     */
+    @FunctionalInterface
+    public interface TethysRangedField<T> {
+        /**
+         * Set value range.
+         * @param pMinimum the minimum value
+         * @param pMaximum the maximum value
+         */
+        void setValueRange(final T pMinimum,
+                           final T pMaximum);
     }
 
     /**
@@ -862,7 +935,9 @@ public abstract class TethysDataEditField<T, N, I>
 
         @Override
         public TethysMoney parseEditedValue(final String pValue) {
-            return getParser().parseMoneyValue(pValue, getCurrency());
+            TethysMoney myValue = getParser().parseMoneyValue(pValue, getCurrency());
+            checkValue(myValue);
+            return myValue;
         }
     }
 
@@ -881,7 +956,9 @@ public abstract class TethysDataEditField<T, N, I>
 
         @Override
         public TethysPrice parseEditedValue(final String pValue) {
-            return getParser().parsePriceValue(pValue, getCurrency());
+            TethysPrice myValue = getParser().parsePriceValue(pValue, getCurrency());
+            checkValue(myValue);
+            return myValue;
         }
     }
 
@@ -900,7 +977,9 @@ public abstract class TethysDataEditField<T, N, I>
 
         @Override
         public TethysDilutedPrice parseEditedValue(final String pValue) {
-            return getParser().parseDilutedPriceValue(pValue, getCurrency());
+            TethysDilutedPrice myValue = getParser().parseDilutedPriceValue(pValue, getCurrency());
+            checkValue(myValue);
+            return myValue;
         }
     }
 }
