@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jmetis.field.swing;
 
 import java.awt.Color;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferenceKey;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldState;
 
 /**
@@ -34,47 +36,85 @@ public class MetisFieldConfig {
     /**
      * The error colour.
      */
-    private Color theErrorColor = Color.red;
+    private final Color theErrorColor;
 
     /**
      * The changed colour.
      */
-    private Color theChangedColor = Color.magenta.darker();
-
-    /**
-     * The new colour.
-     */
-    private Color theNewColor = Color.blue;
+    private final Color theChangedColor;
 
     /**
      * The disabled colour.
      */
-    private Color theDisabledColor = Color.lightGray;
+    private final Color theDisabledColor;
 
     /**
      * The zebra colour.
      */
-    private Color theZebraColor = Color.darkGray;
+    private final Color theZebraColor;
 
     /**
      * The standard colour.
      */
-    private Color theStandardColor = Color.black;
+    private final Color theStandardColor;
 
     /**
      * The background colour.
      */
-    private Color theBackgroundColor = Color.white;
+    private final Color theBackgroundColor;
 
     /**
      * The link colour.
      */
-    private Color theLinkColor = Color.blue;
+    private final Color theLinkColor;
 
     /**
-     * The changed link colour.
+     * The progress colour.
      */
-    private Color theChgLinkColor = Color.blue;
+    private final Color theProgressColor;
+
+    /**
+     * The value colour.
+     */
+    private final Color theValueColor;
+
+    /**
+     * The negative colour.
+     */
+    private final Color theNegativeColor;
+
+    /**
+     * Constructor.
+     */
+    public MetisFieldConfig() {
+        theErrorColor = Color.red;
+        theChangedColor = Color.magenta.darker();
+        theDisabledColor = Color.lightGray;
+        theZebraColor = Color.darkGray;
+        theStandardColor = Color.black;
+        theBackgroundColor = Color.white;
+        theLinkColor = Color.blue;
+        theValueColor = Color.blue;
+        theNegativeColor = Color.red;
+        theProgressColor = Color.green;
+    }
+
+    /**
+     * Constructor.
+     * @param pPreferences the color preferences
+     */
+    public MetisFieldConfig(final MetisColorPreferences pPreferences) {
+        theErrorColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.ERROR));
+        theChangedColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.CHANGED));
+        theDisabledColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.DISABLED));
+        theZebraColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.ZEBRA));
+        theStandardColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.STANDARD));
+        theBackgroundColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.BACKGROUND));
+        theLinkColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.LINK));
+        theValueColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.VALUE));
+        theNegativeColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.NEGATIVE));
+        theProgressColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.PROGRESS));
+    }
 
     /**
      * Get colour for render state.
@@ -86,11 +126,9 @@ public class MetisFieldConfig {
             case ERROR:
                 return theErrorColor;
             case NEW:
-                return theNewColor;
             case CHANGED:
-                return theChangedColor;
             case RESTORED:
-                return theNewColor;
+                return theChangedColor;
             case NORMAL:
             case DELETED:
             default:
@@ -131,11 +169,19 @@ public class MetisFieldConfig {
     }
 
     /**
-     * Get changed link colour.
+     * Get value colour.
      * @return the colour
      */
-    public Color getChangedLinkColor() {
-        return theChgLinkColor;
+    public Color getValueColor() {
+        return theValueColor;
+    }
+
+    /**
+     * Get negative colour.
+     * @return the colour
+     */
+    public Color getNegativeColor() {
+        return theNegativeColor;
     }
 
     /**
@@ -163,74 +209,10 @@ public class MetisFieldConfig {
     }
 
     /**
-     * Set error colour.
-     * @param pColor the colour
+     * Get progress colour.
+     * @return the colour
      */
-    public void setErrorColor(final Color pColor) {
-        theErrorColor = pColor;
-    }
-
-    /**
-     * Set changed colour.
-     * @param pColor the colour
-     */
-    public void setChangedColor(final Color pColor) {
-        theChangedColor = pColor;
-    }
-
-    /**
-     * Set new colour.
-     * @param pColor the colour
-     */
-    public void setNewColor(final Color pColor) {
-        theNewColor = pColor;
-    }
-
-    /**
-     * Set disabled colour.
-     * @param pColor the colour
-     */
-    public void setDisabledColor(final Color pColor) {
-        theDisabledColor = pColor;
-    }
-
-    /**
-     * Set zebra colour.
-     * @param pColor the colour
-     */
-    public void setZebraColor(final Color pColor) {
-        theZebraColor = pColor;
-    }
-
-    /**
-     * Set standard colour.
-     * @param pColor the colour
-     */
-    public void setStandardColor(final Color pColor) {
-        theStandardColor = pColor;
-    }
-
-    /**
-     * Set link colour.
-     * @param pColor the colour
-     */
-    public void setLinkColor(final Color pColor) {
-        theLinkColor = pColor;
-    }
-
-    /**
-     * Set changed link colour.
-     * @param pColor the colour
-     */
-    public void setChgLinkColor(final Color pColor) {
-        theChgLinkColor = pColor;
-    }
-
-    /**
-     * Set background colour.
-     * @param pColor the colour
-     */
-    public void setBackgroundColor(final Color pColor) {
-        theBackgroundColor = pColor;
+    public Color getProgressColor() {
+        return theProgressColor;
     }
 }

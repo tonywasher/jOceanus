@@ -40,7 +40,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferenceKey;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -296,10 +297,10 @@ public class QIFFile {
      * @return the QIF File
      */
     public static QIFFile buildQIFFile(final View pView,
-                                       final QIFPreference pPreferences) {
+                                       final MoneyWiseQIFPreferences pPreferences) {
         /* Access preference details */
-        QIFType myType = pPreferences.getEnumValue(QIFPreference.NAME_QIFTYPE, QIFType.class);
-        TethysDate myLastDate = pPreferences.getDateValue(QIFPreference.NAME_LASTEVENT);
+        QIFType myType = pPreferences.getEnumValue(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.class);
+        TethysDate myLastDate = pPreferences.getDateValue(MoneyWiseQIFPreferenceKey.LASTEVENT);
 
         /* Create new QIF File */
         QIFFile myFile = new QIFFile(myType);

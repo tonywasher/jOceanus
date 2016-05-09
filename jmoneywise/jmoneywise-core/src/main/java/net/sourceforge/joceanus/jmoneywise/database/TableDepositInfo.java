@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositInfo;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDataInfo;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDataInfo;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableDepositInfo
-        extends TableDataInfo<DepositInfo, MoneyWiseDataType> {
+        extends PrometheusTableDataInfo<DepositInfo, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -46,7 +46,7 @@ public class TableDepositInfo
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableDepositInfo(final Database<?> pDatabase) {
+    protected TableDepositInfo(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME, TableAccountInfoType.TABLE_NAME, TableDeposit.TABLE_NAME);
     }
 

@@ -17,7 +17,7 @@ the <<BigDecimal>> class
 
   * a set of data conversion utilities
 
-  * a set of swing extensions.
+  * a set of classes providing an abstraction layer on top of the Gui allowing both Swing and JavaFX implementations.
 
 * Encryption classes (<<jGordianKnot>>)
 
@@ -33,7 +33,7 @@ the <<BigDecimal>> class
 
   * Integrated Data Viewer
 
-  * Sorted LinkedList implementation.
+  * Secure Preferences Support.
 
 * SourceControl classes (<<jThemis>>)
 

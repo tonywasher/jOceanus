@@ -210,6 +210,11 @@ public abstract class TethysDataEditField<T, N, I>
     }
 
     /**
+     * Adjust data field.
+     */
+    public abstract void adjustField();
+
+    /**
      * Obtain the value.
      * @return the value.
      */

@@ -24,23 +24,23 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetReader;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetWriter;
-import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetReader;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetWriter;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSpreadSheet;
 
 /**
  * SpreadSheet extension for MoneyWiseData.
  * @author Tony Washer
  */
 public class MoneyWiseSheet
-        extends SpreadSheet<MoneyWiseData> {
+        extends PrometheusSpreadSheet<MoneyWiseData> {
     /**
      * Obtain a sheet reader.
      * @param pTask Thread Control for task
      * @return the sheet reader
      */
     @Override
-    protected SheetReader<MoneyWiseData> getSheetReader(final TaskControl<MoneyWiseData> pTask) {
+    protected PrometheusSheetReader<MoneyWiseData> getSheetReader(final TaskControl<MoneyWiseData> pTask) {
         /* Create a MoneyWise Reader object and return it */
         return new MoneyWiseReader(pTask);
     }
@@ -51,7 +51,7 @@ public class MoneyWiseSheet
      * @return the sheet writer
      */
     @Override
-    protected SheetWriter<MoneyWiseData> getSheetWriter(final TaskControl<MoneyWiseData> pTask) {
+    protected PrometheusSheetWriter<MoneyWiseData> getSheetWriter(final TaskControl<MoneyWiseData> pTask) {
         /* Create a MoneyWise Writer object and return it */
         return new MoneyWiseWriter(pTask);
     }

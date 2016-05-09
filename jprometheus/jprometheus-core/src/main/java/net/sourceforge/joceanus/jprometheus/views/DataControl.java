@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -359,14 +359,14 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain SpreadSheet object.
      * @return SpreadSheet object
      */
-    public abstract SpreadSheet<T> getSpreadSheet();
+    public abstract PrometheusSpreadSheet<T> getSpreadSheet();
 
     /**
      * Obtain Database object.
      * @return database object
      * @throws OceanusException on error
      */
-    public abstract Database<T> getDatabase() throws OceanusException;
+    public abstract PrometheusDataStore<T> getDatabase() throws OceanusException;
 
     /**
      * Obtain DataSet object.

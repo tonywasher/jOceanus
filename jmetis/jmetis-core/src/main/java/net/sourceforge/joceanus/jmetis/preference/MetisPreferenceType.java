@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference;
 
-
 /**
  * Enum class for preference types.
  */
@@ -68,9 +67,14 @@ public enum MetisPreferenceType {
     COLOR,
 
     /**
-     * Font.
+     * CharArray.
      */
-    FONT;
+    CHARARRAY,
+
+    /**
+     * ByteArray.
+     */
+    BYTEARRAY;
 
     /**
      * The String name.

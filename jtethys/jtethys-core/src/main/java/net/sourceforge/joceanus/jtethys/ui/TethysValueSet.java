@@ -128,52 +128,52 @@ public class TethysValueSet
     /**
      * Standard colour default.
      */
-    private static final String DEFAULT_COLOR_STANDARD = "#000000";
+    public static final String DEFAULT_COLOR_STANDARD = "#000000";
 
     /**
      * Error colour default.
      */
-    private static final String DEFAULT_COLOR_ERROR = "#ff0000";
+    public static final String DEFAULT_COLOR_ERROR = "#ff0000";
 
     /**
      * Background colour default.
      */
-    private static final String DEFAULT_COLOR_BACKGROUND = "#f5f5f5";
+    public static final String DEFAULT_COLOR_BACKGROUND = "#f5f5f5";
 
     /**
      * Disabled colour default.
      */
-    private static final String DEFAULT_COLOR_DISABLED = "#778899";
+    public static final String DEFAULT_COLOR_DISABLED = "#778899";
 
     /**
      * Zebra colour default.
      */
-    private static final String DEFAULT_COLOR_ZEBRA = "#e3e4fa";
+    public static final String DEFAULT_COLOR_ZEBRA = "#e3e4fa";
 
     /**
      * Changed colour default.
      */
-    private static final String DEFAULT_COLOR_CHANGED = "#8b008b";
+    public static final String DEFAULT_COLOR_CHANGED = "#8b008b";
 
     /**
      * Progress colour default.
      */
-    private static final String DEFAULT_COLOR_PROGRESS = "#32cd32";
+    public static final String DEFAULT_COLOR_PROGRESS = "#32cd32";
 
     /**
      * Link colour default.
      */
-    private static final String DEFAULT_COLOR_LINK = "#c71585";
+    public static final String DEFAULT_COLOR_LINK = "#c71585";
 
     /**
      * Value colour default.
      */
-    private static final String DEFAULT_COLOR_VALUE = "#0000ff";
+    public static final String DEFAULT_COLOR_VALUE = "#0000ff";
 
     /**
      * Negative colour default.
      */
-    private static final String DEFAULT_COLOR_NEGATIVE = "#b22222";
+    public static final String DEFAULT_COLOR_NEGATIVE = "#b22222";
 
     /**
      * Standard Font default.

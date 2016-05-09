@@ -30,17 +30,17 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableEncrypted extension for Payee.
  */
 public class TablePayee
-        extends TableEncrypted<Payee, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<Payee, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -50,12 +50,12 @@ public class TablePayee
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TablePayee(final Database<?> pDatabase) {
+    protected TablePayee(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Payee.FIELD_PAYEETYPE, TablePayeeType.TABLE_NAME);
+        PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Payee.FIELD_PAYEETYPE, TablePayeeType.TABLE_NAME);
         myTableDef.addEncryptedColumn(Payee.FIELD_NAME, Payee.NAMELEN);
         myTableDef.addNullEncryptedColumn(Payee.FIELD_DESC, Payee.DESCLEN);
         myTableDef.addBooleanColumn(Payee.FIELD_CLOSED);
@@ -73,7 +73,7 @@ public class TablePayee
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
@@ -90,7 +90,7 @@ public class TablePayee
     protected void setFieldValue(final Payee pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (Payee.FIELD_PAYEETYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getPayeeTypeId());
         } else if (Payee.FIELD_NAME.equals(iField)) {

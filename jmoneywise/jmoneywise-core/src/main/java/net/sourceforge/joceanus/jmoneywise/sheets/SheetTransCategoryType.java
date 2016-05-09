@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetTransCategoryType
-        extends SheetStaticData<TransactionCategoryType, MoneyWiseDataType> {
+        extends PrometheusSheetStaticData<TransactionCategoryType, MoneyWiseDataType> {
 
     /**
      * NamedArea for Category Types.

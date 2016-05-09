@@ -30,17 +30,17 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableEncrypted extension for Security.
  */
 public class TableSecurity
-        extends TableEncrypted<Security, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<Security, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -50,12 +50,12 @@ public class TableSecurity
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableSecurity(final Database<?> pDatabase) {
+    protected TableSecurity(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Security.FIELD_SECTYPE, TableSecurityType.TABLE_NAME);
+        PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Security.FIELD_SECTYPE, TableSecurityType.TABLE_NAME);
         myTableDef.addReferenceColumn(Security.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Security.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addEncryptedColumn(Security.FIELD_NAME, Security.NAMELEN);
@@ -76,7 +76,7 @@ public class TableSecurity
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Security.OBJECT_NAME);
@@ -96,7 +96,7 @@ public class TableSecurity
     protected void setFieldValue(final Security pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (Security.FIELD_SECTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getSecurityTypeId());
         } else if (Security.FIELD_PARENT.equals(iField)) {

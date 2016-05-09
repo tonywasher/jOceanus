@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetDepositCategoryType
-        extends SheetStaticData<DepositCategoryType, MoneyWiseDataType> {
+        extends PrometheusSheetStaticData<DepositCategoryType, MoneyWiseDataType> {
     /**
      * NamedArea for DepositCategoryTypes.
      */

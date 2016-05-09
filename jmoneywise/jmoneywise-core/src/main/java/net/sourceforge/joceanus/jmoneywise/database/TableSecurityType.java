@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableStaticData;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableSecurityType
-        extends TableStaticData<SecurityType, MoneyWiseDataType> {
+        extends PrometheusTableStaticData<SecurityType, MoneyWiseDataType> {
     /**
      * The table name.
      */
@@ -46,7 +46,7 @@ public class TableSecurityType
      * Constructors.
      * @param pDatabase the database control
      */
-    protected TableSecurityType(final Database<MoneyWiseData> pDatabase) {
+    protected TableSecurityType(final PrometheusDataStore<MoneyWiseData> pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 

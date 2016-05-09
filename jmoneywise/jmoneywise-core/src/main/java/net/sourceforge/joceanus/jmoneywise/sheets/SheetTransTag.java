@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetTransTag
-        extends SheetEncrypted<TransactionTag, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<TransactionTag, MoneyWiseDataType> {
     /**
      * NamedArea for TransactionTags.
      */

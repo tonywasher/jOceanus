@@ -39,7 +39,6 @@ public abstract class GordianAADCipher
      * @param pFactory the Security Factory
      * @param pKeyType the keyType
      * @param pMode the cipher mode
-     * @param pPadding is the cipher padded true/false?
      */
     protected GordianAADCipher(final GordianFactory pFactory,
                                final GordianSymKeyType pKeyType,

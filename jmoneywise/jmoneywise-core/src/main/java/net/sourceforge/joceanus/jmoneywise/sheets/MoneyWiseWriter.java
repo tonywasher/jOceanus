@@ -24,14 +24,14 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetWriter;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetWriter extension for MoneyWiseData.
  * @author Tony Washer
  */
 public class MoneyWiseWriter
-        extends SheetWriter<MoneyWiseData> {
+        extends PrometheusSheetWriter<MoneyWiseData> {
     /**
      * Constructor.
      * @param pTask the Task control.

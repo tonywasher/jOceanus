@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.threads.swing.LoaderThread;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -77,7 +77,7 @@ public class LoadArchive
         /* Load workbook */
         MetisPreferenceManager myMgr = theControl.getPreferenceManager();
         ArchiveLoader myLoader = new ArchiveLoader();
-        MoneyWiseData myData = myLoader.loadArchive(theStatus, myMgr.getPreferenceSet(BackupPreferences.class));
+        MoneyWiseData myData = myLoader.loadArchive(theStatus, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));
 
         /* Initialise the status window */
         theStatus.initTask("Analysing Data");
@@ -89,7 +89,7 @@ public class LoadArchive
         theStatus.initTask("Accessing DataStore");
 
         /* Create interface */
-        Database<MoneyWiseData> myDatabase = theControl.getDatabase();
+        PrometheusDataStore<MoneyWiseData> myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {

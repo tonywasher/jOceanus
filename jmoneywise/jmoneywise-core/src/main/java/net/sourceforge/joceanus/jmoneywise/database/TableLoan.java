@@ -30,17 +30,17 @@ import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableEncrypted extension for Loan.
  */
 public class TableLoan
-        extends TableEncrypted<Loan, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<Loan, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -50,12 +50,12 @@ public class TableLoan
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableLoan(final Database<?> pDatabase) {
+    protected TableLoan(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Loan.FIELD_CATEGORY, TableLoanCategory.TABLE_NAME);
+        PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Loan.FIELD_CATEGORY, TableLoanCategory.TABLE_NAME);
         myTableDef.addReferenceColumn(Loan.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Loan.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addEncryptedColumn(Loan.FIELD_NAME, Loan.NAMELEN);
@@ -75,7 +75,7 @@ public class TableLoan
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Loan.OBJECT_NAME);
@@ -94,7 +94,7 @@ public class TableLoan
     protected void setFieldValue(final Loan pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (Loan.FIELD_CATEGORY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (Loan.FIELD_PARENT.equals(iField)) {

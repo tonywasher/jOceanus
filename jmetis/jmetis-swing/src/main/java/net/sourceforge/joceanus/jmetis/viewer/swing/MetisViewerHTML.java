@@ -235,7 +235,7 @@ public final class MetisViewerHTML {
         theColorStandard = pFieldConfig.getStandardColor();
         theColorChanged = pFieldConfig.getChangedColor();
         theColorLink = pFieldConfig.getLinkColor();
-        theColorChgLink = pFieldConfig.getChangedLinkColor();
+        theColorChgLink = theColorLink;
     }
 
     /**

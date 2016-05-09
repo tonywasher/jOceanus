@@ -29,16 +29,19 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.swing.MetisFileSelector;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
-import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Thread to load changes from an encrypted backup. Once the backup is loaded, the current database is loaded and the backup is re-based onto the database so
- * that a correct list of additions, changes and deletions is built. These changes remain in memory and should be committed to the database later.
+ * Thread to load changes from an encrypted backup. Once the backup is loaded, the current database
+ * is loaded and the backup is re-based onto the database so that a correct list of additions,
+ * changes and deletions is built. These changes remain in memory and should be committed to the
+ * database later.
  * @author Tony Washer
  * @param <T> the DataSet type
  * @param <E> the data type enum class
@@ -83,11 +86,11 @@ public class LoadBackup<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Access the Sheet preferences */
         MetisPreferenceManager myMgr = theControl.getPreferenceManager();
-        BackupPreferences myProperties = myMgr.getPreferenceSet(BackupPreferences.class);
+        PrometheusBackupPreferences myProperties = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
 
         /* Determine the archive name */
-        File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR));
-        String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
+        File myBackupDir = new File(myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR));
+        String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX);
 
         /* Determine the name of the file to load */
         MetisFileSelector myDialog = new MetisFileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir, myPrefix, GordianZipReadFile.ZIPFILE_EXT);
@@ -101,14 +104,14 @@ public class LoadBackup<T extends DataSet<T, E>, E extends Enum<E>>
         }
 
         /* Load workbook */
-        SpreadSheet<T> mySheet = theControl.getSpreadSheet();
+        PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
         T myData = mySheet.loadBackup(theStatus, myFile);
 
         /* Initialise the status window */
         theStatus.initTask("Accessing DataStore");
 
         /* Create interface */
-        Database<T> myDatabase = theControl.getDatabase();
+        PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 
         /* Load underlying database */
         T myStore = myDatabase.loadDatabase(theStatus);

@@ -128,7 +128,7 @@ public abstract class TethysPasswordField<N, I>
     public abstract void setPassword(final char[] pPassword);
 
     /**
-     * Obtain the password
+     * Obtain the password.
      * @return the password
      */
     public abstract char[] getPassword();

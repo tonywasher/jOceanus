@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableSecurityPrice
-        extends TableEncrypted<SecurityPrice, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<SecurityPrice, MoneyWiseDataType> {
     /**
      * The name of the Prices table.
      */
@@ -52,13 +52,13 @@ public class TableSecurityPrice
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableSecurityPrice(final Database<?> pDatabase) {
+    protected TableSecurityPrice(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myActCol = myTableDef.addReferenceColumn(SecurityPrice.FIELD_SECURITY, TableSecurity.TABLE_NAME);
-        ColumnDefinition myDateCol = myTableDef.addDateColumn(SecurityPrice.FIELD_DATE);
+        PrometheusColumnDefinition myActCol = myTableDef.addReferenceColumn(SecurityPrice.FIELD_SECURITY, TableSecurity.TABLE_NAME);
+        PrometheusColumnDefinition myDateCol = myTableDef.addDateColumn(SecurityPrice.FIELD_DATE);
         myTableDef.addEncryptedColumn(SecurityPrice.FIELD_PRICE, MetisEncryptedData.PRICELEN);
 
         /* Declare Sort Columns */
@@ -75,7 +75,7 @@ public class TableSecurityPrice
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityPrice.OBJECT_NAME);
@@ -91,7 +91,7 @@ public class TableSecurityPrice
     protected void setFieldValue(final SecurityPrice pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (SecurityPrice.FIELD_SECURITY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getSecurityId());
         } else if (SecurityPrice.FIELD_DATE.equals(iField)) {

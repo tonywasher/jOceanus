@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDataInfo;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDataInfo;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableTaxYearInfo
-        extends TableDataInfo<TaxYearInfo, MoneyWiseDataType> {
+        extends PrometheusTableDataInfo<TaxYearInfo, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -46,7 +46,7 @@ public class TableTaxYearInfo
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableTaxYearInfo(final Database<?> pDatabase) {
+    protected TableTaxYearInfo(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME, TableTaxYearInfoType.TABLE_NAME, TableTaxYear.TABLE_NAME);
     }
 

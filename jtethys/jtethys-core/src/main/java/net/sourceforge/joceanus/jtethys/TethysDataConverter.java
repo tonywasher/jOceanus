@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -84,11 +85,6 @@ public final class TethysDataConverter {
      * Base64 shift 3.
      */
     private static final int BASE64_SHIFT3 = 6;
-
-    /**
-     * Byte encoding.
-     */
-    private static final String ENCODING = "UTF-8";
 
     /**
      * Hexadecimal Radix.
@@ -354,7 +350,7 @@ public final class TethysDataConverter {
         try {
             /* Transform the character array to a byte array */
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            OutputStreamWriter out = new OutputStreamWriter(baos, ENCODING);
+            OutputStreamWriter out = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
             out.write(pChars, 0, pChars.length);
             out.flush();
             return baos.toByteArray();
@@ -378,7 +374,7 @@ public final class TethysDataConverter {
 
             /* Transform the byte array to a character array */
             ByteArrayInputStream bais = new ByteArrayInputStream(pBytes);
-            InputStreamReader in = new InputStreamReader(bais, ENCODING);
+            InputStreamReader in = new InputStreamReader(bais, StandardCharsets.UTF_8);
             myLen = in.read(myArray);
 
             /* Cut down the array to the actual length */
@@ -483,28 +479,18 @@ public final class TethysDataConverter {
      * get Bytes from String.
      * @param pInput the bytes to obtain the string from
      * @return the bytes representing the bytes
-     * @throws OceanusException on error
      */
-    public static String byteArrayToString(final byte[] pInput) throws OceanusException {
-        try {
-            return new String(pInput, ENCODING);
-        } catch (IOException e) {
-            throw new TethysDataException(e.getMessage(), e);
-        }
+    public static String byteArrayToString(final byte[] pInput) {
+        return new String(pInput, StandardCharsets.UTF_8);
     }
 
     /**
      * get Bytes from String.
      * @param pInput the string to obtain the bytes from
      * @return the bytes representing the string
-     * @throws OceanusException on error
      */
-    public static byte[] stringToByteArray(final String pInput) throws OceanusException {
-        try {
-            return pInput.getBytes(ENCODING);
-        } catch (IOException e) {
-            throw new TethysDataException(e.getMessage(), e);
-        }
+    public static byte[] stringToByteArray(final String pInput) {
+        return pInput.getBytes(StandardCharsets.UTF_8);
     }
 
     /**

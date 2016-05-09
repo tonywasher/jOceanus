@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetDataInfo;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetCashInfo
-        extends SheetDataInfo<CashInfo, MoneyWiseDataType> {
+        extends PrometheusSheetDataInfo<CashInfo, MoneyWiseDataType> {
     /**
      * NamedArea for CashInfo.
      */

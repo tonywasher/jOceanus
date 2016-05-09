@@ -108,7 +108,7 @@ public abstract class TethysHTMLManager<N, I>
     }
 
     /**
-     * Obtain the HTML String
+     * Obtain the HTML String.
      * @return the string
      */
     protected String getHTMLString() {
@@ -116,7 +116,7 @@ public abstract class TethysHTMLManager<N, I>
     }
 
     /**
-     * Obtain the processed CSS
+     * Obtain the processed CSS.
      * @return the CSS
      */
     protected String getProcessedCSS() {
@@ -228,7 +228,7 @@ public abstract class TethysHTMLManager<N, I>
     /**
      * Load new page.
      * @param pPageRef the page reference
-     * @param was new page loaded? true/false
+     * @return was new page loaded? true/false
      */
     private boolean loadNewPage(final String pPageRef) {
         return !theEventManager.fireEvent(TethysUIEvent.BUILDPAGE, pPageRef);

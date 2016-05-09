@@ -91,11 +91,6 @@ public final class MetisEncryptedData {
     private static final String ERROR_BYTES_CONVERT = "Failed to convert value from bytes";
 
     /**
-     * Encrypted data conversion failure message.
-     */
-    private static final String ERROR_VALUE_CONVERT = "Failed to convert value to bytes";
-
-    /**
      * Encryption not initialised failure message.
      */
     private static final String ERROR_INIT = "Encryption is not initialised";
@@ -112,7 +107,7 @@ public final class MetisEncryptedData {
      * @param pField the field to obtain the value for
      * @return the value
      */
-    public static <T> T getValue(final MetisEncryptedField<T> pField) {
+    public static <T> T getFieldValue(final MetisEncryptedField<T> pField) {
         return (pField == null)
                                 ? null
                                 : pField.getValue();
@@ -123,7 +118,7 @@ public final class MetisEncryptedData {
      * @param pField the field to obtain the encrypted bytes for
      * @return the value
      */
-    public static byte[] getBytes(final MetisEncryptedField<?> pField) {
+    public static byte[] getFieldBytes(final MetisEncryptedField<?> pField) {
         return (pField == null)
                                 ? null
                                 : pField.getBytes();
@@ -428,29 +423,15 @@ public final class MetisEncryptedData {
         }
 
         @Override
-        protected String parseBytes(final byte[] pBytes) throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Convert the byte array to a string */
-                return TethysDataConverter.byteArrayToString(pBytes);
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_BYTES_CONVERT, e);
-            }
+        protected String parseBytes(final byte[] pBytes) {
+            /* Convert the byte array to a string */
+            return TethysDataConverter.byteArrayToString(pBytes);
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Convert the string to a byte array */
-                return TethysDataConverter.stringToByteArray(getValue());
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_VALUE_CONVERT, e);
-            }
+        protected byte[] getBytesForEncryption() {
+            /* Convert the string to a byte array */
+            return TethysDataConverter.stringToByteArray(getValue());
         }
     }
 
@@ -493,22 +474,15 @@ public final class MetisEncryptedData {
                 return Short.parseShort(TethysDataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (OceanusException | NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new MetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Convert the short to a string and then a byte array */
-                return TethysDataConverter.stringToByteArray(getValue().toString());
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_VALUE_CONVERT, e);
-            }
+        protected byte[] getBytesForEncryption() {
+            /* Convert the short to a string and then a byte array */
+            return TethysDataConverter.stringToByteArray(getValue().toString());
         }
     }
 
@@ -551,22 +525,15 @@ public final class MetisEncryptedData {
                 return Integer.parseInt(TethysDataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (OceanusException | NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new MetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Convert the integer to a string and then a byte array */
-                return TethysDataConverter.stringToByteArray(getValue().toString());
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_VALUE_CONVERT, e);
-            }
+        protected byte[] getBytesForEncryption() {
+            /* Convert the integer to a string and then a byte array */
+            return TethysDataConverter.stringToByteArray(getValue().toString());
         }
     }
 
@@ -609,22 +576,15 @@ public final class MetisEncryptedData {
                 return Long.parseLong(TethysDataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (OceanusException | NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new MetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Convert the long to a string and then a byte array */
-                return TethysDataConverter.stringToByteArray(getValue().toString());
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_VALUE_CONVERT, e);
-            }
+        protected byte[] getBytesForEncryption() {
+            /* Convert the long to a string and then a byte array */
+            return TethysDataConverter.stringToByteArray(getValue().toString());
         }
     }
 
@@ -667,22 +627,15 @@ public final class MetisEncryptedData {
                 return Float.parseFloat(TethysDataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (OceanusException | NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new MetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Convert the float to a string and then a byte array */
-                return TethysDataConverter.stringToByteArray(getValue().toString());
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_VALUE_CONVERT, e);
-            }
+        protected byte[] getBytesForEncryption() {
+            /* Convert the float to a string and then a byte array */
+            return TethysDataConverter.stringToByteArray(getValue().toString());
         }
     }
 
@@ -725,22 +678,15 @@ public final class MetisEncryptedData {
                 return Double.parseDouble(TethysDataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (OceanusException | NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new MetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Convert the double to a string and then a byte array */
-                return TethysDataConverter.stringToByteArray(getValue().toString());
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_VALUE_CONVERT, e);
-            }
+        protected byte[] getBytesForEncryption() {
+            /* Convert the double to a string and then a byte array */
+            return TethysDataConverter.stringToByteArray(getValue().toString());
         }
     }
 
@@ -776,29 +722,15 @@ public final class MetisEncryptedData {
         }
 
         @Override
-        protected Boolean parseBytes(final byte[] pBytes) throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Convert the byte array to a string and then an integer */
-                return Boolean.parseBoolean(TethysDataConverter.byteArrayToString(pBytes));
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_BYTES_CONVERT, e);
-            }
+        protected Boolean parseBytes(final byte[] pBytes) {
+            /* Convert the byte array to a string and then an integer */
+            return Boolean.parseBoolean(TethysDataConverter.byteArrayToString(pBytes));
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Convert the boolean to a string and then a byte array */
-                return TethysDataConverter.stringToByteArray(getValue().toString());
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_VALUE_CONVERT, e);
-            }
+        protected byte[] getBytesForEncryption() {
+            /* Convert the boolean to a string and then a byte array */
+            return TethysDataConverter.stringToByteArray(getValue().toString());
         }
     }
 
@@ -810,7 +742,7 @@ public final class MetisEncryptedData {
         /**
          * Date Formatter.
          */
-        private TethysDateFormatter theDateFormatter = null;
+        private TethysDateFormatter theDateFormatter;
 
         /**
          * Constructor.
@@ -858,23 +790,16 @@ public final class MetisEncryptedData {
                 return getDateFormatter().parseDate(myInput);
 
                 /* Catch Exceptions */
-            } catch (OceanusException | IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 throw new MetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Convert the date to a string and then a byte array */
-                String myInput = getDateFormatter().formatDate(getValue());
-                return TethysDataConverter.stringToByteArray(myInput);
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_VALUE_CONVERT, e);
-            }
+        protected byte[] getBytesForEncryption() {
+            /* Convert the date to a string and then a byte array */
+            String myInput = getDateFormatter().formatDate(getValue());
+            return TethysDataConverter.stringToByteArray(myInput);
         }
     }
 
@@ -886,7 +811,7 @@ public final class MetisEncryptedData {
         /**
          * Date Formatter.
          */
-        private TethysDateFormatter theDateFormatter = null;
+        private TethysDateFormatter theDateFormatter;
 
         /**
          * Constructor.
@@ -934,23 +859,16 @@ public final class MetisEncryptedData {
                 return getDateFormatter().parseDateDay(myInput);
 
                 /* Catch Exceptions */
-            } catch (OceanusException | IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 throw new MetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Convert the date to a string and then a byte array */
-                String myInput = getDateFormatter().formatDateDay(getValue());
-                return TethysDataConverter.stringToByteArray(myInput);
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_VALUE_CONVERT, e);
-            }
+        protected byte[] getBytesForEncryption() {
+            /* Convert the date to a string and then a byte array */
+            String myInput = getDateFormatter().formatDateDay(getValue());
+            return TethysDataConverter.stringToByteArray(myInput);
         }
     }
 
@@ -1038,7 +956,7 @@ public final class MetisEncryptedData {
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
+        protected byte[] getBytesForEncryption() {
             return getValue().toByteArray();
         }
     }
@@ -1079,13 +997,13 @@ public final class MetisEncryptedData {
             try {
                 return new BigDecimal(TethysDataConverter.byteArrayToString(pBytes));
                 /* Catch Exceptions */
-            } catch (OceanusException | NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new MetisDataException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
+        protected byte[] getBytesForEncryption() {
             return TethysDataConverter.stringToByteArray(getValue().toString());
         }
     }
@@ -1177,19 +1095,12 @@ public final class MetisEncryptedData {
         protected abstract X parseValue(final String pValue) throws OceanusException;
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Format the value */
-                String myValue = getValue().toString();
+        protected byte[] getBytesForEncryption() {
+            /* Format the value */
+            String myValue = getValue().toString();
 
-                /* Convert the string to a byte array */
-                return TethysDataConverter.stringToByteArray(myValue);
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_VALUE_CONVERT, e);
-            }
+            /* Convert the string to a byte array */
+            return TethysDataConverter.stringToByteArray(myValue);
         }
     }
 
@@ -1225,19 +1136,12 @@ public final class MetisEncryptedData {
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Format the value */
-                String myValue = getDecimalFormatter().toCurrencyString(getValue());
+        protected byte[] getBytesForEncryption() {
+            /* Format the value */
+            String myValue = getDecimalFormatter().toCurrencyString(getValue());
 
-                /* Convert the string to a byte array */
-                return TethysDataConverter.stringToByteArray(myValue);
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_VALUE_CONVERT, e);
-            }
+            /* Convert the string to a byte array */
+            return TethysDataConverter.stringToByteArray(myValue);
         }
 
         @Override
@@ -1365,19 +1269,12 @@ public final class MetisEncryptedData {
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Format the value */
-                String myValue = getDecimalFormatter().toCurrencyString(getValue());
+        protected byte[] getBytesForEncryption() {
+            /* Format the value */
+            String myValue = getDecimalFormatter().toCurrencyString(getValue());
 
-                /* Convert the string to a byte array */
-                return TethysDataConverter.stringToByteArray(myValue);
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                throw new MetisDataException(ERROR_VALUE_CONVERT, e);
-            }
+            /* Convert the string to a byte array */
+            return TethysDataConverter.stringToByteArray(myValue);
         }
 
         @Override

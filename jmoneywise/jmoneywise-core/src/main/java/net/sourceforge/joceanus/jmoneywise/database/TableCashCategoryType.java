@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableStaticData;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableCashCategoryType
-        extends TableStaticData<CashCategoryType, MoneyWiseDataType> {
+        extends PrometheusTableStaticData<CashCategoryType, MoneyWiseDataType> {
     /**
      * The table name.
      */
@@ -46,7 +46,7 @@ public class TableCashCategoryType
      * Constructors.
      * @param pDatabase the database control
      */
-    protected TableCashCategoryType(final Database<MoneyWiseData> pDatabase) {
+    protected TableCashCategoryType(final PrometheusDataStore<MoneyWiseData> pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 

@@ -147,7 +147,7 @@ public enum TethysSwingArrowIcon implements Icon {
     }
 
     /**
-     * Obtain icon for id
+     * Obtain icon for id.
      * @param pId the id
      * @return the icon
      */

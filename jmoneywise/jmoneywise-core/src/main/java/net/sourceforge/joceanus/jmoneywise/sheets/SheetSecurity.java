@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetSecurity
-        extends SheetEncrypted<Security, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<Security, MoneyWiseDataType> {
     /**
      * NamedArea for Securities.
      */

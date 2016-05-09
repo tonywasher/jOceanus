@@ -132,7 +132,7 @@ public class TethysSwingProgressBar
     }
 
     /**
-     * Set the progress colour
+     * Set the progress colour.
      */
     private void setProgressColour() {
         theProgress.setForeground(theAdjuster.getProgressColor());

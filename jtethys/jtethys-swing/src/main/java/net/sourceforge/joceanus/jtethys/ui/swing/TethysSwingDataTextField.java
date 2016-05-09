@@ -260,9 +260,7 @@ public abstract class TethysSwingDataTextField<T>
      */
     public abstract void startCellEditing(final Rectangle pCell);
 
-    /**
-     * Adjust data field.
-     */
+    @Override
     public void adjustField() {
         theAdjuster.adjustField(this);
     }
@@ -283,7 +281,7 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * The standard border.
          */
-        private static final Border BORDER_STD = BorderFactory.createEmptyBorder();
+        private static final Border BORDER_STD = BorderFactory.createLineBorder(Color.decode("#add8e6"));
 
         /**
          * The converterControl.

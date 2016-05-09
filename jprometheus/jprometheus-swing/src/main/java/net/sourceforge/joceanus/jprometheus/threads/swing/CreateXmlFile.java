@@ -30,7 +30,8 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
-import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -114,12 +115,12 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
 
             /* Access the Backup preferences */
             MetisPreferenceManager myMgr = theControl.getPreferenceManager();
-            BackupPreferences myProperties = myMgr.getPreferenceSet(BackupPreferences.class);
+            PrometheusBackupPreferences myProperties = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
 
             /* Determine the archive name */
-            String myBackupDir = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR);
-            String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
-            Boolean doTimeStamp = myProperties.getBooleanValue(BackupPreferences.NAME_BACKUP_TIME);
+            String myBackupDir = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR);
+            String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX);
+            Boolean doTimeStamp = myProperties.getBooleanValue(PrometheusBackupPreferenceKey.BACKUPTIME);
 
             /* Create the name of the file */
             StringBuilder myName = new StringBuilder(BUFFER_LEN);

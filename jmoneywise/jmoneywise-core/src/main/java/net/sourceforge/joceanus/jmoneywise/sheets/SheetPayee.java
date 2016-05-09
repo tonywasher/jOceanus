@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetPayee
-        extends SheetEncrypted<Payee, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<Payee, MoneyWiseDataType> {
     /**
      * NamedArea for Payees.
      */

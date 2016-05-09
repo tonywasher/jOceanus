@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Schedule;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetSchedule
-        extends SheetDataItem<Schedule, MoneyWiseDataType> {
+        extends PrometheusSheetDataItem<Schedule, MoneyWiseDataType> {
     /**
      * NamedArea for Schedules.
      */

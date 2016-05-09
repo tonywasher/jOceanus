@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableTransaction
-        extends TableEncrypted<Transaction, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<Transaction, MoneyWiseDataType> {
     /**
      * The name of the Transactions table.
      */
@@ -52,12 +52,12 @@ public class TableTransaction
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableTransaction(final Database<?> pDatabase) {
+    protected TableTransaction(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        ColumnDefinition myDateCol = myTableDef.addDateColumn(Transaction.FIELD_DATE);
+        PrometheusColumnDefinition myDateCol = myTableDef.addDateColumn(Transaction.FIELD_DATE);
         myTableDef.addIntegerColumn(Transaction.FIELD_PAIR);
         myTableDef.addIntegerColumn(Transaction.FIELD_ACCOUNT);
         myTableDef.addIntegerColumn(Transaction.FIELD_PARTNER);
@@ -79,7 +79,7 @@ public class TableTransaction
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Transaction.OBJECT_NAME);
@@ -99,7 +99,7 @@ public class TableTransaction
     protected void setFieldValue(final Transaction pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (Transaction.FIELD_DATE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getDate());
         } else if (Transaction.FIELD_PAIR.equals(iField)) {

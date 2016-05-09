@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableTransCategory
-        extends TableEncrypted<TransactionCategory, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<TransactionCategory, MoneyWiseDataType> {
     /**
      * The name of the Category table.
      */
@@ -52,13 +52,13 @@ public class TableTransCategory
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableTransCategory(final Database<?> pDatabase) {
+    protected TableTransCategory(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myCatCol = myTableDef.addReferenceColumn(TransactionCategory.FIELD_CATTYPE, TableTransCategoryType.TABLE_NAME);
-        ColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(TransactionCategory.FIELD_PARENT);
+        PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(TransactionCategory.FIELD_CATTYPE, TableTransCategoryType.TABLE_NAME);
+        PrometheusColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(TransactionCategory.FIELD_PARENT);
         myTableDef.addEncryptedColumn(TransactionCategory.FIELD_NAME, StaticData.NAMELEN);
         myTableDef.addNullEncryptedColumn(TransactionCategory.FIELD_DESC, StaticData.DESCLEN);
 
@@ -76,7 +76,7 @@ public class TableTransCategory
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionCategory.OBJECT_NAME);
@@ -93,7 +93,7 @@ public class TableTransCategory
     protected void setFieldValue(final TransactionCategory pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (TransactionCategory.FIELD_CATTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryTypeId());
         } else if (TransactionCategory.FIELD_PARENT.equals(iField)) {

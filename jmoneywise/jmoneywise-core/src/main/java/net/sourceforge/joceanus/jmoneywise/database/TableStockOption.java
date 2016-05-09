@@ -29,16 +29,16 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableEncrypted extension for StockOption.
  */
 public class TableStockOption
-        extends TableEncrypted<StockOption, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<StockOption, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -48,9 +48,9 @@ public class TableStockOption
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableStockOption(final Database<?> pDatabase) {
+    protected TableStockOption(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
         myTableDef.addIntegerColumn(StockOption.FIELD_STOCKHOLDING);
@@ -71,7 +71,7 @@ public class TableStockOption
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(StockOption.OBJECT_NAME);
@@ -91,7 +91,7 @@ public class TableStockOption
     protected void setFieldValue(final StockOption pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (StockOption.FIELD_STOCKHOLDING.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getStockHoldingId());
         } else if (StockOption.FIELD_GRANTDATE.equals(iField)) {

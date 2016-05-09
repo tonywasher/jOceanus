@@ -29,16 +29,16 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableEncrypted extension for StockOptionVest.
  */
 public class TableStockOptionVest
-        extends TableEncrypted<StockOptionVest, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<StockOptionVest, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -48,9 +48,9 @@ public class TableStockOptionVest
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableStockOptionVest(final Database<?> pDatabase) {
+    protected TableStockOptionVest(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
         myTableDef.addReferenceColumn(StockOptionVest.FIELD_OPTION, TableStockOption.TABLE_NAME);
@@ -67,7 +67,7 @@ public class TableStockOptionVest
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(StockOptionVest.OBJECT_NAME);
@@ -83,7 +83,7 @@ public class TableStockOptionVest
     protected void setFieldValue(final StockOptionVest pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (StockOptionVest.FIELD_OPTION.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getStockOptionId());
         } else if (StockOptionVest.FIELD_DATE.equals(iField)) {

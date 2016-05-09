@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableStaticData;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableLoanCategoryType
-        extends TableStaticData<LoanCategoryType, MoneyWiseDataType> {
+        extends PrometheusTableStaticData<LoanCategoryType, MoneyWiseDataType> {
     /**
      * The table name.
      */
@@ -46,7 +46,7 @@ public class TableLoanCategoryType
      * Constructors.
      * @param pDatabase the database control
      */
-    protected TableLoanCategoryType(final Database<MoneyWiseData> pDatabase) {
+    protected TableLoanCategoryType(final PrometheusDataStore<MoneyWiseData> pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 

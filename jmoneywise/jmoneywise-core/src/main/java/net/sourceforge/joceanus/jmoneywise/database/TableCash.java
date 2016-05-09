@@ -30,17 +30,17 @@ import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableEncrypted extension for Cash.
  */
 public class TableCash
-        extends TableEncrypted<Cash, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<Cash, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -50,12 +50,12 @@ public class TableCash
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableCash(final Database<?> pDatabase) {
+    protected TableCash(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Cash.FIELD_CATEGORY, TableCashCategory.TABLE_NAME);
+        PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Cash.FIELD_CATEGORY, TableCashCategory.TABLE_NAME);
         myTableDef.addReferenceColumn(Cash.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addEncryptedColumn(Cash.FIELD_NAME, Cash.NAMELEN);
         myTableDef.addNullEncryptedColumn(Cash.FIELD_DESC, Cash.DESCLEN);
@@ -74,7 +74,7 @@ public class TableCash
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Cash.OBJECT_NAME);
@@ -92,7 +92,7 @@ public class TableCash
     protected void setFieldValue(final Cash pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (Cash.FIELD_CATEGORY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (Cash.FIELD_CURRENCY.equals(iField)) {

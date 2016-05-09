@@ -82,7 +82,8 @@ import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
@@ -217,10 +218,10 @@ public class ArchiveLoader {
      * @throws OceanusException on error
      */
     public MoneyWiseData loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                     final BackupPreferences pPreferences) throws OceanusException {
+                                     final PrometheusBackupPreferences pPreferences) throws OceanusException {
         /* Determine the archive name */
-        String myName = pPreferences.getStringValue(BackupPreferences.NAME_ARCHIVE_FILE);
-        theLastEvent = pPreferences.getDateValue(BackupPreferences.NAME_LAST_EVENT);
+        String myName = pPreferences.getStringValue(PrometheusBackupPreferenceKey.ARCHIVE);
+        theLastEvent = pPreferences.getDateValue(PrometheusBackupPreferenceKey.LASTEVENT);
         File myArchive = new File(myName);
 
         /* Protect the workbook retrieval */

@@ -28,16 +28,16 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableEncrypted extension for Portfolio.
  */
 public class TablePortfolio
-        extends TableEncrypted<Portfolio, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<Portfolio, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -47,9 +47,9 @@ public class TablePortfolio
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TablePortfolio(final Database<?> pDatabase) {
+    protected TablePortfolio(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
         myTableDef.addEncryptedColumn(Portfolio.FIELD_NAME, Portfolio.NAMELEN);
@@ -69,7 +69,7 @@ public class TablePortfolio
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
@@ -88,7 +88,7 @@ public class TablePortfolio
     protected void setFieldValue(final Portfolio pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (Portfolio.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Portfolio.FIELD_DESC.equals(iField)) {

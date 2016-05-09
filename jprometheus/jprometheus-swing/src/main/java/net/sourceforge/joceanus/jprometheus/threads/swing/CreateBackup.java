@@ -29,8 +29,9 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
-import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -96,13 +97,13 @@ public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
 
             /* Access the Backup preferences */
             MetisPreferenceManager myMgr = theControl.getPreferenceManager();
-            BackupPreferences myProperties = myMgr.getPreferenceSet(BackupPreferences.class);
+            PrometheusBackupPreferences myProperties = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
 
             /* Determine the archive name */
-            String myBackupDir = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR);
-            String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
-            Boolean doTimeStamp = myProperties.getBooleanValue(BackupPreferences.NAME_BACKUP_TIME);
-            MetisWorkBookType myType = myProperties.getEnumValue(BackupPreferences.NAME_BACKUP_TYPE, MetisWorkBookType.class);
+            String myBackupDir = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR);
+            String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX);
+            Boolean doTimeStamp = myProperties.getBooleanValue(PrometheusBackupPreferenceKey.BACKUPTIME);
+            MetisWorkBookType myType = myProperties.getEnumValue(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisWorkBookType.class);
 
             /* Create the name of the file */
             StringBuilder myName = new StringBuilder(BUFFER_LEN);
@@ -130,7 +131,7 @@ public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
             myFile = new File(myName.toString() + GordianZipReadFile.ZIPFILE_EXT);
 
             /* Create backup */
-            SpreadSheet<T> mySheet = theControl.getSpreadSheet();
+            PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
             T myOldData = theControl.getData();
             mySheet.createBackup(theStatus, myOldData, myFile, myType);
 

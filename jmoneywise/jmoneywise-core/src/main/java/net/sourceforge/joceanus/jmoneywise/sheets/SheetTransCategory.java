@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetTransCategory
-        extends SheetEncrypted<TransactionCategory, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<TransactionCategory, MoneyWiseDataType> {
     /**
      * NamedArea for TransactionCategories.
      */

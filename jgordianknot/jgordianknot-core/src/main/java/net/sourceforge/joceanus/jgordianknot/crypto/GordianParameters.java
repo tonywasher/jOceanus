@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.util.Arrays;
+
 /**
  * Security Parameters.
  */
@@ -59,7 +61,7 @@ public class GordianParameters {
     /**
      * Default Security Phrase.
      */
-    protected static final String DEFAULT_SECURITY_PHRASE = "PleaseChangeMeToSomethingMoreUnique";
+    private static final String DEFAULT_SECURITY_PHRASE = "PleaseChangeMeToSomethingMoreUnique";
 
     /**
      * Do we use restricted keys?
@@ -94,7 +96,7 @@ public class GordianParameters {
     /**
      * The Security phrase.
      */
-    private String theSecurityPhrase;
+    private char[] theSecurityPhrase;
 
     /**
      * Constructor.
@@ -171,7 +173,7 @@ public class GordianParameters {
      * Access the security phrase in bytes format.
      * @return the security phrase
      */
-    protected String getSecurityPhrase() {
+    protected char[] getSecurityPhrase() {
         return theSecurityPhrase;
     }
 
@@ -220,8 +222,16 @@ public class GordianParameters {
      * Set security phrase.
      * @param pSecurityPhrase the security phrase (or null)
      */
-    public void setSecurityPhrase(final String pSecurityPhrase) {
+    public void setSecurityPhrase(final char[] pSecurityPhrase) {
         theSecurityPhrase = pSecurityPhrase;
+    }
+
+    /**
+     * Get default security phrase.
+     * @return the default security phrase
+     */
+    public static char[] getDefaultSecurityPhrase() {
+        return DEFAULT_SECURITY_PHRASE.toCharArray();
     }
 
     @Override
@@ -257,7 +267,7 @@ public class GordianParameters {
         /* Check phrase */
         return theSecurityPhrase == null
                                          ? myThat.getSecurityPhrase() == null
-                                         : theSecurityPhrase.equals(myThat.getSecurityPhrase());
+                                         : Arrays.equals(theSecurityPhrase, myThat.getSecurityPhrase());
     }
 
     @Override
@@ -284,8 +294,8 @@ public class GordianParameters {
         myCode *= myPrime;
 
         /* Calculate hash from phrase */
-        return myCode + theSecurityPhrase == null
-                                                  ? 0
-                                                  : theSecurityPhrase.hashCode();
+        return myCode + ((theSecurityPhrase == null)
+                                                     ? 0
+                                                     : Arrays.hashCode(theSecurityPhrase));
     }
 }

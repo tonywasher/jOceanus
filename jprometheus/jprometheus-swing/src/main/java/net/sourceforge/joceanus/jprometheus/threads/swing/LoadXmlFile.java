@@ -30,8 +30,9 @@ import net.sourceforge.joceanus.jmetis.preference.swing.MetisFileSelector;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.preference.BackupPreferences;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -86,11 +87,11 @@ public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Access the Sheet preferences */
         MetisPreferenceManager myMgr = theControl.getPreferenceManager();
-        BackupPreferences myProperties = myMgr.getPreferenceSet(BackupPreferences.class);
+        PrometheusBackupPreferences myProperties = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
 
         /* Determine the archive name */
-        File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR));
-        String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX)
+        File myBackupDir = new File(myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR));
+        String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX)
                           + CreateXmlFile.SUFFIX_FILE;
 
         /* Determine the name of the file to load */
@@ -120,7 +121,7 @@ public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
         theStatus.initTask("Accessing DataStore");
 
         /* Create interface */
-        Database<T> myDatabase = theControl.getDatabase();
+        PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 
         /* Load underlying database */
         T myStore = myDatabase.loadDatabase(theStatus);

@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.DatabaseTable;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDataItem;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableExchangeRate
-        extends DatabaseTable<ExchangeRate, MoneyWiseDataType> {
+        extends PrometheusTableDataItem<ExchangeRate, MoneyWiseDataType> {
     /**
      * The name of the ExchangeRate table.
      */
@@ -57,13 +57,13 @@ public class TableExchangeRate
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableExchangeRate(final Database<?> pDatabase) {
+    protected TableExchangeRate(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myDateCol = myTableDef.addDateColumn(ExchangeRate.FIELD_DATE);
-        ColumnDefinition myFromCol = myTableDef.addReferenceColumn(ExchangeRate.FIELD_FROM, TableAssetCurrency.TABLE_NAME);
+        PrometheusColumnDefinition myDateCol = myTableDef.addDateColumn(ExchangeRate.FIELD_DATE);
+        PrometheusColumnDefinition myFromCol = myTableDef.addReferenceColumn(ExchangeRate.FIELD_FROM, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(ExchangeRate.FIELD_TO, TableAssetCurrency.TABLE_NAME);
         myTableDef.addRatioColumn(ExchangeRate.FIELD_RATE);
 
@@ -82,7 +82,7 @@ public class TableExchangeRate
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
@@ -99,7 +99,7 @@ public class TableExchangeRate
     protected void setFieldValue(final ExchangeRate pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (ExchangeRate.FIELD_DATE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getDate());
         } else if (ExchangeRate.FIELD_FROM.equals(iField)) {

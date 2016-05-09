@@ -256,8 +256,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
     /**
      * Set the value.
      * @param pValue the value
-     * @param pFont the font
-     * @param pColor the colour
+     * @param isChanged is the value changed?
      * @return is the field visible
      */
     protected boolean setValue(final Object pValue,

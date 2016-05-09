@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jprometheus.threads.swing;
 
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.database.Database;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -73,7 +73,7 @@ public class LoadDatabase<T extends DataSet<T, E>, E extends Enum<E>>
         theStatus.initTask("Loading Database");
 
         /* Access database */
-        Database<T> myDatabase = theControl.getDatabase();
+        PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {

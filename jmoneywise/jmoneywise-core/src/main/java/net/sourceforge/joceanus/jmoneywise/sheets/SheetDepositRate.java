@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * @author Tony Washer
  */
 public class SheetDepositRate
-        extends SheetEncrypted<DepositRate, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<DepositRate, MoneyWiseDataType> {
     /**
      * NamedArea for Rates.
      */

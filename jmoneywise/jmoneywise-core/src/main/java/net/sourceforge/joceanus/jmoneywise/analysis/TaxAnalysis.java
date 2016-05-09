@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.time.Month;
 
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
@@ -81,69 +82,84 @@ public class TaxAnalysis {
     /**
      * Do we have an age allowance?
      */
-    private boolean hasAgeAllowance = false;
+    private boolean hasAgeAllowance;
 
     /**
      * Do we have Gains slices?
      */
-    private Boolean hasGainsSlices = false;
+    private Boolean hasGainsSlices;
 
     /**
      * Do we have a reduced allowance?
      */
-    private Boolean hasReducedAllow = false;
+    private Boolean hasReducedAllow;
 
     /**
      * Age of User.
      */
-    private Integer theAge = 0;
+    private Integer theAge;
+
+    /**
+     * TaxPreferenceKeys.
+     */
+    public enum MoneyWiseTaxPreferenceKey implements MetisPreferenceKey {
+        /**
+         * Birth Date.
+         */
+        BIRTHDATE("BirthDate", AnalysisResource.TAXPREF_BIRTH);
+
+        /**
+         * The name of the Preference.
+         */
+        private final String theName;
+
+        /**
+         * The display string.
+         */
+        private final String theDisplay;
+
+        /**
+         * Constructor.
+         * @param pName the name
+         * @param pDisplay the display string;
+         */
+        MoneyWiseTaxPreferenceKey(final String pName,
+                                  final AnalysisResource pDisplay) {
+            theName = pName;
+            theDisplay = pDisplay.getValue();
+        }
+
+        @Override
+        public String getName() {
+            return theName;
+        }
+
+        @Override
+        public String getDisplay() {
+            return theDisplay;
+        }
+    }
 
     /**
      * Taxation Preferences.
      */
-    public static class TaxPreferences
-            extends MetisPreferenceSet {
+    public static class MoneyWiseTaxPreferences
+            extends MetisPreferenceSet<MoneyWiseTaxPreferenceKey> {
         /**
-         * Registry name for BirthDate.
+         * Default year.
          */
-        public static final String NAME_BIRTHDATE = "BirthDate";
-
-        /**
-         * Display name for BirthDate.
-         */
-        private static final String DISPLAY_BIRTHDATE = "Birth Date";
-
-        /**
-         * Default value for BirthDate.
-         */
-        private static final TethysDate DEFAULT_BIRTHDATE = new TethysDate(1970, Month.JANUARY, 1);
+        private static final int YEAR = 1970;
 
         /**
          * Constructor.
+         * @param pManager the preference manager
          * @throws OceanusException on error
          */
-        public TaxPreferences() throws OceanusException {
-            super();
-        }
-
-        @Override
-        protected void definePreferences() {
-            /* Define the preferences */
-            defineDatePreference(NAME_BIRTHDATE, DEFAULT_BIRTHDATE);
-        }
-
-        @Override
-        protected String getDisplayName(final String pName) {
-            /* Handle default values */
-            if (pName.equals(NAME_BIRTHDATE)) {
-                return DISPLAY_BIRTHDATE;
-            }
-            return null;
-        }
-
-        @Override
-        public boolean isDisabled() {
-            return false;
+        public MoneyWiseTaxPreferences(final MetisPreferenceManager pManager) throws OceanusException {
+            super(pManager);
+            defineDatePreference(MoneyWiseTaxPreferenceKey.BIRTHDATE, new TethysDate(YEAR, Month.JANUARY, 1));
+            setName(AnalysisResource.TAXPREF_PREFNAME.getValue());
+            storeChanges();
         }
     }
 
@@ -312,10 +328,10 @@ public class TaxAnalysis {
         TethysMoney myAdjust;
 
         /* Access the taxation properties */
-        TaxPreferences myPreferences = pManager.getPreferenceSet(TaxPreferences.class);
+        MoneyWiseTaxPreferences myPreferences = pManager.getPreferenceSet(MoneyWiseTaxPreferences.class);
 
         /* Determine the relevant age for this tax year */
-        theAge = myPreferences.getDateValue(TaxPreferences.NAME_BIRTHDATE).ageOn(theYear.getTaxYear());
+        theAge = myPreferences.getDateValue(MoneyWiseTaxPreferenceKey.BIRTHDATE).ageOn(theYear.getTaxYear());
 
         /* Determine the relevant allowance */
         if (theAge >= LIMIT_AGE_HI) {

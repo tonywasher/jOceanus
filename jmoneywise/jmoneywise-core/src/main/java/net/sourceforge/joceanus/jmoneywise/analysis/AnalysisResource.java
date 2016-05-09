@@ -474,7 +474,17 @@ public enum AnalysisResource implements TethysResourceId {
     /**
      * TaxAttr Tax.
      */
-    TAXATTR_TAX("TaxAttr.Tax");
+    TAXATTR_TAX("TaxAttr.Tax"),
+
+    /**
+     * TaxPreference Display Name.
+     */
+    TAXPREF_PREFNAME("taxpref.display"),
+
+    /**
+     * TaxPreference Birth Date.
+     */
+    TAXPREF_BIRTH("taxpref.birth");
 
     /**
      * The Resource Builder.

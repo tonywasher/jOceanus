@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableDepositRate
-        extends TableEncrypted<DepositRate, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<DepositRate, MoneyWiseDataType> {
     /**
      * The name of the Rates table.
      */
@@ -52,15 +52,15 @@ public class TableDepositRate
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableDepositRate(final Database<?> pDatabase) {
+    protected TableDepositRate(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myActCol = myTableDef.addReferenceColumn(DepositRate.FIELD_DEPOSIT, TableDeposit.TABLE_NAME);
+        PrometheusColumnDefinition myActCol = myTableDef.addReferenceColumn(DepositRate.FIELD_DEPOSIT, TableDeposit.TABLE_NAME);
         myTableDef.addEncryptedColumn(DepositRate.FIELD_RATE, MetisEncryptedData.RATELEN);
         myTableDef.addNullEncryptedColumn(DepositRate.FIELD_BONUS, MetisEncryptedData.RATELEN);
-        ColumnDefinition myDateCol = myTableDef.addNullDateColumn(DepositRate.FIELD_ENDDATE);
+        PrometheusColumnDefinition myDateCol = myTableDef.addNullDateColumn(DepositRate.FIELD_ENDDATE);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.DESCENDING);
@@ -76,7 +76,7 @@ public class TableDepositRate
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(DepositRate.OBJECT_NAME);
@@ -93,7 +93,7 @@ public class TableDepositRate
     protected void setFieldValue(final DepositRate pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (DepositRate.FIELD_DEPOSIT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getDepositId());
         } else if (DepositRate.FIELD_RATE.equals(iField)) {

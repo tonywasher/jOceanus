@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * @author Tony Washer
  */
 public class SheetSecurityPrice
-        extends SheetEncrypted<SecurityPrice, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<SecurityPrice, MoneyWiseDataType> {
     /**
      * NamedArea for Prices.
      */

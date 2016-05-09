@@ -30,11 +30,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferenceKey;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFFile;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFParser;
@@ -42,9 +47,6 @@ import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFWriter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.threads.swing.WorkerThread;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * WorkerThread extension to create a QIF archive.
@@ -60,11 +62,6 @@ public class WriteQIF
      * Task description.
      */
     private static final String TASK_NAME = "QIF Creation";
-
-    /**
-     * Windows CharacterSet.
-     */
-    private static final String NAME_CHARSET = "Windows-1252";
 
     /**
      * Delete error text.
@@ -107,7 +104,7 @@ public class WriteQIF
 
         /* Load configuration */
         MetisPreferenceManager myMgr = theView.getPreferenceManager();
-        QIFPreference myPrefs = myMgr.getPreferenceSet(QIFPreference.class);
+        MoneyWiseQIFPreferences myPrefs = myMgr.getPreferenceSet(MoneyWiseQIFPreferences.class);
 
         /* Create QIF file */
         QIFFile myQFile = QIFFile.buildQIFFile(theView, myPrefs);
@@ -116,8 +113,8 @@ public class WriteQIF
         theStatus.initTask("Writing QIF file");
 
         /* Determine name of output file */
-        String myDirectory = myPrefs.getStringValue(QIFPreference.NAME_QIFDIR);
-        QIFType myType = myPrefs.getEnumValue(QIFPreference.NAME_QIFTYPE, QIFType.class);
+        String myDirectory = myPrefs.getStringValue(MoneyWiseQIFPreferenceKey.QIFDIR);
+        QIFType myType = myPrefs.getEnumValue(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.class);
 
         /* Determine the output name */
         File myOutFile = new File(myDirectory + File.separator + myType.getFileName());
@@ -128,7 +125,7 @@ public class WriteQIF
         /* Protect against exceptions */
         try (FileOutputStream myOutput = new FileOutputStream(myOutFile);
              BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
-             OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, NAME_CHARSET)) {
+             OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, StandardCharsets.ISO_8859_1)) {
 
             /* Output the data */
             boolean isSuccess = myQWriter.writeFile(myWriter);
@@ -156,7 +153,7 @@ public class WriteQIF
 
         /* Protect against exceptions */
         try (FileInputStream myInput = new FileInputStream(myOutFile);
-             InputStreamReader myReader = new InputStreamReader(myInput, NAME_CHARSET);
+             InputStreamReader myReader = new InputStreamReader(myInput, StandardCharsets.ISO_8859_1);
              BufferedReader myBuffer = new BufferedReader(myReader)) {
 
             /* Load the data */

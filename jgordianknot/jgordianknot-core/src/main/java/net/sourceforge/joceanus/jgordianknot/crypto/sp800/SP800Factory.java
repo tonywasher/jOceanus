@@ -88,6 +88,11 @@ public final class SP800Factory {
     protected static final int MAX_BITS_REQUEST = 1 << (BITS_POWER - 1);
 
     /**
+     * The Entropy Secure Random instance.
+     */
+    private static SecureRandom theStrongEntropy;
+
+    /**
      * The Basic Secure Random instance.
      */
     private final SecureRandom theRandom;
@@ -159,13 +164,17 @@ public final class SP800Factory {
      * @return the secure random
      * @throws OceanusException on error
      */
-    private static SecureRandom getStrongRandom() throws OceanusException {
-        /* Protect against exceptions */
-        try {
-            return SecureRandom.getInstanceStrong();
-        } catch (NoSuchAlgorithmException e) {
-            throw new GordianCryptoException("No strong random", e);
+    private static synchronized SecureRandom getStrongRandom() throws OceanusException {
+        /* If we have not yet created the string entropy */
+        if (theStrongEntropy == null) {
+            /* Protect against exceptions */
+            try {
+                theStrongEntropy = SecureRandom.getInstanceStrong();
+            } catch (NoSuchAlgorithmException e) {
+                throw new GordianCryptoException("No strong random", e);
+            }
         }
+        return theStrongEntropy;
     }
 
     /**

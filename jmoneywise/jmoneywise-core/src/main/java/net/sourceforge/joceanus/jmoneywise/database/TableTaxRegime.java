@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableStaticData;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableTaxRegime
-        extends TableStaticData<TaxRegime, MoneyWiseDataType> {
+        extends PrometheusTableStaticData<TaxRegime, MoneyWiseDataType> {
     /**
      * The name of the TaxRegime table.
      */
@@ -46,7 +46,7 @@ public class TableTaxRegime
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableTaxRegime(final Database<?> pDatabase) {
+    protected TableTaxRegime(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 

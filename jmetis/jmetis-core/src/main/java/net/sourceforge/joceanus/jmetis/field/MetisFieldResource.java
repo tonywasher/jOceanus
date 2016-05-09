@@ -31,6 +31,61 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
  */
 public enum MetisFieldResource implements TethysResourceId {
     /**
+     * FieldColor Standard.
+     */
+    FIELDCOLOR_PREFS("colorpref.name"),
+
+    /**
+     * FieldColor Standard.
+     */
+    FIELDCOLOR_STANDARD("colorpref.display.STANDARD"),
+
+    /**
+     * FieldColor Background.
+     */
+    FIELDCOLOR_BACKGROUND("colorpref.display.BACKGROUND"),
+
+    /**
+     * FieldColor Error.
+     */
+    FIELDCOLOR_ERROR("colorpref.display.ERROR"),
+
+    /**
+     * FieldColor Changed.
+     */
+    FIELDCOLOR_CHANGED("colorpref.display.CHANGED"),
+
+    /**
+     * FieldColor Zebra.
+     */
+    FIELDCOLOR_ZEBRA("colorpref.display.ZEBRA"),
+
+    /**
+     * FieldColor Disabled.
+     */
+    FIELDCOLOR_DISABLED("colorpref.display.DISABLED"),
+
+    /**
+     * FieldColor Link.
+     */
+    FIELDCOLOR_LINK("colorpref.display.LINK"),
+
+    /**
+     * FieldColor Value.
+     */
+    FIELDCOLOR_VALUE("colorpref.display.VALUE"),
+
+    /**
+     * FieldColor Negative.
+     */
+    FIELDCOLOR_NEGATIVE("colorpref.display.NEGATIVE"),
+
+    /**
+     * FieldColor PROGRESS.
+     */
+    FIELDCOLOR_PROGRESS("colorpref.display.PROGRESS"),
+
+    /**
      * FieldValue ERROR.
      */
     FIELDVALUE_ERROR("fieldvalue.ERROR");

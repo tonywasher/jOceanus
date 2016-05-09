@@ -31,46 +31,6 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
  */
 public enum MetisPreferenceResource implements TethysResourceId {
     /**
-     * valueClass STRING.
-     */
-    VALUE_STRING("valueClass.STRING"),
-
-    /**
-     * valueClass INTEGER.
-     */
-    VALUE_INTEGER("valueClass.INTEGER"),
-
-    /**
-     * valueClass MONEY.
-     */
-    VALUE_MONEY("valueClass.MONEY"),
-
-    /**
-     * valueClass MONEY.
-     */
-    VALUE_RATE("valueClass.RATE"),
-
-    /**
-     * valueClass UNITS.
-     */
-    VALUE_UNITS("valueClass.UNITS"),
-
-    /**
-     * valueClass PRICE.
-     */
-    VALUE_PRICE("valueClass.PRICE"),
-
-    /**
-     * valueClass DILUTION.
-     */
-    VALUE_DILUTION("valueClass.DILUTION"),
-
-    /**
-     * valueClass CHARARRAY.
-     */
-    VALUE_CHARARRAY("valueClass.CHARARRAY"),
-
-    /**
      * Preference type STRING.
      */
     TYPE_STRING("type.STRING"),
@@ -111,9 +71,14 @@ public enum MetisPreferenceResource implements TethysResourceId {
     TYPE_COLOR("type.COLOR"),
 
     /**
-     * Preference type FONT.
+     * Preference type CHARARRAY.
      */
-    TYPE_FONT("type.FONT"),
+    TYPE_CHARARRAY("type.CHARARRAY"),
+
+    /**
+     * Preference type BYTEARRAY.
+     */
+    TYPE_BYTEARRAY("type.BYTEARRAY"),
 
     /**
      * OK button text.
@@ -216,34 +181,6 @@ public enum MetisPreferenceResource implements TethysResourceId {
     }
 
     /**
-     * Obtain key for valueClass.
-     * @param pValue the Value
-     * @return the resource key
-     */
-    protected static TethysResourceId getKeyForValueClass(final MetisPreferenceValueClass pValue) {
-        switch (pValue) {
-            case STRING:
-                return VALUE_STRING;
-            case INTEGER:
-                return VALUE_INTEGER;
-            case MONEY:
-                return VALUE_MONEY;
-            case RATE:
-                return VALUE_RATE;
-            case UNITS:
-                return VALUE_UNITS;
-            case PRICE:
-                return VALUE_PRICE;
-            case DILUTION:
-                return VALUE_DILUTION;
-            case CHARARRAY:
-                return VALUE_CHARARRAY;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
-    }
-
-    /**
      * Obtain key for prefType.
      * @param pType the type
      * @return the resource key
@@ -266,8 +203,10 @@ public enum MetisPreferenceResource implements TethysResourceId {
                 return TYPE_ENUM;
             case COLOR:
                 return TYPE_COLOR;
-            case FONT:
-                return TYPE_FONT;
+            case CHARARRAY:
+                return TYPE_CHARARRAY;
+            case BYTEARRAY:
+                return TYPE_BYTEARRAY;
             default:
                 throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pType));
         }

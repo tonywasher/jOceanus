@@ -30,10 +30,10 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableDepositCategory
-        extends TableEncrypted<DepositCategory, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<DepositCategory, MoneyWiseDataType> {
     /**
      * The name of the Category table.
      */
@@ -51,13 +51,13 @@ public class TableDepositCategory
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableDepositCategory(final Database<?> pDatabase) {
+    protected TableDepositCategory(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myCatCol = myTableDef.addReferenceColumn(DepositCategory.FIELD_CATTYPE, TableDepositCategoryType.TABLE_NAME);
-        ColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(DepositCategory.FIELD_PARENT);
+        PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(DepositCategory.FIELD_CATTYPE, TableDepositCategoryType.TABLE_NAME);
+        PrometheusColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(DepositCategory.FIELD_PARENT);
         myTableDef.addEncryptedColumn(DepositCategory.FIELD_NAME, DepositCategory.NAMELEN);
         myTableDef.addNullEncryptedColumn(DepositCategory.FIELD_DESC, DepositCategory.DESCLEN);
 
@@ -75,7 +75,7 @@ public class TableDepositCategory
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(DepositCategory.OBJECT_NAME);
@@ -92,7 +92,7 @@ public class TableDepositCategory
     protected void setFieldValue(final DepositCategory pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (DepositCategory.FIELD_CATTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryTypeId());
         } else if (DepositCategory.FIELD_PARENT.equals(iField)) {

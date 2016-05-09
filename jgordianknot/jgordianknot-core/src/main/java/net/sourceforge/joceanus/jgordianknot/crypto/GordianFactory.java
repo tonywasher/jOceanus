@@ -100,11 +100,11 @@ public abstract class GordianFactory {
         isRestricted = theParameters.useRestricted();
 
         /* Calculate personalisation bytes */
-        String myPhrase = theParameters.getSecurityPhrase();
+        char[] myPhrase = theParameters.getSecurityPhrase();
         GordianDigest myDigest = createDigest(getDefaultDigest());
         myDigest.update(TethysDataConverter.stringToByteArray(BASE_PERSONAL));
         if (myPhrase != null) {
-            myDigest.update(TethysDataConverter.stringToByteArray(myPhrase));
+            myDigest.update(TethysDataConverter.charsToByteArray(myPhrase));
         }
         thePersonalisation = myDigest.finish();
     }

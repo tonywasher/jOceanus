@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.definitions;
 
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -29,86 +31,81 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 /**
  * Quicken Preferences.
  */
-public class QIFPreference
-        extends MetisPreferenceSet {
-    /**
-     * Registry name for QIF Directory.
-     */
-    public static final String NAME_QIFDIR = "QIFDir";
-
-    /**
-     * Backup type.
-     */
-    public static final String NAME_QIFTYPE = "QIFType";
-
-    /**
-     * Registry name for Last Event.
-     */
-    public static final String NAME_LASTEVENT = "LastEvent";
-
-    /**
-     * Display name for Last Event.
-     */
-    private static final String DISPLAY_QIFDIR = "Output Directory";
-
-    /**
-     * Display name for QIFType.
-     */
-    private static final String DISPLAY_QIFTYPE = "Output Type";
-
-    /**
-     * Display name for Last Event.
-     */
-    private static final String DISPLAY_LASTEVENT = "Last Event";
-
-    /**
-     * Default value for QIFDirectory.
-     */
-    private static final String DEFAULT_QIFDIR = System.getProperty("user.home");
-
-    /**
-     * Default value for BackupType.
-     */
-    private static final QIFType DEFAULT_QIFTYPE = QIFType.ACEMONEY;
-
-    /**
-     * Default value for Last Event.
-     */
-    private static final TethysDate DEFAULT_LASTEVENT = new TethysDate();
-
+public final class QIFPreference {
     /**
      * Constructor.
-     * @throws OceanusException on error
      */
-    public QIFPreference() throws OceanusException {
-        super();
+    private QIFPreference() {
     }
 
-    @Override
-    protected void definePreferences() {
-        /* Define the preferences */
-        defineDirectoryPreference(NAME_QIFDIR, DEFAULT_QIFDIR);
-        definePreference(NAME_QIFTYPE, DEFAULT_QIFTYPE, QIFType.class);
-        defineDatePreference(NAME_LASTEVENT, DEFAULT_LASTEVENT);
+    /**
+     * QIFPreferenceKeys.
+     */
+    public enum MoneyWiseQIFPreferenceKey implements MetisPreferenceKey {
+        /**
+         * QIF directory.
+         */
+        QIFDIR("QIFDir", "Output Directory"),
+
+        /**
+         * QIF Type.
+         */
+        QIFTYPE("QIFType", "Output Type"),
+
+        /**
+         * Database Driver.
+         */
+        LASTEVENT("LastEvent", "Last Event");
+
+        /**
+         * The name of the Preference.
+         */
+        private final String theName;
+
+        /**
+         * The display string.
+         */
+        private final String theDisplay;
+
+        /**
+         * Constructor.
+         * @param pName the name
+         * @param pDisplay the display string;
+         */
+        MoneyWiseQIFPreferenceKey(final String pName,
+                                  final String pDisplay) {
+            theName = pName;
+            theDisplay = pDisplay;
+        }
+
+        @Override
+        public String getName() {
+            return theName;
+        }
+
+        @Override
+        public String getDisplay() {
+            return theDisplay;
+        }
     }
 
-    @Override
-    protected String getDisplayName(final String pName) {
-        /* Handle default values */
-        if (pName.equals(NAME_QIFDIR)) {
-            return DISPLAY_QIFDIR;
+    /**
+     * QIF Preferences.
+     */
+    public static class MoneyWiseQIFPreferences
+            extends MetisPreferenceSet<MoneyWiseQIFPreferenceKey> {
+        /**
+         * Constructor.
+         * @param pManager the preference manager
+         * @throws OceanusException on error
+         */
+        public MoneyWiseQIFPreferences(final MetisPreferenceManager pManager) throws OceanusException {
+            super(pManager);
+            defineDirectoryPreference(MoneyWiseQIFPreferenceKey.QIFDIR, System.getProperty("user.home"));
+            defineEnumPreference(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.ACEMONEY, QIFType.class);
+            defineDatePreference(MoneyWiseQIFPreferenceKey.LASTEVENT, new TethysDate());
+            setName("QIF Preferences");
+            storeChanges();
         }
-        if (pName.equals(NAME_QIFTYPE)) {
-            return DISPLAY_QIFTYPE;
-        }
-        if (pName.equals(NAME_LASTEVENT)) {
-            return DISPLAY_LASTEVENT;
-        }
-        return null;
-    }
-
-    @Override
-    public boolean isDisabled() {
-        return false;
     }
 }

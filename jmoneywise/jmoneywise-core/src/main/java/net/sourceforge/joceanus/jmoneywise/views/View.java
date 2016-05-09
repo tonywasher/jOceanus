@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.preference.DatabasePreferences;
-import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusDatabase.PrometheusDatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -142,8 +142,8 @@ public class View
     }
 
     @Override
-    public Database<MoneyWiseData> getDatabase() throws OceanusException {
-        return new MoneyWiseDatabase(getPreferenceManager().getPreferenceSet(DatabasePreferences.class));
+    public PrometheusDataStore<MoneyWiseData> getDatabase() throws OceanusException {
+        return new MoneyWiseDatabase(getPreferenceManager().getPreferenceSet(PrometheusDatabasePreferences.class));
     }
 
     /**
@@ -151,7 +151,7 @@ public class View
      * @return new DataSet
      */
     @Override
-    public SpreadSheet<MoneyWiseData> getSpreadSheet() {
+    public PrometheusSpreadSheet<MoneyWiseData> getSpreadSheet() {
         return new MoneyWiseSheet();
     }
 

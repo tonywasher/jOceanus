@@ -117,6 +117,7 @@ public class MetisFieldSetPanel<N, I>
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pFieldMap the fieldMap
      */
     private MetisFieldSetPanel(final TethysGuiFactory<N, I> pFactory,
                                final Map<MetisField, MetisFieldSetPanelItem<?, N, I>> pFieldMap) {

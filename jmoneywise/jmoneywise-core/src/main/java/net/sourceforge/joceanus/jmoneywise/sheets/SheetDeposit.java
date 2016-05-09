@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * @author Tony Washer
  */
 public class SheetDeposit
-        extends SheetEncrypted<Deposit, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<Deposit, MoneyWiseDataType> {
     /**
      * NamedArea for Deposits.
      */

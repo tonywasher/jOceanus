@@ -24,14 +24,14 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetReader;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetReader;
 
 /**
  * SheetReader extension for MoneyWiseData.
  * @author Tony Washer
  */
 public class MoneyWiseReader
-        extends SheetReader<MoneyWiseData> {
+        extends PrometheusSheetReader<MoneyWiseData> {
     /**
      * Thread control.
      */

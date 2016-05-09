@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ArchiveYear;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * @author Tony Washer
  */
 public class SheetTaxYear
-        extends SheetDataItem<TaxYear, MoneyWiseDataType> {
+        extends PrometheusSheetDataItem<TaxYear, MoneyWiseDataType> {
     /**
      * NamedArea for TaxYears.
      */

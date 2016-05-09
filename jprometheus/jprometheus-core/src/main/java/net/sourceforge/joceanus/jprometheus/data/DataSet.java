@@ -44,8 +44,10 @@ import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
-import net.sourceforge.joceanus.jprometheus.preference.DataListPreferences;
-import net.sourceforge.joceanus.jprometheus.preference.SecurityPreferences;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusDataList.PrometheusDataListPreferenceKey;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusDataList.PrometheusDataListPreferences;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusSecurity.PrometheusSecurityPreferenceKey;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -183,10 +185,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Access the DataListPreferences */
         MetisPreferenceManager myPrefMgr = pUtilitySet.getPreferenceManager();
-        DataListPreferences myDataPreferences = myPrefMgr.getPreferenceSet(DataListPreferences.class);
-        theGranularity = myDataPreferences.getIntegerValue(DataListPreferences.NAME_GRANULARITY);
-        SecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(SecurityPreferences.class);
-        theNumActiveKeySets = mySecPreferences.getIntegerValue(SecurityPreferences.NAME_ACTIVE_KEYSETS);
+        PrometheusDataListPreferences myDataPreferences = myPrefMgr.getPreferenceSet(PrometheusDataListPreferences.class);
+        theGranularity = myDataPreferences.getIntegerValue(PrometheusDataListPreferenceKey.GRANULARITY);
+        PrometheusSecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(PrometheusSecurityPreferences.class);
+        theNumActiveKeySets = mySecPreferences.getIntegerValue(PrometheusSecurityPreferenceKey.ACTIVEKEYSETS);
 
         /* Create the empty security lists */
         theControlKeys = new ControlKeyList(this);

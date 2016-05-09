@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.preference.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -32,13 +32,13 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class MoneyWiseDatabase
-        extends Database<MoneyWiseData> {
+        extends PrometheusDataStore<MoneyWiseData> {
     /**
      * Construct a new Database class for load.
      * @param pPreferences the preferences
      * @throws OceanusException on error
      */
-    public MoneyWiseDatabase(final DatabasePreferences pPreferences) throws OceanusException {
+    public MoneyWiseDatabase(final PrometheusDatabasePreferences pPreferences) throws OceanusException {
         /* Call super-constructor */
         super(pPreferences);
 

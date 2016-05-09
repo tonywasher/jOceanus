@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -44,14 +47,14 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 public class MetisPreferenceManager
         implements MetisDataContents, TethysEventProvider<MetisPreferenceEvent> {
     /**
-     * Report fields.
-     */
-    private final MetisFields theFields = new MetisFields(MetisPreferenceManager.class.getSimpleName());
-
-    /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MetisPreferenceManager.class);
+
+    /**
+     * Report fields.
+     */
+    private final MetisFields theFields = new MetisFields(MetisPreferenceManager.class.getSimpleName());
 
     /**
      * Load error text.
@@ -61,12 +64,26 @@ public class MetisPreferenceManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<MetisPreferenceEvent> theEventManager = new TethysEventManager<>();
+    private final TethysEventManager<MetisPreferenceEvent> theEventManager;
+
+    /**
+     * The Security Manager.
+     */
+    private final MetisPreferenceSecurity theSecurityManager;
 
     /**
      * Map of preferenceSets.
      */
-    private Map<String, MetisPreferenceSet> theMap = new HashMap<>();
+    private Map<String, MetisPreferenceSet<?>> theMap = new HashMap<>();
+
+    /**
+     * Constructor.
+     * @throws OceanusException on error
+     */
+    public MetisPreferenceManager() throws OceanusException {
+        theEventManager = new TethysEventManager<>();
+        theSecurityManager = new MetisPreferenceSecurity(this);
+    }
 
     @Override
     public MetisFields getDataFields() {
@@ -81,7 +98,7 @@ public class MetisPreferenceManager
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Access preference set */
-        MetisPreferenceSet mySet = theMap.get(pField.getName());
+        MetisPreferenceSet<?> mySet = theMap.get(pField.getName());
 
         /* Return the value */
         return (mySet == null)
@@ -95,10 +112,18 @@ public class MetisPreferenceManager
     }
 
     /**
+     * Obtain the security manager.
+     * @return the security manager
+     */
+    protected MetisPreferenceSecurity getSecurity() {
+        return theSecurityManager;
+    }
+
+    /**
      * Obtain the collection of preference sets.
      * @return the preference sets
      */
-    public Collection<MetisPreferenceSet> getPreferenceSets() {
+    public Collection<MetisPreferenceSet<?>> getPreferenceSets() {
         return theMap.values();
     }
 
@@ -108,7 +133,7 @@ public class MetisPreferenceManager
      * @param pClass the class of the preference set
      * @return the relevant preferenceSet
      */
-    public synchronized <X extends MetisPreferenceSet> X getPreferenceSet(final Class<X> pClass) {
+    public synchronized <X extends MetisPreferenceSet<?>> X getPreferenceSet(final Class<X> pClass) {
         /* Locate a cached PreferenceSet */
         String myName = pClass.getSimpleName();
         X mySet = pClass.cast(theMap.get(myName));
@@ -117,8 +142,11 @@ public class MetisPreferenceManager
         if (mySet == null) {
             /* Protect against exceptions */
             try {
+                /* Obtain the relevant constructor */
+                Constructor<X> myConstructor = pClass.getConstructor(getClass());
+
                 /* Access the new set */
-                mySet = pClass.newInstance();
+                mySet = myConstructor.newInstance(this);
 
                 /* Cache the set */
                 theMap.put(myName, mySet);
@@ -130,9 +158,12 @@ public class MetisPreferenceManager
                 theEventManager.fireEvent(MetisPreferenceEvent.NEWSET, mySet);
 
             } catch (IllegalAccessException
-                    | InstantiationException e) {
+                    | InstantiationException
+                    | NoSuchMethodException
+                    | SecurityException
+                    | IllegalArgumentException
+                    | InvocationTargetException e) {
                 LOGGER.error(ERROR_LOAD, e);
-                mySet = null;
             }
         }
 

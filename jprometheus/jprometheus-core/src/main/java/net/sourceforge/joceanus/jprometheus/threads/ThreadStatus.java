@@ -25,10 +25,12 @@ package net.sourceforge.joceanus.jprometheus.threads;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.preference.PrometheusPreferenceResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.StatusData;
 import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
@@ -85,8 +87,8 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Access the threadStatus properties */
         MetisPreferenceManager myMgr = theControl.getPreferenceManager();
-        ThreadStatusPreferences myPreferences = myMgr.getPreferenceSet(ThreadStatusPreferences.class);
-        theSteps = myPreferences.getIntegerValue(ThreadStatusPreferences.NAME_REPSTEPS);
+        PrometheusThreadStatusPreferences myPreferences = myMgr.getPreferenceSet(PrometheusThreadStatusPreferences.class);
+        theSteps = myPreferences.getIntegerValue(PrometheusThreadStatusPreferenceKey.REPSTEPS);
 
         /* Create the status */
         theStatus = new StatusData();
@@ -269,20 +271,51 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * ThreadStatus Preferences.
+     * DataListPreferences.
      */
-    public static final class ThreadStatusPreferences
-            extends MetisPreferenceSet {
+    public enum PrometheusThreadStatusPreferenceKey implements MetisPreferenceKey {
         /**
-         * Registry name for Reporting Steps.
+         * Granularity.
          */
-        public static final String NAME_REPSTEPS = "ReportingSteps";
+        REPSTEPS("ReportingSteps", PrometheusPreferenceResource.THDPREF_REPORTING);
 
         /**
-         * Display name for Reporting Steps.
+         * The name of the Preference.
          */
-        private static final String DISPLAY_REPSTEPS = "Reporting Steps";
+        private final String theName;
 
+        /**
+         * The display name of the Preference.
+         */
+        private final String theDisplay;
+
+        /**
+         * Constructor.
+         * @param pName the name
+         * @param pDisplay the display name
+         */
+        PrometheusThreadStatusPreferenceKey(final String pName,
+                                            final PrometheusPreferenceResource pDisplay) {
+            theName = pName;
+            theDisplay = pDisplay.getValue();
+        }
+
+        @Override
+        public String getName() {
+            return theName;
+        }
+
+        @Override
+        public String getDisplay() {
+            return theDisplay;
+        }
+    }
+
+    /**
+     * PrometheusDataListPreferences.
+     */
+    public static class PrometheusThreadStatusPreferences
+            extends MetisPreferenceSet<PrometheusThreadStatusPreferenceKey> {
         /**
          * Default Reporting Steps.
          */
@@ -290,30 +323,14 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
 
         /**
          * Constructor.
+         * @param pManager the preference manager
          * @throws OceanusException on error
          */
-        public ThreadStatusPreferences() throws OceanusException {
-            super();
-        }
-
-        @Override
-        protected void definePreferences() {
-            /* Define the preferences */
-            defineIntegerPreference(NAME_REPSTEPS, DEFAULT_REPSTEPS);
-        }
-
-        @Override
-        protected String getDisplayName(final String pName) {
-            /* Handle default values */
-            if (pName.equals(NAME_REPSTEPS)) {
-                return DISPLAY_REPSTEPS;
-            }
-            return null;
-        }
-
-        @Override
-        public boolean isDisabled() {
-            return false;
+        protected PrometheusThreadStatusPreferences(final MetisPreferenceManager pManager) throws OceanusException {
+            super(pManager);
+            defineIntegerPreference(PrometheusThreadStatusPreferenceKey.REPSTEPS, DEFAULT_REPSTEPS);
+            setName(PrometheusPreferenceResource.THDPREF_PREFNAME.getValue());
+            storeChanges();
         }
     }
 }

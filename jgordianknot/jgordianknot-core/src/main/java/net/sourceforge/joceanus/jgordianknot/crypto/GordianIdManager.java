@@ -574,6 +574,7 @@ public class GordianIdManager {
      * @param <E> the data type
      * @param pTypes the types to be shuffled.
      * @param pIndex the relevant index
+     * @param pFilter the filter
      * @return the shuffled types
      */
     private <E extends Enum<E>> E[] shuffleTypes(final E[] pTypes,

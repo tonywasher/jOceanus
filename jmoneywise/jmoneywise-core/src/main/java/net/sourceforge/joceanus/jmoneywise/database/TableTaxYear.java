@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearBase;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.database.DatabaseTable;
-import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDataItem;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableTaxYear
-        extends DatabaseTable<TaxYear, MoneyWiseDataType> {
+        extends PrometheusTableDataItem<TaxYear, MoneyWiseDataType> {
     /**
      * The name of the TaxYears table.
      */
@@ -52,12 +52,12 @@ public class TableTaxYear
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableTaxYear(final Database<?> pDatabase) {
+    protected TableTaxYear(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* define the columns */
-        ColumnDefinition myDateCol = myTableDef.addDateColumn(TaxYearBase.FIELD_TAXYEAR);
+        PrometheusColumnDefinition myDateCol = myTableDef.addDateColumn(TaxYearBase.FIELD_TAXYEAR);
         myTableDef.addReferenceColumn(TaxYearBase.FIELD_REGIME, TableTaxRegime.TABLE_NAME);
 
         /* Declare the sort order */
@@ -73,7 +73,7 @@ public class TableTaxYear
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(TaxYear.OBJECT_NAME);
@@ -88,7 +88,7 @@ public class TableTaxYear
     protected void setFieldValue(final TaxYear pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        TableDefinition myTableDef = getTableDef();
+        PrometheusTableDefinition myTableDef = getTableDef();
         if (TaxYearBase.FIELD_TAXYEAR.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getTaxYear());
         } else if (TaxYearBase.FIELD_REGIME.equals(iField)) {
