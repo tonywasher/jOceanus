@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.field;
 
+import java.util.HashMap;
+
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
@@ -148,6 +150,30 @@ public final class MetisFieldColours {
             defineColorPreference(MetisColorPreferenceKey.NEGATIVE, TethysValueSet.DEFAULT_COLOR_NEGATIVE);
             setName(MetisFieldResource.FIELDCOLOR_PREFS.getValue());
             storeChanges();
+        }
+
+        /**
+         * Update the valueSet.
+         * @param pValueSet the value set
+         */
+        public void updateValueSet(final TethysValueSet pValueSet) {
+            /* Create the Colour Map */
+            HashMap<String, String> myMap = new HashMap<>();
+
+            /* Populate the map */
+            myMap.put(TethysValueSet.TETHYS_COLOR_STANDARD, getStringValue(MetisColorPreferenceKey.STANDARD));
+            myMap.put(TethysValueSet.TETHYS_COLOR_BACKGROUND, getStringValue(MetisColorPreferenceKey.BACKGROUND));
+            myMap.put(TethysValueSet.TETHYS_COLOR_ERROR, getStringValue(MetisColorPreferenceKey.ERROR));
+            myMap.put(TethysValueSet.TETHYS_COLOR_CHANGED, getStringValue(MetisColorPreferenceKey.CHANGED));
+            myMap.put(TethysValueSet.TETHYS_COLOR_DISABLED, getStringValue(MetisColorPreferenceKey.DISABLED));
+            myMap.put(TethysValueSet.TETHYS_COLOR_ZEBRA, getStringValue(MetisColorPreferenceKey.ZEBRA));
+            myMap.put(TethysValueSet.TETHYS_COLOR_LINK, getStringValue(MetisColorPreferenceKey.LINK));
+            myMap.put(TethysValueSet.TETHYS_COLOR_VALUE, getStringValue(MetisColorPreferenceKey.VALUE));
+            myMap.put(TethysValueSet.TETHYS_COLOR_NEGATIVE, getStringValue(MetisColorPreferenceKey.NEGATIVE));
+            myMap.put(TethysValueSet.TETHYS_COLOR_PROGRESS, getStringValue(MetisColorPreferenceKey.PROGRESS));
+
+            /* Apply settings */
+            pValueSet.applyColorMapping(myMap);
         }
     }
 }

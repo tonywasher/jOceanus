@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
@@ -271,6 +272,20 @@ public abstract class TethysSwingDataTextField<T>
      * @return the cloned data field
      */
     protected abstract TethysSwingDataTextField<T> cloneField(final JLabel pLabel);
+
+    @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        Dimension myDim = theNode.getPreferredSize();
+        myDim = new Dimension(pWidth, myDim.height);
+        theNode.setPreferredSize(myDim);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        Dimension myDim = theNode.getPreferredSize();
+        myDim = new Dimension(myDim.width, pHeight);
+        theNode.setPreferredSize(myDim);
+    }
 
     /**
      * TextField class.

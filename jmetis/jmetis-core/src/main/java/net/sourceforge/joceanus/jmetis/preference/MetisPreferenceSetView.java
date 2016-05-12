@@ -47,6 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDirectorySelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
+import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysFlowPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
@@ -362,6 +363,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             theItem = pItem;
             theField = theGuiFactory.newIntegerField();
             theField.setEditable(true);
+            theField.setPreferredWidth(TethysFieldType.INTEGER.getDefaultWidth());
 
             /* Create the label */
             TethysLabel<N, I> myLabel = theGuiFactory.newLabel(pItem.getDisplay()

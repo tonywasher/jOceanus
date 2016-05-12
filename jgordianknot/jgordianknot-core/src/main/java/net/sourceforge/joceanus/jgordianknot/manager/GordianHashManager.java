@@ -26,9 +26,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianBadCredentialsException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
@@ -266,5 +268,29 @@ public abstract class GordianHashManager {
 
         /* Return null */
         return null;
+    }
+
+    /**
+     * Obtain Digest predicate.
+     * @param pFactory the factory type
+     * @return the predicate
+     */
+    public static Predicate<GordianDigestType> getDigestPredicate(final GordianFactoryType pFactory) {
+        return GordianFactoryType.BC.equals(pFactory)
+                                                      ? BouncyFactory.generateDigestPredicate()
+                                                      : JcaFactory.generateDigestPredicate();
+    }
+
+    /**
+     * Obtain Maximum CipherSteps.
+     * @param pFactory the factory type
+     * @param pRestricted are the keys restricted
+     * @return the maximum
+     */
+    public static int getMaximumCipherSteps(final GordianFactoryType pFactory,
+                                            final boolean pRestricted) {
+        return GordianFactoryType.BC.equals(pFactory)
+                                                      ? BouncyFactory.getMaximumCipherSteps(pRestricted)
+                                                      : JcaFactory.getMaximumCipherSteps(pRestricted);
     }
 }

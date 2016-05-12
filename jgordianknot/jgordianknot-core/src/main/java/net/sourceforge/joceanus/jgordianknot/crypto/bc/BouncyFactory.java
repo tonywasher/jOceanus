@@ -140,32 +140,37 @@ public final class BouncyFactory
     /**
      * Predicate for all digestTypes.
      */
-    private static final Predicate<GordianDigestType> PREDICATE_DIGESTS = p -> true;
+    private static final Predicate<GordianDigestType> PREDICATE_DIGESTS;
 
     /**
      * Predicate for all supported macTypes.
      */
-    private static final Predicate<GordianMacType> PREDICATE_MACS = p -> true;
-
-    /**
-     * Predicate for all supported streamKeyTypes.
-     */
-    private final Predicate<GordianStreamKeyType> theStreamPredicate = p -> p.validForRestriction(isRestricted());
-
-    /**
-     * Predicate for all supported symKeyTypes.
-     */
-    private final Predicate<GordianSymKeyType> theSymPredicate = p -> p.validForRestriction(isRestricted());
-
-    /**
-     * Predicate for all standard symKeyTypes.
-     */
-    private final Predicate<GordianSymKeyType> theStdSymPredicate = p -> p.validForRestriction(isRestricted()) && p.isStdBlock();
+    private static final Predicate<GordianMacType> PREDICATE_MACS;
 
     /**
      * Predicate for all signature digests.
      */
-    private static final Predicate<GordianDigestType> PREDICATE_SIGNDIGESTS = p -> true;
+    private static final Predicate<GordianDigestType> PREDICATE_SIGNDIGESTS;
+
+    /**
+     * Array for Max Cipher Steps.
+     */
+    private static final int[] MAX_CIPHER_STEPS;
+
+    /**
+     * Predicate for all supported streamKeyTypes.
+     */
+    private final Predicate<GordianStreamKeyType> theStreamPredicate;
+
+    /**
+     * Predicate for all supported symKeyTypes.
+     */
+    private final Predicate<GordianSymKeyType> theSymPredicate;
+
+    /**
+     * Predicate for all standard symKeyTypes.
+     */
+    private final Predicate<GordianSymKeyType> theStdSymPredicate;
 
     /**
      * Cache for KeyGenerators.
@@ -176,6 +181,21 @@ public final class BouncyFactory
      * SP800 Factory.
      */
     private final SP800Factory theSP800Factory;
+
+    /**
+     * Static Constructor.
+     */
+    static {
+        /* Create the Predicates */
+        PREDICATE_DIGESTS = generateDigestPredicate();
+        PREDICATE_SIGNDIGESTS = p -> p == GordianDigestType.SHA2;
+        PREDICATE_MACS = p -> true;
+
+        /* Calculate max cipher Steps */
+        MAX_CIPHER_STEPS = new int[2];
+        MAX_CIPHER_STEPS[0] = determineMaximumCipherSteps(false);
+        MAX_CIPHER_STEPS[1] = determineMaximumCipherSteps(true);
+    }
 
     /**
      * Constructor.
@@ -193,6 +213,12 @@ public final class BouncyFactory
     public BouncyFactory(final GordianParameters pParameters) throws OceanusException {
         /* Initialise underlying class */
         super(pParameters);
+
+        /* Generate the predicates */
+        boolean isRestricted = pParameters.useRestricted();
+        theSymPredicate = generateSymKeyPredicate(isRestricted);
+        theStdSymPredicate = generateStdSymKeyPredicate(isRestricted);
+        theStreamPredicate = generateStreamKeyPredicate(isRestricted);
 
         /* Create the keyGenerator cache */
         theGeneratorCache = new BouncyKeyGeneratorCache();
@@ -774,5 +800,72 @@ public final class BouncyFactory
         } else {
             return new BouncyECIESReceiver(this, (BouncyECPrivateKey) pPrivateKey, pCipherText);
         }
+    }
+
+    /**
+     * Generate Digest predicate.
+     * @return the predicate
+     */
+    public static Predicate<GordianDigestType> generateDigestPredicate() {
+        return p -> true;
+    }
+
+    /**
+     * Generate symKey predicate.
+     * @param pRestricted are keys restricted?
+     * @return the maximum
+     */
+    private static Predicate<GordianSymKeyType> generateSymKeyPredicate(final boolean pRestricted) {
+        return p -> p.validForRestriction(pRestricted);
+    }
+
+    /**
+     * Generate standard symKey predicate.
+     * @param pRestricted are keys restricted?
+     * @return the maximum
+     */
+    private static Predicate<GordianSymKeyType> generateStdSymKeyPredicate(final boolean pRestricted) {
+        return p -> p.validForRestriction(pRestricted) && p.isStdBlock();
+    }
+
+    /**
+     * Generate streamKey predicate.
+     * @param pRestricted are keys restricted?
+     * @return the maximum
+     */
+    private static Predicate<GordianStreamKeyType> generateStreamKeyPredicate(final boolean pRestricted) {
+        return p -> p.validForRestriction(pRestricted);
+    }
+
+    /**
+     * Obtain maximum cipherSteps.
+     * @param pRestricted are keys restricted
+     * @return the maximum
+     */
+    public static int getMaximumCipherSteps(final boolean pRestricted) {
+        return MAX_CIPHER_STEPS[pRestricted
+                                            ? 1
+                                            : 0];
+    }
+
+    /**
+     * Determine maximum cipherSteps.
+     * @param pRestricted are keys restricted?
+     * @return the maximum
+     */
+    private static int determineMaximumCipherSteps(final boolean pRestricted) {
+        /* generate the predicate */
+        Predicate<GordianSymKeyType> myFilter = generateStdSymKeyPredicate(pRestricted);
+
+        /* Count valid values */
+        int myCount = 0;
+        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
+            if (myFilter.test(myType)) {
+                myCount++;
+            }
+        }
+
+        /* Maximum is 1 less than the count */
+        return myCount - 1;
     }
 }

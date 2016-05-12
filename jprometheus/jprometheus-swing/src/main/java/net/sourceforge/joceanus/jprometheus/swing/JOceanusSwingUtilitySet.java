@@ -25,16 +25,13 @@ package net.sourceforge.joceanus.jprometheus.swing;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
@@ -51,11 +48,6 @@ public class JOceanusSwingUtilitySet
      * Field Manager.
      */
     private final MetisFieldManager theFieldManager;
-
-    /**
-     * Colour Preferences.
-     */
-    private final MetisColorPreferences theFieldPreferences;
 
     /**
      * GUI Factory.
@@ -90,11 +82,8 @@ public class JOceanusSwingUtilitySet
         /* Create secure manager */
         super(new GordianSwingHashManager(pParameters), pPrefMgr);
 
-        /* Access the Field Preferences */
-        theFieldPreferences = pPrefMgr.getPreferenceSet(MetisColorPreferences.class);
-
         /* Allocate the FieldManager */
-        theFieldManager = new MetisFieldManager(new MetisFieldConfig(theFieldPreferences));
+        theFieldManager = new MetisFieldManager(new MetisFieldConfig(getColorPreferences()));
 
         /* Create components */
         theViewerManager = new MetisSwingViewerManager(theFieldManager);
@@ -102,9 +91,8 @@ public class JOceanusSwingUtilitySet
         /* Create the GUI Factory */
         theGuiFactory = new TethysSwingGuiFactory(new MetisDataFormatter());
 
-        /* Create listener */
-        TethysEventRegistrar<MetisPreferenceEvent> myRegistrar = theFieldPreferences.getEventRegistrar();
-        myRegistrar.addEventListener(e -> theFieldManager.setConfig(new MetisFieldConfig(theFieldPreferences)));
+        /* Process the colour preferences */
+        processColorPreferences();
     }
 
     /**
@@ -121,6 +109,15 @@ public class JOceanusSwingUtilitySet
 
         /* Build new utility set */
         return new JOceanusSwingUtilitySet(myPrefs.getParameters(), myPrefMgr);
+    }
+
+    @Override
+    protected void processColorPreferences() {
+        /* Call underlying class */
+        super.processColorPreferences();
+
+        /* Update the field manager */
+        theFieldManager.setConfig(new MetisFieldConfig(getColorPreferences()));
     }
 
     @Override

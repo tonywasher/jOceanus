@@ -299,6 +299,18 @@ public abstract class TethysDataEditField<T, N, I>
     }
 
     /**
+     * Set the Preferred Width.
+     * @param pWidth the width
+     */
+    public abstract void setPreferredWidth(final Integer pWidth);
+
+    /**
+     * Set the Preferred Height.
+     * @param pHeight the height
+     */
+    public abstract void setPreferredHeight(final Integer pHeight);
+
+    /**
      * DataEditTextField base class.
      * @param <T> the data type
      */

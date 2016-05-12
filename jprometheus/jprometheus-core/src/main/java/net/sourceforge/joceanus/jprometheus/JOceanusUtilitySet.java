@@ -24,9 +24,13 @@ package net.sourceforge.joceanus.jprometheus;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 
 /**
  * JOceanus Utility Set.
@@ -48,6 +52,11 @@ public abstract class JOceanusUtilitySet {
     private final MetisDataFormatter theFormatter;
 
     /**
+     * Colour Preferences.
+     */
+    private final MetisColorPreferences theColorPreferences;
+
+    /**
      * Constructor.
      * @param pSecureMgr the secure manager
      * @param pPrefMgr the preference manager
@@ -60,6 +69,13 @@ public abstract class JOceanusUtilitySet {
 
         /* Create components */
         theFormatter = new MetisDataFormatter();
+
+        /* Access the Colour Preferences */
+        theColorPreferences = pPrefMgr.getPreferenceSet(MetisColorPreferences.class);
+
+        /* Create listener */
+        TethysEventRegistrar<MetisPreferenceEvent> myRegistrar = theColorPreferences.getEventRegistrar();
+        myRegistrar.addEventListener(e -> processColorPreferences());
     }
 
     /**
@@ -84,6 +100,24 @@ public abstract class JOceanusUtilitySet {
      */
     public MetisDataFormatter getDataFormatter() {
         return theFormatter;
+    }
+
+    /**
+     * Obtain the colour preferences.
+     * @return the colour preferences
+     */
+    protected MetisColorPreferences getColorPreferences() {
+        return theColorPreferences;
+    }
+
+    /**
+     * Process Colour preferences.
+     */
+    protected void processColorPreferences() {
+        /* Update the value Set with the preferences */
+        TethysGuiFactory<?, ?> myFactory = getGuiFactory();
+        TethysValueSet myValueSet = myFactory.getValueSet();
+        theColorPreferences.updateValueSet(myValueSet);
     }
 
     /**

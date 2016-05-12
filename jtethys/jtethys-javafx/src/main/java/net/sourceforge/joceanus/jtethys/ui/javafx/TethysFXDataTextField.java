@@ -207,6 +207,16 @@ public abstract class TethysFXDataTextField<T>
     }
 
     @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        theNode.setPrefWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        theNode.setPrefHeight(pHeight);
+    }
+
+    @Override
     public void showCmdButton(final boolean pShow) {
         /* Remove any button that is displaying */
         theNode.setRight(null);
