@@ -20,12 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.threads;
+package net.sourceforge.joceanus.jmetis.threads.javafx;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerDataManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisTestThread;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
@@ -41,7 +43,7 @@ public class MetisFXThreadTester
     /**
      * ViewerManager.
      */
-    // private final MetisFXViewerManager theViewerMgr;
+    private final MetisViewerDataManager theViewerMgr;
 
     /**
      * GUI factory.
@@ -94,9 +96,8 @@ public class MetisFXThreadTester
         theDebugButton.setText("Debug");
 
         /* Create the Managers */
-        // MetisFieldManager myFieldMgr = new MetisFieldManager(new MetisFieldConfig());
-        // theViewerMgr = new MetisFXViewerManager(myFieldMgr);
-        theThreadMgr = new MetisFXThreadManager(null, theGuiFactory);
+        theViewerMgr = new MetisViewerDataManager();
+        theThreadMgr = new MetisFXThreadManager(theViewerMgr, theGuiFactory);
         theStatusPanel = theThreadMgr.getStatusManager();
         theMainPanel = theGuiFactory.newBorderPane();
     }

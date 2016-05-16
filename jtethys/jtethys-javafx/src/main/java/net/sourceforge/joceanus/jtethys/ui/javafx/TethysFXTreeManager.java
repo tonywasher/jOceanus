@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
@@ -148,14 +147,14 @@ public class TethysFXTreeManager<T>
 
     @Override
     public TethysFXTreeItem<T> addRootItem(final String pName,
-                                           final T pItem) throws OceanusException {
+                                           final T pItem) {
         return new TethysFXTreeItem<>(this, theRoot, pName, pItem);
     }
 
     @Override
     public TethysFXTreeItem<T> addChildItem(final TethysTreeItem<T, Node> pParent,
                                             final String pName,
-                                            final T pItem) throws OceanusException {
+                                            final T pItem) {
         return new TethysFXTreeItem<>(this, (TethysFXTreeItem<T>) pParent, pName, pItem);
     }
 
@@ -188,12 +187,11 @@ public class TethysFXTreeManager<T>
          * @param pParent the parent
          * @param pName the unique name of the item
          * @param pItem the tree item
-         * @throws OceanusException on error
          */
         public TethysFXTreeItem(final TethysFXTreeManager<X> pTree,
                                 final TethysFXTreeItem<X> pParent,
                                 final String pName,
-                                final X pItem) throws OceanusException {
+                                final X pItem) {
             /* build underlying item */
             super(pTree, pParent, pName, pItem);
         }

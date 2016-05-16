@@ -28,6 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerDataManager;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -36,13 +37,12 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager.TethysFXTreeItem;
 
 /**
  * JavaFX Data Viewer Manager.
  */
 public class MetisFXViewerManager
-        extends MetisViewerManager<MetisFXViewerEntry, Node, Node> {
+        extends MetisViewerManager<Node, Node> {
     /**
      * The stage.
      */
@@ -56,20 +56,23 @@ public class MetisFXViewerManager
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pDataManager the viewer data manager
+     * @throws OceanusException on error
      */
-    public MetisFXViewerManager(final TethysFXGuiFactory pFactory) {
+    protected MetisFXViewerManager(final TethysFXGuiFactory pFactory,
+                                   final MetisViewerDataManager pDataManager) throws OceanusException {
         /* Initialise underlying class */
-        super(pFactory.newSplitTreeManager());
+        super(pFactory.newSplitTreeManager(), pDataManager);
     }
 
     @Override
-    public TethysFXSplitTreeManager<MetisFXViewerEntry> getSplitTreeManager() {
-        return (TethysFXSplitTreeManager<MetisFXViewerEntry>) super.getSplitTreeManager();
+    public TethysFXSplitTreeManager<MetisViewerEntry> getSplitTreeManager() {
+        return (TethysFXSplitTreeManager<MetisViewerEntry>) super.getSplitTreeManager();
     }
 
     @Override
-    public TethysFXTreeManager<MetisFXViewerEntry> getTreeManager() {
-        return (TethysFXTreeManager<MetisFXViewerEntry>) super.getTreeManager();
+    public TethysFXTreeManager<MetisViewerEntry> getTreeManager() {
+        return (TethysFXTreeManager<MetisViewerEntry>) super.getTreeManager();
     }
 
     @Override
@@ -118,44 +121,6 @@ public class MetisFXViewerManager
      */
     public void setStage(final Stage pStage) {
         theStage = pStage;
-    }
-
-    @Override
-    public MetisFXViewerEntry newEntry(final String pName) throws OceanusException {
-        /* Create the entry */
-        MetisFXViewerEntry myEntry = new MetisFXViewerEntry(this, pName);
-
-        /* Define and set the tree entry */
-        TethysFXTreeManager<MetisFXViewerEntry> myManager = getTreeManager();
-        TethysFXTreeItem<MetisFXViewerEntry> myTreeItem = new TethysFXTreeItem<>(myManager,
-                myManager.getRoot(), pName, myEntry);
-        myEntry.setTreeItem(myTreeItem);
-
-        /* Return the new entry */
-        return myEntry;
-    }
-
-    @Override
-    public MetisFXViewerEntry newEntry(final MetisViewerEntry<MetisFXViewerEntry, Node, Node> pParent,
-                                       final String pName) throws OceanusException {
-        /* Access parent and create the entry */
-        MetisFXViewerEntry myParent = MetisFXViewerEntry.class.cast(pParent);
-        MetisFXViewerEntry myEntry = new MetisFXViewerEntry(this, pName);
-
-        /* Build the new name */
-        StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(myParent.getName());
-        myBuilder.append('.');
-        myBuilder.append(pName);
-        String myName = myBuilder.toString();
-
-        /* Define and set the tree entry */
-        TethysFXTreeItem<MetisFXViewerEntry> myTreeItem = new TethysFXTreeItem<>(getTreeManager(),
-                myParent.getTreeItem(), myName, myEntry);
-        myEntry.setTreeItem(myTreeItem);
-
-        /* Return the new entry */
-        return myEntry;
     }
 
     /**

@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmetis.threads.javafx;
 
 import javafx.concurrent.Worker.State;
 import javafx.scene.Node;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerDataManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatus;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
@@ -51,7 +51,7 @@ public class MetisFXThreadManager
      * @param pViewerManager the viewer manager
      * @param pFactory the GUI factory
      */
-    public MetisFXThreadManager(final MetisViewerManager pViewerManager,
+    public MetisFXThreadManager(final MetisViewerDataManager pViewerManager,
                                 final TethysFXGuiFactory pFactory) {
         super(pViewerManager, new MetisFXThreadStatusManager(pFactory));
     }

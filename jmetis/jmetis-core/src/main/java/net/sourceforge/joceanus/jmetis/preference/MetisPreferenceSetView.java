@@ -273,6 +273,13 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
     }
 
     /**
+     * Determine Focus.
+     */
+    protected void determineFocus() {
+        /* TODO */
+    }
+
+    /**
      * PreferenceElement.
      */
     @FunctionalInterface
@@ -355,6 +362,11 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         private final TethysDataEditField<Integer, N, I> theField;
 
         /**
+         * The Label item.
+         */
+        private final TethysLabel<N, I> theLabel;
+
+        /**
          * Constructor.
          * @param pItem the item
          */
@@ -370,15 +382,15 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
                                                                + TethysLabel.STR_COLON);
             myLabel.setAlignment(TethysAlignment.EAST);
 
-            /* Create the place-holder */
-            TethysLabel<N, I> myStub = theGuiFactory.newLabel();
+            /* Create the range label */
+            theLabel = theGuiFactory.newLabel();
 
             /* Add to the Grid Pane */
             theGrid.addCell(myLabel);
             theGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
             theGrid.addCell(theField);
-            theGrid.addCell(myStub);
-            theGrid.allowCellGrowth(myStub);
+            theGrid.addCell(theLabel);
+            theGrid.allowCellGrowth(theLabel);
             theGrid.newRow();
 
             /* Create listener */
@@ -543,9 +555,6 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             theField = theGuiFactory.newScrollField();
             theField.setEditable(true);
 
-            /* Build the menu */
-            buildMenu();
-
             /* Create the label */
             TethysLabel<N, I> myLabel = theGuiFactory.newLabel(pItem.getDisplay()
                                                                + TethysLabel.STR_COLON);
@@ -564,6 +573,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
 
             /* Create listeners */
             TethysEventRegistrar<TethysUIEvent> myRegistrar = theField.getEventRegistrar();
+            myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildMenu());
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
                 pItem.setValue(theField.getValue());
                 notifyChanges();
@@ -578,6 +588,9 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             @SuppressWarnings("unchecked")
             TethysScrollField<E, N, I> myField = (TethysScrollField<E, N, I>) theField;
             TethysScrollMenu<E, I> myMenu = myField.getScrollManager().getMenu();
+
+            /* reset the menu */
+            myMenu.removeAllItems();
 
             /* For all values */
             for (E myEnum : theItem.getValues()) {

@@ -80,7 +80,7 @@ public abstract class TethysHelpManager<N, I>
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
-        /* Create the SplitTree */
+        /* Obtain details about the SplitTree */
         theSplitTree = pSplitManager;
         theTree = theSplitTree.getTreeManager();
         theHtml = theSplitTree.getHTMLManager();
@@ -190,10 +190,9 @@ public abstract class TethysHelpManager<N, I>
      * @param pTitle the title for the tree
      * @param pEntries the help entries
      * @return the Tree node
-     * @throws OceanusException on error
      */
     private TethysTreeItem<TethysHelpEntry, N> createTree(final String pTitle,
-                                                          final List<TethysHelpEntry> pEntries) throws OceanusException {
+                                                          final List<TethysHelpEntry> pEntries) {
         /* Obtain the root node */
         TethysTreeItem<TethysHelpEntry, N> myRoot = theTree.getRoot();
         theTree.setRootName(pTitle);
@@ -213,10 +212,9 @@ public abstract class TethysHelpManager<N, I>
      * Add array of Help entries.
      * @param pParent the parent to add to
      * @param pEntries the entries to add
-     * @throws OceanusException on error
      */
     private void addHelpEntries(final TethysTreeItem<TethysHelpEntry, N> pParent,
-                                final List<TethysHelpEntry> pEntries) throws OceanusException {
+                                final List<TethysHelpEntry> pEntries) {
         /* Loop through the entries */
         for (TethysHelpEntry myEntry : pEntries) {
             /* Create the entry */

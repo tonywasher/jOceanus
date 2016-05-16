@@ -527,7 +527,7 @@ public class MaintenanceTab
             /* If the selected component is Preferences */
         } else if (myComponent.equals(thePreferences.getNode())) {
             /* Set the debug focus */
-            // thePreferences.determineFocus();
+            thePreferences.determineFocus();
         }
     }
 

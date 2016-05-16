@@ -25,8 +25,9 @@ package net.sourceforge.joceanus.jtethys.ui;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -38,6 +39,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  */
 public abstract class TethysTreeManager<T, N>
         implements TethysEventProvider<TethysUIEvent> {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(TethysTreeManager.class);
+
     /**
      * The map of items.
      */
@@ -184,15 +190,14 @@ public abstract class TethysTreeManager<T, N>
     /**
      * Register item.
      * @param pItem the item to register
-     * @throws OceanusException on error
      */
-    protected void registerItem(final TethysTreeItem<T, N> pItem) throws OceanusException {
+    protected void registerItem(final TethysTreeItem<T, N> pItem) {
         /* Access unique names */
         String myName = pItem.getName();
 
         /* If this name already exists */
         if (theItemMap.get(myName) != null) {
-            throw new TethysDataException(myName, "Name not unique");
+            LOGGER.error("Name not unique: " + myName);
         }
 
         /* register item */
@@ -221,10 +226,9 @@ public abstract class TethysTreeManager<T, N>
      * @param pName the name
      * @param pItem the item
      * @return the new tree item
-     * @throws OceanusException on error
      */
     public abstract TethysTreeItem<T, N> addRootItem(final String pName,
-                                                     final T pItem) throws OceanusException;
+                                                     final T pItem);
 
     /**
      * Add item to parent.
@@ -232,11 +236,10 @@ public abstract class TethysTreeManager<T, N>
      * @param pName the name
      * @param pItem the item
      * @return the new tree item
-     * @throws OceanusException on error
      */
     public abstract TethysTreeItem<T, N> addChildItem(final TethysTreeItem<T, N> pParent,
                                                       final String pName,
-                                                      final T pItem) throws OceanusException;
+                                                      final T pItem);
 
     /**
      * TreeItem class.
@@ -308,12 +311,11 @@ public abstract class TethysTreeManager<T, N>
          * @param pParent the parent
          * @param pName the unique name of the item
          * @param pItem the contained item
-         * @throws OceanusException on error
          */
         protected TethysTreeItem(final TethysTreeManager<X, C> pTree,
                                  final TethysTreeItem<X, C> pParent,
                                  final String pName,
-                                 final X pItem) throws OceanusException {
+                                 final X pItem) {
             /* Store parameters */
             theTree = pTree;
             theParent = pParent;

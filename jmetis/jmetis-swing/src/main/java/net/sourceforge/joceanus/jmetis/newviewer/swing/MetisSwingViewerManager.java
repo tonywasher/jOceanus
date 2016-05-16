@@ -31,6 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerDataManager;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -39,13 +40,12 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager.TethysSwingTreeItem;
 
 /**
  * JavaSwing Data Viewer Manager.
  */
 public class MetisSwingViewerManager
-        extends MetisViewerManager<MetisSwingViewerEntry, JComponent, Icon> {
+        extends MetisViewerManager<JComponent, Icon> {
     /**
      * The frame.
      */
@@ -59,20 +59,23 @@ public class MetisSwingViewerManager
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pDataManager the viewer data manager
+     * @throws OceanusException on error
      */
-    public MetisSwingViewerManager(final TethysSwingGuiFactory pFactory) {
+    public MetisSwingViewerManager(final TethysSwingGuiFactory pFactory,
+                                   final MetisViewerDataManager pDataManager) throws OceanusException {
         /* Initialise underlying class */
-        super(pFactory.newSplitTreeManager());
+        super(pFactory.newSplitTreeManager(), pDataManager);
     }
 
     @Override
-    public TethysSwingSplitTreeManager<MetisSwingViewerEntry> getSplitTreeManager() {
-        return (TethysSwingSplitTreeManager<MetisSwingViewerEntry>) super.getSplitTreeManager();
+    public TethysSwingSplitTreeManager<MetisViewerEntry> getSplitTreeManager() {
+        return (TethysSwingSplitTreeManager<MetisViewerEntry>) super.getSplitTreeManager();
     }
 
     @Override
-    public TethysSwingTreeManager<MetisSwingViewerEntry> getTreeManager() {
-        return (TethysSwingTreeManager<MetisSwingViewerEntry>) super.getTreeManager();
+    public TethysSwingTreeManager<MetisViewerEntry> getTreeManager() {
+        return (TethysSwingTreeManager<MetisViewerEntry>) super.getTreeManager();
     }
 
     @Override
@@ -107,44 +110,6 @@ public class MetisSwingViewerManager
      */
     public void setFrame(final JFrame pFrame) {
         theBaseFrame = pFrame;
-    }
-
-    @Override
-    public MetisSwingViewerEntry newEntry(final String pName) throws OceanusException {
-        /* Create the entry */
-        MetisSwingViewerEntry myEntry = new MetisSwingViewerEntry(this, pName);
-
-        /* Define and set the tree entry */
-        TethysSwingTreeManager<MetisSwingViewerEntry> myManager = getTreeManager();
-        TethysSwingTreeItem<MetisSwingViewerEntry> myTreeItem = new TethysSwingTreeItem<>(myManager,
-                myManager.getRoot(), pName, myEntry);
-        myEntry.setTreeItem(myTreeItem);
-
-        /* Return the new entry */
-        return myEntry;
-    }
-
-    @Override
-    public MetisSwingViewerEntry newEntry(final MetisViewerEntry<MetisSwingViewerEntry, JComponent, Icon> pParent,
-                                          final String pName) throws OceanusException {
-        /* Access parent and create the entry */
-        MetisSwingViewerEntry myParent = MetisSwingViewerEntry.class.cast(pParent);
-        MetisSwingViewerEntry myEntry = new MetisSwingViewerEntry(this, pName);
-
-        /* Build the new name */
-        StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(myParent.getName());
-        myBuilder.append('.');
-        myBuilder.append(pName);
-        String myName = myBuilder.toString();
-
-        /* Define and set the tree entry */
-        TethysSwingTreeItem<MetisSwingViewerEntry> myTreeItem = new TethysSwingTreeItem<>(getTreeManager(),
-                myParent.getTreeItem(), myName, myEntry);
-        myEntry.setTreeItem(myTreeItem);
-
-        /* Return the new entry */
-        return myEntry;
     }
 
     /**

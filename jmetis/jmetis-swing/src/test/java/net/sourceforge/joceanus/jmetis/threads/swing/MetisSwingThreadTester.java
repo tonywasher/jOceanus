@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.threads;
+package net.sourceforge.joceanus.jmetis.threads.swing;
 
 import java.awt.HeadlessException;
 
@@ -32,11 +32,8 @@ import javax.swing.WindowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadStatusManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerDataManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisTestThread;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
@@ -59,7 +56,7 @@ public class MetisSwingThreadTester {
     /**
      * ViewerManager.
      */
-    private final MetisSwingViewerManager theViewerMgr;
+    private final MetisViewerDataManager theViewerMgr;
 
     /**
      * ThreadManager.
@@ -108,8 +105,7 @@ public class MetisSwingThreadTester {
 
         /* Create the Managers */
         theFrame = new JFrame("MetisSwingThread Demo");
-        MetisFieldManager myFieldMgr = new MetisFieldManager(new MetisFieldConfig());
-        theViewerMgr = new MetisSwingViewerManager(myFieldMgr);
+        theViewerMgr = new MetisViewerDataManager();
         theThreadMgr = new MetisSwingThreadManager(theViewerMgr, theGuiFactory);
         theStatusPanel = theThreadMgr.getStatusManager();
         theMainPanel = theGuiFactory.newBorderPane();

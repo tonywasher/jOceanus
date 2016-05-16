@@ -29,7 +29,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
@@ -138,14 +137,14 @@ public class TethysSwingTreeManager<T>
 
     @Override
     public TethysSwingTreeItem<T> addRootItem(final String pName,
-                                              final T pItem) throws OceanusException {
+                                              final T pItem) {
         return new TethysSwingTreeItem<>(this, theRoot, pName, pItem);
     }
 
     @Override
     public TethysSwingTreeItem<T> addChildItem(final TethysTreeItem<T, JComponent> pParent,
                                                final String pName,
-                                               final T pItem) throws OceanusException {
+                                               final T pItem) {
         return new TethysSwingTreeItem<>(this, (TethysSwingTreeItem<T>) pParent, pName, pItem);
     }
 
@@ -205,12 +204,11 @@ public class TethysSwingTreeManager<T>
          * @param pParent the parent
          * @param pName the unique name of the item
          * @param pItem the tree item
-         * @throws OceanusException on error
          */
         public TethysSwingTreeItem(final TethysSwingTreeManager<X> pTree,
                                    final TethysSwingTreeItem<X> pParent,
                                    final String pName,
-                                   final X pItem) throws OceanusException {
+                                   final X pItem) {
             /* build underlying item */
             super(pTree, pParent, pName, pItem);
         }

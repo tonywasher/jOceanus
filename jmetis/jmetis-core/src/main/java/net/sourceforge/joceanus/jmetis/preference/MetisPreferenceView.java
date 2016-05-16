@@ -293,6 +293,17 @@ public class MetisPreferenceView<N, I>
     }
 
     /**
+     * Determine Focus.
+     */
+    public void determineFocus() {
+        /* Request the focus */
+        MetisPreferenceSetView<?, N, I> myPanel = theProperties.getActiveCard();
+        if (myPanel != null) {
+            myPanel.determineFocus();
+        }
+    }
+
+    /**
      * Does the panel have unsaved updates?
      * @return true/false
      */
@@ -313,7 +324,7 @@ public class MetisPreferenceView<N, I>
     /**
      * Save Updates.
      */
-    public void saveUpdates() {
+    private void saveUpdates() {
         try {
             MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
             myView.storeChanges();
@@ -331,7 +342,7 @@ public class MetisPreferenceView<N, I>
     /**
      * Reset Updates.
      */
-    public void resetUpdates() {
+    private void resetUpdates() {
         /* Reset all changes */
         MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
         myView.resetChanges();
@@ -346,7 +357,7 @@ public class MetisPreferenceView<N, I>
     /**
      * Set the visibility.
      */
-    protected final void setVisibility() {
+    private final void setVisibility() {
         /* Enable selection */
         MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
         theSelectButton.setEnabled((myView != null)

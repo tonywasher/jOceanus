@@ -587,7 +587,7 @@ public abstract class TethysDataEditField<T, N, I>
         }
 
         /**
-         * Check the value range
+         * Check the value range.
          * @param pValue the value
          * @throws IllegalArgumentException on range error
          */

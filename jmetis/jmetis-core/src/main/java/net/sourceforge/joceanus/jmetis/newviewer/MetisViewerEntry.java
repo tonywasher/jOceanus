@@ -22,27 +22,48 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newviewer;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Data Viewer Entry.
- * @param <T> the item type
- * @param <N> the Node type
- * @param <I> the Icon type
  */
-public abstract class MetisViewerEntry<T extends MetisViewerEntry<T, N, I>, N, I> {
+public class MetisViewerEntry {
+    /**
+     * Entry name prefix.
+     */
+    private static final String ENTRY_PREFIX = "TreeItem";
+
+    /**
+     * The ViewerManager.
+     */
+    private final MetisViewerDataManager theManager;
+
+    /**
+     * The id of the entry.
+     */
+    private final int theId;
+
+    /**
+     * The Child List.
+     */
+    private List<MetisViewerEntry> theChildList;
+
+    /**
+     * The unique name of the entry.
+     */
+    private final String theUniqueName;
+
     /**
      * The name of the entry.
      */
-    private final String theName;
+    private final String theDisplayName;
 
     /**
      * The object for the entry.
@@ -50,28 +71,72 @@ public abstract class MetisViewerEntry<T extends MetisViewerEntry<T, N, I>, N, I
     private Object theObject;
 
     /**
-     * The ViewerManager.
+     * Is the entry visible?.
      */
-    private final MetisViewerManager<T, N, I> theManager;
+    private boolean isVisible;
 
     /**
      * Constructor.
      * @param pManager the viewer manager
-     * @param pName the entry name
+     * @param pParent the parent entry
+     * @param pName the entry display name
      */
-    protected MetisViewerEntry(final MetisViewerManager<T, N, I> pManager,
+    protected MetisViewerEntry(final MetisViewerDataManager pManager,
+                               final MetisViewerEntry pParent,
                                final String pName) {
         /* Store parameters */
         theManager = pManager;
-        theName = pName;
+        theDisplayName = pName;
+
+        /* Obtain entry id. */
+        theId = pManager.getNextId();
+
+        /* Determine unique name */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(ENTRY_PREFIX);
+        myBuilder.append(theId);
+        theUniqueName = myBuilder.toString();
+
+        /* Initialise to visible */
+        isVisible = true;
+
+        /* If we have a parent */
+        if (pParent != null) {
+            /* Add the entry to the child list */
+            pParent.addChild(this);
+        }
     }
 
     /**
-     * Get name.
+     * Get viewer manager.
+     * @return the manager
+     */
+    protected MetisViewerDataManager getManager() {
+        return theManager;
+    }
+
+    /**
+     * Get unique name.
      * @return the name
      */
-    public String getName() {
-        return theName;
+    public String getUniqueName() {
+        return theUniqueName;
+    }
+
+    /**
+     * Get display name.
+     * @return the name
+     */
+    public String getDisplayName() {
+        return theDisplayName;
+    }
+
+    /**
+     * Get id.
+     * @return the id
+     */
+    public int getId() {
+        return theId;
     }
 
     /**
@@ -82,91 +147,159 @@ public abstract class MetisViewerEntry<T extends MetisViewerEntry<T, N, I>, N, I
         return theObject;
     }
 
-    /**
-     * Get viewer manager.
-     * @return the manager
-     */
-    protected MetisViewerManager<T, N, I> getManager() {
-        return theManager;
-    }
-
     @Override
     public String toString() {
-        return theName;
+        return theDisplayName;
+    }
+
+    /**
+     * Get child iterator.
+     * @return the iterator
+     */
+    public Iterator<MetisViewerEntry> childIterator() {
+        return theChildList == null
+                                    ? Collections.emptyIterator()
+                                    : theChildList.iterator();
+    }
+
+    /**
+     * Add child.
+     * @param pChild the child to add
+     */
+    private void addChild(final MetisViewerEntry pChild) {
+        if (theChildList == null) {
+            theChildList = new ArrayList<>();
+        }
+        theChildList.add(pChild);
+    }
+
+    /**
+     * Is the entry visible?.
+     * @return true/false
+     */
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    /**
+     * Set entry visibility.
+     * @param pVisible true/false
+     */
+    public void setVisible(final boolean pVisible) {
+        /* If this is a change in status */
+        if (isVisible != pVisible) {
+            /* Change status and report it */
+            isVisible = pVisible;
+            theManager.fireEvent(MetisViewerEvent.VISIBILITY, this);
+        }
     }
 
     /**
      * Set Focus onto this entry.
      */
-    public abstract void setFocus();
-
-    /**
-     * Hide the entry.
-     */
-    public abstract void hideEntry();
-
-    /**
-     * Ensure that the entry is visible.
-     */
-    public abstract void showEntry();
+    public void setFocus() {
+        theManager.setFocus(this);
+    }
 
     /**
      * Set the object referred to by the entry.
      * @param pObject the new object
-     * @throws OceanusException on error
      */
-    public void setObject(final Object pObject) throws OceanusException {
+    public void setObject(final Object pObject) {
+        /* Set the new object */
+        setTheObject(pObject);
+
+        /* Notify regarding the data change */
+        theManager.fireEvent(MetisViewerEvent.VALUE, this);
+    }
+
+    /**
+     * Set the tree object referred to by the entry.
+     * @param pObject the new object
+     */
+    public void setTreeObject(final Object pObject) {
+        /* Set the new object */
+        setTheObject(pObject);
+
+        /* Create child elements if required */
+        if (pObject instanceof MetisDataContents) {
+            createChildElements((MetisDataContents) pObject);
+        }
+
+        /* Notify regarding the data change */
+        theManager.fireEvent(MetisViewerEvent.VALUE, this);
+    }
+
+    /**
+     * Set the object referred to by the entry.
+     * @param pObject the new object
+     */
+    private void setTheObject(final Object pObject) {
         /* Set the new object */
         theObject = pObject;
 
-        /* Remove all the children */
-        removeChildren();
-
-        /* If we have contents */
-        if (MetisDataContents.class.isInstance(pObject)) {
-            /* Access the object */
-            MetisDataContents myContent = (MetisDataContents) pObject;
-            Object myValue;
-            MetisValueSet myValues = null;
-
-            /* Access valueSet if it exists */
-            if (MetisDataValues.class.isInstance(pObject)) {
-                myValues = ((MetisDataValues) pObject).getValueSet();
-            }
-
-            /* Loop through the data fields */
-            MetisFields myFields = myContent.getDataFields();
-            Iterator<MetisField> myIterator = myFields.fieldIterator();
-            while (myIterator.hasNext()) {
-                MetisField myField = myIterator.next();
-
-                /* Access the value */
-                if ((myField.isValueSetField())
-                    && (myValues != null)) {
-                    myValue = myValues.getValue(myField);
-                } else {
-                    myValue = myContent.getFieldValue(myField);
-                }
-
-                /* If the field is a List that has contents */
-                if ((myValue instanceof List)
-                    && (myValue instanceof MetisDataContents)) {
-                    /* Access as list */
-                    List<?> myList = (List<?>) myValue;
-
-                    /* If the list is not empty */
-                    if (!myList.isEmpty()) {
-                        /* Add as a child */
-                        T myEntry = theManager.newEntry(this, myField.getName());
-                        myEntry.setObject(myValue);
-                    }
-                }
-            }
+        /* Clear the childList */
+        if (theChildList != null) {
+            theChildList.clear();
         }
     }
 
     /**
-     * Remove children of the entry.
+     * Create child elements.
+     * @param pContents the contents
      */
-    public abstract void removeChildren();
+    private void createChildElements(final MetisDataContents pContents) {
+        /* Loop through the fields */
+        Iterator<MetisField> myIterator = pContents.getDataFields().fieldIterator();
+        while (myIterator.hasNext()) {
+            MetisField myField = myIterator.next();
+
+            /* Obtain the value */
+            Object myValue = pContents.getFieldValue(myField);
+            boolean addChild = false;
+
+            /* Determine whether to add the child */
+            if (myValue instanceof List) {
+                addChild = !((List<?>) myValue).isEmpty();
+            } else if (myValue instanceof Map) {
+                addChild = !((Map<?, ?>) myValue).isEmpty();
+            } else if (myValue instanceof MetisDataContents) {
+                addChild = true;
+            }
+
+            /* If we should add the child */
+            if (addChild) {
+                /* Create it */
+                MetisViewerEntry myChild = theManager.newEntry(this, myField.getName());
+                myChild.setObject(myValue);
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (!(pThat instanceof MetisViewerEntry)) {
+            return false;
+        }
+
+        /* Access as MetisViewerEntry */
+        MetisViewerEntry myThat = (MetisViewerEntry) pThat;
+
+        /* Must have same id */
+        return theId == myThat.theId;
+    }
+
+    @Override
+    public int hashCode() {
+        return theId;
+    }
 }
