@@ -357,7 +357,7 @@ public class MetisPreferenceView<N, I>
     /**
      * Set the visibility.
      */
-    private final void setVisibility() {
+    private void setVisibility() {
         /* Enable selection */
         MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
         theSelectButton.setEnabled((myView != null)

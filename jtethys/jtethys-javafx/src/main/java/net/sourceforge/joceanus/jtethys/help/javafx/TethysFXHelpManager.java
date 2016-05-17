@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpManager;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpResource;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXHTMLManager;
@@ -128,7 +129,7 @@ public class TethysFXHelpManager
          */
         private HelpDialog() {
             /* Set the title */
-            setTitle("Help Manager");
+            setTitle(TethysHelpResource.TITLE.getValue());
 
             /* Initialise the dialog */
             initModality(Modality.NONE);

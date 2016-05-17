@@ -148,18 +148,12 @@ public class MetisPreferenceSecurity {
     protected static class PrefSecurityPreferences
             extends MetisPreferenceSet<PrefSecurityKey> {
         /**
-         * The hash preference.
-         */
-        private final MetisByteArrayPreference<PrefSecurityKey> thePreference;
-
-        /**
          * Constructor.
          * @param pManager the preference manager
          * @throws OceanusException on error
          */
         public PrefSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager);
-            thePreference = defineByteArrayPreference(PrefSecurityKey.HASH);
+            super(pManager, PrefSecurityKey.class);
             setHidden();
         }
 
@@ -168,7 +162,17 @@ public class MetisPreferenceSecurity {
          * @param pHash the hash
          */
         protected void setHash(final byte[] pHash) {
-            thePreference.setValue(pHash);
+            getByteArrayPreference(PrefSecurityKey.HASH).setValue(pHash);
+        }
+
+        @Override
+        protected void definePreferences() {
+            defineByteArrayPreference(PrefSecurityKey.HASH);
+        }
+
+        @Override
+        protected void autoCorrectPreferences() {
+            /* No-OP */
         }
     }
 }

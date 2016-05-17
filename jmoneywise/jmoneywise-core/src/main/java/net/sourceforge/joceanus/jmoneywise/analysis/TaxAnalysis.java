@@ -156,10 +156,22 @@ public class TaxAnalysis {
          * @throws OceanusException on error
          */
         public MoneyWiseTaxPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager);
-            defineDatePreference(MoneyWiseTaxPreferenceKey.BIRTHDATE, new TethysDate(YEAR, Month.JANUARY, 1));
+            super(pManager, MoneyWiseTaxPreferenceKey.class);
             setName(AnalysisResource.TAXPREF_PREFNAME.getValue());
-            storeChanges();
+        }
+
+        @Override
+        protected void definePreferences() {
+            defineDatePreference(MoneyWiseTaxPreferenceKey.BIRTHDATE);
+        }
+
+        @Override
+        protected void autoCorrectPreferences() {
+            /* Make sure that the birthDate is specified */
+            MetisDatePreference<MoneyWiseTaxPreferenceKey> myPref = getDatePreference(MoneyWiseTaxPreferenceKey.BIRTHDATE);
+            if (!myPref.isAvailable()) {
+                myPref.setValue(new TethysDate(YEAR, Month.JANUARY, 1));
+            }
         }
     }
 

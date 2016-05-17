@@ -126,6 +126,16 @@ public enum MetisPreferenceResource implements TethysResourceId {
     UI_LABEL_SET("ui.label.Set"),
 
     /**
+     * Range minimum.
+     */
+    UI_RANGE_MIN("ui.range.Minimum"),
+
+    /**
+     * Range maximum.
+     */
+    UI_RANGE_MAX("ui.range.Maximum"),
+
+    /**
      * Store Error text.
      */
     UI_ERROR_STORE("ui.error.Store"),

@@ -38,7 +38,7 @@
   <properties>
     <appDir>../../../backup/</appDir>
     <appLibDir>lib/</appLibDir>
-    <packageMain>${packageName}.ui.Control</packageMain>
+    <packageMain>${packageName}.ui.swing.Control</packageMain>
     <packageSplash>net/sourceforge/joceanus/jmoneywise/ui/icons/MoneyWiseSplash.png</packageSplash>
   </properties>
   <build>

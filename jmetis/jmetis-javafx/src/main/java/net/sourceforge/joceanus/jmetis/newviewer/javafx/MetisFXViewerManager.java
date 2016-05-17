@@ -31,6 +31,7 @@ import javafx.stage.Window;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerDataManager;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
@@ -133,7 +134,7 @@ public class MetisFXViewerManager
          */
         private ViewerDialog() {
             /* Set the title */
-            setTitle("Data Manager");
+            setTitle(MetisViewerResource.VIEWER_TITLE.getValue());
 
             /* Initialise the dialog */
             initModality(Modality.NONE);

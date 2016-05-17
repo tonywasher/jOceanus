@@ -107,12 +107,36 @@ public abstract class ThemisGitPreference {
          * @throws OceanusException on error
          */
         public ThemisGitPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager);
-            defineStringPreference(ThemisGitPreferenceKey.BASE, DEFAULT_GIT_REPO);
-            defineStringPreference(ThemisGitPreferenceKey.NAME, "GitRepo");
-            defineStringPreference(ThemisGitPreferenceKey.USER, "User@mail.com");
+            super(pManager, ThemisGitPreferenceKey.class);
             setName("Git Preferences");
-            storeChanges();
+        }
+
+        @Override
+        protected void definePreferences() {
+            defineDirectoryPreference(ThemisGitPreferenceKey.BASE);
+            defineStringPreference(ThemisGitPreferenceKey.NAME);
+            defineStringPreference(ThemisGitPreferenceKey.USER);
+        }
+
+        @Override
+        protected void autoCorrectPreferences() {
+            /* Make sure that the repository is specified */
+            MetisStringPreference<ThemisGitPreferenceKey> myPref = getStringPreference(ThemisGitPreferenceKey.BASE);
+            if (!myPref.isAvailable()) {
+                myPref.setValue(DEFAULT_GIT_REPO);
+            }
+
+            /* Make sure that the name is specified */
+            myPref = getStringPreference(ThemisGitPreferenceKey.NAME);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("GitRepo");
+            }
+
+            /* Make sure that the user is specified */
+            myPref = getStringPreference(ThemisGitPreferenceKey.USER);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("User@mail.com");
+            }
         }
     }
 }

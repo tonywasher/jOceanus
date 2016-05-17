@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpManager;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpResource;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
@@ -124,7 +125,7 @@ public class TethysSwingHelpManager
             theFrame = new JFrame();
 
             /* Set the title */
-            theFrame.setTitle("Help Manager");
+            theFrame.setTitle(TethysHelpResource.TITLE.getValue());
 
             /* Create the help panel */
             JPanel myPanel = new JPanel();
@@ -169,15 +170,6 @@ public class TethysSwingHelpManager
         }
 
         /**
-         * handleWindow Closing.
-         */
-        private void handleWindowClosing() {
-            getTreeManager().setVisible(false);
-            theFrame.dispose();
-            fireEvent(TethysUIEvent.WINDOWCLOSED, null);
-        }
-
-        /**
          * Window adapter class.
          */
         private class HelpWindowAdapter
@@ -185,6 +177,15 @@ public class TethysSwingHelpManager
             @Override
             public void windowClosing(final WindowEvent e) {
                 handleWindowClosing();
+            }
+
+            /**
+             * handleWindow Closing.
+             */
+            private void handleWindowClosing() {
+                getTreeManager().setVisible(false);
+                theFrame.dispose();
+                fireEvent(TethysUIEvent.WINDOWCLOSED, null);
             }
         }
     }

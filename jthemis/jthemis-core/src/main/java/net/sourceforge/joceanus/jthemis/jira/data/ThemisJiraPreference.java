@@ -105,13 +105,43 @@ public abstract class ThemisJiraPreference {
          * @throws OceanusException on error
          */
         public ThemisJiraPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager);
-            defineStringPreference(ThemisJiraPreferenceKey.SERVER, "http://localhost:8080");
-            defineStringPreference(ThemisJiraPreferenceKey.USER, "JiraUser");
-            defineCharArrayPreference(ThemisJiraPreferenceKey.PASS, "Secret".toCharArray());
-            defineStringPreference(ThemisJiraPreferenceKey.PFIX, "Issue #:");
+            super(pManager, ThemisJiraPreferenceKey.class);
             setName("Jira Preferences");
-            storeChanges();
+        }
+
+        @Override
+        protected void definePreferences() throws OceanusException {
+            defineStringPreference(ThemisJiraPreferenceKey.SERVER);
+            defineStringPreference(ThemisJiraPreferenceKey.USER);
+            defineCharArrayPreference(ThemisJiraPreferenceKey.PASS);
+            defineStringPreference(ThemisJiraPreferenceKey.PFIX);
+        }
+
+        @Override
+        protected void autoCorrectPreferences() {
+            /* Make sure that the server is specified */
+            MetisStringPreference<ThemisJiraPreferenceKey> myPref = getStringPreference(ThemisJiraPreferenceKey.SERVER);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("http://localhost:8080");
+            }
+
+            /* Make sure that the prefix is specified */
+            myPref = getStringPreference(ThemisJiraPreferenceKey.PFIX);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("Issue #:");
+            }
+
+            /* Make sure that the prefix is specified */
+            myPref = getStringPreference(ThemisJiraPreferenceKey.USER);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("JiraUser");
+            }
+
+            /* Make sure that the password is specified */
+            MetisCharArrayPreference<ThemisJiraPreferenceKey> myPassPref = getCharArrayPreference(ThemisJiraPreferenceKey.PASS);
+            if (!myPassPref.isAvailable()) {
+                myPassPref.setValue("Secret".toCharArray());
+            }
         }
     }
 }

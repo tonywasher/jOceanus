@@ -100,12 +100,36 @@ public final class QIFPreference {
          * @throws OceanusException on error
          */
         public MoneyWiseQIFPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager);
-            defineDirectoryPreference(MoneyWiseQIFPreferenceKey.QIFDIR, System.getProperty("user.home"));
-            defineEnumPreference(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.ACEMONEY, QIFType.class);
-            defineDatePreference(MoneyWiseQIFPreferenceKey.LASTEVENT, new TethysDate());
+            super(pManager, MoneyWiseQIFPreferenceKey.class);
             setName("QIF Preferences");
-            storeChanges();
+        }
+
+        @Override
+        protected void definePreferences() throws OceanusException {
+            defineDirectoryPreference(MoneyWiseQIFPreferenceKey.QIFDIR);
+            defineEnumPreference(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.class);
+            defineDatePreference(MoneyWiseQIFPreferenceKey.LASTEVENT);
+        }
+
+        @Override
+        protected void autoCorrectPreferences() {
+            /* Make sure that the directory is specified */
+            MetisStringPreference<MoneyWiseQIFPreferenceKey> myDirPref = getStringPreference(MoneyWiseQIFPreferenceKey.QIFDIR);
+            if (!myDirPref.isAvailable()) {
+                myDirPref.setValue(System.getProperty("user.home"));
+            }
+
+            /* Make sure that the QIFType is specified */
+            MetisEnumPreference<MoneyWiseQIFPreferenceKey, QIFType> myTypePref = getEnumPreference(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.class);
+            if (!myTypePref.isAvailable()) {
+                myTypePref.setValue(QIFType.ACEMONEY);
+            }
+
+            /* Make sure that the eventDate is specified */
+            MetisDatePreference<MoneyWiseQIFPreferenceKey> myPref = getDatePreference(MoneyWiseQIFPreferenceKey.LASTEVENT);
+            if (!myPref.isAvailable()) {
+                myPref.setValue(new TethysDate());
+            }
         }
     }
 }

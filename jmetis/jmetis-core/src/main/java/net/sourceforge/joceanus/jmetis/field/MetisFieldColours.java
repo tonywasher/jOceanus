@@ -137,19 +137,8 @@ public final class MetisFieldColours {
          * @throws OceanusException on error
          */
         public MetisColorPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager);
-            defineColorPreference(MetisColorPreferenceKey.STANDARD, TethysValueSet.DEFAULT_COLOR_STANDARD);
-            defineColorPreference(MetisColorPreferenceKey.BACKGROUND, TethysValueSet.DEFAULT_COLOR_BACKGROUND);
-            defineColorPreference(MetisColorPreferenceKey.ERROR, TethysValueSet.DEFAULT_COLOR_ERROR);
-            defineColorPreference(MetisColorPreferenceKey.CHANGED, TethysValueSet.DEFAULT_COLOR_CHANGED);
-            defineColorPreference(MetisColorPreferenceKey.DISABLED, TethysValueSet.DEFAULT_COLOR_DISABLED);
-            defineColorPreference(MetisColorPreferenceKey.ZEBRA, TethysValueSet.DEFAULT_COLOR_ZEBRA);
-            defineColorPreference(MetisColorPreferenceKey.PROGRESS, TethysValueSet.DEFAULT_COLOR_PROGRESS);
-            defineColorPreference(MetisColorPreferenceKey.LINK, TethysValueSet.DEFAULT_COLOR_LINK);
-            defineColorPreference(MetisColorPreferenceKey.VALUE, TethysValueSet.DEFAULT_COLOR_VALUE);
-            defineColorPreference(MetisColorPreferenceKey.NEGATIVE, TethysValueSet.DEFAULT_COLOR_NEGATIVE);
+            super(pManager, MetisColorPreferenceKey.class);
             setName(MetisFieldResource.FIELDCOLOR_PREFS.getValue());
-            storeChanges();
         }
 
         /**
@@ -174,6 +163,47 @@ public final class MetisFieldColours {
 
             /* Apply settings */
             pValueSet.applyColorMapping(myMap);
+        }
+
+        @Override
+        protected void definePreferences() {
+            defineColorPreference(MetisColorPreferenceKey.STANDARD);
+            defineColorPreference(MetisColorPreferenceKey.BACKGROUND);
+            defineColorPreference(MetisColorPreferenceKey.ERROR);
+            defineColorPreference(MetisColorPreferenceKey.CHANGED);
+            defineColorPreference(MetisColorPreferenceKey.DISABLED);
+            defineColorPreference(MetisColorPreferenceKey.ZEBRA);
+            defineColorPreference(MetisColorPreferenceKey.PROGRESS);
+            defineColorPreference(MetisColorPreferenceKey.LINK);
+            defineColorPreference(MetisColorPreferenceKey.VALUE);
+            defineColorPreference(MetisColorPreferenceKey.NEGATIVE);
+        }
+
+        @Override
+        protected void autoCorrectPreferences() {
+            defaultColour(MetisColorPreferenceKey.STANDARD, TethysValueSet.DEFAULT_COLOR_STANDARD);
+            defaultColour(MetisColorPreferenceKey.BACKGROUND, TethysValueSet.DEFAULT_COLOR_BACKGROUND);
+            defaultColour(MetisColorPreferenceKey.ERROR, TethysValueSet.DEFAULT_COLOR_ERROR);
+            defaultColour(MetisColorPreferenceKey.CHANGED, TethysValueSet.DEFAULT_COLOR_CHANGED);
+            defaultColour(MetisColorPreferenceKey.DISABLED, TethysValueSet.DEFAULT_COLOR_DISABLED);
+            defaultColour(MetisColorPreferenceKey.ZEBRA, TethysValueSet.DEFAULT_COLOR_ZEBRA);
+            defaultColour(MetisColorPreferenceKey.PROGRESS, TethysValueSet.DEFAULT_COLOR_PROGRESS);
+            defaultColour(MetisColorPreferenceKey.LINK, TethysValueSet.DEFAULT_COLOR_LINK);
+            defaultColour(MetisColorPreferenceKey.VALUE, TethysValueSet.DEFAULT_COLOR_VALUE);
+            defaultColour(MetisColorPreferenceKey.NEGATIVE, TethysValueSet.DEFAULT_COLOR_NEGATIVE);
+        }
+
+        /**
+         * Set default colour.
+         * @param pKey the key
+         * @param pDefault the default colour
+         */
+        private void defaultColour(final MetisColorPreferenceKey pKey,
+                                   final String pDefault) {
+            MetisStringPreference<MetisColorPreferenceKey> myPref = getStringPreference(pKey);
+            if (!myPref.isAvailable()) {
+                myPref.setValue(pDefault);
+            }
         }
     }
 }

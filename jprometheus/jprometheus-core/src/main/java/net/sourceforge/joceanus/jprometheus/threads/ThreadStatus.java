@@ -319,6 +319,16 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
         /**
          * Default Reporting Steps.
          */
+        private static final Integer MINIMUM_REPSTEPS = 1;
+
+        /**
+         * Maximum Reporting Steps.
+         */
+        private static final Integer MAXIMUM_REPSTEPS = 100;
+
+        /**
+         * Default Reporting Steps.
+         */
         private static final Integer DEFAULT_REPSTEPS = 10;
 
         /**
@@ -327,10 +337,28 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
          * @throws OceanusException on error
          */
         public PrometheusThreadStatusPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager);
-            defineIntegerPreference(PrometheusThreadStatusPreferenceKey.REPSTEPS, DEFAULT_REPSTEPS);
+            super(pManager, PrometheusThreadStatusPreferenceKey.class);
             setName(PrometheusPreferenceResource.THDPREF_PREFNAME.getValue());
-            storeChanges();
+        }
+
+        @Override
+        protected void definePreferences() {
+            defineIntegerPreference(PrometheusThreadStatusPreferenceKey.REPSTEPS);
+        }
+
+        @Override
+        protected void autoCorrectPreferences() {
+            /* Make sure that the value is specified */
+            MetisIntegerPreference<PrometheusThreadStatusPreferenceKey> myPref = getIntegerPreference(PrometheusThreadStatusPreferenceKey.REPSTEPS);
+            if (!myPref.isAvailable()) {
+                myPref.setValue(DEFAULT_REPSTEPS);
+            }
+
+            /* Define the range */
+            myPref.setRange(MINIMUM_REPSTEPS, MAXIMUM_REPSTEPS);
+            if (!myPref.validate()) {
+                myPref.setValue(DEFAULT_REPSTEPS);
+            }
         }
     }
 }

@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerDataManager;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
@@ -129,7 +130,7 @@ public class MetisSwingViewerManager
             theFrame = new JFrame();
 
             /* Set the title */
-            theFrame.setTitle("Data Manager");
+            theFrame.setTitle(MetisViewerResource.VIEWER_TITLE.getValue());
 
             /* Create the help panel */
             JPanel myPanel = new JPanel();
@@ -174,15 +175,6 @@ public class MetisSwingViewerManager
         }
 
         /**
-         * handleWindow Closing.
-         */
-        private void handleWindowClosing() {
-            getTreeManager().setVisible(false);
-            theFrame.dispose();
-            fireEvent(TethysUIEvent.WINDOWCLOSED, null);
-        }
-
-        /**
          * Window adapter class.
          */
         private class ViewerWindowAdapter
@@ -190,6 +182,15 @@ public class MetisSwingViewerManager
             @Override
             public void windowClosing(final WindowEvent e) {
                 handleWindowClosing();
+            }
+
+            /**
+             * handleWindow Closing.
+             */
+            private void handleWindowClosing() {
+                getTreeManager().setVisible(false);
+                theFrame.dispose();
+                fireEvent(TethysUIEvent.WINDOWCLOSED, null);
             }
         }
     }

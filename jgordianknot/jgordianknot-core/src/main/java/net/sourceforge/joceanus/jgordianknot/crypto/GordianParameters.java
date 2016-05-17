@@ -49,9 +49,24 @@ public class GordianParameters {
     public static final GordianDigestType DEFAULT_HASHALGO = GordianDigestType.KECCAK;
 
     /**
+     * Minimum Cipher Steps.
+     */
+    public static final Integer MINIMUM_CIPHER_STEPS = 2;
+
+    /**
      * Default Cipher Steps.
      */
     public static final Integer DEFAULT_CIPHER_STEPS = 3;
+
+    /**
+     * Minimum Hash iterations.
+     */
+    public static final Integer MINIMUM_HASH_ITERATIONS = 1024;
+
+    /**
+     * Maximum Hash iterations.
+     */
+    public static final Integer MAXIMUM_HASH_ITERATIONS = 4096;
 
     /**
      * Default Hash iterations.

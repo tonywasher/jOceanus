@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Backup preferences.
- * @author Tony Washer
  */
 public final class PrometheusBackup {
     /**
@@ -124,15 +123,57 @@ public final class PrometheusBackup {
          * @throws OceanusException on error
          */
         public PrometheusBackupPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager);
-            defineDirectoryPreference(PrometheusBackupPreferenceKey.BACKUPDIR, HOME_DIR);
-            defineStringPreference(PrometheusBackupPreferenceKey.BACKUPPFIX, "MoneyWiseBackup");
-            defineEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisWorkBookType.EXCELXLS, MetisWorkBookType.class);
-            defineFilePreference(PrometheusBackupPreferenceKey.ARCHIVE, HOME_DIR + File.separator + "Archive.xls");
-            defineDatePreference(PrometheusBackupPreferenceKey.LASTEVENT, new TethysDate());
-            defineBooleanPreference(PrometheusBackupPreferenceKey.BACKUPTIME, Boolean.FALSE);
+            super(pManager, PrometheusBackupPreferenceKey.class);
             setName(PrometheusPreferenceResource.BUPREF_PREFNAME.getValue());
-            storeChanges();
+        }
+
+        @Override
+        protected void definePreferences() {
+            defineDirectoryPreference(PrometheusBackupPreferenceKey.BACKUPDIR);
+            defineStringPreference(PrometheusBackupPreferenceKey.BACKUPPFIX);
+            defineEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisWorkBookType.class);
+            defineFilePreference(PrometheusBackupPreferenceKey.ARCHIVE);
+            defineDatePreference(PrometheusBackupPreferenceKey.LASTEVENT);
+            defineBooleanPreference(PrometheusBackupPreferenceKey.BACKUPTIME);
+        }
+
+        @Override
+        protected void autoCorrectPreferences() {
+            /* Make sure that the prefix is specified */
+            MetisStringPreference<PrometheusBackupPreferenceKey> myPref = getStringPreference(PrometheusBackupPreferenceKey.BACKUPPFIX);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("MoneyWiseBackup");
+            }
+
+            /* Make sure that the backup directory is specified */
+            myPref = getStringPreference(PrometheusBackupPreferenceKey.BACKUPDIR);
+            if (!myPref.isAvailable()) {
+                myPref.setValue(HOME_DIR);
+            }
+
+            /* Make sure that the archive file is specified */
+            myPref = getStringPreference(PrometheusBackupPreferenceKey.ARCHIVE);
+            if (!myPref.isAvailable()) {
+                myPref.setValue(HOME_DIR + File.separator + "Archive.xls");
+            }
+
+            /* Make sure that the enum is specified */
+            MetisEnumPreference<PrometheusBackupPreferenceKey, MetisWorkBookType> myTypePref = getEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisWorkBookType.class);
+            if (!myTypePref.isAvailable()) {
+                myTypePref.setValue(MetisWorkBookType.OASISODS);
+            }
+
+            /* Make sure that the date is specified */
+            MetisDatePreference<PrometheusBackupPreferenceKey> myDatePref = getDatePreference(PrometheusBackupPreferenceKey.LASTEVENT);
+            if (!myDatePref.isAvailable()) {
+                myDatePref.setValue(new TethysDate());
+            }
+
+            /* Make sure that the option is specified */
+            MetisBooleanPreference<PrometheusBackupPreferenceKey> myOption = getBooleanPreference(PrometheusBackupPreferenceKey.BACKUPTIME);
+            if (!myOption.isAvailable()) {
+                myOption.setValue(Boolean.FALSE);
+            }
         }
     }
 }

@@ -124,16 +124,73 @@ public final class PrometheusDatabase {
          * @throws OceanusException on error
          */
         public PrometheusDatabasePreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager);
-            defineEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.POSTGRESQL, PrometheusJDBCDriver.class);
-            defineStringPreference(PrometheusDatabasePreferenceKey.DBSERVER, "localhost");
-            defineStringPreference(PrometheusDatabasePreferenceKey.DBINSTANCE, "SQLEXPRESS");
-            defineStringPreference(PrometheusDatabasePreferenceKey.DBNAME, "MoneyWise");
-            defineIntegerPreference(PrometheusDatabasePreferenceKey.DBBATCH, DEFAULT_DBBATCH);
-            defineStringPreference(PrometheusDatabasePreferenceKey.DBUSER, System.getProperty("user.name"));
-            defineCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS, "secret".toCharArray());
+            super(pManager, PrometheusDatabasePreferenceKey.class);
             setName(PrometheusPreferenceResource.DBPREF_PREFNAME.getValue());
-            storeChanges();
+        }
+
+        @Override
+        protected void definePreferences() throws OceanusException {
+            defineEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);
+            defineStringPreference(PrometheusDatabasePreferenceKey.DBSERVER);
+            defineStringPreference(PrometheusDatabasePreferenceKey.DBINSTANCE);
+            defineStringPreference(PrometheusDatabasePreferenceKey.DBNAME);
+            defineIntegerPreference(PrometheusDatabasePreferenceKey.DBBATCH);
+            defineStringPreference(PrometheusDatabasePreferenceKey.DBUSER);
+            defineCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS);
+        }
+
+        @Override
+        protected void autoCorrectPreferences() {
+            /* Make sure that the enum is specified */
+            MetisEnumPreference<PrometheusDatabasePreferenceKey, PrometheusJDBCDriver> myTypePref = getEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);
+            if (!myTypePref.isAvailable()) {
+                myTypePref.setValue(PrometheusJDBCDriver.POSTGRESQL);
+            }
+
+            /* Make sure that the hostName is specified */
+            MetisStringPreference<PrometheusDatabasePreferenceKey> myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBSERVER);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("localhost");
+            }
+
+            /* Make sure that the instance is specified (for SQLSSERVER) */
+            myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBINSTANCE);
+            myPref.setHidden(!PrometheusJDBCDriver.SQLSERVER.equals(myTypePref.getValue()));
+            if (myPref.isHidden()) {
+                myPref.setValue(null);
+            } else if (!myPref.isAvailable()) {
+                myPref.setValue("SQLEXPRESS");
+            }
+
+            /* Make sure that the database is specified */
+            myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBNAME);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("MoneyWise");
+            }
+
+            /* Make sure that the user is specified */
+            myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBUSER);
+            if (!myPref.isAvailable()) {
+                myPref.setValue(System.getProperty("user.name"));
+            }
+
+            /* Make sure that the passWord is specified */
+            MetisCharArrayPreference<PrometheusDatabasePreferenceKey> myPassPref = getCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS);
+            if (!myPassPref.isAvailable()) {
+                myPassPref.setValue("secret".toCharArray());
+            }
+
+            /* Make sure that the value is specified */
+            MetisIntegerPreference<PrometheusDatabasePreferenceKey> myBatchPref = getIntegerPreference(PrometheusDatabasePreferenceKey.DBBATCH);
+            if (!myBatchPref.isAvailable()) {
+                myBatchPref.setValue(DEFAULT_DBBATCH);
+            }
+
+            /* Define the range */
+            myBatchPref.setRange(DEFAULT_DBBATCH, null);
+            if (!myBatchPref.validate()) {
+                myBatchPref.setValue(DEFAULT_DBBATCH);
+            }
         }
     }
 }

@@ -79,8 +79,7 @@
     <MySQLVersion>6.0.2</MySQLVersion>
     <PostGreSQLVersion>9.4.1208.jre7</PostGreSQLVersion>
     <ApachePOIVersion>3.14</ApachePOIVersion>
-    <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
-    <XercesVersion>2.11.0</XercesVersion>
+    <ApacheODFDOMVersion>0.8.1-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.21</SLF4JVersion>
     <LOG4JVersion>2.5</LOG4JVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
@@ -136,7 +135,7 @@
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>3.0.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -206,6 +205,7 @@
    	        <mainClass>${packageMain}</mainClass>
                 <packageName>${packageName}</packageName>
                 <addClasspath>true</addClasspath>
+                <classpathLayoutType>simple</classpathLayoutType>                                                                      
                 <classpathPrefix>${appLibDir}</classpathPrefix>                                                                      
                 <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               </manifest>

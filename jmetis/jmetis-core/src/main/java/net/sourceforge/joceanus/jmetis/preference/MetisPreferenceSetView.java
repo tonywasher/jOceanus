@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.preference;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisBooleanPreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisByteArrayPreference;
@@ -44,6 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRangedField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDirectorySelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
@@ -230,6 +232,9 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
      * Notify changes.
      */
     private void notifyChanges() {
+        /* AutoCorrect the preferences */
+        thePreferences.autoCorrectPreferences();
+
         /* Update the fields */
         updateFields();
 
@@ -343,6 +348,9 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             /* Set changed indication */
             theField.setTheAttributeState(TethysFieldAttribute.CHANGED, theItem.isChanged());
             theField.adjustField();
+
+            /* Handle hidden state */
+            theField.setEnabled(!theItem.isHidden());
         }
     }
 
@@ -362,14 +370,20 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         private final TethysDataEditField<Integer, N, I> theField;
 
         /**
+         * The Ranged Field.
+         */
+        private final TethysRangedField<Integer> theRangedField;
+
+        /**
          * The Label item.
          */
-        private final TethysLabel<N, I> theLabel;
+        private final TethysLabel<N, I> theRangeLabel;
 
         /**
          * Constructor.
          * @param pItem the item
          */
+        @SuppressWarnings("unchecked")
         private IntegerPreferenceElement(final MetisIntegerPreference<K> pItem) {
             /* Store parameters */
             theItem = pItem;
@@ -377,20 +391,25 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             theField.setEditable(true);
             theField.setPreferredWidth(TethysFieldType.INTEGER.getDefaultWidth());
 
+            /* Access the ranged field */
+            theRangedField = theField instanceof TethysRangedField
+                                                                   ? (TethysRangedField<Integer>) theField
+                                                                   : null;
+
             /* Create the label */
             TethysLabel<N, I> myLabel = theGuiFactory.newLabel(pItem.getDisplay()
                                                                + TethysLabel.STR_COLON);
             myLabel.setAlignment(TethysAlignment.EAST);
 
             /* Create the range label */
-            theLabel = theGuiFactory.newLabel();
+            theRangeLabel = theGuiFactory.newLabel();
 
             /* Add to the Grid Pane */
             theGrid.addCell(myLabel);
             theGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
             theGrid.addCell(theField);
-            theGrid.addCell(theLabel);
-            theGrid.allowCellGrowth(theLabel);
+            theGrid.addCell(theRangeLabel);
+            theGrid.allowCellGrowth(theRangeLabel);
             theGrid.newRow();
 
             /* Create listener */
@@ -405,9 +424,59 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             /* Update the field */
             theField.setValue(theItem.getValue());
 
+            /* If we have a ranged field */
+            if (theRangedField != null) {
+                /* handle the range */
+                handleRange();
+            }
+
             /* Set changed indication */
             theField.setTheAttributeState(TethysFieldAttribute.CHANGED, theItem.isChanged());
             theField.adjustField();
+
+            /* Handle hidden state */
+            theField.setEnabled(!theItem.isHidden());
+        }
+
+        /**
+         * handle range.
+         */
+        private void handleRange() {
+            /* Access the minimum/maximum */
+            Integer myMin = theItem.getMinimum();
+            Integer myMax = theItem.getMaximum();
+            boolean hasMin = myMin != null;
+            boolean hasMax = myMax != null;
+
+            /* Set the valid range */
+            theRangedField.setValueRange(myMin, myMax);
+            theRangeLabel.setText(null);
+
+            /* If we have a minimum or maximum */
+            if (hasMin || hasMax) {
+                /* Format the details */
+                StringBuilder myBuilder = new StringBuilder();
+
+                /* Handle minimum */
+                if (hasMin) {
+                    myBuilder.append(MetisPreferenceResource.UI_RANGE_MIN.getValue());
+                    myBuilder.append(' ');
+                    myBuilder.append(myMin);
+                    if (hasMax) {
+                        myBuilder.append(", ");
+                    }
+                }
+
+                /* Handle maximum */
+                if (hasMax) {
+                    myBuilder.append(MetisPreferenceResource.UI_RANGE_MAX.getValue());
+                    myBuilder.append(' ');
+                    myBuilder.append(myMax);
+                }
+
+                /* Format the field */
+                theRangeLabel.setText(myBuilder.toString());
+            }
         }
     }
 
@@ -455,6 +524,9 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
 
             /* Set changed indication */
             theCheckBox.setChanged(theItem.isChanged());
+
+            /* Handle hidden state */
+            theCheckBox.setEnabled(!theItem.isHidden());
         }
 
         /**
@@ -526,6 +598,9 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             /* Set changed indication */
             theField.setTheAttributeState(TethysFieldAttribute.CHANGED, theItem.isChanged());
             theField.adjustField();
+
+            /* Handle hidden state */
+            theField.setEnabled(!theItem.isHidden());
         }
     }
 
@@ -592,10 +667,16 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             /* reset the menu */
             myMenu.removeAllItems();
 
+            /* Obtain the filter */
+            Predicate<E> myFilter = theItem.getFilter();
+
             /* For all values */
             for (E myEnum : theItem.getValues()) {
-                /* Create a new MenuItem and add it to the popUp */
-                myMenu.addItem(myEnum);
+                /* If the element is not filtered */
+                if (myFilter.test(myEnum)) {
+                    /* Create a new MenuItem and add it to the popUp */
+                    myMenu.addItem(myEnum);
+                }
             }
         }
 
@@ -607,6 +688,9 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             /* Set changed indication */
             theField.setTheAttributeState(TethysFieldAttribute.CHANGED, theItem.isChanged());
             theField.adjustField();
+
+            /* Handle hidden state */
+            theField.setEnabled(!theItem.isHidden());
         }
     }
 
@@ -666,6 +750,9 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             /* Set changed indication */
             theField.setTheAttributeState(TethysFieldAttribute.CHANGED, theItem.isChanged());
             theField.adjustField();
+
+            /* Handle hidden state */
+            theField.setEnabled(!theItem.isHidden());
         }
     }
 
@@ -685,6 +772,11 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         private final TethysDataEditField<String, N, I> theField;
 
         /**
+         * The Button.
+         */
+        private final TethysButton<N, I> theButton;
+
+        /**
          * The File Selector.
          */
         private TethysFileSelector theSelector;
@@ -700,19 +792,19 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             theField.setEditable(true);
 
             /* Create the button */
-            TethysButton<N, I> myButton = theGuiFactory.newButton();
-            myButton.setTextOnly();
-            myButton.setText(pItem.getDisplay());
+            theButton = theGuiFactory.newButton();
+            theButton.setTextOnly();
+            theButton.setText(pItem.getDisplay());
 
             /* Add to the Grid Pane */
-            theGrid.addCell(myButton);
+            theGrid.addCell(theButton);
             theGrid.addCell(theField);
             theGrid.setCellColumnSpan(theField, 2);
             theGrid.allowCellGrowth(theField);
             theGrid.newRow();
 
             /* Create listeners */
-            myButton.getEventRegistrar().addEventListener(e -> handleDialog());
+            theButton.getEventRegistrar().addEventListener(e -> handleDialog());
             theField.getEventRegistrar().addEventListener(e -> {
                 pItem.setValue(theField.getValue());
                 notifyChanges();
@@ -727,6 +819,11 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             /* Set changed indication */
             theField.setTheAttributeState(TethysFieldAttribute.CHANGED, theItem.isChanged());
             theField.adjustField();
+
+            /* Handle hidden state */
+            boolean isEnabled = !theItem.isHidden();
+            theField.setEnabled(isEnabled);
+            theButton.setEnabled(isEnabled);
         }
 
         /**
@@ -769,6 +866,11 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         private final TethysDataEditField<String, N, I> theField;
 
         /**
+         * The Button.
+         */
+        private final TethysButton<N, I> theButton;
+
+        /**
          * The Directory Selector.
          */
         private TethysDirectorySelector theSelector;
@@ -784,19 +886,19 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             theField.setEditable(true);
 
             /* Create the button */
-            TethysButton<N, I> myButton = theGuiFactory.newButton();
-            myButton.setTextOnly();
-            myButton.setText(pItem.getDisplay());
+            theButton = theGuiFactory.newButton();
+            theButton.setTextOnly();
+            theButton.setText(pItem.getDisplay());
 
             /* Add to the Grid Pane */
-            theGrid.addCell(myButton);
+            theGrid.addCell(theButton);
             theGrid.addCell(theField);
             theGrid.setCellColumnSpan(theField, 2);
             theGrid.allowCellGrowth(theField);
             theGrid.newRow();
 
             /* Create listeners */
-            myButton.getEventRegistrar().addEventListener(e -> handleDialog());
+            theButton.getEventRegistrar().addEventListener(e -> handleDialog());
             theField.getEventRegistrar().addEventListener(e -> {
                 pItem.setValue(theField.getValue());
                 notifyChanges();
@@ -811,6 +913,11 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             /* Set changed indication */
             theField.setTheAttributeState(TethysFieldAttribute.CHANGED, theItem.isChanged());
             theField.adjustField();
+
+            /* Handle hidden state */
+            boolean isEnabled = !theItem.isHidden();
+            theField.setEnabled(isEnabled);
+            theButton.setEnabled(isEnabled);
         }
 
         /**
@@ -890,6 +997,9 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             /* Set changed indication */
             theField.setTheAttributeState(TethysFieldAttribute.CHANGED, theItem.isChanged());
             theField.adjustField();
+
+            /* Handle hidden state */
+            theField.setEnabled(!theItem.isHidden());
         }
     }
 }

@@ -132,17 +132,71 @@ public abstract class ThemisSvnPreference {
          * @throws OceanusException on error
          */
         public ThemisSvnPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager);
-            defineStringPreference(ThemisSvnPreferenceKey.BASE, "http://localhost");
-            defineStringPreference(ThemisSvnPreferenceKey.NAME, "Repository");
-            defineStringPreference(ThemisSvnPreferenceKey.USER, "SvnUser");
-            defineCharArrayPreference(ThemisSvnPreferenceKey.PASS, "Secret".toCharArray());
-            defineDirectoryPreference(ThemisSvnPreferenceKey.WORK, BASE_DIR + "WorkSpace");
-            defineDirectoryPreference(ThemisSvnPreferenceKey.BUILD, BASE_DIR + "Build");
-            defineDirectoryPreference(ThemisSvnPreferenceKey.INSTALL, "C:\\csvn\\data\\repositories");
-            defineStringPreference(ThemisSvnPreferenceKey.PFIX, "SvnRepo");
+            super(pManager, ThemisSvnPreferenceKey.class);
             setName("Subversion Preferences");
-            storeChanges();
+        }
+
+        @Override
+        protected void definePreferences() throws OceanusException {
+            defineStringPreference(ThemisSvnPreferenceKey.BASE);
+            defineStringPreference(ThemisSvnPreferenceKey.NAME);
+            defineStringPreference(ThemisSvnPreferenceKey.USER);
+            defineCharArrayPreference(ThemisSvnPreferenceKey.PASS);
+            defineDirectoryPreference(ThemisSvnPreferenceKey.WORK);
+            defineDirectoryPreference(ThemisSvnPreferenceKey.BUILD);
+            defineDirectoryPreference(ThemisSvnPreferenceKey.INSTALL);
+            defineStringPreference(ThemisSvnPreferenceKey.PFIX);
+        }
+
+        @Override
+        protected void autoCorrectPreferences() {
+            /* Make sure that the server is specified */
+            MetisStringPreference<ThemisSvnPreferenceKey> myPref = getStringPreference(ThemisSvnPreferenceKey.BASE);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("http://localhost");
+            }
+
+            /* Make sure that the name is specified */
+            myPref = getStringPreference(ThemisSvnPreferenceKey.NAME);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("Repository");
+            }
+
+            /* Make sure that the prefix is specified */
+            myPref = getStringPreference(ThemisSvnPreferenceKey.PFIX);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("SvnRepo");
+            }
+
+            /* Make sure that the user is specified */
+            myPref = getStringPreference(ThemisSvnPreferenceKey.USER);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("SvnUser");
+            }
+
+            /* Make sure that the password is specified */
+            MetisCharArrayPreference<ThemisSvnPreferenceKey> myPassPref = getCharArrayPreference(ThemisSvnPreferenceKey.PASS);
+            if (!myPassPref.isAvailable()) {
+                myPassPref.setValue("Secret".toCharArray());
+            }
+
+            /* Make sure that the workDir is specified */
+            myPref = getStringPreference(ThemisSvnPreferenceKey.WORK);
+            if (!myPref.isAvailable()) {
+                myPref.setValue(BASE_DIR + "WorkSpace");
+            }
+
+            /* Make sure that the buildDir is specified */
+            myPref = getStringPreference(ThemisSvnPreferenceKey.BUILD);
+            if (!myPref.isAvailable()) {
+                myPref.setValue(BASE_DIR + "Build");
+            }
+
+            /* Make sure that the installDir is specified */
+            myPref = getStringPreference(ThemisSvnPreferenceKey.INSTALL);
+            if (!myPref.isAvailable()) {
+                myPref.setValue("C:\\csvn\\data\\repositories");
+            }
         }
     }
 }

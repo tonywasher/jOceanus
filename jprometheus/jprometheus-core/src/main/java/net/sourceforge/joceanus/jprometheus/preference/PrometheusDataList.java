@@ -85,6 +85,16 @@ public final class PrometheusDataList {
     public static class PrometheusDataListPreferences
             extends MetisPreferenceSet<PrometheusDataListPreferenceKey> {
         /**
+         * Minimum Granularity.
+         */
+        private static final int MIN_GRANULARITY = 3;
+
+        /**
+         * Maximum Granularity.
+         */
+        private static final int MAX_GRANULARITY = 10;
+
+        /**
          * Default Granularity.
          */
         private static final int DEFAULT_GRANULARITY = 5;
@@ -95,10 +105,28 @@ public final class PrometheusDataList {
          * @throws OceanusException on error
          */
         public PrometheusDataListPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager);
-            defineIntegerPreference(PrometheusDataListPreferenceKey.GRANULARITY, DEFAULT_GRANULARITY);
+            super(pManager, PrometheusDataListPreferenceKey.class);
             setName(PrometheusPreferenceResource.DLPREF_PREFNAME.getValue());
-            storeChanges();
+        }
+
+        @Override
+        protected void definePreferences() {
+            defineIntegerPreference(PrometheusDataListPreferenceKey.GRANULARITY);
+        }
+
+        @Override
+        protected void autoCorrectPreferences() {
+            /* Make sure that the value is specified */
+            MetisIntegerPreference<PrometheusDataListPreferenceKey> myPref = getIntegerPreference(PrometheusDataListPreferenceKey.GRANULARITY);
+            if (!myPref.isAvailable()) {
+                myPref.setValue(DEFAULT_GRANULARITY);
+            }
+
+            /* Define the range */
+            myPref.setRange(MIN_GRANULARITY, MAX_GRANULARITY);
+            if (!myPref.validate()) {
+                myPref.setValue(DEFAULT_GRANULARITY);
+            }
         }
     }
 }

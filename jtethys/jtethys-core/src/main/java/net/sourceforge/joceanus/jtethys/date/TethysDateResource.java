@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
- * Resource IDs for JDateDay package.
+ * Resource IDs for TethysDate package.
  */
 public enum TethysDateResource implements TethysResourceId {
     /**
