@@ -124,9 +124,10 @@ public class GordianSwingPasswordDialog
         } else {
             try {
                 SwingUtilities.invokeAndWait(() -> pDialog.showDialog());
-            } catch (InvocationTargetException
-                    | InterruptedException e) {
+            } catch (InvocationTargetException e) {
                 LOGGER.error("Failed to display dialog", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
 

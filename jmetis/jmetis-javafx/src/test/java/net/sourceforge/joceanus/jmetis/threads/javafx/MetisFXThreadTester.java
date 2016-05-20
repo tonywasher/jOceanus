@@ -26,7 +26,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerDataManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisTestThread;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadStatusManager;
@@ -43,7 +43,7 @@ public class MetisFXThreadTester
     /**
      * ViewerManager.
      */
-    private final MetisViewerDataManager theViewerMgr;
+    private final MetisViewerManager theViewerMgr;
 
     /**
      * GUI factory.
@@ -96,7 +96,7 @@ public class MetisFXThreadTester
         theDebugButton.setText("Debug");
 
         /* Create the Managers */
-        theViewerMgr = new MetisViewerDataManager();
+        theViewerMgr = new MetisViewerManager();
         theThreadMgr = new MetisFXThreadManager(theViewerMgr, theGuiFactory);
         theStatusPanel = theThreadMgr.getStatusManager();
         theMainPanel = theGuiFactory.newBorderPane();

@@ -28,9 +28,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerDataManager;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -42,8 +42,8 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
 /**
  * JavaFX Data Viewer Manager.
  */
-public class MetisFXViewerManager
-        extends MetisViewerManager<Node, Node> {
+public class MetisFXViewerWindow
+        extends MetisViewerWindow<Node, Node> {
     /**
      * The stage.
      */
@@ -60,10 +60,10 @@ public class MetisFXViewerManager
      * @param pDataManager the viewer data manager
      * @throws OceanusException on error
      */
-    protected MetisFXViewerManager(final TethysFXGuiFactory pFactory,
-                                   final MetisViewerDataManager pDataManager) throws OceanusException {
+    protected MetisFXViewerWindow(final TethysFXGuiFactory pFactory,
+                                  final MetisViewerManager pDataManager) throws OceanusException {
         /* Initialise underlying class */
-        super(pFactory.newSplitTreeManager(), pDataManager);
+        super(pFactory, pDataManager);
     }
 
     @Override
@@ -94,6 +94,9 @@ public class MetisFXViewerManager
 
         /* If the dialog is not visible */
         if (!theDialog.isShowing()) {
+            /* Initialise the tree */
+            initialiseTree();
+
             /* Show it */
             theDialog.showDialog();
         }
@@ -113,6 +116,9 @@ public class MetisFXViewerManager
         if (theDialog.isShowing()) {
             /* hide it */
             theDialog.hide();
+
+            /* Terminate the tree */
+            terminateTree();
         }
     }
 

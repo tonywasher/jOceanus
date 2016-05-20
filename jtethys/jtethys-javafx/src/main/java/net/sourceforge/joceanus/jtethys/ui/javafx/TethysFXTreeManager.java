@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <T> the data type
  */
 public class TethysFXTreeManager<T>
-        extends TethysTreeManager<T, Node> {
+        extends TethysTreeManager<T, Node, Node> {
     /**
      * The treeView.
      */
@@ -51,8 +51,12 @@ public class TethysFXTreeManager<T>
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    protected TethysFXTreeManager() {
+    protected TethysFXTreeManager(final TethysFXGuiFactory pFactory) {
+        /* Initialise underlying class */
+        super(pFactory);
+
         /* Create the tree */
         theRoot = new TethysFXTreeItem<>(this);
         theTree = new TreeView<>(theRoot.getNode());
@@ -69,6 +73,11 @@ public class TethysFXTreeManager<T>
     @Override
     public Node getNode() {
         return theTree;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theTree.setDisable(!pEnabled);
     }
 
     @Override
@@ -152,7 +161,7 @@ public class TethysFXTreeManager<T>
     }
 
     @Override
-    public TethysFXTreeItem<T> addChildItem(final TethysTreeItem<T, Node> pParent,
+    public TethysFXTreeItem<T> addChildItem(final TethysTreeItem<T, Node, Node> pParent,
                                             final String pName,
                                             final T pItem) {
         return new TethysFXTreeItem<>(this, (TethysFXTreeItem<T>) pParent, pName, pItem);
@@ -160,20 +169,20 @@ public class TethysFXTreeManager<T>
 
     /**
      * TreeItem class.
-     * @param <X> the data type
+     * @param <T> the data type
      */
-    public static class TethysFXTreeItem<X>
-            extends TethysTreeItem<X, Node> {
+    public static class TethysFXTreeItem<T>
+            extends TethysTreeItem<T, Node, Node> {
         /**
          * Associated Node.
          */
-        private TethysFXTreeNode<X> theNode;
+        private TethysFXTreeNode<T> theNode;
 
         /**
          * Constructor for root item.
          * @param pTree the tree
          */
-        private TethysFXTreeItem(final TethysFXTreeManager<X> pTree) {
+        private TethysFXTreeItem(final TethysFXTreeManager<T> pTree) {
             /* build underlying item */
             super(pTree);
 
@@ -188,36 +197,36 @@ public class TethysFXTreeManager<T>
          * @param pName the unique name of the item
          * @param pItem the tree item
          */
-        public TethysFXTreeItem(final TethysFXTreeManager<X> pTree,
-                                final TethysFXTreeItem<X> pParent,
+        public TethysFXTreeItem(final TethysFXTreeManager<T> pTree,
+                                final TethysFXTreeItem<T> pParent,
                                 final String pName,
-                                final X pItem) {
+                                final T pItem) {
             /* build underlying item */
             super(pTree, pParent, pName, pItem);
         }
 
         @Override
-        public TethysFXTreeManager<X> getTree() {
-            return (TethysFXTreeManager<X>) super.getTree();
+        public TethysFXTreeManager<T> getTree() {
+            return (TethysFXTreeManager<T>) super.getTree();
         }
 
         @Override
-        public TethysFXTreeItem<X> getParent() {
-            return (TethysFXTreeItem<X>) super.getParent();
+        public TethysFXTreeItem<T> getParent() {
+            return (TethysFXTreeItem<T>) super.getParent();
         }
 
         /**
          * Obtain the node.
          * @return the node
          */
-        private TethysFXTreeNode<X> getNode() {
+        private TethysFXTreeNode<T> getNode() {
             return theNode;
         }
 
         @Override
         protected void attachToTree() {
             /* Obtain the parent */
-            TethysFXTreeItem<X> myParent = getParent();
+            TethysFXTreeItem<T> myParent = getParent();
 
             /* If we are not the root */
             if (myParent != null) {
@@ -238,7 +247,7 @@ public class TethysFXTreeManager<T>
             super.detachFromTree();
 
             /* Obtain the parent */
-            TethysFXTreeItem<X> myParent = getParent();
+            TethysFXTreeItem<T> myParent = getParent();
 
             /* Delete reference if we are not root */
             if (myParent != null) {
@@ -254,7 +263,7 @@ public class TethysFXTreeManager<T>
             theNode = new TethysFXTreeNode<>(this);
 
             /* Obtain the parent */
-            TethysFXTreeItem<X> myParent = getParent();
+            TethysFXTreeItem<T> myParent = getParent();
 
             /* Ignore if we are the root */
             if (myParent != null) {

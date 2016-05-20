@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jTethys: Java Utilities
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help.swing;
+package net.sourceforge.joceanus.jmetis.newviewer.swing;
 
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -31,9 +31,11 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpManager;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpResource;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerWindow;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
@@ -41,10 +43,10 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager;
 
 /**
- * Help Window class, responsible for displaying the help.
+ * JavaSwing Data Viewer Manager.
  */
-public class TethysSwingHelpManager
-        extends TethysHelpManager<JComponent, Icon> {
+public class MetisSwingViewerWindow
+        extends MetisViewerWindow<JComponent, Icon> {
     /**
      * The frame.
      */
@@ -53,25 +55,28 @@ public class TethysSwingHelpManager
     /**
      * The help dialog.
      */
-    private HelpDialog theDialog;
+    private ViewerDialog theDialog;
 
     /**
      * Constructor.
-     * @param pFactory the GUI Factory
+     * @param pFactory the GUI factory
+     * @param pDataManager the viewer data manager
+     * @throws OceanusException on error
      */
-    public TethysSwingHelpManager(final TethysSwingGuiFactory pFactory) {
+    public MetisSwingViewerWindow(final TethysSwingGuiFactory pFactory,
+                                  final MetisViewerManager pDataManager) throws OceanusException {
         /* Initialise underlying class */
-        super(pFactory.newSplitTreeManager());
+        super(pFactory, pDataManager);
     }
 
     @Override
-    public TethysSwingSplitTreeManager<TethysHelpEntry> getSplitTreeManager() {
-        return (TethysSwingSplitTreeManager<TethysHelpEntry>) super.getSplitTreeManager();
+    public TethysSwingSplitTreeManager<MetisViewerEntry> getSplitTreeManager() {
+        return (TethysSwingSplitTreeManager<MetisViewerEntry>) super.getSplitTreeManager();
     }
 
     @Override
-    public TethysSwingTreeManager<TethysHelpEntry> getTreeManager() {
-        return (TethysSwingTreeManager<TethysHelpEntry>) super.getTreeManager();
+    public TethysSwingTreeManager<MetisViewerEntry> getTreeManager() {
+        return (TethysSwingTreeManager<MetisViewerEntry>) super.getTreeManager();
     }
 
     @Override
@@ -84,24 +89,34 @@ public class TethysSwingHelpManager
         /* If the dialog does not exist */
         if (theDialog == null) {
             /* Create a new dialog */
-            theDialog = new HelpDialog();
+            theDialog = new ViewerDialog();
         }
 
-        /* Make sure that the dialog is showing */
-        theDialog.showDialog();
+        /* If the dialog is not showing */
+        if (!theDialog.isShowing()) {
+            /* Initialise the tree */
+            initialiseTree();
+
+            /* Make sure that the dialog is showing */
+            theDialog.showDialog();
+        }
     }
 
     @Override
     public void hideDialog() {
         /* If the dialog exists */
-        if (theDialog != null) {
+        if ((theDialog != null)
+            && theDialog.isShowing()) {
             /* Make sure that the dialog is hidden */
             theDialog.hideDialog();
+
+            /* Terminate the tree */
+            terminateTree();
         }
     }
 
     /**
-     * Set the frame.
+     * ,/. Set the frame.
      * @param pFrame the frame
      */
     public void setFrame(final JFrame pFrame) {
@@ -111,7 +126,7 @@ public class TethysSwingHelpManager
     /**
      * Dialog class.
      */
-    private final class HelpDialog {
+    private final class ViewerDialog {
         /**
          * The frame.
          */
@@ -120,12 +135,12 @@ public class TethysSwingHelpManager
         /**
          * Constructor.
          */
-        private HelpDialog() {
+        private ViewerDialog() {
             /* Create the frame */
             theFrame = new JFrame();
 
             /* Set the title */
-            theFrame.setTitle(TethysHelpResource.TITLE.getValue());
+            theFrame.setTitle(MetisViewerResource.VIEWER_TITLE.getValue());
 
             /* Create the help panel */
             JPanel myPanel = new JPanel();
@@ -138,11 +153,19 @@ public class TethysSwingHelpManager
             theFrame.pack();
 
             /* Change visibility of tree when hiding */
-            theFrame.addWindowListener(new HelpWindowAdapter());
+            theFrame.addWindowListener(new ViewerWindowAdapter());
         }
 
         /**
-         * show the dialog.
+         * Is the dialog showing?
+         * @return true/false
+         */
+        private boolean isShowing() {
+            return theFrame.isShowing();
+        }
+
+        /**
+         * Show the dialog.
          */
         private void showDialog() {
             /* If the dialog is not currently showing */
@@ -172,7 +195,7 @@ public class TethysSwingHelpManager
         /**
          * Window adapter class.
          */
-        private class HelpWindowAdapter
+        private class ViewerWindowAdapter
                 extends WindowAdapter {
             @Override
             public void windowClosing(final WindowEvent e) {

@@ -262,7 +262,7 @@ public class TethysFXGuiFactory
 
     @Override
     public <T> TethysFXTreeManager<T> newTreeManager() {
-        return new TethysFXTreeManager<>();
+        return new TethysFXTreeManager<>(this);
     }
 
     @Override

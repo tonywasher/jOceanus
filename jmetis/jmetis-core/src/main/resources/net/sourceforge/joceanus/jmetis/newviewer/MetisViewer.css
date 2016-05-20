@@ -17,14 +17,14 @@ table {
 
 /* Define background colour for oddRow */
 .oddrow td {
-  background-color: #dddddd;
+  background-color: ${jtethys-color-zebra};
   text-align: center; 
   border: 1px solid white;
 }
 
 /* Define background colour for evenRow */
 .evenrow td { 
-  background-color: #eeeeee;
+  background-color: ${jtethys-color-background};
   text-align: center;
   border: 1px solid white;
 }
@@ -39,8 +39,8 @@ th {
 
 /* Define alternate colour and style for changed elements */
 .changed {
-	font-style: italic;
-	color: ${-jtethys-color-changed};
+  font-style: italic;
+  color: ${-jtethys-color-changed};
 }
 
 /* Define alternate colour and style for security changed elements */
@@ -50,23 +50,10 @@ th {
 
 /* Set standard link definition */
 a { 
-  text-decoration: none;
-  color: ${-jtethys-color-link};
+  text-decoration: underline;
 }
 
-/* Set hover colour for standard link */
+/* Set hover colour for link */
 a:hover { 
-  color: ${-jtethys-color-link};
-}
-
-/* Set changed link definition */
-a.changed {
-  font-style: italic;
-  color: ${-jtethys-color-link};
-}
-
-/* Set hover colour for changed link */
-a.changed:hover {
-  font-style: italic;
   color: ${-jtethys-color-link};
 }

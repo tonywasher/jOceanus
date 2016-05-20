@@ -28,7 +28,7 @@ import java.util.concurrent.Executors;
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerDataManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -105,7 +105,7 @@ public abstract class MetisThreadManager<N, I>
      * @param pViewerManager the viewer manager
      * @param pStatusManager the status manager
      */
-    protected MetisThreadManager(final MetisViewerDataManager pViewerManager,
+    protected MetisThreadManager(final MetisViewerManager pViewerManager,
                                  final MetisThreadStatusManager<N, I> pStatusManager) {
         /* Store the parameters */
         theStatusManager = pStatusManager;

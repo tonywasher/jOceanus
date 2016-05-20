@@ -100,9 +100,10 @@ public class TethysSwingDirectorySelector
         } else {
             try {
                 SwingUtilities.invokeAndWait(() -> showDialog());
-            } catch (InvocationTargetException
-                    | InterruptedException e) {
+            } catch (InvocationTargetException e) {
                 LOGGER.error("Failed to display dialog", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
 

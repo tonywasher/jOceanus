@@ -32,7 +32,7 @@ import javax.swing.WindowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerDataManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisTestThread;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
@@ -56,7 +56,7 @@ public class MetisSwingThreadTester {
     /**
      * ViewerManager.
      */
-    private final MetisViewerDataManager theViewerMgr;
+    private final MetisViewerManager theViewerMgr;
 
     /**
      * ThreadManager.
@@ -105,7 +105,7 @@ public class MetisSwingThreadTester {
 
         /* Create the Managers */
         theFrame = new JFrame("MetisSwingThread Demo");
-        theViewerMgr = new MetisViewerDataManager();
+        theViewerMgr = new MetisViewerManager();
         theThreadMgr = new MetisSwingThreadManager(theViewerMgr, theGuiFactory);
         theStatusPanel = theThreadMgr.getStatusManager();
         theMainPanel = theGuiFactory.newBorderPane();

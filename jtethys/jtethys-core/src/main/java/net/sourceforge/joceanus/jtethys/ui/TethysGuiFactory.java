@@ -255,7 +255,7 @@ public abstract class TethysGuiFactory<N, I> {
      * @param <T> the item type
      * @return the new manager
      */
-    public abstract <T> TethysTreeManager<T, N> newTreeManager();
+    public abstract <T> TethysTreeManager<T, N, I> newTreeManager();
 
     /**
      * Obtain a new splitTree manager.

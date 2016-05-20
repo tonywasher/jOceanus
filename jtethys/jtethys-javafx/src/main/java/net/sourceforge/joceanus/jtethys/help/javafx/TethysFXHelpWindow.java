@@ -29,8 +29,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpManager;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpResource;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXHTMLManager;
@@ -40,8 +40,8 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
 /**
  * Help Window class, responsible for displaying the help.
  */
-public class TethysFXHelpManager
-        extends TethysHelpManager<Node, Node> {
+public class TethysFXHelpWindow
+        extends TethysHelpWindow<Node, Node> {
     /**
      * The stage.
      */
@@ -56,9 +56,9 @@ public class TethysFXHelpManager
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    public TethysFXHelpManager(final TethysFXGuiFactory pFactory) {
+    public TethysFXHelpWindow(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
-        super(pFactory.newSplitTreeManager());
+        super(pFactory);
     }
 
     @Override

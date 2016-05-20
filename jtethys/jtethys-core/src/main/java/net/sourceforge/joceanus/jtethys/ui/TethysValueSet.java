@@ -111,6 +111,16 @@ public class TethysValueSet
     public static final String TETHYS_COLOR_NEGATIVE = STYLE_COLOR + "-negative";
 
     /**
+     * The security colour name.
+     */
+    public static final String TETHYS_COLOR_SECURITY = STYLE_COLOR + "-security";
+
+    /**
+     * The negative colour name.
+     */
+    public static final String TETHYS_COLOR_HEADER = STYLE_COLOR + "-header";
+
+    /**
      * The standard font family name.
      */
     public static final String TETHYS_FONT_STANDARD = STYLE_FONT + "-standard";
@@ -176,6 +186,16 @@ public class TethysValueSet
     public static final String DEFAULT_COLOR_NEGATIVE = "#b22222";
 
     /**
+     * Security colour default.
+     */
+    public static final String DEFAULT_COLOR_SECURITY = "#daa520";
+
+    /**
+     * Header colour default.
+     */
+    public static final String DEFAULT_COLOR_HEADER = "#0000cd";
+
+    /**
      * Standard Font default.
      */
     private static final String DEFAULT_FONT_STANDARD = "Arial";
@@ -226,6 +246,8 @@ public class TethysValueSet
         theDefaultMap.put(TETHYS_COLOR_LINK, DEFAULT_COLOR_LINK);
         theDefaultMap.put(TETHYS_COLOR_VALUE, DEFAULT_COLOR_VALUE);
         theDefaultMap.put(TETHYS_COLOR_NEGATIVE, DEFAULT_COLOR_NEGATIVE);
+        theDefaultMap.put(TETHYS_COLOR_SECURITY, DEFAULT_COLOR_SECURITY);
+        theDefaultMap.put(TETHYS_COLOR_HEADER, DEFAULT_COLOR_HEADER);
 
         /* Create the default font values */
         theDefaultMap.put(TETHYS_FONT_STANDARD, DEFAULT_FONT_STANDARD);

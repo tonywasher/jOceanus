@@ -90,9 +90,19 @@ public final class MetisFieldColours {
         VALUE("ColorValue", MetisFieldResource.FIELDCOLOR_VALUE),
 
         /**
-         * Value colour.
+         * Negative Value colour.
          */
-        NEGATIVE("ColorNegative", MetisFieldResource.FIELDCOLOR_NEGATIVE);
+        NEGATIVE("ColorNegative", MetisFieldResource.FIELDCOLOR_NEGATIVE),
+
+        /**
+         * Security Changed colour.
+         */
+        SECURITY("ColorSecurity", MetisFieldResource.FIELDCOLOR_SECURITY),
+
+        /**
+         * Header colour.
+         */
+        HEADER("ColorHeader", MetisFieldResource.FIELDCOLOR_HEADER);
 
         /**
          * The name of the Preference.
@@ -159,6 +169,8 @@ public final class MetisFieldColours {
             myMap.put(TethysValueSet.TETHYS_COLOR_LINK, getStringValue(MetisColorPreferenceKey.LINK));
             myMap.put(TethysValueSet.TETHYS_COLOR_VALUE, getStringValue(MetisColorPreferenceKey.VALUE));
             myMap.put(TethysValueSet.TETHYS_COLOR_NEGATIVE, getStringValue(MetisColorPreferenceKey.NEGATIVE));
+            myMap.put(TethysValueSet.TETHYS_COLOR_SECURITY, getStringValue(MetisColorPreferenceKey.SECURITY));
+            myMap.put(TethysValueSet.TETHYS_COLOR_HEADER, getStringValue(MetisColorPreferenceKey.HEADER));
             myMap.put(TethysValueSet.TETHYS_COLOR_PROGRESS, getStringValue(MetisColorPreferenceKey.PROGRESS));
 
             /* Apply settings */
@@ -173,10 +185,12 @@ public final class MetisFieldColours {
             defineColorPreference(MetisColorPreferenceKey.CHANGED);
             defineColorPreference(MetisColorPreferenceKey.DISABLED);
             defineColorPreference(MetisColorPreferenceKey.ZEBRA);
-            defineColorPreference(MetisColorPreferenceKey.PROGRESS);
             defineColorPreference(MetisColorPreferenceKey.LINK);
             defineColorPreference(MetisColorPreferenceKey.VALUE);
             defineColorPreference(MetisColorPreferenceKey.NEGATIVE);
+            defineColorPreference(MetisColorPreferenceKey.SECURITY);
+            defineColorPreference(MetisColorPreferenceKey.HEADER);
+            defineColorPreference(MetisColorPreferenceKey.PROGRESS);
         }
 
         @Override
@@ -191,6 +205,8 @@ public final class MetisFieldColours {
             defaultColour(MetisColorPreferenceKey.LINK, TethysValueSet.DEFAULT_COLOR_LINK);
             defaultColour(MetisColorPreferenceKey.VALUE, TethysValueSet.DEFAULT_COLOR_VALUE);
             defaultColour(MetisColorPreferenceKey.NEGATIVE, TethysValueSet.DEFAULT_COLOR_NEGATIVE);
+            defaultColour(MetisColorPreferenceKey.SECURITY, TethysValueSet.DEFAULT_COLOR_SECURITY);
+            defaultColour(MetisColorPreferenceKey.HEADER, TethysValueSet.DEFAULT_COLOR_HEADER);
         }
 
         /**

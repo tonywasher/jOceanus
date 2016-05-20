@@ -183,7 +183,7 @@ public class TethysSwingGuiFactory
 
     @Override
     public <T> TethysSwingTreeManager<T> newTreeManager() {
-        return new TethysSwingTreeManager<>();
+        return new TethysSwingTreeManager<>(this);
     }
 
     @Override

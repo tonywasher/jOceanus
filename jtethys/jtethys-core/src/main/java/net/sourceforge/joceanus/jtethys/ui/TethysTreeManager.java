@@ -36,18 +36,24 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Tree Manager.
  * @param <T> the item type
  * @param <N> the Node type
+ * @param <I> the Icon type
  */
-public abstract class TethysTreeManager<T, N>
-        implements TethysEventProvider<TethysUIEvent> {
+public abstract class TethysTreeManager<T, N, I>
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(TethysTreeManager.class);
 
     /**
+     * The id.
+     */
+    private final Integer theId;
+
+    /**
      * The map of items.
      */
-    private final Map<String, TethysTreeItem<T, N>> theItemMap;
+    private final Map<String, TethysTreeItem<T, N, I>> theItemMap;
 
     /**
      * The Event Manager.
@@ -62,7 +68,7 @@ public abstract class TethysTreeManager<T, N>
     /**
      * The root of the tree.
      */
-    private TethysTreeItem<T, N> theRoot;
+    private TethysTreeItem<T, N, I> theRoot;
 
     /**
      * The root name.
@@ -71,8 +77,10 @@ public abstract class TethysTreeManager<T, N>
 
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    protected TethysTreeManager() {
+    protected TethysTreeManager(final TethysGuiFactory<N, I> pFactory) {
+        theId = pFactory.getNextId();
         theItemMap = new HashMap<>();
         theEventManager = new TethysEventManager<>();
     }
@@ -82,11 +90,10 @@ public abstract class TethysTreeManager<T, N>
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Obtain the node.
-     * @return the node.
-     */
-    public abstract N getNode();
+    @Override
+    public Integer getId() {
+        return theId;
+    }
 
     /**
      * Obtain the selected item.
@@ -113,7 +120,7 @@ public abstract class TethysTreeManager<T, N>
      * Set the root node.
      * @param pRoot the root node
      */
-    protected void setRoot(final TethysTreeItem<T, N> pRoot) {
+    protected void setRoot(final TethysTreeItem<T, N, I> pRoot) {
         theRoot = pRoot;
     }
 
@@ -121,7 +128,7 @@ public abstract class TethysTreeManager<T, N>
      * Obtain the root.
      * @return the root
      */
-    public TethysTreeItem<T, N> getRoot() {
+    public TethysTreeItem<T, N, I> getRoot() {
         return theRoot;
     }
 
@@ -183,7 +190,7 @@ public abstract class TethysTreeManager<T, N>
      * @param pName the name of the item
      * @return the item (or null)
      */
-    public TethysTreeItem<T, N> lookUpItem(final String pName) {
+    public TethysTreeItem<T, N, I> lookUpItem(final String pName) {
         return theItemMap.get(pName);
     }
 
@@ -191,7 +198,7 @@ public abstract class TethysTreeManager<T, N>
      * Register item.
      * @param pItem the item to register
      */
-    protected void registerItem(final TethysTreeItem<T, N> pItem) {
+    protected void registerItem(final TethysTreeItem<T, N, I> pItem) {
         /* Access unique names */
         String myName = pItem.getName();
 
@@ -208,7 +215,7 @@ public abstract class TethysTreeManager<T, N>
      * DeRegister item.
      * @param pItem the item to deRegister
      */
-    protected void deRegisterItem(final TethysTreeItem<T, N> pItem) {
+    protected void deRegisterItem(final TethysTreeItem<T, N, I> pItem) {
         /* Access unique names */
         String myName = pItem.getName();
 
@@ -227,8 +234,8 @@ public abstract class TethysTreeManager<T, N>
      * @param pItem the item
      * @return the new tree item
      */
-    public abstract TethysTreeItem<T, N> addRootItem(final String pName,
-                                                     final T pItem);
+    public abstract TethysTreeItem<T, N, I> addRootItem(final String pName,
+                                                        final T pItem);
 
     /**
      * Add item to parent.
@@ -237,16 +244,17 @@ public abstract class TethysTreeManager<T, N>
      * @param pItem the item
      * @return the new tree item
      */
-    public abstract TethysTreeItem<T, N> addChildItem(final TethysTreeItem<T, N> pParent,
-                                                      final String pName,
-                                                      final T pItem);
+    public abstract TethysTreeItem<T, N, I> addChildItem(final TethysTreeItem<T, N, I> pParent,
+                                                         final String pName,
+                                                         final T pItem);
 
     /**
      * TreeItem class.
-     * @param <X> the data type
-     * @param <C> the component type
+     * @param <T> the data type
+     * @param <N> the node type
+     * @param <I> the icon type
      */
-    public abstract static class TethysTreeItem<X, C> {
+    public abstract static class TethysTreeItem<T, N, I> {
         /**
          * The unique name of this item.
          */
@@ -255,37 +263,37 @@ public abstract class TethysTreeManager<T, N>
         /**
          * The tree to which this item belongs.
          */
-        private final TethysTreeManager<X, C> theTree;
+        private final TethysTreeManager<T, N, I> theTree;
 
         /**
          * The parent of this item.
          */
-        private final TethysTreeItem<X, C> theParent;
+        private final TethysTreeItem<T, N, I> theParent;
 
         /**
          * The first child of this item.
          */
-        private TethysTreeItem<X, C> theFirstChild;
+        private TethysTreeItem<T, N, I> theFirstChild;
 
         /**
          * The last child of this item.
          */
-        private TethysTreeItem<X, C> theLastChild;
+        private TethysTreeItem<T, N, I> theLastChild;
 
         /**
          * The previous sibling of this item.
          */
-        private TethysTreeItem<X, C> thePrevSibling;
+        private TethysTreeItem<T, N, I> thePrevSibling;
 
         /**
          * The next sibling of this item.
          */
-        private TethysTreeItem<X, C> theNextSibling;
+        private TethysTreeItem<T, N, I> theNextSibling;
 
         /**
          * The underlying item.
          */
-        private X theItem;
+        private T theItem;
 
         /**
          * Is the item visible (i.e. part of the actual tree)?
@@ -296,7 +304,7 @@ public abstract class TethysTreeManager<T, N>
          * Constructor for root item.
          * @param pTree the tree
          */
-        protected TethysTreeItem(final TethysTreeManager<X, C> pTree) {
+        protected TethysTreeItem(final TethysTreeManager<T, N, I> pTree) {
             /* Store parameters */
             theTree = pTree;
             theParent = null;
@@ -312,10 +320,10 @@ public abstract class TethysTreeManager<T, N>
          * @param pName the unique name of the item
          * @param pItem the contained item
          */
-        protected TethysTreeItem(final TethysTreeManager<X, C> pTree,
-                                 final TethysTreeItem<X, C> pParent,
+        protected TethysTreeItem(final TethysTreeManager<T, N, I> pTree,
+                                 final TethysTreeItem<T, N, I> pParent,
                                  final String pName,
-                                 final X pItem) {
+                                 final T pItem) {
             /* Store parameters */
             theTree = pTree;
             theParent = pParent;
@@ -325,7 +333,7 @@ public abstract class TethysTreeManager<T, N>
             /* If we have a parent */
             if (theParent != null) {
                 /* If we already have children */
-                TethysTreeItem<X, C> myChild = theParent.theLastChild;
+                TethysTreeItem<T, N, I> myChild = theParent.theLastChild;
                 if (myChild != null) {
                     /* Link to last child */
                     myChild.theNextSibling = this;
@@ -354,7 +362,7 @@ public abstract class TethysTreeManager<T, N>
          * Obtain the item.
          * @return the item
          */
-        public X getItem() {
+        public T getItem() {
             return theItem;
         }
 
@@ -370,7 +378,7 @@ public abstract class TethysTreeManager<T, N>
          * Obtain the parent.
          * @return the parent
          */
-        public TethysTreeItem<X, C> getParent() {
+        public TethysTreeItem<T, N, I> getParent() {
             return theParent;
         }
 
@@ -378,7 +386,7 @@ public abstract class TethysTreeManager<T, N>
          * Obtain the tree.
          * @return the tree
          */
-        public TethysTreeManager<X, C> getTree() {
+        public TethysTreeManager<T, N, I> getTree() {
             return theTree;
         }
 
@@ -402,7 +410,7 @@ public abstract class TethysTreeManager<T, N>
          * Set the item.
          * @param pItem the item
          */
-        public void setItem(final X pItem) {
+        public void setItem(final T pItem) {
             theItem = pItem;
         }
 
@@ -458,7 +466,7 @@ public abstract class TethysTreeManager<T, N>
         public int countPreviousVisibleSiblings() {
             /* Determine the previous visible sibling */
             int myCount = 0;
-            TethysTreeItem<X, C> mySibling = thePrevSibling;
+            TethysTreeItem<T, N, I> mySibling = thePrevSibling;
             while (mySibling != null) {
                 if (mySibling.isVisible) {
                     myCount++;
@@ -473,7 +481,7 @@ public abstract class TethysTreeManager<T, N>
          */
         protected void attachToTree() {
             /* loop through visible children */
-            TethysTreeItem<X, C> myChild = theFirstChild;
+            TethysTreeItem<T, N, I> myChild = theFirstChild;
             while (myChild != null) {
                 /* If it is visible then attach to the tree */
                 if (myChild.isVisible()) {
@@ -488,7 +496,7 @@ public abstract class TethysTreeManager<T, N>
          */
         protected void detachFromTree() {
             /* loop through children */
-            TethysTreeItem<X, C> myChild = theFirstChild;
+            TethysTreeItem<T, N, I> myChild = theFirstChild;
             while (myChild != null) {
                 /* Detach from tree */
                 myChild.detachFromTree();
@@ -509,7 +517,7 @@ public abstract class TethysTreeManager<T, N>
                 theTree.deRegisterItem(theFirstChild);
 
                 /* Unlink the child */
-                TethysTreeItem<X, C> myCurr = theFirstChild;
+                TethysTreeItem<T, N, I> myCurr = theFirstChild;
                 theFirstChild = theFirstChild.theNextSibling;
                 myCurr.theNextSibling = null;
                 if (theFirstChild != null) {

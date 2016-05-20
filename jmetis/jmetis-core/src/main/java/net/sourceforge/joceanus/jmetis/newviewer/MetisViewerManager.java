@@ -22,194 +22,83 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newviewer;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager.TethysTreeItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
- * Viewer Manager class, responsible for displaying the debug view.
- * @param <N> the Node type
- * @param <I> the Icon type
+ * Viewer Data Manager.
  */
-public abstract class MetisViewerManager<N, I>
-        implements TethysEventProvider<TethysUIEvent> {
-    /**
-     * The Height of the window.
-     */
-    protected static final int WINDOW_WIDTH = 900;
-
-    /**
-     * The Height of the window.
-     */
-    protected static final int WINDOW_HEIGHT = 600;
-
-    /**
-     * The Data Manager.
-     */
-    private final MetisViewerDataManager theDataManager;
-
+public class MetisViewerManager
+        implements TethysEventProvider<MetisViewerEvent> {
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<MetisViewerEvent> theEventManager;
 
     /**
-     * The split tree.
+     * The Root List.
      */
-    private final TethysSplitTreeManager<MetisViewerEntry, N, I> theSplitTree;
+    private final List<MetisViewerEntry> theRootList;
 
     /**
-     * The tree manager.
+     * The Next entryId.
      */
-    private final TethysTreeManager<MetisViewerEntry, N> theTree;
+    private static AtomicInteger theNextEntryId = new AtomicInteger(1);
 
     /**
-     * The HTML manager.
+     * The Focused Entry.
      */
-    private final TethysHTMLManager<N, I> theHtml;
+    private MetisViewerEntry theFocused;
 
     /**
      * Constructor.
-     * @param pSplitManager the split tree manager
-     * @param pDataManager the viewer data manager
-     * @throws OceanusException on error
      */
-    protected MetisViewerManager(final TethysSplitTreeManager<MetisViewerEntry, N, I> pSplitManager,
-                                 final MetisViewerDataManager pDataManager) throws OceanusException {
-        /* Record the data manager */
-        theDataManager = pDataManager;
-
+    public MetisViewerManager() {
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
-        /* Obtain details about the SplitTree */
-        theSplitTree = pSplitManager;
-        theTree = theSplitTree.getTreeManager();
-        theHtml = theSplitTree.getHTMLManager();
-
-        /* initialise the tree */
-        initialiseTree();
-
-        /* Listen to the TreeManager */
-        theSplitTree.getEventRegistrar().addEventListener(this::handleSplitTreeAction);
-
-        /* Listen to the data manager */
-        TethysEventRegistrar<MetisViewerEvent> myRegistrar = theDataManager.getEventRegistrar();
-        myRegistrar.addEventListener(MetisViewerEvent.FOCUS, this::handleFocusEvent);
-        myRegistrar.addEventListener(MetisViewerEvent.VISIBILITY, this::handleVisibilityEvent);
-        myRegistrar.addEventListener(MetisViewerEvent.VALUE, this::handleValueEvent);
+        /* Create the root list */
+        theRootList = new ArrayList<>();
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<MetisViewerEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
     /**
-     * Obtain the SplitTree Manager.
-     * @return the tree manager
+     * Get root iterator.
+     * @return the iterator
      */
-    public TethysSplitTreeManager<MetisViewerEntry, N, I> getSplitTreeManager() {
-        return theSplitTree;
+    public Iterator<MetisViewerEntry> rootIterator() {
+        return theRootList.iterator();
     }
 
     /**
-     * Obtain the Tree Manager.
-     * @return the tree manager
+     * Get focused entry.
+     * @return the focused entry
      */
-    public TethysTreeManager<MetisViewerEntry, N> getTreeManager() {
-        return theTree;
+    protected MetisViewerEntry getFocus() {
+        return theFocused;
     }
 
     /**
-     * Obtain the HTML Manager.
-     * @return the HTML manager
+     * Set focused entry.
+     * @param pEntry the entry to focus on
      */
-    public TethysHTMLManager<N, I> getHTMLManager() {
-        return theHtml;
-    }
-
-    /**
-     * Initialise tree.
-     */
-    private void initialiseTree() {
-        /* Loop through the root children */
-        Iterator<MetisViewerEntry> myIterator = theDataManager.rootIterator();
-        while (myIterator.hasNext()) {
-            MetisViewerEntry myEntry = myIterator.next();
-
-            /* Create a new root entry */
-            TethysTreeItem<MetisViewerEntry, N> myTreeItem = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
-
-            /* Create child entries */
-            createChildEntries(myTreeItem);
+    protected void setFocus(final MetisViewerEntry pEntry) {
+        /* If this is a change in focus */
+        if (!pEntry.equals(theFocused)) {
+            /* Record and report the change */
+            theFocused = pEntry;
+            fireEvent(MetisViewerEvent.FOCUS, pEntry);
         }
-    }
-
-    /**
-     * create child items.
-     * @param pItem the parent of the child items
-     */
-    private void createChildEntries(final TethysTreeItem<MetisViewerEntry, N> pItem) {
-        /* Access the item */
-        MetisViewerEntry myItem = pItem.getItem();
-
-        /* Loop through the children */
-        Iterator<MetisViewerEntry> myIterator = myItem.childIterator();
-        while (myIterator.hasNext()) {
-            MetisViewerEntry myEntry = myIterator.next();
-
-            /* Create a new child entry */
-            TethysTreeItem<MetisViewerEntry, N> myTreeItem = theTree.addChildItem(pItem, myEntry.getUniqueName(), myEntry);
-
-            /* Create child entries */
-            createChildEntries(myTreeItem);
-        }
-    }
-
-    /**
-     * Handle focus event.
-     * @param pEvent the event
-     */
-    private void handleFocusEvent(final TethysEvent<MetisViewerEvent> pEvent) {
-        /* Look up item and select it */
-        MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
-        theTree.lookUpAndSelectItem(myEntry.getUniqueName());
-    }
-
-    /**
-     * Handle visibility event.
-     * @param pEvent the event
-     */
-    private void handleVisibilityEvent(final TethysEvent<MetisViewerEvent> pEvent) {
-        /* Look up item and set visibility */
-        MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
-        TethysTreeItem<MetisViewerEntry, N> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
-        myTreeItem.setVisible(myEntry.isVisible());
-    }
-
-    /**
-     * Handle value event.
-     * @param pEvent the event
-     */
-    private void handleValueEvent(final TethysEvent<MetisViewerEvent> pEvent) {
-        /* Look up item and set visibility */
-        MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
-        TethysTreeItem<MetisViewerEntry, N> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
-
-        /* Remove the children of the item and rebuild them */
-        myTreeItem.removeChildren();
-        createChildEntries(myTreeItem);
     }
 
     /**
@@ -217,46 +106,43 @@ public abstract class MetisViewerManager<N, I>
      * @param pEventId the eventId
      * @param pValue the relevant value
      */
-    protected void fireEvent(final TethysUIEvent pEventId,
+    protected void fireEvent(final MetisViewerEvent pEventId,
                              final Object pValue) {
         theEventManager.fireEvent(pEventId, pValue);
     }
 
     /**
-     * show the dialog.
+     * Get NextId.
+     * @return the next id
      */
-    public abstract void showDialog();
-
-    /**
-     * Hide the dialog.
-     */
-    public abstract void hideDialog();
-
-    /**
-     * Handle the split tree action event.
-     * @param pEvent the event
-     */
-    protected void handleSplitTreeAction(final TethysEvent<TethysUIEvent> pEvent) {
-        switch (pEvent.getEventId()) {
-            case NEWVALUE:
-                handleNewTreeItem(pEvent.getDetails(TethysHelpEntry.class));
-                break;
-            case BUILDPAGE:
-            default:
-                break;
-        }
+    protected int getNextId() {
+        return theNextEntryId.getAndIncrement();
     }
 
     /**
-     * Handle the new tree item.
-     * @param pEntry the new entry
+     * Create a new root entry.
+     * @param pName the name of the new entry
+     * @return the new entry
      */
-    private void handleNewTreeItem(final TethysHelpEntry pEntry) {
-        if (pEntry != null) {
-            String myHtml = pEntry.getHtml();
-            if (myHtml != null) {
-                theHtml.setHTMLContent(myHtml, pEntry.getName());
-            }
-        }
+    public MetisViewerEntry newEntry(final String pName) {
+        /* Create the entry and add to root List */
+        MetisViewerEntry myEntry = new MetisViewerEntry(this, null, pName);
+        theRootList.add(myEntry);
+        fireEvent(MetisViewerEvent.ENTRY, myEntry);
+        return myEntry;
+    }
+
+    /**
+     * Create a new entry under parent.
+     * @param pParent the parent entry
+     * @param pName the name of the new entry
+     * @return the new entry
+     */
+    public MetisViewerEntry newEntry(final MetisViewerEntry pParent,
+                                     final String pName) {
+        /* Create the entry under the parent */
+        MetisViewerEntry myEntry = new MetisViewerEntry(this, pParent, pName);
+        fireEvent(MetisViewerEvent.ENTRY, myEntry);
+        return myEntry;
     }
 }

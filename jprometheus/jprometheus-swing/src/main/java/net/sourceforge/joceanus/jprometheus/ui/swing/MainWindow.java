@@ -64,7 +64,7 @@ import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
-import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpManager;
+import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
@@ -328,7 +328,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Started Help window.
      */
-    private TethysSwingHelpManager theHelpWdw;
+    private TethysSwingHelpWindow theHelpWdw;
 
     /**
      * The Viewer Manager.
@@ -893,7 +893,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private void displayHelp() {
         try {
             /* Create the help window */
-            theHelpWdw = new TethysSwingHelpManager((TethysSwingGuiFactory) theView.getUtilitySet().getGuiFactory());
+            theHelpWdw = new TethysSwingHelpWindow((TethysSwingGuiFactory) theView.getUtilitySet().getGuiFactory());
             theHelpWdw.setFrame(theFrame);
             theHelpWdw.setModule(getHelpModule());
 

@@ -44,12 +44,16 @@ public class TethysFXSplitTreeManager<T>
      */
     protected TethysFXSplitTreeManager(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
-        super(new TethysFXTreeManager<T>(), new TethysFXHTMLManager(pFactory));
+        super(pFactory);
+
+        /* Store HTML pane in border pane */
+        TethysFXBorderPaneManager myHTMLPane = getHTMLPane();
+        myHTMLPane.setCentre(getHTMLManager());
 
         /* Create the split pane */
         theSplit = new SplitPane();
         theSplit.setOrientation(Orientation.HORIZONTAL);
-        theSplit.getItems().addAll(getTreeManager().getNode(), getHTMLManager().getNode());
+        theSplit.getItems().addAll(getTreeManager().getNode(), myHTMLPane.getNode());
     }
 
     @Override
@@ -63,7 +67,23 @@ public class TethysFXSplitTreeManager<T>
     }
 
     @Override
+    protected TethysFXBorderPaneManager getHTMLPane() {
+        return (TethysFXBorderPaneManager) super.getHTMLPane();
+    }
+
+    @Override
     public Node getNode() {
         return theSplit;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theSplit.setDisable(!pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theSplit.setVisible(pVisible);
+        theSplit.setManaged(pVisible);
     }
 }

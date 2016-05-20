@@ -57,14 +57,14 @@ public class TestFXHelpWindow
     /**
      * The HelpManager.
      */
-    private final TethysFXHelpManager theHelpWindow;
+    private final TethysFXHelpWindow theHelpWindow;
 
     /**
      * Constructor.
      */
     public TestFXHelpWindow() {
         theButton = new Button("Help");
-        theHelpWindow = new TethysFXHelpManager(new TethysFXGuiFactory());
+        theHelpWindow = new TethysFXHelpWindow(new TethysFXGuiFactory());
     }
 
     /**

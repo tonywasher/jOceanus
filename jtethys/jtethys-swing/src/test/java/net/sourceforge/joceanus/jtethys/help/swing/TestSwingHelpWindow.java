@@ -65,14 +65,14 @@ public class TestSwingHelpWindow
     /**
      * The HelpManager.
      */
-    private final TethysSwingHelpManager theHelpWindow;
+    private final TethysSwingHelpWindow theHelpWindow;
 
     /**
      * Constructor.
      */
     public TestSwingHelpWindow() {
         theButton = new JButton("Help");
-        theHelpWindow = new TethysSwingHelpManager(new TethysSwingGuiFactory());
+        theHelpWindow = new TethysSwingHelpWindow(new TethysSwingGuiFactory());
     }
 
     /**

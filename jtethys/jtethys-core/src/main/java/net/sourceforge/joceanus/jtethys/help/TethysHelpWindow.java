@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <N> the Node type
  * @param <I> the Icon type
  */
-public abstract class TethysHelpManager<N, I>
+public abstract class TethysHelpWindow<N, I>
         implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Height of the window.
@@ -65,7 +66,7 @@ public abstract class TethysHelpManager<N, I>
     /**
      * The tree manager.
      */
-    private final TethysTreeManager<TethysHelpEntry, N> theTree;
+    private final TethysTreeManager<TethysHelpEntry, N, I> theTree;
 
     /**
      * The HTML manager.
@@ -74,14 +75,14 @@ public abstract class TethysHelpManager<N, I>
 
     /**
      * Constructor.
-     * @param pSplitManager the split tree manager
+     * @param pFactory the GUI factory
      */
-    protected TethysHelpManager(final TethysSplitTreeManager<TethysHelpEntry, N, I> pSplitManager) {
+    protected TethysHelpWindow(final TethysGuiFactory<N, I> pFactory) {
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
-        /* Obtain details about the SplitTree */
-        theSplitTree = pSplitManager;
+        /* Create the splitTree manager and obtain details */
+        theSplitTree = pFactory.newSplitTreeManager();
         theTree = theSplitTree.getTreeManager();
         theHtml = theSplitTree.getHTMLManager();
 
@@ -106,7 +107,7 @@ public abstract class TethysHelpManager<N, I>
      * Obtain the Tree Manager.
      * @return the tree manager
      */
-    public TethysTreeManager<TethysHelpEntry, N> getTreeManager() {
+    public TethysTreeManager<TethysHelpEntry, N, I> getTreeManager() {
         return theTree;
     }
 
@@ -191,10 +192,10 @@ public abstract class TethysHelpManager<N, I>
      * @param pEntries the help entries
      * @return the Tree node
      */
-    private TethysTreeItem<TethysHelpEntry, N> createTree(final String pTitle,
-                                                          final List<TethysHelpEntry> pEntries) {
+    private TethysTreeItem<TethysHelpEntry, N, I> createTree(final String pTitle,
+                                                             final List<TethysHelpEntry> pEntries) {
         /* Obtain the root node */
-        TethysTreeItem<TethysHelpEntry, N> myRoot = theTree.getRoot();
+        TethysTreeItem<TethysHelpEntry, N, I> myRoot = theTree.getRoot();
         theTree.setRootName(pTitle);
         theTree.setRootVisible();
 
@@ -213,12 +214,12 @@ public abstract class TethysHelpManager<N, I>
      * @param pParent the parent to add to
      * @param pEntries the entries to add
      */
-    private void addHelpEntries(final TethysTreeItem<TethysHelpEntry, N> pParent,
+    private void addHelpEntries(final TethysTreeItem<TethysHelpEntry, N, I> pParent,
                                 final List<TethysHelpEntry> pEntries) {
         /* Loop through the entries */
         for (TethysHelpEntry myEntry : pEntries) {
             /* Create the entry */
-            TethysTreeItem<TethysHelpEntry, N> myItem = theTree.addChildItem(pParent, myEntry.getName(), myEntry);
+            TethysTreeItem<TethysHelpEntry, N, I> myItem = theTree.addChildItem(pParent, myEntry.getName(), myEntry);
 
             /* If we have children */
             List<TethysHelpEntry> myChildren = myEntry.getChildren();

@@ -43,7 +43,12 @@ public class MetisViewerEntry {
     /**
      * The ViewerManager.
      */
-    private final MetisViewerDataManager theManager;
+    private final MetisViewerManager theManager;
+
+    /**
+     * The Parent.
+     */
+    private final MetisViewerEntry theParent;
 
     /**
      * The id of the entry.
@@ -81,11 +86,12 @@ public class MetisViewerEntry {
      * @param pParent the parent entry
      * @param pName the entry display name
      */
-    protected MetisViewerEntry(final MetisViewerDataManager pManager,
+    protected MetisViewerEntry(final MetisViewerManager pManager,
                                final MetisViewerEntry pParent,
                                final String pName) {
         /* Store parameters */
         theManager = pManager;
+        theParent = pParent;
         theDisplayName = pName;
 
         /* Obtain entry id. */
@@ -111,8 +117,16 @@ public class MetisViewerEntry {
      * Get viewer manager.
      * @return the manager
      */
-    protected MetisViewerDataManager getManager() {
+    protected MetisViewerManager getManager() {
         return theManager;
+    }
+
+    /**
+     * Get parent.
+     * @return the parent
+     */
+    protected MetisViewerEntry getParent() {
+        return theParent;
     }
 
     /**

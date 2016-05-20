@@ -34,16 +34,26 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <I> the icon type
  */
 public abstract class TethysSplitTreeManager<T, N, I>
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+    /**
+     * The id.
+     */
+    private final Integer theId;
+
     /**
      * The Event Manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
+     * The HTMLPane.
+     */
+    private final TethysBorderPaneManager<N, I> theHTMLPane;
+
+    /**
      * The Tree Manager.
      */
-    private final TethysTreeManager<T, N> theTreeManager;
+    private final TethysTreeManager<T, N, I> theTreeManager;
 
     /**
      * The HTML Manager.
@@ -52,14 +62,14 @@ public abstract class TethysSplitTreeManager<T, N, I>
 
     /**
      * Constructor.
-     * @param pTreeManager the tree manager
-     * @param pHTMLManager the html manager
+     * @param pFactory the GUI factory
      */
-    protected TethysSplitTreeManager(final TethysTreeManager<T, N> pTreeManager,
-                                     final TethysHTMLManager<N, I> pHTMLManager) {
-        /* Store parameters */
-        theTreeManager = pTreeManager;
-        theHTMLManager = pHTMLManager;
+    protected TethysSplitTreeManager(final TethysGuiFactory<N, I> pFactory) {
+        /* Create instances */
+        theId = pFactory.getNextId();
+        theTreeManager = pFactory.newTreeManager();
+        theHTMLManager = pFactory.newHTMLManager();
+        theHTMLPane = pFactory.newBorderPane();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -71,11 +81,16 @@ public abstract class TethysSplitTreeManager<T, N, I>
         theHTMLManager.getEventRegistrar().addEventListener(this::handleReferenceLookup);
     }
 
+    @Override
+    public Integer getId() {
+        return theId;
+    }
+
     /**
      * Obtain the Tree Manager.
      * @return the tree manager
      */
-    public TethysTreeManager<T, N> getTreeManager() {
+    public TethysTreeManager<T, N, I> getTreeManager() {
         return theTreeManager;
     }
 
@@ -87,16 +102,26 @@ public abstract class TethysSplitTreeManager<T, N, I>
         return theHTMLManager;
     }
 
+    /**
+     * Obtain the HTML Pane.
+     * @return the HTML pane
+     */
+    protected TethysBorderPaneManager<N, I> getHTMLPane() {
+        return theHTMLPane;
+    }
+
     @Override
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
     /**
-     * Obtain the node.
-     * @return the node.
+     * Set control Pane.
+     * @param pPane the control Pane
      */
-    public abstract N getNode();
+    public void setControlPane(final TethysNode<N> pPane) {
+        theHTMLPane.setNorth(pPane);
+    }
 
     /**
      * Handle HTML reference lookUp.

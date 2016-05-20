@@ -23,26 +23,21 @@
 package net.sourceforge.joceanus.jmetis.newviewer;
 
 /**
- * Viewer Events.
+ * Viewer Mode.
  */
-public enum MetisViewerEvent {
+public enum MetisViewerMode {
     /**
-     * Entry.
+     * Contents.
      */
-    ENTRY,
+    CONTENTS,
 
     /**
-     * Value.
+     * Summary.
      */
-    VALUE,
+    SUMMARY,
 
     /**
-     * Visibility.
+     * Items.
      */
-    VISIBILITY,
-
-    /**
-     * Focus.
-     */
-    FOCUS;
+    ITEMS;
 }

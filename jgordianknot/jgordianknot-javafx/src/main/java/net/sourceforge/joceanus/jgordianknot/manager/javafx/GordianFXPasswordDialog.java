@@ -22,6 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.manager.javafx;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,10 +141,25 @@ public class GordianFXPasswordDialog
 
             /* else we must use invokeAndWait */
         } else {
+            /* Create a FutureTask so that we will wait */
+            FutureTask<Void> myTask = new FutureTask<>(new Callable<Void>() {
+                @Override
+                public Void call() {
+                    pDialog.showDialog();
+                    return null;
+                }
+            });
+
+            /* Protect against exceptions */
             try {
-                Platform.runLater(() -> pDialog.showDialog());
-            } catch (IllegalStateException e) {
+                /* Run on Application thread and wait for completion */
+                Platform.runLater(myTask);
+                myTask.get();
+            } catch (IllegalStateException
+                    | ExecutionException e) {
                 LOGGER.error("Failed to display dialog", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
 

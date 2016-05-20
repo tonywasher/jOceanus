@@ -22,27 +22,42 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newviewer;
 
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+
 /**
- * Viewer Events.
+ * Viewer Icon IDs.
  */
-public enum MetisViewerEvent {
+public enum MetisViewerIcon implements TethysIconId {
     /**
-     * Entry.
+     * Parent.
      */
-    ENTRY,
+    PARENT("BlueJellyParent.png"),
 
     /**
-     * Value.
+     * Next.
      */
-    VALUE,
+    NEXT("icons/OrangeJellyAlphaDelete.png"),
 
     /**
-     * Visibility.
+     * Disabled.
      */
-    VISIBILITY,
+    PREV("icons/OrangeJellyAlphaDisabled.png");
 
     /**
-     * Focus.
+     * Source name.
      */
-    FOCUS;
+    private final String theSource;
+
+    /**
+     * Constructor.
+     * @param pSourceName the source name
+     */
+    MetisViewerIcon(final String pSourceName) {
+        theSource = pSourceName;
+    }
+
+    @Override
+    public String getSourceName() {
+        return theSource;
+    }
 }

@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
@@ -46,14 +45,20 @@ public class TethysSwingSplitTreeManager<T>
      */
     protected TethysSwingSplitTreeManager(final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
-        super(new TethysSwingTreeManager<T>(), new TethysSwingHTMLManager(pFactory));
+        super(pFactory);
 
         /* Create scroll-panes */
-        JScrollPane myTreeScroll = new JScrollPane(getTreeManager().getNode());
-        JScrollPane myHTMLScroll = new JScrollPane(getHTMLManager().getNode());
+        TethysSwingScrollPaneManager myTreeScroll = pFactory.newScrollPane();
+        myTreeScroll.setContent(getTreeManager());
+        TethysSwingScrollPaneManager myHTMLScroll = pFactory.newScrollPane();
+        myHTMLScroll.setContent(getHTMLManager());
+
+        /* Store HTML pane in border pane */
+        TethysSwingBorderPaneManager myHTMLPane = getHTMLPane();
+        myHTMLPane.setCentre(getHTMLManager());
 
         /* Create the split pane */
-        theSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll, myHTMLScroll);
+        theSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll.getNode(), myHTMLPane.getNode());
         theSplit.setOneTouchExpandable(true);
     }
 
@@ -68,7 +73,22 @@ public class TethysSwingSplitTreeManager<T>
     }
 
     @Override
+    protected TethysSwingBorderPaneManager getHTMLPane() {
+        return (TethysSwingBorderPaneManager) super.getHTMLPane();
+    }
+
+    @Override
     public JComponent getNode() {
         return theSplit;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theSplit.setEnabled(pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theSplit.setVisible(pVisible);
     }
 }

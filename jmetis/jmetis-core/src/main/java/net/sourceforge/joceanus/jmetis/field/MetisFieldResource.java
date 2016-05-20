@@ -86,6 +86,16 @@ public enum MetisFieldResource implements TethysResourceId {
     FIELDCOLOR_PROGRESS("colorpref.display.PROGRESS"),
 
     /**
+     * FieldColor SECURITY.
+     */
+    FIELDCOLOR_SECURITY("colorpref.display.SECURITY"),
+
+    /**
+     * FieldColor HEADER.
+     */
+    FIELDCOLOR_HEADER("colorpref.display.HEADER"),
+
+    /**
      * FieldValue ERROR.
      */
     FIELDVALUE_ERROR("fieldvalue.ERROR");
