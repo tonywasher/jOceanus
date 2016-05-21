@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoLinkSet;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
@@ -120,7 +120,7 @@ public class TransactionTag
             /* Catch Exceptions */
         } catch (OceanusException e) {
             /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -609,7 +609,7 @@ public class TransactionTag
             /* Check that this TagId has not been previously added */
             if (!isIdUnique(myTag.getId())) {
                 myTag.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myTag, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myTag, ERROR_VALIDATION);
             }
 
             /* Add to the list */

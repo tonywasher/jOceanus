@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -999,7 +999,7 @@ public abstract class DataItem<E extends Enum<E>>
             DataItem<?> myItem = pList.findItemById((Integer) myValue);
             if (myItem == null) {
                 addError(ERROR_UNKNOWN, pField);
-                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
+                throw new PrometheusDataException(this, ERROR_RESOLUTION);
             }
             myValues.setValue(pField, myItem);
 
@@ -1008,7 +1008,7 @@ public abstract class DataItem<E extends Enum<E>>
             DataItem<?> myItem = pList.findItemByName((String) myValue);
             if (myItem == null) {
                 addError(ERROR_UNKNOWN, pField);
-                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
+                throw new PrometheusDataException(this, ERROR_RESOLUTION);
             }
             myValues.setValue(pField, myItem);
         }

@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
@@ -133,7 +133,7 @@ public final class SheetAccount {
 
             /* Handle exceptions */
         } catch (OceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load " + SHEET_AREA, e);
+            throw new MoneyWiseIOException("Failed to Load " + SHEET_AREA, e);
         }
 
         /* Return to caller */
@@ -219,7 +219,7 @@ public final class SheetAccount {
 
             /* else reject if not payee */
         } else if (!myClass.equals(MoneyWiseDataType.PAYEE.toString())) {
-            throw new JMoneyWiseLogicException("Unexpected Account Class " + myClass);
+            throw new MoneyWiseLogicException("Unexpected Account Class " + myClass);
         }
     }
 

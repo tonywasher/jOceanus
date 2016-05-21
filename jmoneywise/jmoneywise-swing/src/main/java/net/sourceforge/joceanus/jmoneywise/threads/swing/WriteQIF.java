@@ -36,8 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseCancelException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferenceKey;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
@@ -134,12 +134,12 @@ public class WriteQIF
 
             /* Check for cancellation */
             if (!isSuccess) {
-                throw new JMoneyWiseCancelException("Operation Cancelled");
+                throw new MoneyWiseCancelException("Operation Cancelled");
             }
 
         } catch (IOException e) {
             /* Report the error */
-            throw new JMoneyWiseIOException("Failed to write to file: " + myOutFile.getName(), e);
+            throw new MoneyWiseIOException("Failed to write to file: " + myOutFile.getName(), e);
         } finally {
             /* Delete the file */
             if ((!bSuccess) && (!myOutFile.delete())) {
@@ -167,7 +167,7 @@ public class WriteQIF
 
         } catch (IOException e) {
             /* Report the error */
-            throw new JMoneyWiseIOException("Failed to load to file: " + myOutFile.getName(), e);
+            throw new MoneyWiseIOException("Failed to load to file: " + myOutFile.getName(), e);
         }
 
         /* Return nothing */

@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedListIterator;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -792,7 +792,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         /* Validate the list */
         DataErrorList<DataItem<E>> myErrors = validate();
         if (myErrors != null) {
-            throw new JPrometheusDataException(myErrors, DataItem.ERROR_VALIDATION);
+            throw new PrometheusDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 

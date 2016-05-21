@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
@@ -193,7 +193,7 @@ public class Transaction
             /* Catch Exceptions */
         } catch (IllegalArgumentException e) {
             /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
 
         /* Create the InfoSet */
@@ -884,7 +884,7 @@ public class Transaction
     public final void setTransactionTag(final TransactionTag pTag) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
+            throw new MoneyWiseLogicException(ERROR_BADINFOSET);
         }
 
         /* Link the value */
@@ -899,7 +899,7 @@ public class Transaction
     public final void clearTransactionTag(final TransactionTag pTag) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
+            throw new MoneyWiseLogicException(ERROR_BADINFOSET);
         }
 
         /* Link the value */
@@ -943,7 +943,7 @@ public class Transaction
                                  final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
+            throw new MoneyWiseLogicException(ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -1123,7 +1123,7 @@ public class Transaction
             /* Check that this TransId has not been previously added */
             if (!isIdUnique(myTrans.getId())) {
                 myTrans.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myTrans, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myTrans, ERROR_VALIDATION);
             }
 
             /* Add to the list */

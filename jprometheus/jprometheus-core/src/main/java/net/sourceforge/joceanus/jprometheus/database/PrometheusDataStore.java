@@ -35,9 +35,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
-import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
-import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
+import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
+import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusDatabase.PrometheusDatabasePreferenceKey;
@@ -130,10 +130,10 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
 
             theConn.setAutoCommit(false);
         } catch (ClassNotFoundException e) {
-            throw new JPrometheusIOException("Failed to locate driver", e);
+            throw new PrometheusIOException("Failed to locate driver", e);
 
         } catch (SQLException e) {
-            throw new JPrometheusIOException("Failed to load driver", e);
+            throw new PrometheusIOException("Failed to load driver", e);
         }
 
         /* Create table list and add the tables to the list */
@@ -246,7 +246,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new JPrometheusLogicException("Operation Cancelled");
+            throw new PrometheusLogicException("Operation Cancelled");
         }
 
         /* Return the data */
@@ -318,7 +318,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
                 theConn.commit();
             } catch (SQLException e) {
                 close();
-                throw new JPrometheusIOException("Failed to commit transaction", e);
+                throw new PrometheusIOException("Failed to commit transaction", e);
             }
 
             /* Commit the batch */
@@ -330,7 +330,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new JPrometheusCancelException("Operation Cancelled");
+            throw new PrometheusCancelException("Operation Cancelled");
         }
     }
 

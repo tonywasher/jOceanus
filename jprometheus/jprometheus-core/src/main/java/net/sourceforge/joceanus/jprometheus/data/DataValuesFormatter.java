@@ -55,8 +55,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -104,9 +104,9 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     /**
      * Constructor.
      * @param pTask the task control
-     * @throws JPrometheusIOException on error
+     * @throws PrometheusIOException on error
      */
-    public DataValuesFormatter(final TaskControl<T> pTask) throws JPrometheusIOException {
+    public DataValuesFormatter(final TaskControl<T> pTask) throws PrometheusIOException {
         /* Store values */
         theTask = pTask;
 
@@ -121,7 +121,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             theXformer = myXformFactory.newTransformer();
 
         } catch (ParserConfigurationException | TransformerConfigurationException e) {
-            throw new JPrometheusIOException("Failed to initialise parser", e);
+            throw new PrometheusIOException("Failed to initialise parser", e);
         }
     }
 
@@ -176,7 +176,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             return bContinue;
 
         } catch (IOException e) {
-            throw new JPrometheusIOException("Failed to create backup XML", e);
+            throw new PrometheusIOException("Failed to create backup XML", e);
         } finally {
             /* Delete the file on error */
             if (!bContinue && !pFile.delete()) {
@@ -232,7 +232,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             return bContinue;
 
         } catch (IOException e) {
-            throw new JPrometheusIOException("Failed to create extract XML", e);
+            throw new PrometheusIOException("Failed to create extract XML", e);
         } finally {
             /* Delete the file on error */
             if (!bContinue && !pFile.delete()) {
@@ -271,7 +271,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             return bContinue;
 
         } catch (TransformerException | IOException e) {
-            throw new JPrometheusIOException("Failed to transform XML", e);
+            throw new PrometheusIOException("Failed to transform XML", e);
         }
     }
 
@@ -451,7 +451,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         GordianZipFileContents myContents = pZipFile.getContents();
         GordianZipFileEntry myEntry = myContents.findFileEntry(myName);
         if (myEntry == null) {
-            throw new JPrometheusDataException("List not found " + myName);
+            throw new PrometheusDataException("List not found " + myName);
         }
 
         /* Protect the workbook access */
@@ -463,7 +463,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             return parseXMLDocument(myDocument, pList);
 
         } catch (IOException | SAXException e) {
-            throw new JPrometheusIOException("Failed to parse XML", e);
+            throw new PrometheusIOException("Failed to parse XML", e);
         }
     }
 
@@ -483,7 +483,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         /* Check that the document name and dataType are correct */
         if ((!MetisDifference.isEqual(myElement.getNodeName(), pList.listName()))
             || (!MetisDifference.isEqual(myElement.getAttribute(DataValues.ATTR_TYPE), myItemType.name()))) {
-            throw new JPrometheusDataException("Invalid list type");
+            throw new PrometheusDataException("Invalid list type");
         }
 
         /* If this is the first Data version */
@@ -491,7 +491,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         if (theVersion == null) {
             theVersion = myVersion;
         } else if (!theVersion.equals(myVersion)) {
-            throw new JPrometheusDataException("Inconsistent data version");
+            throw new PrometheusDataException("Inconsistent data version");
         }
 
         /* Access field types for list */
@@ -551,7 +551,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             String mySize = pElement.getAttribute(DataValues.ATTR_SIZE);
             return pFormatter.parseValue(mySize, Integer.class);
         } catch (NumberFormatException e) {
-            throw new JPrometheusDataException("Invalid list count", e);
+            throw new PrometheusDataException("Invalid list count", e);
         }
     }
 }

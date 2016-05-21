@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisEncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -222,7 +222,7 @@ public class DataKeySet
             /* Catch Exceptions */
         } catch (OceanusException e) {
             /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
+            throw new PrometheusDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -572,7 +572,7 @@ public class DataKeySet
             /* Check that this keyId has not been previously added */
             if (!isIdUnique(mySet.getId())) {
                 mySet.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JPrometheusDataException(mySet, ERROR_VALIDATION);
+                throw new PrometheusDataException(mySet, ERROR_VALIDATION);
             }
 
             /* Add to the list */

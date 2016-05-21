@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.Str
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
@@ -629,7 +629,7 @@ public class DepositCategoryTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new JMoneyWiseDataException("Failed to create new category", e);
+                OceanusException myError = new MoneyWiseDataException("Failed to create new category", e);
 
                 /* Show the error */
                 setError(myError);

@@ -25,11 +25,9 @@ package net.sourceforge.joceanus.jmetis.threads.swing;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatus;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Swing Thread manager.
@@ -43,12 +41,10 @@ public class MetisSwingThreadManager
 
     /**
      * Constructor.
-     * @param pViewerManager the viewer manager
-     * @param pFactory the GUI factory
+     * @param pToolkit the toolkit
      */
-    public MetisSwingThreadManager(final MetisViewerManager pViewerManager,
-                                   final TethysSwingGuiFactory pFactory) {
-        super(pViewerManager, new MetisSwingThreadStatusManager(pFactory));
+    public MetisSwingThreadManager(final MetisSwingToolkit pToolkit) {
+        super(pToolkit);
     }
 
     @Override

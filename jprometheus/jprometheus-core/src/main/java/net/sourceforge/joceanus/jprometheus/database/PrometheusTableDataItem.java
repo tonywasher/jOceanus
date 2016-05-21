@@ -32,8 +32,8 @@ import java.util.ListIterator;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -334,7 +334,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             postProcessOnLoad();
 
         } catch (SQLException e) {
-            throw new JPrometheusIOException("Failed to load " + getTableName(), e);
+            throw new PrometheusIOException("Failed to load " + getTableName(), e);
         }
 
         /* Return to caller */
@@ -454,7 +454,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             closeStmt();
 
         } catch (SQLException e) {
-            throw new JPrometheusDataException(myCurr, "Failed to insert " + getTableName(), e);
+            throw new PrometheusDataException(myCurr, "Failed to insert " + getTableName(), e);
         }
 
         /* Return to caller */
@@ -537,7 +537,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 }
             }
         } catch (SQLException e) {
-            throw new JPrometheusDataException(myCurr, "Failed to update " + getTableName(), e);
+            throw new PrometheusDataException(myCurr, "Failed to update " + getTableName(), e);
         }
 
         /* Return to caller */
@@ -662,7 +662,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             /* Close the Statement */
             closeStmt();
         } catch (SQLException e) {
-            throw new JPrometheusDataException(myCurr, "Failed to delete " + getTableName(), e);
+            throw new PrometheusDataException(myCurr, "Failed to delete " + getTableName(), e);
         }
 
         /* Return to caller */
@@ -689,7 +689,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 executeStatement(myCreate);
             }
         } catch (SQLException e) {
-            throw new JPrometheusIOException("Failed to create " + getTableName(), e);
+            throw new PrometheusIOException("Failed to create " + getTableName(), e);
         }
     }
 
@@ -711,7 +711,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             myDrop = theTable.getDropTableString();
             executeStatement(myDrop);
         } catch (SQLException e) {
-            throw new JPrometheusIOException("Failed to drop " + getTableName(), e);
+            throw new PrometheusIOException("Failed to drop " + getTableName(), e);
         }
     }
 
@@ -726,7 +726,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             String myTrunc = theTable.getPurgeString();
             executeStatement(myTrunc);
         } catch (SQLException e) {
-            throw new JPrometheusIOException("Failed to purge " + getTableName(), e);
+            throw new PrometheusIOException("Failed to purge " + getTableName(), e);
         }
     }
 

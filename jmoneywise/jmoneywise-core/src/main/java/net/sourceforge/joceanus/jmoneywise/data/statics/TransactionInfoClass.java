@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -216,7 +216,7 @@ public enum TransactionInfoClass implements DataInfoClass {
                 return myClass;
             }
         }
-        throw new JMoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.TRANSINFOTYPE.toString() + ":" + id);
+        throw new MoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.TRANSINFOTYPE.toString() + ":" + id);
     }
 
     /**

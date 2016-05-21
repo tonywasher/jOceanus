@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,35 +20,27 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise;
+package net.sourceforge.joceanus.jprometheus;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * MoneyWise Logic Exception.
+ * Prometheus IO Exception.
  */
-public class JMoneyWiseLogicException
+public class PrometheusIOException
         extends OceanusException {
     /**
      * SerialId.
      */
-    private static final long serialVersionUID = 7365752331990335281L;
+    private static final long serialVersionUID = -6242913937942732481L;
 
     /**
-     * Create a new MoneyWise Exception object based on an object and a string.
-     * @param o the object
+     * Create a new Prometheus Exception object based on a string and an underlying exception.
      * @param s the description of the exception
+     * @param e the underlying exception
      */
-    public JMoneyWiseLogicException(final Object o,
-                                    final String s) {
-        super(o, s);
-    }
-
-    /**
-     * Create a new MoneyWise Exception object based on a string.
-     * @param s the description of the exception
-     */
-    public JMoneyWiseLogicException(final String s) {
-        super(s);
+    public PrometheusIOException(final String s,
+                                 final Throwable e) {
+        super(s, e);
     }
 }

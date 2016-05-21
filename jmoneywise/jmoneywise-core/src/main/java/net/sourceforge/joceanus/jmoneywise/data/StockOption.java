@@ -35,8 +35,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
@@ -232,7 +232,7 @@ public class StockOption
             /* Catch Exceptions */
         } catch (OceanusException e) {
             /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
 
         /* Create the InfoSet */
@@ -862,7 +862,7 @@ public class StockOption
                                  final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
+            throw new MoneyWiseLogicException(ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -1200,7 +1200,7 @@ public class StockOption
             /* Check that this OptionId has not been previously added */
             if (!isIdUnique(myOption.getId())) {
                 myOption.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myOption, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myOption, ERROR_VALIDATION);
             }
 
             /* Add to the list */

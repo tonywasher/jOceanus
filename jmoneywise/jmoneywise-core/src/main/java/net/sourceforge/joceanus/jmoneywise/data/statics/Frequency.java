@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -273,7 +273,7 @@ public class Frequency
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(myFrequency.getId())) {
                 myFrequency.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myFrequency, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myFrequency, ERROR_VALIDATION);
             }
 
             /* Add the Frequency to the list */
@@ -288,7 +288,7 @@ public class Frequency
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(myFreq.getId())) {
                 myFreq.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myFreq, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -306,7 +306,7 @@ public class Frequency
             /* Check that this FreqId has not been previously added */
             if (!isIdUnique(myFreq.getId())) {
                 myFreq.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myFreq, ERROR_VALIDATION);
             }
 
             /* Add to the list */

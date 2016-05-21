@@ -28,7 +28,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase.AssetBaseList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -248,7 +248,7 @@ public final class AssetPair
             AssetBase<?> myItem = pList.findItemById((Integer) myValue);
             if (myItem == null) {
                 pOwner.addError(Transaction.ERROR_UNKNOWN, pField);
-                throw new JMoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);
+                throw new MoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);
             }
             myValues.setValue(pField, myItem);
 
@@ -257,7 +257,7 @@ public final class AssetPair
             AssetBase<?> myItem = pList.findItemByName((String) myValue);
             if (myItem == null) {
                 pOwner.addError(Transaction.ERROR_UNKNOWN, pField);
-                throw new JMoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);
+                throw new MoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);
             }
             myValues.setValue(pField, myItem);
         }
@@ -289,7 +289,7 @@ public final class AssetPair
             SecurityHolding myItem = pMap.findHoldingById((Integer) myValue);
             if (myItem == null) {
                 pOwner.addError(DataItem.ERROR_UNKNOWN, pField);
-                throw new JMoneyWiseDataException(pOwner, DataItem.ERROR_RESOLUTION);
+                throw new MoneyWiseDataException(pOwner, DataItem.ERROR_RESOLUTION);
             }
             myValues.setValue(pField, myItem);
 
@@ -298,7 +298,7 @@ public final class AssetPair
             SecurityHolding myItem = pMap.findHoldingByName((String) myValue);
             if (myItem == null) {
                 pOwner.addError(DataItem.ERROR_UNKNOWN, pField);
-                throw new JMoneyWiseDataException(pOwner, DataItem.ERROR_RESOLUTION);
+                throw new MoneyWiseDataException(pOwner, DataItem.ERROR_RESOLUTION);
             }
             myValues.setValue(pField, myItem);
         }

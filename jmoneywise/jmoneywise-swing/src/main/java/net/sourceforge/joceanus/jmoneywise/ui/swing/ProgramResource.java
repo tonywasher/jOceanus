@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
@@ -58,7 +58,7 @@ public enum ProgramResource implements TethysResourceId {
     /**
      * The Resource Builder.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(JMoneyWiseDataException.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(MoneyWiseDataException.class.getCanonicalName());
 
     /**
      * The Id.

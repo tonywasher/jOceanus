@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.I
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
@@ -435,7 +435,7 @@ public class SpotRatesTable
                 /* Catch Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
+                OceanusException myError = new MoneyWiseDataException("Failed to change selection", e);
 
                 /* Show the error */
                 setError(myError);

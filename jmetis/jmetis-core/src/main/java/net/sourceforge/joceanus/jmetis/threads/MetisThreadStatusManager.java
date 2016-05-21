@@ -91,7 +91,7 @@ public abstract class MetisThreadStatusManager<N, I>
     /**
      * The Thread Manager.
      */
-    private MetisThreadManager<N, I> theThreadManager;
+    private final MetisThreadManager<N, I> theThreadManager;
 
     /**
      * GUI Factory.
@@ -155,10 +155,13 @@ public abstract class MetisThreadStatusManager<N, I>
 
     /**
      * Constructor.
+     * @param pManager the Thread Manager
      * @param pFactory the GUI factory
      */
-    protected MetisThreadStatusManager(final TethysGuiFactory<N, I> pFactory) {
-        /* Store parameter */
+    protected MetisThreadStatusManager(final MetisThreadManager<N, I> pManager,
+                                       final TethysGuiFactory<N, I> pFactory) {
+        /* Store parameters */
+        theThreadManager = pManager;
         theGuiFactory = pFactory;
 
         /* Create components */
@@ -236,19 +239,19 @@ public abstract class MetisThreadStatusManager<N, I>
     }
 
     /**
-     * set Thread Manager.
-     * @param pManager the thread manager
-     */
-    protected void setThreadManager(final MetisThreadManager<N, I> pManager) {
-        theThreadManager = pManager;
-    }
-
-    /**
      * get Thread Manager.
      * @return the thread manager
      */
     protected MetisThreadManager<N, I> getThreadManager() {
         return theThreadManager;
+    }
+
+    /**
+     * Obtain the GUI factory.
+     * @return the factory
+     */
+    protected TethysGuiFactory<N, I> getGuiFactory() {
+        return theGuiFactory;
     }
 
     /**

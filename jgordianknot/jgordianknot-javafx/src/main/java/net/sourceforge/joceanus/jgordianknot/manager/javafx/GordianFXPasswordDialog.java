@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.manager.javafx;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -66,20 +65,20 @@ public class GordianFXPasswordDialog
 
     /**
      * Constructor.
-     * @param pParent the parent stage for the dialog
+     * @param pFactory the GUI Factory
      * @param pTitle the title
      * @param pNeedConfirm true/false
      */
-    public GordianFXPasswordDialog(final Stage pParent,
-                                   final String pTitle,
-                                   final boolean pNeedConfirm) {
+    protected GordianFXPasswordDialog(final TethysFXGuiFactory pFactory,
+                                      final String pTitle,
+                                      final boolean pNeedConfirm) {
         /* Initialise underlying class */
-        super(new TethysFXGuiFactory(), pNeedConfirm);
+        super(pFactory, pNeedConfirm);
 
         /* Initialise the stage */
         theStage = new Stage();
         theStage.initModality(Modality.WINDOW_MODAL);
-        theStage.initOwner(pParent);
+        theStage.initOwner(pFactory.getStage());
         theStage.setTitle(pTitle);
 
         /* Create the scene */
@@ -87,8 +86,7 @@ public class GordianFXPasswordDialog
         theStage.setScene(myScene);
 
         /* Sort out factory */
-        TethysFXGuiFactory myFactory = getFactory();
-        myFactory.registerScene(myScene);
+        pFactory.registerScene(myScene);
     }
 
     @Override
@@ -142,12 +140,9 @@ public class GordianFXPasswordDialog
             /* else we must use invokeAndWait */
         } else {
             /* Create a FutureTask so that we will wait */
-            FutureTask<Void> myTask = new FutureTask<>(new Callable<Void>() {
-                @Override
-                public Void call() {
-                    pDialog.showDialog();
-                    return null;
-                }
+            FutureTask<Void> myTask = new FutureTask<>(() -> {
+                pDialog.showDialog();
+                return null;
             });
 
             /* Protect against exceptions */

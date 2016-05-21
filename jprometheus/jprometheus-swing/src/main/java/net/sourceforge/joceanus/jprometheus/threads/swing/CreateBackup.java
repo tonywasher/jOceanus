@@ -27,7 +27,7 @@ import java.io.File;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
@@ -150,7 +150,7 @@ public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
                 /* Throw an exception */
-                throw new JPrometheusDataException(myDiff, "Backup is inconsistent");
+                throw new PrometheusDataException(myDiff, "Backup is inconsistent");
             }
 
             /* OK so switch off flag */

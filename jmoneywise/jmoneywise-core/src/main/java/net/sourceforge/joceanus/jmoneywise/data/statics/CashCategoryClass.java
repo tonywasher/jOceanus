@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -113,7 +113,7 @@ public enum CashCategoryClass implements CategoryInterface {
                 return myClass;
             }
         }
-        throw new JMoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.CASHTYPE.toString() + ":" + id);
+        throw new MoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.CASHTYPE.toString() + ":" + id);
     }
 
     /**

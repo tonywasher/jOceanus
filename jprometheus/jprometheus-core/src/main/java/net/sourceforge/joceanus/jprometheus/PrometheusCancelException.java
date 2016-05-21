@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Prometheus Cancel Exception.
  */
-public class JPrometheusCancelException
+public class PrometheusCancelException
         extends OceanusException {
     /**
      * SerialId.
@@ -38,7 +38,7 @@ public class JPrometheusCancelException
      * Create a new Prometheus Exception object based on a string.
      * @param s the description of the exception
      */
-    public JPrometheusCancelException(final String s) {
+    public PrometheusCancelException(final String s) {
         super(s);
     }
 }

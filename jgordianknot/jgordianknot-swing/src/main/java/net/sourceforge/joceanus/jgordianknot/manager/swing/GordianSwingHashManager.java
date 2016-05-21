@@ -22,34 +22,43 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.manager.swing;
 
-import javax.swing.JFrame;
-
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
- * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that were not previously resolved, previously used
- * passwords will be attempted. If no match is found, then the user will be prompted for the password.
+ * PasswordHash Manager class which holds a cache of all resolved password hashes. For password
+ * hashes that were not previously resolved, previously used passwords will be attempted. If no
+ * match is found, then the user will be prompted for the password.
  */
 public class GordianSwingHashManager
         extends GordianHashManager {
     /**
-     * Frame to use for password dialog.
+     * GUI factory.
      */
-    private JFrame theFrame = null;
+    private final TethysSwingGuiFactory theFactory;
 
     /**
      * Password dialog.
      */
-    private GordianSwingPasswordDialog theDialog = null;
+    private GordianSwingPasswordDialog theDialog;
 
     /**
      * Constructor for default values.
      * @throws OceanusException on error
      */
     public GordianSwingHashManager() throws OceanusException {
-        super();
+        this(new TethysSwingGuiFactory());
+    }
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI Factory
+     * @throws OceanusException on error
+     */
+    public GordianSwingHashManager(final TethysSwingGuiFactory pFactory) throws OceanusException {
+        this(pFactory, new GordianParameters());
     }
 
     /**
@@ -58,21 +67,25 @@ public class GordianSwingHashManager
      * @throws OceanusException on error
      */
     public GordianSwingHashManager(final GordianParameters pParameters) throws OceanusException {
-        super(pParameters);
+        this(new TethysSwingGuiFactory(), pParameters);
     }
 
     /**
-     * Set the Frame for the Secure Manager.
-     * @param pFrame the frame
+     * Constructor.
+     * @param pFactory the GUI Factory
+     * @param pParameters the Security parameters
+     * @throws OceanusException on error
      */
-    public void setFrame(final JFrame pFrame) {
-        theFrame = pFrame;
+    public GordianSwingHashManager(final TethysSwingGuiFactory pFactory,
+                                   final GordianParameters pParameters) throws OceanusException {
+        super(pParameters);
+        theFactory = pFactory;
     }
 
     @Override
     protected void createTheDialog(final String pTitle,
                                    final boolean pNeedConfirm) {
-        theDialog = new GordianSwingPasswordDialog(theFrame, pTitle, pNeedConfirm);
+        theDialog = new GordianSwingPasswordDialog(theFactory, pTitle, pNeedConfirm);
     }
 
     @Override

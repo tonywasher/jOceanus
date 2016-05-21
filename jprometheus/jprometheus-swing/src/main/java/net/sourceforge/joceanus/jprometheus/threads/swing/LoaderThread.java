@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.threads.swing;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
-import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
@@ -74,7 +74,7 @@ public abstract class LoaderThread<T extends DataSet<T, E>, E extends Enum<E>>
                 | CancellationException
                 | ExecutionException e) {
             /* Report the failure */
-            addError(new JPrometheusIOException("Failed to obtain and activate new data", e));
+            addError(new PrometheusIOException("Failed to obtain and activate new data", e));
         }
 
         /* Update the Status Bar */

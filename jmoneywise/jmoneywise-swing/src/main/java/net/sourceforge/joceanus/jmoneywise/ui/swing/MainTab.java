@@ -28,7 +28,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
@@ -203,7 +203,7 @@ public class MainTab
         try {
             return new MoneyWiseHelp();
         } catch (OceanusException e) {
-            throw new JMoneyWiseIOException("Unable to load help", e);
+            throw new MoneyWiseIOException("Unable to load help", e);
         }
     }
 

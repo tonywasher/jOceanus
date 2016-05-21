@@ -60,8 +60,8 @@ public class MetisFXViewerWindow
      * @param pDataManager the viewer data manager
      * @throws OceanusException on error
      */
-    protected MetisFXViewerWindow(final TethysFXGuiFactory pFactory,
-                                  final MetisViewerManager pDataManager) throws OceanusException {
+    public MetisFXViewerWindow(final TethysFXGuiFactory pFactory,
+                               final MetisViewerManager pDataManager) throws OceanusException {
         /* Initialise underlying class */
         super(pFactory, pDataManager);
     }

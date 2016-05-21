@@ -27,7 +27,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -273,7 +273,7 @@ public class SheetTaxYear
 
             /* Handle exceptions */
         } catch (OceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
+            throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

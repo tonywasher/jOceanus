@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
@@ -564,7 +564,7 @@ public class TransactionAnalyser
 
             /* Unknown combination */
         } else {
-            throw new JMoneyWiseLogicException("Invalid Asset Pair: "
+            throw new MoneyWiseLogicException("Invalid Asset Pair: "
                                                + pTrans.getAssetPair());
         }
     }
@@ -611,7 +611,7 @@ public class TransactionAnalyser
                 break;
             /* Throw an Exception */
             default:
-                throw new JMoneyWiseLogicException(ERROR_CATEGORY
+                throw new MoneyWiseLogicException(ERROR_CATEGORY
                                                    + myCat.getCategoryTypeClass());
         }
     }
@@ -654,7 +654,7 @@ public class TransactionAnalyser
                 break;
             /* Throw an Exception */
             default:
-                throw new JMoneyWiseLogicException(ERROR_CATEGORY
+                throw new MoneyWiseLogicException(ERROR_CATEGORY
                                                    + myCat.getCategoryTypeClass());
         }
     }
@@ -669,7 +669,7 @@ public class TransactionAnalyser
                                                   final SecurityHolding pCredit) throws OceanusException {
         /* Input asset must be AssetBase */
         if (!(pDebit instanceof AssetBase)) {
-            throw new JMoneyWiseLogicException("Invalid Debit Asset: "
+            throw new MoneyWiseLogicException("Invalid Debit Asset: "
                                                + pDebit.getAssetType());
         }
         AssetBase<?> myDebit = (AssetBase<?>) pDebit;
@@ -687,7 +687,7 @@ public class TransactionAnalyser
                 break;
             /* Throw an Exception */
             default:
-                throw new JMoneyWiseLogicException(ERROR_CATEGORY
+                throw new MoneyWiseLogicException(ERROR_CATEGORY
                                                    + myCat.getCategoryTypeClass());
         }
     }

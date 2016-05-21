@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.Rat
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
@@ -348,7 +348,7 @@ public class DepositRateTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new JMoneyWiseDataException("Failed to create new rate", e);
+                OceanusException myError = new MoneyWiseDataException("Failed to create new rate", e);
 
                 /* Show the error */
                 setError(myError);

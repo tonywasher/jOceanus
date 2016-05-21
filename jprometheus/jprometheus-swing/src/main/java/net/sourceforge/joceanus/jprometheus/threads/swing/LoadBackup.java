@@ -27,7 +27,7 @@ import java.io.File;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.swing.MetisFileSelector;
-import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
+import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
@@ -100,7 +100,7 @@ public class LoadBackup<T extends DataSet<T, E>, E extends Enum<E>>
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            throw new JPrometheusCancelException("Operation Cancelled");
+            throw new PrometheusCancelException("Operation Cancelled");
         }
 
         /* Load workbook */

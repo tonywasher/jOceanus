@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.data;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -373,7 +373,7 @@ public class ControlData
             /* Check that this controlId has not been previously added */
             if (!isIdUnique(myControl.getId())) {
                 myControl.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JPrometheusDataException(myControl, ERROR_VALIDATION);
+                throw new PrometheusDataException(myControl, ERROR_VALIDATION);
             }
 
             /* Add to the list */

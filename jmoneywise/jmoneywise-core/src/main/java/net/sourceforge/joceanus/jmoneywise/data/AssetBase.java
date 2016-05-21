@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
@@ -202,7 +202,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
             /* Catch Exceptions */
         } catch (OceanusException e) {
             /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 

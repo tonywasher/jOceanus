@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldData;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager.PopulateFieldData;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -227,7 +227,7 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
             myItem.popHistory();
 
             /* Build the error */
-            OceanusException myError = new JPrometheusDataException("Failed to update field at (" + pRowIndex + "," + pColIndex + ")", e);
+            OceanusException myError = new PrometheusDataException("Failed to update field at (" + pRowIndex + "," + pColIndex + ")", e);
 
             /* Show the error */
             theDataTable.setError(myError);

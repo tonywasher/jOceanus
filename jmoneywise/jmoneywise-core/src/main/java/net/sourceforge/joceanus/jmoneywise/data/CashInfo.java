@@ -27,7 +27,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
@@ -117,7 +117,7 @@ public class CashInfo
 
         } catch (OceanusException e) {
             /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -472,7 +472,7 @@ public class CashInfo
             /* Look up the Info Type */
             AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JMoneyWiseDataException(pCash, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
+                throw new MoneyWiseDataException(pCash, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create the values */
@@ -488,7 +488,7 @@ public class CashInfo
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
 
             /* Add the Info to the list */
@@ -503,7 +503,7 @@ public class CashInfo
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
                 myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
 
             /* Add to the list */

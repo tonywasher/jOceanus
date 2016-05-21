@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -230,7 +230,7 @@ public class DataKey
             /* Catch Exceptions */
         } catch (OceanusException e) {
             /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
+            throw new PrometheusDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -597,7 +597,7 @@ public class DataKey
             /* Check that this keyId has not been previously added */
             if (!isIdUnique(myKey.getId())) {
                 myKey.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JPrometheusDataException(myKey, ERROR_VALIDATION);
+                throw new PrometheusDataException(myKey, ERROR_VALIDATION);
             }
 
             /* Add to the list */

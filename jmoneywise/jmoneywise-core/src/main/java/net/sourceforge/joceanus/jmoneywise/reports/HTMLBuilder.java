@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -263,7 +263,7 @@ public abstract class HTMLBuilder {
             theBuilder = myDocFactory.newDocumentBuilder();
 
         } catch (Exception e) {
-            throw new JMoneyWiseIOException("Failed to create", e);
+            throw new MoneyWiseIOException("Failed to create", e);
         }
     }
 

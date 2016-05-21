@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetPairManager;
@@ -218,7 +218,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         } catch (IllegalArgumentException
                 | OceanusException e) {
             /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -734,7 +734,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         if (!(myValue instanceof AssetPair)) {
             /* report the error */
             addError(ERROR_UNKNOWN, FIELD_PAIR);
-            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
+            throw new MoneyWiseDataException(this, ERROR_RESOLUTION);
         }
 
         /* Store value and access as pair */

@@ -28,9 +28,9 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
@@ -105,7 +105,7 @@ public class JOceanusSwingUtilitySet
         MetisPreferenceManager myPrefMgr = new MetisPreferenceManager();
 
         /* Access security preferences */
-        PrometheusSecurityPreferences myPrefs = myPrefMgr.getPreferenceSet(PrometheusSecurityPreferences.class);
+        MetisSecurityPreferences myPrefs = myPrefMgr.getPreferenceSet(MetisSecurityPreferences.class);
 
         /* Build new utility set */
         return new JOceanusSwingUtilitySet(myPrefs.getParameters(), myPrefMgr);

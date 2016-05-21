@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
@@ -657,7 +657,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
             theItem.popHistory();
 
             /* Build the error */
-            OceanusException myError = new JPrometheusDataException("Failed to update field", e);
+            OceanusException myError = new PrometheusDataException("Failed to update field", e);
 
             /* Show the error */
             theError.addError(myError);

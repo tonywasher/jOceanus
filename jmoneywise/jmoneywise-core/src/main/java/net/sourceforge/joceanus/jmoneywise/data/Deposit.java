@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
@@ -236,7 +236,7 @@ public class Deposit
             /* Catch Exceptions */
         } catch (NumberFormatException e) {
             /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
 
         /* Create the InfoSet */
@@ -977,7 +977,7 @@ public class Deposit
                                  final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
+            throw new MoneyWiseLogicException(ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -1345,7 +1345,7 @@ public class Deposit
             /* Check that this DepositId has not been previously added */
             if (!isIdUnique(myDeposit.getId())) {
                 myDeposit.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myDeposit, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myDeposit, ERROR_VALIDATION);
             }
 
             /* Add to the list */

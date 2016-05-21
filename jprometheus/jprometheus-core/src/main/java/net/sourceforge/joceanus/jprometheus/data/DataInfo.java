@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -621,7 +621,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
 
         /* Reject invalid value */
         if (!bValueOK) {
-            throw new JPrometheusLogicException(this, ERROR_BADDATATYPE);
+            throw new PrometheusLogicException(this, ERROR_BADDATATYPE);
         }
     }
 
@@ -650,7 +650,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
                 return true;
             }
         } catch (IllegalArgumentException e) {
-            throw new JPrometheusDataException(pValue, ERROR_BADDATA, e);
+            throw new PrometheusDataException(pValue, ERROR_BADDATA, e);
         }
         return false;
     }
@@ -677,7 +677,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
                 return true;
             }
         } catch (IllegalArgumentException e) {
-            throw new JPrometheusDataException(pValue, ERROR_BADDATA, e);
+            throw new PrometheusDataException(pValue, ERROR_BADDATA, e);
         }
         return false;
     }
@@ -709,7 +709,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
                 return true;
             }
         } catch (IllegalArgumentException e) {
-            throw new JPrometheusDataException(pValue, ERROR_BADDATA, e);
+            throw new PrometheusDataException(pValue, ERROR_BADDATA, e);
         }
         return false;
     }

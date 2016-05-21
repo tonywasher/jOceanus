@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CategoryBase.CategoryDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
@@ -669,7 +669,7 @@ public class Payee
                                  final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
+            throw new MoneyWiseLogicException(ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -959,7 +959,7 @@ public class Payee
             /* Check that this PayeeId has not been previously added */
             if (!isIdUnique(myPayee.getId())) {
                 myPayee.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myPayee, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myPayee, ERROR_VALIDATION);
             }
 
             /* Add to the list */

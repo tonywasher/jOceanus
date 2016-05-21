@@ -25,11 +25,8 @@ package net.sourceforge.joceanus.jmetis.threads.javafx;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisTestThread;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadStatusManager;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXButton;
@@ -40,11 +37,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
  */
 public class MetisFXThreadTester
         extends Application {
-    /**
-     * ViewerManager.
-     */
-    private final MetisViewerManager theViewerMgr;
-
     /**
      * GUI factory.
      */
@@ -82,10 +74,15 @@ public class MetisFXThreadTester
 
     /**
      * Constructor.
+     * @throws OceanusException on error
      */
-    public MetisFXThreadTester() {
-        /* Create factory */
-        theGuiFactory = new TethysFXGuiFactory(new MetisDataFormatter());
+    public MetisFXThreadTester() throws OceanusException {
+        /* Create toolkit */
+        MetisFXToolkit myToolkit = new MetisFXToolkit();
+
+        /* Access components */
+        theGuiFactory = myToolkit.getGuiFactory();
+        theThreadMgr = myToolkit.getThreadManager();
 
         /* Create buttons */
         theLaunchButton = theGuiFactory.newButton();
@@ -95,9 +92,7 @@ public class MetisFXThreadTester
         theDebugButton.setTextOnly();
         theDebugButton.setText("Debug");
 
-        /* Create the Managers */
-        theViewerMgr = new MetisViewerManager();
-        theThreadMgr = new MetisFXThreadManager(theViewerMgr, theGuiFactory);
+        /* Create the Panels */
         theStatusPanel = theThreadMgr.getStatusManager();
         theMainPanel = theGuiFactory.newBorderPane();
     }

@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -252,7 +252,7 @@ public class TaxBasis
             /* Check that this TaxBasisId has not been previously added */
             if (!isIdUnique(myBasis.getId())) {
                 myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myBasis, ERROR_VALIDATION);
             }
 
             /* Add the Tax Basis to the list */
@@ -267,7 +267,7 @@ public class TaxBasis
             /* Check that this BasisId has not been previously added */
             if (!isIdUnique(myBasis.getId())) {
                 myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myBasis, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -285,7 +285,7 @@ public class TaxBasis
             /* Check that this BasisId has not been previously added */
             if (!isIdUnique(myBasis.getId())) {
                 myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myBasis, ERROR_VALIDATION);
             }
 
             /* Add to the list */

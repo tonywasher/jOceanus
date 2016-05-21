@@ -25,16 +25,14 @@ package net.sourceforge.joceanus.jprometheus.threads;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadPreference.MetisThreadPreferenceKey;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadPreference.MetisThreadPreferences;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusPreferenceResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.StatusData;
 import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Thread Status.
@@ -87,8 +85,8 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Access the threadStatus properties */
         MetisPreferenceManager myMgr = theControl.getPreferenceManager();
-        PrometheusThreadStatusPreferences myPreferences = myMgr.getPreferenceSet(PrometheusThreadStatusPreferences.class);
-        theSteps = myPreferences.getIntegerValue(PrometheusThreadStatusPreferenceKey.REPSTEPS);
+        MetisThreadPreferences myPreferences = myMgr.getPreferenceSet(MetisThreadPreferences.class);
+        theSteps = myPreferences.getIntegerValue(MetisThreadPreferenceKey.REPSTEPS);
 
         /* Create the status */
         theStatus = new StatusData();
@@ -268,97 +266,5 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Return to caller */
         return true;
-    }
-
-    /**
-     * DataListPreferences.
-     */
-    public enum PrometheusThreadStatusPreferenceKey implements MetisPreferenceKey {
-        /**
-         * Granularity.
-         */
-        REPSTEPS("ReportingSteps", PrometheusPreferenceResource.THDPREF_REPORTING);
-
-        /**
-         * The name of the Preference.
-         */
-        private final String theName;
-
-        /**
-         * The display name of the Preference.
-         */
-        private final String theDisplay;
-
-        /**
-         * Constructor.
-         * @param pName the name
-         * @param pDisplay the display name
-         */
-        PrometheusThreadStatusPreferenceKey(final String pName,
-                                            final PrometheusPreferenceResource pDisplay) {
-            theName = pName;
-            theDisplay = pDisplay.getValue();
-        }
-
-        @Override
-        public String getName() {
-            return theName;
-        }
-
-        @Override
-        public String getDisplay() {
-            return theDisplay;
-        }
-    }
-
-    /**
-     * PrometheusDataListPreferences.
-     */
-    public static class PrometheusThreadStatusPreferences
-            extends MetisPreferenceSet<PrometheusThreadStatusPreferenceKey> {
-        /**
-         * Default Reporting Steps.
-         */
-        private static final Integer MINIMUM_REPSTEPS = 1;
-
-        /**
-         * Maximum Reporting Steps.
-         */
-        private static final Integer MAXIMUM_REPSTEPS = 100;
-
-        /**
-         * Default Reporting Steps.
-         */
-        private static final Integer DEFAULT_REPSTEPS = 10;
-
-        /**
-         * Constructor.
-         * @param pManager the preference manager
-         * @throws OceanusException on error
-         */
-        public PrometheusThreadStatusPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, PrometheusThreadStatusPreferenceKey.class);
-            setName(PrometheusPreferenceResource.THDPREF_PREFNAME.getValue());
-        }
-
-        @Override
-        protected void definePreferences() {
-            defineIntegerPreference(PrometheusThreadStatusPreferenceKey.REPSTEPS);
-        }
-
-        @Override
-        protected void autoCorrectPreferences() {
-            /* Make sure that the value is specified */
-            MetisIntegerPreference<PrometheusThreadStatusPreferenceKey> myPref = getIntegerPreference(PrometheusThreadStatusPreferenceKey.REPSTEPS);
-            if (!myPref.isAvailable()) {
-                myPref.setValue(DEFAULT_REPSTEPS);
-            }
-
-            /* Define the range */
-            myPref.setRange(MINIMUM_REPSTEPS, MAXIMUM_REPSTEPS);
-            if (!myPref.validate()) {
-                myPref.setValue(DEFAULT_REPSTEPS);
-            }
-        }
     }
 }

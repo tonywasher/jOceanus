@@ -176,6 +176,14 @@ public class TethysFXGuiFactory
         theStage = pStage;
     }
 
+    /**
+     * Obtain the stage.
+     * @return the stage
+     */
+    public Stage getStage() {
+        return theStage;
+    }
+
     @Override
     public TethysFXLabel newLabel() {
         return new TethysFXLabel(this);

@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -221,7 +221,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         } catch (NumberFormatException
                 | OceanusException e) {
             /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
+            throw new PrometheusDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -613,7 +613,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JPrometheusDataException(ERROR_BADNAME + " " + myClass.getSimpleName() + ": " + pValue);
+            throw new PrometheusDataException(ERROR_BADNAME + " " + myClass.getSimpleName() + ": " + pValue);
         }
     }
 
@@ -642,7 +642,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JPrometheusDataException(ERROR_BADNAME + " " + myClass.getSimpleName() + ": " + pValue);
+            throw new PrometheusDataException(ERROR_BADNAME + " " + myClass.getSimpleName() + ": " + pValue);
         }
     }
 
@@ -884,7 +884,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
                 /* Handle validation failure */
                 if (myItem.hasErrors()) {
-                    throw new JPrometheusDataException(myItem, ERROR_VALIDATION);
+                    throw new PrometheusDataException(myItem, ERROR_VALIDATION);
                 }
             }
 

@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
@@ -209,7 +209,7 @@ public class SheetDepositRate
 
             /* Handle exceptions */
         } catch (OceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
+            throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

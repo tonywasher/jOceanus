@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preference;
 
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
@@ -121,51 +121,6 @@ public enum PrometheusPreferenceResource implements TethysResourceId {
     BUPREF_TIMESTAMP("bupref.timestamps"),
 
     /**
-     * SecurityPreference Display Name.
-     */
-    SECPREF_PREFNAME("secpref.prefname"),
-
-    /**
-     * SecurityPreference Factory.
-     */
-    SECPREF_FACTORY("secpref.factory"),
-
-    /**
-     * SecurityPreference Restricted.
-     */
-    SECPREF_RESTRICTED("secpref.restricted"),
-
-    /**
-     * SecurityPreference HashType.
-     */
-    SECPREF_HASH("secpref.hash"),
-
-    /**
-     * SecurityPreference Factory.
-     */
-    SECPREF_SP800("secpref.sp800"),
-
-    /**
-     * SecurityPreference Cipher Steps.
-     */
-    SECPREF_CIPHERSTEPS("secpref.ciphersteps"),
-
-    /**
-     * SecurityPreference Hash Iterations.
-     */
-    SECPREF_ITERATIONS("secpref.hashiterations"),
-
-    /**
-     * SecurityPreference Phrase.
-     */
-    SECPREF_PHRASE("secpref.phrase"),
-
-    /**
-     * SecurityPreference Active KeySets.
-     */
-    SECPREF_KEYSETS("secpref.keysets"),
-
-    /**
      * DataListPreference Display Name.
      */
     DLPREF_PREFNAME("dlpref.prefname"),
@@ -173,22 +128,12 @@ public enum PrometheusPreferenceResource implements TethysResourceId {
     /**
      * DataListPreference Granularity.
      */
-    DLPREF_GRANULARITY("dlpref.granularity"),
-
-    /**
-     * ThreadPreference Display Name.
-     */
-    THDPREF_PREFNAME("thdpref.prefname"),
-
-    /**
-     * ThreadPreference Reporting.
-     */
-    THDPREF_REPORTING("thdpref.reporting");
+    DLPREF_GRANULARITY("dlpref.granularity");
 
     /**
      * The Resource Builder.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(JPrometheusDataException.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(PrometheusDataException.class.getCanonicalName());
 
     /**
      * The Id.

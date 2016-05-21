@@ -36,7 +36,7 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusColumnType;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusJDBCDriver;
@@ -1017,7 +1017,7 @@ public abstract class PrometheusColumnDefinition {
             try {
                 return pFormatter.parseValue(getValue(), TethysMoney.class);
             } catch (IllegalArgumentException e) {
-                throw new JPrometheusDataException(getValue(), "Bad Money Value", e);
+                throw new PrometheusDataException(getValue(), "Bad Money Value", e);
             }
         }
     }
@@ -1082,7 +1082,7 @@ public abstract class PrometheusColumnDefinition {
             try {
                 return pFormatter.parseValue(getValue(), TethysRate.class);
             } catch (IllegalArgumentException e) {
-                throw new JPrometheusDataException(getValue(), "Bad Rate Value", e);
+                throw new PrometheusDataException(getValue(), "Bad Rate Value", e);
             }
         }
     }
@@ -1136,7 +1136,7 @@ public abstract class PrometheusColumnDefinition {
             try {
                 return pFormatter.parseValue(getValue(), TethysPrice.class);
             } catch (IllegalArgumentException e) {
-                throw new JPrometheusDataException(getValue(), "Bad Price Value", e);
+                throw new PrometheusDataException(getValue(), "Bad Price Value", e);
             }
         }
     }
@@ -1190,7 +1190,7 @@ public abstract class PrometheusColumnDefinition {
             try {
                 return pFormatter.parseValue(getValue(), TethysUnits.class);
             } catch (IllegalArgumentException e) {
-                throw new JPrometheusDataException(getValue(), "Bad Units Value", e);
+                throw new PrometheusDataException(getValue(), "Bad Units Value", e);
             }
         }
     }
@@ -1244,7 +1244,7 @@ public abstract class PrometheusColumnDefinition {
             try {
                 return pFormatter.parseValue(getValue(), TethysDilution.class);
             } catch (IllegalArgumentException e) {
-                throw new JPrometheusDataException(getValue(), "Bad Dilution Value", e);
+                throw new PrometheusDataException(getValue(), "Bad Dilution Value", e);
             }
         }
     }
@@ -1298,7 +1298,7 @@ public abstract class PrometheusColumnDefinition {
             try {
                 return pFormatter.parseValue(getValue(), TethysRatio.class);
             } catch (IllegalArgumentException e) {
-                throw new JPrometheusDataException(getValue(), "Bad Ratio Value", e);
+                throw new PrometheusDataException(getValue(), "Bad Ratio Value", e);
             }
         }
     }

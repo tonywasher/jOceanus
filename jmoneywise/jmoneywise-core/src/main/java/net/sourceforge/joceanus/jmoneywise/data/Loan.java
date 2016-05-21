@@ -32,8 +32,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
@@ -813,7 +813,7 @@ public class Loan
                                  final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
+            throw new MoneyWiseLogicException(ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -1111,7 +1111,7 @@ public class Loan
             /* Check that this LoanId has not been previously added */
             if (!isIdUnique(myLoan.getId())) {
                 myLoan.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myLoan, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myLoan, ERROR_VALIDATION);
             }
 
             /* Add to the list */

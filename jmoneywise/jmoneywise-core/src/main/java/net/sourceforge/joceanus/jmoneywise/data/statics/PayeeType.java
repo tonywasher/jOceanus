@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -209,7 +209,7 @@ public class PayeeType
             /* Check that this PayeeTypeId has not been previously added */
             if (!isIdUnique(myPayeeType.getId())) {
                 myPayeeType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myPayeeType, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myPayeeType, ERROR_VALIDATION);
             }
 
             /* Add the PayeeType to the list */
@@ -224,7 +224,7 @@ public class PayeeType
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
                 myType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -242,7 +242,7 @@ public class PayeeType
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
                 myType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
             /* Add to the list */

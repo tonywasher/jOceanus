@@ -36,6 +36,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferenceKey;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
@@ -46,8 +48,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusDataList.PrometheusDataListPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusDataList.PrometheusDataListPreferences;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusSecurity.PrometheusSecurityPreferenceKey;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -187,8 +187,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         MetisPreferenceManager myPrefMgr = pUtilitySet.getPreferenceManager();
         PrometheusDataListPreferences myDataPreferences = myPrefMgr.getPreferenceSet(PrometheusDataListPreferences.class);
         theGranularity = myDataPreferences.getIntegerValue(PrometheusDataListPreferenceKey.GRANULARITY);
-        PrometheusSecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(PrometheusSecurityPreferences.class);
-        theNumActiveKeySets = mySecPreferences.getIntegerValue(PrometheusSecurityPreferenceKey.ACTIVEKEYSETS);
+        MetisSecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(MetisSecurityPreferences.class);
+        theNumActiveKeySets = mySecPreferences.getIntegerValue(MetisSecurityPreferenceKey.ACTIVEKEYSETS);
 
         /* Create the empty security lists */
         theControlKeys = new ControlKeyList(this);

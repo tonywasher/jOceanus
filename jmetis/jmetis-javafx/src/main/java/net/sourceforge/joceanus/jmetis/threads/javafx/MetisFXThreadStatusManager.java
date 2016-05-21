@@ -26,6 +26,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
 import javafx.util.Duration;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
@@ -41,11 +42,13 @@ public class MetisFXThreadStatusManager
 
     /**
      * Constructor.
+     * @param pManager the thread manager
      * @param pFactory the GUI factory
      */
-    protected MetisFXThreadStatusManager(final TethysFXGuiFactory pFactory) {
+    protected MetisFXThreadStatusManager(final MetisThreadManager<Node, Node> pManager,
+                                         final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
-        super(pFactory);
+        super(pManager, pFactory);
 
         /* Create the timer */
         theTimer = new Timeline(new KeyFrame(Duration.millis(TIMER_DURATION), e -> handleClear()));

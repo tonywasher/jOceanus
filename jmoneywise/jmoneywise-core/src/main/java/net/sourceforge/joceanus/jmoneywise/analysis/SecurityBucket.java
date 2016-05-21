@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
@@ -1071,7 +1071,7 @@ public final class SecurityBucket
                     /* If we are Relevant */
                     if (mySecurity.isRelevant() && theAnalysis.getData().checkClosedAccounts()) {
                         /* throw exception */
-                        throw new JMoneyWiseDataException(myCurr, "Illegally closed security");
+                        throw new MoneyWiseDataException(myCurr, "Illegally closed security");
                     }
                 }
             }

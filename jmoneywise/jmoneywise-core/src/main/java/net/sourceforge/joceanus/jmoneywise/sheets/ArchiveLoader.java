@@ -39,9 +39,9 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseCancelException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair;
@@ -77,7 +77,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -245,7 +245,7 @@ public class ArchiveLoader {
 
         } catch (IOException e) {
             /* Report the error */
-            throw new JMoneyWiseIOException("Failed to load Workbook: " + myArchive.getName(), e);
+            throw new MoneyWiseIOException("Failed to load Workbook: " + myArchive.getName(), e);
         }
     }
 
@@ -427,14 +427,14 @@ public class ArchiveLoader {
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new JMoneyWiseCancelException("Operation Cancelled");
+                throw new MoneyWiseCancelException("Operation Cancelled");
             }
 
             /* Return the data */
             return myData;
         } catch (IOException e) {
             /* Report the error */
-            throw new JMoneyWiseIOException("Failed to load Workbook", e);
+            throw new MoneyWiseIOException("Failed to load Workbook", e);
         }
     }
 
@@ -449,7 +449,7 @@ public class ArchiveLoader {
 
         /* Check for name already exists */
         if (theNameMap.get(myName) != null) {
-            throw new JPrometheusDataException(pAsset, DataItem.ERROR_DUPLICATE);
+            throw new PrometheusDataException(pAsset, DataItem.ERROR_DUPLICATE);
         }
 
         /* Store the asset */
@@ -467,7 +467,7 @@ public class ArchiveLoader {
 
         /* Check for name already exists */
         if (theCategoryMap.get(myName) != null) {
-            throw new JPrometheusDataException(pCategory, DataItem.ERROR_DUPLICATE);
+            throw new PrometheusDataException(pCategory, DataItem.ERROR_DUPLICATE);
         }
 
         /* Store the category */
@@ -487,7 +487,7 @@ public class ArchiveLoader {
 
         /* Check for name already exists */
         if (theNameMap.get(myName) != null) {
-            throw new JPrometheusDataException(pSecurity, DataItem.ERROR_DUPLICATE);
+            throw new PrometheusDataException(pSecurity, DataItem.ERROR_DUPLICATE);
         }
 
         /* Store the asset */
@@ -507,7 +507,7 @@ public class ArchiveLoader {
         /* Check for name already exists */
         Object myHolding = theNameMap.get(pAlias);
         if (!(myHolding instanceof SecurityHoldingDef)) {
-            throw new JPrometheusDataException(pAlias, "Aliased security not found");
+            throw new PrometheusDataException(pAlias, "Aliased security not found");
         }
 
         /* Store the asset */
@@ -556,7 +556,7 @@ public class ArchiveLoader {
                                         final Object pTarget) throws OceanusException {
         /* Target must be portfolio */
         if (!(pTarget instanceof Portfolio)) {
-            throw new JMoneyWiseDataException(pTarget, "Inconsistent portfolios");
+            throw new MoneyWiseDataException(pTarget, "Inconsistent portfolios");
         }
         Portfolio myPortfolio = (Portfolio) pTarget;
 
@@ -862,7 +862,7 @@ public class ArchiveLoader {
                                         final String pCategory) throws OceanusException {
             /* Handle no LastParent */
             if (theLastParent == null) {
-                throw new JMoneyWiseDataException(theDate, "Missing parent transaction");
+                throw new MoneyWiseDataException(theDate, "Missing parent transaction");
             }
 
             /* Note that there is a split */
@@ -986,7 +986,7 @@ public class ArchiveLoader {
                 if (isCreditHolding) {
                     Portfolio myPortfolio = ((SecurityHolding) theLastCredit).getPortfolio();
                     if (!thePortfolio.equals(myPortfolio)) {
-                        throw new JMoneyWiseDataException(theDate, "Inconsistent portfolios");
+                        throw new MoneyWiseDataException(theDate, "Inconsistent portfolios");
                     }
                 }
             } else if (isCreditHolding) {

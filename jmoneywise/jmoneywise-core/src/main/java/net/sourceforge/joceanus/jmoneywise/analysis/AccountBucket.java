@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -894,7 +894,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                     /* If we are Relevant */
                     if (myAccount.isRelevant() && theAnalysis.getData().checkClosedAccounts()) {
                         /* throw exception */
-                        throw new JMoneyWiseDataException(myCurr, "Illegally closed account");
+                        throw new MoneyWiseDataException(myCurr, "Illegally closed account");
                     }
                 }
             }

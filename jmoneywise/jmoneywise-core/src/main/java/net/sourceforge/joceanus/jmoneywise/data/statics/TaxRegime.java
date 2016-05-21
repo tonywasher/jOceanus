@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -241,7 +241,7 @@ public class TaxRegime
             /* Check that this TaxRegimeId has not been previously added */
             if (!isIdUnique(myTaxRegime.getId())) {
                 myTaxRegime.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myTaxRegime, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myTaxRegime, ERROR_VALIDATION);
             }
 
             /* Add the TaxRegime to the list */
@@ -256,7 +256,7 @@ public class TaxRegime
             /* Check that this RegimeId has not been previously added */
             if (!isIdUnique(myRegime.getId())) {
                 myRegime.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myRegime, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myRegime, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -274,7 +274,7 @@ public class TaxRegime
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myRegime.getId())) {
                 myRegime.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myRegime, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myRegime, ERROR_VALIDATION);
             }
 
             /* Add to the list */

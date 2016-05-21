@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.Pri
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
@@ -385,7 +385,7 @@ public class SecurityPriceTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new JMoneyWiseDataException("Failed to create new price", e);
+                OceanusException myError = new MoneyWiseDataException("Failed to create new price", e);
 
                 /* Show the error */
                 setError(myError);

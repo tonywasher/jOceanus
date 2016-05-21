@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -217,7 +217,7 @@ public class DepositCategoryType
             /* Check that this DepositCategoryTypeId has not been previously added */
             if (!isIdUnique(myDepType.getId())) {
                 myDepType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myDepType, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myDepType, ERROR_VALIDATION);
             }
 
             /* Add the Deposit Category to the list */
@@ -232,7 +232,7 @@ public class DepositCategoryType
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
                 myType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -250,7 +250,7 @@ public class DepositCategoryType
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
                 myType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
             /* Add to the list */

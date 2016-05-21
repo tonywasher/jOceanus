@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.threads.swing;
 
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
@@ -94,7 +94,7 @@ public class StoreDatabase<T extends DataSet<T, E>, E extends Enum<E>>
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
                 /* Throw an exception */
-                throw new JPrometheusDataException(myDiff, "DataStore is inconsistent");
+                throw new PrometheusDataException(myDiff, "DataStore is inconsistent");
             }
 
             /* DataSet version is now zero */

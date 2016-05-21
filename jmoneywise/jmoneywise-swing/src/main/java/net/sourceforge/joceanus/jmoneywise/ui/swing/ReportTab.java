@@ -45,7 +45,7 @@ import org.w3c.dom.Document;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportBuilder;
@@ -386,7 +386,7 @@ public class ReportTab
             /* Catch Exceptions */
         } catch (OceanusException e) {
             /* Build the error */
-            OceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
+            OceanusException myError = new MoneyWiseDataException("Failed to change selection", e);
 
             /* Show the error */
             theError.addError(myError);

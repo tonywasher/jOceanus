@@ -26,6 +26,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
@@ -41,11 +42,13 @@ public class MetisSwingThreadStatusManager
 
     /**
      * Constructor.
+     * @param pManager the thread manager
      * @param pFactory the GUI factory
      */
-    protected MetisSwingThreadStatusManager(final TethysSwingGuiFactory pFactory) {
+    protected MetisSwingThreadStatusManager(final MetisThreadManager<JComponent, Icon> pManager,
+                                            final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
-        super(pFactory);
+        super(pManager, pFactory);
 
         /* Create the timer */
         theTimer = new Timer(TIMER_DURATION, e -> handleClear());

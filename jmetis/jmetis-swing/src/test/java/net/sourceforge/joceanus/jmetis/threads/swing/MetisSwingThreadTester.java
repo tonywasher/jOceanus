@@ -32,8 +32,8 @@ import javax.swing.WindowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisTestThread;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
@@ -52,11 +52,6 @@ public class MetisSwingThreadTester {
      * GUI factory.
      */
     private final TethysSwingGuiFactory theGuiFactory;
-
-    /**
-     * ViewerManager.
-     */
-    private final MetisViewerManager theViewerMgr;
 
     /**
      * ThreadManager.
@@ -90,10 +85,15 @@ public class MetisSwingThreadTester {
 
     /**
      * Constructor.
+     * @throws OceanusException on error
      */
-    public MetisSwingThreadTester() {
-        /* Create factory */
-        theGuiFactory = new TethysSwingGuiFactory();
+    public MetisSwingThreadTester() throws OceanusException {
+        /* Create toolkit */
+        MetisSwingToolkit myToolkit = new MetisSwingToolkit();
+
+        /* Access components */
+        theGuiFactory = myToolkit.getGuiFactory();
+        theThreadMgr = myToolkit.getThreadManager();
 
         /* Create buttons */
         theLaunchButton = theGuiFactory.newButton();
@@ -103,10 +103,8 @@ public class MetisSwingThreadTester {
         theDebugButton.setTextOnly();
         theDebugButton.setText("Debug");
 
-        /* Create the Managers */
+        /* Create the Panels */
         theFrame = new JFrame("MetisSwingThread Demo");
-        theViewerMgr = new MetisViewerManager();
-        theThreadMgr = new MetisSwingThreadManager(theViewerMgr, theGuiFactory);
         theStatusPanel = theThreadMgr.getStatusManager();
         theMainPanel = theGuiFactory.newBorderPane();
     }
@@ -145,7 +143,8 @@ public class MetisSwingThreadTester {
             myFrame.pack();
             myFrame.setLocationRelativeTo(null);
             myFrame.setVisible(true);
-        } catch (HeadlessException e) {
+        } catch (OceanusException
+                | HeadlessException e) {
             LOGGER.error("createGUI didn't complete successfully", e);
         }
     }

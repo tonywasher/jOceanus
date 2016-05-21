@@ -37,7 +37,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
@@ -116,7 +116,7 @@ public abstract class ReportManager
             theXformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 
         } catch (Exception e) {
-            throw new JMoneyWiseIOException("Failed to create", e);
+            throw new MoneyWiseIOException("Failed to create", e);
         }
     }
 
@@ -314,7 +314,7 @@ public abstract class ReportManager
             /* Return the new text */
             return theText;
         } catch (TransformerException e) {
-            throw new JMoneyWiseIOException("Failed to format", e);
+            throw new MoneyWiseIOException("Failed to format", e);
         }
     }
 

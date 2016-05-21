@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.http.MetisHTTPYQLClient;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
@@ -109,7 +109,7 @@ public final class YQLDownloader {
                 /* Catch exceptions */
             } catch (OceanusException
                     | IOException e) {
-                throw new JMoneyWiseIOException("Failed to download prices", e);
+                throw new MoneyWiseIOException("Failed to download prices", e);
             }
         }
 
@@ -169,7 +169,7 @@ public final class YQLDownloader {
 
                 /* Catch exceptions */
             } catch (OceanusException | IOException e) {
-                throw new JMoneyWiseIOException("Failed to download rates", e);
+                throw new MoneyWiseIOException("Failed to download rates", e);
             }
         }
         /* Return change indication */

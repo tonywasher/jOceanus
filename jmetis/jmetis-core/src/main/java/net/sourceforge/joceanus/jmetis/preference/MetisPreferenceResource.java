@@ -143,7 +143,52 @@ public enum MetisPreferenceResource implements TethysResourceId {
     /**
      * Select header text.
      */
-    UI_HEADER_SELECT("ui.header.Select");
+    UI_HEADER_SELECT("ui.header.Select"),
+
+    /**
+     * SecurityPreference Display Name.
+     */
+    SECPREF_PREFNAME("secpref.prefname"),
+
+    /**
+     * SecurityPreference Factory.
+     */
+    SECPREF_FACTORY("secpref.factory"),
+
+    /**
+     * SecurityPreference Restricted.
+     */
+    SECPREF_RESTRICTED("secpref.restricted"),
+
+    /**
+     * SecurityPreference HashType.
+     */
+    SECPREF_HASH("secpref.hash"),
+
+    /**
+     * SecurityPreference Factory.
+     */
+    SECPREF_SP800("secpref.sp800"),
+
+    /**
+     * SecurityPreference Cipher Steps.
+     */
+    SECPREF_CIPHERSTEPS("secpref.ciphersteps"),
+
+    /**
+     * SecurityPreference Hash Iterations.
+     */
+    SECPREF_ITERATIONS("secpref.hashiterations"),
+
+    /**
+     * SecurityPreference Phrase.
+     */
+    SECPREF_PHRASE("secpref.phrase"),
+
+    /**
+     * SecurityPreference Active KeySets.
+     */
+    SECPREF_KEYSETS("secpref.keysets");
 
     /**
      * The Resource Builder.

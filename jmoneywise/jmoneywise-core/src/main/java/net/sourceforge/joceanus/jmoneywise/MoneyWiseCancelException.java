@@ -25,52 +25,20 @@ package net.sourceforge.joceanus.jmoneywise;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * MoneyWise Data Exception.
+ * MoneyWise Cancel Exception.
  */
-public class JMoneyWiseDataException
+public class MoneyWiseCancelException
         extends OceanusException {
     /**
      * SerialId.
      */
-    private static final long serialVersionUID = -7752365452043464292L;
-
-    /**
-     * Create a new MoneyWise Exception object based on an object, a string and an underlying exception.
-     * @param o the object
-     * @param s the description of the exception
-     * @param e the underlying exception
-     */
-    public JMoneyWiseDataException(final Object o,
-                                   final String s,
-                                   final Throwable e) {
-        super(o, s, e);
-    }
-
-    /**
-     * Create a new MoneyWise Exception object based on an object and a string.
-     * @param o the object
-     * @param s the description of the exception
-     */
-    public JMoneyWiseDataException(final Object o,
-                                   final String s) {
-        super(o, s);
-    }
-
-    /**
-     * Create a new MoneyWise Exception object based on a string and an underlying exception.
-     * @param s the description of the exception
-     * @param e the underlying exception
-     */
-    public JMoneyWiseDataException(final String s,
-                                   final Throwable e) {
-        super(s, e);
-    }
+    private static final long serialVersionUID = 7209820774558300955L;
 
     /**
      * Create a new MoneyWise Exception object based on a string.
      * @param s the description of the exception
      */
-    public JMoneyWiseDataException(final String s) {
+    public MoneyWiseCancelException(final String s) {
         super(s);
     }
 }

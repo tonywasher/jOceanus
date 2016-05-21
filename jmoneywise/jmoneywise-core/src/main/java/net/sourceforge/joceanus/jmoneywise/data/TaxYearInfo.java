@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
@@ -112,7 +112,7 @@ public class TaxYearInfo
 
         } catch (OceanusException e) {
             /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -357,7 +357,7 @@ public class TaxYearInfo
             /* Look up the Info Type */
             TaxYearInfoType myInfoType = myData.getTaxInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JMoneyWiseDataException(pTaxYear, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
+                throw new MoneyWiseDataException(pTaxYear, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create the values */
@@ -373,7 +373,7 @@ public class TaxYearInfo
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myTaxInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myTaxInfo, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myTaxInfo, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear Info to the list */
@@ -384,7 +384,7 @@ public class TaxYearInfo
 
             /* Handle validation failure */
             if (myTaxInfo.hasErrors()) {
-                throw new JMoneyWiseDataException(myTaxInfo, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myTaxInfo, ERROR_VALIDATION);
             }
         }
 
@@ -396,7 +396,7 @@ public class TaxYearInfo
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
                 myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
 
             /* Add to the list */

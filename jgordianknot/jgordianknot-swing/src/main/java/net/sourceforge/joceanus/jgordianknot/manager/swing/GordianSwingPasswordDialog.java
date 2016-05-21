@@ -57,18 +57,19 @@ public class GordianSwingPasswordDialog
 
     /**
      * Constructor.
-     * @param pParent the parent frame for the dialog
+     * @param pFactory the GUI Factory
      * @param pTitle the title
      * @param pNeedConfirm true/false
      */
-    public GordianSwingPasswordDialog(final JFrame pParent,
-                                      final String pTitle,
-                                      final boolean pNeedConfirm) {
+    protected GordianSwingPasswordDialog(final TethysSwingGuiFactory pFactory,
+                                         final String pTitle,
+                                         final boolean pNeedConfirm) {
         /* Initialise underlying class */
         super(new TethysSwingGuiFactory(), pNeedConfirm);
 
-        /* Initialise the dialog (this calls dialogInit) */
-        theDialog = new JDialog(pParent, pTitle, true);
+        /* Initialise the dialog */
+        JFrame myParent = pFactory.getFrame();
+        theDialog = new JDialog(myParent, pTitle, true);
 
         /* If we are confirming */
         if (pNeedConfirm) {
@@ -83,7 +84,7 @@ public class GordianSwingPasswordDialog
         theDialog.pack();
 
         /* Set the relative location */
-        theDialog.setLocationRelativeTo(pParent);
+        theDialog.setLocationRelativeTo(myParent);
     }
 
     @Override

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Prometheus Data Exception.
  */
-public class JPrometheusDataException
+public class PrometheusDataException
         extends OceanusException {
     /**
      * SerialId.
@@ -35,14 +35,15 @@ public class JPrometheusDataException
     private static final long serialVersionUID = 477418185621087538L;
 
     /**
-     * Create a new Prometheus Exception object based on an object, a string and an underlying exception.
+     * Create a new Prometheus Exception object based on an object, a string and an underlying
+     * exception.
      * @param o the object
      * @param s the description of the exception
      * @param e the underlying exception
      */
-    public JPrometheusDataException(final Object o,
-                                    final String s,
-                                    final Throwable e) {
+    public PrometheusDataException(final Object o,
+                                   final String s,
+                                   final Throwable e) {
         super(o, s, e);
     }
 
@@ -51,8 +52,8 @@ public class JPrometheusDataException
      * @param o the object
      * @param s the description of the exception
      */
-    public JPrometheusDataException(final Object o,
-                                    final String s) {
+    public PrometheusDataException(final Object o,
+                                   final String s) {
         super(o, s);
     }
 
@@ -61,8 +62,8 @@ public class JPrometheusDataException
      * @param s the description of the exception
      * @param e the underlying exception
      */
-    public JPrometheusDataException(final String s,
-                                    final Throwable e) {
+    public PrometheusDataException(final String s,
+                                   final Throwable e) {
         super(s, e);
     }
 
@@ -70,7 +71,7 @@ public class JPrometheusDataException
      * Create a new Prometheus Exception object based on a string.
      * @param s the description of the exception
      */
-    public JPrometheusDataException(final String s) {
+    public PrometheusDataException(final String s) {
         super(s);
     }
 }

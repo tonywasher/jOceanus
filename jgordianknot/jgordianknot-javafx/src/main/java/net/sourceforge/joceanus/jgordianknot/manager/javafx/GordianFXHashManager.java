@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.manager.javafx;
 
-import javafx.stage.Stage;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
  * PasswordHash Manager class which holds a cache of all resolved password hashes. For password
@@ -35,21 +35,30 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class GordianFXHashManager
         extends GordianHashManager {
     /**
-     * Stage to use for password dialog.
+     * GUI factory.
      */
-    private Stage theStage = null;
+    private final TethysFXGuiFactory theFactory;
 
     /**
      * Password dialog.
      */
-    private GordianFXPasswordDialog theDialog = null;
+    private GordianFXPasswordDialog theDialog;
 
     /**
      * Constructor for default values.
      * @throws OceanusException on error
      */
     public GordianFXHashManager() throws OceanusException {
-        super();
+        this(new TethysFXGuiFactory());
+    }
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI Factory
+     * @throws OceanusException on error
+     */
+    public GordianFXHashManager(final TethysFXGuiFactory pFactory) throws OceanusException {
+        this(pFactory, new GordianParameters());
     }
 
     /**
@@ -58,21 +67,25 @@ public class GordianFXHashManager
      * @throws OceanusException on error
      */
     public GordianFXHashManager(final GordianParameters pParameters) throws OceanusException {
-        super(pParameters);
+        this(new TethysFXGuiFactory(), pParameters);
     }
 
     /**
-     * Set the Stage for the Secure Manager.
-     * @param pStage the stage
+     * Constructor.
+     * @param pFactory the GUI Factory
+     * @param pParameters the Security parameters
+     * @throws OceanusException on error
      */
-    public void setStage(final Stage pStage) {
-        theStage = pStage;
+    public GordianFXHashManager(final TethysFXGuiFactory pFactory,
+                                final GordianParameters pParameters) throws OceanusException {
+        super(pParameters);
+        theFactory = pFactory;
     }
 
     @Override
     protected void createTheDialog(final String pTitle,
                                    final boolean pNeedConfirm) {
-        theDialog = new GordianFXPasswordDialog(theStage, pTitle, pNeedConfirm);
+        theDialog = new GordianFXPasswordDialog(theFactory, pTitle, pNeedConfirm);
     }
 
     @Override

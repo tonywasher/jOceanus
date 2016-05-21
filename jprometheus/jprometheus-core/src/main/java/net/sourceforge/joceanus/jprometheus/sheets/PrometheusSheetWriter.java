@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
-import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
-import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
+import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -166,7 +166,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
 
         } catch (IOException e) {
             /* Report the error */
-            throw new JPrometheusIOException("Failed to create Backup Workbook: " + pFile.getName(), e);
+            throw new PrometheusIOException("Failed to create Backup Workbook: " + pFile.getName(), e);
         } finally {
             /* Delete the file on error */
             if ((!bSuccess) && (!pFile.delete())) {
@@ -244,7 +244,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new JPrometheusCancelException("Operation Cancelled");
+            throw new PrometheusCancelException("Operation Cancelled");
         }
     }
 }

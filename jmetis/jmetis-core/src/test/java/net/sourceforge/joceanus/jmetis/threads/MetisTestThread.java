@@ -36,7 +36,7 @@ public class MetisTestThread
     }
 
     @Override
-    public Void performTask(MetisThreadManager<?, ?> pManager) throws OceanusException {
+    public Void performTask(final MetisThreadManager<?, ?> pManager) throws OceanusException {
         /* Set stage */
         boolean bContinue = pManager.setNumStages(2);
 

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * MoneyWise IO Exception.
  */
-public class JMoneyWiseIOException
+public class MoneyWiseIOException
         extends OceanusException {
     /**
      * SerialId.
@@ -39,8 +39,8 @@ public class JMoneyWiseIOException
      * @param s the description of the exception
      * @param e the underlying exception
      */
-    public JMoneyWiseIOException(final String s,
-                                 final Throwable e) {
+    public MoneyWiseIOException(final String s,
+                                final Throwable e) {
         super(s, e);
     }
 }

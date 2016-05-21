@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -382,7 +382,7 @@ public class AssetCurrency
             /* Check that this AccountCurrencyId has not been previously added */
             if (!isIdUnique(myCurr.getId())) {
                 myCurr.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myCurr, ERROR_VALIDATION);
             }
 
             /* Add the Account Currency to the list */
@@ -397,7 +397,7 @@ public class AssetCurrency
             /* Check that this CurrencyId has not been previously added */
             if (!isIdUnique(myCurrency.getId())) {
                 myCurrency.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myCurrency, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myCurrency, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -471,7 +471,7 @@ public class AssetCurrency
             /* Check that this CurrId has not been previously added */
             if (!isIdUnique(myCurr.getId())) {
                 myCurr.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myCurr, ERROR_VALIDATION);
             }
 
             /* Add to the list */

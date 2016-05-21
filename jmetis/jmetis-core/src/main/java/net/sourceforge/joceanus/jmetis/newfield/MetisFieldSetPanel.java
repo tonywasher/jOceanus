@@ -102,7 +102,7 @@ public class MetisFieldSetPanel<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public MetisFieldSetPanel(final TethysGuiFactory<N, I> pFactory) {
+    protected MetisFieldSetPanel(final TethysGuiFactory<N, I> pFactory) {
         this(pFactory, new HashMap<>());
     }
 

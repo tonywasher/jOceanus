@@ -26,8 +26,8 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
@@ -109,7 +109,7 @@ public final class SheetAccountCategory {
 
             /* Handle exceptions */
         } catch (OceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load " + AREA_ACTCATEGORIES, e);
+            throw new MoneyWiseIOException("Failed to Load " + AREA_ACTCATEGORIES, e);
         }
 
         /* Return to caller */
@@ -189,7 +189,7 @@ public final class SheetAccountCategory {
             myList.addValuesItem(myValues);
 
         } else {
-            throw new JMoneyWiseLogicException("Unexpected Account Class" + myClass);
+            throw new MoneyWiseLogicException("Unexpected Account Class" + myClass);
         }
     }
 

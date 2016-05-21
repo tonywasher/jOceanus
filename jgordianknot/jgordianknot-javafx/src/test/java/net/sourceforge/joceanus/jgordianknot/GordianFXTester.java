@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
+import java.io.File;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Group;
@@ -33,6 +35,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.javafx.GordianFXHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
  * Security Test suite.
@@ -46,28 +49,27 @@ public class GordianFXTester
     private final GordianTestSuite theTests;
 
     /**
-     * The stage.
+     * The GUI Factory.
      */
-    private Stage theStage;
+    private final TethysFXGuiFactory theGuiFactory;
 
     /**
      * Constructor.
      */
     public GordianFXTester() {
         theTests = new GordianTestSuite(this);
+        theGuiFactory = new TethysFXGuiFactory();
     }
 
     @Override
     public GordianHashManager newSecureManager() throws OceanusException {
-        GordianFXHashManager myManager = new GordianFXHashManager();
-        myManager.setStage(theStage);
+        GordianFXHashManager myManager = new GordianFXHashManager(theGuiFactory);
         return myManager;
     }
 
     @Override
     public GordianHashManager newSecureManager(final GordianParameters pParams) throws OceanusException {
-        GordianFXHashManager myManager = new GordianFXHashManager(pParams);
-        myManager.setStage(theStage);
+        GordianFXHashManager myManager = new GordianFXHashManager(theGuiFactory, pParams);
         return myManager;
     }
 
@@ -77,24 +79,24 @@ public class GordianFXTester
      * @throws OceanusException on error
      */
     public void runTests(final String pArg) throws OceanusException {
-        // if (pArg != null) {
-        /* handle check algorithms */
-        // if ("check".equals(pArg)) {
-        // theTests.checkAlgorithms();
+        if (pArg != null) {
+            /* handle check algorithms */
+            if ("check".equals(pArg)) {
+                theTests.checkAlgorithms();
 
-        /* handle test security */
-        // } else if ("test".equals(pArg)) {
-        theTests.testSecurity();
+                /* handle test security */
+            } else if ("test".equals(pArg)) {
+                theTests.testSecurity();
 
-        /* handle zip file creation */
-        // } else if ("zip".equals(pArg)) {
-        // File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
-        // theTests.createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
-        // theTests.extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
-        // }
-        // } else {
-        // SecurityTestSuite.listAlgorithms();
-        // }
+                /* handle zip file creation */
+            } else if ("zip".equals(pArg)) {
+                File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
+                theTests.createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
+                theTests.extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
+            }
+        } else {
+            GordianTestSuite.listAlgorithms();
+        }
     }
 
     /**
@@ -113,7 +115,7 @@ public class GordianFXTester
         pStage.setTitle("JavaFXSecurity Demo");
         pStage.setScene(myScene);
         pStage.show();
-        theStage = pStage;
+        theGuiFactory.setStage(pStage);
 
         Platform.runLater(new Runnable() {
             @Override

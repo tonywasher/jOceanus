@@ -27,7 +27,7 @@ import java.io.File;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.swing.MetisFileSelector;
-import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
+import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
@@ -102,7 +102,7 @@ public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            throw new JPrometheusCancelException(ERROR_CANCEL);
+            throw new PrometheusCancelException(ERROR_CANCEL);
         }
 
         /* Create a new formatter */
@@ -114,7 +114,7 @@ public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new JPrometheusCancelException(ERROR_CANCEL);
+            throw new PrometheusCancelException(ERROR_CANCEL);
         }
 
         /* Initialise the status window */

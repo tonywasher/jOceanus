@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
@@ -136,7 +136,7 @@ public class SheetTransInfoType
 
             /* Handle Exceptions */
         } catch (OceanusException e) {
-            throw new JMoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);
+            throw new MoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

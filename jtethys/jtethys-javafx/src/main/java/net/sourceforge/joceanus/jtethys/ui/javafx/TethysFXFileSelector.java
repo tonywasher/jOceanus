@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.io.File;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -105,12 +104,9 @@ public class TethysFXFileSelector
             /* else we must use invokeAndWait */
         } else {
             /* Create a FutureTask so that we will wait */
-            FutureTask<Void> myTask = new FutureTask<>(new Callable<Void>() {
-                @Override
-                public Void call() {
-                    showDialog();
-                    return null;
-                }
+            FutureTask<Void> myTask = new FutureTask<>(() -> {
+                showDialog();
+                return null;
             });
 
             /* Protect against exceptions */

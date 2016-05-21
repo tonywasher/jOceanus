@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
@@ -162,7 +162,7 @@ public class SheetSecurity
         /* Look for separator in category */
         int iIndex = myType.indexOf(TransactionCategory.STR_SEP);
         if (iIndex == -1) {
-            throw new JMoneyWiseLogicException("Unexpected Security Class " + myType);
+            throw new MoneyWiseLogicException("Unexpected Security Class " + myType);
         }
 
         /* Access subCategory as security type */

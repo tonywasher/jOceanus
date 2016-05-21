@@ -28,7 +28,7 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -277,7 +277,7 @@ public abstract class SchedulePattern
                 DayOfWeek myValue = DayOfWeek.valueOf(pName);
                 return getFlag(myValue);
             } catch (IllegalArgumentException e) {
-                throw new JMoneyWiseDataException(pName, DataItem.ERROR_RESOLUTION, e);
+                throw new MoneyWiseDataException(pName, DataItem.ERROR_RESOLUTION, e);
             }
         }
 
@@ -405,7 +405,7 @@ public abstract class SchedulePattern
                 int myValue = Integer.parseInt(pName);
                 return getFlag(myValue);
             } catch (NumberFormatException e) {
-                throw new JMoneyWiseDataException(pName, DataItem.ERROR_RESOLUTION, e);
+                throw new MoneyWiseDataException(pName, DataItem.ERROR_RESOLUTION, e);
             }
         }
 

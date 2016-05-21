@@ -90,6 +90,14 @@ public class TethysSwingGuiFactory
     }
 
     /**
+     * Get the frame.
+     * @return the frame
+     */
+    public JFrame getFrame() {
+        return theFrame;
+    }
+
+    /**
      * Obtain the field adjuster.
      * @return the field adjuster
      */

@@ -46,12 +46,12 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPrefere
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisViewerWindow;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
@@ -224,10 +224,10 @@ public final class ThemisSvnManager {
         thePreferences = thePrefMgr.getPreferenceSet(ThemisSvnPreferences.class);
 
         /* Access the Security Preferences */
-        PrometheusSecurityPreferences mySecurity = thePrefMgr.getPreferenceSet(PrometheusSecurityPreferences.class);
+        MetisSecurityPreferences mySecurity = thePrefMgr.getPreferenceSet(MetisSecurityPreferences.class);
 
         /* Create the Secure Manager */
-        theSecureMgr = new GordianSwingHashManager(mySecurity.getParameters());
+        theSecureMgr = new GordianSwingHashManager(theGuiFactory, mySecurity.getParameters());
 
         /* Create the fieldManager and viewer manager */
         MetisColorPreferences myFieldPrefs = thePrefMgr.getPreferenceSet(MetisColorPreferences.class);

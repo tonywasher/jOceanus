@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataSheet;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -217,7 +217,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
 
             /* Handle exceptions */
         } catch (OceanusException e) {
-            throw new JPrometheusIOException("Failed to Load " + theRangeName, e);
+            throw new PrometheusIOException("Failed to Load " + theRangeName, e);
         }
 
         /* Return to caller */
@@ -286,7 +286,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
                 nameRange();
             }
         } catch (OceanusException e) {
-            throw new JPrometheusIOException("Failed to create " + theRangeName, e);
+            throw new PrometheusIOException("Failed to create " + theRangeName, e);
         }
 
         /* Return to caller */

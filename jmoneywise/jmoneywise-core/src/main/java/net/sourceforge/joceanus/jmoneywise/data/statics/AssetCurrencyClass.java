@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -866,7 +866,7 @@ public enum AssetCurrencyClass implements StaticInterface {
                 return myClass;
             }
         }
-        throw new JMoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.CURRENCY.toString() + ":" + id);
+        throw new MoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.CURRENCY.toString() + ":" + id);
     }
 
     /**

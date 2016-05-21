@@ -29,9 +29,13 @@ import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadPreference.MetisThreadPreferenceKey;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadPreference.MetisThreadPreferences;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 
 /**
  * Thread Manager.
@@ -40,11 +44,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  */
 public abstract class MetisThreadManager<N, I>
         implements TethysEventProvider<MetisThreadEvent> {
-    /**
-     * Default Reporting Steps.
-     */
-    private static final Integer DEFAULT_REPSTEPS = 10;
-
     /**
      * Thread Executor.
      */
@@ -59,11 +58,6 @@ public abstract class MetisThreadManager<N, I>
      * The StatusManager.
      */
     private final MetisThreadStatusManager<N, I> theStatusManager;
-
-    /**
-     * The Active thread.
-     */
-    private MetisThread<?> theThread;
 
     /**
      * The status data.
@@ -86,6 +80,11 @@ public abstract class MetisThreadManager<N, I>
     private final MetisViewerEntry theErrorEntry;
 
     /**
+     * The Active thread.
+     */
+    private MetisThread<?> theThread;
+
+    /**
      * The Active Profile.
      */
     private MetisProfile theProfile;
@@ -102,15 +101,9 @@ public abstract class MetisThreadManager<N, I>
 
     /**
      * Constructor.
-     * @param pViewerManager the viewer manager
-     * @param pStatusManager the status manager
+     * @param pToolkit the toolkit
      */
-    protected MetisThreadManager(final MetisViewerManager pViewerManager,
-                                 final MetisThreadStatusManager<N, I> pStatusManager) {
-        /* Store the parameters */
-        theStatusManager = pStatusManager;
-        theStatusManager.setThreadManager(this);
-
+    protected MetisThreadManager(final MetisToolkit<N, I> pToolkit) {
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
@@ -121,12 +114,21 @@ public abstract class MetisThreadManager<N, I>
         theStatus = new MetisThreadStatus();
 
         /* Create the viewer entries */
-        theThreadEntry = pViewerManager.newEntry("Thread");
-        theProfileEntry = pViewerManager.newEntry(theThreadEntry, "Profile");
-        theErrorEntry = pViewerManager.newEntry(theThreadEntry, "Error");
+        MetisViewerManager myViewer = pToolkit.getViewerManager();
+        theThreadEntry = myViewer.newEntry("Thread");
+        theProfileEntry = myViewer.newEntry(theThreadEntry, "Profile");
+        theErrorEntry = myViewer.newEntry(theThreadEntry, "Error");
 
         /* Hide the thread entry */
         theThreadEntry.setVisible(false);
+
+        /* Create the status manager */
+        theStatusManager = pToolkit.newThreadStatusManager(this);
+
+        /* Access the threadStatus properties */
+        MetisPreferenceManager myMgr = pToolkit.getPreferenceManager();
+        MetisThreadPreferences myPreferences = myMgr.getPreferenceSet(MetisThreadPreferences.class);
+        theReportingSteps = myPreferences.getIntegerValue(MetisThreadPreferenceKey.REPSTEPS);
     }
 
     @Override
@@ -140,6 +142,14 @@ public abstract class MetisThreadManager<N, I>
      */
     protected MetisThreadStatusManager<N, I> getStatusManager() {
         return theStatusManager;
+    }
+
+    /**
+     * Obtain the GUI factory.
+     * @return the factory
+     */
+    public TethysGuiFactory<N, I> getGuiFactory() {
+        return theStatusManager.getGuiFactory();
     }
 
     /**
@@ -291,9 +301,6 @@ public abstract class MetisThreadManager<N, I>
         if (!isCancelled) {
             /* Set number of Steps */
             theStatus.setNumSteps(pNumSteps);
-
-            /* Determine reporting steps */
-            theReportingSteps = DEFAULT_REPSTEPS;
         }
 
         /* Return to caller */

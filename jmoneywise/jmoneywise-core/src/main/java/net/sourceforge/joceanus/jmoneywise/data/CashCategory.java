@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
@@ -429,7 +429,7 @@ public class CashCategory
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(myCategory.getId())) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add to the list */

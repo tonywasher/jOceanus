@@ -63,7 +63,17 @@ public enum MetisThreadResource implements TethysResourceId {
     /**
      * StatusBar Cancel Status.
      */
-    STATUSBAR_STATUS_CANCEL("StatusBar.Status.Cancelled");
+    STATUSBAR_STATUS_CANCEL("StatusBar.Status.Cancelled"),
+
+    /**
+     * ThreadPreference Display Name.
+     */
+    THDPREF_PREFNAME("thdpref.prefname"),
+
+    /**
+     * ThreadPreference Reporting.
+     */
+    THDPREF_REPORTING("thdpref.reporting");
 
     /**
      * The Resource Builder.

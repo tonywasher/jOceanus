@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
@@ -191,7 +191,7 @@ public class Schedule
             /* Catch Exceptions */
         } catch (IllegalArgumentException e) {
             /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -906,7 +906,7 @@ public class Schedule
             /* Check that this ScheduleId has not been previously added */
             if (!isIdUnique(mySchedule.getId())) {
                 mySchedule.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(mySchedule, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(mySchedule, ERROR_VALIDATION);
             }
 
             /* Add to the list */

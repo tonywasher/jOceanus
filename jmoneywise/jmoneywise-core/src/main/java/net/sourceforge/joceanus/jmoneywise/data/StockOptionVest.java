@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
@@ -145,7 +145,7 @@ public class StockOptionVest
             /* Catch Exceptions */
         } catch (OceanusException e) {
             /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -710,7 +710,7 @@ public class StockOptionVest
             /* Check that this VestId has not been previously added */
             if (!isIdUnique(myVest.getId())) {
                 myVest.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myVest, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myVest, ERROR_VALIDATION);
             }
 
             /* Add to the list */

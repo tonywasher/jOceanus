@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.C
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
@@ -535,7 +535,7 @@ public class LoanTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new JMoneyWiseDataException("Failed to create new account", e);
+                OceanusException myError = new MoneyWiseDataException("Failed to create new account", e);
 
                 /* Show the error */
                 setError(myError);

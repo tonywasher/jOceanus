@@ -79,7 +79,7 @@
     <MySQLVersion>6.0.2</MySQLVersion>
     <PostGreSQLVersion>9.4.1208.jre7</PostGreSQLVersion>
     <ApachePOIVersion>3.14</ApachePOIVersion>
-    <ApacheODFDOMVersion>0.8.1-incubating</ApacheODFDOMVersion>
+    <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.21</SLF4JVersion>
     <LOG4JVersion>2.5</LOG4JVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>

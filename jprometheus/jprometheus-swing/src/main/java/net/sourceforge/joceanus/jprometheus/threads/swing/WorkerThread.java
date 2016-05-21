@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
-import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatusControl;
@@ -140,7 +140,7 @@ public abstract class WorkerThread<T>
         } catch (InterruptedException
                 | CancellationException
                 | ExecutionException e) {
-            addError(new JPrometheusIOException("Failed to perform background task", e));
+            addError(new PrometheusIOException("Failed to perform background task", e));
         }
 
         /* Update the Status Bar */

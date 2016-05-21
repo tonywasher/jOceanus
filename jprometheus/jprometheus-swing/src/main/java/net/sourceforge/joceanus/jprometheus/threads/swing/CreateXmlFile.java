@@ -26,8 +26,8 @@ import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
@@ -173,7 +173,7 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
 
                 /* Check for cancellation */
                 if (!bContinue) {
-                    throw new JPrometheusCancelException(ERROR_CANCEL);
+                    throw new PrometheusCancelException(ERROR_CANCEL);
                 }
 
                 /* Initialise the status window */
@@ -191,7 +191,7 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
                 /* If the difference set is non-empty */
                 if (!myDiff.isEmpty()) {
                     /* Throw an exception */
-                    throw new JPrometheusDataException(myDiff, "Backup is inconsistent");
+                    throw new PrometheusDataException(myDiff, "Backup is inconsistent");
                 }
 
                 /* OK so switch off flag */
@@ -200,7 +200,7 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new JPrometheusCancelException(ERROR_CANCEL);
+                throw new PrometheusCancelException(ERROR_CANCEL);
             }
         } finally {
             /* Delete the file */

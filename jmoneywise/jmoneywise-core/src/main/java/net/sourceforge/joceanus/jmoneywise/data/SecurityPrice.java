@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
@@ -166,7 +166,7 @@ public class SecurityPrice
         } catch (IllegalArgumentException
                 | OceanusException e) {
             /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -718,7 +718,7 @@ public class SecurityPrice
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(myPrice.getId())) {
                 myPrice.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myPrice, ERROR_VALIDATION);
+                throw new MoneyWiseDataException(myPrice, ERROR_VALIDATION);
             }
 
             /* Add to the list */
