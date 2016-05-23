@@ -362,7 +362,7 @@ public enum StaticDataResource implements TethysResourceId {
     TRANSTYPE_CAPITALGAIN("TransType.CapitalGain"),
 
     /**
-     * TransType CapitalGain.
+     * TransType MarketGrowth.
      */
     TRANSTYPE_MARKETGROWTH("TransType.MarketGrowth"),
 
@@ -390,6 +390,11 @@ public enum StaticDataResource implements TethysResourceId {
      * TransType CharityDonation.
      */
     TRANSTYPE_CHARDONATION("TransType.CharityDonation"),
+
+    /**
+     * TransType OpeningBalance.
+     */
+    TRANSTYPE_OPENINGBALANCE("TransType.OpeningBalance"),
 
     /**
      * TransType IncomeTotals.
@@ -1285,6 +1290,8 @@ public enum StaticDataResource implements TethysResourceId {
                 return TRANSTYPE_BENEFIT;
             case CHARITYDONATION:
                 return TRANSTYPE_CHARDONATION;
+            case OPENINGBALANCE:
+                return TRANSTYPE_OPENINGBALANCE;
             case INCOMETOTALS:
                 return TRANSTYPE_INCOMETOTALS;
             case EXPENSETOTALS:

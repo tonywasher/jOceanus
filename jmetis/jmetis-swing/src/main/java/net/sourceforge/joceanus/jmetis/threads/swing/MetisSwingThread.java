@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
@@ -39,14 +41,24 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class MetisSwingThread<T>
         extends SwingWorker<Void, MetisThreadStatus> {
     /**
+     * The Toolkit.
+     */
+    private final MetisSwingToolkit theToolkit;
+
+    /**
      * The ThreadManager.
      */
     private final MetisSwingThreadManager theManager;
 
     /**
+     * The ThreadStatusManager.
+     */
+    private final MetisSwingThreadStatusManager theStatusMgr;
+
+    /**
      * The wrapped thread.
      */
-    private final MetisThread<T> theThread;
+    private final MetisThread<T, JComponent, Icon> theThread;
 
     /**
      * The task name.
@@ -60,12 +72,14 @@ public class MetisSwingThread<T>
 
     /**
      * Constructor.
-     * @param pManager the thread manager
+     * @param pToolkit the toolkit
      * @param pThread the thread to wrap
      */
-    protected MetisSwingThread(final MetisSwingThreadManager pManager,
-                               final MetisThread<T> pThread) {
-        theManager = pManager;
+    protected MetisSwingThread(final MetisSwingToolkit pToolkit,
+                               final MetisThread<T, JComponent, Icon> pThread) {
+        theToolkit = pToolkit;
+        theManager = theToolkit.getThreadManager();
+        theStatusMgr = theManager.getStatusManager();
         theThread = pThread;
         theTask = pThread.getTaskName();
     }
@@ -80,7 +94,7 @@ public class MetisSwingThread<T>
 
     @Override
     public Void doInBackground() throws OceanusException {
-        theResult = theThread.performTask(theManager);
+        theResult = theThread.performTask(theToolkit);
         return null;
     }
 
@@ -113,7 +127,7 @@ public class MetisSwingThread<T>
         MetisThreadStatus myStatus = pList.get(pList.size() - 1);
 
         /* Pass to the status bar */
-        theManager.getStatusManager().setProgress(myStatus);
+        theStatusMgr.setProgress(myStatus);
     }
 
     @Override

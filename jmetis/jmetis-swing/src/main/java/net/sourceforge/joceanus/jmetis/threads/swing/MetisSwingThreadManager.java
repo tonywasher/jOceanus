@@ -35,6 +35,11 @@ import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatus;
 public class MetisSwingThreadManager
         extends MetisThreadManager<JComponent, Icon> {
     /**
+     * The Toolkit.
+     */
+    private final MetisSwingToolkit theToolkit;
+
+    /**
      * The Active worker.
      */
     private MetisSwingThread<?> theWorker;
@@ -45,6 +50,7 @@ public class MetisSwingThreadManager
      */
     public MetisSwingThreadManager(final MetisSwingToolkit pToolkit) {
         super(pToolkit);
+        theToolkit = pToolkit;
     }
 
     @Override
@@ -60,9 +66,9 @@ public class MetisSwingThreadManager
     }
 
     @Override
-    protected <T> Runnable wrapThread(final MetisThread<T> pThread) {
+    protected <T> Runnable wrapThread(final MetisThread<T, JComponent, Icon> pThread) {
         /* Create the wrapped thread and listen to state transition */
-        theWorker = new MetisSwingThread<>(this, pThread);
+        theWorker = new MetisSwingThread<>(theToolkit, pThread);
 
         /* Return the worker to the caller */
         return theWorker;

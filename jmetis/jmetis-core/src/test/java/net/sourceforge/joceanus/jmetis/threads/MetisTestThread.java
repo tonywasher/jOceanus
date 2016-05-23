@@ -26,9 +26,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Thread class.
+ * @param <N> the Node type
+ * @param <I> the Icon type
  */
-public class MetisTestThread
-        implements MetisThread<Void> {
+public class MetisTestThread<N, I>
+        implements MetisThread<Void, N, I> {
 
     @Override
     public String getTaskName() {
@@ -36,20 +38,23 @@ public class MetisTestThread
     }
 
     @Override
-    public Void performTask(final MetisThreadManager<?, ?> pManager) throws OceanusException {
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Access the Thread Manager */
+        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+
         /* Set stage */
-        boolean bContinue = pManager.setNumStages(2);
+        boolean bContinue = myManager.setNumStages(2);
 
         /* Perform first task */
         if (bContinue) {
-            bContinue = pManager.setNewStage("First")
-                        && singleTask(pManager, 500);
+            bContinue = myManager.setNewStage("First")
+                        && singleTask(myManager, 500);
         }
 
         /* Perform second task */
         if (bContinue) {
-            bContinue = pManager.setNewStage("Second")
-                        && singleTask(pManager, 200);
+            bContinue = myManager.setNewStage("Second")
+                        && singleTask(myManager, 200);
         }
 
         /* No result */
@@ -63,7 +68,7 @@ public class MetisTestThread
      * @return continue true/false
      * @throws OceanusException on error
      */
-    private boolean singleTask(final MetisThreadManager<?, ?> pManager,
+    private boolean singleTask(final MetisThreadManager<N, I> pManager,
                                final int pNumSteps) throws OceanusException {
         /* Record task details */
         if (!pManager.setNumSteps(500)) {

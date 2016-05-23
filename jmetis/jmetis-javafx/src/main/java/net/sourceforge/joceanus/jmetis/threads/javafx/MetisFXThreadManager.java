@@ -35,6 +35,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class MetisFXThreadManager
         extends MetisThreadManager<Node, Node> {
     /**
+     * The Toolkit.
+     */
+    private final MetisFXToolkit theToolkit;
+
+    /**
      * The Active worker.
      */
     private MetisFXThread<?> theWorker;
@@ -50,6 +55,7 @@ public class MetisFXThreadManager
      */
     public MetisFXThreadManager(final MetisFXToolkit pToolkit) {
         super(pToolkit);
+        theToolkit = pToolkit;
     }
 
     @Override
@@ -65,9 +71,9 @@ public class MetisFXThreadManager
     }
 
     @Override
-    protected <T> Runnable wrapThread(final MetisThread<T> pThread) {
+    protected <T> Runnable wrapThread(final MetisThread<T, Node, Node> pThread) {
         /* Create the wrapped thread and listen to state transition */
-        theWorker = new MetisFXThread<>(this, pThread);
+        theWorker = new MetisFXThread<>(theToolkit, pThread);
         theWorker.stateProperty().addListener((v, o, n) -> handleThreadState(n));
         theWorker.valueProperty().addListener((v, o, n) -> processStatus());
 

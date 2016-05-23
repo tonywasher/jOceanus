@@ -82,7 +82,7 @@ public abstract class MetisThreadManager<N, I>
     /**
      * The Active thread.
      */
-    private MetisThread<?> theThread;
+    private MetisThread<?, N, I> theThread;
 
     /**
      * The Active Profile.
@@ -179,7 +179,7 @@ public abstract class MetisThreadManager<N, I>
      * @param <T> the thread result
      * @param pThread the thread to start
      */
-    public <T> void startThread(final MetisThread<T> pThread) {
+    public <T> void startThread(final MetisThread<T, N, I> pThread) {
         /* Set new profile */
         String myName = pThread.getTaskName();
         setNewProfile(myName);
@@ -208,7 +208,7 @@ public abstract class MetisThreadManager<N, I>
      * @param pThread the thread to wrap
      * @return the runnable thread
      */
-    protected abstract <T> Runnable wrapThread(final MetisThread<T> pThread);
+    protected abstract <T> Runnable wrapThread(final MetisThread<T, N, I> pThread);
 
     /**
      * Register thread completion.

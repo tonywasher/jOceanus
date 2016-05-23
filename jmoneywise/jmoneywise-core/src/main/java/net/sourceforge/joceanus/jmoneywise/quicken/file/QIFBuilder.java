@@ -138,7 +138,7 @@ public class QIFBuilder {
         theNatInsCategory = myCategories.getEventInfoCategory(TransactionInfoClass.NATINSURANCE);
         theBenefitCategory = myCategories.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT);
         theDonateCategory = myCategories.getEventInfoCategory(TransactionInfoClass.CHARITYDONATION);
-        theOpeningCategory = myCategories.getSingularClass(TransactionCategoryClass.INHERITED);
+        theOpeningCategory = myCategories.getSingularClass(TransactionCategoryClass.OPENINGBALANCE);
     }
 
     /**

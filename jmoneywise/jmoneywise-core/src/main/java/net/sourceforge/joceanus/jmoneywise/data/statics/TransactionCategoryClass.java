@@ -279,12 +279,19 @@ public enum TransactionCategoryClass implements CategoryInterface {
     CHARITYDONATION(48, 51),
 
     /**
+     * OpeningBalance.
+     * <p>
+     * This is a singular category catching opening balances.
+     */
+    OPENINGBALANCE(49, 52),
+
+    /**
      * Income Totals.
      * <p>
      * This is used for categories which simply own a set of income sub-categories and is used
      * purely for reporting purposes.
      */
-    INCOMETOTALS(49, 1),
+    INCOMETOTALS(50, 1),
 
     /**
      * Expense Totals.
@@ -292,7 +299,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of expense sub-categories and is used
      * purely for reporting purposes.
      */
-    EXPENSETOTALS(50, 2),
+    EXPENSETOTALS(51, 2),
 
     /**
      * Security Parent.
@@ -300,7 +307,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of security transfer sub-categories and is
      * used purely for holding purposes.
      */
-    SECURITYPARENT(51, 3),
+    SECURITYPARENT(52, 3),
 
     /**
      * Totals.
@@ -308,7 +315,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for the total of all non-transfer categories and is used purely for reporting
      * purposes.
      */
-    TOTALS(52, 0);
+    TOTALS(53, 0);
 
     /**
      * The String name.
@@ -397,6 +404,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TAXABLEGAIN:
             case CAPITALGAIN:
             case TAXFREEGAIN:
+            case OPENINGBALANCE:
             case TOTALS:
                 return true;
             default:
@@ -473,6 +481,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TAXRELIEF:
             case TAXSETTLEMENT:
             case TAXABLEGAIN:
+            case OPENINGBALANCE:
             case TOTALS:
                 return true;
             default:
@@ -530,6 +539,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case RENTALINCOME:
             case ROOMRENTALINCOME:
             case OPTIONSEXERCISE:
+            case OPENINGBALANCE:
             case INCOMETOTALS:
                 return true;
             default:

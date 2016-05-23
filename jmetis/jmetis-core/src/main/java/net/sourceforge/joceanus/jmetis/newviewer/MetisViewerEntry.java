@@ -277,8 +277,6 @@ public class MetisViewerEntry {
                 addChild = !((List<?>) myValue).isEmpty();
             } else if (myValue instanceof Map) {
                 addChild = !((Map<?, ?>) myValue).isEmpty();
-            } else if (myValue instanceof MetisDataContents) {
-                addChild = true;
             }
 
             /* If we should add the child */

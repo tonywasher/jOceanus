@@ -27,8 +27,10 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Metis Thread.
  * @param <T> the thread result
+ * @param <N> the Node type
+ * @param <I> the Icon type
  */
-public interface MetisThread<T> {
+public interface MetisThread<T, N, I> {
     /**
      * obtain the task name.
      * @return the task name
@@ -37,11 +39,11 @@ public interface MetisThread<T> {
 
     /**
      * Perform the task.
-     * @param pManager the thread manager
+     * @param pToolkit the toolkit
      * @return the result
      * @throws OceanusException on error
      */
-    T performTask(final MetisThreadManager<?, ?> pManager) throws OceanusException;
+    T performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException;
 
     /**
      * process result.
