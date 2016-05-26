@@ -39,6 +39,9 @@ the <<BigDecimal>> class
 
   * Classes for analysing a subversion repository and creating an equivalent Git repository.
 
+* Peer2Peer classes (<<jCoeus>>)
+
+  * Classes for analysing peer2peer financial statements.
 
 
   

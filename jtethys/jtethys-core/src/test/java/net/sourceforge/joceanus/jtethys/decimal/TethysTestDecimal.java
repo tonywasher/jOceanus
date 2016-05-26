@@ -87,6 +87,14 @@ public final class TethysTestDecimal {
         myFormat = myFormat.trim();
         myPrice.setZero();
 
+        /* Try to parse a few odd values */
+        TethysDecimal myDec = myParser.parseDecimalValue("0.0", 8);
+        myDec = myParser.parseDecimalValue("0.0587891", 8);
+        myDec = myParser.parseDecimalValue("5.105e-04", 8);
+        myDec = myParser.parseDecimalValue("5.105e04", 8);
+        myDec = myParser.parseDecimalValue("5e01", 8);
+        myDec = myParser.parseDecimalValue("5e-02", 8);
+
         /* Use otherwise dead variables */
         return myMoney.valueAtRate(myRate);
     }

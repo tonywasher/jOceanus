@@ -19,6 +19,7 @@ set dirNames=%dirNames% jmetis jmetis\jmetis-core jmetis\jmetis-swing jmetis\jme
 set dirNames=%dirNames% jprometheus jprometheus\jprometheus-core jprometheus\jprometheus-swing jprometheus\jprometheus-javafx
 set dirNames=%dirNames% jthemis jthemis\jthemis-core jthemis\jthemis-swing jthemis\jthemis-javafx
 set dirNames=%dirNames% jmoneywise jmoneywise\jmoneywise-core jmoneywise\jmoneywise-swing jmoneywise\jmoneywise-javafx
+set dirNames=%dirNames% jcoeus jcoeus\jcoeus-core jcoeus\jcoeus-swing jcoeus\jcoeus-javafx
 set dirNames=%dirNames% .
 
 :docopy

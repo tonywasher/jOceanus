@@ -155,6 +155,23 @@ public class TethysDecimalParser {
         /* Trim leading and trailing blanks again */
         trimBuffer(myWork);
 
+        /* Locate the exponent if present */
+        int myExponent = 0;
+        myPos = myWork.indexOf("e");
+        if (myPos != -1) {
+            /* Obtain the exponent and remove from decimals */
+            String myExp = myWork.substring(myPos + 1);
+            myWork.setLength(myPos);
+
+            /* Parse the integral part */
+            try {
+                myExponent = Integer.parseInt(myExp);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(ERROR_PARSE
+                                                   + pValue, e);
+            }
+        }
+
         /* Locate the decimal point if present */
         myPos = myWork.indexOf(useMoneyDecimal
                                                ? pLocale.getMoneyDecimal()
@@ -171,6 +188,67 @@ public class TethysDecimalParser {
                 myDecimals = new StringBuilder(myWork.substring(myPos + 1));
             }
             myWork.setLength(myPos);
+        }
+
+        /* If we have a positive exponent */
+        if (myExponent > 0) {
+            /* Determine the number of decimals */
+            int myNumDec = myDecimals == null
+                                              ? 0
+                                              : myDecimals.length();
+
+            /* Shift decimals across */
+            while (myExponent > 0 && myNumDec > 0) {
+                /* Copy decimal across */
+                char myChar = myDecimals.charAt(0);
+                myDecimals.deleteCharAt(0);
+                myWork.append(myChar);
+
+                /* Adjust counters */
+                myExponent--;
+                myNumDec--;
+            }
+
+            /* Finish off with zeroes */
+            while (myExponent > 0) {
+                myWork.append(TethysDecimalFormatter.CHAR_ZERO);
+                myExponent--;
+            }
+
+            /* If we now have no decimals remove decimal indication */
+            if (myNumDec == 0) {
+                myDecimals = null;
+            }
+            /* If we have a negative exponent */
+        } else if (myExponent < 0) {
+            /* Determine the number of integer digits */
+            int myNumDigits = myWork.length();
+            StringBuilder myCopy = new StringBuilder();
+
+            /* Shift decimals across */
+            while (myExponent < 0 && myNumDigits > 0) {
+                /* Copy digit across */
+                char myChar = myWork.charAt(myNumDigits - 1);
+                myWork.deleteCharAt(myNumDigits - 1);
+                myCopy.insert(0, myChar);
+
+                /* Adjust counters */
+                myExponent++;
+                myNumDigits--;
+            }
+
+            /* Finish off with zeroes */
+            while (myExponent < 0) {
+                myCopy.insert(0, TethysDecimalFormatter.CHAR_ZERO);
+                myExponent++;
+            }
+
+            /* If we have decimals already */
+            if (myDecimals != null) {
+                myDecimals.insert(0, myCopy);
+            } else {
+                myDecimals = myCopy;
+            }
         }
 
         /* Handle leading decimal point on value */
@@ -704,10 +782,12 @@ public class TethysDecimalParser {
     /**
      * Parse Decimal value.
      * @param pValue the string value to parse.
+     * @param pScale the scale of the resulting decimal
      * @return the parsed decimal
      * @throws IllegalArgumentException on invalid decimal value
      */
-    public TethysDecimal parseDecimalValue(final String pValue) {
+    public TethysDecimal parseDecimalValue(final String pValue,
+                                           final int pScale) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -718,9 +798,7 @@ public class TethysDecimalParser {
 
         /* Parse the remaining string */
         parseDecimalValue(pValue.trim(), theLocale, false, myDecimal);
-
-        /* remove redundant decimal places */
-        myDecimal.reduceScale(0);
+        adjustDecimals(myDecimal, pScale);
 
         /* return the parsed decimal object */
         return myDecimal;

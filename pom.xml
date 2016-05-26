@@ -14,6 +14,7 @@
   <modules>
     <module>jmoneywise</module>
     <module>jthemis</module>
+    <module>jcoeus</module>
     <module>jprometheus</module>
     <module>jmetis</module>
     <module>jgordianknot</module>
