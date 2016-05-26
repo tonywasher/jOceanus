@@ -82,7 +82,7 @@ public class CoeusFundingCircleLoanBookParser
     }
 
     @Override
-    protected void processFields(List<String> pFields) throws OceanusException {
+    protected void processFields(final List<String> pFields) throws OceanusException {
         /* If we have not yet checked the header */
         if (!checkedHeader) {
             /* Validate the header */

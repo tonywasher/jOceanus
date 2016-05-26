@@ -49,8 +49,7 @@ public abstract class CoeusLoanMarket<T extends CoeusTransaction> {
 
     /**
      * Constructor.
-     * @param pMarket the loanMarket
-     * @param pId the loan Id
+     * @param pProvider the loanMarket provider
      */
     protected CoeusLoanMarket(final CoeusLoanMarketProvider pProvider) {
         /* Store parameters */

@@ -90,6 +90,8 @@ public class CoeusZopaTester {
             myMarket.parseStatement(new File(BASE_PATH, "ZopaStatement March 2016.csv"));
             myMarket.parseStatement(new File(BASE_PATH, "ZopaStatement April 2016.csv"));
             myMarket.parseStatement(new File(BASE_PATH, "ZopaStatement May 2016.csv"));
+
+            /* Catch Exceptions */
         } catch (OceanusException e) {
             e.printStackTrace(System.out);
         }

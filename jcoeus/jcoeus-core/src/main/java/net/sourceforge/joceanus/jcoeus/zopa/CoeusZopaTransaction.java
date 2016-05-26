@@ -53,6 +53,11 @@ public class CoeusZopaTransaction
     private static final String PFIX_INTEREST = "Interest payment from ";
 
     /**
+     * Manual Interest payment correction.
+     */
+    private static final String PFIX_INTEREST2 = "Manual Interest Payment Correction";
+
+    /**
      * SafeGuard Interest prefix.
      */
     private static final String PFIX_SAFEINTEREST = "Safeguard interest payment for ";
@@ -66,6 +71,11 @@ public class CoeusZopaTransaction
      * Capital prefix.
      */
     private static final String PFIX_CAPITAL = "Capital payment from ";
+
+    /**
+     * Capital prefix2.
+     */
+    private static final String PFIX_CAPITAL2 = "Capital payment";
 
     /**
      * Safeguard Capital prefix.
@@ -268,6 +278,11 @@ public class CoeusZopaTransaction
             return CoeusTransactionType.CAPITALREPAYMENT;
         }
 
+        /* If the description is Capital payment2 */
+        if (PFIX_CAPITAL2.equals(theDesc)) {
+            return CoeusTransactionType.CAPITALREPAYMENT;
+        }
+
         /* If the description is Capital payment */
         if (theDesc.startsWith(PFIX_SAFECAPITAL)) {
             thePrefix = PFIX_SAFECAPITAL;
@@ -277,6 +292,11 @@ public class CoeusZopaTransaction
         /* If the description is Interest */
         if (theDesc.startsWith(PFIX_INTEREST)) {
             thePrefix = PFIX_INTEREST;
+            return CoeusTransactionType.INTEREST;
+        }
+
+        /* If the description is Manual interest correction */
+        if (PFIX_INTEREST2.equals(theDesc)) {
             return CoeusTransactionType.INTEREST;
         }
 
@@ -316,7 +336,7 @@ public class CoeusZopaTransaction
      * determine capital delta.
      * @return the delta
      */
-    private TethysDecimal determineCapitalDelta() throws OceanusException {
+    private TethysDecimal determineCapitalDelta() {
         /* Switch on transactionType */
         switch (theTransType) {
             case CAPITALLOAN:
@@ -336,7 +356,7 @@ public class CoeusZopaTransaction
      * determine interest delta.
      * @return the delta
      */
-    private TethysDecimal determineInterestDelta() throws OceanusException {
+    private TethysDecimal determineInterestDelta() {
         /* Switch on transactionType */
         switch (theTransType) {
             case INTEREST:
@@ -353,7 +373,7 @@ public class CoeusZopaTransaction
      * determine fees delta.
      * @return the delta
      */
-    private TethysDecimal determineFeesDelta() throws OceanusException {
+    private TethysDecimal determineFeesDelta() {
         /* Switch on transactionType */
         switch (theTransType) {
             case FEES:
@@ -371,7 +391,7 @@ public class CoeusZopaTransaction
      * determine cashBack delta.
      * @return the delta
      */
-    private TethysDecimal determineCashBackDelta() throws OceanusException {
+    private TethysDecimal determineCashBackDelta() {
         /* Switch on transactionType */
         switch (theTransType) {
             case CASHBACK:
@@ -387,7 +407,7 @@ public class CoeusZopaTransaction
      * determine badDebt delta.
      * @return the delta
      */
-    private TethysDecimal determineBadDebtDelta() throws OceanusException {
+    private TethysDecimal determineBadDebtDelta() {
         TethysDecimal myDebt = new TethysDecimal(thePaidOut);
         myDebt.setZero();
         return myDebt;
@@ -397,13 +417,17 @@ public class CoeusZopaTransaction
      * determine loanId.
      * @return the id
      */
-    private String determineLoanId() throws OceanusException {
+    private String determineLoanId() {
         /* Switch on transactionType */
         switch (theTransType) {
             case INTEREST:
-                return theDesc.substring(thePrefix.length());
+                return thePrefix == null
+                                         ? null
+                                         : theDesc.substring(thePrefix.length());
             case CAPITALREPAYMENT:
-                return theDesc.substring(thePrefix.length());
+                return thePrefix == null
+                                         ? null
+                                         : theDesc.substring(thePrefix.length());
             case CAPITALLOAN:
                 String myValue = theDesc.substring(PFIX_LOAN.length());
                 int myIndex = myValue.indexOf(' ');

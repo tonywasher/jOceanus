@@ -63,6 +63,11 @@ public class CoeusRateSetterLoanBookParser {
     private final TethysDecimalParser theDecimalParser;
 
     /**
+     * StringBuilder.
+     */
+    private final StringBuilder theBuilder;
+
+    /**
      * Constructor.
      * @param pFormatter the formatter
      */
@@ -73,6 +78,9 @@ public class CoeusRateSetterLoanBookParser {
         /* Access the formatters */
         theDateParser = pFormatter.getDateFormatter();
         theDecimalParser = pFormatter.getDecimalParser();
+
+        /* create the string builder */
+        theBuilder = new StringBuilder();
     }
 
     /**
@@ -153,11 +161,19 @@ public class CoeusRateSetterLoanBookParser {
 
             /* Loop through the rows */
             for (Element myRow : myRows) {
-                /* Obtain the cells */
-                listChildElements(myRow, "td", myCells);
+                /* Ignore if this is a summary row */
+                if (!myRow.hasClass("rsTableSummaryRow")) {
+                    /* Obtain the cells */
+                    listChildElements(myRow, "td", myCells);
 
-                /* Add the loan book item */
-                theLoans.add(new CoeusRateSetterLoanBookItem(this, isRepaid, myCells));
+                    /* Skip if this is the final empty cell */
+                    if ((myCells.size() == 1) && myCells.get(0).hasClass("rsTableFinalEmptyCell")) {
+                        continue;
+                    }
+
+                    /* Add the loan book item */
+                    theLoans.add(new CoeusRateSetterLoanBookItem(this, isRepaid, myCells));
+                }
             }
 
             /* Catch exceptions */
@@ -189,5 +205,32 @@ public class CoeusRateSetterLoanBookParser {
                 }
             }
         }
+    }
+
+    /**
+     * Extract text from all children without adding blank between elements.
+     * @param pElement the parent element
+     * @param pName the child element name
+     * @return the text
+     */
+    protected String childElementText(final Element pElement) {
+        /* Reset string builder */
+        theBuilder.setLength(0);
+        Element myRow = pElement.select("tr").first();
+
+        /* Loop through the childNodes */
+        for (Node myNode : myRow.childNodes()) {
+            /* If this is an element */
+            if (myNode instanceof Element) {
+                /* If it is a required child */
+                Element myChild = (Element) myNode;
+                if ("td".equals(myNode.nodeName())) {
+                    theBuilder.append(myChild.text());
+                }
+            }
+        }
+
+        /* return the accumulated text */
+        return theBuilder.toString();
     }
 }

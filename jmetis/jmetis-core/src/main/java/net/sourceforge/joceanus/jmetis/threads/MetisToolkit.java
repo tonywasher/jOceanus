@@ -158,13 +158,16 @@ public abstract class MetisToolkit<N, I> {
 
     /**
      * Create a Thread Status Manager.
+     * @param pManager the thread manager
      * @return the thread status manager
      */
     protected abstract MetisThreadStatusManager<N, I> newThreadStatusManager(final MetisThreadManager<N, I> pManager);
 
     /**
      * Create a Security Manager.
+     * @param pParameters the parameters
      * @return the manager
+     * @throws OceanusException on error
      */
     protected abstract GordianHashManager newSecurityManager(final GordianParameters pParameters) throws OceanusException;
 

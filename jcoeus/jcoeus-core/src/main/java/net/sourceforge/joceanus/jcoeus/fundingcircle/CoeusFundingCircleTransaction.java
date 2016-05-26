@@ -250,7 +250,7 @@ public class CoeusFundingCircleTransaction
     }
 
     /**
-     * Set the loanId
+     * Set the loanId.
      * @param pLoanId the loan id
      */
     protected void setLoanId(final String pLoanId) {
@@ -258,7 +258,7 @@ public class CoeusFundingCircleTransaction
     }
 
     /**
-     * Obtain the auctionId
+     * Obtain the auctionId.
      * @return the id
      */
     public String getAuctionId() {

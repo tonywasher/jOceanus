@@ -87,7 +87,8 @@ public class CoeusRateSetterLoanBookItem {
         theStartDate = pParser.parseDate(myIterator.next().text());
 
         /* Obtain the amount */
-        TethysMoney myAmount = pParser.parseMoney(myIterator.next().text());
+        String myAmountText = pParser.childElementText(myIterator.next());
+        TethysMoney myAmount = pParser.parseMoney(myAmountText);
         TethysMoney myZero = new TethysMoney(myAmount);
         myZero.setZero();
 

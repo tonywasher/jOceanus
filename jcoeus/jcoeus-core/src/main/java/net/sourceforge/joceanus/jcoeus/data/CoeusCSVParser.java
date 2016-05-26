@@ -323,6 +323,7 @@ public abstract class CoeusCSVParser {
     /**
      * Check Field Count.
      * @param pFields the fields
+     * @throws OceanusException on error
      */
     private void checkFieldCount(final List<String> pFields) throws OceanusException {
         /* Check the # of fields */
@@ -334,6 +335,7 @@ public abstract class CoeusCSVParser {
     /**
      * Check Headers.
      * @param pFields the fields
+     * @throws OceanusException on error
      */
     protected void checkHeaders(final List<String> pFields) throws OceanusException {
         /* Check names are correct */
