@@ -26,8 +26,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
+import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanRisk;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -35,16 +40,57 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 /**
  * FundingCircle Loan Book Item.
  */
-public class CoeusFundingCircleLoanBookItem {
+public class CoeusFundingCircleLoanBookItem
+        implements MetisDataContents {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusFundingCircleLoanBookItem.class.getSimpleName());
+
+    /**
+     * Loan Id Field Id.
+     */
+    private static final MetisField FIELD_LOANID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANID.getValue());
+
+    /**
+     * Description Field Id.
+     */
+    private static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_DESC.getValue());
+
+    /**
+     * AuctionId Field Id.
+     */
+    private static final MetisField FIELD_AUCTIONID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_AUCTIONID.getValue());
+
+    /**
+     * Risk Field Id.
+     */
+    private static final MetisField FIELD_RISK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANRISK.getValue());
+
+    /**
+     * Outstanding Balance Field Id.
+     */
+    private static final MetisField FIELD_BALANCE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BALANCE.getValue());
+
+    /**
+     * Rate Field Id.
+     */
+    private static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_RATE.getValue());
+
+    /**
+     * Status Field Id.
+     */
+    private static final MetisField FIELD_STATUS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANSTATUS.getValue());
+
     /**
      * The loan Id.
      */
     private final String theLoanId;
 
     /**
-     * The title.
+     * The description.
      */
-    private final String theTitle;
+    private final String theDesc;
 
     /**
      * The auction Id.
@@ -84,7 +130,7 @@ public class CoeusFundingCircleLoanBookItem {
 
         /* Obtain IDs */
         theLoanId = myIterator.next();
-        theTitle = myIterator.next();
+        theDesc = myIterator.next();
         theAuctionId = myIterator.next();
 
         /* Derive the risk */
@@ -118,8 +164,8 @@ public class CoeusFundingCircleLoanBookItem {
      * Obtain the title.
      * @return the title
      */
-    public String getTitle() {
-        return theTitle;
+    public String getDescription() {
+        return theDesc;
     }
 
     /**
@@ -238,5 +284,44 @@ public class CoeusFundingCircleLoanBookItem {
 
         /* Reject the data */
         throw new CoeusDataException(pStatus, "Unrecognised Status");
+    }
+
+    @Override
+    public String formatObject() {
+        return theLoanId;
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_LOANID.equals(pField)) {
+            return theLoanId;
+        }
+        if (FIELD_DESC.equals(pField)) {
+            return theDesc;
+        }
+        if (FIELD_AUCTIONID.equals(pField)) {
+            return theAuctionId;
+        }
+        if (FIELD_RISK.equals(pField)) {
+            return theRisk;
+        }
+        if (FIELD_BALANCE.equals(pField)) {
+            return theBalance;
+        }
+        if (FIELD_RATE.equals(pField)) {
+            return theRate;
+        }
+        if (FIELD_STATUS.equals(pField)) {
+            return theStatus;
+        }
+
+        /* Not recognised */
+        return MetisFieldValue.UNKNOWN;
     }
 }

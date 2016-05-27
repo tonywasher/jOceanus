@@ -22,20 +22,81 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ratesetter;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
  * RateSetter Loan.
  */
 public class CoeusRateSetterLoan
-        extends CoeusLoan<CoeusRateSetterTransaction> {
+        extends CoeusLoan<CoeusRateSetterLoan, CoeusRateSetterTransaction> {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusRateSetterLoan.class.getSimpleName(), CoeusLoan.getBaseFields());
+
+    /**
+     * LoanBookItem Field Id.
+     */
+    private static final MetisField FIELD_BOOKITEM = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BOOKITEM.getValue());
+
+    /**
+     * The market.
+     */
+    private final List<CoeusRateSetterLoanBookItem> theBookItems;
+
     /**
      * Constructor.
      * @param pMarket the market
-     * @param pId the loan Id
+     * @param pBookItem the loan book item
      */
     protected CoeusRateSetterLoan(final CoeusRateSetterMarket pMarket,
-                                  final String pId) {
-        super(pMarket, pId);
+                                  final CoeusRateSetterLoanBookItem pBookItem) {
+        super(pMarket, pBookItem.getLoanId());
+        theBookItems = new ArrayList<>();
+        addBookItem(pBookItem);
+    }
+
+    @Override
+    public CoeusRateSetterMarket getMarket() {
+        return (CoeusRateSetterMarket) super.getMarket();
+    }
+
+    /**
+     * Add a book item.
+     * @param pBookItem the book item
+     */
+    protected void addBookItem(final CoeusRateSetterLoanBookItem pBookItem) {
+        theBookItems.add(pBookItem);
+    }
+
+    /**
+     * Obtain the book item iterator.
+     * @return the iterator
+     */
+    public Iterator<CoeusRateSetterLoanBookItem> bookItemIterator() {
+        return theBookItems.iterator();
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_BOOKITEM.equals(pField)) {
+            return theBookItems;
+        }
+
+        /* Pass call on */
+        return super.getFieldValue(pField);
     }
 }

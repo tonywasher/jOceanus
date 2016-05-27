@@ -24,24 +24,35 @@ package net.sourceforge.joceanus.jcoeus.ratesetter;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
-import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
+import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * RateSetter Market.
  */
 public class CoeusRateSetterMarket
-        extends CoeusLoanMarket<CoeusRateSetterTransaction> {
+        extends CoeusLoanMarket<CoeusRateSetterLoan, CoeusRateSetterTransaction> {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusRateSetterMarket.class.getSimpleName(), CoeusLoanMarket.getBaseFields());
+
+    /**
+     * InitialLoans Field Id.
+     */
+    private static final MetisField FIELD_INITIALLOANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INITIALLOANS.getValue());
+
     /**
      * The LoanBook Parser.
      */
@@ -53,24 +64,9 @@ public class CoeusRateSetterMarket
     private final CoeusRateSetterTransactionParser theXactionParser;
 
     /**
-     * The Map of loanId to BookItem.
-     */
-    private final Map<String, CoeusRateSetterLoanBookItem> theLoanIdMap;
-
-    /**
-     * The List of Transactions.
-     */
-    private final List<CoeusRateSetterTransaction> theTransactions;
-
-    /**
-     * The List of Capital Loans.
+     * The List of Initial Capital Loans.
      */
     private final List<CoeusRateSetterTransaction> theInitialLoans;
-
-    /**
-     * The non-specific Transactions.
-     */
-    private final List<CoeusRateSetterTransaction> theAdmin;
 
     /**
      * Constructor.
@@ -79,19 +75,14 @@ public class CoeusRateSetterMarket
      */
     public CoeusRateSetterMarket(final MetisDataFormatter pFormatter) throws OceanusException {
         /* Initialise underlying class */
-        super(CoeusLoanMarketProvider.RATESETTER);
+        super(pFormatter, CoeusLoanMarketProvider.RATESETTER);
 
         /* Create the parsers */
         theBookParser = new CoeusRateSetterLoanBookParser(pFormatter);
-        theXactionParser = new CoeusRateSetterTransactionParser(pFormatter);
-
-        /* Create the bookItem maps */
-        theLoanIdMap = new HashMap<>();
+        theXactionParser = new CoeusRateSetterTransactionParser(this);
 
         /* Create the lists */
-        theTransactions = new ArrayList<>();
         theInitialLoans = new ArrayList<>();
-        theAdmin = new ArrayList<>();
     }
 
     /**
@@ -106,10 +97,17 @@ public class CoeusRateSetterMarket
         /* Loop through the loanBook items */
         Iterator<CoeusRateSetterLoanBookItem> myIterator = theBookParser.loanIterator();
         while (myIterator.hasNext()) {
-            CoeusRateSetterLoanBookItem myLoan = myIterator.next();
+            CoeusRateSetterLoanBookItem myItem = myIterator.next();
 
-            /* Add to the maps */
-            theLoanIdMap.put(myLoan.getLoanId(), myLoan);
+            /* Look for preExisting loan */
+            CoeusRateSetterLoan myLoan = getLoanById(myItem.getLoanId());
+            if (myLoan == null) {
+                /* Create the loan and record it */
+                recordLoan(new CoeusRateSetterLoan(this, myItem));
+            } else {
+                /* Add the bookItem to the loan */
+                myLoan.addBookItem(myItem);
+            }
         }
     }
 
@@ -126,33 +124,49 @@ public class CoeusRateSetterMarket
         ListIterator<CoeusRateSetterTransaction> myIterator = theXactionParser.reverseTransactionIterator();
         while (myIterator.hasPrevious()) {
             CoeusRateSetterTransaction myTrans = myIterator.previous();
-            CoeusTransactionType myTransType = myTrans.getTransType();
-            String myId = myTrans.getLoanId();
+            CoeusRateSetterLoan myLoan = myTrans.getLoan();
 
-            /* If we have a loanId */
-            if (myId != null) {
-                /* Access the loan */
-                CoeusLoan<CoeusRateSetterTransaction> myLoan = findLoan(myTrans.getLoanId());
+            /* If we have a loan */
+            if (myLoan != null) {
+                /* Record the transaction */
                 myLoan.addTransaction(myTrans);
 
                 /* If this is a CapitalLoan */
-            } else if (CoeusTransactionType.CAPITALLOAN.equals(myTransType)) {
+            } else if (CoeusTransactionType.CAPITALLOAN.equals(myTrans.getTransType())) {
                 /* Add to set of initial loans for later resolution */
                 theInitialLoans.add(myTrans);
 
                 /* else handle as administration transactions */
             } else {
                 /* Add to adminList */
-                theAdmin.add(myTrans);
+                addAdminTransaction(myTrans);
             }
 
             /* Add to the transactions */
-            theTransactions.add(myTrans);
+            addTransaction(myTrans);
         }
     }
 
     @Override
-    protected CoeusRateSetterLoan newLoan(final String pId) {
-        return new CoeusRateSetterLoan(this, pId);
+    public String formatObject() {
+        return FIELD_DEFS.getName();
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_INITIALLOANS.equals(pField)) {
+            return theInitialLoans.isEmpty()
+                                             ? MetisFieldValue.SKIP
+                                             : theInitialLoans;
+        }
+
+        /* Pass call on */
+        return super.getFieldValue(pField);
     }
 }

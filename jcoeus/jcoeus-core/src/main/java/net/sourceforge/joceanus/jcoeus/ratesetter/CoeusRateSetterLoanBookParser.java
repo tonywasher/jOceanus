@@ -71,7 +71,7 @@ public class CoeusRateSetterLoanBookParser {
      * Constructor.
      * @param pFormatter the formatter
      */
-    public CoeusRateSetterLoanBookParser(final MetisDataFormatter pFormatter) {
+    protected CoeusRateSetterLoanBookParser(final MetisDataFormatter pFormatter) {
         /* Create the loan list */
         theLoans = new ArrayList<>();
 
@@ -210,7 +210,6 @@ public class CoeusRateSetterLoanBookParser {
     /**
      * Extract text from all children without adding blank between elements.
      * @param pElement the parent element
-     * @param pName the child element name
      * @return the text
      */
     protected String childElementText(final Element pElement) {

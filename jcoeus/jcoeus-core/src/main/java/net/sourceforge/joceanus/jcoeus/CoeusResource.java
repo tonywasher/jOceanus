@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanRisk;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
@@ -120,6 +123,11 @@ public enum CoeusResource
     TRANS_RECOVERY("trans.recovery"),
 
     /**
+     * Transaction Totals.
+     */
+    TRANS_TOTALS("trans.totals"),
+
+    /**
      * Risk Band A+.
      */
     RISK_APLUS("risk.aplus"),
@@ -157,7 +165,162 @@ public enum CoeusResource
     /**
      * Risk Band Unclassified.
      */
-    RISK_UNCLASSIFIED("risk.a");
+    RISK_UNCLASSIFIED("risk.a"),
+
+    /**
+     * Data Provider.
+     */
+    DATA_PROVIDER("data.provider"),
+
+    /**
+     * Data AuctionIdMap.
+     */
+    DATA_AUCTIONMAP("data.auctionmap"),
+
+    /**
+     * Data LoanMap.
+     */
+    DATA_LOANMAP("data.loanmap"),
+
+    /**
+     * Data Transactions.
+     */
+    DATA_TRANSACTIONS("data.transactions"),
+
+    /**
+     * Data AdminItems.
+     */
+    DATA_ADMINITEMS("data.adminxactions"),
+
+    /**
+     * Data InitialLoans.
+     */
+    DATA_INITIALLOANS("data.initialloans"),
+
+    /**
+     * Data Market.
+     */
+    DATA_MARKET("data.market"),
+
+    /**
+     * Data LoanId.
+     */
+    DATA_LOANID("data.loanid"),
+
+    /**
+     * Data Loan.
+     */
+    DATA_LOAN("data.loan"),
+
+    /**
+     * Data Date.
+     */
+    DATA_DATE("data.date"),
+
+    /**
+     * Data Description.
+     */
+    DATA_DESC("data.desc"),
+
+    /**
+     * Data TransactionType.
+     */
+    DATA_TRANSTYPE("data.transtype"),
+
+    /**
+     * Data Invested.
+     */
+    DATA_INVESTED("data.invested"),
+
+    /**
+     * Data Holding.
+     */
+    DATA_HOLDING("data.holding"),
+
+    /**
+     * Data Capital.
+     */
+    DATA_CAPITAL("data.capital"),
+
+    /**
+     * Data Interest.
+     */
+    DATA_INTEREST("data.interest"),
+
+    /**
+     * Data Fees.
+     */
+    DATA_FEES("data.fees"),
+
+    /**
+     * Data CashBack.
+     */
+    DATA_CASHBACK("data.cashback"),
+
+    /**
+     * Data BadDebt.
+     */
+    DATA_BADDEBT("data.baddebt"),
+
+    /**
+     * Data StartDate.
+     */
+    DATA_STARTDATE("data.startdate"),
+
+    /**
+     * Data OriginalLoan.
+     */
+    DATA_ORIGLOAN("data.origloan"),
+
+    /**
+     * Data Balance.
+     */
+    DATA_BALANCE("data.balance"),
+
+    /**
+     * Data Rate.
+     */
+    DATA_RATE("data.rate"),
+
+    /**
+     * Data Status.
+     */
+    DATA_LOANSTATUS("data.loanstatus"),
+
+    /**
+     * Data AuctionId.
+     */
+    DATA_AUCTIONID("data.auctionid"),
+
+    /**
+     * Data LoanRisk.
+     */
+    DATA_LOANRISK("data.loanrisk"),
+
+    /**
+     * Data BookItem.
+     */
+    DATA_BOOKITEM("data.bookitem");
+
+    /**
+     * The MarketProvider Map.
+     */
+    private static final Map<CoeusLoanMarketProvider, TethysResourceId> MARKET_MAP = buildMarketMap();
+
+    /**
+     * The LoanStatus Map.
+     */
+    private static final Map<CoeusLoanStatus, TethysResourceId> STATUS_MAP = buildStatusMap();
+
+    /**
+     * The LoanRisk Map.
+     */
+    private static final Map<CoeusLoanRisk, TethysResourceId> RISK_MAP = buildRiskMap();
+
+    /**
+     * The TransactionType Map.
+     */
+    private static final Map<CoeusTransactionType, TethysResourceId> TRANS_MAP = buildTransMap();
 
     /**
      * The Resource Builder.
@@ -205,21 +368,40 @@ public enum CoeusResource
     }
 
     /**
+     * Build market map.
+     * @return the map
+     */
+    private static Map<CoeusLoanMarketProvider, TethysResourceId> buildMarketMap() {
+        /* Create the map and return it */
+        Map<CoeusLoanMarketProvider, TethysResourceId> myMap = new EnumMap<>(CoeusLoanMarketProvider.class);
+        myMap.put(CoeusLoanMarketProvider.FUNDINGCIRCLE, MARKET_FUNDINGCIRCLE);
+        myMap.put(CoeusLoanMarketProvider.RATESETTER, MARKET_RATESETTER);
+        myMap.put(CoeusLoanMarketProvider.ZOPA, MARKET_ZOPA);
+        return myMap;
+    }
+
+    /**
      * Obtain key for market.
      * @param pMarket the market
      * @return the resource key
      */
     public static TethysResourceId getKeyForMarket(final CoeusLoanMarketProvider pMarket) {
-        switch (pMarket) {
-            case FUNDINGCIRCLE:
-                return MARKET_FUNDINGCIRCLE;
-            case RATESETTER:
-                return MARKET_RATESETTER;
-            case ZOPA:
-                return MARKET_ZOPA;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pMarket));
-        }
+        return TethysResourceBuilder.getKeyForEnum(MARKET_MAP, pMarket);
+    }
+
+    /**
+     * Build status map.
+     * @return the map
+     */
+    private static Map<CoeusLoanStatus, TethysResourceId> buildStatusMap() {
+        /* Create the map and return it */
+        Map<CoeusLoanStatus, TethysResourceId> myMap = new EnumMap<>(CoeusLoanStatus.class);
+        myMap.put(CoeusLoanStatus.OFFERED, LOAN_OFFERED);
+        myMap.put(CoeusLoanStatus.ACTIVE, LOAN_ACTIVE);
+        myMap.put(CoeusLoanStatus.POORLY, LOAN_POORLY);
+        myMap.put(CoeusLoanStatus.BADDEBT, LOAN_BADDEBT);
+        myMap.put(CoeusLoanStatus.REPAID, LOAN_REPAID);
+        return myMap;
     }
 
     /**
@@ -228,16 +410,27 @@ public enum CoeusResource
      * @return the resource key
      */
     public static TethysResourceId getKeyForLoanStatus(final CoeusLoanStatus pStatus) {
-        switch (pStatus) {
-            case ACTIVE:
-                return LOAN_ACTIVE;
-            case BADDEBT:
-                return LOAN_BADDEBT;
-            case REPAID:
-                return LOAN_REPAID;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pStatus));
-        }
+        return TethysResourceBuilder.getKeyForEnum(STATUS_MAP, pStatus);
+    }
+
+    /**
+     * Build transaction type map.
+     * @return the map
+     */
+    private static Map<CoeusTransactionType, TethysResourceId> buildTransMap() {
+        /* Create the map and return it */
+        Map<CoeusTransactionType, TethysResourceId> myMap = new EnumMap<>(CoeusTransactionType.class);
+        myMap.put(CoeusTransactionType.TRANSFER, TRANS_TRANSFER);
+        myMap.put(CoeusTransactionType.CAPITALLOAN, TRANS_LOAN);
+        myMap.put(CoeusTransactionType.CAPITALREPAYMENT, TRANS_REPAYMENT);
+        myMap.put(CoeusTransactionType.INTEREST, TRANS_INTEREST);
+        myMap.put(CoeusTransactionType.FEES, TRANS_FEES);
+        myMap.put(CoeusTransactionType.CASHBACK, TRANS_CASHBACK);
+        myMap.put(CoeusTransactionType.RATEPROMISE, TRANS_RATEPROMISE);
+        myMap.put(CoeusTransactionType.BUYLOAN, TRANS_BUYLOAN);
+        myMap.put(CoeusTransactionType.RECOVERY, TRANS_RECOVERY);
+        myMap.put(CoeusTransactionType.TOTALS, TRANS_TOTALS);
+        return myMap;
     }
 
     /**
@@ -246,28 +439,25 @@ public enum CoeusResource
      * @return the resource key
      */
     public static TethysResourceId getKeyForTransType(final CoeusTransactionType pTrans) {
-        switch (pTrans) {
-            case TRANSFER:
-                return TRANS_TRANSFER;
-            case CAPITALLOAN:
-                return TRANS_LOAN;
-            case CAPITALREPAYMENT:
-                return TRANS_REPAYMENT;
-            case INTEREST:
-                return TRANS_INTEREST;
-            case FEES:
-                return TRANS_FEES;
-            case CASHBACK:
-                return TRANS_CASHBACK;
-            case RATEPROMISE:
-                return TRANS_RATEPROMISE;
-            case BUYLOAN:
-                return TRANS_BUYLOAN;
-            case RECOVERY:
-                return TRANS_RECOVERY;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pTrans));
-        }
+        return TethysResourceBuilder.getKeyForEnum(TRANS_MAP, pTrans);
+    }
+
+    /**
+     * Build risk map.
+     * @return the map
+     */
+    private static Map<CoeusLoanRisk, TethysResourceId> buildRiskMap() {
+        /* Create the map and return it */
+        Map<CoeusLoanRisk, TethysResourceId> myMap = new EnumMap<>(CoeusLoanRisk.class);
+        myMap.put(CoeusLoanRisk.APLUS, RISK_APLUS);
+        myMap.put(CoeusLoanRisk.A, RISK_A);
+        myMap.put(CoeusLoanRisk.B, RISK_B);
+        myMap.put(CoeusLoanRisk.C, RISK_C);
+        myMap.put(CoeusLoanRisk.D, RISK_D);
+        myMap.put(CoeusLoanRisk.E, RISK_E);
+        myMap.put(CoeusLoanRisk.S, RISK_S);
+        myMap.put(CoeusLoanRisk.UNCLASSIFIED, RISK_UNCLASSIFIED);
+        return myMap;
     }
 
     /**
@@ -276,25 +466,6 @@ public enum CoeusResource
      * @return the resource key
      */
     public static TethysResourceId getKeyForRisk(final CoeusLoanRisk pRisk) {
-        switch (pRisk) {
-            case APLUS:
-                return RISK_APLUS;
-            case A:
-                return RISK_A;
-            case B:
-                return RISK_B;
-            case C:
-                return RISK_C;
-            case D:
-                return RISK_D;
-            case E:
-                return RISK_E;
-            case S:
-                return RISK_S;
-            case UNCLASSIFIED:
-                return RISK_UNCLASSIFIED;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pRisk));
-        }
+        return TethysResourceBuilder.getKeyForEnum(RISK_MAP, pRisk);
     }
 }

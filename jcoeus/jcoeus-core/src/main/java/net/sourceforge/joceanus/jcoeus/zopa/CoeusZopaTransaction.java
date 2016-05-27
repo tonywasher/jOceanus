@@ -28,15 +28,22 @@ import java.util.List;
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Zopa transaction.
  */
 public class CoeusZopaTransaction
-        implements CoeusTransaction {
+        extends CoeusTransaction<CoeusZopaLoan, CoeusZopaTransaction> {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusZopaTransaction.class.getSimpleName(), CoeusTransaction.getBaseFields());
+
     /**
      * Transfer prefix.
      */
@@ -63,7 +70,7 @@ public class CoeusZopaTransaction
     private static final String PFIX_SAFEINTEREST = "Safeguard interest payment for ";
 
     /**
-     * Upfront Interest prefix.
+     * UpFront Interest prefix.
      */
     private static final String PFIX_UPFRONTINTEREST = "RR Upfront Interest for ";
 
@@ -118,9 +125,9 @@ public class CoeusZopaTransaction
     private final CoeusTransactionType theTransType;
 
     /**
-     * Loan Id.
+     * Loan.
      */
-    private final String theLoanId;
+    private final CoeusZopaLoan theLoan;
 
     /**
      * Prefix.
@@ -128,44 +135,95 @@ public class CoeusZopaTransaction
     private String thePrefix;
 
     /**
-     * Paid In.
+     * Invested.
      */
-    private final TethysDecimal thePaidIn;
+    private final TethysDecimal theInvested;
 
     /**
-     * Paid Out.
+     * Holding.
      */
-    private final TethysDecimal thePaidOut;
+    private final TethysDecimal theHolding;
 
     /**
-     * Holding Delta.
+     * Capital.
      */
-    private final TethysDecimal theHoldingDelta;
+    private final TethysDecimal theCapital;
 
     /**
-     * Capital Delta.
+     * Interest.
      */
-    private final TethysDecimal theCapitalDelta;
+    private final TethysDecimal theInterest;
 
     /**
-     * Interest Delta.
+     * Fees.
      */
-    private final TethysDecimal theInterestDelta;
+    private final TethysDecimal theFees;
 
     /**
-     * Fee Delta.
+     * CashBack.
      */
-    private final TethysDecimal theFeesDelta;
+    private final TethysDecimal theCashBack;
 
     /**
-     * CashBack Delta.
+     * BadDebt.
      */
-    private final TethysDecimal theCashBackDelta;
+    private final TethysDecimal theBadDebt;
 
     /**
-     * BadDebt Delta.
+     * Constructor for loan totals.
+     * @param pLoan the loan
      */
-    private final TethysDecimal theBadDebtDelta;
+    protected CoeusZopaTransaction(final CoeusZopaLoan pLoan) {
+        this(pLoan.getMarket(), pLoan, new TethysDate());
+    }
+
+    /**
+     * Constructor for market totals.
+     * @param pMarket the market
+     */
+    protected CoeusZopaTransaction(final CoeusZopaMarket pMarket) {
+        this(pMarket, new TethysDate());
+    }
+
+    /**
+     * Constructor for dated market totals.
+     * @param pMarket the market
+     * @param pDate the date
+     */
+    protected CoeusZopaTransaction(final CoeusZopaMarket pMarket,
+                                   final TethysDate pDate) {
+        this(pMarket, null, pDate);
+    }
+
+    /**
+     * Constructor for totals.
+     * @param pMarket the market
+     * @param pLoan the loan
+     * @param pDate the date
+     */
+    private CoeusZopaTransaction(final CoeusZopaMarket pMarket,
+                                 final CoeusZopaLoan pLoan,
+                                 final TethysDate pDate) {
+        /* Initialise underlying class */
+        super(pMarket);
+
+        /* Record parameters */
+        theLoan = pLoan;
+        theDate = pDate;
+
+        /* Create description */
+        theDesc = CoeusTransactionType.TOTALS.toString();
+        theTransType = CoeusTransactionType.TOTALS;
+
+        /* Create the counters */
+        theHolding = new TethysMoney();
+        theInvested = new TethysDecimal(theHolding);
+        theCapital = new TethysDecimal(theHolding);
+        theInterest = new TethysDecimal(theHolding);
+        theFees = new TethysDecimal(theHolding);
+        theCashBack = new TethysDecimal(theHolding);
+        theBadDebt = new TethysDecimal(theHolding);
+    }
 
     /**
      * Constructor.
@@ -173,8 +231,11 @@ public class CoeusZopaTransaction
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    public CoeusZopaTransaction(final CoeusZopaTransactionParser pParser,
-                                final List<String> pFields) throws OceanusException {
+    protected CoeusZopaTransaction(final CoeusZopaTransactionParser pParser,
+                                   final List<String> pFields) throws OceanusException {
+        /* Initialise underlying class */
+        super(pParser.getMarket());
+
         /* Iterate through the fields */
         Iterator<String> myIterator = pFields.iterator();
 
@@ -187,23 +248,56 @@ public class CoeusZopaTransaction
         /* Determine the transaction type */
         theTransType = determineTransactionType();
 
+        /* Determine loan */
+        theLoan = determineLoan();
+
         /* Parse the values */
-        thePaidIn = pParser.parseDecimal(myIterator.next());
-        thePaidOut = pParser.parseDecimal(myIterator.next());
+        TethysDecimal myPaidIn = pParser.parseDecimal(myIterator.next());
+        TethysDecimal myPaidOut = pParser.parseDecimal(myIterator.next());
 
         /* Determine the HoldingDelta */
-        theHoldingDelta = new TethysDecimal(thePaidIn);
-        theHoldingDelta.subtractValue(thePaidOut);
+        theHolding = new TethysDecimal(myPaidIn);
+        theHolding.subtractValue(myPaidOut);
 
         /* Determine the Deltas */
-        theCapitalDelta = determineCapitalDelta();
-        theInterestDelta = determineInterestDelta();
-        theFeesDelta = determineFeesDelta();
-        theCashBackDelta = determineCashBackDelta();
-        theBadDebtDelta = determineBadDebtDelta();
+        theInvested = determineInvestedDelta();
+        theCapital = determineCapitalDelta();
+        theInterest = determineInterestDelta();
+        theFees = determineFeesDelta();
+        theCashBack = determineCashBackDelta();
+        theBadDebt = determineBadDebtDelta();
 
-        /* Determine loan ID */
-        theLoanId = determineLoanId();
+        /* Check transaction validity */
+        checkValidity();
+    }
+
+    /**
+     * Check validity.
+     * @throws OceanusException on error
+     */
+    private void checkValidity() throws OceanusException {
+        /* Obtain the holding */
+        TethysDecimal myValue = new TethysDecimal(theHolding);
+
+        /* Add Capital BadDebt and Fees */
+        myValue.addValue(theCapital);
+        myValue.addValue(theFees);
+        myValue.addValue(theBadDebt);
+
+        /* Subtract the invested cashBack and interest */
+        myValue.subtractValue(theInterest);
+        myValue.subtractValue(theInvested);
+        myValue.subtractValue(theCashBack);
+
+        /* We should now be zero */
+        if (myValue.isNonZero()) {
+            throw new CoeusDataException(this, "Invalid transaction");
+        }
+    }
+
+    @Override
+    public CoeusZopaMarket getMarket() {
+        return (CoeusZopaMarket) super.getMarket();
     }
 
     @Override
@@ -223,37 +317,49 @@ public class CoeusZopaTransaction
 
     @Override
     public String getLoanId() {
-        return theLoanId;
+        return theLoan == null
+                               ? null
+                               : theLoan.getLoanId();
     }
 
     @Override
-    public TethysDecimal getHoldingDelta() {
-        return theHoldingDelta;
+    public CoeusZopaLoan getLoan() {
+        return theLoan;
     }
 
     @Override
-    public TethysDecimal getCapitalDelta() {
-        return theCapitalDelta;
+    public TethysDecimal getInvested() {
+        return theInvested;
     }
 
     @Override
-    public TethysDecimal getInterestDelta() {
-        return theInterestDelta;
+    public TethysDecimal getHolding() {
+        return theHolding;
     }
 
     @Override
-    public TethysDecimal getFeesDelta() {
-        return theFeesDelta;
+    public TethysDecimal getCapital() {
+        return theCapital;
     }
 
     @Override
-    public TethysDecimal getCashBackDelta() {
-        return theCashBackDelta;
+    public TethysDecimal getInterest() {
+        return theInterest;
     }
 
     @Override
-    public TethysDecimal getBadDebtDelta() {
-        return theBadDebtDelta;
+    public TethysDecimal getFees() {
+        return theFees;
+    }
+
+    @Override
+    public TethysDecimal getCashBack() {
+        return theCashBack;
+    }
+
+    @Override
+    public TethysDecimal getBadDebt() {
+        return theBadDebt;
     }
 
     /**
@@ -333,6 +439,23 @@ public class CoeusZopaTransaction
     }
 
     /**
+     * determine invested delta.
+     * @return the delta
+     */
+    private TethysDecimal determineInvestedDelta() {
+        /* Obtain change in holding account */
+        TethysDecimal myInvested = new TethysDecimal(theHolding);
+
+        /* Invested are increased by any increase the holding account */
+        if (!CoeusTransactionType.TRANSFER.equals(theTransType)) {
+            myInvested.setZero();
+        }
+
+        /* Return the Invested */
+        return myInvested;
+    }
+
+    /**
      * determine capital delta.
      * @return the delta
      */
@@ -340,13 +463,12 @@ public class CoeusZopaTransaction
         /* Switch on transactionType */
         switch (theTransType) {
             case CAPITALLOAN:
-                return new TethysDecimal(thePaidOut);
             case CAPITALREPAYMENT:
-                TethysDecimal myCapital = new TethysDecimal(thePaidIn);
+                TethysDecimal myCapital = new TethysDecimal(theHolding);
                 myCapital.negate();
                 return myCapital;
             default:
-                myCapital = new TethysDecimal(thePaidOut);
+                myCapital = new TethysDecimal(theHolding);
                 myCapital.setZero();
                 return myCapital;
         }
@@ -361,9 +483,9 @@ public class CoeusZopaTransaction
         switch (theTransType) {
             case INTEREST:
             case RATEPROMISE:
-                return new TethysDecimal(theHoldingDelta);
+                return new TethysDecimal(theHolding);
             default:
-                TethysDecimal myInterest = new TethysDecimal(thePaidOut);
+                TethysDecimal myInterest = new TethysDecimal(theHolding);
                 myInterest.setZero();
                 return myInterest;
         }
@@ -374,17 +496,18 @@ public class CoeusZopaTransaction
      * @return the delta
      */
     private TethysDecimal determineFeesDelta() {
-        /* Switch on transactionType */
-        switch (theTransType) {
-            case FEES:
-                TethysDecimal myFees = new TethysDecimal(theHoldingDelta);
-                myFees.negate();
-                return myFees;
-            default:
-                myFees = new TethysDecimal(thePaidOut);
-                myFees.setZero();
-                return myFees;
+        /* Obtain change in holding account */
+        TethysDecimal myFees = new TethysDecimal(theHolding);
+
+        /* Fees are increased by any decrease the holding account */
+        if (CoeusTransactionType.FEES.equals(theTransType)) {
+            myFees.negate();
+        } else {
+            myFees.setZero();
         }
+
+        /* Return the Fees */
+        return myFees;
     }
 
     /**
@@ -392,15 +515,16 @@ public class CoeusZopaTransaction
      * @return the delta
      */
     private TethysDecimal determineCashBackDelta() {
-        /* Switch on transactionType */
-        switch (theTransType) {
-            case CASHBACK:
-                return new TethysDecimal(theHoldingDelta);
-            default:
-                TethysDecimal myCash = new TethysDecimal(thePaidOut);
-                myCash.setZero();
-                return myCash;
+        /* Obtain change in holding account */
+        TethysDecimal myCash = new TethysDecimal(theHolding);
+
+        /* CashBack is increased by any increase in the holding account */
+        if (!CoeusTransactionType.CASHBACK.equals(theTransType)) {
+            myCash.setZero();
         }
+
+        /* Return the CashBack */
+        return myCash;
     }
 
     /**
@@ -408,9 +532,25 @@ public class CoeusZopaTransaction
      * @return the delta
      */
     private TethysDecimal determineBadDebtDelta() {
-        TethysDecimal myDebt = new TethysDecimal(thePaidOut);
+        TethysDecimal myDebt = new TethysDecimal(theHolding);
         myDebt.setZero();
         return myDebt;
+    }
+
+    /**
+     * determine loan.
+     * @return the loan
+     * @throws OceanusException on error
+     */
+    private CoeusZopaLoan determineLoan() throws OceanusException {
+        /* Obtain the market */
+        CoeusZopaMarket myMarket = getMarket();
+
+        /* Determine the loan id */
+        String myLoanId = determineLoanId();
+        return myLoanId == null
+                                ? null
+                                : myMarket.findLoanById(myLoanId);
     }
 
     /**
@@ -430,12 +570,17 @@ public class CoeusZopaTransaction
                                          : theDesc.substring(thePrefix.length());
             case CAPITALLOAN:
                 String myValue = theDesc.substring(PFIX_LOAN.length());
-                int myIndex = myValue.indexOf(' ');
+                int myIndex = myValue.indexOf(" from lending ");
                 return myIndex == -1
                                      ? myValue
                                      : myValue.substring(0, myIndex);
             default:
                 return null;
         }
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
     }
 }

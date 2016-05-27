@@ -24,16 +24,16 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.data.MetisItemValidation;
-import net.sourceforge.joceanus.jmetis.data.MetisItemValidation.MetisErrorElement;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
+import net.sourceforge.joceanus.jmetis.data.MetisItemValidation;
+import net.sourceforge.joceanus.jmetis.data.MetisItemValidation.MetisErrorElement;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
@@ -210,12 +210,12 @@ public abstract class DataItem<E extends Enum<E>>
     /**
      * The list to which this item belongs.
      */
-    private DataList<?, E> theList = null;
+    private DataList<?, E> theList;
 
     /**
      * The item that this DataItem is based upon.
      */
-    private DataItem<?> theBase = null;
+    private DataItem<?> theBase;
 
     /**
      * The Edit state of this item {@link MetisEditState}.
@@ -225,22 +225,22 @@ public abstract class DataItem<E extends Enum<E>>
     /**
      * Is the item a header.
      */
-    private boolean isHeader = false;
+    private boolean isHeader;
 
     /**
      * The id number of the item.
      */
-    private Integer theId = 0;
+    private Integer theId;
 
     /**
      * The history control {@link MetisValueSetHistory}.
      */
-    private MetisValueSetHistory theHistory = null;
+    private MetisValueSetHistory theHistory;
 
     /**
      * The validation control {@link MetisItemValidation}.
      */
-    private MetisItemValidation theErrors = null;
+    private MetisItemValidation theErrors;
 
     /**
      * Status.
@@ -269,8 +269,8 @@ public abstract class DataItem<E extends Enum<E>>
 
         /* Allocate initial value set and declare it */
         MetisValueSet myValues = (this instanceof EncryptedItem)
-                                                            ? new MetisEncryptedValueSet(this)
-                                                            : new MetisValueSet(this);
+                                                                 ? new MetisEncryptedValueSet(this)
+                                                                 : new MetisValueSet(this);
         declareValues(myValues);
         theHistory.setValues(myValues);
 
@@ -281,7 +281,7 @@ public abstract class DataItem<E extends Enum<E>>
         @SuppressWarnings("unchecked")
         DataSet<?, E> myData = (DataSet<?, E>) getTheDataSet();
         Class<E> myClass = myData.getEnumClass();
-        theTouchStatus = new DataTouch<E>(myClass);
+        theTouchStatus = new DataTouch<>(myClass);
     }
 
     /**

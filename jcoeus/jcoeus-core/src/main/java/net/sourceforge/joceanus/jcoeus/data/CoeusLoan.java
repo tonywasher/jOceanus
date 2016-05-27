@@ -23,22 +23,51 @@
 package net.sourceforge.joceanus.jcoeus.data;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import net.sourceforge.joceanus.jcoeus.CoeusResource;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
  * Coeus Loan.
+ * @param <L> the loan type
  * @param <T> the transaction type
  */
-public abstract class CoeusLoan<T extends CoeusTransaction> {
+public abstract class CoeusLoan<L extends CoeusLoan<L, T>, T extends CoeusTransaction<L, T>>
+        implements MetisDataContents {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusLoan.class.getSimpleName());
+
+    /**
+     * Market Field Id.
+     */
+    private static final MetisField FIELD_MARKET = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MARKET.getValue());
+
+    /**
+     * LoanId Field Id.
+     */
+    private static final MetisField FIELD_LOANID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANID.getValue());
+
+    /**
+     * Transactions Field Id.
+     */
+    private static final MetisField FIELD_TRANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TRANSACTIONS.getValue());
+
     /**
      * Loan Market.
      */
-    private final CoeusLoanMarket<T> theMarket;
+    private final CoeusLoanMarket<L, T> theMarket;
 
     /**
      * Loan Id.
      */
-    private final String theId;
+    private final String theLoanId;
 
     /**
      * Loan Transactions.
@@ -50,11 +79,11 @@ public abstract class CoeusLoan<T extends CoeusTransaction> {
      * @param pMarket the loanMarket
      * @param pId the loan Id
      */
-    protected CoeusLoan(final CoeusLoanMarket<T> pMarket,
+    protected CoeusLoan(final CoeusLoanMarket<L, T> pMarket,
                         final String pId) {
         /* Store parameters */
         theMarket = pMarket;
-        theId = pId;
+        theLoanId = pId;
 
         /* create the transaction list */
         theTransactions = new ArrayList<>();
@@ -64,7 +93,7 @@ public abstract class CoeusLoan<T extends CoeusTransaction> {
      * Obtain the market.
      * @return the market
      */
-    public CoeusLoanMarket<T> getMarket() {
+    public CoeusLoanMarket<L, T> getMarket() {
         return theMarket;
     }
 
@@ -73,7 +102,15 @@ public abstract class CoeusLoan<T extends CoeusTransaction> {
      * @return the id
      */
     public String getLoanId() {
-        return theId;
+        return theLoanId;
+    }
+
+    /**
+     * Obtain the transaction iterator.
+     * @return the iterator
+     */
+    public Iterator<T> transactionIterator() {
+        return theTransactions.iterator();
     }
 
     /**
@@ -82,5 +119,35 @@ public abstract class CoeusLoan<T extends CoeusTransaction> {
      */
     public void addTransaction(final T pTrans) {
         theTransactions.add(pTrans);
+    }
+
+    /**
+     * Obtain the data fields.
+     * @return the data fields
+     */
+    protected static MetisFields getBaseFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject() {
+        return theLoanId;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_MARKET.equals(pField)) {
+            return theMarket;
+        }
+        if (FIELD_LOANID.equals(pField)) {
+            return theLoanId;
+        }
+        if (FIELD_TRANS.equals(pField)) {
+            return theTransactions;
+        }
+
+        /* Not recognised */
+        return MetisFieldValue.UNKNOWN;
     }
 }

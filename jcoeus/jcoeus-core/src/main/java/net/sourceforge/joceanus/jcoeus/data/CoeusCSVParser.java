@@ -91,8 +91,8 @@ public abstract class CoeusCSVParser {
      * @param pFormatter the formatter
      * @param pHeaders the expected headers
      */
-    public CoeusCSVParser(final MetisDataFormatter pFormatter,
-                          final String[] pHeaders) {
+    protected CoeusCSVParser(final MetisDataFormatter pFormatter,
+                             final String[] pHeaders) {
         /* Store the headers */
         theHeaders = pHeaders;
 

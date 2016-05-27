@@ -28,6 +28,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -36,7 +37,12 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * FundingCircle transaction.
  */
 public class CoeusFundingCircleTransaction
-        implements CoeusTransaction {
+        extends CoeusTransaction<CoeusFundingCircleLoan, CoeusFundingCircleTransaction> {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusFundingCircleTransaction.class.getSimpleName(), CoeusTransaction.getBaseFields());
+
     /**
      * Transfer prefix.
      */
@@ -133,14 +139,9 @@ public class CoeusFundingCircleTransaction
     private final CoeusTransactionType theTransType;
 
     /**
-     * Auction Id.
+     * Loan.
      */
-    private final String theAuctionId;
-
-    /**
-     * Loan Id.
-     */
-    private String theLoanId;
+    private final CoeusFundingCircleLoan theLoan;
 
     /**
      * Prefix.
@@ -148,44 +149,95 @@ public class CoeusFundingCircleTransaction
     private String thePrefix;
 
     /**
-     * Paid In.
+     * Invested.
      */
-    private final TethysMoney thePaidIn;
+    private final TethysMoney theInvested;
 
     /**
-     * Paid Out.
+     * Holding.
      */
-    private final TethysMoney thePaidOut;
+    private final TethysMoney theHolding;
 
     /**
-     * Holding Delta.
+     * Capital.
      */
-    private final TethysMoney theHoldingDelta;
+    private final TethysMoney theCapital;
 
     /**
-     * Capital Delta.
+     * Interest.
      */
-    private final TethysMoney theCapitalDelta;
+    private final TethysMoney theInterest;
 
     /**
-     * Interest Delta.
+     * Fees.
      */
-    private final TethysMoney theInterestDelta;
+    private final TethysMoney theFees;
 
     /**
-     * Fee Delta.
+     * CashBack.
      */
-    private final TethysMoney theFeesDelta;
+    private final TethysMoney theCashBack;
 
     /**
-     * CashBack Delta.
+     * BadDebt.
      */
-    private final TethysMoney theCashBackDelta;
+    private final TethysMoney theBadDebt;
 
     /**
-     * BadDebt Delta.
+     * Constructor for loan totals.
+     * @param pLoan the loan
      */
-    private final TethysMoney theBadDebtDelta;
+    protected CoeusFundingCircleTransaction(final CoeusFundingCircleLoan pLoan) {
+        this(pLoan.getMarket(), pLoan, new TethysDate());
+    }
+
+    /**
+     * Constructor for market totals.
+     * @param pMarket the market
+     */
+    protected CoeusFundingCircleTransaction(final CoeusFundingCircleMarket pMarket) {
+        this(pMarket, new TethysDate());
+    }
+
+    /**
+     * Constructor for dated market totals.
+     * @param pMarket the market
+     * @param pDate the date
+     */
+    protected CoeusFundingCircleTransaction(final CoeusFundingCircleMarket pMarket,
+                                            final TethysDate pDate) {
+        this(pMarket, null, pDate);
+    }
+
+    /**
+     * Constructor for totals.
+     * @param pMarket the market
+     * @param pLoan the loan
+     * @param pDate the date
+     */
+    private CoeusFundingCircleTransaction(final CoeusFundingCircleMarket pMarket,
+                                          final CoeusFundingCircleLoan pLoan,
+                                          final TethysDate pDate) {
+        /* Initialise underlying class */
+        super(pMarket);
+
+        /* Record parameters */
+        theLoan = pLoan;
+        theDate = pDate;
+
+        /* Create description */
+        theDesc = CoeusTransactionType.TOTALS.toString();
+        theTransType = CoeusTransactionType.TOTALS;
+
+        /* Create the counters */
+        theInvested = new TethysMoney();
+        theHolding = new TethysMoney();
+        theCapital = new TethysMoney();
+        theInterest = new TethysMoney();
+        theFees = new TethysMoney();
+        theCashBack = new TethysMoney();
+        theBadDebt = new TethysMoney();
+    }
 
     /**
      * Constructor.
@@ -193,8 +245,11 @@ public class CoeusFundingCircleTransaction
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    public CoeusFundingCircleTransaction(final CoeusFundingCircleTransactionParser pParser,
-                                         final List<String> pFields) throws OceanusException {
+    protected CoeusFundingCircleTransaction(final CoeusFundingCircleTransactionParser pParser,
+                                            final List<String> pFields) throws OceanusException {
+        /* Initialise underlying class */
+        super(pParser.getMarket());
+
         /* Iterate through the fields */
         Iterator<String> myIterator = pFields.iterator();
 
@@ -207,26 +262,56 @@ public class CoeusFundingCircleTransaction
         /* Determine the transaction type */
         theTransType = determineTransactionType();
 
-        /* Determine the auction id */
-        theAuctionId = determineAuctionId();
+        /* Determine the loan */
+        theLoan = determineLoan();
 
         /* Parse the values */
-        thePaidIn = pParser.parseMoney(myIterator.next());
-        thePaidOut = pParser.parseMoney(myIterator.next());
+        TethysMoney myPaidIn = pParser.parseMoney(myIterator.next());
+        TethysMoney myPaidOut = pParser.parseMoney(myIterator.next());
 
         /* Determine the HoldingDelta */
-        theHoldingDelta = new TethysMoney(thePaidIn);
-        theHoldingDelta.subtractAmount(thePaidOut);
+        theHolding = new TethysMoney(myPaidIn);
+        theHolding.subtractAmount(myPaidOut);
 
         /* Determine the Deltas */
-        theCapitalDelta = determineCapitalDelta();
-        theInterestDelta = determineInterestDelta();
-        theFeesDelta = determineFeesDelta();
-        theCashBackDelta = determineCashBackDelta();
-        theBadDebtDelta = determineBadDebtDelta();
+        theInvested = determineInvestedDelta();
+        theCapital = determineCapitalDelta();
+        theInterest = determineInterestDelta();
+        theFees = determineFeesDelta();
+        theCashBack = determineCashBackDelta();
+        theBadDebt = determineBadDebtDelta();
 
-        /* Determine loan ID */
-        theLoanId = determineLoanId();
+        /* Check transaction validity */
+        checkValidity();
+    }
+
+    /**
+     * Check validity.
+     * @throws OceanusException on error
+     */
+    private void checkValidity() throws OceanusException {
+        /* Obtain the holding */
+        TethysMoney myMoney = new TethysMoney(theHolding);
+
+        /* Add Capital BadDebt and Fees */
+        myMoney.addAmount(theCapital);
+        myMoney.addAmount(theFees);
+        myMoney.addAmount(theBadDebt);
+
+        /* Subtract the invested cashBack and interest */
+        myMoney.subtractAmount(theInterest);
+        myMoney.subtractAmount(theInvested);
+        myMoney.subtractAmount(theCashBack);
+
+        /* We should now be zero */
+        if (myMoney.isNonZero()) {
+            throw new CoeusDataException(this, "Invalid transaction");
+        }
+    }
+
+    @Override
+    public CoeusFundingCircleMarket getMarket() {
+        return (CoeusFundingCircleMarket) super.getMarket();
     }
 
     @Override
@@ -246,53 +331,49 @@ public class CoeusFundingCircleTransaction
 
     @Override
     public String getLoanId() {
-        return theLoanId;
-    }
-
-    /**
-     * Set the loanId.
-     * @param pLoanId the loan id
-     */
-    protected void setLoanId(final String pLoanId) {
-        theLoanId = pLoanId;
-    }
-
-    /**
-     * Obtain the auctionId.
-     * @return the id
-     */
-    public String getAuctionId() {
-        return theAuctionId;
+        return theLoan == null
+                               ? null
+                               : theLoan.getLoanId();
     }
 
     @Override
-    public TethysMoney getHoldingDelta() {
-        return theHoldingDelta;
+    public CoeusFundingCircleLoan getLoan() {
+        return theLoan;
     }
 
     @Override
-    public TethysMoney getCapitalDelta() {
-        return theCapitalDelta;
+    public TethysMoney getInvested() {
+        return theInvested;
     }
 
     @Override
-    public TethysMoney getInterestDelta() {
-        return theInterestDelta;
+    public TethysMoney getHolding() {
+        return theHolding;
     }
 
     @Override
-    public TethysMoney getFeesDelta() {
-        return theFeesDelta;
+    public TethysMoney getCapital() {
+        return theCapital;
     }
 
     @Override
-    public TethysMoney getCashBackDelta() {
-        return theCashBackDelta;
+    public TethysMoney getInterest() {
+        return theInterest;
     }
 
     @Override
-    public TethysMoney getBadDebtDelta() {
-        return theBadDebtDelta;
+    public TethysMoney getFees() {
+        return theFees;
+    }
+
+    @Override
+    public TethysMoney getCashBack() {
+        return theCashBack;
+    }
+
+    @Override
+    public TethysMoney getBadDebt() {
+        return theBadDebt;
     }
 
     /**
@@ -395,6 +476,23 @@ public class CoeusFundingCircleTransaction
     }
 
     /**
+     * determine invested delta.
+     * @return the delta
+     */
+    private TethysMoney determineInvestedDelta() {
+        /* Obtain change in holding account */
+        TethysMoney myInvested = new TethysMoney(theHolding);
+
+        /* Invested are increased by any increase the holding account */
+        if (!CoeusTransactionType.TRANSFER.equals(theTransType)) {
+            myInvested.setZero();
+        }
+
+        /* Return the Invested */
+        return myInvested;
+    }
+
+    /**
      * determine capital delta.
      * @return the delta
      */
@@ -402,15 +500,14 @@ public class CoeusFundingCircleTransaction
         /* Switch on transactionType */
         switch (theTransType) {
             case CAPITALLOAN:
-                return new TethysMoney(thePaidOut);
             case CAPITALREPAYMENT:
-                TethysMoney myCapital = new TethysMoney(thePaidIn);
+                TethysMoney myCapital = new TethysMoney(theHolding);
                 myCapital.negate();
                 return myCapital;
             case BUYLOAN:
                 return determineFCBuyLoan(true);
             default:
-                myCapital = new TethysMoney(thePaidOut);
+                myCapital = new TethysMoney(theHolding);
                 myCapital.setZero();
                 return myCapital;
         }
@@ -424,11 +521,11 @@ public class CoeusFundingCircleTransaction
         /* Switch on transactionType */
         switch (theTransType) {
             case INTEREST:
-                return new TethysMoney(thePaidIn);
+                return new TethysMoney(theHolding);
             case BUYLOAN:
                 return determineFCBuyLoan(false);
             default:
-                TethysMoney myInterest = new TethysMoney(thePaidOut);
+                TethysMoney myInterest = new TethysMoney(theHolding);
                 myInterest.setZero();
                 return myInterest;
         }
@@ -439,15 +536,18 @@ public class CoeusFundingCircleTransaction
      * @return the delta
      */
     private TethysMoney determineFeesDelta() {
-        /* Switch on transactionType */
-        switch (theTransType) {
-            case FEES:
-                return new TethysMoney(thePaidOut);
-            default:
-                TethysMoney myFees = new TethysMoney(thePaidOut);
-                myFees.setZero();
-                return myFees;
+        /* Obtain change in holding account */
+        TethysMoney myFees = new TethysMoney(theHolding);
+
+        /* Fees are increased by any decrease the holding account */
+        if (CoeusTransactionType.FEES.equals(theTransType)) {
+            myFees.negate();
+        } else {
+            myFees.setZero();
         }
+
+        /* Return the Fees */
+        return myFees;
     }
 
     /**
@@ -455,15 +555,16 @@ public class CoeusFundingCircleTransaction
      * @return the delta
      */
     private TethysMoney determineCashBackDelta() {
-        /* Switch on transactionType */
-        switch (theTransType) {
-            case CASHBACK:
-                return new TethysMoney(thePaidIn);
-            default:
-                TethysMoney myCash = new TethysMoney(thePaidOut);
-                myCash.setZero();
-                return myCash;
+        /* Obtain change in holding account */
+        TethysMoney myCash = new TethysMoney(theHolding);
+
+        /* CashBack is increased by any increase in the holding account */
+        if (!CoeusTransactionType.CASHBACK.equals(theTransType)) {
+            myCash.setZero();
         }
+
+        /* Return the CashBack */
+        return myCash;
     }
 
     /**
@@ -471,16 +572,41 @@ public class CoeusFundingCircleTransaction
      * @return the delta
      */
     private TethysMoney determineBadDebtDelta() {
-        /* Switch on transactionType */
-        switch (theTransType) {
-            case RECOVERY:
-                TethysMoney myDebt = new TethysMoney(thePaidIn);
-                myDebt.negate();
-                return myDebt;
-            default:
-                myDebt = new TethysMoney(thePaidOut);
-                myDebt.setZero();
-                return myDebt;
+        /* Obtain change in holding account */
+        TethysMoney myDebt = new TethysMoney(theHolding);
+
+        /* BadDebt is reduced by any increase in the holding account */
+        if (CoeusTransactionType.RECOVERY.equals(theTransType)) {
+            myDebt.negate();
+        } else {
+            myDebt.setZero();
+        }
+
+        /* Return the debt */
+        return myDebt;
+    }
+
+    /**
+     * determine loan.
+     * @return the loan
+     * @throws OceanusException on error
+     */
+    private CoeusFundingCircleLoan determineLoan() throws OceanusException {
+        /* Obtain the market */
+        CoeusFundingCircleMarket myMarket = getMarket();
+
+        /* If this is a CapitalLoan */
+        if (CoeusTransactionType.CAPITALLOAN.equals(theTransType)) {
+            /* Look up the loan via the auctionId */
+            String myAuctionId = theDesc.substring(thePrefix.length());
+            int myIndex = myAuctionId.lastIndexOf('-');
+            return myMarket.findLoanByAuctionId(myAuctionId.substring(myIndex + 2));
+        } else {
+            /* Determine the loan id */
+            String myLoanId = determineLoanId();
+            return myLoanId == null
+                                    ? null
+                                    : myMarket.findLoanById(myLoanId);
         }
     }
 
@@ -502,27 +628,9 @@ public class CoeusFundingCircleTransaction
                 myIndex = myId.indexOf(" : ");
                 return myId.substring(0, myIndex);
             case INTEREST:
-                return theDesc.substring(thePrefix.length());
             case RECOVERY:
-                return theDesc.substring(thePrefix.length());
             case CAPITALREPAYMENT:
                 return theDesc.substring(thePrefix.length());
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * determine auctionId.
-     * @return the id
-     */
-    private String determineAuctionId() {
-        /* Switch on transactionType */
-        switch (theTransType) {
-            case CAPITALLOAN:
-                String myId = theDesc.substring(thePrefix.length());
-                int myIndex = myId.indexOf('-');
-                return myId.substring(0, myIndex + 1);
             default:
                 return null;
         }
@@ -554,7 +662,8 @@ public class CoeusFundingCircleTransaction
         myInterest = myInterest.substring(myIndex + 1);
 
         /* Access cash value */
-        TethysMoney myCash = new TethysMoney(thePaidOut);
+        TethysMoney myCash = new TethysMoney(theHolding);
+        myCash.negate();
         String myValue = myCash.toString();
 
         /* If we are looking at the Principal */
@@ -576,5 +685,10 @@ public class CoeusFundingCircleTransaction
 
         /* Return value */
         return myCash;
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
     }
 }

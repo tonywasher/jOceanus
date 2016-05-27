@@ -55,7 +55,7 @@ public class CoeusFundingCircleLoanBookParser
      * Constructor.
      * @param pFormatter the formatter
      */
-    public CoeusFundingCircleLoanBookParser(final MetisDataFormatter pFormatter) {
+    protected CoeusFundingCircleLoanBookParser(final MetisDataFormatter pFormatter) {
         /* Initialise the underlying class */
         super(pFormatter, HEADERS);
 

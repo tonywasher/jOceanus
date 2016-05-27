@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusCSVParser;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -42,6 +41,11 @@ public class CoeusRateSetterTransactionParser
     { "Date", "Market", "Type", "Item", "Amount", "Capital", "Interest", "Fee" };
 
     /**
+     * The market.
+     */
+    private final CoeusRateSetterMarket theMarket;
+
+    /**
      * Parsed fields.
      */
     private final List<CoeusRateSetterTransaction> theTransactions;
@@ -53,14 +57,23 @@ public class CoeusRateSetterTransactionParser
 
     /**
      * Constructor.
-     * @param pFormatter the formatter
+     * @param pMarket the market
      */
-    public CoeusRateSetterTransactionParser(final MetisDataFormatter pFormatter) {
+    protected CoeusRateSetterTransactionParser(final CoeusRateSetterMarket pMarket) {
         /* Initialise the underlying class */
-        super(pFormatter, HEADERS);
+        super(pMarket.getFormatter(), HEADERS);
+        theMarket = pMarket;
 
         /* Create the transaction list */
         theTransactions = new ArrayList<>();
+    }
+
+    /**
+     * Obtain the market.
+     * @return the market
+     */
+    protected CoeusRateSetterMarket getMarket() {
+        return theMarket;
     }
 
     /**

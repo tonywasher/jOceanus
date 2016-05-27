@@ -38,7 +38,7 @@ public class CoeusZopaTester {
     private static final String BASE_PATH = "c:\\Users\\Tony\\Documents\\Peer2Peer\\Archive\\Zopa";
 
     /**
-     * Main program
+     * Main program.
      * @param args the arguments
      */
     public static void main(final String[] args) {

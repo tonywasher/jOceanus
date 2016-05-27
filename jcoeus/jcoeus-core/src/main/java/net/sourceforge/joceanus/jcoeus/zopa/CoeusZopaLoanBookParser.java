@@ -57,7 +57,7 @@ public class CoeusZopaLoanBookParser
      * Constructor.
      * @param pFormatter the formatter
      */
-    public CoeusZopaLoanBookParser(final MetisDataFormatter pFormatter) {
+    protected CoeusZopaLoanBookParser(final MetisDataFormatter pFormatter) {
         /* Initialise the underlying class */
         super(pFormatter, HEADERS);
         setDecimalSize(CoeusZopaMarket.DECIMAL_SIZE);

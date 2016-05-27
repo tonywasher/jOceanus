@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusCSVParser;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -42,6 +41,11 @@ public class CoeusFundingCircleTransactionParser
     { "Date", "Description", "Paid In", "Paid Out" };
 
     /**
+     * The market.
+     */
+    private final CoeusFundingCircleMarket theMarket;
+
+    /**
      * Parsed fields.
      */
     private final List<CoeusFundingCircleTransaction> theTransactions;
@@ -53,14 +57,23 @@ public class CoeusFundingCircleTransactionParser
 
     /**
      * Constructor.
-     * @param pFormatter the formatter
+     * @param pMarket the market
      */
-    public CoeusFundingCircleTransactionParser(final MetisDataFormatter pFormatter) {
+    protected CoeusFundingCircleTransactionParser(final CoeusFundingCircleMarket pMarket) {
         /* Initialise the underlying class */
-        super(pFormatter, HEADERS);
+        super(pMarket.getFormatter(), HEADERS);
+        theMarket = pMarket;
 
         /* Create the transaction list */
         theTransactions = new ArrayList<>();
+    }
+
+    /**
+     * Obtain the market.
+     * @return the market
+     */
+    protected CoeusFundingCircleMarket getMarket() {
+        return theMarket;
     }
 
     /**

@@ -23,25 +23,25 @@
 package net.sourceforge.joceanus.jcoeus.zopa;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
-import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarketProvider;
-import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Zopa Market.
  */
 public class CoeusZopaMarket
-        extends CoeusLoanMarket<CoeusZopaTransaction> {
+        extends CoeusLoanMarket<CoeusZopaLoan, CoeusZopaTransaction> {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusZopaMarket.class.getSimpleName(), CoeusLoanMarket.getBaseFields());
+
     /**
      * The Decimal size.
      */
@@ -58,38 +58,16 @@ public class CoeusZopaMarket
     private final CoeusZopaTransactionParser theXactionParser;
 
     /**
-     * The Map of loanId to BookItem.
-     */
-    private final Map<String, CoeusZopaLoanBookItem> theLoanIdMap;
-
-    /**
-     * The List of Transactions.
-     */
-    private final List<CoeusZopaTransaction> theTransactions;
-
-    /**
-     * The non-Loan Transactions.
-     */
-    private final List<CoeusZopaTransaction> theAdmin;
-
-    /**
      * Constructor.
      * @param pFormatter the formatter
      */
     public CoeusZopaMarket(final MetisDataFormatter pFormatter) {
         /* Initialise underlying class */
-        super(CoeusLoanMarketProvider.ZOPA);
+        super(pFormatter, CoeusLoanMarketProvider.ZOPA);
 
         /* Create the parsers */
         theBookParser = new CoeusZopaLoanBookParser(pFormatter);
-        theXactionParser = new CoeusZopaTransactionParser(pFormatter);
-
-        /* Create the bookItem map */
-        theLoanIdMap = new HashMap<>();
-
-        /* Create the lists */
-        theTransactions = new ArrayList<>();
-        theAdmin = new ArrayList<>();
+        theXactionParser = new CoeusZopaTransactionParser(this);
     }
 
     /**
@@ -104,10 +82,17 @@ public class CoeusZopaMarket
         /* Loop through the loan book items */
         Iterator<CoeusZopaLoanBookItem> myIterator = theBookParser.loanIterator();
         while (myIterator.hasNext()) {
-            CoeusZopaLoanBookItem myLoan = myIterator.next();
+            CoeusZopaLoanBookItem myItem = myIterator.next();
 
-            /* Add to the map */
-            theLoanIdMap.put(myLoan.getLoanId(), myLoan);
+            /* Look for preExisting loan */
+            CoeusZopaLoan myLoan = getLoanById(myItem.getLoanId());
+            if (myLoan == null) {
+                /* Create the loan and record it */
+                recordLoan(new CoeusZopaLoan(this, myItem));
+            } else {
+                /* Add the bookItem to the loan */
+                myLoan.addBookItem(myItem);
+            }
         }
     }
 
@@ -124,28 +109,31 @@ public class CoeusZopaMarket
         ListIterator<CoeusZopaTransaction> myIterator = theXactionParser.reverseTransactionIterator();
         while (myIterator.hasPrevious()) {
             CoeusZopaTransaction myTrans = myIterator.previous();
-            CoeusTransactionType myTransType = myTrans.getTransType();
-            String myId = myTrans.getLoanId();
+            CoeusZopaLoan myLoan = myTrans.getLoan();
 
-            /* If we have a loanId */
-            if (myId != null) {
-                /* Access the loan */
-                CoeusLoan<CoeusZopaTransaction> myLoan = findLoan(myTrans.getLoanId());
+            /* If we have a loan */
+            if (myLoan != null) {
+                /* Record the transaction */
                 myLoan.addTransaction(myTrans);
 
                 /* else handle as administration transactions */
             } else {
                 /* Add to adminList */
-                theAdmin.add(myTrans);
+                addAdminTransaction(myTrans);
             }
 
             /* Add to the transactions */
-            theTransactions.add(myTrans);
+            addTransaction(myTrans);
         }
     }
 
     @Override
-    protected CoeusZopaLoan newLoan(final String pId) {
-        return new CoeusZopaLoan(this, pId);
+    public String formatObject() {
+        return FIELD_DEFS.getName();
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
     }
 }

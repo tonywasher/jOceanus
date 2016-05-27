@@ -25,8 +25,10 @@ package net.sourceforge.joceanus.jcoeus.ratesetter;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -36,7 +38,12 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * RateSetter Transaction.
  */
 public class CoeusRateSetterTransaction
-        implements CoeusTransaction {
+        extends CoeusTransaction<CoeusRateSetterLoan, CoeusRateSetterTransaction> {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusRateSetterTransaction.class.getSimpleName(), CoeusTransaction.getBaseFields());
+
     /**
      * Open prefix.
      */
@@ -68,7 +75,7 @@ public class CoeusRateSetterTransaction
     private static final String PFIX_CAPITAL = "Monthly repayment";
 
     /**
-     * Full Repayment prefix.
+     * Full RePayment prefix.
      */
     private static final String PFIX_FULLCAPITAL = "Repaid loan capital";
 
@@ -76,6 +83,11 @@ public class CoeusRateSetterTransaction
      * Fees prefix.
      */
     private static final String PFIX_FEES = "RateSetter lender fee";
+
+    /**
+     * ZERO for BadDebt/CashBack.
+     */
+    private static final TethysMoney ZERO_MONEY = new TethysMoney();
 
     /**
      * Date of transaction.
@@ -98,34 +110,91 @@ public class CoeusRateSetterTransaction
     private final CoeusTransactionType theTransType;
 
     /**
-     * Loan Id.
+     * Loan.
      */
-    private final String theLoanId;
+    private CoeusRateSetterLoan theLoan;
 
     /**
-     * Holding Delta.
+     * Invested.
      */
-    private final TethysMoney theHoldingDelta;
+    private final TethysMoney theInvested;
 
     /**
-     * Capital Delta.
+     * Holding.
      */
-    private final TethysMoney theCapitalDelta;
+    private final TethysMoney theHolding;
 
     /**
-     * Interest Delta.
+     * Capital.
      */
-    private final TethysMoney theInterestDelta;
+    private final TethysMoney theCapital;
 
     /**
-     * Fee Delta.
+     * Interest.
      */
-    private final TethysMoney theFeesDelta;
+    private final TethysMoney theInterest;
 
     /**
-     * Zero Delta.
+     * Fees.
      */
-    private final TethysMoney theZeroDelta;
+    private final TethysMoney theFees;
+
+    /**
+     * Constructor for loan totals.
+     * @param pLoan the loan
+     */
+    protected CoeusRateSetterTransaction(final CoeusRateSetterLoan pLoan) {
+        this(pLoan.getMarket(), pLoan, new TethysDate());
+    }
+
+    /**
+     * Constructor for market totals.
+     * @param pMarket the market
+     */
+    protected CoeusRateSetterTransaction(final CoeusRateSetterMarket pMarket) {
+        this(pMarket, new TethysDate());
+    }
+
+    /**
+     * Constructor for dated market totals.
+     * @param pMarket the market
+     * @param pDate the date
+     */
+    protected CoeusRateSetterTransaction(final CoeusRateSetterMarket pMarket,
+                                         final TethysDate pDate) {
+        this(pMarket, null, pDate);
+    }
+
+    /**
+     * Constructor for totals.
+     * @param pMarket the market
+     * @param pLoan the loan
+     * @param pDate the date
+     */
+    private CoeusRateSetterTransaction(final CoeusRateSetterMarket pMarket,
+                                       final CoeusRateSetterLoan pLoan,
+                                       final TethysDate pDate) {
+        /* Initialise underlying class */
+        super(pMarket);
+
+        /* Record parameters */
+        theLoan = pLoan;
+        theDate = pDate;
+
+        /* Create description */
+        theDesc = CoeusTransactionType.TOTALS.toString();
+        theTransType = CoeusTransactionType.TOTALS;
+
+        /* Ignore loanType */
+        theLoanType = null;
+
+        /* Create the counters */
+        theInvested = new TethysMoney();
+        theHolding = new TethysMoney();
+        theCapital = new TethysMoney();
+        theInterest = new TethysMoney();
+        theFees = new TethysMoney();
+    }
 
     /**
      * Constructor.
@@ -133,50 +202,72 @@ public class CoeusRateSetterTransaction
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    public CoeusRateSetterTransaction(final CoeusRateSetterTransactionParser pParser,
-                                      final List<String> pFields) throws OceanusException {
+    protected CoeusRateSetterTransaction(final CoeusRateSetterTransactionParser pParser,
+                                         final List<String> pFields) throws OceanusException {
+        /* Initialise underlying class */
+        super(pParser.getMarket());
+
         /* Iterate through the fields */
         Iterator<String> myIterator = pFields.iterator();
 
-        /* Protect against exceptions */
-        try {
-            /* Parse the date */
-            theDate = pParser.parseDate(myIterator.next());
+        /* Parse the date */
+        theDate = pParser.parseDate(myIterator.next());
 
-            /* Store IDs */
-            theLoanType = myIterator.next();
-            theDesc = myIterator.next();
-            String myId = myIterator.next();
-            theLoanId = myId.length() > 0
-                                          ? myId
-                                          : null;
+        /* Store IDs */
+        theLoanType = myIterator.next();
+        theDesc = myIterator.next();
 
-            /* Determine the transaction type */
-            theTransType = determineTransactionType();
+        /* Determine the transaction type */
+        theTransType = determineTransactionType();
+        theLoan = determineLoan(myIterator.next());
 
-            /* Parse the monetary values */
-            theHoldingDelta = pParser.parseMoney(myIterator.next());
-            TethysMoney myCapital = pParser.parseMoney(myIterator.next());
-            theInterestDelta = pParser.parseMoney(myIterator.next());
+        /* Parse the monetary values */
+        theHolding = pParser.parseMoney(myIterator.next());
+        TethysMoney myCapital = pParser.parseMoney(myIterator.next());
+        theInterest = pParser.parseMoney(myIterator.next());
 
-            /* Handle fees delta */
-            theFeesDelta = pParser.parseMoney(myIterator.next());
-            theFeesDelta.negate();
+        /* Handle fees */
+        theFees = pParser.parseMoney(myIterator.next());
+        theFees.negate();
 
-            /* Handle CapitalDelta correctly */
-            theCapitalDelta = CoeusTransactionType.CAPITALLOAN.equals(theTransType)
-                                                                                    ? new TethysMoney(theHoldingDelta)
-                                                                                    : myCapital;
-            theCapitalDelta.negate();
+        /* Handle Capital correctly */
+        theCapital = CoeusTransactionType.CAPITALLOAN.equals(theTransType)
+                                                                           ? new TethysMoney(theHolding)
+                                                                           : myCapital;
+        theCapital.negate();
 
-            /* Handle ZeroDelta correctly */
-            theZeroDelta = new TethysMoney(theHoldingDelta);
-            theZeroDelta.setZero();
+        /* Handle Invested correctly */
+        theInvested = determineInvestedDelta();
 
-            /* Catch exceptions */
-        } catch (IllegalArgumentException e) {
-            throw new TethysDataException("Invalid Record", e);
+        /* Check transaction validity */
+        checkValidity();
+    }
+
+    /**
+     * Check validity.
+     * @throws OceanusException on error
+     */
+    private void checkValidity() throws OceanusException {
+        /* Obtain the holding */
+        TethysMoney myMoney = new TethysMoney(theHolding);
+
+        /* Add Capital and Fees */
+        myMoney.addAmount(theCapital);
+        myMoney.addAmount(theFees);
+
+        /* Subtract the invested and interest */
+        myMoney.subtractAmount(theInterest);
+        myMoney.subtractAmount(theInvested);
+
+        /* We should now be zero */
+        if (myMoney.isNonZero()) {
+            throw new CoeusDataException(this, "Invalid transaction");
         }
+    }
+
+    @Override
+    public CoeusRateSetterMarket getMarket() {
+        return (CoeusRateSetterMarket) super.getMarket();
     }
 
     /**
@@ -211,42 +302,59 @@ public class CoeusRateSetterTransaction
         return theTransType;
     }
 
-    /**
-     * Obtain the loanId.
-     * @return the loanId
-     */
+    @Override
     public String getLoanId() {
-        return theLoanId;
+        return theLoan == null
+                               ? null
+                               : theLoan.getLoanId();
     }
 
     @Override
-    public TethysMoney getHoldingDelta() {
-        return theHoldingDelta;
+    public CoeusRateSetterLoan getLoan() {
+        return theLoan;
+    }
+
+    /**
+     * Set the loan.
+     * @param pLoan the loan
+     */
+    protected void setLoan(final CoeusRateSetterLoan pLoan) {
+        theLoan = pLoan;
     }
 
     @Override
-    public TethysMoney getCapitalDelta() {
-        return theCapitalDelta;
+    public TethysMoney getInvested() {
+        return theInvested;
     }
 
     @Override
-    public TethysMoney getInterestDelta() {
-        return theInterestDelta;
+    public TethysMoney getHolding() {
+        return theHolding;
     }
 
     @Override
-    public TethysMoney getFeesDelta() {
-        return theFeesDelta;
+    public TethysMoney getCapital() {
+        return theCapital;
     }
 
     @Override
-    public TethysMoney getCashBackDelta() {
-        return theZeroDelta;
+    public TethysMoney getInterest() {
+        return theInterest;
     }
 
     @Override
-    public TethysMoney getBadDebtDelta() {
-        return theZeroDelta;
+    public TethysMoney getFees() {
+        return theFees;
+    }
+
+    @Override
+    public TethysMoney getCashBack() {
+        return ZERO_MONEY;
+    }
+
+    @Override
+    public TethysMoney getBadDebt() {
+        return ZERO_MONEY;
     }
 
     /**
@@ -285,5 +393,45 @@ public class CoeusRateSetterTransaction
 
         /* Not recognised */
         throw new TethysDataException("Unrecognised transaction");
+    }
+
+    /**
+     * determine loan.
+     * @param pId the loan id (potentially)
+     * @return the loan
+     * @throws OceanusException on error
+     */
+    private CoeusRateSetterLoan determineLoan(final String pId) throws OceanusException {
+        /* Switch on transaction type */
+        switch (theTransType) {
+            case CAPITALREPAYMENT:
+            case INTEREST:
+            case FEES:
+                return getMarket().findLoanById(pId);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * determine invested delta.
+     * @return the delta
+     */
+    private TethysMoney determineInvestedDelta() {
+        /* Obtain change in holding account */
+        TethysMoney myInvested = new TethysMoney(theHolding);
+
+        /* Invested are increased by any increase the holding account */
+        if (!CoeusTransactionType.TRANSFER.equals(theTransType)) {
+            myInvested.setZero();
+        }
+
+        /* Return the Invested */
+        return myInvested;
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
     }
 }

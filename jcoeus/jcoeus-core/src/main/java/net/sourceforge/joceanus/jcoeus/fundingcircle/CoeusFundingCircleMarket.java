@@ -23,24 +23,34 @@
 package net.sourceforge.joceanus.jcoeus.fundingcircle;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
+import net.sourceforge.joceanus.jcoeus.CoeusDataException;
+import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarketProvider;
-import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * FundingCircle Market.
  */
 public class CoeusFundingCircleMarket
-        extends CoeusLoanMarket<CoeusFundingCircleTransaction> {
+        extends CoeusLoanMarket<CoeusFundingCircleLoan, CoeusFundingCircleTransaction> {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusFundingCircleMarket.class.getSimpleName(), CoeusLoanMarket.getBaseFields());
+
+    /**
+     * AuctionMap Field Id.
+     */
+    private static final MetisField FIELD_AUCTIONS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_AUCTIONMAP.getValue());
+
     /**
      * The LoanBook Parser.
      */
@@ -54,22 +64,7 @@ public class CoeusFundingCircleMarket
     /**
      * The Map of auctionId to BookItem.
      */
-    private final Map<String, CoeusFundingCircleLoanBookItem> theAuctionIdMap;
-
-    /**
-     * The Map of loanId to BookItem.
-     */
-    private final Map<String, CoeusFundingCircleLoanBookItem> theLoanIdMap;
-
-    /**
-     * The List of Transactions.
-     */
-    private final List<CoeusFundingCircleTransaction> theTransactions;
-
-    /**
-     * The non-loan Transactions.
-     */
-    private final List<CoeusFundingCircleTransaction> theAdmin;
+    private final Map<String, CoeusFundingCircleLoan> theAuctionMap;
 
     /**
      * Constructor.
@@ -77,19 +72,14 @@ public class CoeusFundingCircleMarket
      */
     public CoeusFundingCircleMarket(final MetisDataFormatter pFormatter) {
         /* Initialise underlying class */
-        super(CoeusLoanMarketProvider.FUNDINGCIRCLE);
+        super(pFormatter, CoeusLoanMarketProvider.FUNDINGCIRCLE);
 
         /* Create the parsers */
         theBookParser = new CoeusFundingCircleLoanBookParser(pFormatter);
-        theXactionParser = new CoeusFundingCircleTransactionParser(pFormatter);
+        theXactionParser = new CoeusFundingCircleTransactionParser(this);
 
-        /* Create the bookItem maps */
-        theAuctionIdMap = new HashMap<>();
-        theLoanIdMap = new HashMap<>();
-
-        /* Create the lists */
-        theTransactions = new ArrayList<>();
-        theAdmin = new ArrayList<>();
+        /* Create the bookItem map */
+        theAuctionMap = new LinkedHashMap<>();
     }
 
     /**
@@ -104,11 +94,12 @@ public class CoeusFundingCircleMarket
         /* Loop through the loan book items */
         Iterator<CoeusFundingCircleLoanBookItem> myIterator = theBookParser.loanIterator();
         while (myIterator.hasNext()) {
-            CoeusFundingCircleLoanBookItem myLoan = myIterator.next();
+            CoeusFundingCircleLoanBookItem myItem = myIterator.next();
 
-            /* Add to the maps */
-            theAuctionIdMap.put(myLoan.getAuctionId(), myLoan);
-            theLoanIdMap.put(myLoan.getLoanId(), myLoan);
+            /* Create the loan and record it */
+            CoeusFundingCircleLoan myLoan = new CoeusFundingCircleLoan(this, myItem);
+            recordLoan(myLoan);
+            theAuctionMap.put(myItem.getAuctionId(), myLoan);
         }
     }
 
@@ -125,28 +116,56 @@ public class CoeusFundingCircleMarket
         Iterator<CoeusFundingCircleTransaction> myIterator = theXactionParser.transactionIterator();
         while (myIterator.hasNext()) {
             CoeusFundingCircleTransaction myTrans = myIterator.next();
-            CoeusTransactionType myTransType = myTrans.getTransType();
-            String myId = myTrans.getLoanId();
+            CoeusFundingCircleLoan myLoan = myTrans.getLoan();
 
-            /* If we have a loanId */
-            if (myId != null) {
-                /* Access the loan */
-                CoeusLoan<CoeusFundingCircleTransaction> myLoan = findLoan(myTrans.getLoanId());
+            /* If we have a loan */
+            if (myLoan != null) {
+                /* Record the transaction */
                 myLoan.addTransaction(myTrans);
 
                 /* else handle as administration transactions */
             } else {
                 /* Add to adminList */
-                theAdmin.add(myTrans);
+                addAdminTransaction(myTrans);
             }
 
             /* Add to the transactions */
-            theTransactions.add(myTrans);
+            addTransaction(myTrans);
         }
     }
 
+    /**
+     * LookUp Loan by auction id.
+     * @param pId the id of the loan
+     * @return the loan
+     * @throws OceanusException on error
+     */
+    protected CoeusFundingCircleLoan findLoanByAuctionId(final String pId) throws OceanusException {
+        CoeusFundingCircleLoan myLoan = theAuctionMap.get(pId);
+        if (myLoan == null) {
+            throw new CoeusDataException(pId, "Unrecognised AuctionId");
+        }
+        return myLoan;
+    }
+
     @Override
-    protected CoeusFundingCircleLoan newLoan(final String pId) {
-        return new CoeusFundingCircleLoan(this, pId);
+    public String formatObject() {
+        return FIELD_DEFS.getName();
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_AUCTIONS.equals(pField)) {
+            return theAuctionMap;
+        }
+
+        /* Pass call on */
+        return super.getFieldValue(pField);
     }
 }

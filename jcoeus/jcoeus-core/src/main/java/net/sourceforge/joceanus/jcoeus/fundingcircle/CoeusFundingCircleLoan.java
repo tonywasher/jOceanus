@@ -22,20 +22,68 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.fundingcircle;
 
+import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
  * FundingCircle Loan.
  */
 public class CoeusFundingCircleLoan
-        extends CoeusLoan<CoeusFundingCircleTransaction> {
+        extends CoeusLoan<CoeusFundingCircleLoan, CoeusFundingCircleTransaction> {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusFundingCircleLoan.class.getSimpleName(), CoeusLoan.getBaseFields());
+
+    /**
+     * LoanBookItem Field Id.
+     */
+    private static final MetisField FIELD_BOOKITEM = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BOOKITEM.getValue());
+
+    /**
+     * The bookItem.
+     */
+    private final CoeusFundingCircleLoanBookItem theBookItem;
+
     /**
      * Constructor.
      * @param pMarket the market
-     * @param pId the loan Id
+     * @param pBookItem the loan book item
      */
     protected CoeusFundingCircleLoan(final CoeusFundingCircleMarket pMarket,
-                                     final String pId) {
-        super(pMarket, pId);
+                                     final CoeusFundingCircleLoanBookItem pBookItem) {
+        super(pMarket, pBookItem.getLoanId());
+        theBookItem = pBookItem;
+    }
+
+    @Override
+    public CoeusFundingCircleMarket getMarket() {
+        return (CoeusFundingCircleMarket) super.getMarket();
+    }
+
+    /**
+     * Obtain the book item.
+     * @return the book item
+     */
+    public CoeusFundingCircleLoanBookItem getLoanBookItem() {
+        return theBookItem;
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_BOOKITEM.equals(pField)) {
+            return theBookItem;
+        }
+
+        /* Pass call on */
+        return super.getFieldValue(pField);
     }
 }

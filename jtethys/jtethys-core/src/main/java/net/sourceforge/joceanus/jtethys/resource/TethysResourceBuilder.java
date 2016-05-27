@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -139,6 +140,21 @@ public final class TethysResourceBuilder {
 
         /* No change */
         return pClass;
+    }
+
+    /**
+     * Obtain key for enum.
+     * @param pMap the map
+     * @param pValue the enum value
+     * @return the resource key
+     */
+    public static <E extends Enum<E>> TethysResourceId getKeyForEnum(final Map<E, TethysResourceId> pMap,
+                                                                     final E pValue) {
+        TethysResourceId myId = pMap.get(pValue);
+        if (myId == null) {
+            throw new IllegalArgumentException(getErrorNoResource(pValue));
+        }
+        return myId;
     }
 
     /**

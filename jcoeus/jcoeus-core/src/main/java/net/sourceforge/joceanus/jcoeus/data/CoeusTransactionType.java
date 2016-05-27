@@ -71,7 +71,12 @@ public enum CoeusTransactionType {
     /**
      * BuyLoan.
      */
-    BUYLOAN;
+    BUYLOAN,
+
+    /**
+     * Totals.
+     */
+    TOTALS;
 
     /**
      * The String name.
