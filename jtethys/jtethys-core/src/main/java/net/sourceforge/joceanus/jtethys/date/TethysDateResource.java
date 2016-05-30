@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.date;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -191,6 +194,11 @@ public enum TethysDateResource implements TethysResourceId {
     DIALOG_NULL("dialog.NullSelect");
 
     /**
+     * The Period Map.
+     */
+    private static final Map<TethysDatePeriod, TethysResourceId> PERIOD_MAP = buildPeriodMap();
+
+    /**
      * The Resource Builder.
      */
     private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(OceanusException.class.getCanonicalName());
@@ -236,40 +244,34 @@ public enum TethysDateResource implements TethysResourceId {
     }
 
     /**
+     * Build period map.
+     * @return the map
+     */
+    private static Map<TethysDatePeriod, TethysResourceId> buildPeriodMap() {
+        /* Create the map and return it */
+        Map<TethysDatePeriod, TethysResourceId> myMap = new EnumMap<>(TethysDatePeriod.class);
+        myMap.put(TethysDatePeriod.ONEWEEK, PERIOD_ONEWEEK);
+        myMap.put(TethysDatePeriod.FORTNIGHT, PERIOD_FORTNIGHT);
+        myMap.put(TethysDatePeriod.ONEMONTH, PERIOD_ONEMONTH);
+        myMap.put(TethysDatePeriod.QUARTERYEAR, PERIOD_QUARTERYEAR);
+        myMap.put(TethysDatePeriod.HALFYEAR, PERIOD_HALFYEAR);
+        myMap.put(TethysDatePeriod.ONEYEAR, PERIOD_ONEYEAR);
+        myMap.put(TethysDatePeriod.CALENDARMONTH, PERIOD_CALENDARMONTH);
+        myMap.put(TethysDatePeriod.CALENDARQUARTER, PERIOD_CALENDARQUARTER);
+        myMap.put(TethysDatePeriod.CALENDARYEAR, PERIOD_CALENDARYEAR);
+        myMap.put(TethysDatePeriod.FISCALYEAR, PERIOD_FISCALYEAR);
+        myMap.put(TethysDatePeriod.DATESUPTO, PERIOD_DATESUPTO);
+        myMap.put(TethysDatePeriod.CUSTOM, PERIOD_CUSTOM);
+        myMap.put(TethysDatePeriod.ALLDATES, PERIOD_ALLDATES);
+        return myMap;
+    }
+
+    /**
      * Obtain key for period.
      * @param pPeriod the period
      * @return the resource key
      */
     protected static TethysResourceId getKeyForPeriod(final TethysDatePeriod pPeriod) {
-        switch (pPeriod) {
-            case ONEWEEK:
-                return PERIOD_ONEWEEK;
-            case FORTNIGHT:
-                return PERIOD_FORTNIGHT;
-            case ONEMONTH:
-                return PERIOD_ONEMONTH;
-            case QUARTERYEAR:
-                return PERIOD_QUARTERYEAR;
-            case HALFYEAR:
-                return PERIOD_HALFYEAR;
-            case ONEYEAR:
-                return PERIOD_ONEYEAR;
-            case CALENDARMONTH:
-                return PERIOD_CALENDARMONTH;
-            case CALENDARQUARTER:
-                return PERIOD_CALENDARQUARTER;
-            case CALENDARYEAR:
-                return PERIOD_CALENDARYEAR;
-            case FISCALYEAR:
-                return PERIOD_FISCALYEAR;
-            case DATESUPTO:
-                return PERIOD_DATESUPTO;
-            case CUSTOM:
-                return PERIOD_CUSTOM;
-            case ALLDATES:
-                return PERIOD_ALLDATES;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pPeriod));
-        }
+        return TethysResourceBuilder.getKeyForEnum(PERIOD_MAP, pPeriod);
     }
 }

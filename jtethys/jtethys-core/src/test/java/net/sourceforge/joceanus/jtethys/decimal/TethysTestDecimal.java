@@ -96,6 +96,7 @@ public final class TethysTestDecimal {
         myDec = myParser.parseDecimalValue("5e-02", 8);
 
         /* Use otherwise dead variables */
+        myDec.doubleValue();
         return myMoney.valueAtRate(myRate);
     }
 }

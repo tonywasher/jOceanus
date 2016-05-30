@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -191,6 +194,11 @@ public enum MetisPreferenceResource implements TethysResourceId {
     SECPREF_KEYSETS("secpref.keysets");
 
     /**
+     * The PreferenceType Map.
+     */
+    private static final Map<MetisPreferenceType, TethysResourceId> PREF_MAP = buildPreferenceMap();
+
+    /**
      * The Resource Builder.
      */
     private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(MetisDataException.class.getCanonicalName());
@@ -236,34 +244,31 @@ public enum MetisPreferenceResource implements TethysResourceId {
     }
 
     /**
+     * Build preference map.
+     * @return the map
+     */
+    private static Map<MetisPreferenceType, TethysResourceId> buildPreferenceMap() {
+        /* Create the map and return it */
+        Map<MetisPreferenceType, TethysResourceId> myMap = new EnumMap<>(MetisPreferenceType.class);
+        myMap.put(MetisPreferenceType.STRING, TYPE_STRING);
+        myMap.put(MetisPreferenceType.INTEGER, TYPE_INTEGER);
+        myMap.put(MetisPreferenceType.BOOLEAN, TYPE_BOOLEAN);
+        myMap.put(MetisPreferenceType.DATE, TYPE_DATE);
+        myMap.put(MetisPreferenceType.FILE, TYPE_FILE);
+        myMap.put(MetisPreferenceType.DIRECTORY, TYPE_DIRECTORY);
+        myMap.put(MetisPreferenceType.ENUM, TYPE_ENUM);
+        myMap.put(MetisPreferenceType.COLOR, TYPE_COLOR);
+        myMap.put(MetisPreferenceType.CHARARRAY, TYPE_CHARARRAY);
+        myMap.put(MetisPreferenceType.BYTEARRAY, TYPE_BYTEARRAY);
+        return myMap;
+    }
+
+    /**
      * Obtain key for prefType.
      * @param pType the type
      * @return the resource key
      */
     protected static TethysResourceId getKeyForPrefType(final MetisPreferenceType pType) {
-        switch (pType) {
-            case STRING:
-                return TYPE_STRING;
-            case INTEGER:
-                return TYPE_INTEGER;
-            case BOOLEAN:
-                return TYPE_BOOLEAN;
-            case DATE:
-                return TYPE_DATE;
-            case FILE:
-                return TYPE_FILE;
-            case DIRECTORY:
-                return TYPE_DIRECTORY;
-            case ENUM:
-                return TYPE_ENUM;
-            case COLOR:
-                return TYPE_COLOR;
-            case CHARARRAY:
-                return TYPE_CHARARRAY;
-            case BYTEARRAY:
-                return TYPE_BYTEARRAY;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pType));
-        }
+        return TethysResourceBuilder.getKeyForEnum(PREF_MAP, pType);
     }
 }

@@ -86,6 +86,10 @@ public class CoeusRateSetterTester {
             myMarket.parseStatement(new File(BASE_PATH, "LenderTransactions3.csv"));
             myMarket.parseStatement(new File(BASE_PATH, "LenderTransactions4.csv"));
 
+            /* Analyse the data */
+            myMarket.analyseMarket();
+            myFormatter = null;
+
             /* Catch Exceptions */
         } catch (OceanusException e) {
             e.printStackTrace(System.out);

@@ -88,6 +88,9 @@ public class CoeusFundingCircleTester {
             myMarket.parseStatement(new File(BASE_PATH, "statement_2016-04.csv"));
             myMarket.parseStatement(new File(BASE_PATH, "statement_2016-05.csv"));
 
+            /* Analyse the data */
+            myMarket.analyseMarket();
+
             /* Catch Exceptions */
         } catch (OceanusException e) {
             e.printStackTrace(System.out);

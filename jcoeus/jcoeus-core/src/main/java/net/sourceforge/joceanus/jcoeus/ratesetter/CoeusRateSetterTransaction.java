@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * RateSetter Transaction.
  */
 public class CoeusRateSetterTransaction
-        extends CoeusTransaction<CoeusRateSetterLoan, CoeusRateSetterTransaction> {
+        extends CoeusTransaction<CoeusRateSetterLoan, CoeusRateSetterTransaction, CoeusRateSetterTotals, CoeusRateSetterHistory> {
     /**
      * Report fields.
      */
@@ -138,63 +138,6 @@ public class CoeusRateSetterTransaction
      * Fees.
      */
     private final TethysMoney theFees;
-
-    /**
-     * Constructor for loan totals.
-     * @param pLoan the loan
-     */
-    protected CoeusRateSetterTransaction(final CoeusRateSetterLoan pLoan) {
-        this(pLoan.getMarket(), pLoan, new TethysDate());
-    }
-
-    /**
-     * Constructor for market totals.
-     * @param pMarket the market
-     */
-    protected CoeusRateSetterTransaction(final CoeusRateSetterMarket pMarket) {
-        this(pMarket, new TethysDate());
-    }
-
-    /**
-     * Constructor for dated market totals.
-     * @param pMarket the market
-     * @param pDate the date
-     */
-    protected CoeusRateSetterTransaction(final CoeusRateSetterMarket pMarket,
-                                         final TethysDate pDate) {
-        this(pMarket, null, pDate);
-    }
-
-    /**
-     * Constructor for totals.
-     * @param pMarket the market
-     * @param pLoan the loan
-     * @param pDate the date
-     */
-    private CoeusRateSetterTransaction(final CoeusRateSetterMarket pMarket,
-                                       final CoeusRateSetterLoan pLoan,
-                                       final TethysDate pDate) {
-        /* Initialise underlying class */
-        super(pMarket);
-
-        /* Record parameters */
-        theLoan = pLoan;
-        theDate = pDate;
-
-        /* Create description */
-        theDesc = CoeusTransactionType.TOTALS.toString();
-        theTransType = CoeusTransactionType.TOTALS;
-
-        /* Ignore loanType */
-        theLoanType = null;
-
-        /* Create the counters */
-        theInvested = new TethysMoney();
-        theHolding = new TethysMoney();
-        theCapital = new TethysMoney();
-        theInterest = new TethysMoney();
-        theFees = new TethysMoney();
-    }
 
     /**
      * Constructor.

@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * FundingCircle transaction.
  */
 public class CoeusFundingCircleTransaction
-        extends CoeusTransaction<CoeusFundingCircleLoan, CoeusFundingCircleTransaction> {
+        extends CoeusTransaction<CoeusFundingCircleLoan, CoeusFundingCircleTransaction, CoeusFundingCircleTotals, CoeusFundingCircleHistory> {
     /**
      * Report fields.
      */
@@ -182,62 +182,6 @@ public class CoeusFundingCircleTransaction
      * BadDebt.
      */
     private final TethysMoney theBadDebt;
-
-    /**
-     * Constructor for loan totals.
-     * @param pLoan the loan
-     */
-    protected CoeusFundingCircleTransaction(final CoeusFundingCircleLoan pLoan) {
-        this(pLoan.getMarket(), pLoan, new TethysDate());
-    }
-
-    /**
-     * Constructor for market totals.
-     * @param pMarket the market
-     */
-    protected CoeusFundingCircleTransaction(final CoeusFundingCircleMarket pMarket) {
-        this(pMarket, new TethysDate());
-    }
-
-    /**
-     * Constructor for dated market totals.
-     * @param pMarket the market
-     * @param pDate the date
-     */
-    protected CoeusFundingCircleTransaction(final CoeusFundingCircleMarket pMarket,
-                                            final TethysDate pDate) {
-        this(pMarket, null, pDate);
-    }
-
-    /**
-     * Constructor for totals.
-     * @param pMarket the market
-     * @param pLoan the loan
-     * @param pDate the date
-     */
-    private CoeusFundingCircleTransaction(final CoeusFundingCircleMarket pMarket,
-                                          final CoeusFundingCircleLoan pLoan,
-                                          final TethysDate pDate) {
-        /* Initialise underlying class */
-        super(pMarket);
-
-        /* Record parameters */
-        theLoan = pLoan;
-        theDate = pDate;
-
-        /* Create description */
-        theDesc = CoeusTransactionType.TOTALS.toString();
-        theTransType = CoeusTransactionType.TOTALS;
-
-        /* Create the counters */
-        theInvested = new TethysMoney();
-        theHolding = new TethysMoney();
-        theCapital = new TethysMoney();
-        theInterest = new TethysMoney();
-        theFees = new TethysMoney();
-        theCashBack = new TethysMoney();
-        theBadDebt = new TethysMoney();
-    }
 
     /**
      * Constructor.
@@ -439,7 +383,7 @@ public class CoeusFundingCircleTransaction
         /* If the description is Recovery3 */
         if (theDesc.startsWith(PFIX_RECOVERY3)) {
             thePrefix = PFIX_RECOVERY3;
-            return CoeusTransactionType.INTEREST;
+            return CoeusTransactionType.RECOVERY;
         }
 
         /* If the description is CashBack */

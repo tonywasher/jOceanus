@@ -1048,7 +1048,7 @@ public class TaxYear
          * @return the matching item
          */
         public TaxYear findItemByDate(final TethysDate pDate) {
-            TethysDate myDate = TethysFiscalYear.UK.normaliseDate(pDate);
+            TethysDate myDate = TethysFiscalYear.UK.endOfYear(pDate);
             return findItemByKey(myDate);
         }
 

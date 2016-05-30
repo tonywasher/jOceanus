@@ -74,6 +74,11 @@ public enum CoeusTransactionType {
     BUYLOAN,
 
     /**
+     * BadDebt.
+     */
+    BADDEBT,
+
+    /**
      * Totals.
      */
     TOTALS;

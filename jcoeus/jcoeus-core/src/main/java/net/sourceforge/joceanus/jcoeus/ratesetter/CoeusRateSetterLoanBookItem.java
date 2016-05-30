@@ -56,7 +56,7 @@ public class CoeusRateSetterLoanBookItem
     /**
      * StartDate Field Id.
      */
-    private static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_STARTDATE.getValue());
+    private static final MetisField FIELD_STARTDATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_STARTDATE.getValue());
 
     /**
      * Original Loan Field Id.
@@ -72,6 +72,11 @@ public class CoeusRateSetterLoanBookItem
      * Rate Field Id.
      */
     private static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_RATE.getValue());
+
+    /**
+     * LastDate Field Id.
+     */
+    private static final MetisField FIELD_LASTDATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LASTDATE.getValue());
 
     /**
      * Status Field Id.
@@ -102,6 +107,11 @@ public class CoeusRateSetterLoanBookItem
      * The rate.
      */
     private final TethysRate theRate;
+
+    /**
+     * The LastDate.
+     */
+    private final TethysDate theLastDate;
 
     /**
      * The status.
@@ -143,6 +153,9 @@ public class CoeusRateSetterLoanBookItem
 
         /* Obtain the rate */
         theRate = pParser.parseRate(myIterator.next().text());
+
+        /* Obtain the lastDate */
+        theLastDate = pParser.parseDate(myIterator.next().text());
 
         /* Set the status */
         theStatus = pRepaid
@@ -192,6 +205,14 @@ public class CoeusRateSetterLoanBookItem
     }
 
     /**
+     * Obtain the lastDate.
+     * @return the startDate
+     */
+    public TethysDate getLastDate() {
+        return theLastDate;
+    }
+
+    /**
      * Obtain the status.
      * @return the status
      */
@@ -215,7 +236,7 @@ public class CoeusRateSetterLoanBookItem
         if (FIELD_LOANID.equals(pField)) {
             return theLoanId;
         }
-        if (FIELD_DATE.equals(pField)) {
+        if (FIELD_STARTDATE.equals(pField)) {
             return theStartDate;
         }
         if (FIELD_LOAN.equals(pField)) {
@@ -226,6 +247,9 @@ public class CoeusRateSetterLoanBookItem
         }
         if (FIELD_RATE.equals(pField)) {
             return theRate;
+        }
+        if (FIELD_LASTDATE.equals(pField)) {
+            return theLastDate;
         }
         if (FIELD_STATUS.equals(pField)) {
             return theStatus;

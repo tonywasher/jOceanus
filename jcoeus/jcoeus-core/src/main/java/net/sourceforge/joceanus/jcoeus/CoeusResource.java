@@ -118,6 +118,11 @@ public enum CoeusResource
     TRANS_BUYLOAN("trans.buyloan"),
 
     /**
+     * Transaction BadDebt.
+     */
+    TRANS_BADDEBT("trans.baddebt"),
+
+    /**
      * Transaction Recovery.
      */
     TRANS_RECOVERY("trans.recovery"),
@@ -186,11 +191,6 @@ public enum CoeusResource
      * Data Transactions.
      */
     DATA_TRANSACTIONS("data.transactions"),
-
-    /**
-     * Data AdminItems.
-     */
-    DATA_ADMINITEMS("data.adminxactions"),
 
     /**
      * Data InitialLoans.
@@ -263,6 +263,41 @@ public enum CoeusResource
     DATA_BADDEBT("data.baddebt"),
 
     /**
+     * Data Total Invested.
+     */
+    DATA_TOTALINVESTED("data.total.invested"),
+
+    /**
+     * Data Total Holding.
+     */
+    DATA_TOTALHOLDING("data.total.holding"),
+
+    /**
+     * Data Total Capital.
+     */
+    DATA_TOTALCAPITAL("data.total.capital"),
+
+    /**
+     * Data Total Interest.
+     */
+    DATA_TOTALINTEREST("data.total.interest"),
+
+    /**
+     * Data Total Fees.
+     */
+    DATA_TOTALFEES("data.total.fees"),
+
+    /**
+     * Data Total CashBack.
+     */
+    DATA_TOTALCASHBACK("data.total.cashback"),
+
+    /**
+     * Data Total BadDebt.
+     */
+    DATA_TOTALBADDEBT("data.total.baddebt"),
+
+    /**
      * Data StartDate.
      */
     DATA_STARTDATE("data.startdate"),
@@ -283,6 +318,11 @@ public enum CoeusResource
     DATA_RATE("data.rate"),
 
     /**
+     * Data LastDate.
+     */
+    DATA_LASTDATE("data.lastdate"),
+
+    /**
      * Data Status.
      */
     DATA_LOANSTATUS("data.loanstatus"),
@@ -300,7 +340,32 @@ public enum CoeusResource
     /**
      * Data BookItem.
      */
-    DATA_BOOKITEM("data.bookitem");
+    DATA_BOOKITEM("data.bookitem"),
+
+    /**
+     * Data Totals.
+     */
+    DATA_TOTALS("data.totals"),
+
+    /**
+     * Data History.
+     */
+    DATA_HISTORY("data.history"),
+
+    /**
+     * Data MonthlyDeltas.
+     */
+    DATA_MONTHLYDELTAS("data.deltas.monthly"),
+
+    /**
+     * Data AnnualDeltas.
+     */
+    DATA_ANNUALDELTAS("data.deltas.annually"),
+
+    /**
+     * Data MonthlyTotals.
+     */
+    DATA_MONTHLYTOTALS("data.totals.monthly");
 
     /**
      * The MarketProvider Map.
@@ -428,6 +493,7 @@ public enum CoeusResource
         myMap.put(CoeusTransactionType.CASHBACK, TRANS_CASHBACK);
         myMap.put(CoeusTransactionType.RATEPROMISE, TRANS_RATEPROMISE);
         myMap.put(CoeusTransactionType.BUYLOAN, TRANS_BUYLOAN);
+        myMap.put(CoeusTransactionType.BADDEBT, TRANS_BADDEBT);
         myMap.put(CoeusTransactionType.RECOVERY, TRANS_RECOVERY);
         myMap.put(CoeusTransactionType.TOTALS, TRANS_TOTALS);
         return myMap;

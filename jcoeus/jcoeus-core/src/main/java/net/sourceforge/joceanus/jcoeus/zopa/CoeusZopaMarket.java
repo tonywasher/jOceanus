@@ -31,12 +31,13 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarketProvider;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Zopa Market.
  */
 public class CoeusZopaMarket
-        extends CoeusLoanMarket<CoeusZopaLoan, CoeusZopaTransaction> {
+        extends CoeusLoanMarket<CoeusZopaLoan, CoeusZopaTransaction, CoeusZopaTotals, CoeusZopaHistory> {
     /**
      * Report fields.
      */
@@ -109,22 +110,31 @@ public class CoeusZopaMarket
         ListIterator<CoeusZopaTransaction> myIterator = theXactionParser.reverseTransactionIterator();
         while (myIterator.hasPrevious()) {
             CoeusZopaTransaction myTrans = myIterator.previous();
-            CoeusZopaLoan myLoan = myTrans.getLoan();
-
-            /* If we have a loan */
-            if (myLoan != null) {
-                /* Record the transaction */
-                myLoan.addTransaction(myTrans);
-
-                /* else handle as administration transactions */
-            } else {
-                /* Add to adminList */
-                addAdminTransaction(myTrans);
-            }
 
             /* Add to the transactions */
             addTransaction(myTrans);
         }
+    }
+
+    @Override
+    protected CoeusZopaTotals newTotals() {
+        return new CoeusZopaTotals(this);
+    }
+
+    @Override
+    protected CoeusZopaTotals newTotals(final TethysDate pDate,
+                                        final CoeusZopaTotals pTotals) {
+        return new CoeusZopaTotals(pDate, pTotals);
+    }
+
+    @Override
+    protected CoeusZopaHistory newHistory() {
+        return new CoeusZopaHistory(this);
+    }
+
+    @Override
+    protected CoeusZopaHistory newHistory(final TethysDate pDate) {
+        return new CoeusZopaHistory(this, pDate);
     }
 
     @Override

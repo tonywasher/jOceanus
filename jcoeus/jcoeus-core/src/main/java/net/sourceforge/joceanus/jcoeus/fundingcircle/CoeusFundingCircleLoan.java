@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
  * FundingCircle Loan.
  */
 public class CoeusFundingCircleLoan
-        extends CoeusLoan<CoeusFundingCircleLoan, CoeusFundingCircleTransaction> {
+        extends CoeusLoan<CoeusFundingCircleLoan, CoeusFundingCircleTransaction, CoeusFundingCircleTotals, CoeusFundingCircleHistory> {
     /**
      * Report fields.
      */
@@ -69,6 +69,11 @@ public class CoeusFundingCircleLoan
      */
     public CoeusFundingCircleLoanBookItem getLoanBookItem() {
         return theBookItem;
+    }
+
+    @Override
+    protected CoeusFundingCircleHistory newHistory() {
+        return new CoeusFundingCircleHistory(this);
     }
 
     @Override

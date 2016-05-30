@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
@@ -450,6 +453,16 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
     SCHEDULE_LIST("Schedule.List");
 
     /**
+     * The MarketProvider Map.
+     */
+    private static final Map<MoneyWiseDataType, TethysResourceId> NAME_MAP = buildNameMap();
+
+    /**
+     * The MarketProvider Map.
+     */
+    private static final Map<MoneyWiseDataType, TethysResourceId> LIST_MAP = buildListMap();
+
+    /**
      * The Resource Builder.
      */
     private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
@@ -495,99 +508,116 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
     }
 
     /**
+     * Build name map.
+     * @return the map
+     */
+    private static Map<MoneyWiseDataType, TethysResourceId> buildNameMap() {
+        /* Create the map and return it */
+        Map<MoneyWiseDataType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseDataType.class);
+        myMap.put(MoneyWiseDataType.DEPOSITTYPE, DEPOSITTYPE_NAME);
+        myMap.put(MoneyWiseDataType.CASHTYPE, CASHTYPE_NAME);
+        myMap.put(MoneyWiseDataType.LOANTYPE, LOANTYPE_NAME);
+        myMap.put(MoneyWiseDataType.SECURITYTYPE, SECURITYTYPE_NAME);
+        myMap.put(MoneyWiseDataType.PAYEETYPE, PAYEETYPE_NAME);
+        myMap.put(MoneyWiseDataType.TRANSTYPE, TRANSTYPE_NAME);
+        myMap.put(MoneyWiseDataType.TAXBASIS, TAXBASIS_NAME);
+        myMap.put(MoneyWiseDataType.TAXTYPE, TAXTYPE_NAME);
+        myMap.put(MoneyWiseDataType.TAXREGIME, TAXREGIME_NAME);
+        myMap.put(MoneyWiseDataType.FREQUENCY, FREQUENCY_NAME);
+        myMap.put(MoneyWiseDataType.CURRENCY, CURRENCY_NAME);
+        myMap.put(MoneyWiseDataType.TAXINFOTYPE, TAXINFOTYPE_NAME);
+        myMap.put(MoneyWiseDataType.ACCOUNTINFOTYPE, ACCOUNTINFOTYPE_NAME);
+        myMap.put(MoneyWiseDataType.TRANSINFOTYPE, TRANSINFOTYPE_NAME);
+        myMap.put(MoneyWiseDataType.DEPOSITCATEGORY, DEPOSITCAT_NAME);
+        myMap.put(MoneyWiseDataType.CASHCATEGORY, CASHCAT_NAME);
+        myMap.put(MoneyWiseDataType.LOANCATEGORY, LOANCAT_NAME);
+        myMap.put(MoneyWiseDataType.TRANSCATEGORY, TRANSCAT_NAME);
+        myMap.put(MoneyWiseDataType.EXCHANGERATE, XCHGRATE_NAME);
+        myMap.put(MoneyWiseDataType.TRANSTAG, TRANSTAG_NAME);
+        myMap.put(MoneyWiseDataType.TAXYEAR, TAXYEAR_NAME);
+        myMap.put(MoneyWiseDataType.TAXYEARINFO, TAXINFO_NAME);
+        myMap.put(MoneyWiseDataType.PAYEE, PAYEE_NAME);
+        myMap.put(MoneyWiseDataType.PAYEEINFO, PAYEEINFO_NAME);
+        myMap.put(MoneyWiseDataType.SECURITY, SECURITY_NAME);
+        myMap.put(MoneyWiseDataType.SECURITYPRICE, SECURITYPRICE_NAME);
+        myMap.put(MoneyWiseDataType.SECURITYINFO, SECURITYINFO_NAME);
+        myMap.put(MoneyWiseDataType.DEPOSIT, DEPOSIT_NAME);
+        myMap.put(MoneyWiseDataType.DEPOSITRATE, DEPOSITRATE_NAME);
+        myMap.put(MoneyWiseDataType.DEPOSITINFO, DEPOSITINFO_NAME);
+        myMap.put(MoneyWiseDataType.CASH, CASH_NAME);
+        myMap.put(MoneyWiseDataType.CASHINFO, CASHINFO_NAME);
+        myMap.put(MoneyWiseDataType.LOAN, LOAN_NAME);
+        myMap.put(MoneyWiseDataType.LOANINFO, LOANINFO_NAME);
+        myMap.put(MoneyWiseDataType.PORTFOLIO, PORTFOLIO_NAME);
+        myMap.put(MoneyWiseDataType.PORTFOLIOINFO, PORTFOLIOINFO_NAME);
+        myMap.put(MoneyWiseDataType.STOCKOPTION, STOCKOPTION_NAME);
+        myMap.put(MoneyWiseDataType.STOCKOPTIONVEST, STOCKOPTIONVEST_NAME);
+        myMap.put(MoneyWiseDataType.STOCKOPTIONINFO, STOCKOPTIONINFO_NAME);
+        myMap.put(MoneyWiseDataType.TRANSACTION, TRANSACTION_NAME);
+        myMap.put(MoneyWiseDataType.TRANSACTIONINFO, TRANSINFO_NAME);
+        myMap.put(MoneyWiseDataType.SCHEDULE, SCHEDULE_NAME);
+        return myMap;
+    }
+
+    /**
      * Obtain key for data item.
      * @param pValue the Value
      * @return the resource key
      */
     protected static TethysResourceId getKeyForDataType(final MoneyWiseDataType pValue) {
-        switch (pValue) {
-            case DEPOSITTYPE:
-                return DEPOSITTYPE_NAME;
-            case CASHTYPE:
-                return CASHTYPE_NAME;
-            case LOANTYPE:
-                return LOANTYPE_NAME;
-            case SECURITYTYPE:
-                return SECURITYTYPE_NAME;
-            case PAYEETYPE:
-                return PAYEETYPE_NAME;
-            case TRANSTYPE:
-                return TRANSTYPE_NAME;
-            case TAXBASIS:
-                return TAXBASIS_NAME;
-            case TAXTYPE:
-                return TAXTYPE_NAME;
-            case TAXREGIME:
-                return TAXREGIME_NAME;
-            case FREQUENCY:
-                return FREQUENCY_NAME;
-            case CURRENCY:
-                return CURRENCY_NAME;
-            case TAXINFOTYPE:
-                return TAXINFOTYPE_NAME;
-            case ACCOUNTINFOTYPE:
-                return ACCOUNTINFOTYPE_NAME;
-            case TRANSINFOTYPE:
-                return TRANSINFOTYPE_NAME;
-            case DEPOSITCATEGORY:
-                return DEPOSITCAT_NAME;
-            case CASHCATEGORY:
-                return CASHCAT_NAME;
-            case LOANCATEGORY:
-                return LOANCAT_NAME;
-            case TRANSCATEGORY:
-                return TRANSCAT_NAME;
-            case EXCHANGERATE:
-                return XCHGRATE_NAME;
-            case TRANSTAG:
-                return TRANSTAG_NAME;
-            case TAXYEAR:
-                return TAXYEAR_NAME;
-            case TAXYEARINFO:
-                return TAXINFO_NAME;
-            case PAYEE:
-                return PAYEE_NAME;
-            case PAYEEINFO:
-                return PAYEEINFO_NAME;
-            case SECURITY:
-                return SECURITY_NAME;
-            case SECURITYPRICE:
-                return SECURITYPRICE_NAME;
-            case SECURITYINFO:
-                return SECURITYINFO_NAME;
-            case DEPOSIT:
-                return DEPOSIT_NAME;
-            case DEPOSITRATE:
-                return DEPOSITRATE_NAME;
-            case DEPOSITINFO:
-                return DEPOSITINFO_NAME;
-            case CASH:
-                return CASH_NAME;
-            case CASHINFO:
-                return CASHINFO_NAME;
-            case LOAN:
-                return LOAN_NAME;
-            case LOANINFO:
-                return LOANINFO_NAME;
-            case PORTFOLIO:
-                return PORTFOLIO_NAME;
-            case PORTFOLIOINFO:
-                return PORTFOLIOINFO_NAME;
-            case STOCKOPTION:
-                return STOCKOPTION_NAME;
-            case STOCKOPTIONVEST:
-                return STOCKOPTIONVEST_NAME;
-            case STOCKOPTIONINFO:
-                return STOCKOPTIONINFO_NAME;
-            case TRANSACTION:
-                return TRANSACTION_NAME;
-            case TRANSACTIONINFO:
-                return TRANSINFO_NAME;
-            case SCHEDULE:
-                return SCHEDULE_NAME;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(NAME_MAP, pValue);
+    }
+
+    /**
+     * Build list map.
+     * @return the map
+     */
+    private static Map<MoneyWiseDataType, TethysResourceId> buildListMap() {
+        /* Create the map and return it */
+        Map<MoneyWiseDataType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseDataType.class);
+        myMap.put(MoneyWiseDataType.DEPOSITTYPE, DEPOSITTYPE_LIST);
+        myMap.put(MoneyWiseDataType.CASHTYPE, CASHTYPE_LIST);
+        myMap.put(MoneyWiseDataType.LOANTYPE, LOANTYPE_LIST);
+        myMap.put(MoneyWiseDataType.SECURITYTYPE, SECURITYTYPE_LIST);
+        myMap.put(MoneyWiseDataType.PAYEETYPE, PAYEETYPE_LIST);
+        myMap.put(MoneyWiseDataType.TRANSTYPE, TRANSTYPE_LIST);
+        myMap.put(MoneyWiseDataType.TAXBASIS, TAXBASIS_LIST);
+        myMap.put(MoneyWiseDataType.TAXTYPE, TAXTYPE_LIST);
+        myMap.put(MoneyWiseDataType.TAXREGIME, TAXREGIME_LIST);
+        myMap.put(MoneyWiseDataType.FREQUENCY, FREQUENCY_LIST);
+        myMap.put(MoneyWiseDataType.CURRENCY, CURRENCY_LIST);
+        myMap.put(MoneyWiseDataType.TAXINFOTYPE, TAXINFOTYPE_LIST);
+        myMap.put(MoneyWiseDataType.ACCOUNTINFOTYPE, ACCOUNTINFOTYPE_LIST);
+        myMap.put(MoneyWiseDataType.TRANSINFOTYPE, TRANSINFOTYPE_LIST);
+        myMap.put(MoneyWiseDataType.DEPOSITCATEGORY, DEPOSITCAT_LIST);
+        myMap.put(MoneyWiseDataType.CASHCATEGORY, CASHCAT_LIST);
+        myMap.put(MoneyWiseDataType.LOANCATEGORY, LOANCAT_LIST);
+        myMap.put(MoneyWiseDataType.TRANSCATEGORY, TRANSCAT_LIST);
+        myMap.put(MoneyWiseDataType.EXCHANGERATE, XCHGRATE_LIST);
+        myMap.put(MoneyWiseDataType.TRANSTAG, TRANSTAG_LIST);
+        myMap.put(MoneyWiseDataType.TAXYEAR, TAXYEAR_LIST);
+        myMap.put(MoneyWiseDataType.TAXYEARINFO, TAXINFO_LIST);
+        myMap.put(MoneyWiseDataType.PAYEE, PAYEE_LIST);
+        myMap.put(MoneyWiseDataType.PAYEEINFO, PAYEEINFO_LIST);
+        myMap.put(MoneyWiseDataType.SECURITY, SECURITY_LIST);
+        myMap.put(MoneyWiseDataType.SECURITYPRICE, SECURITYPRICE_LIST);
+        myMap.put(MoneyWiseDataType.SECURITYINFO, SECURITYINFO_LIST);
+        myMap.put(MoneyWiseDataType.DEPOSIT, DEPOSIT_LIST);
+        myMap.put(MoneyWiseDataType.DEPOSITRATE, DEPOSITRATE_LIST);
+        myMap.put(MoneyWiseDataType.DEPOSITINFO, DEPOSITINFO_LIST);
+        myMap.put(MoneyWiseDataType.CASH, CASH_LIST);
+        myMap.put(MoneyWiseDataType.CASHINFO, CASHINFO_LIST);
+        myMap.put(MoneyWiseDataType.LOAN, LOAN_LIST);
+        myMap.put(MoneyWiseDataType.LOANINFO, LOANINFO_LIST);
+        myMap.put(MoneyWiseDataType.PORTFOLIO, PORTFOLIO_LIST);
+        myMap.put(MoneyWiseDataType.PORTFOLIOINFO, PORTFOLIOINFO_LIST);
+        myMap.put(MoneyWiseDataType.STOCKOPTION, STOCKOPTION_LIST);
+        myMap.put(MoneyWiseDataType.STOCKOPTIONVEST, STOCKOPTIONVEST_LIST);
+        myMap.put(MoneyWiseDataType.STOCKOPTIONINFO, STOCKOPTIONINFO_LIST);
+        myMap.put(MoneyWiseDataType.TRANSACTION, TRANSACTION_LIST);
+        myMap.put(MoneyWiseDataType.TRANSACTIONINFO, TRANSINFO_LIST);
+        myMap.put(MoneyWiseDataType.SCHEDULE, SCHEDULE_LIST);
+        return myMap;
     }
 
     /**
@@ -596,93 +626,6 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForDataList(final MoneyWiseDataType pValue) {
-        switch (pValue) {
-            case DEPOSITTYPE:
-                return DEPOSITTYPE_LIST;
-            case CASHTYPE:
-                return CASHTYPE_LIST;
-            case LOANTYPE:
-                return LOANTYPE_LIST;
-            case SECURITYTYPE:
-                return SECURITYTYPE_LIST;
-            case PAYEETYPE:
-                return PAYEETYPE_LIST;
-            case TRANSTYPE:
-                return TRANSTYPE_LIST;
-            case TAXBASIS:
-                return TAXBASIS_LIST;
-            case TAXTYPE:
-                return TAXTYPE_LIST;
-            case TAXREGIME:
-                return TAXREGIME_LIST;
-            case FREQUENCY:
-                return FREQUENCY_LIST;
-            case CURRENCY:
-                return CURRENCY_LIST;
-            case TAXINFOTYPE:
-                return TAXINFOTYPE_LIST;
-            case ACCOUNTINFOTYPE:
-                return ACCOUNTINFOTYPE_LIST;
-            case TRANSINFOTYPE:
-                return TRANSINFOTYPE_LIST;
-            case DEPOSITCATEGORY:
-                return DEPOSITCAT_LIST;
-            case CASHCATEGORY:
-                return CASHCAT_LIST;
-            case LOANCATEGORY:
-                return LOANCAT_LIST;
-            case TRANSCATEGORY:
-                return TRANSCAT_LIST;
-            case EXCHANGERATE:
-                return XCHGRATE_LIST;
-            case TRANSTAG:
-                return TRANSTAG_LIST;
-            case TAXYEAR:
-                return TAXYEAR_LIST;
-            case TAXYEARINFO:
-                return TAXINFO_LIST;
-            case PAYEE:
-                return PAYEE_LIST;
-            case PAYEEINFO:
-                return PAYEEINFO_LIST;
-            case SECURITY:
-                return SECURITY_LIST;
-            case SECURITYPRICE:
-                return SECURITYPRICE_LIST;
-            case SECURITYINFO:
-                return SECURITYINFO_LIST;
-            case DEPOSIT:
-                return DEPOSIT_LIST;
-            case DEPOSITRATE:
-                return DEPOSITRATE_LIST;
-            case DEPOSITINFO:
-                return DEPOSITINFO_LIST;
-            case CASH:
-                return CASH_LIST;
-            case CASHINFO:
-                return CASHINFO_LIST;
-            case LOAN:
-                return LOAN_LIST;
-            case LOANINFO:
-                return LOANINFO_LIST;
-            case PORTFOLIO:
-                return PORTFOLIO_LIST;
-            case PORTFOLIOINFO:
-                return PORTFOLIOINFO_LIST;
-            case STOCKOPTION:
-                return STOCKOPTION_LIST;
-            case STOCKOPTIONVEST:
-                return STOCKOPTIONVEST_LIST;
-            case STOCKOPTIONINFO:
-                return STOCKOPTIONINFO_LIST;
-            case TRANSACTION:
-                return TRANSACTION_LIST;
-            case TRANSACTIONINFO:
-                return TRANSINFO_LIST;
-            case SCHEDULE:
-                return SCHEDULE_LIST;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(LIST_MAP, pValue);
     }
 }

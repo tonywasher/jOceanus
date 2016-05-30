@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
@@ -445,6 +448,11 @@ public enum MoneyWiseUIResource implements TethysResourceId {
     MAIN_MENU_CREATEQIF("Main.Menu.CreateQIF");
 
     /**
+     * The ColumnSet Map.
+     */
+    private static final Map<AnalysisColumnSet, TethysResourceId> COLUMN_MAP = buildColumnMap();
+
+    /**
      * The Resource Builder.
      */
     private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseUIResource.class.getCanonicalName());
@@ -490,28 +498,28 @@ public enum MoneyWiseUIResource implements TethysResourceId {
     }
 
     /**
+     * Build column map.
+     * @return the map
+     */
+    private static Map<AnalysisColumnSet, TethysResourceId> buildColumnMap() {
+        /* Create the map and return it */
+        Map<AnalysisColumnSet, TethysResourceId> myMap = new EnumMap<>(AnalysisColumnSet.class);
+        myMap.put(AnalysisColumnSet.BALANCE, COLUMNSET_BALANCE);
+        myMap.put(AnalysisColumnSet.STANDARD, COLUMNSET_STANDARD);
+        myMap.put(AnalysisColumnSet.SALARY, COLUMNSET_SALARY);
+        myMap.put(AnalysisColumnSet.INTEREST, COLUMNSET_INTEREST);
+        myMap.put(AnalysisColumnSet.DIVIDEND, COLUMNSET_DIVIDEND);
+        myMap.put(AnalysisColumnSet.SECURITY, COLUMNSET_SECURITY);
+        myMap.put(AnalysisColumnSet.ALL, COLUMNSET_ALL);
+        return myMap;
+    }
+
+    /**
      * Obtain key for columnSet.
      * @param pValue the Value
      * @return the resource key
      */
     protected static TethysResourceId getKeyForColumnSet(final AnalysisColumnSet pValue) {
-        switch (pValue) {
-            case BALANCE:
-                return COLUMNSET_BALANCE;
-            case STANDARD:
-                return COLUMNSET_STANDARD;
-            case SALARY:
-                return COLUMNSET_SALARY;
-            case INTEREST:
-                return COLUMNSET_INTEREST;
-            case DIVIDEND:
-                return COLUMNSET_DIVIDEND;
-            case SECURITY:
-                return COLUMNSET_SECURITY;
-            case ALL:
-                return COLUMNSET_ALL;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(COLUMN_MAP, pValue);
     }
 }

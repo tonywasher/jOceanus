@@ -167,7 +167,8 @@ public class CoeusRateSetterLoanBookParser {
                     listChildElements(myRow, "td", myCells);
 
                     /* Skip if this is the final empty cell */
-                    if ((myCells.size() == 1) && myCells.get(0).hasClass("rsTableFinalEmptyCell")) {
+                    if ((myCells.size() == 1)
+                        && myCells.get(0).hasClass("rsTableFinalEmptyCell")) {
                         continue;
                     }
 

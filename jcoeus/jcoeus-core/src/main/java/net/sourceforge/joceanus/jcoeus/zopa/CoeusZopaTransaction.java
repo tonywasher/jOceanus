@@ -32,13 +32,12 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Zopa transaction.
  */
 public class CoeusZopaTransaction
-        extends CoeusTransaction<CoeusZopaLoan, CoeusZopaTransaction> {
+        extends CoeusTransaction<CoeusZopaLoan, CoeusZopaTransaction, CoeusZopaTotals, CoeusZopaHistory> {
     /**
      * Report fields.
      */
@@ -88,6 +87,11 @@ public class CoeusZopaTransaction
      * Safeguard Capital prefix.
      */
     private static final String PFIX_SAFECAPITAL = "Safeguard capital payment for ";
+
+    /**
+     * Fees Rebate prefix.
+     */
+    private static final String PFIX_FEESREBATE = "Monthly Lender Fees Rebate";
 
     /**
      * Fees prefix.
@@ -168,62 +172,6 @@ public class CoeusZopaTransaction
      * BadDebt.
      */
     private final TethysDecimal theBadDebt;
-
-    /**
-     * Constructor for loan totals.
-     * @param pLoan the loan
-     */
-    protected CoeusZopaTransaction(final CoeusZopaLoan pLoan) {
-        this(pLoan.getMarket(), pLoan, new TethysDate());
-    }
-
-    /**
-     * Constructor for market totals.
-     * @param pMarket the market
-     */
-    protected CoeusZopaTransaction(final CoeusZopaMarket pMarket) {
-        this(pMarket, new TethysDate());
-    }
-
-    /**
-     * Constructor for dated market totals.
-     * @param pMarket the market
-     * @param pDate the date
-     */
-    protected CoeusZopaTransaction(final CoeusZopaMarket pMarket,
-                                   final TethysDate pDate) {
-        this(pMarket, null, pDate);
-    }
-
-    /**
-     * Constructor for totals.
-     * @param pMarket the market
-     * @param pLoan the loan
-     * @param pDate the date
-     */
-    private CoeusZopaTransaction(final CoeusZopaMarket pMarket,
-                                 final CoeusZopaLoan pLoan,
-                                 final TethysDate pDate) {
-        /* Initialise underlying class */
-        super(pMarket);
-
-        /* Record parameters */
-        theLoan = pLoan;
-        theDate = pDate;
-
-        /* Create description */
-        theDesc = CoeusTransactionType.TOTALS.toString();
-        theTransType = CoeusTransactionType.TOTALS;
-
-        /* Create the counters */
-        theHolding = new TethysMoney();
-        theInvested = new TethysDecimal(theHolding);
-        theCapital = new TethysDecimal(theHolding);
-        theInterest = new TethysDecimal(theHolding);
-        theFees = new TethysDecimal(theHolding);
-        theCashBack = new TethysDecimal(theHolding);
-        theBadDebt = new TethysDecimal(theHolding);
-    }
 
     /**
      * Constructor.
@@ -427,6 +375,11 @@ public class CoeusZopaTransaction
         /* If the description is CashBack */
         if (PFIX_CASHBACK.equals(theDesc)) {
             return CoeusTransactionType.CASHBACK;
+        }
+
+        /* If the description is FeesRebate */
+        if (PFIX_FEESREBATE.equals(theDesc)) {
+            return CoeusTransactionType.INTEREST;
         }
 
         /* If the description is Fees */

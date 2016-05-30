@@ -139,7 +139,7 @@ public enum TethysFiscalYear {
      * @param pDate the date to normalise.
      * @return the normalised date
      */
-    public TethysDate normaliseDate(final TethysDate pDate) {
+    public TethysDate endOfYear(final TethysDate pDate) {
         /* Access constituent parts */
         int myDay = pDate.getDay();
         int myMonth = pDate.getMonth();
@@ -156,6 +156,33 @@ public enum TethysFiscalYear {
         /* Adjust if we are later */
         if (!bEarlier) {
             myDate.adjustYear(1);
+        }
+
+        /* Move back a day */
+        myDate.adjustDay(-1);
+
+        /* Return the date */
+        return myDate;
+    }
+
+    /**
+     * Normalise date to end of FiscalMonth.
+     * @param pDate the date to normalise.
+     * @return the normalised date
+     */
+    public TethysDate endOfMonth(final TethysDate pDate) {
+        /* Access constituent parts */
+        int myDay = pDate.getDay();
+
+        /* See whether we are earlier in the month */
+        boolean bEarlier = myDay < theDay;
+
+        /* Build the basic taxMonth */
+        TethysDate myDate = new TethysDate(pDate.getYear(), pDate.getMonth(), theDay, pDate.getLocale());
+
+        /* Adjust if we are later */
+        if (!bEarlier) {
+            myDate.adjustMonth(1);
         }
 
         /* Move back a day */

@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
@@ -487,6 +490,36 @@ public enum AnalysisResource implements TethysResourceId {
     TAXPREF_BIRTH("taxpref.birth");
 
     /**
+     * The AccountAttr Map.
+     */
+    private static final Map<AccountAttribute, TethysResourceId> ACCOUNT_MAP = buildAccountMap();
+
+    /**
+     * The TransactionAttr Map.
+     */
+    private static final Map<TransactionAttribute, TethysResourceId> TRANSACTION_MAP = buildTransMap();
+
+    /**
+     * The PayeeAttr Map.
+     */
+    private static final Map<PayeeAttribute, TethysResourceId> PAYEE_MAP = buildPayeeMap();
+
+    /**
+     * The SecurityAttr Map.
+     */
+    private static final Map<SecurityAttribute, TethysResourceId> SECURITY_MAP = buildSecurityMap();
+
+    /**
+     * The TaxAttr Map.
+     */
+    private static final Map<TaxBasisAttribute, TethysResourceId> TAX_MAP = buildTaxMap();
+
+    /**
+     * The AnalysisType Map.
+     */
+    private static final Map<AnalysisType, TethysResourceId> ANALYSIS_MAP = buildAnalysisMap();
+
+    /**
      * The Resource Builder.
      */
     private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(Analysis.class.getCanonicalName());
@@ -541,73 +574,108 @@ public enum AnalysisResource implements TethysResourceId {
     }
 
     /**
+     * Build account map.
+     * @return the map
+     */
+    private static Map<AccountAttribute, TethysResourceId> buildAccountMap() {
+        /* Create the map and return it */
+        Map<AccountAttribute, TethysResourceId> myMap = new EnumMap<>(AccountAttribute.class);
+        myMap.put(AccountAttribute.VALUATION, ACCOUNTATTR_VALUATION);
+        myMap.put(AccountAttribute.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);
+        myMap.put(AccountAttribute.LOCALVALUE, ACCOUNTATTR_LOCALVALUE);
+        myMap.put(AccountAttribute.DEPOSITRATE, ACCOUNTATTR_DEPOSITRATE);
+        myMap.put(AccountAttribute.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);
+        myMap.put(AccountAttribute.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
+        myMap.put(AccountAttribute.FOREIGNVALUEDELTA, ACCOUNTATTR_FOREIGNVALUEDELTA);
+        myMap.put(AccountAttribute.CURRENCYFLUCT, ACCOUNTATTR_CURRENCYFLUCT);
+        myMap.put(AccountAttribute.MATURITY, ACCOUNTATTR_MATURITY);
+        myMap.put(AccountAttribute.SPEND, ACCOUNTATTR_SPEND);
+        myMap.put(AccountAttribute.BADDEBT, ACCOUNTATTR_BADDEBT);
+        return myMap;
+    }
+
+    /**
      * Obtain key for account attribute.
      * @param pValue the Value
      * @return the resource key
      */
     protected static TethysResourceId getKeyForAccountAttr(final AccountAttribute pValue) {
-        switch (pValue) {
-            case VALUATION:
-                return ACCOUNTATTR_VALUATION;
-            case FOREIGNVALUE:
-                return ACCOUNTATTR_FOREIGNVALUE;
-            case LOCALVALUE:
-                return ACCOUNTATTR_LOCALVALUE;
-            case DEPOSITRATE:
-                return ACCOUNTATTR_DEPOSITRATE;
-            case EXCHANGERATE:
-                return ACCOUNTATTR_EXCHANGERATE;
-            case VALUEDELTA:
-                return ACCOUNTATTR_VALUEDELTA;
-            case FOREIGNVALUEDELTA:
-                return ACCOUNTATTR_FOREIGNVALUEDELTA;
-            case CURRENCYFLUCT:
-                return ACCOUNTATTR_CURRENCYFLUCT;
-            case MATURITY:
-                return ACCOUNTATTR_MATURITY;
-            case SPEND:
-                return ACCOUNTATTR_SPEND;
-            case BADDEBT:
-                return ACCOUNTATTR_BADDEBT;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(ACCOUNT_MAP, pValue);
     }
 
     /**
-     * Obtain key for event attribute.
+     * Build transaction map.
+     * @return the map
+     */
+    private static Map<TransactionAttribute, TethysResourceId> buildTransMap() {
+        /* Create the map and return it */
+        Map<TransactionAttribute, TethysResourceId> myMap = new EnumMap<>(TransactionAttribute.class);
+        myMap.put(TransactionAttribute.INCOME, PAYEEATTR_INCOME);
+        myMap.put(TransactionAttribute.EXPENSE, PAYEEATTR_EXPENSE);
+        myMap.put(TransactionAttribute.PROFIT, ACCOUNTATTR_PROFIT);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for transaction attribute.
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForEventAttr(final TransactionAttribute pValue) {
-        switch (pValue) {
-            case INCOME:
-                return PAYEEATTR_INCOME;
-            case EXPENSE:
-                return PAYEEATTR_EXPENSE;
-            case PROFIT:
-                return ACCOUNTATTR_PROFIT;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+    protected static TethysResourceId getKeyForTransactionAttr(final TransactionAttribute pValue) {
+        return TethysResourceBuilder.getKeyForEnum(TRANSACTION_MAP, pValue);
     }
 
     /**
-     * Obtain key for payee attribute.
+     * Build payee map.
+     * @return the map
+     */
+    private static Map<PayeeAttribute, TethysResourceId> buildPayeeMap() {
+        /* Create the map and return it */
+        Map<PayeeAttribute, TethysResourceId> myMap = new EnumMap<>(PayeeAttribute.class);
+        myMap.put(PayeeAttribute.INCOME, PAYEEATTR_INCOME);
+        myMap.put(PayeeAttribute.EXPENSE, PAYEEATTR_EXPENSE);
+        myMap.put(PayeeAttribute.PROFIT, ACCOUNTATTR_PROFIT);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for Payee attribute.
      * @param pValue the Value
      * @return the resource key
      */
     protected static TethysResourceId getKeyForPayeeAttr(final PayeeAttribute pValue) {
-        switch (pValue) {
-            case INCOME:
-                return PAYEEATTR_INCOME;
-            case EXPENSE:
-                return PAYEEATTR_EXPENSE;
-            case PROFIT:
-                return ACCOUNTATTR_PROFIT;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(PAYEE_MAP, pValue);
+    }
+
+    /**
+     * Build security map.
+     * @return the map
+     */
+    private static Map<SecurityAttribute, TethysResourceId> buildSecurityMap() {
+        /* Create the map and return it */
+        Map<SecurityAttribute, TethysResourceId> myMap = new EnumMap<>(SecurityAttribute.class);
+        myMap.put(SecurityAttribute.VALUATION, ACCOUNTATTR_VALUATION);
+        myMap.put(SecurityAttribute.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);
+        myMap.put(SecurityAttribute.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
+        myMap.put(SecurityAttribute.FOREIGNVALUEDELTA, ACCOUNTATTR_FOREIGNVALUEDELTA);
+        myMap.put(SecurityAttribute.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);
+        myMap.put(SecurityAttribute.UNITS, SECURITYATTR_UNITS);
+        myMap.put(SecurityAttribute.COST, SECURITYATTR_COST);
+        myMap.put(SecurityAttribute.GAINS, SECURITYATTR_GAINS);
+        myMap.put(SecurityAttribute.LOCALGAINS, SECURITYATTR_LOCALGAINS);
+        myMap.put(SecurityAttribute.FOREIGNGAINS, SECURITYATTR_FOREIGNGAINS);
+        myMap.put(SecurityAttribute.GROWTHADJUST, SECURITYATTR_GROWTHADJUST);
+        myMap.put(SecurityAttribute.INVESTED, SECURITYATTR_INVESTED);
+        myMap.put(SecurityAttribute.LOCALINVESTED, SECURITYATTR_LOCALINVESTED);
+        myMap.put(SecurityAttribute.FOREIGNINVESTED, SECURITYATTR_FOREIGNINVESTED);
+        myMap.put(SecurityAttribute.DIVIDEND, SECURITYATTR_DIVIDEND);
+        myMap.put(SecurityAttribute.LOCALDIVIDEND, SECURITYATTR_LOCALDIVIDEND);
+        myMap.put(SecurityAttribute.FOREIGNDIVIDEND, SECURITYATTR_FOREIGNDIVIDEND);
+        myMap.put(SecurityAttribute.MARKET, SECURITYATTR_MARKET);
+        myMap.put(SecurityAttribute.MARKETPROFIT, SECURITYATTR_MARKETPROFIT);
+        myMap.put(SecurityAttribute.PROFIT, SECURITYATTR_PROFIT);
+        myMap.put(SecurityAttribute.PRICE, SECURITYATTR_PRICE);
+        return myMap;
     }
 
     /**
@@ -616,52 +684,20 @@ public enum AnalysisResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForSecurityAttr(final SecurityAttribute pValue) {
-        switch (pValue) {
-            case VALUATION:
-                return ACCOUNTATTR_VALUATION;
-            case FOREIGNVALUE:
-                return ACCOUNTATTR_FOREIGNVALUE;
-            case VALUEDELTA:
-                return ACCOUNTATTR_VALUEDELTA;
-            case FOREIGNVALUEDELTA:
-                return ACCOUNTATTR_FOREIGNVALUEDELTA;
-            case EXCHANGERATE:
-                return ACCOUNTATTR_EXCHANGERATE;
-            case UNITS:
-                return SECURITYATTR_UNITS;
-            case COST:
-                return SECURITYATTR_COST;
-            case GAINS:
-                return SECURITYATTR_GAINS;
-            case LOCALGAINS:
-                return SECURITYATTR_LOCALGAINS;
-            case FOREIGNGAINS:
-                return SECURITYATTR_FOREIGNGAINS;
-            case GROWTHADJUST:
-                return SECURITYATTR_GROWTHADJUST;
-            case INVESTED:
-                return SECURITYATTR_INVESTED;
-            case LOCALINVESTED:
-                return SECURITYATTR_LOCALINVESTED;
-            case FOREIGNINVESTED:
-                return SECURITYATTR_FOREIGNINVESTED;
-            case DIVIDEND:
-                return SECURITYATTR_DIVIDEND;
-            case LOCALDIVIDEND:
-                return SECURITYATTR_LOCALDIVIDEND;
-            case FOREIGNDIVIDEND:
-                return SECURITYATTR_FOREIGNDIVIDEND;
-            case MARKET:
-                return SECURITYATTR_MARKET;
-            case MARKETPROFIT:
-                return SECURITYATTR_MARKETPROFIT;
-            case PROFIT:
-                return SECURITYATTR_PROFIT;
-            case PRICE:
-                return SECURITYATTR_PRICE;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(SECURITY_MAP, pValue);
+    }
+
+    /**
+     * Build taxBasis map.
+     * @return the map
+     */
+    private static Map<TaxBasisAttribute, TethysResourceId> buildTaxMap() {
+        /* Create the map and return it */
+        Map<TaxBasisAttribute, TethysResourceId> myMap = new EnumMap<>(TaxBasisAttribute.class);
+        myMap.put(TaxBasisAttribute.GROSS, TAXATTR_GROSS);
+        myMap.put(TaxBasisAttribute.NETT, TAXATTR_NETT);
+        myMap.put(TaxBasisAttribute.TAXCREDIT, TAXATTR_TAX);
+        return myMap;
     }
 
     /**
@@ -670,16 +706,27 @@ public enum AnalysisResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForTaxAttr(final TaxBasisAttribute pValue) {
-        switch (pValue) {
-            case GROSS:
-                return TAXATTR_GROSS;
-            case NETT:
-                return TAXATTR_NETT;
-            case TAXCREDIT:
-                return TAXATTR_TAX;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(TAX_MAP, pValue);
+    }
+
+    /**
+     * Build analysis map.
+     * @return the map
+     */
+    private static Map<AnalysisType, TethysResourceId> buildAnalysisMap() {
+        /* Create the map and return it */
+        Map<AnalysisType, TethysResourceId> myMap = new EnumMap<>(AnalysisType.class);
+        myMap.put(AnalysisType.DEPOSIT, MoneyWiseDataTypeResource.DEPOSIT_NAME);
+        myMap.put(AnalysisType.CASH, MoneyWiseDataTypeResource.CASH_NAME);
+        myMap.put(AnalysisType.LOAN, MoneyWiseDataTypeResource.LOAN_NAME);
+        myMap.put(AnalysisType.PAYEE, MoneyWiseDataTypeResource.PAYEE_NAME);
+        myMap.put(AnalysisType.SECURITY, MoneyWiseDataTypeResource.SECURITY_NAME);
+        myMap.put(AnalysisType.PORTFOLIO, MoneyWiseDataTypeResource.PORTFOLIO_NAME);
+        myMap.put(AnalysisType.CATEGORY, MoneyWiseDataTypeResource.TRANSCAT_NAME);
+        myMap.put(AnalysisType.TAXBASIS, MoneyWiseDataTypeResource.TAXBASIS_NAME);
+        myMap.put(AnalysisType.TRANSTAG, MoneyWiseDataTypeResource.TRANSTAG_NAME);
+        myMap.put(AnalysisType.ALL, FILTER_ALL);
+        return myMap;
     }
 
     /**
@@ -688,29 +735,6 @@ public enum AnalysisResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForAnalysisType(final AnalysisType pValue) {
-        switch (pValue) {
-            case DEPOSIT:
-                return MoneyWiseDataTypeResource.DEPOSIT_NAME;
-            case CASH:
-                return MoneyWiseDataTypeResource.CASH_NAME;
-            case LOAN:
-                return MoneyWiseDataTypeResource.LOAN_NAME;
-            case PAYEE:
-                return MoneyWiseDataTypeResource.PAYEE_NAME;
-            case SECURITY:
-                return MoneyWiseDataTypeResource.SECURITY_NAME;
-            case PORTFOLIO:
-                return MoneyWiseDataTypeResource.PORTFOLIO_NAME;
-            case CATEGORY:
-                return MoneyWiseDataTypeResource.TRANSCAT_NAME;
-            case TAXBASIS:
-                return MoneyWiseDataTypeResource.TAXBASIS_NAME;
-            case TRANSTAG:
-                return MoneyWiseDataTypeResource.TRANSTAG_NAME;
-            case ALL:
-                return FILTER_ALL;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(ANALYSIS_MAP, pValue);
     }
 }

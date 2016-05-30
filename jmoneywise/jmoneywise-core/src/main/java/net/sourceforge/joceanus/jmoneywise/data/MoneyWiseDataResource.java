@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
@@ -619,6 +622,16 @@ public enum MoneyWiseDataResource implements TethysResourceId {
     SCHEDULE_ERROR_AFTERENDDATE("Schedule.Error.AfterEndDate");
 
     /**
+     * The Asset Type Map.
+     */
+    private static final Map<AssetType, TethysResourceId> TYPE_MAP = buildTypeMap();
+
+    /**
+     * The Asset Direction Map.
+     */
+    private static final Map<AssetDirection, TethysResourceId> DIRECTION_MAP = buildDirectionMap();
+
+    /**
      * The Resource Builder.
      */
     private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
@@ -673,31 +686,42 @@ public enum MoneyWiseDataResource implements TethysResourceId {
     }
 
     /**
+     * Build asset type map.
+     * @return the map
+     */
+    private static Map<AssetType, TethysResourceId> buildTypeMap() {
+        /* Create the map and return it */
+        Map<AssetType, TethysResourceId> myMap = new EnumMap<>(AssetType.class);
+        myMap.put(AssetType.PAYEE, ASSETTYPE_PAYEE);
+        myMap.put(AssetType.SECURITY, ASSETTYPE_SECURITY);
+        myMap.put(AssetType.DEPOSIT, ASSETTYPE_DEPOSIT);
+        myMap.put(AssetType.CASH, ASSETTYPE_CASH);
+        myMap.put(AssetType.AUTOEXPENSE, ASSETTYPE_AUTOEXPENSE);
+        myMap.put(AssetType.LOAN, ASSETTYPE_LOAN);
+        myMap.put(AssetType.PORTFOLIO, ASSETTYPE_PORTFOLIO);
+        myMap.put(AssetType.SECURITYHOLDING, ASSETTYPE_SECURITYHOLDING);
+        return myMap;
+    }
+
+    /**
      * Obtain key for asset type.
      * @param pValue the Value
      * @return the resource key
      */
     protected static TethysResourceId getKeyForAssetType(final AssetType pValue) {
-        switch (pValue) {
-            case PAYEE:
-                return ASSETTYPE_PAYEE;
-            case SECURITY:
-                return ASSETTYPE_SECURITY;
-            case DEPOSIT:
-                return ASSETTYPE_DEPOSIT;
-            case CASH:
-                return ASSETTYPE_CASH;
-            case AUTOEXPENSE:
-                return ASSETTYPE_AUTOEXPENSE;
-            case LOAN:
-                return ASSETTYPE_LOAN;
-            case PORTFOLIO:
-                return ASSETTYPE_PORTFOLIO;
-            case SECURITYHOLDING:
-                return ASSETTYPE_SECURITYHOLDING;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(TYPE_MAP, pValue);
+    }
+
+    /**
+     * Build asset direction map.
+     * @return the map
+     */
+    private static Map<AssetDirection, TethysResourceId> buildDirectionMap() {
+        /* Create the map and return it */
+        Map<AssetDirection, TethysResourceId> myMap = new EnumMap<>(AssetDirection.class);
+        myMap.put(AssetDirection.TO, ASSETDIRECTION_TO);
+        myMap.put(AssetDirection.FROM, ASSETDIRECTION_FROM);
+        return myMap;
     }
 
     /**
@@ -706,13 +730,6 @@ public enum MoneyWiseDataResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForAssetDirection(final AssetDirection pValue) {
-        switch (pValue) {
-            case TO:
-                return ASSETDIRECTION_TO;
-            case FROM:
-                return ASSETDIRECTION_FROM;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(DIRECTION_MAP, pValue);
     }
 }

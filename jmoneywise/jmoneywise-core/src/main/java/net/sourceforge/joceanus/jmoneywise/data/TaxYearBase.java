@@ -369,7 +369,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
             }
 
             /* The day and month must be end of taxYear */
-            if (!myDate.equals(TethysFiscalYear.UK.normaliseDate(myDate))) {
+            if (!myDate.equals(TethysFiscalYear.UK.endOfYear(myDate))) {
                 addError(ERROR_BADDATE, FIELD_TAXYEAR);
             }
         }

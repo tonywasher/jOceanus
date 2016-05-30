@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
  * RateSetter Loan.
  */
 public class CoeusRateSetterLoan
-        extends CoeusLoan<CoeusRateSetterLoan, CoeusRateSetterTransaction> {
+        extends CoeusLoan<CoeusRateSetterLoan, CoeusRateSetterTransaction, CoeusRateSetterTotals, CoeusRateSetterHistory> {
     /**
      * Report fields.
      */
@@ -82,6 +82,11 @@ public class CoeusRateSetterLoan
      */
     public Iterator<CoeusRateSetterLoanBookItem> bookItemIterator() {
         return theBookItems.iterator();
+    }
+
+    @Override
+    protected CoeusRateSetterHistory newHistory() {
+        return new CoeusRateSetterHistory(this);
     }
 
     @Override

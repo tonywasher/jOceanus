@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.data;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -81,6 +84,16 @@ public enum MetisDataResource implements TethysResourceId {
     PROFILE_HIDDEN("profile.Hidden");
 
     /**
+     * The Difference Map.
+     */
+    private static final Map<MetisDifference, TethysResourceId> DIFF_MAP = buildDifferenceMap();
+
+    /**
+     * The FieldValue Map.
+     */
+    private static final Map<MetisFieldValue, TethysResourceId> VALUE_MAP = buildValueMap();
+
+    /**
      * The Resource Builder.
      */
     private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(MetisDataException.class.getCanonicalName());
@@ -126,21 +139,37 @@ public enum MetisDataResource implements TethysResourceId {
     }
 
     /**
+     * Build difference map.
+     * @return the map
+     */
+    private static Map<MetisDifference, TethysResourceId> buildDifferenceMap() {
+        /* Create the map and return it */
+        Map<MetisDifference, TethysResourceId> myMap = new EnumMap<>(MetisDifference.class);
+        myMap.put(MetisDifference.IDENTICAL, DIFFERENCE_IDENTICAL);
+        myMap.put(MetisDifference.SECURITY, DIFFERENCE_SECURITY);
+        myMap.put(MetisDifference.DIFFERENT, DIFFERENCE_DIFFERENT);
+        return myMap;
+    }
+
+    /**
      * Obtain key for difference.
      * @param pValue the Value
      * @return the resource key
      */
     protected static TethysResourceId getKeyForDifference(final MetisDifference pValue) {
-        switch (pValue) {
-            case IDENTICAL:
-                return DIFFERENCE_IDENTICAL;
-            case SECURITY:
-                return DIFFERENCE_SECURITY;
-            case DIFFERENT:
-                return DIFFERENCE_DIFFERENT;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(DIFF_MAP, pValue);
+    }
+
+    /**
+     * Build value map.
+     * @return the map
+     */
+    private static Map<MetisFieldValue, TethysResourceId> buildValueMap() {
+        /* Create the map and return it */
+        Map<MetisFieldValue, TethysResourceId> myMap = new EnumMap<>(MetisFieldValue.class);
+        myMap.put(MetisFieldValue.UNKNOWN, FIELDVALUE_UNKNOWN);
+        myMap.put(MetisFieldValue.SKIP, FIELDVALUE_SKIP);
+        return myMap;
     }
 
     /**
@@ -149,13 +178,6 @@ public enum MetisDataResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForFieldValue(final MetisFieldValue pValue) {
-        switch (pValue) {
-            case UNKNOWN:
-                return FIELDVALUE_UNKNOWN;
-            case SKIP:
-                return FIELDVALUE_SKIP;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(VALUE_MAP, pValue);
     }
 }

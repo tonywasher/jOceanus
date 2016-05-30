@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -501,6 +504,16 @@ public enum PrometheusDataResource implements TethysResourceId {
     CONTROLDATA_ERROR_EXISTS("ControlData.Error.Exists");
 
     /**
+     * The Name Map.
+     */
+    private static final Map<CryptographyDataType, TethysResourceId> NAME_MAP = buildNameMap();
+
+    /**
+     * The List Map.
+     */
+    private static final Map<CryptographyDataType, TethysResourceId> LIST_MAP = buildListMap();
+
+    /**
      * The Resource Builder.
      */
     private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(DataSet.class.getCanonicalName());
@@ -546,23 +559,40 @@ public enum PrometheusDataResource implements TethysResourceId {
     }
 
     /**
-     * Obtain key for cryptography item.
+     * Build item map.
+     * @return the map
+     */
+    private static Map<CryptographyDataType, TethysResourceId> buildNameMap() {
+        /* Create the map and return it */
+        Map<CryptographyDataType, TethysResourceId> myMap = new EnumMap<>(CryptographyDataType.class);
+        myMap.put(CryptographyDataType.CONTROLKEY, CONTROLKEY_NAME);
+        myMap.put(CryptographyDataType.DATAKEYSET, DATAKEYSET_NAME);
+        myMap.put(CryptographyDataType.DATAKEY, DATAKEY_NAME);
+        myMap.put(CryptographyDataType.CONTROLDATA, CONTROLDATA_NAME);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for name.
      * @param pValue the Value
      * @return the resource key
      */
     protected static TethysResourceId getKeyForCryptoItem(final CryptographyDataType pValue) {
-        switch (pValue) {
-            case CONTROLKEY:
-                return CONTROLKEY_NAME;
-            case DATAKEYSET:
-                return DATAKEYSET_NAME;
-            case DATAKEY:
-                return DATAKEY_NAME;
-            case CONTROLDATA:
-                return CONTROLDATA_NAME;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(NAME_MAP, pValue);
+    }
+
+    /**
+     * Build list map.
+     * @return the map
+     */
+    private static Map<CryptographyDataType, TethysResourceId> buildListMap() {
+        /* Create the map and return it */
+        Map<CryptographyDataType, TethysResourceId> myMap = new EnumMap<>(CryptographyDataType.class);
+        myMap.put(CryptographyDataType.CONTROLKEY, CONTROLKEY_LIST);
+        myMap.put(CryptographyDataType.DATAKEYSET, DATAKEYSET_LIST);
+        myMap.put(CryptographyDataType.DATAKEY, DATAKEY_LIST);
+        myMap.put(CryptographyDataType.CONTROLDATA, CONTROLDATA_LIST);
+        return myMap;
     }
 
     /**
@@ -571,17 +601,6 @@ public enum PrometheusDataResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForCryptoList(final CryptographyDataType pValue) {
-        switch (pValue) {
-            case CONTROLKEY:
-                return CONTROLKEY_LIST;
-            case DATAKEYSET:
-                return DATAKEYSET_LIST;
-            case DATAKEY:
-                return DATAKEY_LIST;
-            case CONTROLDATA:
-                return CONTROLDATA_LIST;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(LIST_MAP, pValue);
     }
 }

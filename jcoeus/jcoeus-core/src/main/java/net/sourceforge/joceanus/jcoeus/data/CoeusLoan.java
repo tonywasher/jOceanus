@@ -22,10 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
@@ -36,8 +32,10 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
  * Coeus Loan.
  * @param <L> the loan type
  * @param <T> the transaction type
+ * @param <S> the totals type
+ * @param <H> the history type
  */
-public abstract class CoeusLoan<L extends CoeusLoan<L, T>, T extends CoeusTransaction<L, T>>
+public abstract class CoeusLoan<L extends CoeusLoan<L, T, S, H>, T extends CoeusTransaction<L, T, S, H>, S extends CoeusTotals<L, T, S, H>, H extends CoeusHistory<L, T, S, H>>
         implements MetisDataContents {
     /**
      * Report fields.
@@ -55,14 +53,14 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T>, T extends CoeusTransa
     private static final MetisField FIELD_LOANID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANID.getValue());
 
     /**
-     * Transactions Field Id.
+     * History Field Id.
      */
-    private static final MetisField FIELD_TRANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TRANSACTIONS.getValue());
+    private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_HISTORY.getValue());
 
     /**
      * Loan Market.
      */
-    private final CoeusLoanMarket<L, T> theMarket;
+    private final CoeusLoanMarket<L, T, S, H> theMarket;
 
     /**
      * Loan Id.
@@ -70,30 +68,30 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T>, T extends CoeusTransa
     private final String theLoanId;
 
     /**
-     * Loan Transactions.
+     * The TotalsHistory.
      */
-    private final List<T> theTransactions;
+    private final H theHistory;
 
     /**
      * Constructor.
      * @param pMarket the loanMarket
      * @param pId the loan Id
      */
-    protected CoeusLoan(final CoeusLoanMarket<L, T> pMarket,
+    protected CoeusLoan(final CoeusLoanMarket<L, T, S, H> pMarket,
                         final String pId) {
         /* Store parameters */
         theMarket = pMarket;
         theLoanId = pId;
 
-        /* create the transaction list */
-        theTransactions = new ArrayList<>();
+        /* Create the histories */
+        theHistory = newHistory();
     }
 
     /**
      * Obtain the market.
      * @return the market
      */
-    public CoeusLoanMarket<L, T> getMarket() {
+    public CoeusLoanMarket<L, T, S, H> getMarket() {
         return theMarket;
     }
 
@@ -106,20 +104,33 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T>, T extends CoeusTransa
     }
 
     /**
-     * Obtain the transaction iterator.
-     * @return the iterator
+     * Obtain the history.
+     * @return the history
      */
-    public Iterator<T> transactionIterator() {
-        return theTransactions.iterator();
+    public H getHistory() {
+        return theHistory;
     }
 
     /**
-     * Add the transaction to the list.
+     * Clear the history.
+     */
+    protected void clearHistory() {
+        theHistory.clear();
+    }
+
+    /**
+     * Add the transaction to the history.
      * @param pTrans the transaction
      */
-    public void addTransaction(final T pTrans) {
-        theTransactions.add(pTrans);
+    protected void addTransactionToHistory(final T pTrans) {
+        theHistory.addTransactionToHistory(pTrans);
     }
+
+    /**
+     * New history.
+     * @return the history
+     */
+    protected abstract H newHistory();
 
     /**
      * Obtain the data fields.
@@ -143,8 +154,8 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T>, T extends CoeusTransa
         if (FIELD_LOANID.equals(pField)) {
             return theLoanId;
         }
-        if (FIELD_TRANS.equals(pField)) {
-            return theTransactions;
+        if (FIELD_HISTORY.equals(pField)) {
+            return theHistory;
         }
 
         /* Not recognised */

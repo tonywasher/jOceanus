@@ -36,13 +36,17 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 
 /**
  * Loan Market.
  * @param <L> the loan type
  * @param <T> the transaction type
+ * @param <S> the totals type
+ * @param <H> the history type
  */
-public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T>, T extends CoeusTransaction<L, T>>
+public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends CoeusTransaction<L, T, S, H>, S extends CoeusTotals<L, T, S, H>, H extends CoeusHistory<L, T, S, H>>
         implements MetisDataContents {
     /**
      * Report fields.
@@ -65,9 +69,24 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T>, T extends Coeus
     private static final MetisField FIELD_TRANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TRANSACTIONS.getValue());
 
     /**
-     * AdminItems Field Id.
+     * Totals Field Id.
      */
-    private static final MetisField FIELD_ADMIN = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ADMINITEMS.getValue());
+    private static final MetisField FIELD_TOTALS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALS.getValue());
+
+    /**
+     * MonthlyDeltas Field Id.
+     */
+    private static final MetisField FIELD_MONTHLYDELTAS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MONTHLYDELTAS.getValue());
+
+    /**
+     * AnnualDeltas Field Id.
+     */
+    private static final MetisField FIELD_ANNUALDELTAS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ANNUALDELTAS.getValue());
+
+    /**
+     * MonthlyTotals Field Id.
+     */
+    private static final MetisField FIELD_MONTHLYTOTALS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MONTHLYTOTALS.getValue());
 
     /**
      * Loan Market Provider.
@@ -90,9 +109,24 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T>, T extends Coeus
     private final List<T> theTransactions;
 
     /**
-     * The Transactions that are not specific to a loan.
+     * The TotalsHistory.
      */
-    private final List<T> theAdmin;
+    private final H theHistory;
+
+    /**
+     * The Map of MonthlyHistories.
+     */
+    private final Map<TethysDate, H> theMonthlyHistories;
+
+    /**
+     * The Map of AnnualHistories.
+     */
+    private final Map<TethysDate, H> theAnnualHistories;
+
+    /**
+     * The List of MonthlyTotals.
+     */
+    private final List<S> theMonthlyTotals;
 
     /**
      * Constructor.
@@ -110,7 +144,12 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T>, T extends Coeus
 
         /* Create lists */
         theTransactions = new ArrayList<>();
-        theAdmin = new ArrayList<>();
+        theMonthlyTotals = new ArrayList<>();
+
+        /* Create the histories */
+        theHistory = newHistory();
+        theMonthlyHistories = new LinkedHashMap<>();
+        theAnnualHistories = new LinkedHashMap<>();
     }
 
     /**
@@ -146,14 +185,6 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T>, T extends Coeus
     }
 
     /**
-     * Obtain the administration iterator.
-     * @return the iterator
-     */
-    public Iterator<T> adminIterator() {
-        return theTransactions.iterator();
-    }
-
-    /**
      * LookUp Loan by loanId.
      * @param pId the id of the loan
      * @return the loan
@@ -168,7 +199,7 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T>, T extends Coeus
     }
 
     /**
-     * Obtain pre-existing loan.
+     * Obtain preExisting loan.
      * @param pId the id of the loan
      * @return the loan
      * @throws OceanusException on error
@@ -202,11 +233,174 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T>, T extends Coeus
     }
 
     /**
-     * Add administration transaction to list.
-     * @param pTrans the transaction
+     * Reset the loans.
      */
-    protected void addAdminTransaction(final T pTrans) {
-        theAdmin.add(pTrans);
+    private void resetLoans() {
+        /* Loop through the loans */
+        Iterator<L> myIterator = theLoanMap.values().iterator();
+        while (myIterator.hasNext()) {
+            L myLoan = myIterator.next();
+            myLoan.clearHistory();
+        }
+    }
+
+    /**
+     * Analyse just the loans.
+     */
+    public void analyseLoans() {
+        /* Clear the history */
+        resetLoans();
+
+        /* Loop through the transactions */
+        Iterator<T> myIterator = transactionIterator();
+        while (myIterator.hasNext()) {
+            T myTransaction = myIterator.next();
+
+            /* If the item has a loan */
+            L myLoan = myTransaction.getLoan();
+            if (myLoan != null) {
+                /* Add to the loans history */
+                myLoan.addTransactionToHistory(myTransaction);
+            }
+        }
+    }
+
+    /**
+     * Analyse the market.
+     */
+    public void analyseMarket() {
+        /* Clear the history */
+        theHistory.clear();
+        theMonthlyHistories.clear();
+        theAnnualHistories.clear();
+        theMonthlyTotals.clear();
+        resetLoans();
+
+        /* Loop through the transactions */
+        Iterator<T> myIterator = transactionIterator();
+        while (myIterator.hasNext()) {
+            T myTransaction = myIterator.next();
+            TethysDate myDate = myTransaction.getDate();
+
+            /* Obtain the monthly history and adjust */
+            H myHistory = getMonthlyHistory(myDate);
+            myHistory.addTransactionToHistory(myTransaction);
+
+            /* Obtain the annual history and adjust */
+            myHistory = getAnnualHistory(myDate);
+            myHistory.addTransactionToHistory(myTransaction);
+
+            /* Adjust the history */
+            theHistory.addTransactionToHistory(myTransaction);
+
+            /* If the item has a loan */
+            L myLoan = myTransaction.getLoan();
+            if (myLoan != null) {
+                /* Add to the loans history */
+                myLoan.addTransactionToHistory(myTransaction);
+            }
+        }
+
+        /* Build monthly totals */
+        buildMonthlyTotals();
+    }
+
+    /**
+     * Obtain monthly history.
+     * @param pDate the date
+     * @return the history
+     */
+    private H getMonthlyHistory(final TethysDate pDate) {
+        /* Determine the date of the month */
+        TethysDate myDate = TethysFiscalYear.UK.endOfMonth(pDate);
+
+        /* Look up an existing history */
+        H myHistory = theMonthlyHistories.get(myDate);
+        if (myHistory == null) {
+            /* Create new history and record it */
+            myHistory = newHistory(myDate);
+            theMonthlyHistories.put(myDate, myHistory);
+        }
+
+        /* Return the history */
+        return myHistory;
+    }
+
+    /**
+     * Obtain annual history.
+     * @param pDate the date
+     * @return the history
+     */
+    private H getAnnualHistory(final TethysDate pDate) {
+        /* Determine the date of the month */
+        TethysDate myDate = TethysFiscalYear.UK.endOfYear(pDate);
+
+        /* Look up an existing history */
+        H myHistory = theAnnualHistories.get(myDate);
+        if (myHistory == null) {
+            /* Create new totals and record them */
+            myHistory = newHistory(myDate);
+            theAnnualHistories.put(myDate, myHistory);
+        }
+
+        /* Return the history */
+        return myHistory;
+    }
+
+    /**
+     * Build monthly totals.
+     */
+    private void buildMonthlyTotals() {
+        /* Create a base Totals */
+        S myBase = newTotals();
+
+        /* Loop through the monthly deltas */
+        Iterator<H> myIterator = theMonthlyHistories.values().iterator();
+        while (myIterator.hasNext()) {
+            H myHistory = myIterator.next();
+            S myDelta = myHistory.getTotals();
+            TethysDate myDate = myDelta.getDate();
+
+            /* Adjust totals */
+            myBase.addTotalsToTotals(myDelta);
+            S myTotals = newTotals(myDate, myBase);
+
+            /* Add to the list */
+            theMonthlyTotals.add(myTotals);
+        }
+    }
+
+    /**
+     * New totals.
+     * @return the totals
+     */
+    protected abstract S newTotals();
+
+    /**
+     * New totals.
+     * @param pDate the date
+     * @param pTotals the totals
+     * @return the totals
+     */
+    protected abstract S newTotals(final TethysDate pDate,
+                                   final S pTotals);
+
+    /**
+     * New history.
+     * @return the history
+     */
+    protected abstract H newHistory();
+
+    /**
+     * New dated history.
+     * @param pDate the date
+     * @return the history
+     */
+    protected abstract H newHistory(final TethysDate pDate);
+
+    @Override
+    public String toString() {
+        return formatObject();
     }
 
     /**
@@ -229,8 +423,17 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T>, T extends Coeus
         if (FIELD_TRANS.equals(pField)) {
             return theTransactions;
         }
-        if (FIELD_ADMIN.equals(pField)) {
-            return theAdmin;
+        if (FIELD_TOTALS.equals(pField)) {
+            return theHistory;
+        }
+        if (FIELD_MONTHLYDELTAS.equals(pField)) {
+            return theMonthlyHistories;
+        }
+        if (FIELD_ANNUALDELTAS.equals(pField)) {
+            return theAnnualHistories;
+        }
+        if (FIELD_MONTHLYTOTALS.equals(pField)) {
+            return theMonthlyTotals;
         }
 
         /* Not recognised */

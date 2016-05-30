@@ -37,12 +37,13 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * RateSetter Market.
  */
 public class CoeusRateSetterMarket
-        extends CoeusLoanMarket<CoeusRateSetterLoan, CoeusRateSetterTransaction> {
+        extends CoeusLoanMarket<CoeusRateSetterLoan, CoeusRateSetterTransaction, CoeusRateSetterTotals, CoeusRateSetterHistory> {
     /**
      * Report fields.
      */
@@ -124,27 +125,38 @@ public class CoeusRateSetterMarket
         ListIterator<CoeusRateSetterTransaction> myIterator = theXactionParser.reverseTransactionIterator();
         while (myIterator.hasPrevious()) {
             CoeusRateSetterTransaction myTrans = myIterator.previous();
-            CoeusRateSetterLoan myLoan = myTrans.getLoan();
 
-            /* If we have a loan */
-            if (myLoan != null) {
-                /* Record the transaction */
-                myLoan.addTransaction(myTrans);
-
-                /* If this is a CapitalLoan */
-            } else if (CoeusTransactionType.CAPITALLOAN.equals(myTrans.getTransType())) {
+            /* If we have a loan offer */
+            if ((myTrans.getLoan() == null)
+                && CoeusTransactionType.CAPITALLOAN.equals(myTrans.getTransType())) {
                 /* Add to set of initial loans for later resolution */
                 theInitialLoans.add(myTrans);
-
-                /* else handle as administration transactions */
-            } else {
-                /* Add to adminList */
-                addAdminTransaction(myTrans);
             }
 
             /* Add to the transactions */
             addTransaction(myTrans);
         }
+    }
+
+    @Override
+    protected CoeusRateSetterTotals newTotals() {
+        return new CoeusRateSetterTotals(this);
+    }
+
+    @Override
+    protected CoeusRateSetterTotals newTotals(final TethysDate pDate,
+                                              final CoeusRateSetterTotals pTotals) {
+        return new CoeusRateSetterTotals(pDate, pTotals);
+    }
+
+    @Override
+    protected CoeusRateSetterHistory newHistory() {
+        return new CoeusRateSetterHistory(this);
+    }
+
+    @Override
+    protected CoeusRateSetterHistory newHistory(final TethysDate pDate) {
+        return new CoeusRateSetterHistory(this, pDate);
     }
 
     @Override

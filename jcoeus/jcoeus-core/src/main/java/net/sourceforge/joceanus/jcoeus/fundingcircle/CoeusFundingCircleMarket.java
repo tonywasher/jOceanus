@@ -35,12 +35,13 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * FundingCircle Market.
  */
 public class CoeusFundingCircleMarket
-        extends CoeusLoanMarket<CoeusFundingCircleLoan, CoeusFundingCircleTransaction> {
+        extends CoeusLoanMarket<CoeusFundingCircleLoan, CoeusFundingCircleTransaction, CoeusFundingCircleTotals, CoeusFundingCircleHistory> {
     /**
      * Report fields.
      */
@@ -116,18 +117,6 @@ public class CoeusFundingCircleMarket
         Iterator<CoeusFundingCircleTransaction> myIterator = theXactionParser.transactionIterator();
         while (myIterator.hasNext()) {
             CoeusFundingCircleTransaction myTrans = myIterator.next();
-            CoeusFundingCircleLoan myLoan = myTrans.getLoan();
-
-            /* If we have a loan */
-            if (myLoan != null) {
-                /* Record the transaction */
-                myLoan.addTransaction(myTrans);
-
-                /* else handle as administration transactions */
-            } else {
-                /* Add to adminList */
-                addAdminTransaction(myTrans);
-            }
 
             /* Add to the transactions */
             addTransaction(myTrans);
@@ -146,6 +135,27 @@ public class CoeusFundingCircleMarket
             throw new CoeusDataException(pId, "Unrecognised AuctionId");
         }
         return myLoan;
+    }
+
+    @Override
+    protected CoeusFundingCircleTotals newTotals() {
+        return new CoeusFundingCircleTotals(this);
+    }
+
+    @Override
+    protected CoeusFundingCircleTotals newTotals(final TethysDate pDate,
+                                                 final CoeusFundingCircleTotals pTotals) {
+        return new CoeusFundingCircleTotals(pDate, pTotals);
+    }
+
+    @Override
+    protected CoeusFundingCircleHistory newHistory() {
+        return new CoeusFundingCircleHistory(this);
+    }
+
+    @Override
+    protected CoeusFundingCircleHistory newHistory(final TethysDate pDate) {
+        return new CoeusFundingCircleHistory(this, pDate);
     }
 
     @Override

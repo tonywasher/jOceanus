@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
  * Zopa Loan.
  */
 public class CoeusZopaLoan
-        extends CoeusLoan<CoeusZopaLoan, CoeusZopaTransaction> {
+        extends CoeusLoan<CoeusZopaLoan, CoeusZopaTransaction, CoeusZopaTotals, CoeusZopaHistory> {
     /**
      * Report fields.
      */
@@ -82,6 +82,11 @@ public class CoeusZopaLoan
      */
     public Iterator<CoeusZopaLoanBookItem> bookItemIterator() {
         return theBookItems.iterator();
+    }
+
+    @Override
+    protected CoeusZopaHistory newHistory() {
+        return new CoeusZopaHistory(this);
     }
 
     @Override

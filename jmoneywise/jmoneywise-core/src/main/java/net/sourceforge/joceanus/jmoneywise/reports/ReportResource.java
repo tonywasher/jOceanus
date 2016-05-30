@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.reports;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -121,6 +124,11 @@ public enum ReportResource implements TethysResourceId {
     TAXCALC_TITLE("TaxCalc.Title");
 
     /**
+     * The Report Map.
+     */
+    private static final Map<ReportType, TethysResourceId> REPORT_MAP = buildReportMap();
+
+    /**
      * The Resource Builder.
      */
     private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(Analysis.class.getCanonicalName());
@@ -166,30 +174,29 @@ public enum ReportResource implements TethysResourceId {
     }
 
     /**
+     * Build report map.
+     * @return the map
+     */
+    private static Map<ReportType, TethysResourceId> buildReportMap() {
+        /* Create the map and return it */
+        Map<ReportType, TethysResourceId> myMap = new EnumMap<>(ReportType.class);
+        myMap.put(ReportType.NETWORTH, TYPE_NETWORTH);
+        myMap.put(ReportType.BALANCESHEET, TYPE_BALANCESHEET);
+        myMap.put(ReportType.CASHFLOW, TYPE_CASHFLOW);
+        myMap.put(ReportType.INCOMEEXPENSE, TYPE_INCEXP);
+        myMap.put(ReportType.PORTFOLIO, TYPE_PORTFOLIO);
+        myMap.put(ReportType.MARKETGROWTH, TYPE_MARKET);
+        myMap.put(ReportType.TAXBASIS, TYPE_TAXBASIS);
+        myMap.put(ReportType.TAXCALC, TYPE_TAXCALC);
+        return myMap;
+    }
+
+    /**
      * Obtain key for report type.
      * @param pValue the Value
      * @return the resource key
      */
-    protected static ReportResource getKeyForReportType(final ReportType pValue) {
-        switch (pValue) {
-            case NETWORTH:
-                return TYPE_NETWORTH;
-            case BALANCESHEET:
-                return TYPE_BALANCESHEET;
-            case CASHFLOW:
-                return TYPE_CASHFLOW;
-            case INCOMEEXPENSE:
-                return TYPE_INCEXP;
-            case PORTFOLIO:
-                return TYPE_PORTFOLIO;
-            case MARKETGROWTH:
-                return TYPE_MARKET;
-            case TAXBASIS:
-                return TYPE_TAXBASIS;
-            case TAXCALC:
-                return TYPE_TAXCALC;
-            default:
-                return null;
-        }
+    protected static TethysResourceId getKeyForReportType(final ReportType pValue) {
+        return TethysResourceBuilder.getKeyForEnum(REPORT_MAP, pValue);
     }
 }

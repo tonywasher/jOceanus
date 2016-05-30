@@ -691,7 +691,7 @@ public enum AssetCurrencyClass implements StaticInterface {
     /**
      * South Sudan Pound.
      */
-    // SSP(132, 131),
+    SSP(132, 131),
 
     /**
      * Sierra Leone Leone.
@@ -736,7 +736,7 @@ public enum AssetCurrencyClass implements StaticInterface {
     /**
      * Zambia Kwacha.
      */
-    // ZMW(141, 140),
+    ZMW(141, 140),
 
     /**
      * Cape Verde Escudo.
@@ -806,7 +806,22 @@ public enum AssetCurrencyClass implements StaticInterface {
     /**
      * Pacific Franc.
      */
-    XPF(155, 154);
+    XPF(155, 154),
+
+    /**
+     * North Korean Won.
+     */
+    KPW(156, 155),
+
+    /**
+     * Croatian Kuna.
+     */
+    HRK(157, 156),
+
+    /**
+     * Sao Tome and Príncipe Dobra.
+     */
+    STD(158, 157);
 
     /**
      * Class Id.

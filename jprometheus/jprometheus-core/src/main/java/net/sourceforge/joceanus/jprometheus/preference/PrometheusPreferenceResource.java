@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preference;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -131,6 +134,11 @@ public enum PrometheusPreferenceResource implements TethysResourceId {
     DLPREF_GRANULARITY("dlpref.granularity");
 
     /**
+     * The Driver Map.
+     */
+    private static final Map<PrometheusJDBCDriver, TethysResourceId> DRIVER_MAP = buildDriverMap();
+
+    /**
      * The Resource Builder.
      */
     private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(PrometheusDataException.class.getCanonicalName());
@@ -176,20 +184,24 @@ public enum PrometheusPreferenceResource implements TethysResourceId {
     }
 
     /**
+     * Build driver map.
+     * @return the map
+     */
+    private static Map<PrometheusJDBCDriver, TethysResourceId> buildDriverMap() {
+        /* Create the map and return it */
+        Map<PrometheusJDBCDriver, TethysResourceId> myMap = new EnumMap<>(PrometheusJDBCDriver.class);
+        myMap.put(PrometheusJDBCDriver.SQLSERVER, DRIVER_SQLSERVER);
+        myMap.put(PrometheusJDBCDriver.POSTGRESQL, DRIVER_POSTGRESQL);
+        myMap.put(PrometheusJDBCDriver.MYSQL, DRIVER_MYSQL);
+        return myMap;
+    }
+
+    /**
      * Obtain key for DBDriver.
      * @param pValue the Value
      * @return the resource key
      */
     protected static TethysResourceId getKeyForDriver(final PrometheusJDBCDriver pValue) {
-        switch (pValue) {
-            case SQLSERVER:
-                return DRIVER_SQLSERVER;
-            case POSTGRESQL:
-                return DRIVER_POSTGRESQL;
-            case MYSQL:
-                return DRIVER_MYSQL;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(DRIVER_MAP, pValue);
     }
 }

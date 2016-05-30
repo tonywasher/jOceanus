@@ -53,7 +53,7 @@ public enum TransactionAttribute implements BucketAttribute {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = AnalysisResource.getKeyForEventAttr(this).getValue();
+            theName = AnalysisResource.getKeyForTransactionAttr(this).getValue();
         }
 
         /* return the name */

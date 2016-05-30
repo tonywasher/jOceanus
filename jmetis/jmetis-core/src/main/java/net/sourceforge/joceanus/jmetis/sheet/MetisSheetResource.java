@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -39,6 +42,11 @@ public enum MetisSheetResource implements TethysResourceId {
      * WorkBook OasisODS.
      */
     WORKBOOK_OASISODS("workBook.OASISODS");
+
+    /**
+     * The WorkBook Map.
+     */
+    private static final Map<MetisWorkBookType, TethysResourceId> WORKBOOK_MAP = buildWorkBookMap();
 
     /**
      * The Resource Builder.
@@ -86,18 +94,23 @@ public enum MetisSheetResource implements TethysResourceId {
     }
 
     /**
+     * Build workBook map.
+     * @return the map
+     */
+    private static Map<MetisWorkBookType, TethysResourceId> buildWorkBookMap() {
+        /* Create the map and return it */
+        Map<MetisWorkBookType, TethysResourceId> myMap = new EnumMap<>(MetisWorkBookType.class);
+        myMap.put(MetisWorkBookType.EXCELXLS, WORKBOOK_EXCELXLS);
+        myMap.put(MetisWorkBookType.OASISODS, WORKBOOK_OASISODS);
+        return myMap;
+    }
+
+    /**
      * Obtain key for workBookType.
      * @param pType the Type
      * @return the resource key
      */
     protected static TethysResourceId getKeyForWorkBook(final MetisWorkBookType pType) {
-        switch (pType) {
-            case EXCELXLS:
-                return WORKBOOK_EXCELXLS;
-            case OASISODS:
-                return WORKBOOK_OASISODS;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pType));
-        }
+        return TethysResourceBuilder.getKeyForEnum(WORKBOOK_MAP, pType);
     }
 }

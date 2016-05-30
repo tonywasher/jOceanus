@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -193,7 +196,37 @@ public enum GordianCryptoResource implements TethysResourceId {
     /**
      * StreamKey GRAIN.
      */
-    STREAMKEY_GRAIN("streamKey.GRAIN");
+    STREAMKEY_GRAIN("streamKey.GRAIN"),
+
+    /**
+     * StreamKey RC4.
+     */
+    STREAMKEY_RC4("streamKey.RC4");
+
+    /**
+     * The Factory Map.
+     */
+    private static final Map<GordianFactoryType, TethysResourceId> FACTORY_MAP = buildFactoryMap();
+
+    /**
+     * The Digest Map.
+     */
+    private static final Map<GordianDigestType, TethysResourceId> DIGEST_MAP = buildDigestMap();
+
+    /**
+     * The MAC Map.
+     */
+    private static final Map<GordianMacType, TethysResourceId> MAC_MAP = buildMacMap();
+
+    /**
+     * The SymKey Map.
+     */
+    private static final Map<GordianSymKeyType, TethysResourceId> SYM_MAP = buildSymKeyMap();
+
+    /**
+     * The StreamKey Map.
+     */
+    private static final Map<GordianStreamKeyType, TethysResourceId> STREAM_MAP = buildStreamKeyMap();
 
     /**
      * The Resource Builder.
@@ -241,19 +274,43 @@ public enum GordianCryptoResource implements TethysResourceId {
     }
 
     /**
+     * Build factory map.
+     * @return the map
+     */
+    private static Map<GordianFactoryType, TethysResourceId> buildFactoryMap() {
+        /* Create the map and return it */
+        Map<GordianFactoryType, TethysResourceId> myMap = new EnumMap<>(GordianFactoryType.class);
+        myMap.put(GordianFactoryType.BC, FACTORY_BC);
+        myMap.put(GordianFactoryType.JCA, FACTORY_JCA);
+        return myMap;
+    }
+
+    /**
      * Obtain key for Factory.
      * @param pFactoryType the factoryType
      * @return the resource key
      */
     protected static TethysResourceId getKeyForFactoryType(final GordianFactoryType pFactoryType) {
-        switch (pFactoryType) {
-            case BC:
-                return FACTORY_BC;
-            case JCA:
-                return FACTORY_JCA;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pFactoryType));
-        }
+        return TethysResourceBuilder.getKeyForEnum(FACTORY_MAP, pFactoryType);
+    }
+
+    /**
+     * Build digest map.
+     * @return the map
+     */
+    private static Map<GordianDigestType, TethysResourceId> buildDigestMap() {
+        /* Create the map and return it */
+        Map<GordianDigestType, TethysResourceId> myMap = new EnumMap<>(GordianDigestType.class);
+        myMap.put(GordianDigestType.SHA2, DIGEST_SHA2);
+        myMap.put(GordianDigestType.TIGER, DIGEST_TIGER);
+        myMap.put(GordianDigestType.WHIRLPOOL, DIGEST_WHIRLPOOL);
+        myMap.put(GordianDigestType.RIPEMD, DIGEST_RIPEMD);
+        myMap.put(GordianDigestType.GOST, DIGEST_GOST);
+        myMap.put(GordianDigestType.KECCAK, DIGEST_KECCAK);
+        myMap.put(GordianDigestType.SKEIN, DIGEST_SKEIN);
+        myMap.put(GordianDigestType.SM3, DIGEST_SM3);
+        myMap.put(GordianDigestType.BLAKE, DIGEST_BLAKE);
+        return myMap;
     }
 
     /**
@@ -262,50 +319,51 @@ public enum GordianCryptoResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForDigest(final GordianDigestType pDigest) {
-        switch (pDigest) {
-            case SHA2:
-                return DIGEST_SHA2;
-            case TIGER:
-                return DIGEST_TIGER;
-            case WHIRLPOOL:
-                return DIGEST_WHIRLPOOL;
-            case RIPEMD:
-                return DIGEST_RIPEMD;
-            case GOST:
-                return DIGEST_GOST;
-            case KECCAK:
-                return DIGEST_KECCAK;
-            case SKEIN:
-                return DIGEST_SKEIN;
-            case SM3:
-                return DIGEST_SM3;
-            case BLAKE:
-                return DIGEST_BLAKE;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pDigest));
-        }
+        return TethysResourceBuilder.getKeyForEnum(DIGEST_MAP, pDigest);
     }
 
     /**
-     * Obtain key for HMac.
+     * Build MAC map.
+     * @return the map
+     */
+    private static Map<GordianMacType, TethysResourceId> buildMacMap() {
+        /* Create the map and return it */
+        Map<GordianMacType, TethysResourceId> myMap = new EnumMap<>(GordianMacType.class);
+        myMap.put(GordianMacType.HMAC, MAC_HMAC);
+        myMap.put(GordianMacType.GMAC, MAC_GMAC);
+        myMap.put(GordianMacType.POLY1305, MAC_POLY);
+        myMap.put(GordianMacType.SKEIN, MAC_SKEIN);
+        myMap.put(GordianMacType.VMPC, MAC_VMPC);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for MAC.
      * @param pMac the MacType
      * @return the resource key
      */
     protected static TethysResourceId getKeyForMac(final GordianMacType pMac) {
-        switch (pMac) {
-            case HMAC:
-                return MAC_HMAC;
-            case GMAC:
-                return MAC_GMAC;
-            case POLY1305:
-                return MAC_POLY;
-            case SKEIN:
-                return MAC_SKEIN;
-            case VMPC:
-                return MAC_VMPC;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pMac));
-        }
+        return TethysResourceBuilder.getKeyForEnum(MAC_MAP, pMac);
+    }
+
+    /**
+     * Build SymKey map.
+     * @return the map
+     */
+    private static Map<GordianSymKeyType, TethysResourceId> buildSymKeyMap() {
+        /* Create the map and return it */
+        Map<GordianSymKeyType, TethysResourceId> myMap = new EnumMap<>(GordianSymKeyType.class);
+        myMap.put(GordianSymKeyType.AES, SYMKEY_AES);
+        myMap.put(GordianSymKeyType.SERPENT, SYMKEY_SERPENT);
+        myMap.put(GordianSymKeyType.TWOFISH, SYMKEY_TWOFISH);
+        myMap.put(GordianSymKeyType.CAMELLIA, SYMKEY_CAMELLIA);
+        myMap.put(GordianSymKeyType.RC6, SYMKEY_RC6);
+        myMap.put(GordianSymKeyType.CAST6, SYMKEY_CAST6);
+        myMap.put(GordianSymKeyType.THREEFISH, SYMKEY_AES);
+        myMap.put(GordianSymKeyType.NOEKEON, SYMKEY_NOEKEON);
+        myMap.put(GordianSymKeyType.SEED, SYMKEY_SEED);
+        myMap.put(GordianSymKeyType.SM4, SYMKEY_SM4);
+        return myMap;
     }
 
     /**
@@ -314,30 +372,25 @@ public enum GordianCryptoResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForSym(final GordianSymKeyType pKeyType) {
-        switch (pKeyType) {
-            case AES:
-                return SYMKEY_AES;
-            case TWOFISH:
-                return SYMKEY_TWOFISH;
-            case SERPENT:
-                return SYMKEY_SERPENT;
-            case CAMELLIA:
-                return SYMKEY_CAMELLIA;
-            case CAST6:
-                return SYMKEY_CAST6;
-            case RC6:
-                return SYMKEY_RC6;
-            case THREEFISH:
-                return SYMKEY_THREEFISH;
-            case NOEKEON:
-                return SYMKEY_NOEKEON;
-            case SEED:
-                return SYMKEY_SEED;
-            case SM4:
-                return SYMKEY_SM4;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pKeyType));
-        }
+        return TethysResourceBuilder.getKeyForEnum(SYM_MAP, pKeyType);
+    }
+
+    /**
+     * Build StreamKey map.
+     * @return the map
+     */
+    private static Map<GordianStreamKeyType, TethysResourceId> buildStreamKeyMap() {
+        /* Create the map and return it */
+        Map<GordianStreamKeyType, TethysResourceId> myMap = new EnumMap<>(GordianStreamKeyType.class);
+        myMap.put(GordianStreamKeyType.XSALSA20, STREAMKEY_XSALSA20);
+        myMap.put(GordianStreamKeyType.SALSA20, STREAMKEY_SALSA20);
+        myMap.put(GordianStreamKeyType.HC, STREAMKEY_HC);
+        myMap.put(GordianStreamKeyType.CHACHA, STREAMKEY_CHACHA);
+        myMap.put(GordianStreamKeyType.VMPC, STREAMKEY_VMPC);
+        myMap.put(GordianStreamKeyType.ISAAC, STREAMKEY_ISAAC);
+        myMap.put(GordianStreamKeyType.GRAIN, STREAMKEY_GRAIN);
+        myMap.put(GordianStreamKeyType.RC4, STREAMKEY_RC4);
+        return myMap;
     }
 
     /**
@@ -346,23 +399,6 @@ public enum GordianCryptoResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForStream(final GordianStreamKeyType pKeyType) {
-        switch (pKeyType) {
-            case XSALSA20:
-                return STREAMKEY_XSALSA20;
-            case SALSA20:
-                return STREAMKEY_SALSA20;
-            case HC:
-                return STREAMKEY_HC;
-            case CHACHA:
-                return STREAMKEY_CHACHA;
-            case VMPC:
-                return STREAMKEY_VMPC;
-            case ISAAC:
-                return STREAMKEY_ISAAC;
-            case GRAIN:
-                return STREAMKEY_GRAIN;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pKeyType));
-        }
+        return TethysResourceBuilder.getKeyForEnum(STREAM_MAP, pKeyType);
     }
 }
