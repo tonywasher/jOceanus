@@ -91,6 +91,9 @@ public class CoeusZopaTester {
             myMarket.parseStatement(new File(BASE_PATH, "ZopaStatement April 2016.csv"));
             myMarket.parseStatement(new File(BASE_PATH, "ZopaStatement May 2016.csv"));
 
+            /* Parse the badDebt file */
+            myMarket.parseBadDebtBook(new File(BASE_PATH, "my_baddebt_loan_book.csv"));
+
             /* Analyse the data */
             myMarket.analyseMarket();
 

@@ -54,6 +54,11 @@ public class CoeusZopaMarket
     private final CoeusZopaLoanBookParser theBookParser;
 
     /**
+     * The BadDebt Parser.
+     */
+    private final CoeusZopaBadDebtParser theDebtParser;
+
+    /**
      * The Transaction Parser.
      */
     private final CoeusZopaTransactionParser theXactionParser;
@@ -68,6 +73,7 @@ public class CoeusZopaMarket
 
         /* Create the parsers */
         theBookParser = new CoeusZopaLoanBookParser(pFormatter);
+        theDebtParser = new CoeusZopaBadDebtParser(this);
         theXactionParser = new CoeusZopaTransactionParser(this);
     }
 
@@ -94,6 +100,25 @@ public class CoeusZopaMarket
                 /* Add the bookItem to the loan */
                 myLoan.addBookItem(myItem);
             }
+        }
+    }
+
+    /**
+     * Parse the badDebtBook file.
+     * @param pFile the file to parse
+     * @throws OceanusException on error
+     */
+    public void parseBadDebtBook(final File pFile) throws OceanusException {
+        /* Parse the file */
+        theDebtParser.parseFile(pFile);
+
+        /* Loop through the loan book items */
+        Iterator<CoeusZopaTransaction> myIterator = theDebtParser.badDebtIterator();
+        while (myIterator.hasNext()) {
+            CoeusZopaTransaction myTrans = myIterator.next();
+
+            /* Add to the transactions */
+            addTransaction(myTrans);
         }
     }
 

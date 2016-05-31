@@ -149,6 +149,11 @@ public class CoeusFundingCircleTransaction
     private String thePrefix;
 
     /**
+     * Value.
+     */
+    private final TethysMoney theValue;
+
+    /**
      * Invested.
      */
     private final TethysMoney theInvested;
@@ -224,6 +229,67 @@ public class CoeusFundingCircleTransaction
         theFees = determineFeesDelta();
         theCashBack = determineCashBackDelta();
         theBadDebt = determineBadDebtDelta();
+        theValue = determineValueDelta();
+
+        /* Check transaction validity */
+        checkValidity();
+    }
+
+    /**
+     * BadDebt Constructor.
+     * @param pParser the parser
+     * @param pFields the fields
+     * @throws OceanusException on error
+     */
+    protected CoeusFundingCircleTransaction(final CoeusFundingCircleBadDebtParser pParser,
+                                            final List<String> pFields) throws OceanusException {
+        /* Initialise underlying class */
+        super(pParser.getMarket());
+
+        /* Iterate through the fields */
+        Iterator<String> myIterator = pFields.iterator();
+
+        /* Access loan id */
+        String myLoanId = myIterator.next();
+
+        /* Skip description/risk/Payments left */
+        myIterator.next();
+        myIterator.next();
+        myIterator.next();
+
+        /* Parse the outstanding balance */
+        TethysMoney myDebt = pParser.parseMoney(myIterator.next());
+
+        /* Ignore the rate/date of next payment/status/seller */
+        myIterator.next();
+        myIterator.next();
+        myIterator.next();
+        myIterator.next();
+
+        /* Parse the date */
+        theDate = pParser.parseDate(myIterator.next());
+
+        /* Obtain description */
+        theDesc = CoeusTransactionType.BADDEBT.toString();
+
+        /* Determine the transaction type */
+        theTransType = CoeusTransactionType.BADDEBT;
+
+        /* Determine the loan */
+        theLoan = getMarket().findLoanById(myLoanId);
+
+        /* Determine the BadDebt Deltas */
+        theBadDebt = myDebt;
+        theCapital = new TethysMoney(myDebt);
+        theCapital.negate();
+
+        /* Set other values to zero */
+        theHolding = new TethysMoney();
+        theInvested = new TethysMoney();
+        theInterest = new TethysMoney();
+        theFees = new TethysMoney();
+        theCashBack = new TethysMoney();
+        theValue = determineValueDelta();
 
         /* Check transaction validity */
         checkValidity();
@@ -283,6 +349,11 @@ public class CoeusFundingCircleTransaction
     @Override
     public CoeusFundingCircleLoan getLoan() {
         return theLoan;
+    }
+
+    @Override
+    public TethysMoney getValue() {
+        return theValue;
     }
 
     @Override
@@ -417,6 +488,19 @@ public class CoeusFundingCircleTransaction
 
         /* Not recognised */
         throw new CoeusDataException("Unrecognised transaction");
+    }
+
+    /**
+     * determine value delta.
+     * @return the delta
+     */
+    private TethysMoney determineValueDelta() {
+        /* Obtain change in holding account plus change in capital */
+        TethysMoney myValue = new TethysMoney(theHolding);
+        myValue.addAmount(theCapital);
+
+        /* Return the Value */
+        return myValue;
     }
 
     /**

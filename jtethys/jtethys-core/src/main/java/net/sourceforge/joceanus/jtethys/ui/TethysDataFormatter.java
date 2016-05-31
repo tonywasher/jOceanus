@@ -147,6 +147,15 @@ public class TethysDataFormatter {
     }
 
     /**
+     * Obtain the locale.
+     * @return the locale
+     */
+    public Locale getLocale() {
+        /* Obtain locale from date formatter */
+        return theDateFormatter.getLocale();
+    }
+
+    /**
      * Format an object value.
      * @param pValue the object to format
      * @return the formatted value

@@ -38,6 +38,11 @@ public class CoeusFundingCircleTotals
     private static final MetisFields FIELD_DEFS = new MetisFields(CoeusFundingCircleTotals.class.getSimpleName(), CoeusTotals.getBaseFields());
 
     /**
+     * Value.
+     */
+    private final TethysMoney theTotalValue;
+
+    /**
      * Invested.
      */
     private final TethysMoney theTotalInvested;
@@ -110,7 +115,8 @@ public class CoeusFundingCircleTotals
         /* Initialise underlying class */
         super(pMarket, pLoan, pDate);
 
-        /* Initialise values from underlying transaction */
+        /* Initialise values */
+        theTotalValue = new TethysMoney();
         theTotalInvested = new TethysMoney();
         theTotalHolding = new TethysMoney();
         theTotalCapital = new TethysMoney();
@@ -131,6 +137,7 @@ public class CoeusFundingCircleTotals
         super(pUnderlying);
 
         /* Initialise values from previous totals */
+        theTotalValue = new TethysMoney(pTotals.getTotalValue());
         theTotalInvested = new TethysMoney(pTotals.getTotalInvested());
         theTotalHolding = new TethysMoney(pTotals.getTotalHolding());
         theTotalCapital = new TethysMoney(pTotals.getTotalCapital());
@@ -151,6 +158,7 @@ public class CoeusFundingCircleTotals
         super(pTotals.getMarket(), pTotals.getLoan(), pDate);
 
         /* Initialise values from previous totals */
+        theTotalValue = new TethysMoney(pTotals.getTotalValue());
         theTotalInvested = new TethysMoney(pTotals.getTotalInvested());
         theTotalHolding = new TethysMoney(pTotals.getTotalHolding());
         theTotalCapital = new TethysMoney(pTotals.getTotalCapital());
@@ -163,6 +171,7 @@ public class CoeusFundingCircleTotals
     @Override
     protected void addTotalsToTotals(final CoeusFundingCircleTotals pTotals) {
         /* Add values from totals */
+        theTotalValue.addAmount(pTotals.getTotalValue());
         theTotalInvested.addAmount(pTotals.getTotalInvested());
         theTotalHolding.addAmount(pTotals.getTotalHolding());
         theTotalCapital.addAmount(pTotals.getTotalCapital());
@@ -175,6 +184,7 @@ public class CoeusFundingCircleTotals
     @Override
     protected void addTransactionToTotals(final CoeusFundingCircleTransaction pTransaction) {
         /* Add values from transaction */
+        theTotalValue.addAmount(pTransaction.getValue());
         theTotalInvested.addAmount(pTransaction.getInvested());
         theTotalHolding.addAmount(pTransaction.getHolding());
         theTotalCapital.addAmount(pTransaction.getCapital());
@@ -187,6 +197,11 @@ public class CoeusFundingCircleTotals
     @Override
     public CoeusFundingCircleMarket getMarket() {
         return (CoeusFundingCircleMarket) super.getMarket();
+    }
+
+    @Override
+    public TethysMoney getValue() {
+        return (TethysMoney) super.getValue();
     }
 
     @Override
@@ -222,6 +237,11 @@ public class CoeusFundingCircleTotals
     @Override
     public TethysMoney getBadDebt() {
         return (TethysMoney) super.getBadDebt();
+    }
+
+    @Override
+    public TethysMoney getTotalValue() {
+        return theTotalValue;
     }
 
     @Override

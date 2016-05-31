@@ -38,6 +38,11 @@ public class CoeusZopaTotals
     private static final MetisFields FIELD_DEFS = new MetisFields(CoeusZopaTotals.class.getSimpleName(), CoeusTotals.getBaseFields());
 
     /**
+     * Value.
+     */
+    private final TethysDecimal theTotalValue;
+
+    /**
      * Invested.
      */
     private final TethysDecimal theTotalInvested;
@@ -110,7 +115,8 @@ public class CoeusZopaTotals
         /* Initialise underlying class */
         super(pMarket, pLoan, pDate);
 
-        /* Initialise values from underlying transaction */
+        /* Initialise values */
+        theTotalValue = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theTotalInvested = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theTotalHolding = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theTotalCapital = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
@@ -131,6 +137,7 @@ public class CoeusZopaTotals
         super(pUnderlying);
 
         /* Initialise values from previous totals */
+        theTotalValue = new TethysDecimal(pTotals.getTotalValue());
         theTotalInvested = new TethysDecimal(pTotals.getTotalInvested());
         theTotalHolding = new TethysDecimal(pTotals.getTotalHolding());
         theTotalCapital = new TethysDecimal(pTotals.getTotalCapital());
@@ -154,6 +161,7 @@ public class CoeusZopaTotals
         super(pTotals.getMarket(), pTotals.getLoan(), pDate);
 
         /* Initialise values from previous totals */
+        theTotalValue = new TethysDecimal(pTotals.getTotalValue());
         theTotalInvested = new TethysDecimal(pTotals.getTotalInvested());
         theTotalHolding = new TethysDecimal(pTotals.getTotalHolding());
         theTotalCapital = new TethysDecimal(pTotals.getTotalCapital());
@@ -166,6 +174,7 @@ public class CoeusZopaTotals
     @Override
     protected void addTotalsToTotals(final CoeusZopaTotals pTotals) {
         /* Add values from totals */
+        theTotalValue.addValue(pTotals.getTotalValue());
         theTotalInvested.addValue(pTotals.getTotalInvested());
         theTotalHolding.addValue(pTotals.getTotalHolding());
         theTotalCapital.addValue(pTotals.getTotalCapital());
@@ -178,6 +187,7 @@ public class CoeusZopaTotals
     @Override
     protected void addTransactionToTotals(final CoeusZopaTransaction pTransaction) {
         /* Add values from transaction */
+        theTotalValue.addValue(pTransaction.getValue());
         theTotalInvested.addValue(pTransaction.getInvested());
         theTotalHolding.addValue(pTransaction.getHolding());
         theTotalCapital.addValue(pTransaction.getCapital());
@@ -190,6 +200,11 @@ public class CoeusZopaTotals
     @Override
     public CoeusZopaMarket getMarket() {
         return (CoeusZopaMarket) super.getMarket();
+    }
+
+    @Override
+    public TethysDecimal getTotalValue() {
+        return theTotalValue;
     }
 
     @Override

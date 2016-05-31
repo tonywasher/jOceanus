@@ -115,6 +115,11 @@ public class CoeusRateSetterTransaction
     private CoeusRateSetterLoan theLoan;
 
     /**
+     * Value.
+     */
+    private final TethysMoney theValue;
+
+    /**
      * Invested.
      */
     private final TethysMoney theInvested;
@@ -182,6 +187,48 @@ public class CoeusRateSetterTransaction
         /* Handle Invested correctly */
         theInvested = determineInvestedDelta();
 
+        /* Calculate value delta */
+        theValue = determineValueDelta();
+
+        /* Check transaction validity */
+        checkValidity();
+    }
+
+    /**
+     * Constructor.
+     * @param pBase the base transaction
+     * @param pLoan the loan
+     * @throws OceanusException on error
+     */
+    protected CoeusRateSetterTransaction(final CoeusRateSetterTransaction pBase,
+                                         final CoeusRateSetterLoan pLoan) throws OceanusException {
+        /* Initialise underlying class */
+        super(pBase.getMarket());
+
+        /* Parse the date */
+        theDate = pBase.getDate();
+
+        /* Store IDs */
+        theLoanType = pBase.getLoanType();
+        theDesc = pBase.getDescription();
+
+        /* Determine the transaction type */
+        theTransType = pBase.getTransType();
+        theLoan = pLoan;
+
+        /* Handle fees */
+        theInterest = new TethysMoney();
+        theFees = new TethysMoney();
+        theInvested = new TethysMoney();
+
+        /* Obtain Capital and holding */
+        theCapital = new TethysMoney(pLoan.getLoanBookItem().getLent());
+        theHolding = new TethysMoney(theCapital);
+        theHolding.negate();
+
+        /* Calculate value delta */
+        theValue = determineValueDelta();
+
         /* Check transaction validity */
         checkValidity();
     }
@@ -213,10 +260,7 @@ public class CoeusRateSetterTransaction
         return (CoeusRateSetterMarket) super.getMarket();
     }
 
-    /**
-     * Obtain the date.
-     * @return the date
-     */
+    @Override
     public TethysDate getDate() {
         return theDate;
     }
@@ -229,18 +273,12 @@ public class CoeusRateSetterTransaction
         return theLoanType;
     }
 
-    /**
-     * Obtain the Description.
-     * @return the description
-     */
+    @Override
     public String getDescription() {
         return theDesc;
     }
 
-    /**
-     * Obtain the transactionType.
-     * @return the transactionType
-     */
+    @Override
     public CoeusTransactionType getTransType() {
         return theTransType;
     }
@@ -263,6 +301,11 @@ public class CoeusRateSetterTransaction
      */
     protected void setLoan(final CoeusRateSetterLoan pLoan) {
         theLoan = pLoan;
+    }
+
+    @Override
+    public TethysMoney getValue() {
+        return theValue;
     }
 
     @Override
@@ -354,6 +397,19 @@ public class CoeusRateSetterTransaction
             default:
                 return null;
         }
+    }
+
+    /**
+     * determine value delta.
+     * @return the delta
+     */
+    private TethysMoney determineValueDelta() {
+        /* Obtain change in holding account plus change in capital */
+        TethysMoney myValue = new TethysMoney(theHolding);
+        myValue.addAmount(theCapital);
+
+        /* Return the Value */
+        return myValue;
     }
 
     /**

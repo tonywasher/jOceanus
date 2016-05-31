@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jcoeus.data;
 
 import net.sourceforge.joceanus.jcoeus.CoeusResource;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
@@ -71,6 +70,11 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
     private static final MetisField FIELD_TYPE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TRANSTYPE.getValue());
 
     /**
+     * Value Field Id.
+     */
+    private static final MetisField FIELD_VALUE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_VALUE.getValue());
+
+    /**
      * Invested Field Id.
      */
     private static final MetisField FIELD_INVESTED = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INVESTED.getValue());
@@ -104,6 +108,11 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
      * BadDebt Field Id.
      */
     private static final MetisField FIELD_BADDEBT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBT.getValue());
+
+    /**
+     * TotalValue Field Id.
+     */
+    private static final MetisField FIELD_TOTAL_VALUE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALVALUE.getValue());
 
     /**
      * TotalInvested Field Id.
@@ -231,6 +240,16 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
     }
 
     /**
+     * Obtain the value.
+     * @return the value
+     */
+    public TethysDecimal getValue() {
+        return theTransaction == null
+                                      ? null
+                                      : theTransaction.getValue();
+    }
+
+    /**
      * Obtain the invested.
      * @return the invested
      */
@@ -301,6 +320,12 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
     }
 
     /**
+     * Obtain the total value.
+     * @return the value
+     */
+    public abstract TethysDecimal getTotalValue();
+
+    /**
      * Obtain the total invested.
      * @return the invested
      */
@@ -358,6 +383,7 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
      * Reset the totals.
      */
     protected void resetTotals() {
+        getTotalValue().setZero();
         getTotalInvested().setZero();
         getTotalHolding().setZero();
         getTotalCapital().setZero();
@@ -384,9 +410,9 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
     public String formatObject() {
         /* Create builder and access formatter */
         StringBuilder myBuilder = new StringBuilder();
-        MetisDataFormatter myFormatter = theMarket.getFormatter();
 
         /* Add the values */
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_VALUE, getTotalValue());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_HOLDING, getTotalHolding());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_CAPITAL, getTotalCapital());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_INTEREST, getTotalInterest());
@@ -401,7 +427,7 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
 
         /* Format the transaction type and date */
         if (theDate != null) {
-            myBuilder.insert(0, myFormatter.formatObject(getDate()));
+            myBuilder.insert(0, theDate.toString());
             myBuilder.insert(0, CoeusTransaction.CHAR_BLANK);
         }
         myBuilder.insert(0, CoeusTransactionType.TOTALS.toString());
@@ -432,6 +458,11 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
         }
         if (FIELD_TYPE.equals(pField)) {
             return getTransType();
+        }
+        if (FIELD_VALUE.equals(pField)) {
+            return theTransaction == null
+                                          ? MetisFieldValue.SKIP
+                                          : theTransaction.getFieldValue(CoeusTransaction.FIELD_VALUE);
         }
         if (FIELD_INVESTED.equals(pField)) {
             return theTransaction == null
@@ -467,6 +498,12 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
             return theTransaction == null
                                           ? MetisFieldValue.SKIP
                                           : theTransaction.getFieldValue(CoeusTransaction.FIELD_BADDEBT);
+        }
+        if (FIELD_TOTAL_VALUE.equals(pField)) {
+            TethysDecimal myValue = getTotalValue();
+            return myValue.isZero()
+                                    ? MetisFieldValue.SKIP
+                                    : myValue;
         }
         if (FIELD_TOTAL_INVESTED.equals(pField)) {
             TethysDecimal myInvested = getTotalInvested();

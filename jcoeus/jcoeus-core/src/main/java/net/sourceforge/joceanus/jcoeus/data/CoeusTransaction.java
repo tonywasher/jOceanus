@@ -71,6 +71,11 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     private static final MetisField FIELD_TYPE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TRANSTYPE.getValue());
 
     /**
+     * Value Field Id.
+     */
+    protected static final MetisField FIELD_VALUE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_VALUE.getValue());
+
+    /**
      * Invested Field Id.
      */
     protected static final MetisField FIELD_INVESTED = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INVESTED.getValue());
@@ -119,6 +124,11 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
      * Close Character.
      */
     protected static final char CHAR_CLOSE = ')';
+
+    /**
+     * Id For value.
+     */
+    protected static final String ID_VALUE = "V";
 
     /**
      * Id For holding.
@@ -208,6 +218,12 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     public abstract String getLoanId();
 
     /**
+     * Obtain the value.
+     * @return the value
+     */
+    public abstract TethysDecimal getValue();
+
+    /**
      * Obtain the invested.
      * @return the invested
      */
@@ -269,6 +285,7 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
         MetisDataFormatter myFormatter = theMarket.getFormatter();
 
         /* Add the values */
+        formatValue(myBuilder, ID_VALUE, getValue());
         formatValue(myBuilder, ID_HOLDING, getHolding());
         formatValue(myBuilder, ID_CAPITAL, getCapital());
         formatValue(myBuilder, ID_INTEREST, getInterest());
@@ -334,6 +351,12 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
         }
         if (FIELD_TYPE.equals(pField)) {
             return getTransType();
+        }
+        if (FIELD_VALUE.equals(pField)) {
+            TethysDecimal myValue = getValue();
+            return myValue.isZero()
+                                    ? MetisFieldValue.SKIP
+                                    : myValue;
         }
         if (FIELD_INVESTED.equals(pField)) {
             TethysDecimal myInvested = getInvested();

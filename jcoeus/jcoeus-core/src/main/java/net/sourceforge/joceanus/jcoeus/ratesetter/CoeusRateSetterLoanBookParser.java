@@ -141,6 +141,9 @@ public class CoeusRateSetterLoanBookParser {
     public void parseFile(final File pInput) throws OceanusException {
         /* Protect against exceptions */
         try {
+            /* Reset the list */
+            theLoans.clear();
+
             /* Set the parser correctly */
             theDateParser.setFormat("dd/MM/yyyy");
 

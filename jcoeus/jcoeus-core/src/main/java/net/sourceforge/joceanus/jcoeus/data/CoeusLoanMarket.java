@@ -99,6 +99,11 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
     private final MetisDataFormatter theFormatter;
 
     /**
+     * FiscalYear.
+     */
+    private final TethysFiscalYear theFiscalYear;
+
+    /**
      * Loan Map.
      */
     private final Map<String, L> theLoanMap;
@@ -129,6 +134,11 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
     private final List<S> theMonthlyTotals;
 
     /**
+     * Use fiscal monthly totals.
+     */
+    private boolean makeFiscalTotals;
+
+    /**
      * Constructor.
      * @param pFormatter the data formatter
      * @param pProvider the loanMarket provider
@@ -138,6 +148,9 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
         /* Store parameters */
         theFormatter = pFormatter;
         theProvider = pProvider;
+
+        /* Determine the fiscal year */
+        theFiscalYear = TethysFiscalYear.determineFiscalYear(theFormatter.getLocale());
 
         /* Create maps */
         theLoanMap = new LinkedHashMap<>();
@@ -150,6 +163,9 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
         theHistory = newHistory();
         theMonthlyHistories = new LinkedHashMap<>();
         theAnnualHistories = new LinkedHashMap<>();
+
+        /* Use fiscal monthly totals by default */
+        makeFiscalTotals = true;
     }
 
     /**
@@ -182,6 +198,21 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
      */
     public Iterator<T> transactionIterator() {
         return theTransactions.iterator();
+    }
+
+    /**
+     * Obtain the transactions.
+     * @return the transactions
+     */
+    protected List<T> getTransactions() {
+        return theTransactions;
+    }
+
+    /**
+     * Make monthly totals.
+     */
+    public void makeMonthlyTotals() {
+        makeFiscalTotals = false;
     }
 
     /**
@@ -245,27 +276,6 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
     }
 
     /**
-     * Analyse just the loans.
-     */
-    public void analyseLoans() {
-        /* Clear the history */
-        resetLoans();
-
-        /* Loop through the transactions */
-        Iterator<T> myIterator = transactionIterator();
-        while (myIterator.hasNext()) {
-            T myTransaction = myIterator.next();
-
-            /* If the item has a loan */
-            L myLoan = myTransaction.getLoan();
-            if (myLoan != null) {
-                /* Add to the loans history */
-                myLoan.addTransactionToHistory(myTransaction);
-            }
-        }
-    }
-
-    /**
      * Analyse the market.
      */
     public void analyseMarket() {
@@ -275,6 +285,9 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
         theAnnualHistories.clear();
         theMonthlyTotals.clear();
         resetLoans();
+
+        /* Sort the transactions */
+        theTransactions.sort((l, r) -> l.getDate().compareTo(r.getDate()));
 
         /* Loop through the transactions */
         Iterator<T> myIterator = transactionIterator();
@@ -312,7 +325,10 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
      */
     private H getMonthlyHistory(final TethysDate pDate) {
         /* Determine the date of the month */
-        TethysDate myDate = TethysFiscalYear.UK.endOfMonth(pDate);
+        TethysDate myDate = makeFiscalTotals
+                                             ? theFiscalYear.endOfMonth(pDate)
+                                             : new TethysDate(pDate);
+        myDate.endCalendarMonth();
 
         /* Look up an existing history */
         H myHistory = theMonthlyHistories.get(myDate);
@@ -333,7 +349,7 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
      */
     private H getAnnualHistory(final TethysDate pDate) {
         /* Determine the date of the month */
-        TethysDate myDate = TethysFiscalYear.UK.endOfYear(pDate);
+        TethysDate myDate = theFiscalYear.endOfYear(pDate);
 
         /* Look up an existing history */
         H myHistory = theAnnualHistories.get(myDate);

@@ -141,6 +141,11 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T, S, H>, T extends Coeus
     }
 
     @Override
+    public String toString() {
+        return formatObject();
+    }
+
+    @Override
     public String formatObject() {
         return theLoanId;
     }

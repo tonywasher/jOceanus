@@ -88,6 +88,8 @@ public class CoeusRateSetterTester {
 
             /* Analyse the data */
             myMarket.analyseMarket();
+            myMarket.repairLoans();
+            myMarket.analyseMarket();
             myFormatter = null;
 
             /* Catch Exceptions */

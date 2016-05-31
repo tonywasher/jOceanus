@@ -228,6 +228,11 @@ public enum CoeusResource
     DATA_TRANSTYPE("data.transtype"),
 
     /**
+     * Data Value.
+     */
+    DATA_VALUE("data.value"),
+
+    /**
      * Data Invested.
      */
     DATA_INVESTED("data.invested"),
@@ -261,6 +266,11 @@ public enum CoeusResource
      * Data BadDebt.
      */
     DATA_BADDEBT("data.baddebt"),
+
+    /**
+     * Data Total Value.
+     */
+    DATA_TOTALVALUE("data.total.value"),
 
     /**
      * Data Total Invested.

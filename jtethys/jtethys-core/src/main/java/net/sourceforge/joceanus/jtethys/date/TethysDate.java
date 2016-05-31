@@ -30,6 +30,7 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
@@ -532,6 +533,17 @@ public class TethysDate
     }
 
     /**
+     * Adjust the date to the end of the month.
+     */
+    public void endCalendarMonth() {
+        /* Move to the first of the next month and then one day before */
+        theDate = theDate.withDayOfMonth(1);
+        theDate = theDate.plusMonths(1);
+        theDate = theDate.minusDays(1);
+        obtainValues();
+    }
+
+    /**
      * Adjust the date to the start of the quarter.
      */
     public void startCalendarQuarter() {
@@ -603,6 +615,16 @@ public class TethysDate
 
         /* Return to caller */
         return myAge;
+    }
+
+    /**
+     * Calculate the days until the specified date.
+     * @param pDate the date for which to days until
+     * @return the days until that date
+     */
+    public long daysUntil(final TethysDate pDate) {
+        /* Calculate the initial age assuming same date in year */
+        return theDate.until(pDate.theDate, ChronoUnit.DAYS);
     }
 
     /**

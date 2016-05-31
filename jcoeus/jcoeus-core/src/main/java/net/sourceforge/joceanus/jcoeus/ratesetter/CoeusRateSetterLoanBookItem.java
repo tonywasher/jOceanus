@@ -61,7 +61,7 @@ public class CoeusRateSetterLoanBookItem
     /**
      * Original Loan Field Id.
      */
-    private static final MetisField FIELD_LOAN = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ORIGLOAN.getValue());
+    private static final MetisField FIELD_LENT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ORIGLOAN.getValue());
 
     /**
      * Outstanding Balance Field Id.
@@ -96,7 +96,7 @@ public class CoeusRateSetterLoanBookItem
     /**
      * The Original Loan.
      */
-    private final TethysMoney theLoan;
+    private final TethysMoney theLent;
 
     /**
      * The Outstanding Balance.
@@ -144,12 +144,15 @@ public class CoeusRateSetterLoanBookItem
         myZero.setZero();
 
         /* Set balance and loan */
-        theLoan = pRepaid
+        theLent = pRepaid
                           ? myAmount
                           : myZero;
         theBalance = pRepaid
                              ? myZero
                              : myAmount;
+
+        /* adjust the lent to include the balance */
+        theLent.addAmount(theBalance);
 
         /* Obtain the rate */
         theRate = pParser.parseRate(myIterator.next().text());
@@ -181,11 +184,11 @@ public class CoeusRateSetterLoanBookItem
     }
 
     /**
-     * Obtain the loan.
-     * @return the loan
+     * Obtain the lent amount.
+     * @return the lent
      */
-    public TethysMoney getLoan() {
-        return theLoan;
+    public TethysMoney getLent() {
+        return theLent;
     }
 
     /**
@@ -239,8 +242,8 @@ public class CoeusRateSetterLoanBookItem
         if (FIELD_STARTDATE.equals(pField)) {
             return theStartDate;
         }
-        if (FIELD_LOAN.equals(pField)) {
-            return theLoan;
+        if (FIELD_LENT.equals(pField)) {
+            return theLent;
         }
         if (FIELD_BALANCE.equals(pField)) {
             return theBalance;

@@ -304,7 +304,7 @@ public abstract class CoeusCSVParser {
      * @param pBuilder the string builder
      * @return the # of quotes
      */
-    private int countQuotes(final StringBuilder pBuilder) {
+    private static int countQuotes(final StringBuilder pBuilder) {
         /* Initialise variables */
         int myCount = 0;
 

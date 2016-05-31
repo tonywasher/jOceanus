@@ -88,6 +88,9 @@ public class CoeusFundingCircleTester {
             myMarket.parseStatement(new File(BASE_PATH, "statement_2016-04.csv"));
             myMarket.parseStatement(new File(BASE_PATH, "statement_2016-05.csv"));
 
+            /* Parse the badDebt file */
+            myMarket.parseBadDebtBook(new File(BASE_PATH, "baddebts-report.csv"));
+
             /* Analyse the data */
             myMarket.analyseMarket();
 

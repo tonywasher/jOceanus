@@ -22,10 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ratesetter;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
@@ -49,7 +45,7 @@ public class CoeusRateSetterLoan
     /**
      * The market.
      */
-    private final List<CoeusRateSetterLoanBookItem> theBookItems;
+    private final CoeusRateSetterLoanBookItem theBookItem;
 
     /**
      * Constructor.
@@ -59,8 +55,7 @@ public class CoeusRateSetterLoan
     protected CoeusRateSetterLoan(final CoeusRateSetterMarket pMarket,
                                   final CoeusRateSetterLoanBookItem pBookItem) {
         super(pMarket, pBookItem.getLoanId());
-        theBookItems = new ArrayList<>();
-        addBookItem(pBookItem);
+        theBookItem = pBookItem;
     }
 
     @Override
@@ -69,19 +64,11 @@ public class CoeusRateSetterLoan
     }
 
     /**
-     * Add a book item.
-     * @param pBookItem the book item
+     * Obtain the book item.
+     * @return the book item
      */
-    protected void addBookItem(final CoeusRateSetterLoanBookItem pBookItem) {
-        theBookItems.add(pBookItem);
-    }
-
-    /**
-     * Obtain the book item iterator.
-     * @return the iterator
-     */
-    public Iterator<CoeusRateSetterLoanBookItem> bookItemIterator() {
-        return theBookItems.iterator();
+    public CoeusRateSetterLoanBookItem getLoanBookItem() {
+        return theBookItem;
     }
 
     @Override
@@ -98,7 +85,7 @@ public class CoeusRateSetterLoan
     public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_BOOKITEM.equals(pField)) {
-            return theBookItems;
+            return theBookItem;
         }
 
         /* Pass call on */

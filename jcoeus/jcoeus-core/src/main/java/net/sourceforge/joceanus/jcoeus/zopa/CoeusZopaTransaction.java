@@ -144,6 +144,11 @@ public class CoeusZopaTransaction
     private final TethysDecimal theInvested;
 
     /**
+     * Value.
+     */
+    private final TethysDecimal theValue;
+
+    /**
      * Holding.
      */
     private final TethysDecimal theHolding;
@@ -214,6 +219,90 @@ public class CoeusZopaTransaction
         theFees = determineFeesDelta();
         theCashBack = determineCashBackDelta();
         theBadDebt = determineBadDebtDelta();
+        theValue = determineValueDelta();
+
+        /* Check transaction validity */
+        checkValidity();
+    }
+
+    /**
+     * Constructor.
+     * @param pParser the parser
+     * @param pFields the fields
+     * @throws OceanusException on error
+     */
+    protected CoeusZopaTransaction(final CoeusZopaBadDebtParser pParser,
+                                   final List<String> pFields) throws OceanusException {
+        /* Initialise underlying class */
+        super(pParser.getMarket());
+
+        /* Iterate through the fields */
+        Iterator<String> myIterator = pFields.iterator();
+
+        /* Obtain LoanIDs */
+        String myLoanId = myIterator.next();
+
+        /* Skip Product/date acquired/risk */
+        myIterator.next();
+        myIterator.next();
+        myIterator.next();
+
+        /* Skip Term and Loan Size */
+        myIterator.next();
+        myIterator.next();
+
+        /* Skip status/rate/lent */
+        myIterator.next();
+        myIterator.next();
+        myIterator.next();
+
+        /* Parse the outstanding balances */
+        TethysDecimal myDebt = pParser.parseDecimal(myIterator.next());
+
+        /* Skip rePaid/capital/interest/arrears */
+        myIterator.next();
+        myIterator.next();
+        myIterator.next();
+        myIterator.next();
+
+        /* Skip Payment Day/SafeGuard flag */
+        myIterator.next();
+        myIterator.next();
+
+        /* Skip Comment and loan start/end dates */
+        myIterator.next();
+        myIterator.next();
+        myIterator.next();
+
+        /* Skip Monthly rePayment/Purpose/portion rePaid */
+        myIterator.next();
+        myIterator.next();
+        myIterator.next();
+
+        /* Parse the date */
+        theDate = pParser.parseDate(myIterator.next());
+
+        /* Obtain description */
+        theDesc = CoeusTransactionType.BADDEBT.toString();
+
+        /* Determine the transaction type */
+        theTransType = CoeusTransactionType.BADDEBT;
+
+        /* Determine the loan */
+        theLoan = getMarket().findLoanById(myLoanId);
+
+        /* Determine the BadDebt Deltas */
+        theBadDebt = myDebt;
+        theCapital = new TethysDecimal(myDebt);
+        theCapital.negate();
+
+        /* Set other values to zero */
+        theHolding = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theInvested = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theFees = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theCashBack = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theValue = determineValueDelta();
 
         /* Check transaction validity */
         checkValidity();
@@ -273,6 +362,11 @@ public class CoeusZopaTransaction
     @Override
     public CoeusZopaLoan getLoan() {
         return theLoan;
+    }
+
+    @Override
+    public TethysDecimal getValue() {
+        return theValue;
     }
 
     @Override
@@ -389,6 +483,19 @@ public class CoeusZopaTransaction
 
         /* Not recognised */
         throw new CoeusDataException("Unrecognised transaction");
+    }
+
+    /**
+     * determine value delta.
+     * @return the delta
+     */
+    private TethysDecimal determineValueDelta() {
+        /* Obtain change in holding account plus change in capital */
+        TethysDecimal myValue = new TethysDecimal(theHolding);
+        myValue.addValue(theCapital);
+
+        /* Return the Value */
+        return myValue;
     }
 
     /**

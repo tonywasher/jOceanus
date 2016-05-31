@@ -58,6 +58,11 @@ public class CoeusFundingCircleMarket
     private final CoeusFundingCircleLoanBookParser theBookParser;
 
     /**
+     * The BadDebt Parser.
+     */
+    private final CoeusFundingCircleBadDebtParser theDebtParser;
+
+    /**
      * The Transaction Parser.
      */
     private final CoeusFundingCircleTransactionParser theXactionParser;
@@ -77,6 +82,7 @@ public class CoeusFundingCircleMarket
 
         /* Create the parsers */
         theBookParser = new CoeusFundingCircleLoanBookParser(pFormatter);
+        theDebtParser = new CoeusFundingCircleBadDebtParser(this);
         theXactionParser = new CoeusFundingCircleTransactionParser(this);
 
         /* Create the bookItem map */
@@ -101,6 +107,25 @@ public class CoeusFundingCircleMarket
             CoeusFundingCircleLoan myLoan = new CoeusFundingCircleLoan(this, myItem);
             recordLoan(myLoan);
             theAuctionMap.put(myItem.getAuctionId(), myLoan);
+        }
+    }
+
+    /**
+     * Parse the badDebtBook file.
+     * @param pFile the file to parse
+     * @throws OceanusException on error
+     */
+    public void parseBadDebtBook(final File pFile) throws OceanusException {
+        /* Parse the file */
+        theDebtParser.parseFile(pFile);
+
+        /* Loop through the loan book items */
+        Iterator<CoeusFundingCircleTransaction> myIterator = theDebtParser.badDebtIterator();
+        while (myIterator.hasNext()) {
+            CoeusFundingCircleTransaction myTrans = myIterator.next();
+
+            /* Add to the transactions */
+            addTransaction(myTrans);
         }
     }
 

@@ -23,19 +23,14 @@
 package net.sourceforge.joceanus.jcoeus.ratesetter;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -50,11 +45,6 @@ public class CoeusRateSetterMarket
     private static final MetisFields FIELD_DEFS = new MetisFields(CoeusRateSetterMarket.class.getSimpleName(), CoeusLoanMarket.getBaseFields());
 
     /**
-     * InitialLoans Field Id.
-     */
-    private static final MetisField FIELD_INITIALLOANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INITIALLOANS.getValue());
-
-    /**
      * The LoanBook Parser.
      */
     private final CoeusRateSetterLoanBookParser theBookParser;
@@ -65,9 +55,9 @@ public class CoeusRateSetterMarket
     private final CoeusRateSetterTransactionParser theXactionParser;
 
     /**
-     * The List of Initial Capital Loans.
+     * The Repairer.
      */
-    private final List<CoeusRateSetterTransaction> theInitialLoans;
+    private final CoeusRateSetterRepair theRepairer;
 
     /**
      * Constructor.
@@ -82,8 +72,21 @@ public class CoeusRateSetterMarket
         theBookParser = new CoeusRateSetterLoanBookParser(pFormatter);
         theXactionParser = new CoeusRateSetterTransactionParser(this);
 
-        /* Create the lists */
-        theInitialLoans = new ArrayList<>();
+        /* Create the repairer */
+        theRepairer = new CoeusRateSetterRepair(this);
+    }
+
+    @Override
+    protected void addTransaction(final CoeusRateSetterTransaction pTrans) {
+        super.addTransaction(pTrans);
+    }
+
+    /**
+     * Add transaction to list.
+     * @param pTrans the transaction
+     */
+    protected void removeTransaction(final CoeusRateSetterTransaction pTrans) {
+        getTransactions().remove(pTrans);
     }
 
     /**
@@ -100,15 +103,8 @@ public class CoeusRateSetterMarket
         while (myIterator.hasNext()) {
             CoeusRateSetterLoanBookItem myItem = myIterator.next();
 
-            /* Look for preExisting loan */
-            CoeusRateSetterLoan myLoan = getLoanById(myItem.getLoanId());
-            if (myLoan == null) {
-                /* Create the loan and record it */
-                recordLoan(new CoeusRateSetterLoan(this, myItem));
-            } else {
-                /* Add the bookItem to the loan */
-                myLoan.addBookItem(myItem);
-            }
+            /* Create the loan and record it */
+            recordLoan(new CoeusRateSetterLoan(this, myItem));
         }
     }
 
@@ -130,12 +126,21 @@ public class CoeusRateSetterMarket
             if ((myTrans.getLoan() == null)
                 && CoeusTransactionType.CAPITALLOAN.equals(myTrans.getTransType())) {
                 /* Add to set of initial loans for later resolution */
-                theInitialLoans.add(myTrans);
+                theRepairer.recordInitialLoan(myTrans);
             }
 
             /* Add to the transactions */
             addTransaction(myTrans);
         }
+    }
+
+    /**
+     * Repair loans such that original loan is known and original payments is associated.
+     * @throws OceanusException on error
+     */
+    public void repairLoans() throws OceanusException {
+        /* Repair the loans */
+        theRepairer.repairLoans();
     }
 
     @Override
@@ -167,18 +172,5 @@ public class CoeusRateSetterMarket
     @Override
     public MetisFields getDataFields() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisField pField) {
-        /* Handle standard fields */
-        if (FIELD_INITIALLOANS.equals(pField)) {
-            return theInitialLoans.isEmpty()
-                                             ? MetisFieldValue.SKIP
-                                             : theInitialLoans;
-        }
-
-        /* Pass call on */
-        return super.getFieldValue(pField);
     }
 }
