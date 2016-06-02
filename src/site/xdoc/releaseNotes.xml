@@ -26,7 +26,8 @@
         <dt>v1.4.0-b2</dt> <dd>rework tax basis report</dd>
         <dt>v1.5.0-b1</dt> <dd>Create javaFX infrastructure</dd>
         <dt>v1.5.0-b2</dt> <dd>Phase 1 of migration to javaFX infrastructure</dd>
-        <dt>v1.5.0-b2</dt> <dd>Phase 2 of migration to javaFX infrastructure</dd>
+        <dt>v1.5.0-b3</dt> <dd>Phase 2 of migration to javaFX infrastructure</dd>
+        <dt>v1.5.0-b4</dt> <dd>Phase 3 of migration to javaFX infrastructure</dd>
       </dl>
     </section>
   </body>
