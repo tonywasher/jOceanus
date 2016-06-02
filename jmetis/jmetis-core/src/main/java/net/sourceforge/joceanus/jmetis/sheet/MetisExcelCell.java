@@ -101,12 +101,9 @@ public class MetisExcelCell
                 return theExcelCell.getBooleanCellValue();
             case HSSFCell.CELL_TYPE_FORMULA:
                 CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
-                switch (myValue.getCellType()) {
-                    case HSSFCell.CELL_TYPE_BOOLEAN:
-                        return myValue.getBooleanValue();
-                    default:
-                        return null;
-                }
+                return HSSFCell.CELL_TYPE_BOOLEAN == myValue.getCellType()
+                                                                           ? myValue.getBooleanValue()
+                                                                           : null;
             default:
                 return null;
         }
@@ -114,12 +111,9 @@ public class MetisExcelCell
 
     @Override
     public TethysDate getDateValue() {
-        switch (theExcelCell.getCellType()) {
-            case HSSFCell.CELL_TYPE_NUMERIC:
-                return new TethysDate(theExcelCell.getDateCellValue());
-            default:
-                return null;
-        }
+        return HSSFCell.CELL_TYPE_NUMERIC == theExcelCell.getCellType()
+                                                                        ? new TethysDate(theExcelCell.getDateCellValue())
+                                                                        : null;
     }
 
     @Override
@@ -130,13 +124,9 @@ public class MetisExcelCell
                 return myValue.intValue();
             case HSSFCell.CELL_TYPE_FORMULA:
                 CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
-                switch (myCellValue.getCellType()) {
-                    case HSSFCell.CELL_TYPE_NUMERIC:
-                        Double myDouble = myCellValue.getNumberValue();
-                        return myDouble.intValue();
-                    default:
-                        return null;
-                }
+                return HSSFCell.CELL_TYPE_NUMERIC == myCellValue.getCellType()
+                                                                               ? ((Double) myCellValue.getNumberValue()).intValue()
+                                                                               : null;
             default:
                 return null;
         }

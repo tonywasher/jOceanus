@@ -93,6 +93,7 @@ public class CoeusFundingCircleTester {
 
             /* Analyse the data */
             myMarket.analyseMarket();
+            myMarket.checkLoans();
 
             /* Catch Exceptions */
         } catch (OceanusException e) {

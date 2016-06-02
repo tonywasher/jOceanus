@@ -144,6 +144,7 @@ public final class TethysResourceBuilder {
 
     /**
      * Obtain key for enum.
+     * @param <E> the enum type
      * @param pMap the map
      * @param pValue the enum value
      * @return the resource key

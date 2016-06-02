@@ -137,9 +137,9 @@ public class CoeusRateSetterRepair {
             /* If the loan is active */
             CoeusRateSetterLoanBookItem myItem = myLoan.getLoanBookItem();
             if (CoeusLoanStatus.ACTIVE.equals(myItem.getStatus())) {
+                /* Add repayments to the amount of the loan which is currently the balance */
                 TethysMoney myLent = myItem.getLent();
-                CoeusRateSetterHistory myHistory = myLoan.getHistory();
-                CoeusRateSetterTotals myTotals = myHistory.getTotals();
+                CoeusRateSetterTotals myTotals = myLoan.getTotals();
                 myLent.subtractAmount(myTotals.getTotalCapital());
             }
 

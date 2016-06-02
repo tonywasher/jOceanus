@@ -90,6 +90,11 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
     private static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_CAPITAL.getValue());
 
     /**
+     * NettInterest Field Id.
+     */
+    private static final MetisField FIELD_NETINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_NETINTEREST.getValue());
+
+    /**
      * Interest Field Id.
      */
     private static final MetisField FIELD_INTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INTEREST.getValue());
@@ -108,6 +113,11 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
      * BadDebt Field Id.
      */
     private static final MetisField FIELD_BADDEBT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBT.getValue());
+
+    /**
+     * Recovered Field Id.
+     */
+    private static final MetisField FIELD_RECOVERED = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_RECOVERED.getValue());
 
     /**
      * TotalValue Field Id.
@@ -130,6 +140,11 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
     private static final MetisField FIELD_TOTAL_CAPITAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALCAPITAL.getValue());
 
     /**
+     * TotalNettInterest Field Id.
+     */
+    private static final MetisField FIELD_TOTAL_NETINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALNETINTEREST.getValue());
+
+    /**
      * TotalInterest Field Id.
      */
     private static final MetisField FIELD_TOTAL_INTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALINTEREST.getValue());
@@ -148,6 +163,11 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
      * TotalBadDebt Field Id.
      */
     private static final MetisField FIELD_TOTAL_BADDEBT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALBADDEBT.getValue());
+
+    /**
+     * TotalRecovered Field Id.
+     */
+    private static final MetisField FIELD_TOTAL_RECOVERED = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALRECOVERED.getValue());
 
     /**
      * The market.
@@ -280,6 +300,16 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
     }
 
     /**
+     * Obtain the nettInterest.
+     * @return the interest
+     */
+    public TethysDecimal getNettInterest() {
+        return theTransaction == null
+                                      ? null
+                                      : theTransaction.getNettInterest();
+    }
+
+    /**
      * Obtain the interest.
      * @return the interest
      */
@@ -320,6 +350,16 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
     }
 
     /**
+     * Obtain the recovered.
+     * @return the recovered
+     */
+    public TethysDecimal getRecovered() {
+        return theTransaction == null
+                                      ? null
+                                      : theTransaction.getRecovered();
+    }
+
+    /**
      * Obtain the total value.
      * @return the value
      */
@@ -342,6 +382,12 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
      * @return the capital
      */
     public abstract TethysDecimal getTotalCapital();
+
+    /**
+     * Obtain the total nettInterest.
+     * @return the interest
+     */
+    public abstract TethysDecimal getTotalNettInterest();
 
     /**
      * Obtain the total interest.
@@ -368,6 +414,12 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
     public abstract TethysDecimal getTotalBadDebt();
 
     /**
+     * Obtain the total recovered.
+     * @return the recovered
+     */
+    public abstract TethysDecimal getTotalRecovered();
+
+    /**
      * Add totals to totals.
      * @param pTotals the totals to add
      */
@@ -387,10 +439,12 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
         getTotalInvested().setZero();
         getTotalHolding().setZero();
         getTotalCapital().setZero();
+        getTotalNettInterest().setZero();
         getTotalInterest().setZero();
         getTotalFees().setZero();
         getTotalCashBack().setZero();
         getTotalBadDebt().setZero();
+        getTotalRecovered().setZero();
     }
 
     /**
@@ -415,10 +469,12 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_VALUE, getTotalValue());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_HOLDING, getTotalHolding());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_CAPITAL, getTotalCapital());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_NETINTEREST, getTotalNettInterest());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_INTEREST, getTotalInterest());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_FEES, getTotalFees());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_CASHBACK, getTotalCashBack());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_BADDEBT, getTotalBadDebt());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_RECOVERED, getTotalRecovered());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_INVESTED, getTotalInvested());
 
         /* Add brackets around the values */
@@ -479,6 +535,11 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
                                           ? MetisFieldValue.SKIP
                                           : theTransaction.getFieldValue(CoeusTransaction.FIELD_CAPITAL);
         }
+        if (FIELD_NETINTEREST.equals(pField)) {
+            return theTransaction == null
+                                          ? MetisFieldValue.SKIP
+                                          : theTransaction.getFieldValue(CoeusTransaction.FIELD_NETINTEREST);
+        }
         if (FIELD_INTEREST.equals(pField)) {
             return theTransaction == null
                                           ? MetisFieldValue.SKIP
@@ -498,6 +559,11 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
             return theTransaction == null
                                           ? MetisFieldValue.SKIP
                                           : theTransaction.getFieldValue(CoeusTransaction.FIELD_BADDEBT);
+        }
+        if (FIELD_RECOVERED.equals(pField)) {
+            return theTransaction == null
+                                          ? MetisFieldValue.SKIP
+                                          : theTransaction.getFieldValue(CoeusTransaction.FIELD_RECOVERED);
         }
         if (FIELD_TOTAL_VALUE.equals(pField)) {
             TethysDecimal myValue = getTotalValue();
@@ -523,6 +589,12 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
                                       ? MetisFieldValue.SKIP
                                       : myCapital;
         }
+        if (FIELD_TOTAL_NETINTEREST.equals(pField)) {
+            TethysDecimal myInterest = getTotalNettInterest();
+            return myInterest.isZero()
+                                       ? MetisFieldValue.SKIP
+                                       : myInterest;
+        }
         if (FIELD_TOTAL_INTEREST.equals(pField)) {
             TethysDecimal myInterest = getTotalInterest();
             return myInterest.isZero()
@@ -546,6 +618,12 @@ public abstract class CoeusTotals<L extends CoeusLoan<L, T, S, H>, T extends Coe
             return myBadDebt.isZero()
                                       ? MetisFieldValue.SKIP
                                       : myBadDebt;
+        }
+        if (FIELD_TOTAL_RECOVERED.equals(pField)) {
+            TethysDecimal myRecovered = getTotalRecovered();
+            return myRecovered.isZero()
+                                        ? MetisFieldValue.SKIP
+                                        : myRecovered;
         }
 
         /* Not recognised */

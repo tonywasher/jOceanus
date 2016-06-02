@@ -58,6 +58,11 @@ public class CoeusZopaTotals
     private final TethysDecimal theTotalCapital;
 
     /**
+     * NettInterest.
+     */
+    private final TethysDecimal theTotalNettInterest;
+
+    /**
      * Interest.
      */
     private final TethysDecimal theTotalInterest;
@@ -76,6 +81,11 @@ public class CoeusZopaTotals
      * BadDebt.
      */
     private final TethysDecimal theTotalBadDebt;
+
+    /**
+     * Recovered.
+     */
+    private final TethysDecimal theTotalRecovered;
 
     /**
      * Constructor for zeroed totals.
@@ -120,10 +130,12 @@ public class CoeusZopaTotals
         theTotalInvested = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theTotalHolding = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theTotalCapital = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theTotalNettInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theTotalInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theTotalFees = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theTotalCashBack = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theTotalBadDebt = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theTotalRecovered = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
     }
 
     /**
@@ -141,13 +153,12 @@ public class CoeusZopaTotals
         theTotalInvested = new TethysDecimal(pTotals.getTotalInvested());
         theTotalHolding = new TethysDecimal(pTotals.getTotalHolding());
         theTotalCapital = new TethysDecimal(pTotals.getTotalCapital());
+        theTotalNettInterest = new TethysDecimal(pTotals.getTotalNettInterest());
         theTotalInterest = new TethysDecimal(pTotals.getTotalInterest());
         theTotalFees = new TethysDecimal(pTotals.getTotalFees());
         theTotalCashBack = new TethysDecimal(pTotals.getTotalCashBack());
         theTotalBadDebt = new TethysDecimal(pTotals.getTotalBadDebt());
-
-        /* Add the transaction to the totals */
-        addTransactionToTotals(pUnderlying);
+        theTotalRecovered = new TethysDecimal(pTotals.getTotalRecovered());
     }
 
     /**
@@ -165,10 +176,12 @@ public class CoeusZopaTotals
         theTotalInvested = new TethysDecimal(pTotals.getTotalInvested());
         theTotalHolding = new TethysDecimal(pTotals.getTotalHolding());
         theTotalCapital = new TethysDecimal(pTotals.getTotalCapital());
+        theTotalNettInterest = new TethysDecimal(pTotals.getTotalNettInterest());
         theTotalInterest = new TethysDecimal(pTotals.getTotalInterest());
         theTotalFees = new TethysDecimal(pTotals.getTotalFees());
         theTotalCashBack = new TethysDecimal(pTotals.getTotalCashBack());
         theTotalBadDebt = new TethysDecimal(pTotals.getTotalBadDebt());
+        theTotalRecovered = new TethysDecimal(pTotals.getTotalRecovered());
     }
 
     @Override
@@ -178,10 +191,12 @@ public class CoeusZopaTotals
         theTotalInvested.addValue(pTotals.getTotalInvested());
         theTotalHolding.addValue(pTotals.getTotalHolding());
         theTotalCapital.addValue(pTotals.getTotalCapital());
+        theTotalNettInterest.addValue(pTotals.getTotalNettInterest());
         theTotalInterest.addValue(pTotals.getTotalInterest());
         theTotalFees.addValue(pTotals.getTotalFees());
         theTotalCashBack.addValue(pTotals.getTotalCashBack());
         theTotalBadDebt.addValue(pTotals.getTotalBadDebt());
+        theTotalRecovered.addValue(pTotals.getTotalRecovered());
     }
 
     @Override
@@ -191,10 +206,12 @@ public class CoeusZopaTotals
         theTotalInvested.addValue(pTransaction.getInvested());
         theTotalHolding.addValue(pTransaction.getHolding());
         theTotalCapital.addValue(pTransaction.getCapital());
+        theTotalNettInterest.addValue(pTransaction.getNettInterest());
         theTotalInterest.addValue(pTransaction.getInterest());
         theTotalFees.addValue(pTransaction.getFees());
         theTotalCashBack.addValue(pTransaction.getCashBack());
         theTotalBadDebt.addValue(pTransaction.getBadDebt());
+        theTotalRecovered.addValue(pTransaction.getRecovered());
     }
 
     @Override
@@ -223,6 +240,11 @@ public class CoeusZopaTotals
     }
 
     @Override
+    public TethysDecimal getTotalNettInterest() {
+        return theTotalNettInterest;
+    }
+
+    @Override
     public TethysDecimal getTotalInterest() {
         return theTotalInterest;
     }
@@ -240,6 +262,11 @@ public class CoeusZopaTotals
     @Override
     public TethysDecimal getTotalBadDebt() {
         return theTotalBadDebt;
+    }
+
+    @Override
+    public TethysDecimal getTotalRecovered() {
+        return theTotalRecovered;
     }
 
     @Override

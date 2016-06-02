@@ -58,6 +58,11 @@ public class CoeusFundingCircleTotals
     private final TethysMoney theTotalCapital;
 
     /**
+     * NettInterest.
+     */
+    private final TethysMoney theTotalNettInterest;
+
+    /**
      * Interest.
      */
     private final TethysMoney theTotalInterest;
@@ -76,6 +81,11 @@ public class CoeusFundingCircleTotals
      * BadDebt.
      */
     private final TethysMoney theTotalBadDebt;
+
+    /**
+     * Recovered.
+     */
+    private final TethysMoney theTotalRecovered;
 
     /**
      * Constructor for zeroed totals.
@@ -120,10 +130,12 @@ public class CoeusFundingCircleTotals
         theTotalInvested = new TethysMoney();
         theTotalHolding = new TethysMoney();
         theTotalCapital = new TethysMoney();
+        theTotalNettInterest = new TethysMoney();
         theTotalInterest = new TethysMoney();
         theTotalFees = new TethysMoney();
         theTotalCashBack = new TethysMoney();
         theTotalBadDebt = new TethysMoney();
+        theTotalRecovered = new TethysMoney();
     }
 
     /**
@@ -141,10 +153,12 @@ public class CoeusFundingCircleTotals
         theTotalInvested = new TethysMoney(pTotals.getTotalInvested());
         theTotalHolding = new TethysMoney(pTotals.getTotalHolding());
         theTotalCapital = new TethysMoney(pTotals.getTotalCapital());
+        theTotalNettInterest = new TethysMoney(pTotals.getTotalInterest());
         theTotalInterest = new TethysMoney(pTotals.getTotalInterest());
         theTotalFees = new TethysMoney(pTotals.getTotalFees());
         theTotalCashBack = new TethysMoney(pTotals.getTotalCashBack());
         theTotalBadDebt = new TethysMoney(pTotals.getTotalBadDebt());
+        theTotalRecovered = new TethysMoney(pTotals.getTotalRecovered());
     }
 
     /**
@@ -162,10 +176,12 @@ public class CoeusFundingCircleTotals
         theTotalInvested = new TethysMoney(pTotals.getTotalInvested());
         theTotalHolding = new TethysMoney(pTotals.getTotalHolding());
         theTotalCapital = new TethysMoney(pTotals.getTotalCapital());
+        theTotalNettInterest = new TethysMoney(pTotals.getTotalNettInterest());
         theTotalInterest = new TethysMoney(pTotals.getTotalInterest());
         theTotalFees = new TethysMoney(pTotals.getTotalFees());
         theTotalCashBack = new TethysMoney(pTotals.getTotalCashBack());
         theTotalBadDebt = new TethysMoney(pTotals.getTotalBadDebt());
+        theTotalRecovered = new TethysMoney(pTotals.getTotalRecovered());
     }
 
     @Override
@@ -175,10 +191,12 @@ public class CoeusFundingCircleTotals
         theTotalInvested.addAmount(pTotals.getTotalInvested());
         theTotalHolding.addAmount(pTotals.getTotalHolding());
         theTotalCapital.addAmount(pTotals.getTotalCapital());
+        theTotalNettInterest.addAmount(pTotals.getTotalNettInterest());
         theTotalInterest.addAmount(pTotals.getTotalInterest());
         theTotalFees.addAmount(pTotals.getTotalFees());
         theTotalCashBack.addAmount(pTotals.getTotalCashBack());
         theTotalBadDebt.addAmount(pTotals.getTotalBadDebt());
+        theTotalRecovered.addAmount(pTotals.getTotalRecovered());
     }
 
     @Override
@@ -188,10 +206,12 @@ public class CoeusFundingCircleTotals
         theTotalInvested.addAmount(pTransaction.getInvested());
         theTotalHolding.addAmount(pTransaction.getHolding());
         theTotalCapital.addAmount(pTransaction.getCapital());
+        theTotalNettInterest.addAmount(pTransaction.getNettInterest());
         theTotalInterest.addAmount(pTransaction.getInterest());
         theTotalFees.addAmount(pTransaction.getFees());
         theTotalCashBack.addAmount(pTransaction.getCashBack());
         theTotalBadDebt.addAmount(pTransaction.getBadDebt());
+        theTotalRecovered.addAmount(pTransaction.getRecovered());
     }
 
     @Override
@@ -220,6 +240,11 @@ public class CoeusFundingCircleTotals
     }
 
     @Override
+    public TethysMoney getNettInterest() {
+        return (TethysMoney) super.getNettInterest();
+    }
+
+    @Override
     public TethysMoney getInterest() {
         return (TethysMoney) super.getInterest();
     }
@@ -237,6 +262,11 @@ public class CoeusFundingCircleTotals
     @Override
     public TethysMoney getBadDebt() {
         return (TethysMoney) super.getBadDebt();
+    }
+
+    @Override
+    public TethysMoney getRecovered() {
+        return (TethysMoney) super.getRecovered();
     }
 
     @Override
@@ -260,6 +290,11 @@ public class CoeusFundingCircleTotals
     }
 
     @Override
+    public TethysMoney getTotalNettInterest() {
+        return theTotalNettInterest;
+    }
+
+    @Override
     public TethysMoney getTotalInterest() {
         return theTotalInterest;
     }
@@ -277,6 +312,11 @@ public class CoeusFundingCircleTotals
     @Override
     public TethysMoney getTotalBadDebt() {
         return theTotalBadDebt;
+    }
+
+    @Override
+    public TethysMoney getTotalRecovered() {
+        return theTotalRecovered;
     }
 
     @Override

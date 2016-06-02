@@ -64,6 +64,7 @@ public class CoeusZopaBadDebtParser
     protected CoeusZopaBadDebtParser(final CoeusZopaMarket pMarket) {
         /* Initialise the underlying class */
         super(pMarket.getFormatter(), HEADERS);
+        setDecimalSize(CoeusZopaMarket.DECIMAL_SIZE);
         theMarket = pMarket;
 
         /* Create the badDebts list */

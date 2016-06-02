@@ -63,6 +63,11 @@ public class CoeusRateSetterTotals
     private final TethysMoney theTotalCapital;
 
     /**
+     * NettInterest.
+     */
+    private final TethysMoney theTotalNettInterest;
+
+    /**
      * Interest.
      */
     private final TethysMoney theTotalInterest;
@@ -115,6 +120,7 @@ public class CoeusRateSetterTotals
         theTotalInvested = new TethysMoney();
         theTotalHolding = new TethysMoney();
         theTotalCapital = new TethysMoney();
+        theTotalNettInterest = new TethysMoney();
         theTotalInterest = new TethysMoney();
         theTotalFees = new TethysMoney();
     }
@@ -134,11 +140,9 @@ public class CoeusRateSetterTotals
         theTotalInvested = new TethysMoney(pTotals.getTotalInvested());
         theTotalHolding = new TethysMoney(pTotals.getTotalHolding());
         theTotalCapital = new TethysMoney(pTotals.getTotalCapital());
+        theTotalNettInterest = new TethysMoney(pTotals.getTotalNettInterest());
         theTotalInterest = new TethysMoney(pTotals.getTotalInterest());
         theTotalFees = new TethysMoney(pTotals.getTotalFees());
-
-        /* Add the transaction to the totals */
-        addTransactionToTotals(pUnderlying);
     }
 
     /**
@@ -156,6 +160,7 @@ public class CoeusRateSetterTotals
         theTotalInvested = new TethysMoney(pTotals.getTotalInvested());
         theTotalHolding = new TethysMoney(pTotals.getTotalHolding());
         theTotalCapital = new TethysMoney(pTotals.getTotalCapital());
+        theTotalNettInterest = new TethysMoney(pTotals.getTotalNettInterest());
         theTotalInterest = new TethysMoney(pTotals.getTotalInterest());
         theTotalFees = new TethysMoney(pTotals.getTotalFees());
     }
@@ -167,6 +172,7 @@ public class CoeusRateSetterTotals
         theTotalInvested.addAmount(pTotals.getTotalInvested());
         theTotalHolding.addAmount(pTotals.getTotalHolding());
         theTotalCapital.addAmount(pTotals.getTotalCapital());
+        theTotalNettInterest.addAmount(pTotals.getTotalNettInterest());
         theTotalInterest.addAmount(pTotals.getTotalInterest());
         theTotalFees.addAmount(pTotals.getTotalFees());
     }
@@ -178,6 +184,7 @@ public class CoeusRateSetterTotals
         theTotalInvested.addAmount(pTransaction.getInvested());
         theTotalHolding.addAmount(pTransaction.getHolding());
         theTotalCapital.addAmount(pTransaction.getCapital());
+        theTotalNettInterest.addAmount(pTransaction.getNettInterest());
         theTotalInterest.addAmount(pTransaction.getInterest());
         theTotalFees.addAmount(pTransaction.getFees());
     }
@@ -203,6 +210,11 @@ public class CoeusRateSetterTotals
     }
 
     @Override
+    public TethysMoney getNettInterest() {
+        return (TethysMoney) super.getNettInterest();
+    }
+
+    @Override
     public TethysMoney getInterest() {
         return (TethysMoney) super.getInterest();
     }
@@ -220,6 +232,11 @@ public class CoeusRateSetterTotals
     @Override
     public TethysMoney getBadDebt() {
         return (TethysMoney) super.getBadDebt();
+    }
+
+    @Override
+    public TethysMoney getRecovered() {
+        return (TethysMoney) super.getRecovered();
     }
 
     @Override
@@ -243,6 +260,11 @@ public class CoeusRateSetterTotals
     }
 
     @Override
+    public TethysMoney getTotalNettInterest() {
+        return theTotalNettInterest;
+    }
+
+    @Override
     public TethysMoney getTotalInterest() {
         return theTotalInterest;
     }
@@ -259,6 +281,11 @@ public class CoeusRateSetterTotals
 
     @Override
     public TethysMoney getTotalBadDebt() {
+        return ZERO_MONEY;
+    }
+
+    @Override
+    public TethysMoney getTotalRecovered() {
         return ZERO_MONEY;
     }
 

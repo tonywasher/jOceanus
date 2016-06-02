@@ -123,8 +123,8 @@ public class CoeusFundingCircleLoanBookItem
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    public CoeusFundingCircleLoanBookItem(final CoeusFundingCircleLoanBookParser pParser,
-                                          final List<String> pFields) throws OceanusException {
+    protected CoeusFundingCircleLoanBookItem(final CoeusFundingCircleLoanBookParser pParser,
+                                             final List<String> pFields) throws OceanusException {
         /* Iterate through the fields */
         Iterator<String> myIterator = pFields.iterator();
 
@@ -214,7 +214,7 @@ public class CoeusFundingCircleLoanBookItem
      * @return the risk
      * @throws OceanusException on error
      */
-    private CoeusLoanRisk determineRisk(final String pRisk) throws OceanusException {
+    private static CoeusLoanRisk determineRisk(final String pRisk) throws OceanusException {
         /* If the risk is empty, return unclassified */
         if (pRisk.length() == 0) {
             return CoeusLoanRisk.UNCLASSIFIED;
@@ -260,7 +260,7 @@ public class CoeusFundingCircleLoanBookItem
      * @return the status
      * @throws OceanusException on error
      */
-    private CoeusLoanStatus determineStatus(final String pStatus) throws OceanusException {
+    private static CoeusLoanStatus determineStatus(final String pStatus) throws OceanusException {
         /* Look for Active status */
         if ("Live".equals(pStatus)
             || "Processing".equals(pStatus)) {
@@ -287,8 +287,19 @@ public class CoeusFundingCircleLoanBookItem
     }
 
     @Override
+    public String toString() {
+        return formatObject();
+    }
+
+    @Override
     public String formatObject() {
-        return theLoanId;
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(theLoanId);
+        myBuilder.append(' ');
+        myBuilder.append(theStatus.toString());
+        myBuilder.append(' ');
+        myBuilder.append(theBalance.toString());
+        return myBuilder.toString();
     }
 
     @Override

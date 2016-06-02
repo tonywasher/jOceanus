@@ -169,6 +169,11 @@ public class CoeusFundingCircleTransaction
     private final TethysMoney theCapital;
 
     /**
+     * NettInterest.
+     */
+    private final TethysMoney theNettInterest;
+
+    /**
      * Interest.
      */
     private final TethysMoney theInterest;
@@ -187,6 +192,11 @@ public class CoeusFundingCircleTransaction
      * BadDebt.
      */
     private final TethysMoney theBadDebt;
+
+    /**
+     * Recovered.
+     */
+    private final TethysMoney theRecovered;
 
     /**
      * Constructor.
@@ -229,7 +239,9 @@ public class CoeusFundingCircleTransaction
         theFees = determineFeesDelta();
         theCashBack = determineCashBackDelta();
         theBadDebt = determineBadDebtDelta();
+        theRecovered = determineRecoveredDelta();
         theValue = determineValueDelta();
+        theNettInterest = determineNettInterestDelta();
 
         /* Check transaction validity */
         checkValidity();
@@ -289,6 +301,8 @@ public class CoeusFundingCircleTransaction
         theInterest = new TethysMoney();
         theFees = new TethysMoney();
         theCashBack = new TethysMoney();
+        theNettInterest = new TethysMoney();
+        theRecovered = new TethysMoney();
         theValue = determineValueDelta();
 
         /* Check transaction validity */
@@ -303,12 +317,12 @@ public class CoeusFundingCircleTransaction
         /* Obtain the holding */
         TethysMoney myMoney = new TethysMoney(theHolding);
 
-        /* Add Capital BadDebt and Fees */
+        /* Add Capital, BadDebt and Fees */
         myMoney.addAmount(theCapital);
         myMoney.addAmount(theFees);
         myMoney.addAmount(theBadDebt);
 
-        /* Subtract the invested cashBack and interest */
+        /* Subtract the invested, cashBack and interest */
         myMoney.subtractAmount(theInterest);
         myMoney.subtractAmount(theInvested);
         myMoney.subtractAmount(theCashBack);
@@ -316,6 +330,12 @@ public class CoeusFundingCircleTransaction
         /* We should now be zero */
         if (myMoney.isNonZero()) {
             throw new CoeusDataException(this, "Invalid transaction");
+        }
+
+        /* Check that capital is only changed on a loan */
+        if (theCapital.isNonZero()
+            && theLoan == null) {
+            throw new CoeusDataException(this, "Capital changed on non-loan");
         }
     }
 
@@ -372,6 +392,11 @@ public class CoeusFundingCircleTransaction
     }
 
     @Override
+    public TethysMoney getNettInterest() {
+        return theNettInterest;
+    }
+
+    @Override
     public TethysMoney getInterest() {
         return theInterest;
     }
@@ -389,6 +414,11 @@ public class CoeusFundingCircleTransaction
     @Override
     public TethysMoney getBadDebt() {
         return theBadDebt;
+    }
+
+    @Override
+    public TethysMoney getRecovered() {
+        return theRecovered;
     }
 
     /**
@@ -542,6 +572,19 @@ public class CoeusFundingCircleTransaction
     }
 
     /**
+     * determine nettInterest delta.
+     * @return the delta
+     */
+    private TethysMoney determineNettInterestDelta() {
+        /* Obtain change in interest minus change in fees */
+        TethysMoney myValue = new TethysMoney(theInterest);
+        myValue.subtractAmount(theFees);
+
+        /* Return the Value */
+        return myValue;
+    }
+
+    /**
      * determine interest delta.
      * @return the delta
      */
@@ -612,6 +655,23 @@ public class CoeusFundingCircleTransaction
 
         /* Return the debt */
         return myDebt;
+    }
+
+    /**
+     * determine recovered delta.
+     * @return the delta
+     */
+    private TethysMoney determineRecoveredDelta() {
+        /* Obtain change in holding account */
+        TethysMoney myRecovered = new TethysMoney(theHolding);
+
+        /* Recovery is increased by any increase in the holding account */
+        if (!CoeusTransactionType.RECOVERY.equals(theTransType)) {
+            myRecovered.setZero();
+        }
+
+        /* Return the Recovery */
+        return myRecovered;
     }
 
     /**

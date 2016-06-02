@@ -22,10 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.fundingcircle;
 
+import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
+import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * FundingCircle Loan.
@@ -74,6 +77,31 @@ public class CoeusFundingCircleLoan
     @Override
     protected CoeusFundingCircleHistory newHistory() {
         return new CoeusFundingCircleHistory(this);
+    }
+
+    @Override
+    protected void checkLoan() throws CoeusDataException {
+        /* Access details */
+        TethysMoney myBookBalance = getBalance();
+        CoeusFundingCircleTotals myTotals = getTotals();
+        TethysMoney myLoanBalance = myTotals.getTotalCapital();
+
+        /* If this is a badDebt */
+        if (CoeusLoanStatus.BADDEBT.equals(theBookItem.getStatus())) {
+            /* Loan Balance is badDebt - recovered */
+            myLoanBalance = new TethysMoney(myTotals.getTotalBadDebt());
+            myLoanBalance.addAmount(myTotals.getTotalRecovered());
+        }
+
+        /* Check that this matches the book balance */
+        if (!myBookBalance.equals(myLoanBalance)) {
+            throw new CoeusDataException(this, "Bad Balance");
+        }
+    }
+
+    @Override
+    public TethysMoney getBalance() {
+        return theBookItem.getBalance();
     }
 
     @Override

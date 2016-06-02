@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusCSVParser;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -44,6 +43,11 @@ public class CoeusZopaLoanBookParser
             "Scheduled end date", "Expected Repayment", "Loan purpose", "Repaid %" };
 
     /**
+     * The market.
+     */
+    private final CoeusZopaMarket theMarket;
+
+    /**
      * Parsed fields.
      */
     private final List<CoeusZopaLoanBookItem> theLoans;
@@ -55,15 +59,26 @@ public class CoeusZopaLoanBookParser
 
     /**
      * Constructor.
-     * @param pFormatter the formatter
+     * @param pMarket the market
      */
-    protected CoeusZopaLoanBookParser(final MetisDataFormatter pFormatter) {
+    protected CoeusZopaLoanBookParser(final CoeusZopaMarket pMarket) {
         /* Initialise the underlying class */
-        super(pFormatter, HEADERS);
+        super(pMarket.getFormatter(), HEADERS);
+        theMarket = pMarket;
+
+        /* Set the decimal size */
         setDecimalSize(CoeusZopaMarket.DECIMAL_SIZE);
 
         /* Create the loan list */
         theLoans = new ArrayList<>();
+    }
+
+    /**
+     * Obtain the market.
+     * @return the market
+     */
+    protected CoeusZopaMarket getMarket() {
+        return theMarket;
     }
 
     /**

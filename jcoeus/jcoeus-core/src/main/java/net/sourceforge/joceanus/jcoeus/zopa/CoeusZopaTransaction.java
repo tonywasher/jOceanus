@@ -159,6 +159,11 @@ public class CoeusZopaTransaction
     private final TethysDecimal theCapital;
 
     /**
+     * NettInterest.
+     */
+    private final TethysDecimal theNettInterest;
+
+    /**
      * Interest.
      */
     private final TethysDecimal theInterest;
@@ -177,6 +182,11 @@ public class CoeusZopaTransaction
      * BadDebt.
      */
     private final TethysDecimal theBadDebt;
+
+    /**
+     * Recovered.
+     */
+    private final TethysDecimal theRecovered;
 
     /**
      * Constructor.
@@ -219,7 +229,9 @@ public class CoeusZopaTransaction
         theFees = determineFeesDelta();
         theCashBack = determineCashBackDelta();
         theBadDebt = determineBadDebtDelta();
+        theRecovered = determineRecoveredDelta();
         theValue = determineValueDelta();
+        theNettInterest = determineNettInterestDelta();
 
         /* Check transaction validity */
         checkValidity();
@@ -299,9 +311,11 @@ public class CoeusZopaTransaction
         /* Set other values to zero */
         theHolding = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theInvested = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theNettInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theFees = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theCashBack = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theRecovered = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theValue = determineValueDelta();
 
         /* Check transaction validity */
@@ -329,6 +343,12 @@ public class CoeusZopaTransaction
         /* We should now be zero */
         if (myValue.isNonZero()) {
             throw new CoeusDataException(this, "Invalid transaction");
+        }
+
+        /* Check that capital is only changed on a loan */
+        if (theCapital.isNonZero()
+            && theLoan == null) {
+            throw new CoeusDataException(this, "Capital changed on non-loan");
         }
     }
 
@@ -385,6 +405,11 @@ public class CoeusZopaTransaction
     }
 
     @Override
+    public TethysDecimal getNettInterest() {
+        return theNettInterest;
+    }
+
+    @Override
     public TethysDecimal getInterest() {
         return theInterest;
     }
@@ -402,6 +427,11 @@ public class CoeusZopaTransaction
     @Override
     public TethysDecimal getBadDebt() {
         return theBadDebt;
+    }
+
+    @Override
+    public TethysDecimal getRecovered() {
+        return theRecovered;
     }
 
     /**
@@ -428,7 +458,7 @@ public class CoeusZopaTransaction
 
         /* If the description is Capital payment2 */
         if (PFIX_CAPITAL2.equals(theDesc)) {
-            return CoeusTransactionType.CAPITALREPAYMENT;
+            return CoeusTransactionType.INTEREST;
         }
 
         /* If the description is Capital payment */
@@ -535,6 +565,19 @@ public class CoeusZopaTransaction
     }
 
     /**
+     * determine nettInterest delta.
+     * @return the delta
+     */
+    private TethysDecimal determineNettInterestDelta() {
+        /* Obtain change in holding account plus change in capital */
+        TethysDecimal myValue = new TethysDecimal(theInterest);
+        myValue.subtractValue(theFees);
+
+        /* Return the Value */
+        return myValue;
+    }
+
+    /**
      * determine interest delta.
      * @return the delta
      */
@@ -588,6 +631,23 @@ public class CoeusZopaTransaction
     }
 
     /**
+     * determine recovered delta.
+     * @return the delta
+     */
+    private TethysDecimal determineRecoveredDelta() {
+        /* Obtain change in holding account */
+        TethysDecimal myRecovered = new TethysDecimal(theHolding);
+
+        /* recovered is increased by any increase in the holding account */
+        if (!CoeusTransactionType.RECOVERY.equals(theTransType)) {
+            myRecovered.setZero();
+        }
+
+        /* Return the Recovered */
+        return myRecovered;
+    }
+
+    /**
      * determine badDebt delta.
      * @return the delta
      */
@@ -621,9 +681,6 @@ public class CoeusZopaTransaction
         /* Switch on transactionType */
         switch (theTransType) {
             case INTEREST:
-                return thePrefix == null
-                                         ? null
-                                         : theDesc.substring(thePrefix.length());
             case CAPITALREPAYMENT:
                 return thePrefix == null
                                          ? null

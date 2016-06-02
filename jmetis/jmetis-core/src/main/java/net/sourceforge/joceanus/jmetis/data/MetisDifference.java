@@ -68,12 +68,7 @@ public enum MetisDifference {
      * @return true/false
      */
     public boolean isDifferent() {
-        switch (this) {
-            case IDENTICAL:
-                return false;
-            default:
-                return true;
-        }
+        return !IDENTICAL.equals(this);
     }
 
     /**
@@ -89,12 +84,7 @@ public enum MetisDifference {
      * @return true/false
      */
     public boolean isValueChanged() {
-        switch (this) {
-            case DIFFERENT:
-                return true;
-            default:
-                return false;
-        }
+        return DIFFERENT.equals(this);
     }
 
     /**
@@ -102,12 +92,7 @@ public enum MetisDifference {
      * @return true/false
      */
     public boolean isSecurityChanged() {
-        switch (this) {
-            case SECURITY:
-                return false;
-            default:
-                return true;
-        }
+        return SECURITY.equals(this);
     }
 
     /**

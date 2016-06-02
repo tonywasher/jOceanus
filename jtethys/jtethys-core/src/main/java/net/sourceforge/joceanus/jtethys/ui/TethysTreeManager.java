@@ -148,10 +148,7 @@ public abstract class TethysTreeManager<T, N, I>
         return isVisible;
     }
 
-    /**
-     * Set visibility.
-     * @param pVisible true/false
-     */
+    @Override
     public void setVisible(final boolean pVisible) {
         /* If visibility is changing */
         if (isVisible != pVisible) {

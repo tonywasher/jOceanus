@@ -135,6 +135,11 @@ public class CoeusRateSetterTransaction
     private final TethysMoney theCapital;
 
     /**
+     * NettInterest.
+     */
+    private final TethysMoney theNettInterest;
+
+    /**
      * Interest.
      */
     private final TethysMoney theInterest;
@@ -187,6 +192,9 @@ public class CoeusRateSetterTransaction
         /* Handle Invested correctly */
         theInvested = determineInvestedDelta();
 
+        /* Calculate nettInterest delta */
+        theNettInterest = determineNettInterestDelta();
+
         /* Calculate value delta */
         theValue = determineValueDelta();
 
@@ -220,6 +228,7 @@ public class CoeusRateSetterTransaction
         theInterest = new TethysMoney();
         theFees = new TethysMoney();
         theInvested = new TethysMoney();
+        theNettInterest = new TethysMoney();
 
         /* Obtain Capital and holding */
         theCapital = new TethysMoney(pLoan.getLoanBookItem().getLent());
@@ -252,6 +261,13 @@ public class CoeusRateSetterTransaction
         /* We should now be zero */
         if (myMoney.isNonZero()) {
             throw new CoeusDataException(this, "Invalid transaction");
+        }
+
+        /* Check that capital is only changed on a loan */
+        if (theCapital.isNonZero()
+            && (theLoan == null
+                && !CoeusTransactionType.CAPITALLOAN.equals(theTransType))) {
+            throw new CoeusDataException(this, "Capital changed on non-loan");
         }
     }
 
@@ -324,6 +340,11 @@ public class CoeusRateSetterTransaction
     }
 
     @Override
+    public TethysMoney getNettInterest() {
+        return theNettInterest;
+    }
+
+    @Override
     public TethysMoney getInterest() {
         return theInterest;
     }
@@ -340,6 +361,11 @@ public class CoeusRateSetterTransaction
 
     @Override
     public TethysMoney getBadDebt() {
+        return ZERO_MONEY;
+    }
+
+    @Override
+    public TethysMoney getRecovered() {
         return ZERO_MONEY;
     }
 
@@ -427,6 +453,19 @@ public class CoeusRateSetterTransaction
 
         /* Return the Invested */
         return myInvested;
+    }
+
+    /**
+     * determine nettInterest delta.
+     * @return the delta
+     */
+    private TethysMoney determineNettInterestDelta() {
+        /* Obtain change in interest minus change in fees */
+        TethysMoney myValue = new TethysMoney(theInterest);
+        myValue.subtractAmount(theFees);
+
+        /* Return the Value */
+        return myValue;
     }
 
     @Override

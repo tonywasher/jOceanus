@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jcoeus.data;
 
 import net.sourceforge.joceanus.jcoeus.CoeusResource;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
@@ -91,6 +90,11 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     protected static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_CAPITAL.getValue());
 
     /**
+     * NettInterest Field Id.
+     */
+    protected static final MetisField FIELD_NETINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_NETINTEREST.getValue());
+
+    /**
      * Interest Field Id.
      */
     protected static final MetisField FIELD_INTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INTEREST.getValue());
@@ -109,6 +113,11 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
      * BadDebt Field Id.
      */
     protected static final MetisField FIELD_BADDEBT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBT.getValue());
+
+    /**
+     * Recovered Field Id.
+     */
+    protected static final MetisField FIELD_RECOVERED = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_RECOVERED.getValue());
 
     /**
      * Blank Character.
@@ -141,6 +150,11 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     protected static final String ID_CAPITAL = "C";
 
     /**
+     * Id For nettInterest.
+     */
+    protected static final String ID_NETINTEREST = "NI";
+
+    /**
      * Id For interest.
      */
     protected static final String ID_INTEREST = "I";
@@ -164,6 +178,11 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
      * Id For basDebt.
      */
     protected static final String ID_BADDEBT = "BD";
+
+    /**
+     * Id For recovered.
+     */
+    protected static final String ID_RECOVERED = "R";
 
     /**
      * The market.
@@ -242,6 +261,12 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     public abstract TethysDecimal getCapital();
 
     /**
+     * Obtain the Nett interest.
+     * @return the interest
+     */
+    public abstract TethysDecimal getNettInterest();
+
+    /**
      * Obtain the interest.
      * @return the interest
      */
@@ -266,6 +291,12 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     public abstract TethysDecimal getBadDebt();
 
     /**
+     * Obtain the recovered.
+     * @return the recovered
+     */
+    public abstract TethysDecimal getRecovered();
+
+    /**
      * Obtain the data fields.
      * @return the data fields
      */
@@ -282,24 +313,25 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     public String formatObject() {
         /* Create builder and access formatter */
         StringBuilder myBuilder = new StringBuilder();
-        MetisDataFormatter myFormatter = theMarket.getFormatter();
 
         /* Add the values */
         formatValue(myBuilder, ID_VALUE, getValue());
         formatValue(myBuilder, ID_HOLDING, getHolding());
         formatValue(myBuilder, ID_CAPITAL, getCapital());
+        formatValue(myBuilder, ID_NETINTEREST, getNettInterest());
         formatValue(myBuilder, ID_INTEREST, getInterest());
         formatValue(myBuilder, ID_FEES, getFees());
         formatValue(myBuilder, ID_CASHBACK, getCashBack());
         formatValue(myBuilder, ID_BADDEBT, getBadDebt());
         formatValue(myBuilder, ID_INVESTED, getInvested());
+        formatValue(myBuilder, ID_RECOVERED, getRecovered());
 
         /* Add brackets around the values */
         myBuilder.insert(0, CHAR_OPEN);
         myBuilder.append(CHAR_CLOSE);
 
         /* Format the transaction type and date */
-        myBuilder.insert(0, myFormatter.formatObject(getDate()));
+        myBuilder.insert(0, getDate().toString());
         myBuilder.insert(0, CHAR_BLANK);
         myBuilder.insert(0, getTransType().toString());
 
@@ -376,6 +408,12 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
                                       ? MetisFieldValue.SKIP
                                       : myCapital;
         }
+        if (FIELD_NETINTEREST.equals(pField)) {
+            TethysDecimal myInterest = getNettInterest();
+            return myInterest.isZero()
+                                       ? MetisFieldValue.SKIP
+                                       : myInterest;
+        }
         if (FIELD_INTEREST.equals(pField)) {
             TethysDecimal myInterest = getInterest();
             return myInterest.isZero()
@@ -399,6 +437,12 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
             return myBadDebt.isZero()
                                       ? MetisFieldValue.SKIP
                                       : myBadDebt;
+        }
+        if (FIELD_RECOVERED.equals(pField)) {
+            TethysDecimal myRecovered = getRecovered();
+            return myRecovered.isZero()
+                                        ? MetisFieldValue.SKIP
+                                        : myRecovered;
         }
 
         /* Not recognised */

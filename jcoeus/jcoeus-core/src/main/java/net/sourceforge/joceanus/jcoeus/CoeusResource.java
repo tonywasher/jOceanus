@@ -248,6 +248,11 @@ public enum CoeusResource
     DATA_CAPITAL("data.capital"),
 
     /**
+     * Data Net Interest.
+     */
+    DATA_NETINTEREST("data.netinterest"),
+
+    /**
      * Data Interest.
      */
     DATA_INTEREST("data.interest"),
@@ -266,6 +271,11 @@ public enum CoeusResource
      * Data BadDebt.
      */
     DATA_BADDEBT("data.baddebt"),
+
+    /**
+     * Data Recovered.
+     */
+    DATA_RECOVERED("data.recovered"),
 
     /**
      * Data Total Value.
@@ -288,6 +298,11 @@ public enum CoeusResource
     DATA_TOTALCAPITAL("data.total.capital"),
 
     /**
+     * Data Total Net Interest.
+     */
+    DATA_TOTALNETINTEREST("data.total.netinterest"),
+
+    /**
      * Data Total Interest.
      */
     DATA_TOTALINTEREST("data.total.interest"),
@@ -308,6 +323,11 @@ public enum CoeusResource
     DATA_TOTALBADDEBT("data.total.baddebt"),
 
     /**
+     * Data Total Recovered.
+     */
+    DATA_TOTALRECOVERED("data.total.recovered"),
+
+    /**
      * Data StartDate.
      */
     DATA_STARTDATE("data.startdate"),
@@ -315,7 +335,7 @@ public enum CoeusResource
     /**
      * Data OriginalLoan.
      */
-    DATA_ORIGLOAN("data.origloan"),
+    DATA_LENT("data.lent"),
 
     /**
      * Data Balance.
@@ -351,6 +371,26 @@ public enum CoeusResource
      * Data BookItem.
      */
     DATA_BOOKITEM("data.bookitem"),
+
+    /**
+     * Data BookItems.
+     */
+    DATA_BOOKITEMS("data.bookitems"),
+
+    /**
+     * Data Missing.
+     */
+    DATA_MISSING("data.missing"),
+
+    /**
+     * Data Missing LoanBook.
+     */
+    DATA_MISSINGBOOK("data.missing.loanbook"),
+
+    /**
+     * Data Missing Payments.
+     */
+    DATA_MISSINGPAY("data.missing.payments"),
 
     /**
      * Data Totals.

@@ -27,6 +27,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Coeus Loan.
@@ -112,6 +114,20 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T, S, H>, T extends Coeus
     }
 
     /**
+     * Obtain the totals.
+     * @return the totals
+     */
+    public S getTotals() {
+        return theHistory.getTotals();
+    }
+
+    /**
+     * Obtain the balance.
+     * @return the balance
+     */
+    public abstract TethysDecimal getBalance();
+
+    /**
      * Clear the history.
      */
     protected void clearHistory() {
@@ -131,6 +147,12 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T, S, H>, T extends Coeus
      * @return the history
      */
     protected abstract H newHistory();
+
+    /**
+     * CheckLoan.
+     * @throws OceanusException on error
+     */
+    protected abstract void checkLoan() throws OceanusException;
 
     /**
      * Obtain the data fields.

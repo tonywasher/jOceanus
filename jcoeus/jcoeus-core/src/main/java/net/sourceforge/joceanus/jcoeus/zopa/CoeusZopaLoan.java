@@ -26,10 +26,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
+import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Zopa Loan.
@@ -47,9 +51,29 @@ public class CoeusZopaLoan
     private static final MetisField FIELD_BOOKITEM = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BOOKITEM.getValue());
 
     /**
-     * The market.
+     * LoanBookItemList Field Id.
+     */
+    private static final MetisField FIELD_BOOKITEMLIST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BOOKITEMS.getValue());
+
+    /**
+     * Missing Field Id.
+     */
+    private static final MetisField FIELD_MISSING = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSING.getValue());
+
+    /**
+     * The list of bookItems.
+     */
+    private CoeusZopaLoanBookItem theBookItem;
+
+    /**
+     * The list of bookItems.
      */
     private final List<CoeusZopaLoanBookItem> theBookItems;
+
+    /**
+     * The Missing.
+     */
+    private final TethysDecimal theMissing;
 
     /**
      * Constructor.
@@ -60,7 +84,8 @@ public class CoeusZopaLoan
                             final CoeusZopaLoanBookItem pBookItem) {
         super(pMarket, pBookItem.getLoanId());
         theBookItems = new ArrayList<>();
-        addBookItem(pBookItem);
+        theBookItem = pBookItem;
+        theMissing = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
     }
 
     @Override
@@ -73,7 +98,24 @@ public class CoeusZopaLoan
      * @param pBookItem the book item
      */
     protected void addBookItem(final CoeusZopaLoanBookItem pBookItem) {
+        /* If this is the first secondary item */
+        if (theBookItems.isEmpty()) {
+            /* switch the original to the list and replace with a totalling item */
+            theBookItems.add(theBookItem);
+            theBookItem = new CoeusZopaLoanBookItem(theBookItem);
+        }
+
+        /* add to list and totalling item */
+        theBookItem.addBookItem(pBookItem);
         theBookItems.add(pBookItem);
+    }
+
+    /**
+     * Obtain the book item.
+     * @return the item
+     */
+    public CoeusZopaLoanBookItem getBookItem() {
+        return theBookItem;
     }
 
     /**
@@ -90,6 +132,38 @@ public class CoeusZopaLoan
     }
 
     @Override
+    protected void checkLoan() throws CoeusDataException {
+        /* Obtain the book balance and adjust for missing payments */
+        TethysDecimal myBookBalance = new TethysDecimal(theBookItem.getBalance());
+        myBookBalance.addValue(theBookItem.getMissing());
+
+        /* Access the total capital */
+        CoeusZopaTotals myTotals = getTotals();
+        TethysDecimal myLoanBalance = myTotals.getTotalCapital();
+
+        /* If this is a badDebt */
+        if (CoeusLoanStatus.BADDEBT.equals(theBookItem.getStatus())) {
+            /* Loan Balance is badDebt - recovered */
+            myLoanBalance = new TethysDecimal(myTotals.getTotalBadDebt());
+            myLoanBalance.addValue(myTotals.getTotalRecovered());
+        }
+
+        /* Check that this matches the book balance */
+        if (!myBookBalance.equals(myLoanBalance)) {
+            /* Calculate the missing payments */
+            myLoanBalance = new TethysDecimal(myLoanBalance);
+            myLoanBalance.subtractValue(myBookBalance);
+            getMarket().recordMissingPayments(myLoanBalance);
+            theMissing.addValue(myLoanBalance);
+        }
+    }
+
+    @Override
+    public TethysDecimal getBalance() {
+        return theBookItem.getBalance();
+    }
+
+    @Override
     public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
@@ -98,7 +172,17 @@ public class CoeusZopaLoan
     public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
         if (FIELD_BOOKITEM.equals(pField)) {
-            return theBookItems;
+            return theBookItem;
+        }
+        if (FIELD_BOOKITEMLIST.equals(pField)) {
+            return theBookItems.isEmpty()
+                                          ? MetisFieldValue.SKIP
+                                          : theBookItems;
+        }
+        if (FIELD_MISSING.equals(pField)) {
+            return theMissing.isNonZero()
+                                          ? MetisFieldValue.SKIP
+                                          : theMissing;
         }
 
         /* Pass call on */

@@ -61,7 +61,7 @@ public class CoeusRateSetterLoanBookItem
     /**
      * Original Loan Field Id.
      */
-    private static final MetisField FIELD_LENT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ORIGLOAN.getValue());
+    private static final MetisField FIELD_LENT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LENT.getValue());
 
     /**
      * Outstanding Balance Field Id.
@@ -125,9 +125,9 @@ public class CoeusRateSetterLoanBookItem
      * @param pCells the cells
      * @throws OceanusException on error
      */
-    public CoeusRateSetterLoanBookItem(final CoeusRateSetterLoanBookParser pParser,
-                                       final boolean pRepaid,
-                                       final List<Element> pCells) throws OceanusException {
+    protected CoeusRateSetterLoanBookItem(final CoeusRateSetterLoanBookParser pParser,
+                                          final boolean pRepaid,
+                                          final List<Element> pCells) throws OceanusException {
         /* Iterate through the cells */
         Iterator<Element> myIterator = pCells.iterator();
 
@@ -224,8 +224,19 @@ public class CoeusRateSetterLoanBookItem
     }
 
     @Override
+    public String toString() {
+        return formatObject();
+    }
+
+    @Override
     public String formatObject() {
-        return theLoanId;
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(theLoanId);
+        myBuilder.append(' ');
+        myBuilder.append(theStatus.toString());
+        myBuilder.append(' ');
+        myBuilder.append(theBalance.toString());
+        return myBuilder.toString();
     }
 
     @Override

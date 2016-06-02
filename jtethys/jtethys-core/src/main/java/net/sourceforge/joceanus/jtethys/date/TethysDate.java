@@ -731,20 +731,22 @@ public class TethysDate
             return false;
         }
 
-        /* Make sure that the object is a JDateDay */
+        /* Make sure that the object is a TethysDate */
         if (pThat.getClass() != this.getClass()) {
             return false;
         }
 
-        /* Access the object as a JDateDay */
+        /* Access the object as a TethysDate */
         TethysDate myThat = (TethysDate) pThat;
 
         /* Check components */
         if (theYear != myThat.theYear) {
             return false;
-        } else if (theMonth != myThat.theMonth) {
+        }
+        if (theMonth != myThat.theMonth) {
             return false;
-        } else if (theDay != myThat.theDay) {
+        }
+        if (theDay != myThat.theDay) {
             return false;
         }
         return true;

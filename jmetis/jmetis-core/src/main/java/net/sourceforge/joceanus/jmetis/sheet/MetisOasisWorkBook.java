@@ -688,54 +688,79 @@ public class MetisOasisWorkBook {
                 theStyles.appendChild(new OdfNumberPercentageStyle(theContentDom, pFormat, pStyleName));
                 break;
             default:
-                /* Declare variables */
-                String myPosName;
-                String myNegName;
-                OdfNumberStyle myPos;
-                OdfNumberStyle myNeg;
-                StyleTextPropertiesElement myNegStyle;
-
-                /* Look for format splits */
-                String[] myParts = pFormat.split(Character.toString(MetisDataFormats.CHAR_SEP));
-                switch (myParts.length) {
-                    case 1:
-                        theStyles.appendChild(new OdfNumberStyle(theContentDom, pFormat, pStyleName));
-                        break;
-                    case 2:
-                        myNegName = "m"
-                                    + pStyleName;
-                        myPos = new OdfNumberStyle(theContentDom, myParts[0], pStyleName);
-                        myNeg = new OdfNumberStyle(theContentDom, myParts[0], myNegName);
-                        myPos.setMapNegative(myNegName);
-                        myNegStyle = new StyleTextPropertiesElement(theContentDom);
-                        myNegStyle.setFoColorAttribute(COLOR_NEG);
-                        myNeg.insertBefore(myNegStyle, myNeg.getFirstChild());
-                        theStyles.appendChild(myNeg);
-                        theStyles.appendChild(myPos);
-                        break;
-                    default:
-                        myNegName = "n"
-                                    + pStyleName;
-                        myPosName = "p"
-                                    + pStyleName;
-                        myPos = new OdfNumberStyle(theContentDom, myParts[0], myPosName);
-                        myNeg = new OdfNumberStyle(theContentDom, myParts[0], myNegName);
-                        OdfNumberStyle myZero = new OdfNumberStyle(theContentDom);
-                        myZero.setStyleNameAttribute(pStyleName);
-                        NumberTextElement myZeroText = myZero.newNumberTextElement();
-                        myZeroText.setTextContent(myParts[2]);
-                        myZero.setMapNegative(myNegName);
-                        myZero.setMapPositive(myPosName);
-                        myNegStyle = new StyleTextPropertiesElement(theContentDom);
-                        myNegStyle.setFoColorAttribute(COLOR_NEG);
-                        myNeg.insertBefore(myNegStyle, myNeg.getFirstChild());
-                        theStyles.appendChild(myNeg);
-                        theStyles.appendChild(myPos);
-                        theStyles.appendChild(myZero);
-                        break;
-                }
+                createStandardNumericStyle(pStyleName, pFormat);
                 break;
         }
+    }
+
+    /**
+     * Define a standard numeric CellStyle.
+     * @param pStyleName the style name
+     * @param pFormat the style format
+     */
+    private void createStandardNumericStyle(final String pStyleName,
+                                            final String pFormat) {
+        /* Look for format splits */
+        String[] myParts = pFormat.split(Character.toString(MetisDataFormats.CHAR_SEP));
+        switch (myParts.length) {
+            case 1:
+                theStyles.appendChild(new OdfNumberStyle(theContentDom, pFormat, pStyleName));
+                break;
+            case 2:
+                createDoubleNumericStyle(pStyleName, myParts);
+                break;
+            default:
+                createTripleNumericStyle(pStyleName, myParts);
+                break;
+        }
+    }
+
+    /**
+     * Define a double numeric CellStyle.
+     * @param pStyleName the style name
+     * @param pParts the format parts
+     */
+    private void createDoubleNumericStyle(final String pStyleName,
+                                          final String[] pParts) {
+        /* Build style */
+        String myNegName = "m"
+                           + pStyleName;
+        OdfNumberStyle myPos = new OdfNumberStyle(theContentDom, pParts[0], pStyleName);
+        OdfNumberStyle myNeg = new OdfNumberStyle(theContentDom, pParts[0], myNegName);
+        myPos.setMapNegative(myNegName);
+        StyleTextPropertiesElement myNegStyle = new StyleTextPropertiesElement(theContentDom);
+        myNegStyle.setFoColorAttribute(COLOR_NEG);
+        myNeg.insertBefore(myNegStyle, myNeg.getFirstChild());
+        theStyles.appendChild(myNeg);
+        theStyles.appendChild(myPos);
+    }
+
+    /**
+     * Define a triple numeric CellStyle.
+     * @param pStyleName the style name
+     * @param pParts the format parts
+     */
+    private void createTripleNumericStyle(final String pStyleName,
+                                          final String[] pParts) {
+        /* Build style */
+        String myNegName = "n"
+                           + pStyleName;
+        String myPosName = "p"
+                           + pStyleName;
+        OdfNumberStyle myPos = new OdfNumberStyle(theContentDom, pParts[0], myPosName);
+        OdfNumberStyle myNeg = new OdfNumberStyle(theContentDom, pParts[0], myNegName);
+        OdfNumberStyle myZero = new OdfNumberStyle(theContentDom);
+        myZero.setStyleNameAttribute(pStyleName);
+        NumberTextElement myZeroText = myZero.newNumberTextElement();
+        myZeroText.setTextContent(pParts[2]);
+        myZero.setMapNegative(myNegName);
+        myZero.setMapPositive(myPosName);
+        StyleTextPropertiesElement myNegStyle = new StyleTextPropertiesElement(theContentDom);
+        myNegStyle.setFoColorAttribute(COLOR_NEG);
+        myNeg.insertBefore(myNegStyle, myNeg.getFirstChild());
+        theStyles.appendChild(myNeg);
+        theStyles.appendChild(myPos);
+        theStyles.appendChild(myZero);
     }
 
     /**

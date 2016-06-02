@@ -70,12 +70,17 @@ public class CoeusZopaLoanBookItem
     /**
      * Original Loan Field Id.
      */
-    private static final MetisField FIELD_LOAN = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ORIGLOAN.getValue());
+    private static final MetisField FIELD_LENT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LENT.getValue());
 
     /**
      * Balance Field Id.
      */
     private static final MetisField FIELD_BALANCE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BALANCE.getValue());
+
+    /**
+     * Missing Field Id.
+     */
+    private static final MetisField FIELD_MISSING = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSING.getValue());
 
     /**
      * The loan Id.
@@ -128,6 +133,11 @@ public class CoeusZopaLoanBookItem
     private final TethysDecimal theArrears;
 
     /**
+     * The Missing.
+     */
+    private final TethysDecimal theMissing;
+
+    /**
      * The portion repaid.
      */
     private final TethysRate thePortionRepaid;
@@ -143,8 +153,8 @@ public class CoeusZopaLoanBookItem
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    public CoeusZopaLoanBookItem(final CoeusZopaLoanBookParser pParser,
-                                 final List<String> pFields) throws OceanusException {
+    protected CoeusZopaLoanBookItem(final CoeusZopaLoanBookParser pParser,
+                                    final List<String> pFields) throws OceanusException {
         /* Iterate through the fields */
         Iterator<String> myIterator = pFields.iterator();
 
@@ -176,6 +186,14 @@ public class CoeusZopaLoanBookItem
         theInterest = pParser.parseDecimal(myIterator.next());
         theArrears = pParser.parseDecimal(myIterator.next());
 
+        /* Determine any missing capital */
+        theMissing = new TethysDecimal(theLent);
+        theMissing.subtractValue(theCapital);
+        theMissing.subtractValue(theBalance);
+
+        /* Add to the total missing book */
+        pParser.getMarket().recordMissingBook(theMissing);
+
         /* Skip Payment Day */
         myIterator.next();
 
@@ -193,6 +211,53 @@ public class CoeusZopaLoanBookItem
 
         /* Parse the rate */
         thePortionRepaid = pParser.parseRate(myIterator.next());
+    }
+
+    /**
+     * Constructor.
+     * @param pSource the source item
+     */
+    protected CoeusZopaLoanBookItem(final CoeusZopaLoanBookItem pSource) {
+        /* Obtain IDs */
+        theLoanId = pSource.getLoanId();
+
+        /* Risk varies */
+        theRisk = pSource.getRisk();
+
+        /* Derive the status */
+        theStatus = pSource.getStatus();
+
+        /* Parse the rate */
+        theRate = pSource.getRate();
+
+        /* Parse the outstanding balances */
+        theLent = new TethysDecimal(pSource.getLent());
+        theBalance = new TethysDecimal(pSource.getBalance());
+        theRepaid = new TethysDecimal(pSource.getRepaid());
+        theCapital = new TethysDecimal(pSource.getCapitalRepaid());
+        theInterest = new TethysDecimal(pSource.getInterestRepaid());
+        theArrears = new TethysDecimal(pSource.getArrears());
+        theMissing = new TethysDecimal(pSource.getMissing());
+
+        /* Determine whether the loan is safeGuarded */
+        isSafeGuarded = false;
+
+        /* Parse the rate */
+        thePortionRepaid = null;
+    }
+
+    /**
+     * Add bookItem.
+     * @param pSource the source item
+     */
+    protected void addBookItem(final CoeusZopaLoanBookItem pSource) {
+        theLent.addValue(pSource.getLent());
+        theBalance.addValue(pSource.getBalance());
+        theRepaid.addValue(pSource.getRepaid());
+        theInterest.addValue(pSource.getInterestRepaid());
+        theCapital.addValue(pSource.getCapitalRepaid());
+        theArrears.addValue(pSource.getArrears());
+        theMissing.addValue(pSource.getMissing());
     }
 
     /**
@@ -276,6 +341,14 @@ public class CoeusZopaLoanBookItem
     }
 
     /**
+     * Obtain the missing.
+     * @return the missing capital
+     */
+    public TethysDecimal getMissing() {
+        return theMissing;
+    }
+
+    /**
      * Obtain the portion repaid.
      * @return the portion repaid
      */
@@ -297,7 +370,7 @@ public class CoeusZopaLoanBookItem
      * @return the risk
      * @throws OceanusException on error
      */
-    private CoeusLoanRisk determineRisk(final String pRisk) throws OceanusException {
+    private static CoeusLoanRisk determineRisk(final String pRisk) throws OceanusException {
         /* If the risk is empty, return unclassified */
         if (pRisk.length() == 0) {
             return CoeusLoanRisk.UNCLASSIFIED;
@@ -348,7 +421,7 @@ public class CoeusZopaLoanBookItem
      * @return the status
      * @throws OceanusException on error
      */
-    private CoeusLoanStatus determineStatus(final String pStatus) throws OceanusException {
+    private static CoeusLoanStatus determineStatus(final String pStatus) throws OceanusException {
         /* Look for Offered status */
         if ("WithdrawalPending".equals(pStatus)) {
             return CoeusLoanStatus.OFFERED;
@@ -382,7 +455,22 @@ public class CoeusZopaLoanBookItem
 
     @Override
     public String formatObject() {
-        return theLoanId;
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(theLoanId);
+        myBuilder.append(' ');
+        myBuilder.append(theStatus.toString());
+        myBuilder.append(",B=");
+        myBuilder.append(theBalance.toString());
+        if (theMissing.isNonZero()) {
+            myBuilder.append(",M=");
+            myBuilder.append(theMissing.toString());
+        }
+        return myBuilder.toString();
+    }
+
+    @Override
+    public String toString() {
+        return formatObject();
     }
 
     @Override
@@ -405,11 +493,16 @@ public class CoeusZopaLoanBookItem
         if (FIELD_STATUS.equals(pField)) {
             return theStatus;
         }
-        if (FIELD_LOAN.equals(pField)) {
+        if (FIELD_LENT.equals(pField)) {
             return theLent;
         }
         if (FIELD_BALANCE.equals(pField)) {
             return theBalance;
+        }
+        if (FIELD_MISSING.equals(pField)) {
+            return theMissing.isNonZero()
+                                          ? MetisFieldValue.SKIP
+                                          : theMissing;
         }
 
         /* Not recognised */

@@ -216,32 +216,23 @@ public class MetisOasisCell
 
     @Override
     public Boolean getBooleanValue() {
-        switch (getValueType()) {
-            case BOOLEAN:
-                return theOasisCell.getOfficeBooleanValueAttribute();
-            default:
-                return null;
-        }
+        return Value.BOOLEAN.equals(getValueType())
+                                                    ? theOasisCell.getOfficeBooleanValueAttribute()
+                                                    : null;
     }
 
     @Override
     public TethysDate getDateValue() throws OceanusException {
-        switch (getValueType()) {
-            case DATE:
-                return parseValue(theOasisCell.getOfficeDateValueAttribute(), TethysDate.class);
-            default:
-                return null;
-        }
+        return Value.DATE.equals(getValueType())
+                                                 ? parseValue(theOasisCell.getOfficeDateValueAttribute(), TethysDate.class)
+                                                 : null;
     }
 
     @Override
     public Integer getIntegerValue() throws OceanusException {
-        switch (getValueType()) {
-            case FLOAT:
-                return theOasisCell.getOfficeValueAttribute().intValue();
-            default:
-                return null;
-        }
+        return Value.FLOAT.equals(getValueType())
+                                                  ? theOasisCell.getOfficeValueAttribute().intValue()
+                                                  : null;
     }
 
     @Override
@@ -281,32 +272,23 @@ public class MetisOasisCell
 
     @Override
     public TethysUnits getUnitsValue() throws OceanusException {
-        switch (getValueType()) {
-            case FLOAT:
-                return parseValue(theOasisCell.getOfficeValueAttribute(), TethysUnits.class);
-            default:
-                return null;
-        }
+        return Value.FLOAT.equals(getValueType())
+                                                  ? parseValue(theOasisCell.getOfficeValueAttribute(), TethysUnits.class)
+                                                  : null;
     }
 
     @Override
     public TethysDilution getDilutionValue() throws OceanusException {
-        switch (getValueType()) {
-            case FLOAT:
-                return parseValue(theOasisCell.getOfficeValueAttribute(), TethysDilution.class);
-            default:
-                return null;
-        }
+        return Value.FLOAT.equals(getValueType())
+                                                  ? parseValue(theOasisCell.getOfficeValueAttribute(), TethysDilution.class)
+                                                  : null;
     }
 
     @Override
     public TethysRatio getRatioValue() throws OceanusException {
-        switch (getValueType()) {
-            case FLOAT:
-                return parseValue(theOasisCell.getOfficeValueAttribute(), TethysRatio.class);
-            default:
-                return null;
-        }
+        return Value.FLOAT.equals(getValueType())
+                                                  ? parseValue(theOasisCell.getOfficeValueAttribute(), TethysRatio.class)
+                                                  : null;
     }
 
     @Override

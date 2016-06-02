@@ -35,7 +35,7 @@ public class CoeusZopaTester {
     /**
      * Base Path.
      */
-    private static final String BASE_PATH = "c:\\Users\\Tony\\Documents\\Peer2Peer\\Archive\\Zopa";
+    private static final String BASE_PATH = "c:\\Users\\Tony\\Documents\\Peer2Peer\\Archive\\Zopa1";
 
     /**
      * Main program.
@@ -90,12 +90,14 @@ public class CoeusZopaTester {
             myMarket.parseStatement(new File(BASE_PATH, "ZopaStatement March 2016.csv"));
             myMarket.parseStatement(new File(BASE_PATH, "ZopaStatement April 2016.csv"));
             myMarket.parseStatement(new File(BASE_PATH, "ZopaStatement May 2016.csv"));
+            myMarket.parseStatement(new File(BASE_PATH, "ZopaStatement June 2016.csv"));
 
             /* Parse the badDebt file */
             myMarket.parseBadDebtBook(new File(BASE_PATH, "my_baddebt_loan_book.csv"));
 
             /* Analyse the data */
             myMarket.analyseMarket();
+            myMarket.checkLoans();
 
             /* Catch Exceptions */
         } catch (OceanusException e) {

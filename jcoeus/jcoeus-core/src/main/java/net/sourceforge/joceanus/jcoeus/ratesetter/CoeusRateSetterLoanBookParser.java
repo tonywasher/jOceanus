@@ -192,9 +192,9 @@ public class CoeusRateSetterLoanBookParser {
      * @param pName the element name
      * @param pList the list of elements
      */
-    private void listChildElements(final Element pElement,
-                                   final String pName,
-                                   final List<Element> pList) {
+    private static void listChildElements(final Element pElement,
+                                          final String pName,
+                                          final List<Element> pList) {
         /* Reset the list */
         pList.clear();
 

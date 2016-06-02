@@ -26,12 +26,16 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarketProvider;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Zopa Market.
@@ -42,6 +46,16 @@ public class CoeusZopaMarket
      * Report fields.
      */
     private static final MetisFields FIELD_DEFS = new MetisFields(CoeusZopaMarket.class.getSimpleName(), CoeusLoanMarket.getBaseFields());
+
+    /**
+     * Missing LoanBook Field Id.
+     */
+    private static final MetisField FIELD_MISSINGBOOK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGBOOK.getValue());
+
+    /**
+     * Missing Payments Field Id.
+     */
+    private static final MetisField FIELD_MISSINGPAY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGPAY.getValue());
 
     /**
      * The Decimal size.
@@ -64,6 +78,16 @@ public class CoeusZopaMarket
     private final CoeusZopaTransactionParser theXactionParser;
 
     /**
+     * The Missing LoanBook Balance.
+     */
+    private final TethysDecimal theMissingLoanBook;
+
+    /**
+     * The Missing LoanPayments.
+     */
+    private final TethysDecimal theMissingPayments;
+
+    /**
      * Constructor.
      * @param pFormatter the formatter
      */
@@ -72,9 +96,13 @@ public class CoeusZopaMarket
         super(pFormatter, CoeusLoanMarketProvider.ZOPA);
 
         /* Create the parsers */
-        theBookParser = new CoeusZopaLoanBookParser(pFormatter);
+        theBookParser = new CoeusZopaLoanBookParser(this);
         theDebtParser = new CoeusZopaBadDebtParser(this);
         theXactionParser = new CoeusZopaTransactionParser(this);
+
+        /* Create missing counters */
+        theMissingLoanBook = new TethysDecimal(0, DECIMAL_SIZE);
+        theMissingPayments = new TethysDecimal(0, DECIMAL_SIZE);
     }
 
     /**
@@ -136,7 +164,9 @@ public class CoeusZopaMarket
         while (myIterator.hasPrevious()) {
             CoeusZopaTransaction myTrans = myIterator.previous();
 
-            /* Add to the transactions */
+            /*
+             * If this is /* Add to the transactions
+             */
             addTransaction(myTrans);
         }
     }
@@ -162,6 +192,22 @@ public class CoeusZopaMarket
         return new CoeusZopaHistory(this, pDate);
     }
 
+    /**
+     * Record missing book details.
+     * @param pMissing the missing amount
+     */
+    protected void recordMissingBook(final TethysDecimal pMissing) {
+        theMissingLoanBook.addValue(pMissing);
+    }
+
+    /**
+     * Record missing loan payments.
+     * @param pMissing the missing amount
+     */
+    protected void recordMissingPayments(final TethysDecimal pMissing) {
+        theMissingPayments.addValue(pMissing);
+    }
+
     @Override
     public String formatObject() {
         return FIELD_DEFS.getName();
@@ -170,5 +216,23 @@ public class CoeusZopaMarket
     @Override
     public MetisFields getDataFields() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_MISSINGBOOK.equals(pField)) {
+            return theMissingLoanBook.isZero()
+                                               ? MetisFieldValue.SKIP
+                                               : theMissingLoanBook;
+        }
+        if (FIELD_MISSINGPAY.equals(pField)) {
+            return theMissingPayments.isZero()
+                                               ? MetisFieldValue.SKIP
+                                               : theMissingPayments;
+        }
+
+        /* Pass call on */
+        return super.getFieldValue(pField);
     }
 }

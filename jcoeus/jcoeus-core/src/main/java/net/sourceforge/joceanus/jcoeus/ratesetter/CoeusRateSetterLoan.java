@@ -22,10 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ratesetter;
 
+import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * RateSetter Loan.
@@ -74,6 +76,19 @@ public class CoeusRateSetterLoan
     @Override
     protected CoeusRateSetterHistory newHistory() {
         return new CoeusRateSetterHistory(this);
+    }
+
+    @Override
+    protected void checkLoan() throws CoeusDataException {
+        TethysMoney myBookBalance = theBookItem.getBalance();
+        if (!myBookBalance.equals(getTotals().getTotalCapital())) {
+            throw new CoeusDataException(this, "Bad Balance");
+        }
+    }
+
+    @Override
+    public TethysMoney getBalance() {
+        return theBookItem.getBalance();
     }
 
     @Override

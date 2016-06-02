@@ -216,6 +216,21 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
     }
 
     /**
+     * Check loans.
+     * @throws OceanusException on error
+     */
+    public void checkLoans() throws OceanusException {
+        /* Loop through the loans */
+        Iterator<L> myIterator = loanIterator();
+        while (myIterator.hasNext()) {
+            L myLoan = myIterator.next();
+
+            /* Check the loan */
+            myLoan.checkLoan();
+        }
+    }
+
+    /**
      * LookUp Loan by loanId.
      * @param pId the id of the loan
      * @return the loan
