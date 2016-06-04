@@ -116,7 +116,7 @@ public class TethysValueSet
     public static final String TETHYS_COLOR_SECURITY = STYLE_COLOR + "-security";
 
     /**
-     * The negative colour name.
+     * The header colour name.
      */
     public static final String TETHYS_COLOR_HEADER = STYLE_COLOR + "-header";
 

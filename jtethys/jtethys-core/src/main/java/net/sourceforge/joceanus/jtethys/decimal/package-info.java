@@ -21,12 +21,15 @@
  * $Date$
  ******************************************************************************/
 /**
- * JDecimal is a package that provides a Decimal implementation in many ways similar to that provided by BigDecimal, except that
- * the class is mutable, allowing for much faster arithmetic.
- * <p>Rather than deal with arbitrarily large numbers, JDecimal stores the value as a simple long, and so is not suitable for
- * extremely large values, since precision will be lost. Users should continue to use BigDecimal for these situations
- * <p>This implementation is particularly suited to financial applications since a monetary value of $10,000,000,000,000,000.00 can
- * easily be accommodated within a long. Hopefully this will be sufficient for most peoples purposes.
+ * Package that provides a Decimal implementation in many ways similar to that provided by
+ * BigDecimal, except that the class is mutable, allowing for much faster arithmetic.
+ * <p>
+ * Rather than deal with arbitrarily large numbers, TethysDecimal stores the value as a simple long,
+ * and so is not suitable for extremely large values, as precision can be lost. Users should
+ * continue to use BigDecimal for these situations
+ * <p>
+ * This implementation is particularly suited to financial applications since a monetary value of
+ * $10,000,000,000,000,000.00 can easily be accommodated within a long. Hopefully this will be
+ * sufficient for most peoples purposes.
  */
 package net.sourceforge.joceanus.jtethys.decimal;
-

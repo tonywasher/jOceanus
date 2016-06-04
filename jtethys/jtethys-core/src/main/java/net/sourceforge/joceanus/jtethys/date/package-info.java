@@ -21,8 +21,8 @@
  * $Date$
  ******************************************************************************/
 /**
- * JDateDay is a package that provides a view of a date as simply a day, with no time information. It works on top of (and extends)
- * JDateButton, and also provides a DateDayRange facility to specify and manipulate a contiguous range of dates.
+ * Package that provides a view of a date as simply a day, with no time information. It works on top
+ * of (and extends) JDateButton, and also provides a DateRange facility to specify and manipulate a
+ * contiguous range of dates.
  */
 package net.sourceforge.joceanus.jtethys.date;
-

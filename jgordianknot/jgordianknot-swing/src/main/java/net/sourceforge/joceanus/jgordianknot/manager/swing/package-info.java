@@ -20,8 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.manager.swing;
-
 /**
  * Swing modules for jGordianKnot.
  */
+package net.sourceforge.joceanus.jgordianknot.manager.swing;

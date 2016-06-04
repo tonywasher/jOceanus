@@ -21,6 +21,6 @@
  * $Date$
  ******************************************************************************/
 /**
- * JavaFX Viewer.
+ * Swing Viewer.
  */
 package net.sourceforge.joceanus.jmetis.newviewer.swing;

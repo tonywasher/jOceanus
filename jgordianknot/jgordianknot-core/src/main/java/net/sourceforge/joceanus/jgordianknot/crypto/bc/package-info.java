@@ -21,6 +21,6 @@
  * $Date$
  ******************************************************************************/
 /**
- * Provides JCA versions of the cryptography primitives.
+ * Provides BouncyCastle versions of the cryptography primitives.
  */
 package net.sourceforge.joceanus.jgordianknot.crypto.bc;

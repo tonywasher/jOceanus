@@ -380,6 +380,11 @@ public class MetisViewerPage {
             return MetisViewerMode.SUMMARY;
         }
 
+        /* Handle null */
+        if (theObject == null) {
+            return MetisViewerMode.NULL;
+        }
+
         /* Reject the mode */
         throw new IllegalArgumentException("Invalid object: " + theObject);
     }

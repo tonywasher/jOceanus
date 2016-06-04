@@ -6,6 +6,11 @@ body {
 }
 
 /* Define tables */
+h2 {
+  text-align: center;
+}
+	
+/* Define tables */
 table { 
   width: 90%;
   margin-left:5%; 
@@ -17,21 +22,21 @@ table {
 
 /* Define background colour for oddRow */
 .oddrow td {
-  background-color: ${jtethys-color-zebra};
+  background-color: ${-jtethys-color-zebra};
   text-align: center; 
   border: 1px solid white;
 }
 
 /* Define background colour for evenRow */
 .evenrow td { 
-  background-color: ${jtethys-color-background};
+  background-color: ${-jtethys-color-background};
   text-align: center;
   border: 1px solid white;
 }
 
 /* Define table headers */
 th {
-  background-color: #bbbbbb;
+  background-color: ${-jtethys-color-header};
   font-weight:bold;
   color: white;
   border: 1px solid white;

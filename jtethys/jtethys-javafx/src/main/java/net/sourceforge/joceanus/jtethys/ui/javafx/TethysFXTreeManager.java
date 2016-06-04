@@ -67,7 +67,14 @@ public class TethysFXTreeManager<T>
         theTree.setShowRoot(false);
 
         /* Add listener */
-        theTree.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> fireEvent(TethysUIEvent.NEWVALUE, n.getValue().getItem()));
+        theTree.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> {
+            TethysFXTreeItem<T> myValue = n == null
+                                                    ? null
+                                                    : n.getValue();
+            fireEvent(TethysUIEvent.NEWVALUE, myValue == null
+                                                              ? null
+                                                              : myValue.getItem());
+        });
     }
 
     @Override
@@ -87,17 +94,18 @@ public class TethysFXTreeManager<T>
 
     @Override
     public T getSelectedItem() {
-        return theTree.getSelectionModel().getSelectedItem().getValue().getItem();
+        TreeItem<TethysFXTreeItem<T>> myItem = theTree.getSelectionModel().getSelectedItem();
+        TethysFXTreeItem<T> myValue = myItem == null
+                                                     ? null
+                                                     : myItem.getValue();
+        return myValue == null
+                               ? null
+                               : myValue.getItem();
     }
 
     @Override
     public TethysFXTreeItem<T> lookUpItem(final String pName) {
         return (TethysFXTreeItem<T>) super.lookUpItem(pName);
-    }
-
-    @Override
-    protected void detachTree() {
-        theRoot.removeChildren();
     }
 
     @Override
@@ -250,7 +258,8 @@ public class TethysFXTreeManager<T>
             TethysFXTreeItem<T> myParent = getParent();
 
             /* Delete reference if we are not root */
-            if (myParent != null) {
+            if (theNode != null
+                && myParent != null) {
                 /* remove from list of children */
                 myParent.getNode().getChildren().remove(theNode);
                 theNode = null;
@@ -265,11 +274,8 @@ public class TethysFXTreeManager<T>
             /* Obtain the parent */
             TethysFXTreeItem<T> myParent = getParent();
 
-            /* Ignore if we are the root */
-            if (myParent != null) {
-                /* Add at index in list */
-                myParent.getNode().getChildren().add(pChildNo, theNode);
-            }
+            /* Add at index in list */
+            myParent.getNode().getChildren().add(pChildNo, theNode);
 
             /* attach all visible children */
             super.attachToTree();

@@ -16,6 +16,6 @@
  * 15:06:09 +0000 (Tue, 24 Mar 2015) $
  ******************************************************************************/
 /**
- * Class providing utilities to simplify laying out panels.
+ * Swing UI utilities.
  */
 package net.sourceforge.joceanus.jtethys.ui.swing;

@@ -25,8 +25,10 @@ package net.sourceforge.joceanus.jmetis.threads.javafx;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import net.sourceforge.joceanus.jmetis.newviewer.javafx.MetisFXViewerWindow;
 import net.sourceforge.joceanus.jmetis.threads.MetisTestThread;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXButton;
@@ -37,6 +39,11 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
  */
 public class MetisFXThreadTester
         extends Application {
+    /**
+     * Toolkit.
+     */
+    private final MetisFXToolkit theToolkit;
+
     /**
      * GUI factory.
      */
@@ -78,11 +85,11 @@ public class MetisFXThreadTester
      */
     public MetisFXThreadTester() throws OceanusException {
         /* Create toolkit */
-        MetisFXToolkit myToolkit = new MetisFXToolkit();
+        theToolkit = new MetisFXToolkit();
 
         /* Access components */
-        theGuiFactory = myToolkit.getGuiFactory();
-        theThreadMgr = myToolkit.getThreadManager();
+        theGuiFactory = theToolkit.getGuiFactory();
+        theThreadMgr = theToolkit.getThreadManager();
 
         /* Create buttons */
         theLaunchButton = theGuiFactory.newButton();
@@ -153,6 +160,9 @@ public class MetisFXThreadTester
 
         /* handle launch thread */
         theLaunchButton.getEventRegistrar().addEventListener(e -> launchThread());
+
+        /* handle debug */
+        theDebugButton.getEventRegistrar().addEventListener(e -> showDebug());
     }
 
     /**
@@ -173,6 +183,20 @@ public class MetisFXThreadTester
      * launch thread.
      */
     private void launchThread() {
-        theThreadMgr.startThread(new MetisTestThread());
+        theThreadMgr.startThread(new MetisTestThread<>());
+    }
+
+    /**
+     * show debug.
+     */
+    private void showDebug() {
+        try {
+            MetisFXViewerWindow myWindow = theToolkit.newViewerWindow();
+            theDebugButton.setEnabled(false);
+            myWindow.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theDebugButton.setEnabled(true));
+            myWindow.showDialog();
+        } catch (OceanusException e) {
+            e.printStackTrace();
+        }
     }
 }

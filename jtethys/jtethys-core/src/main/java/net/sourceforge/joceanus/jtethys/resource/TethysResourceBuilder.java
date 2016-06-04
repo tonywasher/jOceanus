@@ -173,6 +173,23 @@ public final class TethysResourceBuilder {
     }
 
     /**
+     * Obtain Icon for enum.
+     * @param <E> the enum type
+     * @param <I> the icon type
+     * @param pMap the map
+     * @param pValue the enum value
+     * @return the icon
+     */
+    public static <E extends Enum<E>, I> I getIconForEnum(final Map<E, I> pMap,
+                                                          final E pValue) {
+        I myIcon = pMap.get(pValue);
+        if (myIcon == null) {
+            throw new IllegalArgumentException(getErrorNoResource(pValue));
+        }
+        return myIcon;
+    }
+
+    /**
      * Load resource file to String.
      * @param pClass the class to use to load the resource
      * @param pName the name of the resource relative to the class

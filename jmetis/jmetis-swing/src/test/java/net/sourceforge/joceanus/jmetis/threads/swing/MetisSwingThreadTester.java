@@ -32,8 +32,10 @@ import javax.swing.WindowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jmetis.newviewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jmetis.threads.MetisTestThread;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
@@ -47,6 +49,11 @@ public class MetisSwingThreadTester {
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MetisSwingThreadTester.class);
+
+    /**
+     * Toolkit.
+     */
+    private final MetisSwingToolkit theToolkit;
 
     /**
      * GUI factory.
@@ -89,11 +96,11 @@ public class MetisSwingThreadTester {
      */
     public MetisSwingThreadTester() throws OceanusException {
         /* Create toolkit */
-        MetisSwingToolkit myToolkit = new MetisSwingToolkit();
+        theToolkit = new MetisSwingToolkit();
 
         /* Access components */
-        theGuiFactory = myToolkit.getGuiFactory();
-        theThreadMgr = myToolkit.getThreadManager();
+        theGuiFactory = theToolkit.getGuiFactory();
+        theThreadMgr = theToolkit.getThreadManager();
 
         /* Create buttons */
         theLaunchButton = theGuiFactory.newButton();
@@ -179,6 +186,9 @@ public class MetisSwingThreadTester {
         /* handle launch thread */
         theLaunchButton.getEventRegistrar().addEventListener(e -> launchThread());
 
+        /* handle debug */
+        theDebugButton.getEventRegistrar().addEventListener(e -> showDebug());
+
         /* Return the node */
         return theMainPanel.getNode();
     }
@@ -201,6 +211,20 @@ public class MetisSwingThreadTester {
      * launch thread.
      */
     private void launchThread() {
-        theThreadMgr.startThread(new MetisTestThread());
+        theThreadMgr.startThread(new MetisTestThread<>());
+    }
+
+    /**
+     * show debug.
+     */
+    private void showDebug() {
+        try {
+            MetisSwingViewerWindow myWindow = theToolkit.newViewerWindow();
+            theDebugButton.setEnabled(false);
+            myWindow.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theDebugButton.setEnabled(true));
+            myWindow.showDialog();
+        } catch (OceanusException e) {
+            e.printStackTrace();
+        }
     }
 }

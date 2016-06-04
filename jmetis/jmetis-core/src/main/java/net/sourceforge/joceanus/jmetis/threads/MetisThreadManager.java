@@ -359,6 +359,7 @@ public abstract class MetisThreadManager<N, I>
      */
     protected void endTask() {
         theProfile.end();
+        theProfileEntry.setObject(theProfile);
         theProfileEntry.setFocus();
     }
 

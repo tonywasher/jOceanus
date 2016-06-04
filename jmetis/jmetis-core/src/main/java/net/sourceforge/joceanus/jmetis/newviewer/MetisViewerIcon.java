@@ -36,12 +36,12 @@ public enum MetisViewerIcon implements TethysIconId {
     /**
      * Next.
      */
-    NEXT("icons/OrangeJellyAlphaDelete.png"),
+    NEXT("BlueJellyNext.png"),
 
     /**
      * Disabled.
      */
-    PREV("icons/OrangeJellyAlphaDisabled.png");
+    PREV("BlueJellyPrevious.png");
 
     /**
      * Source name.

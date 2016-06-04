@@ -15,8 +15,7 @@
  * sourceforge/joceanus/jgordianknot/swing/PasswordDialog.java $ $Revision$ $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.manager.javafx;
-
 /**
  * Swing modules for jGordianKnot.
  */
+package net.sourceforge.joceanus.jgordianknot.manager.javafx;

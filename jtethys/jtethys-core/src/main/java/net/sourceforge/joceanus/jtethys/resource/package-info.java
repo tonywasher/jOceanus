@@ -20,8 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.resource;
-
 /**
  * Class providing utilities to simplify resource bundle usage.
  */
+package net.sourceforge.joceanus.jtethys.resource;

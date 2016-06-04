@@ -178,7 +178,7 @@ public abstract class MetisViewerWindow<N, I>
      * @throws OceanusException on error
      */
     private void loadCSS(final String pName) throws OceanusException {
-        String myCSS = TethysResourceBuilder.loadResourceToString(this.getClass(), pName);
+        String myCSS = TethysResourceBuilder.loadResourceToString(MetisViewerWindow.class, pName);
         theHtml.setCSSContent(myCSS);
     }
 
@@ -193,6 +193,7 @@ public abstract class MetisViewerWindow<N, I>
 
             /* Create a new root entry */
             TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
+            myTreeItem.setVisible(myEntry.isVisible());
 
             /* Create child entries */
             createChildEntries(myTreeItem);
@@ -207,7 +208,9 @@ public abstract class MetisViewerWindow<N, I>
 
         /* Select the focused item */
         MetisViewerEntry myEntry = theDataManager.getFocus();
-        theTree.lookUpAndSelectItem(myEntry.getUniqueName());
+        if (myEntry != null) {
+            theTree.lookUpAndSelectItem(myEntry.getUniqueName());
+        }
     }
 
     /**
@@ -244,6 +247,7 @@ public abstract class MetisViewerWindow<N, I>
 
             /* Create a new child entry */
             TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.addChildItem(pItem, myEntry.getUniqueName(), myEntry);
+            myTreeItem.setVisible(myEntry.isVisible());
 
             /* Create child entries */
             createChildEntries(myTreeItem);
@@ -255,9 +259,15 @@ public abstract class MetisViewerWindow<N, I>
      * @param pEvent the event
      */
     private void handleFocusEvent(final TethysEvent<MetisViewerEvent> pEvent) {
-        /* Look up item and select it */
+        /* Access item and check whether it is the currently selected item */
         MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
-        theTree.lookUpAndSelectItem(myEntry.getUniqueName());
+        boolean isSelected = myEntry.equals(theTree.getSelectedItem());
+
+        /* If it is not the selected item */
+        if (!isSelected) {
+            /* Select the item */
+            theTree.lookUpAndSelectItem(myEntry.getUniqueName());
+        }
     }
 
     /**
@@ -268,7 +278,9 @@ public abstract class MetisViewerWindow<N, I>
         /* Look up item and set visibility */
         MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
         TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
-        myTreeItem.setVisible(myEntry.isVisible());
+        if (myTreeItem != null) {
+            myTreeItem.setVisible(myEntry.isVisible());
+        }
     }
 
     /**
@@ -278,11 +290,18 @@ public abstract class MetisViewerWindow<N, I>
     private void handleValueEvent(final TethysEvent<MetisViewerEvent> pEvent) {
         /* Look up item and rebuild */
         MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
+        boolean isSelected = myEntry.equals(theTree.getSelectedItem());
         TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
 
         /* Remove the children of the item and rebuild them */
         myTreeItem.removeChildren();
         createChildEntries(myTreeItem);
+
+        /* If we are selected */
+        if (isSelected) {
+            /* Refresh the page */
+            handleNewTreeItem(myEntry);
+        }
     }
 
     /**
@@ -350,9 +369,10 @@ public abstract class MetisViewerWindow<N, I>
      */
     private void handleNewTreeItem(final MetisViewerEntry pEntry) {
         if (pEntry != null) {
-            /* Create the page */
+            /* Create the page and ensure that we remember the focus */
             theActive = new MetisViewerPage(pEntry);
             updatePage();
+            pEntry.setFocus();
         }
     }
 

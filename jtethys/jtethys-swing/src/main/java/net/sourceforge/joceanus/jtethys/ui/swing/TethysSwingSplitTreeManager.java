@@ -55,7 +55,7 @@ public class TethysSwingSplitTreeManager<T>
 
         /* Store HTML pane in border pane */
         TethysSwingBorderPaneManager myHTMLPane = getHTMLPane();
-        myHTMLPane.setCentre(getHTMLManager());
+        myHTMLPane.setCentre(myHTMLScroll);
 
         /* Create the split pane */
         theSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll.getNode(), myHTMLPane.getNode());

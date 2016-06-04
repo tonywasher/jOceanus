@@ -154,6 +154,11 @@ public abstract class MetisThreadStatusManager<N, I>
     private boolean progressShowing;
 
     /**
+     * have we completed?
+     */
+    private boolean haveCompleted;
+
+    /**
      * Constructor.
      * @param pManager the Thread Manager
      * @param pFactory the GUI factory
@@ -335,7 +340,8 @@ public abstract class MetisThreadStatusManager<N, I>
      */
     private void showProgress() {
         /* Only bother if we need to */
-        if (!progressShowing) {
+        if (!progressShowing
+            && !haveCompleted) {
             theNode.selectCard(PANEL_PROGRESS);
             progressShowing = true;
         }
@@ -347,6 +353,7 @@ public abstract class MetisThreadStatusManager<N, I>
     private void showStatus() {
         theNode.selectCard(PANEL_STATUS);
         progressShowing = false;
+        haveCompleted = true;
     }
 
     /**
@@ -362,5 +369,6 @@ public abstract class MetisThreadStatusManager<N, I>
     protected void handleClear() {
         /* Note that the thread is completed */
         theThreadManager.threadCompleted();
+        haveCompleted = false;
     }
 }

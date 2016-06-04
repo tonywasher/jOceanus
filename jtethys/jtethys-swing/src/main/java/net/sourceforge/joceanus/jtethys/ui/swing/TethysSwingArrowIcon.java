@@ -26,9 +26,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.EnumMap;
+import java.util.Map;
 
 import javax.swing.Icon;
 
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
 
 /**
@@ -74,6 +77,11 @@ public enum TethysSwingArrowIcon implements Icon {
      * DoubleRight Arrow.
      */
     DOUBLERIGHT(new Point(1, 1), new Point(1, 9), new Point(5, 5), new Point(5, 9), new Point(9, 5), new Point(5, 1), new Point(5, 5));
+
+    /**
+     * The Icon Map.
+     */
+    private static final Map<TethysArrowIconId, Icon> ICON_MAP = buildIconMap();
 
     /**
      * The size of the icon.
@@ -147,30 +155,29 @@ public enum TethysSwingArrowIcon implements Icon {
     }
 
     /**
+     * Build icon map.
+     * @return the map
+     */
+    private static Map<TethysArrowIconId, Icon> buildIconMap() {
+        /* Create the map and return it */
+        Map<TethysArrowIconId, Icon> myMap = new EnumMap<>(TethysArrowIconId.class);
+        myMap.put(TethysArrowIconId.UP, UP);
+        myMap.put(TethysArrowIconId.DOWN, DOWN);
+        myMap.put(TethysArrowIconId.LEFT, LEFT);
+        myMap.put(TethysArrowIconId.RIGHT, RIGHT);
+        myMap.put(TethysArrowIconId.DOUBLEUP, DOUBLEUP);
+        myMap.put(TethysArrowIconId.DOUBLEDOWN, DOUBLEDOWN);
+        myMap.put(TethysArrowIconId.DOUBLELEFT, DOUBLELEFT);
+        myMap.put(TethysArrowIconId.DOUBLERIGHT, DOUBLERIGHT);
+        return myMap;
+    }
+
+    /**
      * Obtain icon for id.
      * @param pId the id
      * @return the icon
      */
     protected static Icon getIconForId(final TethysArrowIconId pId) {
-        switch (pId) {
-            case UP:
-                return UP;
-            case DOWN:
-                return DOWN;
-            case LEFT:
-                return LEFT;
-            case RIGHT:
-                return RIGHT;
-            case DOUBLEUP:
-                return DOUBLEUP;
-            case DOUBLEDOWN:
-                return DOUBLEDOWN;
-            case DOUBLELEFT:
-                return DOUBLELEFT;
-            case DOUBLERIGHT:
-                return DOUBLERIGHT;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return TethysResourceBuilder.getIconForEnum(ICON_MAP, pId);
     }
 }

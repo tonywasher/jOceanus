@@ -116,18 +116,17 @@ public class TethysSwingTreeManager<T>
      */
     @SuppressWarnings("unchecked")
     private T getSelectedItemFromPath(final TreePath pPath) {
-        TethysSwingTreeNode<T> myNode = (TethysSwingTreeNode<T>) pPath.getLastPathComponent();
-        return myNode.getValue().getItem();
+        TethysSwingTreeNode<T> myNode = pPath == null
+                                                      ? null
+                                                      : (TethysSwingTreeNode<T>) pPath.getLastPathComponent();
+        return myNode == null
+                              ? null
+                              : myNode.getValue().getItem();
     }
 
     @Override
     public TethysSwingTreeItem<T> lookUpItem(final String pName) {
         return (TethysSwingTreeItem<T>) super.lookUpItem(pName);
-    }
-
-    @Override
-    protected void detachTree() {
-        theRoot.removeChildren();
     }
 
     @Override
@@ -270,6 +269,7 @@ public class TethysSwingTreeManager<T>
                 if (myTree.isCollapsed(myPath)) {
                     myTree.expandPath(myPath);
                 }
+                myModel.reload();
             }
         }
 
@@ -279,7 +279,8 @@ public class TethysSwingTreeManager<T>
             super.detachFromTree();
 
             /* Delete reference if we are not root */
-            if (getParent() != null) {
+            if (theNode != null
+                && getParent() != null) {
                 /* Remove reference */
                 getTree().theTreeModel.removeNodeFromParent(theNode);
                 theNode = null;
@@ -291,20 +292,18 @@ public class TethysSwingTreeManager<T>
             /* Create the node */
             theNode = new TethysSwingTreeNode<>(this);
 
-            /* Obtain the parent */
+            /* Obtain the parent and model */
             TethysSwingTreeItem<T> myParent = getParent();
+            DefaultTreeModel myModel = getTree().theTreeModel;
 
-            /* Ignore if we are the root */
-            if (myParent != null) {
-                /* Access the model */
-                DefaultTreeModel myModel = getTree().theTreeModel;
-
-                /* Add at index in list */
-                myModel.insertNodeInto(theNode, myParent.getNode(), pChildNo);
-            }
+            /* Add at index in list */
+            myModel.insertNodeInto(theNode, myParent.getNode(), pChildNo);
 
             /* attach all visible children */
             super.attachToTree();
+
+            /* Reload the parent */
+            myModel.reload(myParent.getNode());
         }
 
         @Override

@@ -138,12 +138,12 @@ public class MetisViewerControl<N, I>
 
         /* Create the next button */
         theNextButton = pFactory.newButton();
-        configureButton(theParentButton, MetisViewerIcon.NEXT);
+        configureButton(theNextButton, MetisViewerIcon.NEXT);
         theNextButton.getEventRegistrar().addEventListener(e -> theViewer.handleNextPage());
 
         /* Create the previous button */
         thePrevButton = pFactory.newButton();
-        configureButton(theParentButton, MetisViewerIcon.PREV);
+        configureButton(thePrevButton, MetisViewerIcon.PREV);
         thePrevButton.getEventRegistrar().addEventListener(e -> theViewer.handlePreviousPage());
 
         /* Create the label */
@@ -173,7 +173,8 @@ public class MetisViewerControl<N, I>
         /* Create the Main Pane */
         thePane = pFactory.newBorderPane();
         thePane.setCentre(theSliderPane);
-        thePane.setEast(theButtonsPane);
+        thePane.setWest(theButtonsPane);
+        setVisible(false);
     }
 
     @Override
@@ -217,19 +218,22 @@ public class MetisViewerControl<N, I>
      */
     protected void updateState(final MetisViewerPage pPage) {
         /* Only show Parent button if we have a parent */
-        theParentButton.setVisible(pPage.hasParent());
+        boolean hasParent = pPage.hasParent();
+        theParentButton.setVisible(hasParent);
+        boolean isVisible = hasParent;
 
         /* Set the active mode */
         MetisViewerMode myMode = pPage.getMode();
         boolean isList = !MetisViewerMode.SUMMARY.equals(myMode);
 
         /* Set the Mode Button */
-        theModeButton.setValue(pPage.getMode());
+        theModeButton.setValue(myMode);
         boolean isEnabled = pPage.hasMultiModes();
         theModeButton.setEnabled(isEnabled);
         if (isEnabled) {
             buildModeMenu(pPage);
         }
+        isVisible |= isEnabled;
 
         /* Obtain list details */
         int mySize = pPage.getSize();
@@ -240,6 +244,7 @@ public class MetisViewerControl<N, I>
             && (mySize > 0)) {
             /* Show the Slider */
             theSliderPane.setVisible(true);
+            isVisible = true;
 
             /* Build the text */
             StringBuilder myBuilder = new StringBuilder();
@@ -265,6 +270,9 @@ public class MetisViewerControl<N, I>
             /* Hide the Slider */
             theSliderPane.setVisible(false);
         }
+
+        /* Set visibility */
+        setVisible(isVisible);
     }
 
     /**

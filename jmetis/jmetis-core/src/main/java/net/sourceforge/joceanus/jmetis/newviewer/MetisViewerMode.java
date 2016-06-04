@@ -39,5 +39,10 @@ public enum MetisViewerMode {
     /**
      * Items.
      */
-    ITEMS;
+    ITEMS,
+
+    /**
+     * Null.
+     */
+    NULL;
 }

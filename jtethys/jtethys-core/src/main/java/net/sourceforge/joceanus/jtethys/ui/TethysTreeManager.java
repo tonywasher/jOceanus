@@ -160,20 +160,14 @@ public abstract class TethysTreeManager<T, N, I>
                 /* Attach the root and visible children to the tree */
                 theRoot.attachToTree();
                 applyFocus();
+
+                /* else we are removing all nodes */
             } else {
                 /* Detach the root and children from the tree */
                 theRoot.detachFromTree();
-
-                /* Detach the tree */
-                detachTree();
             }
         }
     }
-
-    /**
-     * Detach the tree.
-     */
-    protected abstract void detachTree();
 
     /**
      * Select and display item.
@@ -421,23 +415,20 @@ public abstract class TethysTreeManager<T, N, I>
                 /* Set new visibility */
                 isVisible = pVisible;
 
-                /* If the tree is visible */
-                if (theTree.isVisible()) {
-                    /* If we are showing the item */
-                    if (pVisible) {
-                        /* Ensure that the parent is visible */
-                        if (!theParent.isVisible()) {
-                            theParent.setVisible(true);
-                        }
+                /* Nothing further to do if we are not showing the tree */
+                if (!theTree.isVisible()) {
+                    return;
+                }
 
-                        /* Attach to parent at required position */
-                        int myPos = countPreviousVisibleSiblings();
-                        attachAsChildNo(myPos);
+                /* If we are showing the item */
+                if (pVisible) {
+                    /* Attach to parent at required position */
+                    int myPos = countPreviousVisibleSiblings();
+                    attachAsChildNo(myPos);
 
-                        /* else just detach item and children */
-                    } else {
-                        detachFromTree();
-                    }
+                    /* else just detach item and children */
+                } else {
+                    detachFromTree();
                 }
             }
         }

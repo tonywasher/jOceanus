@@ -21,7 +21,6 @@
  * $Date$
  ******************************************************************************/
 /**
- * Simple help manager class.
+ * Swing Help utilities.
  */
 package net.sourceforge.joceanus.jtethys.help.swing;
-
