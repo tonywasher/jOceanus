@@ -33,8 +33,8 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerResource;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerWindow;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;

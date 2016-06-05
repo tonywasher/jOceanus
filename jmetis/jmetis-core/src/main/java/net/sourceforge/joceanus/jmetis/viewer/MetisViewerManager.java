@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmetis.viewer;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerResource;
 
 /**
  * Data Manager.

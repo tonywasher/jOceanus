@@ -28,6 +28,7 @@ import javax.swing.JComponent;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.newviewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
@@ -45,7 +46,16 @@ public class MetisSwingToolkit
      * @throws OceanusException on error
      */
     public MetisSwingToolkit() throws OceanusException {
-        super();
+        this(null);
+    }
+
+    /**
+     * Constructor.
+     * @param pProfile the initial profile
+     * @throws OceanusException on error
+     */
+    public MetisSwingToolkit(final MetisProfile pProfile) throws OceanusException {
+        super(pProfile);
     }
 
     @Override

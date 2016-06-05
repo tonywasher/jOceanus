@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
 
 /**
  * Debug Detail class that holds details of links to other objects.

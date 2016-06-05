@@ -20,7 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.viewer;
+package net.sourceforge.joceanus.jmetis.newviewer;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
@@ -108,7 +111,37 @@ public enum MetisViewerResource implements TethysResourceId {
     /**
      * ItemSelect ShowItem text.
      */
-    VIEWER_SELECT_SHOWITEMS("itemSelect.showItems");
+    VIEWER_SELECT_SHOWITEMS("itemSelect.showItems"),
+
+    /**
+     * Error Entry.
+     */
+    VIEWER_ENTRY_ERROR("stdEntry.error"),
+
+    /**
+     * Profile Entry.
+     */
+    VIEWER_ENTRY_PROFILE("stdEntry.profile"),
+
+    /**
+     * Data Entry.
+     */
+    VIEWER_ENTRY_DATA("stdEntry.data"),
+
+    /**
+     * View Entry.
+     */
+    VIEWER_ENTRY_VIEW("stdEntry.view"),
+
+    /**
+     * Preferences Entry.
+     */
+    VIEWER_ENTRY_PREF("stdEntry.pref");
+
+    /**
+     * The stdEntry Map.
+     */
+    private static final Map<MetisViewerStandardEntry, TethysResourceId> ENTRY_MAP = buildEntryMap();
 
     /**
      * The Resource Builder.
@@ -153,5 +186,29 @@ public enum MetisViewerResource implements TethysResourceId {
 
         /* return the value */
         return theValue;
+    }
+
+    /**
+     * Build preference map.
+     * @return the map
+     */
+    private static Map<MetisViewerStandardEntry, TethysResourceId> buildEntryMap() {
+        /* Create the map and return it */
+        Map<MetisViewerStandardEntry, TethysResourceId> myMap = new EnumMap<>(MetisViewerStandardEntry.class);
+        myMap.put(MetisViewerStandardEntry.ERROR, VIEWER_ENTRY_ERROR);
+        myMap.put(MetisViewerStandardEntry.PROFILE, VIEWER_ENTRY_PROFILE);
+        myMap.put(MetisViewerStandardEntry.DATA, VIEWER_ENTRY_DATA);
+        myMap.put(MetisViewerStandardEntry.VIEW, VIEWER_ENTRY_VIEW);
+        myMap.put(MetisViewerStandardEntry.PREFERENCES, VIEWER_ENTRY_PREF);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for stdEntry.
+     * @param pEntry the entry
+     * @return the resource key
+     */
+    protected static TethysResourceId getKeyForStdEntry(final MetisViewerStandardEntry pEntry) {
+        return TethysResourceBuilder.getKeyForEnum(ENTRY_MAP, pEntry);
     }
 }

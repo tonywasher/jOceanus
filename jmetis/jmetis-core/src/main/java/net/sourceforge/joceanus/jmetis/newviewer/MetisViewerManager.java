@@ -23,8 +23,10 @@
 package net.sourceforge.joceanus.jmetis.newviewer;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -47,6 +49,11 @@ public class MetisViewerManager
     private final List<MetisViewerEntry> theRootList;
 
     /**
+     * The Standard Entry Map.
+     */
+    private final Map<MetisViewerStandardEntry, MetisViewerEntry> theStdEntries;
+
+    /**
      * The Next entryId.
      */
     private static AtomicInteger theNextEntryId = new AtomicInteger(1);
@@ -65,6 +72,10 @@ public class MetisViewerManager
 
         /* Create the root list */
         theRootList = new ArrayList<>();
+
+        /* Create the standard entry map */
+        theStdEntries = new EnumMap<>(MetisViewerStandardEntry.class);
+        createStandardEntries();
     }
 
     @Override
@@ -143,6 +154,30 @@ public class MetisViewerManager
         /* Create the entry under the parent */
         MetisViewerEntry myEntry = new MetisViewerEntry(this, pParent, pName);
         fireEvent(MetisViewerEvent.ENTRY, myEntry);
+        return myEntry;
+    }
+
+    /**
+     * Create standard entries.
+     */
+    private void createStandardEntries() {
+        /* Loop through the standard entries */
+        for (MetisViewerStandardEntry myId : MetisViewerStandardEntry.values()) {
+            /* Create invisible root entry and add to the map */
+            MetisViewerEntry myEntry = newEntry(myId.toString());
+            myEntry.setVisible(false);
+            theStdEntries.put(myId, myEntry);
+        }
+    }
+
+    /**
+     * Obtain standard entry.
+     * @param pEntry the standard entry id
+     * @return the viewer entry
+     */
+    public MetisViewerEntry getStandardEntry(final MetisViewerStandardEntry pEntry) {
+        MetisViewerEntry myEntry = theStdEntries.get(pEntry);
+        myEntry.setVisible(true);
         return myEntry;
     }
 }

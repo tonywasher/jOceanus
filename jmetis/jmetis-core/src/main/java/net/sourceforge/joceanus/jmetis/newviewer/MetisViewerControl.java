@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newviewer;
 
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;

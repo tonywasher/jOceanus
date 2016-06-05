@@ -51,8 +51,8 @@ import javax.swing.text.html.StyleSheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerResource;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
 
 /**
  * Data Item.

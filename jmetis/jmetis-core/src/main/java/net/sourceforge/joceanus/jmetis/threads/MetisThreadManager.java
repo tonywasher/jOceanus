@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadPreference.MetisThreadPreferenceKey;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadPreference.MetisThreadPreferences;
@@ -55,6 +56,11 @@ public abstract class MetisThreadManager<N, I>
     private final TethysEventManager<MetisThreadEvent> theEventManager;
 
     /**
+     * The Toolkit.
+     */
+    private final MetisToolkit<N, I> theToolkit;
+
+    /**
      * The StatusManager.
      */
     private final MetisThreadStatusManager<N, I> theStatusManager;
@@ -63,11 +69,6 @@ public abstract class MetisThreadManager<N, I>
      * The status data.
      */
     private final MetisThreadStatus theStatus;
-
-    /**
-     * The Thread Viewer Entry.
-     */
-    private final MetisViewerEntry theThreadEntry;
 
     /**
      * The Profile Viewer Entry.
@@ -104,6 +105,9 @@ public abstract class MetisThreadManager<N, I>
      * @param pToolkit the toolkit
      */
     protected MetisThreadManager(final MetisToolkit<N, I> pToolkit) {
+        /* record parameters */
+        theToolkit = pToolkit;
+
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
@@ -114,19 +118,18 @@ public abstract class MetisThreadManager<N, I>
         theStatus = new MetisThreadStatus();
 
         /* Create the viewer entries */
-        MetisViewerManager myViewer = pToolkit.getViewerManager();
-        theThreadEntry = myViewer.newEntry("Thread");
-        theProfileEntry = myViewer.newEntry(theThreadEntry, "Profile");
-        theErrorEntry = myViewer.newEntry(theThreadEntry, "Error");
+        MetisViewerManager myViewer = theToolkit.getViewerManager();
+        theProfileEntry = myViewer.getStandardEntry(MetisViewerStandardEntry.PROFILE);
+        theErrorEntry = myViewer.getStandardEntry(MetisViewerStandardEntry.ERROR);
 
-        /* Hide the thread entry */
-        theThreadEntry.setVisible(false);
+        /* Hide the error entry */
+        theErrorEntry.setVisible(false);
 
         /* Create the status manager */
-        theStatusManager = pToolkit.newThreadStatusManager(this);
+        theStatusManager = theToolkit.newThreadStatusManager(this);
 
         /* Access the threadStatus properties */
-        MetisPreferenceManager myMgr = pToolkit.getPreferenceManager();
+        MetisPreferenceManager myMgr = theToolkit.getPreferenceManager();
         MetisThreadPreferences myPreferences = myMgr.getPreferenceSet(MetisThreadPreferences.class);
         theReportingSteps = myPreferences.getIntegerValue(MetisThreadPreferenceKey.REPSTEPS);
     }
@@ -195,9 +198,6 @@ public abstract class MetisThreadManager<N, I>
         theExecutor.execute(myRunnable);
         theThread = pThread;
 
-        /* Show the thread entry */
-        theThreadEntry.setVisible(true);
-
         /* Note that thread has started */
         theEventManager.fireEvent(MetisThreadEvent.THREADSTART);
     }
@@ -216,7 +216,6 @@ public abstract class MetisThreadManager<N, I>
     protected void threadCompleted() {
         /* Remove reference */
         theThread = null;
-        theThreadEntry.setVisible(false);
 
         /* Note that thread has completed */
         theEventManager.fireEvent(MetisThreadEvent.THREADEND);
@@ -344,10 +343,7 @@ public abstract class MetisThreadManager<N, I>
      */
     private void setNewProfile(final String pTask) {
         /* Create a new profile */
-        theProfile = new MetisProfile(pTask);
-
-        /* Update the Viewer entry */
-        theProfileEntry.setObject(theProfile);
+        theProfile = theToolkit.getNewProfile(pTask);
 
         /* Clear errors */
         theError = null;

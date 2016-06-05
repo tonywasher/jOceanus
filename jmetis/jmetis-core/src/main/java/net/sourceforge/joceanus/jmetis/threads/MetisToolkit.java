@@ -25,8 +25,11 @@ package net.sourceforge.joceanus.jmetis.threads;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelPair;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
@@ -72,15 +75,33 @@ public abstract class MetisToolkit<N, I> {
     private final MetisThreadManager<N, I> theThreadManager;
 
     /**
+     * The Profile Viewer Entry.
+     */
+    private final MetisViewerEntry theProfileEntry;
+
+    /**
+     * The Active Profile.
+     */
+    private MetisProfile theProfile;
+
+    /**
      * Constructor.
+     * @param pProfile the initial profile
      * @throws OceanusException on error
      */
-    protected MetisToolkit() throws OceanusException {
+    protected MetisToolkit(final MetisProfile pProfile) throws OceanusException {
         /* Create the formatter */
         theFormatter = new MetisDataFormatter();
 
         /* Create the viewer */
         theViewerManager = new MetisViewerManager();
+
+        /* Access the profile entry */
+        theProfileEntry = theViewerManager.getStandardEntry(MetisViewerStandardEntry.PROFILE);
+
+        /* record the initial profile */
+        theProfile = pProfile;
+        theProfileEntry.setObject(theProfile);
 
         /* Create the preference manager */
         thePreferenceManager = new MetisPreferenceManager();
@@ -198,5 +219,41 @@ public abstract class MetisToolkit<N, I> {
      */
     public MetisFieldSetPanelPair<N, I> newFieldSetPanelPair() {
         return new MetisFieldSetPanelPair<>(getGuiFactory());
+    }
+
+    /**
+     * Create new profile.
+     * @param pTask the name of the task
+     * @return the new profile
+     */
+    public MetisProfile getNewProfile(final String pTask) {
+        /* Create a new profile */
+        theProfile = new MetisProfile(pTask);
+
+        /* Update the Profile Viewer entry */
+        theProfileEntry.setObject(theProfile);
+
+        /* Return the new profile */
+        return theProfile;
+    }
+
+    /**
+     * Obtain the active profile.
+     * @return the active profile
+     */
+    public MetisProfile getActiveProfile() {
+        /* Create a new profile */
+        return theProfile;
+    }
+
+    /**
+     * Obtain the active task.
+     * @return the active task
+     */
+    public MetisProfile getActiveTask() {
+        /* Create a new profile */
+        return theProfile == null
+                                  ? null
+                                  : theProfile.getActiveTask();
     }
 }
