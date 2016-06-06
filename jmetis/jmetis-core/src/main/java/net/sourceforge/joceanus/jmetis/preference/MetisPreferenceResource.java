@@ -151,6 +151,11 @@ public enum MetisPreferenceResource implements TethysResourceId {
     /**
      * SecurityPreference Display Name.
      */
+    SECPREF_BASEPREFNAME("secpref.baseprefname"),
+
+    /**
+     * SecurityPreference Display Name.
+     */
     SECPREF_PREFNAME("secpref.prefname"),
 
     /**

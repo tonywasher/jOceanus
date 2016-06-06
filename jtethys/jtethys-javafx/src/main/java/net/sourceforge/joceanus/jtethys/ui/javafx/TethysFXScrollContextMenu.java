@@ -410,14 +410,14 @@ public class TethysFXScrollContextMenu<T>
                 doCloseMenu = closeOnToggle;
             }
 
-            /* fire selection event */
-            fireEvent(new TethysFXContextEvent<T>(theSelectedItem));
-
             /* Close the menu if requested */
             if (doCloseMenu) {
                 /* Close the menu */
                 closeMenu();
             }
+
+            /* fire selection event */
+            fireEvent(new TethysFXContextEvent<T>(theSelectedItem));
         }
     }
 

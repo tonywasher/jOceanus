@@ -28,9 +28,11 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Thread to change the password. The user will be prompted for a new password and this will be used to create a new Password Hash. The controlKey will be
- * updated with this Hash and the encryption DataKeys will be updated with their new wrapped format. Since the DataKeys do not themselves change there is no
- * need to re-encrypt and data fields. Data will be left in the Updated state ready for committing the change to the database.
+ * Thread to change the password. The user will be prompted for a new password and this will be used
+ * to create a new Password Hash. The controlKey will be updated with this Hash and the encryption
+ * DataKeys will be updated with their new wrapped format. Since the DataKeys do not themselves
+ * change there is no need to re-encrypt and data fields. Data will be left in the Updated state
+ * ready for committing the change to the database.
  * @author Tony Washer
  * @param <T> the DataSet type
  * @param <E> the data type enum class
@@ -45,7 +47,7 @@ public class UpdatePassword<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Data Control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T, E, ?, ?> theControl;
 
     /**
      * Thread Status.

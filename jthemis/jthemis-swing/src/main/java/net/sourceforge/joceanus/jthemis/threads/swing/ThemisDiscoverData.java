@@ -28,9 +28,9 @@ import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportTask;
@@ -125,8 +125,7 @@ public class ThemisDiscoverData
             ThemisSvnExtract myPlan = myIterator.next();
 
             /* Create the data entry */
-            MetisViewerEntry myEntry = pDataMgr.newEntry(myPlan.getName());
-            myEntry.addAsChildOf(pParent);
+            MetisViewerEntry myEntry = pDataMgr.newEntry(pParent, myPlan.getName());
             myEntry.setObject(myPlan);
         }
     }

@@ -147,8 +147,7 @@ public final class MetisFieldColours {
          * @throws OceanusException on error
          */
         public MetisColorPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MetisColorPreferenceKey.class);
-            setName(MetisFieldResource.FIELDCOLOR_PREFS.getValue());
+            super(pManager, MetisColorPreferenceKey.class, MetisFieldResource.FIELDCOLOR_PREFS);
         }
 
         /**

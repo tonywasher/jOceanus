@@ -323,6 +323,16 @@ public class MetisViewerBuilder {
      * @param pData the data
      */
     protected void newDataCell(final Object pData) {
+        newDataCell(pData, false);
+    }
+
+    /**
+     * Make new data cell.
+     * @param pData the data
+     * @param pChanged is this a changed field true/false
+     */
+    protected void newDataCell(final Object pData,
+                               final boolean pChanged) {
         /* Create the data cell */
         Element myCell = theDocument.createElement(ELEMENT_TCELL);
         theTblRow.appendChild(myCell);
@@ -341,6 +351,8 @@ public class MetisViewerBuilder {
                                                                         ? CLASS_CHANGED
                                                                         : CLASS_SECCHANGED);
             }
+        } else if (pChanged) {
+            myCell.setAttribute(ATTR_CLASS, CLASS_CHANGED);
         }
 
         /* If the object is link-able */

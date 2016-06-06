@@ -43,39 +43,40 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * Data Control for MoneyWiseApp.
- * @author Tony Washer
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class View
-        extends DataControl<MoneyWiseData, MoneyWiseDataType> {
+public class View<N, I>
+        extends DataControl<MoneyWiseData, MoneyWiseDataType, N, I> {
     /**
      * The DataSet.
      */
-    private MoneyWiseData theData = null;
+    private MoneyWiseData theData;
 
     /**
      * The Date range for the view.
      */
-    private TethysDateRange theRange = null;
+    private TethysDateRange theRange;
 
     /**
      * The analysis manager.
      */
-    private AnalysisManager theAnalysisMgr = null;
+    private AnalysisManager theAnalysisMgr;
 
     /**
      * The dilution event map.
      */
-    private DilutionEventMap theDilutions = null;
+    private DilutionEventMap theDilutions;
 
     /**
      * Do we have security buckets?.
      */
-    private boolean hasActiveSecurities = false;
+    private boolean hasActiveSecurities;
 
     /**
      * Do we have multiple currencies?
      */
-    private boolean hasMultiCurrency = false;
+    private boolean hasMultiCurrency;
 
     /**
      * Constructor.
@@ -83,7 +84,7 @@ public class View
      * @param pProfile the startup profile
      * @throws OceanusException on error
      */
-    public View(final JOceanusUtilitySet pUtilitySet,
+    public View(final JOceanusUtilitySet<N, I> pUtilitySet,
                 final MetisProfile pProfile) throws OceanusException {
         /* Call super-constructor */
         super(pUtilitySet, pProfile);

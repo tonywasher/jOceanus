@@ -94,9 +94,6 @@ public class MetisSwingViewerWindow
 
         /* If the dialog is not showing */
         if (!theDialog.isShowing()) {
-            /* Initialise the tree */
-            initialiseTree();
-
             /* Make sure that the dialog is showing */
             theDialog.showDialog();
         }

@@ -593,14 +593,14 @@ public class TethysSwingScrollContextMenu<T>
                 doCloseMenu = closeOnToggle;
             }
 
-            /* fire selection event */
-            theEventManager.fireEvent(myEvent, theSelectedItem);
-
             /* Close the menu if requested */
             if (doCloseMenu) {
                 /* Close the menu */
                 closeMenu();
             }
+
+            /* fire selection event */
+            theEventManager.fireEvent(myEvent, theSelectedItem);
         }
     }
 

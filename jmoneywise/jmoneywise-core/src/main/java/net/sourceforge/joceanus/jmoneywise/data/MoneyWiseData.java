@@ -137,7 +137,7 @@ public class MoneyWiseData
      * Standard constructor.
      * @param pUtilitySet the utility set
      */
-    public MoneyWiseData(final JOceanusUtilitySet pUtilitySet) {
+    public MoneyWiseData(final JOceanusUtilitySet<?, ?> pUtilitySet) {
         /* Call Super-constructor */
         super(MoneyWiseDataType.class, pUtilitySet);
 

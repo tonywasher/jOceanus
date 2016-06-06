@@ -95,7 +95,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * The Data view.
      */
-    private final DataControl<?, E> theControl;
+    private final DataControl<?, E, ?, ?> theControl;
 
     /**
      * The field manager.
@@ -166,7 +166,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      * @param pItemType the item type
      * @param pListClass the list class
      */
-    public StaticDataTable(final DataControl<?, E> pControl,
+    public StaticDataTable(final DataControl<?, E, ?, ?> pControl,
                            final UpdateSet<E> pUpdateSet,
                            final JOceanusSwingUtilitySet pUtilitySet,
                            final PrometheusErrorPanel<JComponent, Icon> pError,

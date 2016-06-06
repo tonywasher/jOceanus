@@ -87,7 +87,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * The DataControl.
      */
-    private final DataControl<?, E> theControl;
+    private final DataControl<?, E, ?, ?> theControl;
 
     /**
      * The version.
@@ -104,7 +104,7 @@ public class UpdateSet<E extends Enum<E>>
      * @param pControl the Data Control
      * @param pClass the enum class
      */
-    public UpdateSet(final DataControl<?, E> pControl,
+    public UpdateSet(final DataControl<?, E, ?, ?> pControl,
                      final Class<E> pClass) {
         /* Store the Control */
         theControl = pControl;

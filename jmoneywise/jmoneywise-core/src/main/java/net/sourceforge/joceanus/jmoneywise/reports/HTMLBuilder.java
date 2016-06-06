@@ -251,8 +251,8 @@ public abstract class HTMLBuilder {
      * @param pUtilitySet the utility set
      * @throws OceanusException on error
      */
-    protected HTMLBuilder(final View pView,
-                          final JOceanusUtilitySet pUtilitySet) throws OceanusException {
+    protected HTMLBuilder(final View<?, ?> pView,
+                          final JOceanusUtilitySet<?, ?> pUtilitySet) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Create the formatter */

@@ -104,7 +104,7 @@ public abstract class MetisToolkit<N, I> {
         theProfileEntry.setObject(theProfile);
 
         /* Create the preference manager */
-        thePreferenceManager = new MetisPreferenceManager();
+        thePreferenceManager = new MetisPreferenceManager(theViewerManager);
 
         /* Create the guiFactory */
         theGuiFactory = newGuiFactory();

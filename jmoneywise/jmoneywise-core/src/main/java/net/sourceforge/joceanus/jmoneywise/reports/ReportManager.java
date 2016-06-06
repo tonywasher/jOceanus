@@ -96,8 +96,8 @@ public abstract class ReportManager
      * @param pBuilder the HTML builder
      * @throws OceanusException on error
      */
-    public ReportManager(final View pView,
-                         final JOceanusUtilitySet pUtilitySet,
+    public ReportManager(final View<?, ?> pView,
+                         final JOceanusUtilitySet<?, ?> pUtilitySet,
                          final HTMLBuilder pBuilder) throws OceanusException {
         /* Create the builder */
         theBuilder = pBuilder;

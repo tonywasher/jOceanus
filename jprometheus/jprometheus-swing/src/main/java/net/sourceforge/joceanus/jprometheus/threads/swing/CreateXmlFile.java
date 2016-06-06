@@ -72,7 +72,7 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Data Control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T, E, ?, ?> theControl;
 
     /**
      * Thread Status.

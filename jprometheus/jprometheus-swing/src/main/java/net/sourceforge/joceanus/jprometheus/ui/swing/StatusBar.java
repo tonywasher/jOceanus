@@ -164,7 +164,7 @@ public class StatusBar
     /**
      * Data control.
      */
-    private final DataControl<?, ?> theData;
+    private final DataControl<?, ?, ?, ?> theData;
 
     /**
      * Errors.
@@ -197,7 +197,7 @@ public class StatusBar
      * @param pData the Data control
      */
     public StatusBar(final ThreadControl pThread,
-                     final DataControl<?, ?> pData) {
+                     final DataControl<?, ?, ?, ?> pData) {
         /* Record passed parameters */
         theControl = pThread;
         theData = pData;

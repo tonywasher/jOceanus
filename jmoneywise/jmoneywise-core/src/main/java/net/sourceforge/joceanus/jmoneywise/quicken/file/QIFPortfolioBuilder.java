@@ -25,9 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.quicken.file;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioCashBucket;
@@ -47,16 +49,12 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
-import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Portfolio Builder class for QIF File.
@@ -95,19 +93,18 @@ public class QIFPortfolioBuilder {
     /**
      * Constructor.
      * @param pBuilder the builder
-     * @param pView the view
+     * @param pData the data
+     * @param pAnalysis the analysis
      */
     protected QIFPortfolioBuilder(final QIFBuilder pBuilder,
-                                  final View pView) {
+                                  final MoneyWiseData pData,
+                                  final Analysis pAnalysis) {
         /* Store parameters */
         theBuilder = pBuilder;
         theFile = theBuilder.getFile();
         theFileType = theFile.getFileType();
-        theData = pView.getData();
-
-        /* Obtain base analysis */
-        AnalysisManager myManager = pView.getAnalysisManager();
-        theAnalysis = myManager.getAnalysis();
+        theData = pData;
+        theAnalysis = pAnalysis;
     }
 
     /**
@@ -117,7 +114,7 @@ public class QIFPortfolioBuilder {
      * @return the price
      */
     private TethysPrice getPriceForDate(final Security pSecurity,
-                                   final TethysDate pDate) {
+                                        final TethysDate pDate) {
         /* Add the price */
         SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
         return myPriceMap.getPriceForDate(pSecurity, pDate);
@@ -130,7 +127,7 @@ public class QIFPortfolioBuilder {
      * @return the units
      */
     private TethysUnits getUnitsForHoldingEvent(final SecurityHolding pHolding,
-                                           final Transaction pTrans) {
+                                                final Transaction pTrans) {
         /* Access the relevant bucket */
         PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
         SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
@@ -147,7 +144,7 @@ public class QIFPortfolioBuilder {
      * @return the units
      */
     protected TethysUnits getBaseUnitsForHolding(final SecurityHolding pHolding,
-                                            final Transaction pTrans) {
+                                                 final Transaction pTrans) {
         /* Access the relevant bucket */
         PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
         SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
@@ -176,7 +173,7 @@ public class QIFPortfolioBuilder {
      * @return the delta cost
      */
     private TethysMoney getDeltaCostForHolding(final SecurityHolding pHolding,
-                                          final Transaction pTrans) {
+                                               final Transaction pTrans) {
         /* Access the relevant bucket */
         PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
         SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
@@ -192,7 +189,7 @@ public class QIFPortfolioBuilder {
      * @return the cash value (or null if none)
      */
     private TethysMoney getPortfolioCashValue(final Portfolio pPortfolio,
-                                         final Transaction pTrans) {
+                                              final Transaction pTrans) {
         /* Access the relevant bucket */
         PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
         PortfolioCashBucket myBucket = myPortfolios.getCashBucket(pPortfolio);
@@ -415,8 +412,8 @@ public class QIFPortfolioBuilder {
 
         /* Create a buy shares event for the new shares */
         QIFPortfolioEvent myPortEvent = new QIFPortfolioEvent(theFile, pTrans, canXferLinked
-                                                                                            ? QActionType.BUYX
-                                                                                            : QActionType.BUY);
+                                                                                             ? QActionType.BUYX
+                                                                                             : QActionType.BUY);
         myPortEvent.recordAmount(myAmount);
         myPortEvent.recordSecurity(myQSecurity);
         myPortEvent.recordQuantity(myUnits);
@@ -590,8 +587,8 @@ public class QIFPortfolioBuilder {
 
         /* Create a share movement event */
         QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, isCredit
-                                                                                   ? QActionType.SHRSIN
-                                                                                   : QActionType.SHRSOUT);
+                                                                                    ? QActionType.SHRSIN
+                                                                                    : QActionType.SHRSOUT);
         myEvent.recordSecurity(myQSecurity);
         myEvent.recordQuantity(myUnits);
 
@@ -642,8 +639,8 @@ public class QIFPortfolioBuilder {
 
         /* Create a dividend event */
         QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, doXferLinked
-                                                                                       ? QActionType.DIVX
-                                                                                       : QActionType.DIV);
+                                                                                        ? QActionType.DIVX
+                                                                                        : QActionType.DIV);
         myEvent.recordSecurity(myQSecurity);
         myEvent.recordAmount(myFullAmount);
         if (doXferLinked) {
@@ -805,8 +802,8 @@ public class QIFPortfolioBuilder {
 
             /* Create a tax credit event */
             myEvent = new QIFPortfolioEvent(theFile, pTrans, useMiscIncX
-                                                                        ? QActionType.MISCINCX
-                                                                        : QActionType.MISCINC);
+                                                                         ? QActionType.MISCINCX
+                                                                         : QActionType.MISCINC);
             myEvent.recordSecurity(myQSecurity);
             myEvent.recordAmount(myTaxCredit);
             if (useMiscIncX) {
@@ -905,8 +902,8 @@ public class QIFPortfolioBuilder {
 
         /* Create a sellShares/returnCapital event for the share reduction */
         QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, doReturnCapital
-                                                                                          ? QActionType.RTRNCAP
-                                                                                          : QActionType.SELL);
+                                                                                           ? QActionType.RTRNCAP
+                                                                                           : QActionType.SELL);
         myEvent.recordAmount(myValue);
         myEvent.recordSecurity(myDebitSecurity);
         myEvent.recordPrice(myDebitPrice);
@@ -1084,12 +1081,12 @@ public class QIFPortfolioBuilder {
 
         /* Create a sellShares/returnCapital event */
         QIFPortfolioEvent myPortEvent = new QIFPortfolioEvent(theFile, pTrans, doReturnCapital
-                                                                                              ? canXferLinked
-                                                                                                             ? QActionType.RTRNCAPX
-                                                                                                             : QActionType.RTRNCAP
-                                                                                              : canXferLinked
-                                                                                                             ? QActionType.SELLX
-                                                                                                             : QActionType.SELL);
+                                                                                               ? canXferLinked
+                                                                                                               ? QActionType.RTRNCAPX
+                                                                                                               : QActionType.RTRNCAP
+                                                                                               : canXferLinked
+                                                                                                               ? QActionType.SELLX
+                                                                                                               : QActionType.SELL);
         myPortEvent.recordAmount(myAmount);
         myPortEvent.recordSecurity(myQSecurity);
         if (!doReturnCapital) {

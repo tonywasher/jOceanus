@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jtethys.help.swing;
 
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
-import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JApplet;
@@ -144,12 +143,7 @@ public class TestSwingHelpWindow
         myPane.add(theButton, BorderLayout.LINE_START);
 
         /* Add listener for the button */
-        theButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                theHelpWindow.showDialog();
-            }
-        });
+        theButton.addActionListener(e -> theHelpWindow.showDialog());
 
         /* Protect against exceptions */
         try {

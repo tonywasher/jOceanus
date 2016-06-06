@@ -113,7 +113,7 @@ public class MoneyWiseAnalysisSelect<N, I>
     /**
      * View.
      */
-    private final View theView;
+    private final View<N, I> theView;
 
     /**
      * Panel.
@@ -288,7 +288,7 @@ public class MoneyWiseAnalysisSelect<N, I>
      * @param pNewButton the new button
      */
     public MoneyWiseAnalysisSelect(final TethysGuiFactory<N, I> pFactory,
-                                   final View pView,
+                                   final View<N, I> pView,
                                    final AnalysisView pAnalysisView,
                                    final TethysButton<N, I> pNewButton) {
         /* Access the analysis manager */

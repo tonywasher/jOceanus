@@ -105,8 +105,7 @@ public final class PrometheusDataList {
          * @throws OceanusException on error
          */
         public PrometheusDataListPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, PrometheusDataListPreferenceKey.class);
-            setName(PrometheusPreferenceResource.DLPREF_PREFNAME.getValue());
+            super(pManager, PrometheusDataListPreferenceKey.class, PrometheusPreferenceResource.DLPREF_PREFNAME);
         }
 
         @Override

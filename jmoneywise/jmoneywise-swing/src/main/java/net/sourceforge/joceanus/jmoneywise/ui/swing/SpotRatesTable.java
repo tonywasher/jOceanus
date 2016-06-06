@@ -51,7 +51,6 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseSpotRatesSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.SpotExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.views.SpotExchangeRate.SpotExchangeList;
-import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.YQLDownloader;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
@@ -116,7 +115,7 @@ public class SpotRatesTable
     /**
      * The data view.
      */
-    private final View theView;
+    private final SwingView theView;
 
     /**
      * The field manager.
@@ -171,7 +170,7 @@ public class SpotRatesTable
     /**
      * The exchange rates list.
      */
-    private SpotExchangeList theRates;
+    private SpotExchangeList<JComponent, Icon> theRates;
 
     /**
      * The selected date.
@@ -334,7 +333,7 @@ public class SpotRatesTable
         /* If selection is valid */
         if (theDate != null) {
             /* Create the new list */
-            theRates = new SpotExchangeList(theView, pDate);
+            theRates = new SpotExchangeList<>(theView, pDate);
 
             /* Update Next/Previous values */
             theSelect.setAdjacent(theRates.getPrev(), theRates.getNext());

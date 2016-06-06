@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Thread to purge tables in a database that represent a data set. Existing loaded data will be marked as new so that it will be written to the database via the
- * store command.
+ * Thread to purge tables in a database that represent a data set. Existing loaded data will be
+ * marked as new so that it will be written to the database via the store command.
  * @author Tony Washer
  * @param <T> the DataSet type
  */
@@ -44,7 +44,7 @@ public class PurgeDatabase<T extends DataSet<T, ?>>
     /**
      * Data Control.
      */
-    private final DataControl<T, ?> theControl;
+    private final DataControl<T, ?, ?, ?> theControl;
 
     /**
      * Thread Status.

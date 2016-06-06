@@ -60,7 +60,7 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The data control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T, E, ?, ?> theControl;
 
     /**
      * The StatusBar.
@@ -77,7 +77,7 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pControl the data control
      * @param pStatusBar the status bar
      */
-    public ThreadStatus(final DataControl<T, E> pControl,
+    public ThreadStatus(final DataControl<T, E, ?, ?> pControl,
                         final StatusDisplay pStatusBar) {
         /* Store parameter */
         theControl = pControl;
@@ -111,7 +111,7 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
      * Get the data control.
      * @return the data control
      */
-    public DataControl<T, E> getControl() {
+    public DataControl<T, E, ?, ?> getControl() {
         return theControl;
     }
 

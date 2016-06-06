@@ -123,8 +123,7 @@ public final class PrometheusBackup {
          * @throws OceanusException on error
          */
         public PrometheusBackupPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, PrometheusBackupPreferenceKey.class);
-            setName(PrometheusPreferenceResource.BUPREF_PREFNAME.getValue());
+            super(pManager, PrometheusBackupPreferenceKey.class, PrometheusPreferenceResource.BUPREF_PREFNAME);
         }
 
         @Override

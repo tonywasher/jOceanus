@@ -98,8 +98,7 @@ public class MetisThreadPreference {
          * @throws OceanusException on error
          */
         public MetisThreadPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MetisThreadPreferenceKey.class);
-            setName(MetisThreadResource.THDPREF_PREFNAME.getValue());
+            super(pManager, MetisThreadPreferenceKey.class, MetisThreadResource.THDPREF_PREFNAME);
         }
 
         @Override

@@ -251,7 +251,7 @@ public class MetisViewerPage {
      * Move to previous page.
      */
     protected void previous() {
-        if (hasNext()) {
+        if (hasPrevious()) {
             if (MetisViewerMode.ITEMS.equals(theMode)) {
                 theItemNo--;
             } else {

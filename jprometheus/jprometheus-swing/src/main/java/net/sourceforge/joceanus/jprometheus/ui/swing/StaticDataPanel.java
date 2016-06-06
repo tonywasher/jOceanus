@@ -101,7 +101,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     /**
      * The data control.
      */
-    private final DataControl<?, E> theControl;
+    private final DataControl<?, E, ?, ?> theControl;
 
     /**
      * The Panel.
@@ -169,7 +169,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
      * @param pUtilitySet the utility set
      * @param pClass the dataType class
      */
-    public StaticDataPanel(final DataControl<?, E> pControl,
+    public StaticDataPanel(final DataControl<?, E, ?, ?> pControl,
                            final JOceanusSwingUtilitySet pUtilitySet,
                            final Class<E> pClass) {
         /* Store control */

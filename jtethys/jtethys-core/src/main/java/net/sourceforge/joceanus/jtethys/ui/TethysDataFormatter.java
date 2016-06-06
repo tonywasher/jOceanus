@@ -27,7 +27,9 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -240,13 +242,13 @@ public class TethysDataFormatter {
             return theDecimalFormatter.formatDecimal((TethysDecimal) pValue);
         }
 
-        /* Handle JOceanusExceptions */
+        /* Handle OceanusExceptions */
         if (OceanusException.class.isInstance(pValue)) {
             return myClass.getSimpleName();
         }
 
         /* Standard format option */
-        return myClass.getCanonicalName();
+        return formatBasicValue(pValue);
     }
 
     /**
@@ -255,7 +257,7 @@ public class TethysDataFormatter {
      * @param pSource the source value
      * @param pClass the value type class
      * @return the formatted value
-     * @throws IllegalArgumentException on bad Date/JDecimal format
+     * @throws IllegalArgumentException on bad Date/Decimal format
      * @throws NumberFormatException on bad Integer format
      */
     public <T> T parseValue(final String pSource,
@@ -333,7 +335,7 @@ public class TethysDataFormatter {
      * @param pSource the source value
      * @param pClass the value type class
      * @return the formatted value
-     * @throws IllegalArgumentException on bad JDecimal format
+     * @throws IllegalArgumentException on bad TethysDecimal format
      */
     public <T> T parseValue(final Double pSource,
                             final Class<T> pClass) {
@@ -371,7 +373,7 @@ public class TethysDataFormatter {
      * @param pCurrCode the currency code
      * @param pClass the value type class
      * @return the formatted value
-     * @throws IllegalArgumentException on bad JDecimal format
+     * @throws IllegalArgumentException on bad TethysDecimal format
      */
     public <T> T parseValue(final Double pSource,
                             final String pCurrCode,
@@ -385,5 +387,42 @@ public class TethysDataFormatter {
             return pClass.cast(theDecimalParser.createMoneyFromDouble(pSource, pCurrCode));
         }
         throw new IllegalArgumentException(ERROR_CLASS + pClass.getSimpleName());
+    }
+
+    /**
+     * Format basic object.
+     * @param pValue the object
+     * @return the formatted value
+     */
+    private String formatBasicValue(final Object pValue) {
+        /* Access the class */
+        Class<?> myClass = pValue.getClass();
+
+        /* Create basic result */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(myClass.getCanonicalName());
+
+        /* Handle list/map instances */
+        if (List.class.isInstance(pValue)) {
+            formatSize(myBuilder, ((List<?>) pValue).size());
+        } else if (Map.class.isInstance(pValue)) {
+            formatSize(myBuilder, ((Map<?, ?>) pValue).size());
+        }
+
+        /* Return the value */
+        return myBuilder.toString();
+    }
+
+    /**
+     * Format size.
+     * @param pBuilder the string builder
+     * @param pSize the size
+     */
+    private static void formatSize(final StringBuilder pBuilder,
+                                   final Object pSize) {
+        /* Append the size */
+        pBuilder.append('(');
+        pBuilder.append(pSize);
+        pBuilder.append(')');
     }
 }

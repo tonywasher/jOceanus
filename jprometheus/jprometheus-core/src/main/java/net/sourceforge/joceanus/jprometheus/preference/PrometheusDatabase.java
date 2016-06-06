@@ -124,8 +124,7 @@ public final class PrometheusDatabase {
          * @throws OceanusException on error
          */
         public PrometheusDatabasePreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, PrometheusDatabasePreferenceKey.class);
-            setName(PrometheusPreferenceResource.DBPREF_PREFNAME.getValue());
+            super(pManager, PrometheusDatabasePreferenceKey.class, PrometheusPreferenceResource.DBPREF_PREFNAME);
         }
 
         @Override

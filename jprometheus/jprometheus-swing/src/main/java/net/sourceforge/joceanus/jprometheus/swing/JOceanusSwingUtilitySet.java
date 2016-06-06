@@ -22,13 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.swing;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
+import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -38,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * JOceanus Swing Utility Set.
  */
 public class JOceanusSwingUtilitySet
-        extends JOceanusUtilitySet {
+        extends JOceanusUtilitySet<JComponent, Icon> {
     /**
      * Viewer Manager.
      */
@@ -50,37 +49,14 @@ public class JOceanusSwingUtilitySet
     private final MetisFieldManager theFieldManager;
 
     /**
-     * GUI Factory.
-     */
-    private final TethysSwingGuiFactory theGuiFactory;
-
-    /**
-     * Constructor.
-     * @throws OceanusException on error
-     */
-    public JOceanusSwingUtilitySet() throws OceanusException {
-        this(new GordianParameters());
-    }
-
-    /**
-     * Constructor.
-     * @param pParameters the security parameters
-     * @throws OceanusException on error
-     */
-    public JOceanusSwingUtilitySet(final GordianParameters pParameters) throws OceanusException {
-        this(pParameters, new MetisPreferenceManager());
-    }
-
-    /**
      * Constructor.
      * @param pParameters the security parameters
      * @param pPrefMgr the preference manager
      * @throws OceanusException on error
      */
-    public JOceanusSwingUtilitySet(final GordianParameters pParameters,
-                                   final MetisPreferenceManager pPrefMgr) throws OceanusException {
-        /* Create secure manager */
-        super(new GordianSwingHashManager(pParameters), pPrefMgr);
+    public JOceanusSwingUtilitySet() throws OceanusException {
+        /* Create Toolkit */
+        super(new MetisSwingToolkit());
 
         /* Allocate the FieldManager */
         theFieldManager = new MetisFieldManager(new MetisFieldConfig(getColorPreferences()));
@@ -88,27 +64,8 @@ public class JOceanusSwingUtilitySet
         /* Create components */
         theViewerManager = new MetisSwingViewerManager(theFieldManager);
 
-        /* Create the GUI Factory */
-        theGuiFactory = new TethysSwingGuiFactory(new MetisDataFormatter());
-
         /* Process the colour preferences */
         processColorPreferences();
-    }
-
-    /**
-     * Create default UtilitySet.
-     * @return the utility set
-     * @throws OceanusException on error
-     */
-    public static JOceanusSwingUtilitySet createDefault() throws OceanusException {
-        /* Preference Manager */
-        MetisPreferenceManager myPrefMgr = new MetisPreferenceManager();
-
-        /* Access security preferences */
-        MetisSecurityPreferences myPrefs = myPrefMgr.getPreferenceSet(MetisSecurityPreferences.class);
-
-        /* Build new utility set */
-        return new JOceanusSwingUtilitySet(myPrefs.getParameters(), myPrefMgr);
     }
 
     @Override
@@ -127,7 +84,7 @@ public class JOceanusSwingUtilitySet
 
     @Override
     public TethysSwingGuiFactory getGuiFactory() {
-        return theGuiFactory;
+        return (TethysSwingGuiFactory) super.getGuiFactory();
     }
 
     /**

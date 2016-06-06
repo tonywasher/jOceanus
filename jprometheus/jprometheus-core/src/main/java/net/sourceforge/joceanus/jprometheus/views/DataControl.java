@@ -48,8 +48,10 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Provides top-level control of data.
  * @param <T> the DataSet type
  * @param <E> the data type enum class
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
+public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * Debug View Name.
@@ -99,12 +101,12 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The DataSet.
      */
-    private T theData = null;
+    private T theData;
 
     /**
      * The Update DataSet.
      */
-    private T theUpdates = null;
+    private T theUpdates;
 
     /**
      * The Error List.
@@ -114,12 +116,12 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Frame.
      */
-    private JFrame theFrame = null;
+    private JFrame theFrame;
 
     /**
      * The UtilitySet.
      */
-    private final JOceanusUtilitySet theUtilitySet;
+    private final JOceanusUtilitySet<N, I> theUtilitySet;
 
     /**
      * The Active Profile.
@@ -137,7 +139,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pProfile the startup profile
      * @throws OceanusException on error
      */
-    protected DataControl(final JOceanusUtilitySet pUtilitySet,
+    protected DataControl(final JOceanusUtilitySet<N, I> pUtilitySet,
                           final MetisProfile pProfile) throws OceanusException {
         /* Store the parameters */
         theUtilitySet = pUtilitySet;
@@ -271,7 +273,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain UtilitySet.
      * @return the UtilitySet
      */
-    public JOceanusUtilitySet getUtilitySet() {
+    public JOceanusUtilitySet<N, I> getUtilitySet() {
         return theUtilitySet;
     }
 

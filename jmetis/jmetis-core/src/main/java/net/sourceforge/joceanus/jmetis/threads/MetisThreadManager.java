@@ -222,6 +222,13 @@ public abstract class MetisThreadManager<N, I>
     }
 
     /**
+     * Shut down the thread manager.
+     */
+    public void shutdown() {
+        theExecutor.shutdownNow();
+    }
+
+    /**
      * cancel the worker.
      */
     public abstract void cancelWorker();

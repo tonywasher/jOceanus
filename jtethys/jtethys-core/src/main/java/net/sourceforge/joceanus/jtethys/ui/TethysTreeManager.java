@@ -345,8 +345,8 @@ public abstract class TethysTreeManager<T, N, I>
                 theTree.registerItem(this);
             }
 
-            /* Initially visible */
-            isVisible = true;
+            /* Make visible */
+            setVisible(true);
         }
 
         /**

@@ -100,8 +100,7 @@ public final class QIFPreference {
          * @throws OceanusException on error
          */
         public MoneyWiseQIFPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MoneyWiseQIFPreferenceKey.class);
-            setName("QIF Preferences");
+            super(pManager, MoneyWiseQIFPreferenceKey.class, "QIF Preferences");
         }
 
         @Override

@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
@@ -34,8 +35,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 
 /**
  * JOceanus Utility Set.
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public abstract class JOceanusUtilitySet {
+public abstract class JOceanusUtilitySet<N, I> {
     /**
      * Secure Manager.
      */
@@ -52,26 +55,28 @@ public abstract class JOceanusUtilitySet {
     private final MetisDataFormatter theFormatter;
 
     /**
+     * GUI Factory.
+     */
+    private final TethysGuiFactory<N, I> theGuiFactory;
+
+    /**
      * Colour Preferences.
      */
     private final MetisColorPreferences theColorPreferences;
 
     /**
      * Constructor.
-     * @param pSecureMgr the secure manager
-     * @param pPrefMgr the preference manager
+     * @param pToolkit the toolkit
      */
-    protected JOceanusUtilitySet(final GordianHashManager pSecureMgr,
-                                 final MetisPreferenceManager pPrefMgr) {
-        /* Store parameters */
-        theSecureMgr = pSecureMgr;
-        thePreferenceMgr = pPrefMgr;
-
-        /* Create components */
-        theFormatter = new MetisDataFormatter();
+    protected JOceanusUtilitySet(final MetisToolkit<N, I> pToolkit) {
+        /* Access components */
+        theSecureMgr = pToolkit.getSecurityManager();
+        thePreferenceMgr = pToolkit.getPreferenceManager();
+        theFormatter = pToolkit.getFormatter();
+        theGuiFactory = pToolkit.getGuiFactory();
 
         /* Access the Colour Preferences */
-        theColorPreferences = pPrefMgr.getPreferenceSet(MetisColorPreferences.class);
+        theColorPreferences = thePreferenceMgr.getPreferenceSet(MetisColorPreferences.class);
 
         /* Create listener */
         TethysEventRegistrar<MetisPreferenceEvent> myRegistrar = theColorPreferences.getEventRegistrar();
@@ -103,6 +108,14 @@ public abstract class JOceanusUtilitySet {
     }
 
     /**
+     * Obtain the GUI Factory.
+     * @return the factory
+     */
+    public TethysGuiFactory<N, I> getGuiFactory() {
+        return theGuiFactory;
+    }
+
+    /**
      * Obtain the colour preferences.
      * @return the colour preferences
      */
@@ -125,10 +138,4 @@ public abstract class JOceanusUtilitySet {
      * @return the manager
      */
     public abstract MetisViewerManager getViewerManager();
-
-    /**
-     * Obtain the GUI Factory.
-     * @return the factory
-     */
-    public abstract TethysGuiFactory<?, ?> getGuiFactory();
 }

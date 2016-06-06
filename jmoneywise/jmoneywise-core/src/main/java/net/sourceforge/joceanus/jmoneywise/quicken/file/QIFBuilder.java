@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -43,7 +44,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
-import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -114,26 +114,25 @@ public class QIFBuilder {
     /**
      * Constructor.
      * @param pFile the QIF File
-     * @param pView the view
+     * @param pData the data
+     * @param pAnalysis the analysis
      */
     protected QIFBuilder(final QIFFile pFile,
-                         final View pView) {
+                         final MoneyWiseData pData,
+                         final Analysis pAnalysis) {
         /* Store parameters */
         theFile = pFile;
         theFileType = pFile.getFileType();
 
-        /* Access the data */
-        MoneyWiseData myData = pView.getData();
-
         /* Create portfolio builder */
-        thePortBuilder = new QIFPortfolioBuilder(this, pView);
+        thePortBuilder = new QIFPortfolioBuilder(this, pData, pAnalysis);
 
         /* Store Tax account */
-        PayeeList myPayees = myData.getPayees();
+        PayeeList myPayees = pData.getPayees();
         theTaxMan = myPayees.getSingularClass(PayeeTypeClass.TAXMAN);
 
         /* Store categories */
-        TransactionCategoryList myCategories = myData.getTransCategories();
+        TransactionCategoryList myCategories = pData.getTransCategories();
         theTaxCategory = myCategories.getEventInfoCategory(TransactionInfoClass.TAXCREDIT);
         theNatInsCategory = myCategories.getEventInfoCategory(TransactionInfoClass.NATINSURANCE);
         theBenefitCategory = myCategories.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT);

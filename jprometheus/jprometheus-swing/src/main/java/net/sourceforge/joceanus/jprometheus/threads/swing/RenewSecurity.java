@@ -28,9 +28,11 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Thread to renew security in the data set. A new ControlKey will be created using the same password as the existing security, together with a new set of
- * encryption DataKeys. All encrypted fields in the data set will then be re-encrypted with the new ControlKey, and finally the ControlData will be updated to
- * use the new controlKey. Data will be left in the Updated state ready for committing the change to the database.
+ * Thread to renew security in the data set. A new ControlKey will be created using the same
+ * password as the existing security, together with a new set of encryption DataKeys. All encrypted
+ * fields in the data set will then be re-encrypted with the new ControlKey, and finally the
+ * ControlData will be updated to use the new controlKey. Data will be left in the Updated state
+ * ready for committing the change to the database.
  * @author Tony Washer
  * @param <T> the DataSet type
  * @param <E> the data type enum class
@@ -45,7 +47,7 @@ public class RenewSecurity<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Data Control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T, E, ?, ?> theControl;
 
     /**
      * Thread Status.

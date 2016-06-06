@@ -220,8 +220,7 @@ public class MetisPreferenceSecurity {
          * @throws OceanusException on error
          */
         public MetisBaseSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MetisSecurityPreferenceKey.class);
-            setName(MetisPreferenceResource.SECPREF_PREFNAME.getValue());
+            super(pManager, MetisSecurityPreferenceKey.class, MetisPreferenceResource.SECPREF_BASEPREFNAME);
             setHidden();
         }
 
@@ -270,8 +269,7 @@ public class MetisPreferenceSecurity {
          * @throws OceanusException on error
          */
         public MetisSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MetisSecurityPreferenceKey.class);
-            setName(MetisPreferenceResource.SECPREF_PREFNAME.getValue());
+            super(pManager, MetisSecurityPreferenceKey.class, MetisPreferenceResource.SECPREF_PREFNAME);
         }
 
         /**

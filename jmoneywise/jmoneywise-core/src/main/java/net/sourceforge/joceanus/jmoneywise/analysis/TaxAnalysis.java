@@ -156,8 +156,7 @@ public class TaxAnalysis {
          * @throws OceanusException on error
          */
         public MoneyWiseTaxPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MoneyWiseTaxPreferenceKey.class);
-            setName(AnalysisResource.TAXPREF_PREFNAME.getValue());
+            super(pManager, MoneyWiseTaxPreferenceKey.class, AnalysisResource.TAXPREF_PREFNAME);
         }
 
         @Override

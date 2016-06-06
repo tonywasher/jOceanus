@@ -88,7 +88,7 @@ public class MoneyWiseSpotRatesSelect<N, I>
     /**
      * The data view.
      */
-    private final View theView;
+    private final View<N, I> theView;
 
     /**
      * The currency label.
@@ -131,7 +131,7 @@ public class MoneyWiseSpotRatesSelect<N, I>
      * @param pView the data view
      */
     public MoneyWiseSpotRatesSelect(final TethysGuiFactory<N, I> pFactory,
-                                    final View pView) {
+                                    final View<N, I> pView) {
         /* Store table and view details */
         theView = pView;
 

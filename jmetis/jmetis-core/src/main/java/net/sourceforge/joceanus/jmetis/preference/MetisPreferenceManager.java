@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -67,6 +68,11 @@ public class MetisPreferenceManager
     private final TethysEventManager<MetisPreferenceEvent> theEventManager;
 
     /**
+     * Viewer Manager.
+     */
+    private final MetisViewerManager theViewerManager;
+
+    /**
      * The Security Manager.
      */
     private final MetisPreferenceSecurity theSecurityManager;
@@ -78,9 +84,11 @@ public class MetisPreferenceManager
 
     /**
      * Constructor.
+     * @param pViewer the viewer manager
      * @throws OceanusException on error
      */
-    public MetisPreferenceManager() throws OceanusException {
+    public MetisPreferenceManager(final MetisViewerManager pViewer) throws OceanusException {
+        theViewerManager = pViewer;
         theEventManager = new TethysEventManager<>();
         theSecurityManager = new MetisPreferenceSecurity(this);
     }
@@ -117,6 +125,14 @@ public class MetisPreferenceManager
      */
     protected MetisPreferenceSecurity getSecurity() {
         return theSecurityManager;
+    }
+
+    /**
+     * Obtain the viewer manager.
+     * @return the viewer manager
+     */
+    protected MetisViewerManager getViewer() {
+        return theViewerManager;
     }
 
     /**

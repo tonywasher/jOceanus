@@ -55,7 +55,6 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseSpotPricesSelect
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice.SpotSecurityList;
-import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.YQLDownloader;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
@@ -115,7 +114,7 @@ public class SpotPricesTable
     /**
      * The data view.
      */
-    private final View theView;
+    private final SwingView theView;
 
     /**
      * The field manager.
@@ -170,7 +169,7 @@ public class SpotPricesTable
     /**
      * The account price list.
      */
-    private SpotSecurityList thePrices;
+    private SpotSecurityList<JComponent, Icon> thePrices;
 
     /**
      * The selected date.
@@ -341,7 +340,7 @@ public class SpotPricesTable
         /* If selection is valid */
         if ((theDate != null) && (thePortfolio != null)) {
             /* Create the new list */
-            thePrices = new SpotSecurityList(theView, pPortfolio, pDate);
+            thePrices = new SpotSecurityList<>(theView, pPortfolio, pDate);
 
             /* Update Next/Previous values */
             theSelect.setAdjacent(thePrices.getPrev(), thePrices.getNext());

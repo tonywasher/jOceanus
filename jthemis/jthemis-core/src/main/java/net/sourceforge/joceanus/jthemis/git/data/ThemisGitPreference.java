@@ -107,8 +107,7 @@ public abstract class ThemisGitPreference {
          * @throws OceanusException on error
          */
         public ThemisGitPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, ThemisGitPreferenceKey.class);
-            setName("Git Preferences");
+            super(pManager, ThemisGitPreferenceKey.class, "Git Preferences");
         }
 
         @Override

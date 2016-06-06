@@ -198,7 +198,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The data view.
      */
-    private DataControl<T, E> theView;
+    private DataControl<T, E, ?, ?> theView;
 
     /**
      * The frame.
@@ -361,7 +361,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Get the data view.
      * @return the data view
      */
-    public DataControl<T, E> getView() {
+    public DataControl<T, E, ?, ?> getView() {
         return theView;
     }
 
@@ -415,7 +415,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pUtilitySet the utility set
      * @throws OceanusException on error
      */
-    public void buildMainWindow(final DataControl<T, E> pView,
+    public void buildMainWindow(final DataControl<T, E, ?, ?> pView,
                                 final JOceanusSwingUtilitySet pUtilitySet) throws OceanusException {
         /* Store the view */
         theView = pView;

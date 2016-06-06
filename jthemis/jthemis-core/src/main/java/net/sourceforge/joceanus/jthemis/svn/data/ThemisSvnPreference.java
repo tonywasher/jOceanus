@@ -132,8 +132,7 @@ public abstract class ThemisSvnPreference {
          * @throws OceanusException on error
          */
         public ThemisSvnPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, ThemisSvnPreferenceKey.class);
-            setName("Subversion Preferences");
+            super(pManager, ThemisSvnPreferenceKey.class, "Subversion Preferences");
         }
 
         @Override

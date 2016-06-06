@@ -130,9 +130,6 @@ public abstract class MetisViewerWindow<N, I>
         theControl = new MetisViewerControl<>(pFactory, this);
         theSplitTree.setControlPane(theControl);
 
-        /* Listen to the TreeManager */
-        theSplitTree.getEventRegistrar().addEventListener(this::handleSplitTreeAction);
-
         /* Create the registration lists */
         theRegistrations = new ArrayList<>();
 
@@ -141,6 +138,12 @@ public abstract class MetisViewerWindow<N, I>
 
         /* Load the CSS */
         loadCSS("MetisViewer.css");
+
+        /* Initialise the tree */
+        initialiseTree();
+
+        /* Listen to the TreeManager */
+        theSplitTree.getEventRegistrar().addEventListener(this::handleSplitTreeAction);
     }
 
     @Override
@@ -185,7 +188,7 @@ public abstract class MetisViewerWindow<N, I>
     /**
      * Initialise tree.
      */
-    protected void initialiseTree() {
+    private void initialiseTree() {
         /* Loop through the root children */
         Iterator<MetisViewerEntry> myIterator = theDataManager.rootIterator();
         while (myIterator.hasNext()) {
@@ -357,6 +360,7 @@ public abstract class MetisViewerWindow<N, I>
                 break;
             case BUILDPAGE:
                 handleLink(pEvent.getDetails(String.class));
+                pEvent.consume();
                 break;
             default:
                 break;

@@ -38,11 +38,15 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldState;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Wrapper class for java preferences.
@@ -84,22 +88,22 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     /**
      * The map of preferences.
      */
-    private Map<String, MetisPreferenceItem<K>> theNameMap;
+    private final Map<String, MetisPreferenceItem<K>> theNameMap;
 
     /**
      * The map of preferences.
      */
-    private Map<K, MetisPreferenceItem<K>> theKeyMap;
+    private final Map<K, MetisPreferenceItem<K>> theKeyMap;
 
     /**
      * The list of preferences that have a value on initialisation.
      */
-    private String[] theActive;
+    private final String[] theActive;
 
     /**
      * The name of the preferenceSet.
      */
-    private String theName;
+    private final String theName;
 
     /**
      * Is this a hidden preferenceSet.
@@ -110,12 +114,28 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * Constructor.
      * @param pManager the preference manager
      * @param pClass the key class
+     * @param pId the resource id for the set name
      * @throws OceanusException on error
      */
     protected MetisPreferenceSet(final MetisPreferenceManager pManager,
-                                 final Class<K> pClass) throws OceanusException {
-        /* Store security manager */
+                                 final Class<K> pClass,
+                                 final TethysResourceId pId) throws OceanusException {
+        this(pManager, pClass, pId.getValue());
+    }
+
+    /**
+     * Constructor.
+     * @param pManager the preference manager
+     * @param pClass the key class
+     * @param pName the set name
+     * @throws OceanusException on error
+     */
+    protected MetisPreferenceSet(final MetisPreferenceManager pManager,
+                                 final Class<K> pClass,
+                                 final String pName) throws OceanusException {
+        /* Store security manager and name */
         theSecurityManager = pManager.getSecurity();
+        theName = pName;
 
         /* Access the handle */
         theHandle = deriveHandle();
@@ -140,6 +160,12 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
         /* Store any changes */
         storeChanges();
+
+        /* Create the viewer record */
+        MetisViewerManager myViewer = pManager.getViewer();
+        MetisViewerEntry myParent = myViewer.getStandardEntry(MetisViewerStandardEntry.PREFERENCES);
+        MetisViewerEntry myViewerEntry = myViewer.newEntry(myParent, theName);
+        myViewerEntry.setObject(this);
     }
 
     @Override
@@ -225,14 +251,6 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      */
     public String getName() {
         return theName;
-    }
-
-    /**
-     * Set the name of the set.
-     * @param pName the name
-     */
-    protected void setName(final String pName) {
-        theName = pName;
     }
 
     /**

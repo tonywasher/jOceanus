@@ -94,9 +94,6 @@ public class MetisFXViewerWindow
 
         /* If the dialog is not visible */
         if (!theDialog.isShowing()) {
-            /* Initialise the tree */
-            initialiseTree();
-
             /* Show it */
             theDialog.showDialog();
         }

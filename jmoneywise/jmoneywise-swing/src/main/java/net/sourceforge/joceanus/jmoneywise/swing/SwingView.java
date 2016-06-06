@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.swing;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
@@ -33,14 +36,14 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Extension of view to cast utilities properly.
  */
 public class SwingView
-        extends View {
+        extends View<JComponent, Icon> {
     /**
      * Constructor.
      * @param pProfile the profile
      * @throws OceanusException on error
      */
     public SwingView(final MetisProfile pProfile) throws OceanusException {
-        super(JOceanusSwingUtilitySet.createDefault(), pProfile);
+        super(new JOceanusSwingUtilitySet(), pProfile);
     }
 
     @Override

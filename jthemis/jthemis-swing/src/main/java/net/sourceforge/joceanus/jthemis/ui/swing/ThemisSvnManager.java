@@ -41,18 +41,16 @@ import javax.swing.WindowConstants;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerStandardEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceView;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.MetisViewerWindow;
+import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPreferences;
@@ -109,7 +107,7 @@ public final class ThemisSvnManager {
     /**
      * The Viewer Manager.
      */
-    private final MetisSwingViewerManager theViewerMgr;
+    private final MetisViewerManager theViewerMgr;
 
     /**
      * The Security Manager.
@@ -177,19 +175,24 @@ public final class ThemisSvnManager {
     private final JMenuItem theRestoreSvn;
 
     /**
-     * The Started data window.
+     * The Date entry.
      */
-    private MetisViewerWindow theDataWdw;
+    private final MetisViewerEntry theDataEntry;
 
     /**
      * The GitRepo entry.
      */
-    private MetisViewerEntry theGitEntry;
+    private final MetisViewerEntry theGitEntry;
 
     /**
      * The Error entry.
      */
-    private MetisViewerEntry theErrorEntry;
+    private final MetisViewerEntry theErrorEntry;
+
+    /**
+     * The data window.
+     */
+    private final MetisSwingViewerWindow theDataWdw;
 
     /**
      * The Window Close handler.
@@ -216,26 +219,30 @@ public final class ThemisSvnManager {
      * @throws OceanusException on error
      */
     protected ThemisSvnManager() throws OceanusException {
-        /* Create the GuiFactory */
-        theGuiFactory = new TethysSwingGuiFactory();
+        /* Create the Toolkit */
+        MetisSwingToolkit myToolkit = new MetisSwingToolkit();
 
-        /* Create the preference manager */
-        thePrefMgr = new MetisPreferenceManager();
+        /* Access GuiFactory/Preference Manager */
+        theGuiFactory = myToolkit.getGuiFactory();
+        thePrefMgr = myToolkit.getPreferenceManager();
         thePreferences = thePrefMgr.getPreferenceSet(ThemisSvnPreferences.class);
 
-        /* Access the Security Preferences */
-        MetisSecurityPreferences mySecurity = thePrefMgr.getPreferenceSet(MetisSecurityPreferences.class);
+        /* Access the Security/Viewer Manager */
+        theSecureMgr = myToolkit.getSecurityManager();
+        theViewerMgr = myToolkit.getViewerManager();
 
-        /* Create the Secure Manager */
-        theSecureMgr = new GordianSwingHashManager(theGuiFactory, mySecurity.getParameters());
+        /* Access error entry */
+        theErrorEntry = theViewerMgr.getStandardEntry(MetisViewerStandardEntry.ERROR);
+        theErrorEntry.setVisible(false);
 
-        /* Create the fieldManager and viewer manager */
-        MetisColorPreferences myFieldPrefs = thePrefMgr.getPreferenceSet(MetisColorPreferences.class);
-        MetisFieldManager myFieldMgr = new MetisFieldManager(new MetisFieldConfig(myFieldPrefs));
-        theViewerMgr = new MetisSwingViewerManager(myFieldMgr);
+        /* Access date entry */
+        theDataEntry = theViewerMgr.getStandardEntry(MetisViewerStandardEntry.DATA);
+        theGitEntry = theViewerMgr.newEntry(theDataEntry, "GitRepo");
+        theGitEntry.setVisible(false);
 
         /* Create the frame */
         theFrame = new JFrame(ThemisSvnManager.class.getSimpleName());
+        theGuiFactory.setFrame(theFrame);
 
         /* Create the Tabbed Pane */
         TethysSwingTabPaneManager myTabs = theGuiFactory.newTabPane();
@@ -244,8 +251,6 @@ public final class ThemisSvnManager {
         theStatusPanel = new ThemisSvnStatusWindow(this);
 
         /* Create the Preferences Tab */
-        // MetisViewerEntry myMaintEntry = theViewerMgr.newEntry("Maintenance");
-        // myFieldMgr, theViewerMgr, myMaintEntry);
         MetisPreferenceView<JComponent, Icon> myPrefPanel = new MetisPreferenceView<>(theGuiFactory, thePrefMgr);
         myTabs.addTabItem("Status", theStatusPanel);
         myTabs.addTabItem("Preferences", myPrefPanel);
@@ -327,6 +332,10 @@ public final class ThemisSvnManager {
         theFrame.setLocationRelativeTo(null);
         theFrame.setVisible(true);
 
+        /* Create the data window */
+        theDataWdw = new MetisSwingViewerWindow(theGuiFactory, theViewerMgr);
+        theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theShowDataMgr.setEnabled(true));
+
         /* Create and run discoverData thread */
         ThemisDiscoverData myThread = new ThemisDiscoverData(theStatusPanel);
         theTasks.setEnabled(false);
@@ -371,21 +380,18 @@ public final class ThemisSvnManager {
      */
     protected void setSubversionData(final ThemisDiscoverData pData) {
         /* Declare repository to data manager */
-        MetisViewerEntry myRepEntry = theViewerMgr.newEntry("SvnRepository");
-        myRepEntry.addAsRootChild();
+        MetisViewerEntry myRepEntry = theViewerMgr.newEntry(theDataEntry, "SvnRepository");
         theRepository = pData.getRepository();
         myRepEntry.setObject(theRepository);
         myRepEntry.setFocus();
 
         /* Declare WorkingCopySet to data manager */
-        MetisViewerEntry mySetEntry = theViewerMgr.newEntry("WorkingSet");
-        mySetEntry.addAsRootChild();
+        MetisViewerEntry mySetEntry = theViewerMgr.newEntry(theDataEntry, "WorkingSet");
         theWorkingSet = pData.getWorkingCopySet();
         mySetEntry.setObject(theWorkingSet);
 
         /* Declare Extract Plans to data manager */
-        MetisViewerEntry myPlanEntry = theViewerMgr.newEntry("ExtractPlans");
-        myPlanEntry.addAsRootChild();
+        MetisViewerEntry myPlanEntry = theViewerMgr.newEntry(theDataEntry, "ExtractPlans");
         pData.declareExtractPlans(theViewerMgr, myPlanEntry);
 
         /* Enable the git menu */
@@ -405,7 +411,7 @@ public final class ThemisSvnManager {
             }
         }
 
-        /* Enable the git menu if we have components */
+        /* Enable the GIT menu if we have components */
         if (theCreateGit.getItemCount() > 0) {
             theCreateGit.setEnabled(true);
         }
@@ -419,15 +425,10 @@ public final class ThemisSvnManager {
      * @param pGit the git thread
      */
     protected void setGitData(final ThemisCreateGitRepo pGit) {
-        /* Ensure that we have a Git entry */
-        if (theGitEntry == null) {
-            theGitEntry = theViewerMgr.newEntry("GitRepo");
-            theGitEntry.addAsRootChild();
-        }
-
         /* Declare repository to data manager */
         ThemisGitRepository myRepo = pGit.getGitRepo();
         theGitEntry.setObject(myRepo);
+        theGitEntry.setVisible(true);
         theGitEntry.setFocus();
 
         /* process any error */
@@ -441,20 +442,14 @@ public final class ThemisSvnManager {
     private void processError(final OceanusException pError) {
         /* If we have an error */
         if (pError != null) {
-            /* Ensure that we have an error entry */
-            if (theErrorEntry == null) {
-                theErrorEntry = theViewerMgr.newEntry("Error");
-                theErrorEntry.addAsRootChild();
-            }
-
             /* Set data and focus */
-            theErrorEntry.showEntry();
             theErrorEntry.setObject(pError);
+            theErrorEntry.setVisible(true);
             theErrorEntry.setFocus();
 
             /* else hide any error entry */
         } else if (theErrorEntry != null) {
-            theErrorEntry.hideEntry();
+            theErrorEntry.setVisible(false);
         }
     }
 
@@ -612,12 +607,6 @@ public final class ThemisSvnManager {
 
             /* If this is the DataManager window */
             if (theShowDataMgr.equals(o)) {
-                /* Create the data window */
-                theDataWdw = new MetisViewerWindow(theFrame, theViewerMgr);
-
-                /* Listen for its closure */
-                theDataWdw.addWindowListener(theCloseHandler);
-
                 /* Disable the menu item */
                 theShowDataMgr.setEnabled(false);
 
@@ -712,24 +701,9 @@ public final class ThemisSvnManager {
                 /* terminate the executor */
                 theStatusPanel.shutdown();
 
-                /* Dispose of the data/help Windows if they exist */
-                if (theDataWdw != null) {
-                    theDataWdw.dispose();
-                }
-
                 /* Dispose of the frame */
                 theFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 theFrame.dispose();
-
-                /* else if this is the Data Window shutting down */
-            } else if (o.equals(theDataWdw)) {
-                /* Re-enable the help menu item */
-                theShowDataMgr.setEnabled(true);
-                theDataWdw.dispose();
-                theDataWdw = null;
-
-                /* Notify data manager */
-                theViewerMgr.declareWindow(null);
             }
         }
     }

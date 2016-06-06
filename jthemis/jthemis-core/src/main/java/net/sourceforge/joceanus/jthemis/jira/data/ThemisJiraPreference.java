@@ -105,8 +105,7 @@ public abstract class ThemisJiraPreference {
          * @throws OceanusException on error
          */
         public ThemisJiraPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, ThemisJiraPreferenceKey.class);
-            setName("Jira Preferences");
+            super(pManager, ThemisJiraPreferenceKey.class, "Jira Preferences");
         }
 
         @Override

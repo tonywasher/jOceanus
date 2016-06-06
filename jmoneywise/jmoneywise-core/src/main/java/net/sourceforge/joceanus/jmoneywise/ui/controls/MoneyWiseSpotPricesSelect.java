@@ -103,7 +103,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
     /**
      * The data view.
      */
-    private final View theView;
+    private final View<N, I> theView;
 
     /**
      * The date button.
@@ -171,7 +171,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
      * @param pView the data view
      */
     public MoneyWiseSpotPricesSelect(final TethysGuiFactory<N, I> pFactory,
-                                     final View pView) {
+                                     final View<N, I> pView) {
         /* Store table and view details */
         theView = pView;
 

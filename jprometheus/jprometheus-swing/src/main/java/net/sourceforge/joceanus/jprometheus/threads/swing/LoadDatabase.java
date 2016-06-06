@@ -44,7 +44,7 @@ public class LoadDatabase<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Data control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T, E, ?, ?> theControl;
 
     /**
      * Thread Status.

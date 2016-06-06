@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseCancelException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferenceKey;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
@@ -71,7 +72,7 @@ public class WriteQIF
     /**
      * Data View.
      */
-    private final View theView;
+    private final View<?, ?> theView;
 
     /**
      * Thread Status.
@@ -106,8 +107,11 @@ public class WriteQIF
         MetisPreferenceManager myMgr = theView.getPreferenceManager();
         MoneyWiseQIFPreferences myPrefs = myMgr.getPreferenceSet(MoneyWiseQIFPreferences.class);
 
+        /* Obtain the analysis */
+        Analysis myAnalysis = theView.getAnalysisManager().getAnalysis();
+
         /* Create QIF file */
-        QIFFile myQFile = QIFFile.buildQIFFile(theView, myPrefs);
+        QIFFile myQFile = QIFFile.buildQIFFile(theView.getData(), myAnalysis, myPrefs);
 
         /* Initialise the status window */
         theStatus.initTask("Writing QIF file");

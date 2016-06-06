@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
@@ -199,9 +200,13 @@ public class MetisViewerFormatter {
         MetisFields myFields = pContents.getDataFields();
         MetisValueSet myValues = null;
         MetisDataValues myValueCtl = null;
+        MetisFieldSetItem myItem = null;
         if (MetisDataValues.class.isInstance(pContents)) {
             myValueCtl = (MetisDataValues) pContents;
             myValues = myValueCtl.getValueSet();
+        }
+        if (MetisFieldSetItem.class.isInstance(pContents)) {
+            myItem = (MetisFieldSetItem) pContents;
         }
 
         /* Initialise the document */
@@ -235,7 +240,12 @@ public class MetisViewerFormatter {
             /* Start the field */
             theBuilder.newTableRow();
             theBuilder.newDataCell(myField.getName());
-            theBuilder.newDataCell(myValue);
+            if ((myItem != null)
+                && (myItem.getFieldState(myField).isChanged())) {
+                theBuilder.newDataCell(myValue, true);
+            } else {
+                theBuilder.newDataCell(myValue);
+            }
         }
     }
 
@@ -247,7 +257,7 @@ public class MetisViewerFormatter {
     private void formatHTMLListItem(final List<?> pList,
                                     final int pIndex) {
         /* Obtain the object */
-        Object myObject = pList.get(pIndex);
+        Object myObject = pList.get(pIndex - 1);
 
         /* Format the object */
         formatHTMLObject(myObject);
@@ -260,27 +270,30 @@ public class MetisViewerFormatter {
      */
     private void formatHTMLListSection(final List<?> pList,
                                        final int pStart) {
-        /* Create iterator at start */
-        Iterator<?> myIterator = pList.listIterator(pStart);
-
         /* Initialise the document */
         theBuilder.newTitle(TABLE_LIST);
         theBuilder.newTable();
         theBuilder.newTitleCell(COLUMN_INDEX);
         theBuilder.newTitleCell(COLUMN_VALUE);
 
-        /* Loop up to the limit */
-        int myCount = ITEMS_PER_PAGE;
-        int myIndex = pStart + 1;
-        while (myIterator.hasNext()
-               && (myCount-- > 0)) {
-            /* Access the key and value */
-            Object myObject = myIterator.next();
+        /* If there are items in the list */
+        if (!pList.isEmpty()) {
+            /* Create iterator at start */
+            Iterator<?> myIterator = pList.listIterator(pStart - 1);
 
-            /* Format the row */
-            theBuilder.newTableRow();
-            theBuilder.newDataCell(myIndex++);
-            theBuilder.newDataCell(myObject);
+            /* Loop up to the limit */
+            int myCount = ITEMS_PER_PAGE;
+            int myIndex = pStart;
+            while (myIterator.hasNext()
+                   && (myCount-- > 0)) {
+                /* Access the key and value */
+                Object myObject = myIterator.next();
+
+                /* Format the row */
+                theBuilder.newTableRow();
+                theBuilder.newDataCell(myIndex++);
+                theBuilder.newDataCell(myObject);
+            }
         }
     }
 
@@ -292,17 +305,6 @@ public class MetisViewerFormatter {
     private void formatHTMLMapSection(final Map<?, ?> pMap,
                                       final int pStart) {
 
-        /* Create iterator and shift to start */
-        Iterator<?> myIterator = pMap.entrySet().iterator();
-        int myCount = pStart;
-        if (myCount > 0) {
-            /* Skip leading entries */
-            while (myIterator.hasNext()
-                   && (myCount-- > 0)) {
-                myIterator.next();
-            }
-        }
-
         /* Initialise the document */
         theBuilder.newTitle(TABLE_MAP);
         theBuilder.newTable();
@@ -310,19 +312,33 @@ public class MetisViewerFormatter {
         theBuilder.newTitleCell(COLUMN_KEY);
         theBuilder.newTitleCell(COLUMN_VALUE);
 
-        /* Loop up to the limit */
-        myCount = ITEMS_PER_PAGE;
-        int myIndex = pStart + 1;
-        while (myIterator.hasNext()
-               && (myCount-- > 0)) {
-            /* Access the key and value */
-            Map.Entry<?, ?> myEntry = Map.Entry.class.cast(myIterator.next());
+        /* If there are items in the list */
+        if (!pMap.isEmpty()) {
+            /* Create iterator and shift to start */
+            Iterator<?> myIterator = pMap.entrySet().iterator();
+            int myCount = pStart - 1;
+            if (myCount > 0) {
+                /* Skip leading entries */
+                while (myIterator.hasNext()
+                       && (myCount-- > 0)) {
+                    myIterator.next();
+                }
+            }
 
-            /* Format the row */
-            theBuilder.newTableRow();
-            theBuilder.newDataCell(myIndex++);
-            theBuilder.newDataCell(myEntry.getKey());
-            theBuilder.newDataCell(myEntry.getValue());
+            /* Loop up to the limit */
+            myCount = ITEMS_PER_PAGE;
+            int myIndex = pStart;
+            while (myIterator.hasNext()
+                   && (myCount-- > 0)) {
+                /* Access the key and value */
+                Map.Entry<?, ?> myEntry = Map.Entry.class.cast(myIterator.next());
+
+                /* Format the row */
+                theBuilder.newTableRow();
+                theBuilder.newDataCell(myIndex++);
+                theBuilder.newDataCell(myEntry.getKey());
+                theBuilder.newDataCell(myEntry.getValue());
+            }
         }
     }
 

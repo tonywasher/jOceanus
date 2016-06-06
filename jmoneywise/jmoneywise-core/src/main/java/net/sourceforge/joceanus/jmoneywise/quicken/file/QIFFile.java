@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -43,7 +44,6 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferenceKey;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
-import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -292,11 +292,13 @@ public class QIFFile {
 
     /**
      * Build QIF File from data.
-     * @param pView the view
+     * @param pData the data
+     * @param pAnalysis the analysis
      * @param pPreferences the preferences
      * @return the QIF File
      */
-    public static QIFFile buildQIFFile(final View pView,
+    public static QIFFile buildQIFFile(final MoneyWiseData pData,
+                                       final Analysis pAnalysis,
                                        final MoneyWiseQIFPreferences pPreferences) {
         /* Access preference details */
         QIFType myType = pPreferences.getEnumValue(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.class);
@@ -306,7 +308,7 @@ public class QIFFile {
         QIFFile myFile = new QIFFile(myType);
 
         /* Build the data for the accounts */
-        myFile.buildData(pView, myLastDate);
+        myFile.buildData(pData, pAnalysis, myLastDate);
         myFile.sortLists();
 
         /* Return the QIF File */
@@ -676,24 +678,25 @@ public class QIFFile {
 
     /**
      * Build data.
-     * @param pView the view
+     * @param pData the data
+     * @param pAnalysis the analysis
      * @param pLastDate the last date
      */
-    public void buildData(final View pView,
+    public void buildData(final MoneyWiseData pData,
+                          final Analysis pAnalysis,
                           final TethysDate pLastDate) {
         /* Create a builder */
-        QIFBuilder myBuilder = new QIFBuilder(this, pView);
+        QIFBuilder myBuilder = new QIFBuilder(this, pData, pAnalysis);
 
         /* Store dates */
-        MoneyWiseData myData = pView.getData();
-        theStartDate = myData.getDateRange().getStart();
+        theStartDate = pData.getDateRange().getStart();
         theLastDate = pLastDate;
 
         /* Build opening balances */
-        buildOpeningBalances(myBuilder, myData.getDeposits());
+        buildOpeningBalances(myBuilder, pData.getDeposits());
 
         /* Loop through the events */
-        TransactionList myEvents = myData.getTransactions();
+        TransactionList myEvents = pData.getTransactions();
         Iterator<Transaction> myIterator = myEvents.iterator();
         while (myIterator.hasNext()) {
             Transaction myEvent = myIterator.next();
@@ -709,7 +712,7 @@ public class QIFFile {
         }
 
         /* Build prices for securities */
-        buildPrices(myData.getSecurityPrices());
+        buildPrices(pData.getSecurityPrices());
     }
 
     /**
