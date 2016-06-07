@@ -52,15 +52,17 @@ public class MetisFXThreadManager
     /**
      * Constructor.
      * @param pToolkit the toolkit
+     * @param pSlider use slider status
      */
-    public MetisFXThreadManager(final MetisFXToolkit pToolkit) {
-        super(pToolkit);
+    public MetisFXThreadManager(final MetisFXToolkit pToolkit,
+                                final boolean pSlider) {
+        super(pToolkit, pSlider);
         theToolkit = pToolkit;
     }
 
     @Override
-    public MetisFXThreadStatusManager getStatusManager() {
-        return (MetisFXThreadStatusManager) super.getStatusManager();
+    public MetisFXThreadSliderStatus getStatusManager() {
+        return (MetisFXThreadSliderStatus) super.getStatusManager();
     }
 
     @Override
@@ -140,9 +142,6 @@ public class MetisFXThreadManager
      * Handle completion.
      */
     private void handleCompletion() {
-        /* Access the status manager */
-        MetisFXThreadStatusManager myManager = getStatusManager();
-
         /* Handle exceptions */
         try {
             /* Complete the thread */
@@ -150,7 +149,7 @@ public class MetisFXThreadManager
 
             /* Record the completion */
             endTask();
-            myManager.setCompletion();
+            getStatusManager().setCompletion();
 
             /* Catch exceptions */
         } catch (OceanusException e) {

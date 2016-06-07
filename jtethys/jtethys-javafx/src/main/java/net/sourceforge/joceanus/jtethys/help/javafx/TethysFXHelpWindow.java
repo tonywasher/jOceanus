@@ -45,7 +45,7 @@ public class TethysFXHelpWindow
     /**
      * The stage.
      */
-    private Stage theStage;
+    private final Stage theStage;
 
     /**
      * The help dialog.
@@ -59,6 +59,7 @@ public class TethysFXHelpWindow
     public TethysFXHelpWindow(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
+        theStage = pFactory.getStage();
     }
 
     @Override
@@ -109,14 +110,6 @@ public class TethysFXHelpWindow
             /* hide it */
             theDialog.hide();
         }
-    }
-
-    /**
-     * Set the stage.
-     * @param pStage the stage
-     */
-    public void setStage(final Stage pStage) {
-        theStage = pStage;
     }
 
     /**

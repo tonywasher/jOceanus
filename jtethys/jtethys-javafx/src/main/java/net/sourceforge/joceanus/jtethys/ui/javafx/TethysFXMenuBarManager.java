@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import java.util.function.Consumer;
+
 import javafx.scene.Node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -30,11 +32,10 @@ import javafx.scene.control.SeparatorMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 
 /**
- * FX MenuBar Manager.
- * @param <T> the item type
+ * JavaFX MenuBar Manager.
  */
-public class TethysFXMenuBarManager<T>
-        extends TethysMenuBarManager<T, Node> {
+public class TethysFXMenuBarManager
+        extends TethysMenuBarManager<Node> {
     /**
      * The MenuBar.
      */
@@ -53,17 +54,23 @@ public class TethysFXMenuBarManager<T>
     }
 
     @Override
-    public TethysFXMenuBarSubMenu addSubMenu(final String pText) {
-        TethysFXMenuBarSubMenu myMenu = new TethysFXMenuBarSubMenu(pText);
+    public <I> TethysFXMenuSubMenu<I> newSubMenu(final I pId) {
+        TethysFXMenuSubMenu<I> myMenu = new TethysFXMenuSubMenu<>(pId);
         theMenuBar.getMenus().add(myMenu.getMenu());
         return myMenu;
     }
 
+    @Override
+    public <I> TethysFXMenuSubMenu<I> lookUpSubMenu(final I pId) {
+        return (TethysFXMenuSubMenu<I>) super.lookUpSubMenu(pId);
+    }
+
     /**
-     * FXMenu.
+     * JavaFXSubMenu.
+     * @param <S> the id type
      */
-    public class TethysFXMenuBarSubMenu
-            extends TethysMenuBarSubMenu {
+    public class TethysFXMenuSubMenu<S>
+            extends TethysMenuSubMenu<S> {
         /**
          * The SubMenu.
          */
@@ -71,38 +78,40 @@ public class TethysFXMenuBarManager<T>
 
         /**
          * Constructor.
-         * @param pText the menu text
+         * @param pId the Id
          */
-        protected TethysFXMenuBarSubMenu(final String pText) {
-            theMenu = new Menu(pText);
+        protected TethysFXMenuSubMenu(final S pId) {
+            super(pId);
+            theMenu = new Menu(pId.toString());
         }
 
         /**
          * Obtain the menu.
          * @return the menu
          */
-        private Menu getMenu() {
+        protected Menu getMenu() {
             return theMenu;
         }
 
         @Override
-        public TethysFXMenuBarSubMenu addSubMenu(final String pText) {
-            TethysFXMenuBarSubMenu myMenu = new TethysFXMenuBarSubMenu(pText);
+        public <I> TethysFXMenuSubMenu<I> newSubMenu(final I pId) {
+            TethysFXMenuSubMenu<I> myMenu = new TethysFXMenuSubMenu<>(pId);
             theMenu.getItems().add(myMenu.getMenu());
             incrementItemCount();
             return myMenu;
         }
 
         @Override
-        public TethysFXMenuBarItem addMenuItem(final T pItem) {
-            TethysFXMenuBarItem myItem = new TethysFXMenuBarItem(pItem);
-            theMenu.getItems().add(myItem.getMenuItem());
+        public <I> TethysFXMenuItem<I> newMenuItem(final I pId,
+                                                   final Consumer<I> pAction) {
+            TethysFXMenuItem<I> myItem = new TethysFXMenuItem<>(pId, pAction);
+            theMenu.getItems().add(myItem.getItem());
             incrementItemCount();
             return myItem;
         }
 
         @Override
-        public void addSeparator() {
+        public void newSeparator() {
             theMenu.getItems().add(new SeparatorMenuItem());
         }
 
@@ -113,16 +122,22 @@ public class TethysFXMenuBarManager<T>
         }
 
         @Override
-        protected void enableMenu(final boolean pEnabled) {
+        protected void setVisible(final boolean pVisible) {
+            theMenu.setVisible(pVisible);
+        }
+
+        @Override
+        protected void enableItem(final boolean pEnabled) {
             theMenu.setDisable(!pEnabled);
         }
     }
 
     /**
-     * FXMenuItem.
+     * JavaFXMenuItem.
+     * @param <I> the id type
      */
-    public class TethysFXMenuBarItem
-            extends TethysMenuBarItem {
+    public class TethysFXMenuItem<I>
+            extends TethysMenuItem<I> {
         /**
          * The Menu Item.
          */
@@ -130,24 +145,31 @@ public class TethysFXMenuBarManager<T>
 
         /**
          * Constructor.
-         * @param pItem the item
+         * @param pId the id
+         * @param pAction the action
          */
-        protected TethysFXMenuBarItem(final T pItem) {
+        protected TethysFXMenuItem(final I pId,
+                                   final Consumer<I> pAction) {
             /* Initialise underlying class */
-            super(pItem);
+            super(pId, pAction);
             theMenuItem = new MenuItem();
-            theMenuItem.setText(pItem.toString());
+            theMenuItem.setText(pId.toString());
 
             /* Add listener */
-            theMenuItem.setOnAction(e -> notifySelection());
+            theMenuItem.setOnAction(e -> notifyAction());
         }
 
         /**
-         * Obtain the menu item.
-         * @return the menu item
+         * Obtain the item.
+         * @return the item
          */
-        private MenuItem getMenuItem() {
+        protected MenuItem getItem() {
             return theMenuItem;
+        }
+
+        @Override
+        protected void setVisible(final boolean pVisible) {
+            theMenuItem.setVisible(pVisible);
         }
 
         @Override

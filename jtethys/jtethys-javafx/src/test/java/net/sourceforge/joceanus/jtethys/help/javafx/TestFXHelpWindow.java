@@ -50,24 +50,6 @@ public class TestFXHelpWindow
     private static final Logger LOGGER = LoggerFactory.getLogger(TestFXHelpWindow.class);
 
     /**
-     * The HelpButton.
-     */
-    private final Button theButton;
-
-    /**
-     * The HelpManager.
-     */
-    private final TethysFXHelpWindow theHelpWindow;
-
-    /**
-     * Constructor.
-     */
-    public TestFXHelpWindow() {
-        theButton = new Button("Help");
-        theHelpWindow = new TethysFXHelpWindow(new TethysFXGuiFactory());
-    }
-
-    /**
      * Main entry point.
      * @param args the parameters
      */
@@ -78,7 +60,7 @@ public class TestFXHelpWindow
     @Override
     public void start(final Stage pStage) {
         /* Create the panel */
-        Node myMain = buildPanel();
+        Node myMain = buildPanel(pStage);
 
         /* Create scene */
         Scene myScene = new Scene(new Group());
@@ -86,31 +68,38 @@ public class TestFXHelpWindow
         pStage.setTitle("JavaFXHelp Demo");
         pStage.setScene(myScene);
         pStage.show();
-
-        /* Declare stage to the HelpWindow */
-        theHelpWindow.setStage(pStage);
     }
 
     /**
      * Build the panel.
      * @return the panel
      */
-    private Node buildPanel() {
+    private Node buildPanel(final Stage pStage) {
+        /* Create the factory */
+        TethysFXGuiFactory myFactory = new TethysFXGuiFactory();
+        myFactory.setStage(pStage);
+
+        /* Create a button */
+        Button myButton = new Button("Help");
+
+        /* Create the help window */
+        TethysFXHelpWindow myWindow = new TethysFXHelpWindow(myFactory);
+
         /* Create a BorderPane for the fields */
         BorderPane myPane = new BorderPane();
-        myPane.setLeft(theButton);
+        myPane.setLeft(myButton);
 
         /* Add listener for the button */
-        theButton.setOnAction(new EventHandler<ActionEvent>() {
+        myButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent event) {
-                theHelpWindow.showDialog();
+                myWindow.showDialog();
             }
         });
 
         /* Protect against exceptions */
         try {
-            theHelpWindow.setModule(new TestHelp());
+            myWindow.setModule(new TestHelp());
         } catch (OceanusException e) {
             LOGGER.error("failed to build HelpModule", e);
         }
@@ -121,7 +110,7 @@ public class TestFXHelpWindow
     /**
      * Help system.
      */
-    public class TestHelp
+    public static class TestHelp
             extends TethysHelpModule {
         /**
          * Constructor.

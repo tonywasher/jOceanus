@@ -87,9 +87,11 @@ public abstract class MetisToolkit<N, I> {
     /**
      * Constructor.
      * @param pProfile the initial profile
+     * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    protected MetisToolkit(final MetisProfile pProfile) throws OceanusException {
+    protected MetisToolkit(final MetisProfile pProfile,
+                           final boolean pSlider) throws OceanusException {
         /* Create the formatter */
         theFormatter = new MetisDataFormatter();
 
@@ -113,8 +115,8 @@ public abstract class MetisToolkit<N, I> {
         MetisSecurityPreferences myPreferences = thePreferenceManager.getPreferenceSet(MetisSecurityPreferences.class);
         theHashManager = newSecurityManager(myPreferences.getParameters());
 
-        /* Create the thread manager */
-        theThreadManager = newThreadManager();
+        /* create the thread manager */
+        theThreadManager = newThreadManager(pSlider);
     }
 
     /**
@@ -173,16 +175,26 @@ public abstract class MetisToolkit<N, I> {
 
     /**
      * Create a Thread Manager.
+     * @param pSlider use slider status
      * @return the thread manager
      */
-    protected abstract MetisThreadManager<N, I> newThreadManager();
+    protected abstract MetisThreadManager<N, I> newThreadManager(final boolean pSlider);
 
     /**
-     * Create a Thread Status Manager.
+     * Create a Thread Slider Status.
      * @param pManager the thread manager
      * @return the thread status manager
      */
-    protected abstract MetisThreadStatusManager<N, I> newThreadStatusManager(final MetisThreadManager<N, I> pManager);
+    protected abstract MetisThreadSliderStatus<N, I> newThreadSliderStatus(final MetisThreadManager<N, I> pManager);
+
+    /**
+     * Create a Thread TextArea Status.
+     * @param pManager the thread manager
+     * @return the thread status manager
+     */
+    protected MetisThreadTextAreaStatus<N, I> newThreadTextAreaStatus(final MetisThreadManager<N, I> pManager) {
+        return new MetisThreadTextAreaStatus<>(pManager, theGuiFactory);
+    }
 
     /**
      * Create a Security Manager.

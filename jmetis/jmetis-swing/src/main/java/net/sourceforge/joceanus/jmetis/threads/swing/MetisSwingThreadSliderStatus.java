@@ -27,14 +27,14 @@ import javax.swing.JComponent;
 import javax.swing.Timer;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadSliderStatus;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Swing Thread Status Manager.
  */
-public class MetisSwingThreadStatusManager
-        extends MetisThreadStatusManager<JComponent, Icon> {
+public class MetisSwingThreadSliderStatus
+        extends MetisThreadSliderStatus<JComponent, Icon> {
     /**
      * Timer.
      */
@@ -45,8 +45,8 @@ public class MetisSwingThreadStatusManager
      * @param pManager the thread manager
      * @param pFactory the GUI factory
      */
-    protected MetisSwingThreadStatusManager(final MetisThreadManager<JComponent, Icon> pManager,
-                                            final TethysSwingGuiFactory pFactory) {
+    protected MetisSwingThreadSliderStatus(final MetisThreadManager<JComponent, Icon> pManager,
+                                           final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pManager, pFactory);
 
@@ -61,7 +61,7 @@ public class MetisSwingThreadStatusManager
     }
 
     @Override
-    protected void setCompletion() {
+    public void setCompletion() {
         /* Pass call on */
         super.setCompletion();
 

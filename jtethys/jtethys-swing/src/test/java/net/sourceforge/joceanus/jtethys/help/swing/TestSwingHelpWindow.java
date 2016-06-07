@@ -24,9 +24,7 @@ package net.sourceforge.joceanus.jtethys.help.swing;
 
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
-import java.lang.reflect.InvocationTargetException;
 
-import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -44,34 +42,16 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 /**
  * Help Window.
  */
-public class TestSwingHelpWindow
-        extends JApplet {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -1073083122991090117L;
-
+public class TestSwingHelpWindow {
     /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(TestSwingHelpWindow.class);
 
     /**
-     * The HelpButton.
-     */
-    private final JButton theButton;
-
-    /**
-     * The HelpManager.
-     */
-    private final TethysSwingHelpWindow theHelpWindow;
-
-    /**
      * Constructor.
      */
-    public TestSwingHelpWindow() {
-        theButton = new JButton("Help");
-        theHelpWindow = new TethysSwingHelpWindow(new TethysSwingGuiFactory());
+    private TestSwingHelpWindow() {
     }
 
     /**
@@ -87,25 +67,6 @@ public class TestSwingHelpWindow
         });
     }
 
-    @Override
-    public void init() {
-        // Execute a job on the event-dispatching thread; creating this applet's GUI.
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    /* Create the Test Panel */
-                    JPanel myPanel = buildPanel();
-                    setContentPane(myPanel);
-                }
-            });
-        } catch (InvocationTargetException e) {
-            LOGGER.error("Failed to invoke thread", e);
-        } catch (InterruptedException e) {
-            LOGGER.error("Thread was interrupted", e);
-        }
-    }
-
     /**
      * Create and show the GUI.
      */
@@ -114,9 +75,15 @@ public class TestSwingHelpWindow
             /* Create the frame */
             JFrame myFrame = new JFrame("HelpWindow Test");
 
+            /* Create the guiFactory */
+            TethysSwingGuiFactory myFactory = new TethysSwingGuiFactory();
+            myFactory.setFrame(myFrame);
+
+            /* Create the help window */
+            TethysSwingHelpWindow myWindow = new TethysSwingHelpWindow(myFactory);
+
             /* Access the panel */
-            TestSwingHelpWindow myWindow = new TestSwingHelpWindow();
-            JPanel myPanel = myWindow.buildPanel();
+            JPanel myPanel = buildPanel(myWindow);
 
             /* Attach the panel to the frame */
             myPanel.setOpaque(true);
@@ -134,20 +101,24 @@ public class TestSwingHelpWindow
 
     /**
      * Build the panel.
+     * @param pWindow the window
      * @return the panel
      */
-    private JPanel buildPanel() {
+    private static JPanel buildPanel(final TethysSwingHelpWindow pWindow) {
+        /* Create a button */
+        JButton myButton = new JButton("Help");
+
         /* Create a BorderPane for the fields */
         JPanel myPane = new JPanel();
         myPane.setLayout(new BorderLayout());
-        myPane.add(theButton, BorderLayout.LINE_START);
+        myPane.add(myButton, BorderLayout.LINE_START);
 
         /* Add listener for the button */
-        theButton.addActionListener(e -> theHelpWindow.showDialog());
+        myButton.addActionListener(e -> pWindow.showDialog());
 
         /* Protect against exceptions */
         try {
-            theHelpWindow.setModule(new TestHelp());
+            pWindow.setModule(new TestHelp());
         } catch (OceanusException e) {
             LOGGER.error("failed to build HelpModule", e);
         }
@@ -157,7 +128,7 @@ public class TestSwingHelpWindow
     /**
      * Help system.
      */
-    public class TestHelp
+    public static class TestHelp
             extends TethysHelpModule {
         /**
          * Constructor.

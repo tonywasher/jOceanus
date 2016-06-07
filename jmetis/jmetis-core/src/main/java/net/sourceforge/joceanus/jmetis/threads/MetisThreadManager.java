@@ -63,7 +63,7 @@ public abstract class MetisThreadManager<N, I>
     /**
      * The StatusManager.
      */
-    private final MetisThreadStatusManager<N, I> theStatusManager;
+    private final MetisThreadStatusManager<N> theStatusManager;
 
     /**
      * The status data.
@@ -103,8 +103,10 @@ public abstract class MetisThreadManager<N, I>
     /**
      * Constructor.
      * @param pToolkit the toolkit
+     * @param pSlider use slider status
      */
-    protected MetisThreadManager(final MetisToolkit<N, I> pToolkit) {
+    protected MetisThreadManager(final MetisToolkit<N, I> pToolkit,
+                                 final boolean pSlider) {
         /* record parameters */
         theToolkit = pToolkit;
 
@@ -126,7 +128,9 @@ public abstract class MetisThreadManager<N, I>
         theErrorEntry.setVisible(false);
 
         /* Create the status manager */
-        theStatusManager = theToolkit.newThreadStatusManager(this);
+        theStatusManager = pSlider
+                                   ? theToolkit.newThreadSliderStatus(this)
+                                   : theToolkit.newThreadTextAreaStatus(this);
 
         /* Access the threadStatus properties */
         MetisPreferenceManager myMgr = theToolkit.getPreferenceManager();
@@ -143,7 +147,7 @@ public abstract class MetisThreadManager<N, I>
      * Obtain the status manager.
      * @return the status Manager
      */
-    protected MetisThreadStatusManager<N, I> getStatusManager() {
+    protected MetisThreadStatusManager<N> getStatusManager() {
         return theStatusManager;
     }
 
@@ -152,7 +156,7 @@ public abstract class MetisThreadManager<N, I>
      * @return the factory
      */
     public TethysGuiFactory<N, I> getGuiFactory() {
-        return theStatusManager.getGuiFactory();
+        return theToolkit.getGuiFactory();
     }
 
     /**
@@ -215,10 +219,11 @@ public abstract class MetisThreadManager<N, I>
      */
     protected void threadCompleted() {
         /* Remove reference */
+        MetisThread<?, N, I> myThread = theThread;
         theThread = null;
 
         /* Note that thread has completed */
-        theEventManager.fireEvent(MetisThreadEvent.THREADEND);
+        theEventManager.fireEvent(MetisThreadEvent.THREADEND, myThread);
     }
 
     /**

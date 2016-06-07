@@ -394,7 +394,7 @@ public class TethysDataFormatter {
      * @param pValue the object
      * @return the formatted value
      */
-    private String formatBasicValue(final Object pValue) {
+    private static String formatBasicValue(final Object pValue) {
         /* Access the class */
         Class<?> myClass = pValue.getClass();
 

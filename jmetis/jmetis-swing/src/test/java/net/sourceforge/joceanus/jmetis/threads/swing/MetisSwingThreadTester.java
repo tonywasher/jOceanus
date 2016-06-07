@@ -78,7 +78,7 @@ public class MetisSwingThreadTester {
     /**
      * the status panel.
      */
-    private final MetisSwingThreadStatusManager theStatusPanel;
+    private final MetisSwingThreadSliderStatus theStatusPanel;
 
     /**
      * the main panel.
@@ -114,6 +114,7 @@ public class MetisSwingThreadTester {
         theFrame = new JFrame("MetisSwingThread Demo");
         theStatusPanel = theThreadMgr.getStatusManager();
         theMainPanel = theGuiFactory.newBorderPane();
+        theGuiFactory.setFrame(theFrame);
     }
 
     /**

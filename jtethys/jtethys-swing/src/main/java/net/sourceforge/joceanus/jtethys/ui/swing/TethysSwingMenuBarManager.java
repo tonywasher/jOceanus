@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.util.function.Consumer;
+
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -31,10 +33,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 
 /**
  * Swing MenuBar Manager.
- * @param <T> the item type
  */
-public class TethysSwingMenuBarManager<T>
-        extends TethysMenuBarManager<T, JComponent> {
+public class TethysSwingMenuBarManager
+        extends TethysMenuBarManager<JComponent> {
     /**
      * The MenuBar.
      */
@@ -53,17 +54,23 @@ public class TethysSwingMenuBarManager<T>
     }
 
     @Override
-    public TethysSwingMenuBarSubMenu addSubMenu(final String pText) {
-        TethysSwingMenuBarSubMenu myMenu = new TethysSwingMenuBarSubMenu(pText);
+    public <I> TethysSwingMenuSubMenu<I> newSubMenu(final I pId) {
+        TethysSwingMenuSubMenu<I> myMenu = new TethysSwingMenuSubMenu<>(pId);
         theMenuBar.add(myMenu.getMenu());
         return myMenu;
     }
 
+    @Override
+    public <I> TethysSwingMenuSubMenu<I> lookUpSubMenu(final I pId) {
+        return (TethysSwingMenuSubMenu<I>) super.lookUpSubMenu(pId);
+    }
+
     /**
-     * SwingMenu.
+     * SwingSubMenu.
+     * @param <S> the id type
      */
-    public class TethysSwingMenuBarSubMenu
-            extends TethysMenuBarSubMenu {
+    public class TethysSwingMenuSubMenu<S>
+            extends TethysMenuSubMenu<S> {
         /**
          * The SubMenu.
          */
@@ -71,38 +78,40 @@ public class TethysSwingMenuBarManager<T>
 
         /**
          * Constructor.
-         * @param pText the menu text
+         * @param pId the Id
          */
-        protected TethysSwingMenuBarSubMenu(final String pText) {
-            theMenu = new JMenu(pText);
+        protected TethysSwingMenuSubMenu(final S pId) {
+            super(pId);
+            theMenu = new JMenu(pId.toString());
         }
 
         /**
          * Obtain the menu.
          * @return the menu
          */
-        private JMenu getMenu() {
+        protected JMenu getMenu() {
             return theMenu;
         }
 
         @Override
-        public TethysSwingMenuBarSubMenu addSubMenu(final String pText) {
-            TethysSwingMenuBarSubMenu myMenu = new TethysSwingMenuBarSubMenu(pText);
+        public <I> TethysSwingMenuSubMenu<I> newSubMenu(final I pId) {
+            TethysSwingMenuSubMenu<I> myMenu = new TethysSwingMenuSubMenu<>(pId);
             theMenu.add(myMenu.getMenu());
             incrementItemCount();
             return myMenu;
         }
 
         @Override
-        public TethysSwingMenuBarItem addMenuItem(final T pItem) {
-            TethysSwingMenuBarItem myItem = new TethysSwingMenuBarItem(pItem);
-            theMenu.add(myItem.getMenuItem());
+        public <I> TethysSwingMenuItem<I> newMenuItem(final I pId,
+                                                      final Consumer<I> pAction) {
+            TethysSwingMenuItem<I> myItem = new TethysSwingMenuItem<>(pId, pAction);
+            theMenu.add(myItem.getItem());
             incrementItemCount();
             return myItem;
         }
 
         @Override
-        public void addSeparator() {
+        public void newSeparator() {
             theMenu.addSeparator();
         }
 
@@ -113,16 +122,22 @@ public class TethysSwingMenuBarManager<T>
         }
 
         @Override
-        protected void enableMenu(final boolean pEnabled) {
+        protected void setVisible(final boolean pVisible) {
+            theMenu.setVisible(pVisible);
+        }
+
+        @Override
+        protected void enableItem(final boolean pEnabled) {
             theMenu.setEnabled(pEnabled);
         }
     }
 
     /**
      * SwingMenuItem.
+     * @param <I> the id type
      */
-    public class TethysSwingMenuBarItem
-            extends TethysMenuBarItem {
+    public class TethysSwingMenuItem<I>
+            extends TethysMenuItem<I> {
         /**
          * The Menu Item.
          */
@@ -130,24 +145,31 @@ public class TethysSwingMenuBarManager<T>
 
         /**
          * Constructor.
-         * @param pItem the item
+         * @param pId the id
+         * @param pAction the action
          */
-        protected TethysSwingMenuBarItem(final T pItem) {
+        protected TethysSwingMenuItem(final I pId,
+                                      final Consumer<I> pAction) {
             /* Initialise underlying class */
-            super(pItem);
+            super(pId, pAction);
             theMenuItem = new JMenuItem();
-            theMenuItem.setText(pItem.toString());
+            theMenuItem.setText(pId.toString());
 
             /* Add listener */
-            theMenuItem.addActionListener(e -> notifySelection());
+            theMenuItem.addActionListener(e -> notifyAction());
         }
 
         /**
-         * Obtain the menu item.
-         * @return the menu item
+         * Obtain the item.
+         * @return the item
          */
-        private JMenuItem getMenuItem() {
+        protected JMenuItem getItem() {
             return theMenuItem;
+        }
+
+        @Override
+        protected void setVisible(final boolean pVisible) {
+            theMenuItem.setVisible(pVisible);
         }
 
         @Override

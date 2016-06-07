@@ -53,7 +53,7 @@ public class MetisSwingThread<T>
     /**
      * The ThreadStatusManager.
      */
-    private final MetisSwingThreadStatusManager theStatusMgr;
+    private final MetisSwingThreadSliderStatus theStatusMgr;
 
     /**
      * The wrapped thread.

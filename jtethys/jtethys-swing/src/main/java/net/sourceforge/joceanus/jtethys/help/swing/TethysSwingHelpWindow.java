@@ -48,7 +48,7 @@ public class TethysSwingHelpWindow
     /**
      * The frame.
      */
-    private JFrame theBaseFrame;
+    private final JFrame theBaseFrame;
 
     /**
      * The help dialog.
@@ -62,6 +62,7 @@ public class TethysSwingHelpWindow
     public TethysSwingHelpWindow(final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
+        theBaseFrame = pFactory.getFrame();
     }
 
     @Override
@@ -98,14 +99,6 @@ public class TethysSwingHelpWindow
             /* Make sure that the dialog is hidden */
             theDialog.hideDialog();
         }
-    }
-
-    /**
-     * Set the frame.
-     * @param pFrame the frame
-     */
-    public void setFrame(final JFrame pFrame) {
-        theBaseFrame = pFrame;
     }
 
     /**

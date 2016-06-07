@@ -27,14 +27,14 @@ import javafx.animation.Timeline;
 import javafx.scene.Node;
 import javafx.util.Duration;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadSliderStatus;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
  * JavaFX Thread Status Manager.
  */
-public class MetisFXThreadStatusManager
-        extends MetisThreadStatusManager<Node, Node> {
+public class MetisFXThreadSliderStatus
+        extends MetisThreadSliderStatus<Node, Node> {
     /**
      * Timer.
      */
@@ -45,8 +45,8 @@ public class MetisFXThreadStatusManager
      * @param pManager the thread manager
      * @param pFactory the GUI factory
      */
-    protected MetisFXThreadStatusManager(final MetisThreadManager<Node, Node> pManager,
-                                         final TethysFXGuiFactory pFactory) {
+    protected MetisFXThreadSliderStatus(final MetisThreadManager<Node, Node> pManager,
+                                        final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pManager, pFactory);
 
@@ -60,7 +60,7 @@ public class MetisFXThreadStatusManager
     }
 
     @Override
-    protected void setCompletion() {
+    public void setCompletion() {
         /* Pass call on */
         super.setCompletion();
 

@@ -53,7 +53,18 @@ public class MetisFXToolkit
      * @throws OceanusException on error
      */
     public MetisFXToolkit(final MetisProfile pProfile) throws OceanusException {
-        super(pProfile);
+        this(pProfile, true);
+    }
+
+    /**
+     * Constructor.
+     * @param pProfile the initial profile
+     * @param pSlider use slider status
+     * @throws OceanusException on error
+     */
+    public MetisFXToolkit(final MetisProfile pProfile,
+                          final boolean pSlider) throws OceanusException {
+        super(pProfile, pSlider);
     }
 
     @Override
@@ -72,8 +83,8 @@ public class MetisFXToolkit
     }
 
     @Override
-    protected MetisFXThreadManager newThreadManager() {
-        return new MetisFXThreadManager(this);
+    protected MetisFXThreadManager newThreadManager(final boolean pSlider) {
+        return new MetisFXThreadManager(this, pSlider);
     }
 
     @Override
@@ -92,7 +103,7 @@ public class MetisFXToolkit
     }
 
     @Override
-    protected MetisFXThreadStatusManager newThreadStatusManager(final MetisThreadManager<Node, Node> pManager) {
-        return new MetisFXThreadStatusManager(pManager, getGuiFactory());
+    protected MetisFXThreadSliderStatus newThreadSliderStatus(final MetisThreadManager<Node, Node> pManager) {
+        return new MetisFXThreadSliderStatus(pManager, getGuiFactory());
     }
 }

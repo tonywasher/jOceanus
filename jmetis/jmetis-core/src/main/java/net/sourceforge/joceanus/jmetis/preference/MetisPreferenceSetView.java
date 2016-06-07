@@ -221,6 +221,9 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
      * Update fields.
      */
     private void updateFields() {
+        /* Update the viewer entry */
+        thePreferences.updateViewerEntry();
+
         /* Loop through the fields */
         for (PreferenceElement myItem : theElements) {
             /* Update the field */
@@ -281,7 +284,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
      * Determine Focus.
      */
     protected void determineFocus() {
-        /* TODO */
+        thePreferences.setFocus();
     }
 
     /**

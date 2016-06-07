@@ -50,7 +50,7 @@ public class MetisSwingViewerWindow
     /**
      * The frame.
      */
-    private JFrame theBaseFrame;
+    private final JFrame theBaseFrame;
 
     /**
      * The help dialog.
@@ -67,6 +67,7 @@ public class MetisSwingViewerWindow
                                   final MetisViewerManager pDataManager) throws OceanusException {
         /* Initialise underlying class */
         super(pFactory, pDataManager);
+        theBaseFrame = pFactory.getFrame();
     }
 
     @Override
@@ -110,14 +111,6 @@ public class MetisSwingViewerWindow
             /* Terminate the tree */
             terminateTree();
         }
-    }
-
-    /**
-     * ,/. Set the frame.
-     * @param pFrame the frame
-     */
-    public void setFrame(final JFrame pFrame) {
-        theBaseFrame = pFrame;
     }
 
     /**

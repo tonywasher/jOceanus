@@ -135,6 +135,11 @@ public class TethysSwingGuiFactory
     }
 
     @Override
+    public TethysSwingTextArea newTextArea() {
+        return new TethysSwingTextArea(this);
+    }
+
+    @Override
     public <T> TethysSwingScrollContextMenu<T> newContextMenu() {
         return new TethysSwingScrollContextMenu<>();
     }
@@ -220,8 +225,8 @@ public class TethysSwingGuiFactory
     }
 
     @Override
-    public <T> TethysSwingMenuBarManager<T> newMenuBar() {
-        return new TethysSwingMenuBarManager<>();
+    public TethysSwingMenuBarManager newMenuBar() {
+        return new TethysSwingMenuBarManager();
     }
 
     @Override

@@ -106,6 +106,11 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     private final String theName;
 
     /**
+     * The viewer entry.
+     */
+    private final MetisViewerEntry theViewerEntry;
+
+    /**
      * Is this a hidden preferenceSet.
      */
     private boolean isHidden;
@@ -164,8 +169,8 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         /* Create the viewer record */
         MetisViewerManager myViewer = pManager.getViewer();
         MetisViewerEntry myParent = myViewer.getStandardEntry(MetisViewerStandardEntry.PREFERENCES);
-        MetisViewerEntry myViewerEntry = myViewer.newEntry(myParent, theName);
-        myViewerEntry.setObject(this);
+        theViewerEntry = myViewer.newEntry(myParent, theName);
+        theViewerEntry.setObject(this);
     }
 
     @Override
@@ -279,6 +284,20 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     @Override
     public boolean isEditable() {
         return true;
+    }
+
+    /**
+     * Set the focus.
+     */
+    protected void setFocus() {
+        theViewerEntry.setFocus();
+    }
+
+    /**
+     * Update the viewer entry.
+     */
+    protected void updateViewerEntry() {
+        theViewerEntry.setObject(this);
     }
 
     /**

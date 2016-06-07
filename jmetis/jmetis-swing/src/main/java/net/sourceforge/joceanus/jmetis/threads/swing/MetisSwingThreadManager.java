@@ -47,9 +47,11 @@ public class MetisSwingThreadManager
     /**
      * Constructor.
      * @param pToolkit the toolkit
+     * @param pSlider use slider status
      */
-    public MetisSwingThreadManager(final MetisSwingToolkit pToolkit) {
-        super(pToolkit);
+    public MetisSwingThreadManager(final MetisSwingToolkit pToolkit,
+                                   final boolean pSlider) {
+        super(pToolkit, pSlider);
         theToolkit = pToolkit;
     }
 
@@ -61,8 +63,8 @@ public class MetisSwingThreadManager
     }
 
     @Override
-    public MetisSwingThreadStatusManager getStatusManager() {
-        return (MetisSwingThreadStatusManager) super.getStatusManager();
+    public MetisSwingThreadSliderStatus getStatusManager() {
+        return (MetisSwingThreadSliderStatus) super.getStatusManager();
     }
 
     @Override

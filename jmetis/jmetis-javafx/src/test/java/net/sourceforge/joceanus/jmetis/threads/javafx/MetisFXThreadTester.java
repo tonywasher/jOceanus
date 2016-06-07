@@ -67,7 +67,7 @@ public class MetisFXThreadTester
     /**
      * the status panel.
      */
-    private final MetisFXThreadStatusManager theStatusPanel;
+    private final MetisFXThreadSliderStatus theStatusPanel;
 
     /**
      * the main panel.
@@ -124,6 +124,9 @@ public class MetisFXThreadTester
         Scene myScene = new Scene(theMainPanel.getNode());
         pStage.setTitle("MetisFXThread Demo");
         pStage.setScene(myScene);
+
+        /* Shutdown threads on exit */
+        pStage.setOnCloseRequest(e -> theThreadMgr.shutdown());
 
         /* Configure factory */
         theGuiFactory.setStage(pStage);

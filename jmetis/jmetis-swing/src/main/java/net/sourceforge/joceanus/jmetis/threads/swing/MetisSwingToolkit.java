@@ -55,7 +55,18 @@ public class MetisSwingToolkit
      * @throws OceanusException on error
      */
     public MetisSwingToolkit(final MetisProfile pProfile) throws OceanusException {
-        super(pProfile);
+        this(pProfile, true);
+    }
+
+    /**
+     * Constructor.
+     * @param pProfile the initial profile
+     * @param pSlider use slider status
+     * @throws OceanusException on error
+     */
+    public MetisSwingToolkit(final MetisProfile pProfile,
+                             final boolean pSlider) throws OceanusException {
+        super(pProfile, pSlider);
     }
 
     @Override
@@ -74,8 +85,8 @@ public class MetisSwingToolkit
     }
 
     @Override
-    protected MetisSwingThreadManager newThreadManager() {
-        return new MetisSwingThreadManager(this);
+    protected MetisSwingThreadManager newThreadManager(final boolean pSlider) {
+        return new MetisSwingThreadManager(this, pSlider);
     }
 
     @Override
@@ -94,7 +105,7 @@ public class MetisSwingToolkit
     }
 
     @Override
-    protected MetisSwingThreadStatusManager newThreadStatusManager(final MetisThreadManager<JComponent, Icon> pManager) {
-        return new MetisSwingThreadStatusManager(pManager, getGuiFactory());
+    protected MetisSwingThreadSliderStatus newThreadSliderStatus(final MetisThreadManager<JComponent, Icon> pManager) {
+        return new MetisSwingThreadSliderStatus(pManager, getGuiFactory());
     }
 }

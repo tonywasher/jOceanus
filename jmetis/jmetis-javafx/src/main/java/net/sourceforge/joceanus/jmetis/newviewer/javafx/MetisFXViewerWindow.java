@@ -47,7 +47,7 @@ public class MetisFXViewerWindow
     /**
      * The stage.
      */
-    private Stage theStage;
+    private final Stage theStage;
 
     /**
      * The help dialog.
@@ -64,6 +64,7 @@ public class MetisFXViewerWindow
                                final MetisViewerManager pDataManager) throws OceanusException {
         /* Initialise underlying class */
         super(pFactory, pDataManager);
+        theStage = pFactory.getStage();
     }
 
     @Override
@@ -117,14 +118,6 @@ public class MetisFXViewerWindow
             /* Terminate the tree */
             terminateTree();
         }
-    }
-
-    /**
-     * Set the stage.
-     * @param pStage the stage
-     */
-    public void setStage(final Stage pStage) {
-        theStage = pStage;
     }
 
     /**

@@ -214,6 +214,11 @@ public class TethysFXGuiFactory
     }
 
     @Override
+    public TethysFXTextArea newTextArea() {
+        return new TethysFXTextArea(this);
+    }
+
+    @Override
     public <T> TethysFXScrollContextMenu<T> newContextMenu() {
         return new TethysFXScrollContextMenu<>();
     }
@@ -299,8 +304,8 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    public <T> TethysFXMenuBarManager<T> newMenuBar() {
-        return new TethysFXMenuBarManager<>();
+    public TethysFXMenuBarManager newMenuBar() {
+        return new TethysFXMenuBarManager();
     }
 
     @Override

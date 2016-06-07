@@ -178,6 +178,12 @@ public abstract class TethysGuiFactory<N, I> {
     public abstract TethysButton<N, I> newButton();
 
     /**
+     * Obtain a new textArea.
+     * @return the new textArea
+     */
+    public abstract TethysTextArea<N, I> newTextArea();
+
+    /**
      * Obtain a context menu.
      * @param <T> the item type
      * @return the new menu
@@ -290,10 +296,9 @@ public abstract class TethysGuiFactory<N, I> {
 
     /**
      * Obtain a new menuBar manager.
-     * @param <T> the item type
      * @return the new manager
      */
-    public abstract <T> TethysMenuBarManager<T, N> newMenuBar();
+    public abstract TethysMenuBarManager<N> newMenuBar();
 
     /**
      * Obtain a new tabPane manager.

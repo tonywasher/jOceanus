@@ -22,32 +22,26 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * MenuBar Manager.
- * @param <T> the item type
  * @param <N> the Node type
  */
-public abstract class TethysMenuBarManager<T, N>
-        implements TethysEventProvider<TethysUIEvent> {
+public abstract class TethysMenuBarManager<N> {
     /**
-     * The Event Manager.
+     * The Element Map.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final Map<Object, TethysMenuElement<?>> theElementMap;
 
     /**
      * Constructor.
      */
     protected TethysMenuBarManager() {
-        theEventManager = new TethysEventManager<>();
-    }
-
-    @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
+        /* Create the map */
+        theElementMap = new HashMap<>();
     }
 
     /**
@@ -58,144 +52,97 @@ public abstract class TethysMenuBarManager<T, N>
 
     /**
      * Add subMenu.
-     * @param pText the menu text
+     * @param <I> the type of the id
+     * @param pId the id of the subMenu
      * @return the new subMenu
      */
-    public abstract TethysMenuBarSubMenu addSubMenu(final String pText);
+    public abstract <I> TethysMenuSubMenu<I> newSubMenu(final I pId);
 
     /**
-     * Notify of selection.
-     * @param pItem the item that has been selected
+     * Set visible state for element.
+     * @param <I> the type of the id
+     * @param pId the id of the element
+     * @param pVisible true/false
      */
-    protected void notifySelected(final TethysMenuBarItem pItem) {
-        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, pItem.getItem());
+    public <I> void setVisible(final I pId,
+                               final boolean pVisible) {
+        TethysMenuElement<?> myElement = theElementMap.get(pId);
+        if (myElement != null) {
+            myElement.setVisible(pVisible);
+        }
     }
 
     /**
-     * SubMenu.
+     * Set enabled state for element.
+     * @param <I> the type of the id
+     * @param pId the id of the element
+     * @param pEnabled true/false
      */
-    public abstract class TethysMenuBarSubMenu {
+    public <I> void setEnabled(final I pId,
+                               final boolean pEnabled) {
+        TethysMenuElement<?> myElement = theElementMap.get(pId);
+        if (myElement != null) {
+            myElement.setEnabled(pEnabled);
+        }
+    }
+
+    /**
+     * Look up subMenu.
+     * @param <I> the type of the id
+     * @param pId the id of the element
+     * @return the subMenu
+     */
+    @SuppressWarnings("unchecked")
+    public <I> TethysMenuSubMenu<I> lookUpSubMenu(final I pId) {
+        TethysMenuElement<?> myElement = theElementMap.get(pId);
+        return (myElement instanceof TethysMenuSubMenu)
+                                                        ? (TethysMenuSubMenu<I>) myElement
+                                                        : null;
+    }
+
+    /**
+     * MenuElement.
+     * @param <I> the id type
+     */
+    public abstract class TethysMenuElement<I> {
         /**
-         * Is the menu enabled?
+         * The Id.
+         */
+        private final I theId;
+
+        /**
+         * Is the element enabled?
          */
         private boolean isEnabled;
 
         /**
-         * The item count.
-         */
-        private int theItemCount;
-
-        /**
          * Constructor.
+         * @param pId the id
          */
-        protected TethysMenuBarSubMenu() {
+        protected TethysMenuElement(final I pId) {
+            /* record details */
+            theId = pId;
             isEnabled = true;
-        }
 
-        /**
-         * Is the menu enabled?
-         * @return true/false
-         */
-        public boolean isEnabled() {
-            return isEnabled;
-        }
-
-        /**
-         * Add subMenu.
-         * @param pText the menu text
-         * @return the new subMenu
-         */
-        public abstract TethysMenuBarSubMenu addSubMenu(final String pText);
-
-        /**
-         * Add menuItem.
-         * @param pItem the item
-         * @return the new menu item
-         */
-        public abstract TethysMenuBarItem addMenuItem(final T pItem);
-
-        /**
-         * Add Separator.
-         */
-        public abstract void addSeparator();
-
-        /**
-         * Clear items.
-         */
-        public void clearItems() {
-            theItemCount = 0;
-        }
-
-        /**
-         * Increment count.
-         */
-        protected void incrementItemCount() {
-            theItemCount++;
-        }
-
-        /**
-         * Count items.
-         * @return the count of items
-         */
-        public int countItems() {
-            return theItemCount;
-        }
-
-        /**
-         * Set the enabled state of the menu.
-         * @param pEnabled true/false
-         */
-        public void setEnabled(final boolean pEnabled) {
-            /* If we are changing enabled state */
-            if (pEnabled != isEnabled) {
-                /* Set new enabled state */
-                isEnabled = pEnabled;
-
-                /* enable the menu */
-                enableMenu(isEnabled);
+            /* Check uniqueness of item */
+            if (theElementMap.containsKey(pId)) {
+                throw new IllegalArgumentException("Duplicate MenuId: " + pId);
             }
+
+            /* Store into map */
+            theElementMap.put(pId, this);
         }
 
         /**
-         * Enable/disable the menu.
-         * @param pEnabled true/false
+         * Obtain the id.
+         * @return the id
          */
-        protected abstract void enableMenu(final boolean pEnabled);
-    }
-
-    /**
-     * MenuItem.
-     */
-    public abstract class TethysMenuBarItem {
-        /**
-         * The item.
-         */
-        private final T theItem;
-
-        /**
-         * Is the item enabled?
-         */
-        private boolean isEnabled;
-
-        /**
-         * Constructor.
-         * @param pItem the item
-         */
-        protected TethysMenuBarItem(final T pItem) {
-            theItem = pItem;
-            isEnabled = true;
+        public I getId() {
+            return theId;
         }
 
         /**
-         * Obtain the item.
-         * @return the item
-         */
-        public T getItem() {
-            return theItem;
-        }
-
-        /**
-         * Is the item enabled?
+         * Is the menu enabled?
          * @return true/false
          */
         public boolean isEnabled() {
@@ -224,10 +171,104 @@ public abstract class TethysMenuBarManager<T, N>
         protected abstract void enableItem(final boolean pEnabled);
 
         /**
-         * Notify selection.
+         * Set item visibility.
+         * @param pVisible true/false
          */
-        protected void notifySelection() {
-            notifySelected(this);
+        protected abstract void setVisible(final boolean pVisible);
+    }
+
+    /**
+     * SubMenu.
+     * @param <S> the id type
+     */
+    public abstract class TethysMenuSubMenu<S>
+            extends TethysMenuElement<S> {
+        /**
+         * The item count.
+         */
+        private int theItemCount;
+
+        /**
+         * Constructor.
+         * @param pId the id
+         */
+        protected TethysMenuSubMenu(final S pId) {
+            super(pId);
+        }
+
+        /**
+         * Add Separator.
+         */
+        public abstract void newSeparator();
+
+        /**
+         * Add subMenu.
+         * @param <I> the type of the id
+         * @param pId the id of the subMenu
+         * @return the new subMenu
+         */
+        public abstract <I> TethysMenuSubMenu<I> newSubMenu(final I pId);
+
+        /**
+         * Add MenuItem.
+         * @param <I> the type of the id
+         * @param pId the id of the item
+         * @param pAction the action
+         * @return the new item
+         */
+        public abstract <I> TethysMenuItem<I> newMenuItem(final I pId,
+                                                          final Consumer<I> pAction);
+
+        /**
+         * Clear items.
+         */
+        public void clearItems() {
+            theItemCount = 0;
+        }
+
+        /**
+         * Increment count.
+         */
+        protected void incrementItemCount() {
+            theItemCount++;
+        }
+
+        /**
+         * Count items.
+         * @return the count of items
+         */
+        public int countItems() {
+            return theItemCount;
+        }
+    }
+
+    /**
+     * MenuItem.
+     * @param <I> the id type
+     */
+    public abstract class TethysMenuItem<I>
+            extends TethysMenuElement<I> {
+        /**
+         * The consumer.
+         */
+        private Consumer<I> theAction;
+
+        /**
+         * Constructor.
+         * @param pId the id
+         * @param pAction the action
+         */
+        protected TethysMenuItem(final I pId,
+                                 final Consumer<I> pAction) {
+            super(pId);
+            theAction = pAction;
+        }
+
+        /**
+         * notify of the action.
+         */
+        protected void notifyAction() {
+            theAction.accept(getId());
         }
     }
 }
