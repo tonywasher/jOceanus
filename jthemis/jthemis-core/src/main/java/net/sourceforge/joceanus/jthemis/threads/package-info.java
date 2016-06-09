@@ -21,8 +21,6 @@
  * $Date$
  ******************************************************************************/
 /**
- * Threads for subversion.
- * @author Tony Washer
+ * Threads for Themis.
  */
-package net.sourceforge.joceanus.jthemis.threads.swing;
-
+package net.sourceforge.joceanus.jthemis.threads;

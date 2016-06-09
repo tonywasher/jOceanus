@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.threads.swing;
+package net.sourceforge.joceanus.jthemis.threads;
 
 import java.io.File;
 import java.util.Collection;
@@ -30,21 +30,22 @@ import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
-import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisCheckOut;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.SvnWorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisVersionMgr;
 
 /**
- * Thread to handle creation of working copy.
+ * Thread to handle creation of branch tags.
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class ThemisCreateTagExtract<N, I>
+public class ThemisCreateBranchTags<N, I>
         implements MetisThread<Void, N, I> {
     /**
-     * Tags.
+     * Branches.
      */
-    private Collection<ThemisSvnTag> theTags;
+    private Collection<ThemisSvnBranch> theBranches;
 
     /**
      * Location.
@@ -57,20 +58,33 @@ public class ThemisCreateTagExtract<N, I>
     private final ThemisSvnRepository theRepository;
 
     /**
+     * The WorkingCopySet.
+     */
+    private SvnWorkingCopySet theWorkingCopySet;
+
+    /**
      * Constructor.
-     * @param pTags the tags to create the extract for
+     * @param pBranches the branches to create the tags for
      * @param pLocation the location to create into
      */
-    public ThemisCreateTagExtract(final ThemisSvnTag[] pTags,
+    public ThemisCreateBranchTags(final ThemisSvnBranch[] pBranches,
                                   final File pLocation) {
         /* Store parameters */
         theLocation = pLocation;
-        theRepository = pTags[0].getRepository();
+        theRepository = pBranches[0].getRepository();
+    }
+
+    /**
+     * Obtain the working copy set.
+     * @return the working copy set
+     */
+    public SvnWorkingCopySet getWorkingCopySet() {
+        return theWorkingCopySet;
     }
 
     @Override
     public String getTaskName() {
-        return "CreateTagExtract";
+        return "CreateBranchTags";
     }
 
     @Override
@@ -86,9 +100,14 @@ public class ThemisCreateTagExtract<N, I>
             /* Access the thread manager */
             MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
 
-            /* Check out the branches */
-            ThemisCheckOut myCheckOut = new ThemisCheckOut(theRepository, myManager);
-            myCheckOut.exportTags(theTags, theLocation);
+            /* Create the tags */
+            ThemisVersionMgr myVersionMgr = new ThemisVersionMgr(theRepository, theLocation, myManager);
+            myVersionMgr.createTags(theBranches);
+
+            /* Discover workingSet details */
+            theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, myManager);
+
+            /* Close repository connection */
         } finally {
             /* Dispose of any connections */
             if (theRepository != null) {

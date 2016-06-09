@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.ui.swing;
+package net.sourceforge.joceanus.jthemis.ui;
 
 import java.io.File;
 import java.util.Iterator;
@@ -56,16 +56,16 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPr
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.SvnWorkingCopySet;
-import net.sourceforge.joceanus.jthemis.threads.swing.ThemisCreateBranchTags;
-import net.sourceforge.joceanus.jthemis.threads.swing.ThemisCreateGitRepo;
-import net.sourceforge.joceanus.jthemis.threads.swing.ThemisCreateNewBranch;
-import net.sourceforge.joceanus.jthemis.threads.swing.ThemisCreateTagExtract;
-import net.sourceforge.joceanus.jthemis.threads.swing.ThemisCreateWorkingCopy;
-import net.sourceforge.joceanus.jthemis.threads.swing.ThemisDiscoverData;
-import net.sourceforge.joceanus.jthemis.threads.swing.ThemisRevertWorkingCopy;
-import net.sourceforge.joceanus.jthemis.threads.swing.ThemisSubversionBackup;
-import net.sourceforge.joceanus.jthemis.threads.swing.ThemisSubversionRestore;
-import net.sourceforge.joceanus.jthemis.threads.swing.ThemisUpdateWorkingCopy;
+import net.sourceforge.joceanus.jthemis.threads.ThemisCreateBranchTags;
+import net.sourceforge.joceanus.jthemis.threads.ThemisCreateGitRepo;
+import net.sourceforge.joceanus.jthemis.threads.ThemisCreateNewBranch;
+import net.sourceforge.joceanus.jthemis.threads.ThemisCreateTagExtract;
+import net.sourceforge.joceanus.jthemis.threads.ThemisCreateWorkingCopy;
+import net.sourceforge.joceanus.jthemis.threads.ThemisDiscoverData;
+import net.sourceforge.joceanus.jthemis.threads.ThemisRevertWorkingCopy;
+import net.sourceforge.joceanus.jthemis.threads.ThemisSubversionBackup;
+import net.sourceforge.joceanus.jthemis.threads.ThemisSubversionRestore;
+import net.sourceforge.joceanus.jthemis.threads.ThemisUpdateWorkingCopy;
 
 /**
  * Top level SvnManager window.

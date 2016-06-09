@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.ui.swing;
+package net.sourceforge.joceanus.jthemis.ui;
 
 /**
  * Themis SubVersion Menu items.

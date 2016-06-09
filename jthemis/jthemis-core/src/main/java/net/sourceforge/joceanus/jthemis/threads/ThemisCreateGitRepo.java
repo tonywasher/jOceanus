@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.threads.swing;
+package net.sourceforge.joceanus.jthemis.threads;
 
 import java.time.LocalTime;
 

@@ -21,6 +21,6 @@
  * $Date$
  ******************************************************************************/
 /**
- * Package to handle Swing user interface for Themis.
+ * Package to handle user interface for Themis.
  */
-package net.sourceforge.joceanus.jthemis.ui.swing;
+package net.sourceforge.joceanus.jthemis.ui;

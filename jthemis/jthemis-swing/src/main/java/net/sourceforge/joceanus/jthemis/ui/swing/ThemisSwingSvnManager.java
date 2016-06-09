@@ -33,6 +33,7 @@ import javax.swing.WindowConstants;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
+import net.sourceforge.joceanus.jthemis.ui.ThemisSvnManager;
 
 /**
  * Top level Swing SvnManager window.

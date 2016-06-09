@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ui.ThemisSvnManager;
 
 /**
  * Top level JSvnManager starter.

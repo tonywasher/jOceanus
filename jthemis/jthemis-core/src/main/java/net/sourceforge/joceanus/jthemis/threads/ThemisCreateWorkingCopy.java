@@ -20,38 +20,39 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.threads.swing;
+package net.sourceforge.joceanus.jthemis.threads;
 
 import java.io.File;
 import java.util.Collection;
+
+import org.tmatesoft.svn.core.wc.SVNRevision;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch.ScmBranchOpType;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.SvnWorkingCopySet;
-import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisVersionMgr;
+import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisCheckOut;
 
 /**
- * Thread to handle creation of new branches.
+ * Thread to handle creation of working copy.
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class ThemisCreateNewBranch<N, I>
+public class ThemisCreateWorkingCopy<N, I>
         implements MetisThread<Void, N, I> {
     /**
-     * Tags.
+     * Branches.
      */
-    private Collection<ThemisSvnTag> theTags;
+    private Collection<ThemisSvnBranch> theBranches;
 
     /**
-     * Branch Type.
+     * Revision.
      */
-    private final ScmBranchOpType theBranchType;
+    private final SVNRevision theRevision;
 
     /**
      * Location.
@@ -70,22 +71,17 @@ public class ThemisCreateNewBranch<N, I>
 
     /**
      * Constructor.
-     * @param pTags the tags to create the branches from
-     * @param pBranchType the type of branches to create
+     * @param pBranches the branches to create the working copy for
+     * @param pRevision the revision to check out
      * @param pLocation the location to create into
      */
-    public ThemisCreateNewBranch(final ThemisSvnTag[] pTags,
-                                 final ScmBranchOpType pBranchType,
-                                 final File pLocation) {
+    public ThemisCreateWorkingCopy(final ThemisSvnBranch[] pBranches,
+                                   final SVNRevision pRevision,
+                                   final File pLocation) {
         /* Store parameters */
         theLocation = pLocation;
-        theBranchType = pBranchType;
-        theRepository = pTags[0].getRepository();
-    }
-
-    @Override
-    public String getTaskName() {
-        return "CreateNewBranch";
+        theRevision = pRevision;
+        theRepository = pBranches[0].getRepository();
     }
 
     /**
@@ -94,6 +90,11 @@ public class ThemisCreateNewBranch<N, I>
      */
     public SvnWorkingCopySet getWorkingCopySet() {
         return theWorkingCopySet;
+    }
+
+    @Override
+    public String getTaskName() {
+        return "CreateWorkingCopy";
     }
 
     @Override
@@ -109,9 +110,9 @@ public class ThemisCreateNewBranch<N, I>
             /* Access the thread manager */
             MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
 
-            /* Create the branches */
-            ThemisVersionMgr myVersionMgr = new ThemisVersionMgr(theRepository, theLocation, myManager);
-            myVersionMgr.createBranches(theTags, theBranchType);
+            /* Check out the branches */
+            ThemisCheckOut myCheckOut = new ThemisCheckOut(theRepository, myManager);
+            myCheckOut.checkOutBranches(theBranches, theRevision, theLocation);
 
             /* Discover workingSet details */
             theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, myManager);
