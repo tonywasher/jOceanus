@@ -797,12 +797,11 @@ public class TethysSwingDateDialog
 
                 /* Determine whether the day is select-able */
                 boolean isSelectable = true;
-                if ((iEarliest > 0)
-                    && (iDay < iEarliest)) {
-                    isSelectable = false;
-                } else if ((iLatest > 0)
-                           && (iDay > iLatest)) {
-                    isSelectable = false;
+                if (iEarliest > 0) {
+                    isSelectable &= iDay >= iEarliest;
+                }
+                if (iLatest > 0) {
+                    isSelectable &= iDay <= iLatest;
                 }
 
                 /* Set the day */

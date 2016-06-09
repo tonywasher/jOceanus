@@ -31,12 +31,12 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitComponent.GitComponentList;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPreferenceKey;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPreferences;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmRepository;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
@@ -74,7 +74,7 @@ public class ThemisGitRepository
      * @throws OceanusException on error
      */
     public ThemisGitRepository(final MetisPreferenceManager pPreferenceMgr,
-                               final ReportStatus pReport) throws OceanusException {
+                               final MetisThreadStatusReport pReport) throws OceanusException {
         /* Call super constructor */
         super(pPreferenceMgr);
 

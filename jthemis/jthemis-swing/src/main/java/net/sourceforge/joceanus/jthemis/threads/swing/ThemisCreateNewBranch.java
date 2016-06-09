@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jthemis.threads.swing;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch.ScmBranchOpType;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
@@ -38,17 +38,18 @@ import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisVersionMgr;
 
 /**
  * Thread to handle creation of new branches.
- * @author Tony Washer
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class ThemisCreateNewBranch
-        extends ThemisScmThread {
+public class ThemisCreateNewBranch<N, I>
+        implements MetisThread<Void, N, I> {
     /**
      * Tags.
      */
-    private final Collection<ThemisSvnTag> theTags;
+    private Collection<ThemisSvnTag> theTags;
 
     /**
-     * Tags.
+     * Branch Type.
      */
     private final ScmBranchOpType theBranchType;
 
@@ -58,11 +59,6 @@ public class ThemisCreateNewBranch
     private final File theLocation;
 
     /**
-     * Report object.
-     */
-    private final ReportTask theReport;
-
-    /**
      * The Repository.
      */
     private final ThemisSvnRepository theRepository;
@@ -70,49 +66,26 @@ public class ThemisCreateNewBranch
     /**
      * The WorkingCopySet.
      */
-    private SvnWorkingCopySet theWorkingCopySet = null;
-
-    /**
-     * The Error.
-     */
-    private OceanusException theError = null;
+    private SvnWorkingCopySet theWorkingCopySet;
 
     /**
      * Constructor.
      * @param pTags the tags to create the branches from
      * @param pBranchType the type of branches to create
      * @param pLocation the location to create into
-     * @param pReport the report object
      */
     public ThemisCreateNewBranch(final ThemisSvnTag[] pTags,
                                  final ScmBranchOpType pBranchType,
-                                 final File pLocation,
-                                 final ReportTask pReport) {
-        /* Call super-constructor */
-        super(pReport);
-
+                                 final File pLocation) {
         /* Store parameters */
         theLocation = pLocation;
         theBranchType = pBranchType;
-        theReport = pReport;
         theRepository = pTags[0].getRepository();
-        Collection<ThemisSvnTag> myTags = null;
+    }
 
-        /* protect against exceptions */
-        try {
-            /* Create new directory for working copy */
-            ThemisDirectory.createDirectory(pLocation);
-
-            /* Store the tags */
-            myTags = new HashSet<>(Arrays.asList(pTags));
-        } catch (OceanusException e) {
-            /* Store the error and cancel thread */
-            theError = e;
-            cancel(true);
-        }
-
-        /* Record tags */
-        theTags = myTags;
+    @Override
+    public String getTaskName() {
+        return "CreateNewBranch";
     }
 
     /**
@@ -124,23 +97,24 @@ public class ThemisCreateNewBranch
     }
 
     @Override
-    public OceanusException getError() {
-        return theError;
+    public void prepareTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Create new directory for working copy */
+        ThemisDirectory.createDirectory(theLocation);
     }
 
     @Override
-    protected Void doInBackground() {
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Protect against exceptions */
         try {
+            /* Access the thread manager */
+            MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+
             /* Create the branches */
-            ThemisVersionMgr myVersionMgr = new ThemisVersionMgr(theRepository, theLocation, this);
+            ThemisVersionMgr myVersionMgr = new ThemisVersionMgr(theRepository, theLocation, myManager);
             myVersionMgr.createBranches(theTags, theBranchType);
 
             /* Discover workingSet details */
-            theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, this);
-        } catch (OceanusException e) {
-            /* Store the error */
-            theError = e;
+            theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, myManager);
         } finally {
             /* Dispose of any connections */
             if (theRepository != null) {
@@ -150,11 +124,5 @@ public class ThemisCreateNewBranch
 
         /* Return null */
         return null;
-    }
-
-    @Override
-    public void done() {
-        /* Report task complete */
-        theReport.completeTask(this);
     }
 }

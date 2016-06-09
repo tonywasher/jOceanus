@@ -24,23 +24,21 @@ package net.sourceforge.joceanus.jthemis.threads.swing;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.SvnWorkingCopySet;
 import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisCheckOut;
 
 /**
  * Thread to handle revert of working copy.
- * @author Tony Washer
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class ThemisRevertWorkingCopy
-        extends ThemisScmThread {
-    /**
-     * Report object.
-     */
-    private final ReportTask theReport;
-
+public class ThemisRevertWorkingCopy<N, I>
+        implements MetisThread<Void, N, I> {
     /**
      * The Repository.
      */
@@ -57,25 +55,14 @@ public class ThemisRevertWorkingCopy
     private SvnWorkingCopySet theWorkingCopySet;
 
     /**
-     * The Error.
-     */
-    private OceanusException theError;
-
-    /**
      * Constructor.
      * @param pWorkingSet the working set to update
-     * @param pReport the report object
      */
-    public ThemisRevertWorkingCopy(final SvnWorkingCopySet pWorkingSet,
-                                   final ReportTask pReport) {
-        /* Call super-constructor */
-        super(pReport);
-
+    public ThemisRevertWorkingCopy(final SvnWorkingCopySet pWorkingSet) {
         /* Store parameters */
         theWorkingCopySet = pWorkingSet;
         theLocation = pWorkingSet.getLocation();
         theRepository = pWorkingSet.getRepository();
-        theReport = pReport;
     }
 
     /**
@@ -87,23 +74,23 @@ public class ThemisRevertWorkingCopy
     }
 
     @Override
-    public OceanusException getError() {
-        return theError;
+    public String getTaskName() {
+        return "RevertWorkingCopy";
     }
 
     @Override
-    protected Void doInBackground() {
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Protect against exceptions */
         try {
+            /* Access the thread manager */
+            MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+
             /* Update the working copy set */
-            ThemisCheckOut myCheckOut = new ThemisCheckOut(theRepository, this);
+            ThemisCheckOut myCheckOut = new ThemisCheckOut(theRepository, myManager);
             myCheckOut.revertWorkingCopySet(theWorkingCopySet);
 
             /* Discover new workingSet details */
-            theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, this);
-        } catch (OceanusException e) {
-            /* Store the error */
-            theError = e;
+            theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, myManager);
         } finally {
             /* Dispose of any connections */
             if (theRepository != null) {
@@ -113,11 +100,5 @@ public class ThemisRevertWorkingCopy
 
         /* Return null */
         return null;
-    }
-
-    @Override
-    public void done() {
-        /* Report task complete */
-        theReport.completeTask(this);
     }
 }

@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadPreference.MetisThreadPreferenceKey;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadPreference.MetisThreadPreferences;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -44,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
  * @param <I> the icon type
  */
 public abstract class MetisThreadManager<N, I>
-        implements TethysEventProvider<MetisThreadEvent> {
+        implements TethysEventProvider<MetisThreadEvent>, MetisThreadStatusReport {
     /**
      * Thread Executor.
      */
@@ -147,7 +148,7 @@ public abstract class MetisThreadManager<N, I>
      * Obtain the status manager.
      * @return the status Manager
      */
-    protected MetisThreadStatusManager<N> getStatusManager() {
+    public MetisThreadStatusManager<N> getStatusManager() {
         return theStatusManager;
     }
 
@@ -157,14 +158,6 @@ public abstract class MetisThreadManager<N, I>
      */
     public TethysGuiFactory<N, I> getGuiFactory() {
         return theToolkit.getGuiFactory();
-    }
-
-    /**
-     * Obtain the node.
-     * @return the node
-     */
-    public N getNode() {
-        return theStatusManager.getNode();
     }
 
     /**
@@ -190,20 +183,43 @@ public abstract class MetisThreadManager<N, I>
         /* Set new profile */
         String myName = pThread.getTaskName();
         setNewProfile(myName);
-
-        /* Create the wrapped thread */
-        Runnable myRunnable = wrapThread(pThread);
-
-        /* Initialise status window */
-        theStatus.setTask(myName);
-        theStatusManager.setProgress(theStatus);
-
-        /* Create thread and record status */
-        theExecutor.execute(myRunnable);
         theThread = pThread;
 
-        /* Note that thread has started */
-        theEventManager.fireEvent(MetisThreadEvent.THREADSTART);
+        /* If we prepared the thread OK */
+        if (prepareThread()) {
+            /* Create the wrapped thread */
+            Runnable myRunnable = wrapThread(pThread);
+
+            /* Initialise status window */
+            theStatus.setTask(myName);
+            theStatusManager.setProgress(theStatus);
+
+            /* Create thread and record status */
+            theExecutor.execute(myRunnable);
+            /* Note that thread has started */
+            theEventManager.fireEvent(MetisThreadEvent.THREADSTART);
+        }
+    }
+
+    /**
+     * Prepare task.
+     * @return continue true/false
+     */
+    private boolean prepareThread() {
+        /* Protect against exceptions */
+        try {
+            /* Prepare the task and continue */
+            theThread.prepareTask(theToolkit);
+            return true;
+
+            /* Catch exceptions */
+        } catch (OceanusException e) {
+            endTask();
+            setError(e);
+            theStatusManager.setFailure(e);
+            threadCompleted();
+            return false;
+        }
     }
 
     /**
@@ -238,17 +254,7 @@ public abstract class MetisThreadManager<N, I>
      */
     public abstract void cancelWorker();
 
-    /**
-     * is the thread cancelled?
-     * @return true/false
-     */
-    public abstract boolean isCancelled();
-
-    /**
-     * Initialise the task.
-     * @param pTask the name of the task
-     * @return continue true/false
-     */
+    @Override
     public boolean initTask(final String pTask) {
         /* Check for cancellation */
         boolean isCancelled = isCancelled();
@@ -264,11 +270,7 @@ public abstract class MetisThreadManager<N, I>
         return !isCancelled;
     }
 
-    /**
-     * Set Number of stages.
-     * @param pNumStages number of stages
-     * @return continue true/false
-     */
+    @Override
     public boolean setNumStages(final int pNumStages) {
         /* Check for cancellation */
         boolean isCancelled = isCancelled();
@@ -281,11 +283,7 @@ public abstract class MetisThreadManager<N, I>
         return !isCancelled;
     }
 
-    /**
-     * Set New stage.
-     * @param pStage the stage
-     * @return continue true/false
-     */
+    @Override
     public boolean setNewStage(final String pStage) {
         /* Check for cancellation */
         boolean isCancelled = isCancelled();
@@ -301,11 +299,7 @@ public abstract class MetisThreadManager<N, I>
         return !isCancelled;
     }
 
-    /**
-     * Set Number of steps in this stage.
-     * @param pNumSteps number of steps
-     * @return continue true/false
-     */
+    @Override
     public boolean setNumSteps(final int pNumSteps) {
         /* Check for cancellation */
         boolean isCancelled = isCancelled();
@@ -318,10 +312,7 @@ public abstract class MetisThreadManager<N, I>
         return !isCancelled;
     }
 
-    /**
-     * Set Number of steps completed.
-     * @return continue true/false
-     */
+    @Override
     public boolean setNextStep() {
         /* Check for cancellation */
         boolean isCancelled = isCancelled();
@@ -337,6 +328,22 @@ public abstract class MetisThreadManager<N, I>
                 /* Publish status */
                 publishStatus(theStatus);
             }
+        }
+
+        /* Return to caller */
+        return !isCancelled;
+    }
+
+    @Override
+    public boolean setNextStep(final String pStep) {
+        /* Check for cancellation */
+        boolean isCancelled = isCancelled();
+        if (!isCancelled) {
+            /* Set Next step */
+            theStatus.setNextStep(pStep);
+
+            /* Publish status */
+            publishStatus(theStatus);
         }
 
         /* Return to caller */

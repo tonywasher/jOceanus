@@ -63,11 +63,6 @@ public class MetisSwingThreadManager
     }
 
     @Override
-    public MetisSwingThreadSliderStatus getStatusManager() {
-        return (MetisSwingThreadSliderStatus) super.getStatusManager();
-    }
-
-    @Override
     protected <T> Runnable wrapThread(final MetisThread<T, JComponent, Icon> pThread) {
         /* Create the wrapped thread and listen to state transition */
         theWorker = new MetisSwingThread<>(theToolkit, pThread);

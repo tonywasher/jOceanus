@@ -41,6 +41,7 @@ import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
@@ -48,7 +49,6 @@ import net.sourceforge.joceanus.jthemis.ThemisLogicException;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitBranch;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitComponent;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract;
@@ -119,7 +119,7 @@ public class ThemisBuildGit {
      * @param pReport the report status
      * @throws OceanusException on error
      */
-    public void buildRepository(final ReportStatus pReport) throws OceanusException {
+    public void buildRepository(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Report start of analysis */
         pReport.initTask("Building Git Component");
 
@@ -168,7 +168,7 @@ public class ThemisBuildGit {
      * @return the extract status
      * @throws OceanusException on error
      */
-    private SvnExtractStatus tryBuildBranches(final ReportStatus pReport) throws OceanusException {
+    private SvnExtractStatus tryBuildBranches(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Create flags */
         boolean isBlocked = false;
         boolean isExtracted = false;
@@ -220,7 +220,7 @@ public class ThemisBuildGit {
      * @return the extract status
      * @throws OceanusException on error
      */
-    private SvnExtractStatus tryBuildTags(final ReportStatus pReport) throws OceanusException {
+    private SvnExtractStatus tryBuildTags(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Create flags */
         boolean isBlocked = false;
         boolean isExtracted = false;
@@ -271,7 +271,7 @@ public class ThemisBuildGit {
      * @param pReport the report status
      * @throws OceanusException on error
      */
-    private void buildTrunk(final ReportStatus pReport) throws OceanusException {
+    private void buildTrunk(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access the plan */
         SvnBranchExtractPlan myPlan = thePlan.getTrunkPlan();
         Object myOwner = myPlan.getOwner();
@@ -290,7 +290,7 @@ public class ThemisBuildGit {
      * @param pLastCommit the commit to branch from
      * @throws OceanusException on error
      */
-    private void buildBranch(final ReportStatus pReport,
+    private void buildBranch(final MetisThreadStatusReport pReport,
                              final SvnBranchExtractPlan pBranchPlan,
                              final RevCommit pLastCommit) throws OceanusException {
         /* Protect against exceptions */
@@ -331,7 +331,7 @@ public class ThemisBuildGit {
      * @param pLastCommit the commit to branch from
      * @throws OceanusException on error
      */
-    private void buildTag(final ReportStatus pReport,
+    private void buildTag(final MetisThreadStatusReport pReport,
                           final SvnTagExtractPlan pTagPlan,
                           final RevCommit pLastCommit) throws OceanusException {
         /* Protect against exceptions */
@@ -381,7 +381,7 @@ public class ThemisBuildGit {
      * @param pIterator the view iterator
      * @throws OceanusException on error
      */
-    private void commitPlan(final ReportStatus pReport,
+    private void commitPlan(final MetisThreadStatusReport pReport,
                             final Object pOwner,
                             final RevCommit pBaseCommit,
                             final Iterator<SvnExtractView> pIterator) throws OceanusException {
@@ -399,7 +399,7 @@ public class ThemisBuildGit {
 
                 /* Report plan step */
                 String myFormat = myFormatter.formatDate(myView.getDate());
-                if (!pReport.setNewStep(myFormat)) {
+                if (!pReport.setNextStep(myFormat)) {
                     return;
                 }
 

@@ -677,12 +677,11 @@ public class TethysFXDateDialog
 
                 /* Determine whether the day is select-able */
                 boolean isSelectable = true;
-                if ((iEarliest > 0)
-                    && (iDay < iEarliest)) {
-                    isSelectable = false;
-                } else if ((iLatest > 0)
-                           && (iDay > iLatest)) {
-                    isSelectable = false;
+                if (iEarliest > 0) {
+                    isSelectable &= iDay >= iEarliest;
+                }
+                if (iLatest > 0) {
+                    isSelectable &= iDay <= iLatest;
                 }
 
                 /* Set text */
@@ -690,7 +689,9 @@ public class TethysFXDateDialog
             }
 
             /* Loop through remaining columns in row */
-            for (int iDay = 1; iCol < DAYS_IN_WEEK; iCol++, iDay++) {
+            for (
+
+            int iDay = 1; iCol < DAYS_IN_WEEK; iCol++, iDay++) {
                 /* Access the label */
                 PanelDay myLabel = theDays[iRow][iCol];
 

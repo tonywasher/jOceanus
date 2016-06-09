@@ -51,11 +51,11 @@ import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferenceKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
@@ -108,14 +108,14 @@ public class ThemisBackup {
     /**
      * The Status reporter.
      */
-    private final ReportStatus theStatus;
+    private final MetisThreadStatusReport theStatus;
 
     /**
      * Constructor.
      * @param pStatus the status reporter
      * @param pPrefMgr the preference manager
      */
-    public ThemisBackup(final ReportStatus pStatus,
+    public ThemisBackup(final MetisThreadStatusReport pStatus,
                         final MetisPreferenceManager pPrefMgr) {
         /* Store parameters */
         theStatus = pStatus;
@@ -395,7 +395,7 @@ public class ThemisBackup {
             if (myAction.equals(SVNAdminEventAction.REVISION_DUMPED)
                 || myAction.equals(SVNAdminEventAction.REVISION_LOADED)) {
                 /* Set new step */
-                theStatus.setNewStep("Revision");
+                theStatus.setNextStep("Revision");
             }
         }
 

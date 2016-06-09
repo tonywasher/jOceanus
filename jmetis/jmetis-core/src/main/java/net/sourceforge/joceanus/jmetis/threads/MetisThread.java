@@ -38,6 +38,17 @@ public interface MetisThread<T, N, I> {
     String getTaskName();
 
     /**
+     * prepare task.
+     * @param pToolkit the toolkit
+     * @throws OceanusException on error
+     */
+    default void prepareTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /*
+         * Overridden as needed
+         */
+    }
+
+    /**
      * Perform the task.
      * @param pToolkit the toolkit
      * @return the result
@@ -50,7 +61,11 @@ public interface MetisThread<T, N, I> {
      * @param pResult the result
      * @throws OceanusException on error
      */
-    void processResult(final T pResult) throws OceanusException;
+    default void processResult(final T pResult) throws OceanusException {
+        /*
+         * Overridden as needed
+         */
+    }
 
     /**
      * interruptForCancel.

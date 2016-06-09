@@ -41,9 +41,9 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferenceKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
@@ -245,7 +245,7 @@ public final class ThemisSvnWorkingCopy
      * @param pReport the report object
      * @throws OceanusException on error
      */
-    public void discoverUpdates(final ReportStatus pReport) throws OceanusException {
+    public void discoverUpdates(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access client */
         ThemisSvnRepository myRepository = theBranch.getRepository();
         SVNClientManager myMgr = myRepository.getClientManager();
@@ -418,7 +418,7 @@ public final class ThemisSvnWorkingCopy
          */
         public SvnWorkingCopySet(final ThemisSvnRepository pRepository,
                                  final File pLocation,
-                                 final ReportStatus pReport) throws OceanusException {
+                                 final MetisThreadStatusReport pReport) throws OceanusException {
             /* Call super constructor */
             super(ThemisSvnWorkingCopy.class);
 
@@ -437,7 +437,7 @@ public final class ThemisSvnWorkingCopy
          * @throws OceanusException on error
          */
         public SvnWorkingCopySet(final ThemisSvnRepository pRepository,
-                                 final ReportStatus pReport) throws OceanusException {
+                                 final MetisThreadStatusReport pReport) throws OceanusException {
             /* Call super constructor */
             super(ThemisSvnWorkingCopy.class);
 
@@ -501,7 +501,7 @@ public final class ThemisSvnWorkingCopy
          * @param pReport the report object
          * @throws OceanusException on error
          */
-        private void analyseWorkingCopySet(final ReportStatus pReport) throws OceanusException {
+        private void analyseWorkingCopySet(final MetisThreadStatusReport pReport) throws OceanusException {
             /* Report start of analysis */
             pReport.initTask("Analysing Working Copies");
 

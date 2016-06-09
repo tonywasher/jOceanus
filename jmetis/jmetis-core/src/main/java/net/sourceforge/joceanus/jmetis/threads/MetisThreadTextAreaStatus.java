@@ -200,7 +200,7 @@ public class MetisThreadTextAreaStatus<N, I>
             myBuilder.append(" of ");
             myBuilder.append(pStatus.getNumSteps());
             myBuilder.append(": ");
-            myBuilder.append(pStatus.getStepsDone());
+            myBuilder.append(pStatus.getStep());
             setNewStep(myBuilder.toString());
         }
 
@@ -225,7 +225,7 @@ public class MetisThreadTextAreaStatus<N, I>
      * Set new step.
      * @param pStep the step to set
      */
-    private void setNewStep(final String pStep) {
+    protected void setNewStep(final String pStep) {
         /* Replace any existing status */
         theTextArea.replaceText(pStep, theStatusPosition, thePosition);
         thePosition = theStatusPosition + pStep.length();
@@ -248,6 +248,7 @@ public class MetisThreadTextAreaStatus<N, I>
 
         /* Hide the cancel button */
         theCancelButton.setVisible(false);
+        theThreadManager.threadCompleted();
     }
 
     @Override

@@ -32,6 +32,7 @@ import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatus;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -53,7 +54,7 @@ public class MetisSwingThread<T>
     /**
      * The ThreadStatusManager.
      */
-    private final MetisSwingThreadSliderStatus theStatusMgr;
+    private final MetisThreadStatusManager<JComponent> theStatusMgr;
 
     /**
      * The wrapped thread.

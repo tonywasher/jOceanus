@@ -24,12 +24,14 @@ package net.sourceforge.joceanus.jthemis.ui.swing;
 
 import java.util.Properties;
 
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -37,11 +39,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public final class ThemisSvnStarter {
-    /**
-     * SvnManager.
-     */
-    private static ThemisSvnManager theManager;
-
     /**
      * Logger.
      */
@@ -51,14 +48,6 @@ public final class ThemisSvnStarter {
      * Private constructor.
      */
     private ThemisSvnStarter() {
-    }
-
-    /**
-     * Obtain the manager.
-     * @return the manager
-     */
-    public static ThemisSvnManager getManager() {
-        return theManager;
     }
 
     /**
@@ -74,8 +63,20 @@ public final class ThemisSvnStarter {
             myLogProp.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
             PropertyConfigurator.configure(myLogProp);
 
+            /* Create the Toolkit */
+            MetisSwingToolkit myToolkit = new MetisSwingToolkit(null, false);
+
+            /* Create the frame and declare it */
+            JFrame myFrame = new JFrame(ThemisSvnManager.class.getSimpleName());
+            myToolkit.getGuiFactory().setFrame(myFrame);
+
             /* Create the SvnManager program */
-            theManager = new ThemisSvnManager();
+            new ThemisSwingSvnManager(myFrame, myToolkit);
+
+            /* Show the frame */
+            myFrame.pack();
+            myFrame.setLocationRelativeTo(null);
+            myFrame.setVisible(true);
 
         } catch (OceanusException e) {
             LOGGER.error("createGUI didn't complete successfully", e);

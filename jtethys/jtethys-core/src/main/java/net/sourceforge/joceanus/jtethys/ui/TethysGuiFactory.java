@@ -298,7 +298,7 @@ public abstract class TethysGuiFactory<N, I> {
      * Obtain a new menuBar manager.
      * @return the new manager
      */
-    public abstract TethysMenuBarManager<N> newMenuBar();
+    public abstract TethysMenuBarManager newMenuBar();
 
     /**
      * Obtain a new tabPane manager.

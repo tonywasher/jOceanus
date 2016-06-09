@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.newviewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jmetis.threads.MetisTestThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
@@ -78,7 +79,7 @@ public class MetisSwingThreadTester {
     /**
      * the status panel.
      */
-    private final MetisSwingThreadSliderStatus theStatusPanel;
+    private final MetisThreadStatusManager<JComponent> theStatusPanel;
 
     /**
      * the main panel.

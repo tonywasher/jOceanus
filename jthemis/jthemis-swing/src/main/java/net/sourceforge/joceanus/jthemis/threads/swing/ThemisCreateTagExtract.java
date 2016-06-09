@@ -25,8 +25,10 @@ package net.sourceforge.joceanus.jthemis.threads.swing;
 import java.io.File;
 import java.util.Collection;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
@@ -34,14 +36,15 @@ import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisCheckOut;
 
 /**
  * Thread to handle creation of working copy.
- * @author Tony Washer
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class ThemisCreateTagExtract
-        extends ThemisScmThread {
+public class ThemisCreateTagExtract<N, I>
+        implements MetisThread<Void, N, I> {
     /**
      * Tags.
      */
-    private final Collection<ThemisSvnTag> theTags;
+    private Collection<ThemisSvnTag> theTags;
 
     /**
      * Location.
@@ -49,69 +52,43 @@ public class ThemisCreateTagExtract
     private final File theLocation;
 
     /**
-     * Report object.
-     */
-    private final ReportTask theReport;
-
-    /**
      * The Repository.
      */
     private final ThemisSvnRepository theRepository;
 
     /**
-     * The Error.
-     */
-    private OceanusException theError = null;
-
-    /**
      * Constructor.
      * @param pTags the tags to create the extract for
      * @param pLocation the location to create into
-     * @param pReport the report object
      */
     public ThemisCreateTagExtract(final ThemisSvnTag[] pTags,
-                                  final File pLocation,
-                                  final ReportTask pReport) {
-        /* Call super-constructor */
-        super(pReport);
-
+                                  final File pLocation) {
         /* Store parameters */
         theLocation = pLocation;
-        theReport = pReport;
         theRepository = pTags[0].getRepository();
-
-        /* protect against exceptions */
-        try {
-            /* Create new directory for extract */
-            ThemisDirectory.createDirectory(pLocation);
-
-            /* Access tag list for extract */
-            // myTags = SvnTag.getTagMap(pTags).values();
-        } catch (OceanusException e) {
-            /* Store the error and cancel thread */
-            theError = e;
-            cancel(true);
-        }
-
-        /* Record tags */
-        theTags = null;
     }
 
     @Override
-    public OceanusException getError() {
-        return theError;
+    public String getTaskName() {
+        return "CreateTagExtract";
     }
 
     @Override
-    protected Void doInBackground() {
+    public void prepareTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Create new directory for working copy */
+        ThemisDirectory.createDirectory(theLocation);
+    }
+
+    @Override
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Protect against exceptions */
         try {
+            /* Access the thread manager */
+            MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+
             /* Check out the branches */
-            ThemisCheckOut myCheckOut = new ThemisCheckOut(theRepository, this);
+            ThemisCheckOut myCheckOut = new ThemisCheckOut(theRepository, myManager);
             myCheckOut.exportTags(theTags, theLocation);
-        } catch (OceanusException e) {
-            /* Store the error */
-            theError = e;
         } finally {
             /* Dispose of any connections */
             if (theRepository != null) {
@@ -121,11 +98,5 @@ public class ThemisCreateTagExtract
 
         /* Return null */
         return null;
-    }
-
-    @Override
-    public void done() {
-        /* Report task complete */
-        theReport.completeTask(this);
     }
 }

@@ -437,6 +437,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Create the frame */
         theFrame = new JFrame(getFrameName());
+        pUtilitySet.getGuiFactory().setFrame(theFrame);
 
         /* Build the Main Panel */
         JComponent myMainPanel = buildMainPanel();
@@ -894,7 +895,6 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         try {
             /* Create the help window */
             theHelpWdw = new TethysSwingHelpWindow((TethysSwingGuiFactory) theView.getUtilitySet().getGuiFactory());
-            theHelpWdw.setFrame(theFrame);
             theHelpWdw.setModule(getHelpModule());
 
             /* Listen for its closure */

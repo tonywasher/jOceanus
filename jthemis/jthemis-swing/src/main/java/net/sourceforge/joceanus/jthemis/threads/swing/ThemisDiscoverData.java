@@ -25,15 +25,14 @@ package net.sourceforge.joceanus.jthemis.threads.swing;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
@@ -41,20 +40,11 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.SvnWorking
 
 /**
  * Thread to handle analysis of repository.
- * @author Tony Washer
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class ThemisDiscoverData
-        extends ThemisScmThread {
-    /**
-     * Preference Manager.
-     */
-    private final MetisPreferenceManager thePreferenceMgr;
-
-    /**
-     * Report object.
-     */
-    private final ReportTask theReport;
-
+public class ThemisDiscoverData<N, I>
+        implements MetisThread<Void, N, I> {
     /**
      * The Repository.
      */
@@ -72,12 +62,8 @@ public class ThemisDiscoverData
 
     /**
      * Constructor.
-     * @param pReport the report object
      */
-    public ThemisDiscoverData(final ReportTask pReport) {
-        super(pReport);
-        thePreferenceMgr = pReport.getPreferenceMgr();
-        theReport = pReport;
+    public ThemisDiscoverData() {
         theExtractPlanMap = new LinkedHashMap<>();
     }
 
@@ -95,6 +81,11 @@ public class ThemisDiscoverData
      */
     public SvnWorkingCopySet getWorkingCopySet() {
         return theWorkingCopySet;
+    }
+
+    @Override
+    public String getTaskName() {
+        return "DiscoverData";
     }
 
     /**
@@ -131,19 +122,23 @@ public class ThemisDiscoverData
     }
 
     @Override
-    protected Void doInBackground() throws OceanusException {
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Protect against exceptions */
         try {
+            /* Access the thread manager */
+            MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+            MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
+
             /* Discover repository details */
-            theRepository = new ThemisSvnRepository(thePreferenceMgr, this);
+            theRepository = new ThemisSvnRepository(myPreferences, myManager);
 
             /* Discover workingSet details */
-            if (!isCancelled()) {
-                theWorkingCopySet = new SvnWorkingCopySet(theRepository, this);
+            if (!myManager.isCancelled()) {
+                theWorkingCopySet = new SvnWorkingCopySet(theRepository, myManager);
             }
 
             /* Build the Extract Plans */
-            if (!isCancelled()) {
+            if (!myManager.isCancelled()) {
                 deriveExtractPlans();
             }
 
@@ -156,23 +151,5 @@ public class ThemisDiscoverData
                 theRepository.dispose();
             }
         }
-    }
-
-    @Override
-    public void done() {
-        /* Protect against exceptions */
-        try {
-            /* Force out any exceptions that occurred in the thread */
-            get();
-
-            /* Catch exceptions */
-        } catch (CancellationException
-                | InterruptedException
-                | ExecutionException e) {
-            setError(new ThemisIOException("Failed to perform background task", e));
-        }
-
-        /* Report task complete */
-        theReport.completeTask(this);
     }
 }

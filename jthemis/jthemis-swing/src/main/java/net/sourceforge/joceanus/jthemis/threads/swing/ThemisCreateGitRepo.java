@@ -23,33 +23,23 @@
 package net.sourceforge.joceanus.jthemis.threads.swing;
 
 import java.time.LocalTime;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisBuildGit;
 
 /**
  * Thread to handle creation of GitRepo from Subversion component.
- * @author Tony Washer
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class ThemisCreateGitRepo
-        extends ThemisScmThread {
-    /**
-     * Preference Manager.
-     */
-    private final MetisPreferenceManager thePreferenceMgr;
-
-    /**
-     * Report object.
-     */
-    private final ReportTask theReport;
-
+public class ThemisCreateGitRepo<N, I>
+        implements MetisThread<Void, N, I> {
     /**
      * The Component.
      */
@@ -62,14 +52,9 @@ public class ThemisCreateGitRepo
 
     /**
      * Constructor.
-     * @param pReport the report object
      * @param pSource the source subversion component
      */
-    public ThemisCreateGitRepo(final ReportTask pReport,
-                               final ThemisSvnComponent pSource) {
-        super(pReport);
-        thePreferenceMgr = pReport.getPreferenceMgr();
-        theReport = pReport;
+    public ThemisCreateGitRepo(final ThemisSvnComponent pSource) {
         theSource = pSource;
     }
 
@@ -82,37 +67,28 @@ public class ThemisCreateGitRepo
     }
 
     @Override
-    protected Void doInBackground() throws OceanusException {
+    public String getTaskName() {
+        return "createGitRepo";
+    }
+
+    @Override
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Access the thread manager */
+        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
+
         /* Access git repository */
-        theGitRepo = new ThemisGitRepository(thePreferenceMgr, this);
+        theGitRepo = new ThemisGitRepository(myPreferences, myManager);
 
         /* Create a new Git repository */
         ThemisBuildGit myBuild = new ThemisBuildGit(theSource, theGitRepo);
         Long myStart = System.nanoTime();
-        myBuild.buildRepository(this);
+        myBuild.buildRepository(myManager);
         Long myEnd = System.nanoTime();
         LocalTime myDuration = LocalTime.ofNanoOfDay(myEnd - myStart);
-        setNewStage("Elapsed: " + myDuration);
+        myManager.setNewStage("Elapsed: " + myDuration);
 
         /* Return null */
         return null;
-    }
-
-    @Override
-    public void done() {
-        /* Protect against exceptions */
-        try {
-            /* Force out any exceptions that occurred in the thread */
-            get();
-
-            /* Catch exceptions */
-        } catch (CancellationException
-                | InterruptedException
-                | ExecutionException e) {
-            setError(new ThemisIOException("Failed to perform background task", e));
-        }
-
-        /* Report task complete */
-        theReport.completeTask(this);
     }
 }

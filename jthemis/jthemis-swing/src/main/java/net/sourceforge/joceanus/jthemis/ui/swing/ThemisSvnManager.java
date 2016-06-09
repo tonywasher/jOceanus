@@ -22,21 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.ui.swing;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Iterator;
-
-import javax.swing.AbstractAction;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.WindowConstants;
 
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
@@ -44,15 +31,20 @@ import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.jmetis.newviewer.swing.MetisSwingViewerWindow;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceView;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadEvent;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPreferences;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraPreference.ThemisJiraPreferences;
@@ -76,9 +68,11 @@ import net.sourceforge.joceanus.jthemis.threads.swing.ThemisSubversionRestore;
 import net.sourceforge.joceanus.jthemis.threads.swing.ThemisUpdateWorkingCopy;
 
 /**
- * Top level JSvnManager window.
+ * Top level SvnManager window.
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public final class ThemisSvnManager {
+public abstract class ThemisSvnManager<N, I> {
     /**
      * The Base component.
      */
@@ -92,12 +86,7 @@ public final class ThemisSvnManager {
     /**
      * The GUI Factory.
      */
-    private final TethysSwingGuiFactory theGuiFactory;
-
-    /**
-     * The Frame.
-     */
-    private final JFrame theFrame;
+    private final TethysGuiFactory<N, I> theGuiFactory;
 
     /**
      * The Preference Manager.
@@ -115,64 +104,14 @@ public final class ThemisSvnManager {
     private final GordianHashManager theSecureMgr;
 
     /**
+     * The Thread Manager.
+     */
+    private final MetisThreadManager<N, I> theThreadMgr;
+
+    /**
      * Preferences.
      */
     private final ThemisSvnPreferences thePreferences;
-
-    /**
-     * The DataManager menuItem.
-     */
-    private final JMenuItem theShowDataMgr;
-
-    /**
-     * The Tasks menu.
-     */
-    private final JMenu theTasks;
-
-    /**
-     * The ExtractTag menuItem.
-     */
-    private final JMenuItem theExtractTag;
-
-    /**
-     * The CreateWorkingCopy menuItem.
-     */
-    private final JMenuItem theCreateWC;
-
-    /**
-     * The UpdateWorkingCopy menuItem.
-     */
-    private final JMenuItem theUpdateWC;
-
-    /**
-     * The RevertWorkingCopy menuItem.
-     */
-    private final JMenuItem theRevertWC;
-
-    /**
-     * The CreateBranchTags menuItem.
-     */
-    private final JMenuItem theCreateBrnTags;
-
-    /**
-     * The CreateNewBranch menuItem.
-     */
-    private final JMenuItem theCreateNewBrn;
-
-    /**
-     * The createGit menu.
-     */
-    private final JMenu theCreateGit;
-
-    /**
-     * The BackupSvn menuItem.
-     */
-    private final JMenuItem theBackupSvn;
-
-    /**
-     * The RestoreSvn menuItem.
-     */
-    private final JMenuItem theRestoreSvn;
 
     /**
      * The Date entry.
@@ -190,14 +129,19 @@ public final class ThemisSvnManager {
     private final MetisViewerEntry theErrorEntry;
 
     /**
-     * The data window.
+     * The menuBar.
      */
-    private final MetisSwingViewerWindow theDataWdw;
+    private final TethysMenuBarManager theMenuBar;
 
     /**
-     * The Window Close handler.
+     * The tabs.
      */
-    private WindowClose theCloseHandler = new WindowClose();
+    private final TethysTabPaneManager<N, I> theTabs;
+
+    /**
+     * The data window.
+     */
+    private final MetisViewerWindow<N, I> theDataWdw;
 
     /**
      * The repository.
@@ -210,26 +154,22 @@ public final class ThemisSvnManager {
     private SvnWorkingCopySet theWorkingSet;
 
     /**
-     * Status panel.
-     */
-    private final ThemisSvnStatusWindow theStatusPanel;
-
-    /**
      * Constructor.
+     * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    protected ThemisSvnManager() throws OceanusException {
-        /* Create the Toolkit */
-        MetisSwingToolkit myToolkit = new MetisSwingToolkit();
-
+    protected ThemisSvnManager(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access GuiFactory/Preference Manager */
-        theGuiFactory = myToolkit.getGuiFactory();
-        thePrefMgr = myToolkit.getPreferenceManager();
+        theGuiFactory = pToolkit.getGuiFactory();
+        thePrefMgr = pToolkit.getPreferenceManager();
         thePreferences = thePrefMgr.getPreferenceSet(ThemisSvnPreferences.class);
 
         /* Access the Security/Viewer Manager */
-        theSecureMgr = myToolkit.getSecurityManager();
-        theViewerMgr = myToolkit.getViewerManager();
+        theSecureMgr = pToolkit.getSecurityManager();
+        theViewerMgr = pToolkit.getViewerManager();
+
+        /* Access the thread manager */
+        theThreadMgr = pToolkit.getThreadManager();
 
         /* Access error entry */
         theErrorEntry = theViewerMgr.getStandardEntry(MetisViewerStandardEntry.ERROR);
@@ -240,20 +180,13 @@ public final class ThemisSvnManager {
         theGitEntry = theViewerMgr.newEntry(theDataEntry, "GitRepo");
         theGitEntry.setVisible(false);
 
-        /* Create the frame */
-        theFrame = new JFrame(ThemisSvnManager.class.getSimpleName());
-        theGuiFactory.setFrame(theFrame);
-
         /* Create the Tabbed Pane */
-        TethysSwingTabPaneManager myTabs = theGuiFactory.newTabPane();
-
-        /* Create the panel */
-        theStatusPanel = new ThemisSvnStatusWindow(this);
+        theTabs = theGuiFactory.newTabPane();
 
         /* Create the Preferences Tab */
-        MetisPreferenceView<JComponent, Icon> myPrefPanel = new MetisPreferenceView<>(theGuiFactory, thePrefMgr);
-        myTabs.addTabItem("Status", theStatusPanel);
-        myTabs.addTabItem("Preferences", myPrefPanel);
+        MetisPreferenceView<N, I> myPrefPanel = new MetisPreferenceView<>(theGuiFactory, thePrefMgr);
+        theTabs.addTabItem("Status", theThreadMgr.getStatusManager());
+        theTabs.addTabItem("Preferences", myPrefPanel);
 
         /* Add interesting preferences */
         thePrefMgr.getPreferenceSet(PrometheusBackupPreferences.class);
@@ -261,85 +194,40 @@ public final class ThemisSvnManager {
         thePrefMgr.getPreferenceSet(ThemisSvnPreferences.class);
         thePrefMgr.getPreferenceSet(ThemisGitPreferences.class);
 
-        /* Create the menu bar and listener */
-        JMenuBar myMainMenu = new JMenuBar();
-        MenuListener myMenuListener = new MenuListener();
+        /* Create the menu bar */
+        theMenuBar = theGuiFactory.newMenuBar();
 
         /* Create the Tasks menu */
-        theTasks = new JMenu("Tasks");
-        myMainMenu.add(theTasks);
+        TethysMenuSubMenu<ThemisSvnMenuItem> myTasks = theMenuBar.newSubMenu(ThemisSvnMenuItem.TASKS);
 
-        /* Create the JDataWindow menuItem */
-        theShowDataMgr = new JMenuItem("DataViewer");
-        theShowDataMgr.addActionListener(myMenuListener);
-        myMainMenu.add(theShowDataMgr);
+        /* Create the Help menu */
+        TethysMenuSubMenu<ThemisSvnMenuItem> myHelp = theMenuBar.newSubMenu(ThemisSvnMenuItem.HELP);
 
-        /* Create the CreateWC menuItem */
-        theCreateWC = new JMenuItem("CreateWorkingCopy");
-        theCreateWC.addActionListener(myMenuListener);
-        theTasks.add(theCreateWC);
+        /* Create the Viewer menuItem */
+        myHelp.newMenuItem(ThemisSvnMenuItem.DATAVIEWER, e -> handleViewerClosed());
 
-        /* Create the ExtractTag menuItem */
-        theExtractTag = new JMenuItem("CreateTagExtract");
-        theExtractTag.addActionListener(myMenuListener);
-        theTasks.add(theExtractTag);
-
-        /* Create the UpdateWC menuItem */
-        theUpdateWC = new JMenuItem("UpdateWorkingCopy");
-        theUpdateWC.addActionListener(myMenuListener);
-        theTasks.add(theUpdateWC);
-
-        /* Create the RevertWC menuItem */
-        theRevertWC = new JMenuItem("RevertWorkingCopy");
-        theRevertWC.addActionListener(myMenuListener);
-        theTasks.add(theRevertWC);
-
-        /* Create the CreateBranchTags menuItem */
-        theCreateBrnTags = new JMenuItem("CreateBranchTags");
-        theCreateBrnTags.addActionListener(myMenuListener);
-        theTasks.add(theCreateBrnTags);
-
-        /* Create the CreateNewBranch menuItem */
-        theCreateNewBrn = new JMenuItem("CreateNewBranch");
-        theCreateNewBrn.addActionListener(myMenuListener);
-        theTasks.add(theCreateNewBrn);
-
-        /* Create the GitRepository */
-        theCreateGit = new JMenu("CreateGitRepo");
-        theCreateGit.setEnabled(false);
-        theTasks.add(theCreateGit);
-
-        /* Create the BackupSvn menuItem */
-        theBackupSvn = new JMenuItem("BackupSubVersion");
-        theBackupSvn.addActionListener(myMenuListener);
-        theTasks.add(theBackupSvn);
-
-        /* Create the RestoreSvn menuItem */
-        theRestoreSvn = new JMenuItem("RestoreSubVersion");
-        theRestoreSvn.addActionListener(myMenuListener);
-        theTasks.add(theRestoreSvn);
-
-        /* Add the Menu bar */
-        theFrame.setJMenuBar(myMainMenu);
-
-        /* Attach the panel to the frame */
-        theFrame.setContentPane(myTabs.getNode());
-        theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        theFrame.addWindowListener(theCloseHandler);
-
-        /* Show the frame */
-        theFrame.pack();
-        theFrame.setLocationRelativeTo(null);
-        theFrame.setVisible(true);
+        /* Create the menuItems */
+        myTasks.newMenuItem(ThemisSvnMenuItem.CREATEWORKINGCOPY, e -> runCheckOutWC());
+        myTasks.newMenuItem(ThemisSvnMenuItem.EXTRACTTAG, e -> runCreateTagExtract());
+        myTasks.newMenuItem(ThemisSvnMenuItem.UPDATEWORKINGCOPY, e -> runUpdateWC());
+        myTasks.newMenuItem(ThemisSvnMenuItem.REVERTWORKINGCOPY, e -> runRevertWC());
+        myTasks.newMenuItem(ThemisSvnMenuItem.CREATETAG, e -> runCreateBranchTags());
+        myTasks.newMenuItem(ThemisSvnMenuItem.CREATEBRANCH, e -> runCreateNewBranch());
+        myTasks.newSubMenu(ThemisSvnMenuItem.CREATEGITREPO);
+        myTasks.newMenuItem(ThemisSvnMenuItem.BACKUPSVN, e -> backupSubversion());
+        myTasks.newMenuItem(ThemisSvnMenuItem.RESTORESVN, e -> restoreSubversion());
+        theMenuBar.setEnabled(ThemisSvnMenuItem.CREATEGITREPO, false);
 
         /* Create the data window */
-        theDataWdw = new MetisSwingViewerWindow(theGuiFactory, theViewerMgr);
-        theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theShowDataMgr.setEnabled(true));
+        theDataWdw = pToolkit.newViewerWindow();
+        theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(ThemisSvnMenuItem.DATAVIEWER, true));
+
+        /* Listen for thread completion */
+        theThreadMgr.getEventRegistrar().addEventListener(MetisThreadEvent.THREADEND, e -> completeTask(e.getDetails()));
 
         /* Create and run discoverData thread */
-        ThemisDiscoverData myThread = new ThemisDiscoverData(theStatusPanel);
-        theTasks.setEnabled(false);
-        theStatusPanel.runThread(myThread);
+        ThemisDiscoverData<N, I> myThread = new ThemisDiscoverData<>();
+        runThread(myThread);
     }
 
     /**
@@ -351,14 +239,6 @@ public final class ThemisSvnManager {
     }
 
     /**
-     * Obtain GUI factory.
-     * @return the factory
-     */
-    protected TethysSwingGuiFactory getGuiFactory() {
-        return theGuiFactory;
-    }
-
-    /**
      * Obtain secure manager.
      * @return the secure manager
      */
@@ -367,18 +247,26 @@ public final class ThemisSvnManager {
     }
 
     /**
-     * Obtain frame.
-     * @return the frame
+     * Obtain menuBar.
+     * @return the menuBar
      */
-    protected JFrame getFrame() {
-        return theFrame;
+    protected TethysMenuBarManager getMenuBar() {
+        return theMenuBar;
+    }
+
+    /**
+     * Obtain tabs.
+     * @return the tabs
+     */
+    protected TethysTabPaneManager<N, I> getTabs() {
+        return theTabs;
     }
 
     /**
      * Declare subversion data.
      * @param pData the discover thread
      */
-    protected void setSubversionData(final ThemisDiscoverData pData) {
+    protected void setSubversionData(final ThemisDiscoverData<?, ?> pData) {
         /* Declare repository to data manager */
         MetisViewerEntry myRepEntry = theViewerMgr.newEntry(theDataEntry, "SvnRepository");
         theRepository = pData.getRepository();
@@ -394,8 +282,9 @@ public final class ThemisSvnManager {
         MetisViewerEntry myPlanEntry = theViewerMgr.newEntry(theDataEntry, "ExtractPlans");
         pData.declareExtractPlans(theViewerMgr, myPlanEntry);
 
-        /* Enable the git menu */
-        theCreateGit.setEnabled(true);
+        /* Access the git menu */
+        TethysMenuSubMenu<?> myMenu = theMenuBar.lookUpSubMenu(ThemisSvnMenuItem.CREATEGITREPO);
+        myMenu.clearItems();
 
         /* If we have a repository */
         if (theRepository != null) {
@@ -405,52 +294,24 @@ public final class ThemisSvnManager {
                 ThemisSvnComponent myComp = myIterator.next();
 
                 /* Create a new menu item for the component */
-                ItemAction myAction = new ItemAction(myComp);
-                JMenuItem myItem = new JMenuItem(myAction);
-                theCreateGit.add(myItem);
+                myMenu.newMenuItem(myComp, e -> createGitRepo(myComp));
             }
         }
 
         /* Enable the GIT menu if we have components */
-        if (theCreateGit.getItemCount() > 0) {
-            theCreateGit.setEnabled(true);
-        }
-
-        /* process any error */
-        processError(pData.getError());
+        theMenuBar.setEnabled(ThemisSvnMenuItem.CREATEGITREPO, myMenu.countItems() > 0);
     }
 
     /**
      * Declare git data.
      * @param pGit the git thread
      */
-    protected void setGitData(final ThemisCreateGitRepo pGit) {
+    protected void setGitData(final ThemisCreateGitRepo<?, ?> pGit) {
         /* Declare repository to data manager */
         ThemisGitRepository myRepo = pGit.getGitRepo();
         theGitEntry.setObject(myRepo);
         theGitEntry.setVisible(true);
         theGitEntry.setFocus();
-
-        /* process any error */
-        processError(pGit.getError());
-    }
-
-    /**
-     * process error.
-     * @param pError the error
-     */
-    private void processError(final OceanusException pError) {
-        /* If we have an error */
-        if (pError != null) {
-            /* Set data and focus */
-            theErrorEntry.setObject(pError);
-            theErrorEntry.setVisible(true);
-            theErrorEntry.setFocus();
-
-            /* else hide any error entry */
-        } else if (theErrorEntry != null) {
-            theErrorEntry.setVisible(false);
-        }
     }
 
     /**
@@ -461,7 +322,7 @@ public final class ThemisSvnManager {
         /* If this is the discoverData thread */
         if (pTask instanceof ThemisDiscoverData) {
             /* Access correctly */
-            ThemisDiscoverData myThread = (ThemisDiscoverData) pTask;
+            ThemisDiscoverData<?, ?> myThread = (ThemisDiscoverData<?, ?>) pTask;
 
             /* Report data to manager */
             setSubversionData(myThread);
@@ -470,14 +331,14 @@ public final class ThemisSvnManager {
         /* If this is the discoverData thread */
         if (pTask instanceof ThemisCreateGitRepo) {
             /* Access correctly */
-            ThemisCreateGitRepo myThread = (ThemisCreateGitRepo) pTask;
+            ThemisCreateGitRepo<?, ?> myThread = (ThemisCreateGitRepo<?, ?>) pTask;
 
             /* Report data to manager */
             setGitData(myThread);
         }
 
         /* Enable other tasks */
-        theTasks.setEnabled(true);
+        theMenuBar.setEnabled(ThemisSvnMenuItem.TASKS, true);
     }
 
     /**
@@ -491,9 +352,8 @@ public final class ThemisSvnManager {
         ThemisSvnBranch myBranch = theRepository.locateBranch(BASE_COMP, "v1.2.0");
         ThemisSvnBranch[] myList = new ThemisSvnBranch[]
         { myBranch };
-        ThemisCreateWorkingCopy myThread = new ThemisCreateWorkingCopy(myList, SVNRevision.HEAD, new File(myPath + "TestWC"), theStatusPanel);
-        theTasks.setEnabled(false);
-        theStatusPanel.runThread(myThread);
+        ThemisCreateWorkingCopy<N, I> myThread = new ThemisCreateWorkingCopy<>(myList, SVNRevision.HEAD, new File(myPath + "TestWC"));
+        runThread(myThread);
     }
 
     /**
@@ -507,9 +367,8 @@ public final class ThemisSvnManager {
         ThemisSvnTag myTag = theRepository.locateTag(BASE_COMP, BASE_BRANCH, 1);
         ThemisSvnTag[] myList = new ThemisSvnTag[]
         { myTag };
-        ThemisCreateTagExtract myThread = new ThemisCreateTagExtract(myList, new File(myPath + "TestXT"), theStatusPanel);
-        theTasks.setEnabled(false);
-        theStatusPanel.runThread(myThread);
+        ThemisCreateTagExtract<N, I> myThread = new ThemisCreateTagExtract<>(myList, new File(myPath + "TestXT"));
+        runThread(myThread);
     }
 
     /**
@@ -517,9 +376,8 @@ public final class ThemisSvnManager {
      */
     private void runUpdateWC() {
         /* Create and run updateWorkingCopy thread */
-        ThemisUpdateWorkingCopy myThread = new ThemisUpdateWorkingCopy(theWorkingSet, theStatusPanel);
-        theTasks.setEnabled(false);
-        theStatusPanel.runThread(myThread);
+        ThemisUpdateWorkingCopy<N, I> myThread = new ThemisUpdateWorkingCopy<>(theWorkingSet);
+        runThread(myThread);
     }
 
     /**
@@ -527,9 +385,8 @@ public final class ThemisSvnManager {
      */
     private void runRevertWC() {
         /* Create and run revertWorkingCopy thread */
-        ThemisRevertWorkingCopy myThread = new ThemisRevertWorkingCopy(theWorkingSet, theStatusPanel);
-        theTasks.setEnabled(false);
-        theStatusPanel.runThread(myThread);
+        ThemisRevertWorkingCopy<N, I> myThread = new ThemisRevertWorkingCopy<>(theWorkingSet);
+        runThread(myThread);
     }
 
     /**
@@ -543,9 +400,8 @@ public final class ThemisSvnManager {
         ThemisSvnBranch myBranch = theRepository.locateBranch(BASE_COMP, BASE_BRANCH);
         ThemisSvnBranch[] myList = new ThemisSvnBranch[]
         { myBranch };
-        ThemisCreateBranchTags myThread = new ThemisCreateBranchTags(myList, new File(myPath + "TestBT"), theStatusPanel);
-        theTasks.setEnabled(false);
-        theStatusPanel.runThread(myThread);
+        ThemisCreateBranchTags<N, I> myThread = new ThemisCreateBranchTags<>(myList, new File(myPath + "TestBT"));
+        runThread(myThread);
     }
 
     /**
@@ -559,9 +415,8 @@ public final class ThemisSvnManager {
         ThemisSvnTag myTag = theRepository.locateTag(BASE_COMP, "v1.0.0", 1);
         ThemisSvnTag[] myList = new ThemisSvnTag[]
         { myTag };
-        ThemisCreateNewBranch myThread = new ThemisCreateNewBranch(myList, ScmBranchOpType.MAJOR, new File(myPath + "TestNB"), theStatusPanel);
-        theTasks.setEnabled(false);
-        theStatusPanel.runThread(myThread);
+        ThemisCreateNewBranch<N, I> myThread = new ThemisCreateNewBranch<>(myList, ScmBranchOpType.MAJOR, new File(myPath + "TestNB"));
+        runThread(myThread);
     }
 
     /**
@@ -569,9 +424,8 @@ public final class ThemisSvnManager {
      */
     private void backupSubversion() {
         /* Create the worker thread */
-        ThemisSubversionBackup myThread = new ThemisSubversionBackup(theStatusPanel);
-        theTasks.setEnabled(false);
-        theStatusPanel.runThread(myThread);
+        ThemisSubversionBackup<N, I> myThread = new ThemisSubversionBackup<>();
+        runThread(myThread);
     }
 
     /**
@@ -579,9 +433,8 @@ public final class ThemisSvnManager {
      */
     private void restoreSubversion() {
         /* Create the worker thread */
-        ThemisSubversionRestore myThread = new ThemisSubversionRestore(theStatusPanel);
-        theTasks.setEnabled(false);
-        theStatusPanel.runThread(myThread);
+        ThemisSubversionRestore<N, I> myThread = new ThemisSubversionRestore<>();
+        runThread(myThread);
     }
 
     /**
@@ -590,121 +443,31 @@ public final class ThemisSvnManager {
      */
     private void createGitRepo(final ThemisSvnComponent pSource) {
         /* Create the worker thread */
-        ThemisCreateGitRepo myThread = new ThemisCreateGitRepo(theStatusPanel, pSource);
-        theTasks.setEnabled(false);
-        theStatusPanel.runThread(myThread);
+        ThemisCreateGitRepo<N, I> myThread = new ThemisCreateGitRepo<>(pSource);
+        runThread(myThread);
     }
 
     /**
-     * MenuListener class.
+     * Run thread.
+     * @param pThread the thread
      */
-    private final class MenuListener
-            implements ActionListener {
-
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            Object o = evt.getSource();
-
-            /* If this is the DataManager window */
-            if (theShowDataMgr.equals(o)) {
-                /* Disable the menu item */
-                theShowDataMgr.setEnabled(false);
-
-                /* Display it */
-                theDataWdw.showDialog();
-
-                /* If this is the CreateWC task */
-            } else if (theCreateWC.equals(o)) {
-                /* run the thread */
-                runCheckOutWC();
-
-                /* If this is the ExtractTag task */
-            } else if (theExtractTag.equals(o)) {
-                /* run the thread */
-                runCreateTagExtract();
-
-                /* If this is the UpdateWC task */
-            } else if (theUpdateWC.equals(o)) {
-                /* run the thread */
-                runUpdateWC();
-
-                /* If this is the RevertWC task */
-            } else if (theRevertWC.equals(o)) {
-                /* run the thread */
-                runRevertWC();
-
-                /* If this is the CreateBranchTags task */
-            } else if (theCreateBrnTags.equals(o)) {
-                /* run the thread */
-                runCreateBranchTags();
-
-                /* If this is the CreateNewBranch task */
-            } else if (theCreateNewBrn.equals(o)) {
-                /* run the thread */
-                runCreateNewBranch();
-
-                /* If this event relates to the Subversion backup item */
-            } else if (theBackupSvn.equals(o)) {
-                /* Start a write backup operation */
-                backupSubversion();
-
-                /* If this event relates to the Subversion restore item */
-            } else if (theRestoreSvn.equals(o)) {
-                /* Start a restore backup operation */
-                restoreSubversion();
-            }
-        }
+    private void runThread(final MetisThread<?, N, I> pThread) {
+        theMenuBar.setEnabled(ThemisSvnMenuItem.TASKS, false);
+        theThreadMgr.startThread(pThread);
     }
 
     /**
-     * Item action class.
+     * Handle ViewerClosed.
      */
-    private final class ItemAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 1093025312352957763L;
-
-        /**
-         * Item.
-         */
-        private final transient ThemisSvnComponent theSource;
-
-        /**
-         * Constructor.
-         * @param pSource the source component
-         */
-        private ItemAction(final ThemisSvnComponent pSource) {
-            super(pSource.getName());
-            theSource = pSource;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* run the thread */
-            createGitRepo(theSource);
-        }
+    private void handleViewerClosed() {
+        theMenuBar.setEnabled(ThemisSvnMenuItem.DATAVIEWER, false);
+        theDataWdw.showDialog();
     }
 
     /**
-     * Window Close Adapter.
+     * Handle WindowClosed.
      */
-    private class WindowClose
-            extends WindowAdapter {
-        @Override
-        public void windowClosing(final WindowEvent evt) {
-            Object o = evt.getSource();
-
-            /* If this is the frame that is closing down */
-            if (theFrame.equals(o)) {
-                /* terminate the executor */
-                theStatusPanel.shutdown();
-
-                /* Dispose of the frame */
-                theFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                theFrame.dispose();
-            }
-        }
+    protected void handleWindowClosed() {
+        theThreadMgr.shutdown();
     }
 }

@@ -36,11 +36,11 @@ import org.tmatesoft.svn.core.wc.SVNEvent;
 import org.tmatesoft.svn.core.wc.SVNEventAction;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraIssue;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.SvnWorkingCopySet;
 
@@ -72,7 +72,7 @@ public class ThemisCommitMgr {
     /**
      * Report object.
      */
-    private final ReportStatus theReport;
+    private final MetisThreadStatusReport theReport;
 
     /**
      * Client manager.
@@ -95,7 +95,7 @@ public class ThemisCommitMgr {
      * @param pReport the report object
      */
     public ThemisCommitMgr(final SvnWorkingCopySet pWorkingSet,
-                           final ReportStatus pReport) {
+                           final MetisThreadStatusReport pReport) {
         /* Store parameters */
         theWorkingSet = pWorkingSet;
         theRepository = theWorkingSet.getRepository();

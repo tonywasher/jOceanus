@@ -22,76 +22,38 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.threads.swing;
 
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisBackup;
 
 /**
  * Thread to handle subVersion backups.
- * @author Tony Washer
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class ThemisSubversionBackup
-        extends ThemisScmThread {
-    /**
-     * The preference manager.
-     */
-    private final MetisPreferenceManager thePreferenceMgr;
-
-    /**
-     * The secure manager.
-     */
-    private final GordianHashManager theSecureMgr;
-
-    /**
-     * Report object.
-     */
-    private final ReportTask theReport;
-
-    /**
-     * Constructor (Event Thread).
-     * @param pReport the report object
-     */
-    public ThemisSubversionBackup(final ReportTask pReport) {
-        /* Call super-constructor */
-        super(pReport);
-
-        /* Store passed parameters */
-        theReport = pReport;
-        thePreferenceMgr = pReport.getPreferenceMgr();
-        theSecureMgr = pReport.getSecureMgr();
+public class ThemisSubversionBackup<N, I>
+        implements MetisThread<Void, N, I> {
+    @Override
+    public String getTaskName() {
+        return "BackupSubVersion";
     }
 
     @Override
-    public Void doInBackground() throws OceanusException {
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Access details from toolkit */
+        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
+        GordianHashManager mySecureMgr = pToolkit.getSecurityManager();
+
         /* Create backup */
-        ThemisBackup myAccess = new ThemisBackup(this, thePreferenceMgr);
-        myAccess.backUpRepositories(theSecureMgr);
+        ThemisBackup myAccess = new ThemisBackup(myManager, myPreferences);
+        myAccess.backUpRepositories(mySecureMgr);
 
         /* Return nothing */
         return null;
-    }
-
-    @Override
-    public void done() {
-        /* Protect against exceptions */
-        try {
-            /* Force out any exceptions that occurred in the thread */
-            get();
-
-            /* Catch exceptions */
-        } catch (CancellationException
-                | InterruptedException
-                | ExecutionException e) {
-            setError(new ThemisIOException("Failed to perform background task", e));
-        }
-
-        /* Report task complete */
-        theReport.completeTask(this);
     }
 }

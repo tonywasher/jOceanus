@@ -27,56 +27,40 @@ import java.io.File;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.swing.MetisFileSelector;
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 import net.sourceforge.joceanus.jthemis.ThemisCancelException;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferenceKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
 import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisBackup;
 
 /**
  * Thread to handle subVersion backups.
- * @author Tony Washer
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class ThemisSubversionRestore
-        extends ThemisScmThread {
-    /**
-     * ReportTask.
-     */
-    private final ReportTask theStatus;
-
-    /**
-     * The preference manager.
-     */
-    private final MetisPreferenceManager thePreferenceMgr;
-
-    /**
-     * The secure manager.
-     */
-    private final GordianHashManager theSecureMgr;
-
-    /**
-     * Constructor (Event Thread).
-     * @param pReport the report object
-     */
-    public ThemisSubversionRestore(final ReportTask pReport) {
-        /* Call super-constructor */
-        super(pReport);
-
-        /* Store passed parameters */
-        theStatus = pReport;
-        thePreferenceMgr = pReport.getPreferenceMgr();
-        theSecureMgr = pReport.getSecureMgr();
+public class ThemisSubversionRestore<N, I>
+        implements MetisThread<Void, N, I> {
+    @Override
+    public String getTaskName() {
+        return "RestoreSubVersion";
     }
 
     @Override
-    public Void doInBackground() throws OceanusException {
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Access details from toolkit */
+        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
+        GordianHashManager mySecureMgr = pToolkit.getSecurityManager();
+
         /* Access the BackUp preferences */
-        ThemisSvnPreferences mySVNPreferences = thePreferenceMgr.getPreferenceSet(ThemisSvnPreferences.class);
-        PrometheusBackupPreferences myBUPreferences = thePreferenceMgr.getPreferenceSet(PrometheusBackupPreferences.class);
+        ThemisSvnPreferences mySVNPreferences = myPreferences.getPreferenceSet(ThemisSvnPreferences.class);
+        PrometheusBackupPreferences myBUPreferences = myPreferences.getPreferenceSet(PrometheusBackupPreferences.class);
 
         /* Access preferences */
         File myRepo = new File(mySVNPreferences.getStringValue(ThemisSvnPreferenceKey.INSTALL));
@@ -84,9 +68,11 @@ public class ThemisSubversionRestore
         String myPrefix = mySVNPreferences.getStringValue(ThemisSvnPreferenceKey.PFIX);
 
         /* Determine the name of the file to load */
-        MetisFileSelector myDialog = new MetisFileSelector(theStatus.getFrame(), "Select Backup to restore", myBackupDir, myPrefix, GordianZipReadFile.ZIPFILE_EXT);
-        myDialog.showDialog();
-        File myFile = myDialog.getSelectedFile();
+        TethysFileSelector myDialog = pToolkit.getGuiFactory().newFileSelector();
+        myDialog.setTitle("Select Backup to restore");
+        myDialog.setInitialDirectory(myBackupDir);
+        myDialog.setExtension(GordianZipReadFile.ZIPFILE_EXT);
+        File myFile = myDialog.selectFile();
 
         /* If we did not select a file */
         if (myFile == null) {
@@ -103,8 +89,8 @@ public class ThemisSubversionRestore
         myRepo = new File(myRepo.getPath(), myName);
 
         /* restore the backup */
-        ThemisBackup myAccess = new ThemisBackup(this, thePreferenceMgr);
-        myAccess.loadRepository(myRepo, theSecureMgr, myFile);
+        ThemisBackup myAccess = new ThemisBackup(myManager, myPreferences);
+        myAccess.loadRepository(myRepo, mySecureMgr, myFile);
 
         /* Return nothing */
         return null;

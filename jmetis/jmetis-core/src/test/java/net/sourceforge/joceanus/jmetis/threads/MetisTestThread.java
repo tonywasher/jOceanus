@@ -94,9 +94,4 @@ public class MetisTestThread<N, I>
         /* Continue */
         return true;
     }
-
-    @Override
-    public void processResult(final Void pResult) throws OceanusException {
-        /* Nothing to do */
-    }
 }

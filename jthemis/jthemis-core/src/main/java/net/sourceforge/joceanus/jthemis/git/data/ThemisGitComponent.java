@@ -45,11 +45,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitBranch.GitBranchList;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition.MvnSubModule;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
@@ -166,7 +166,7 @@ public final class ThemisGitComponent
      * @throws OceanusException on error
      */
     public ThemisMvnProjectDefinition parseProjectObject(final ObjectId pCommitId,
-                                                   final String pPath) throws OceanusException {
+                                                         final String pPath) throws OceanusException {
         InputStream myInput = null;
 
         /* Protect against exceptions */
@@ -308,7 +308,7 @@ public final class ThemisGitComponent
          * @param pReport the report object
          * @throws OceanusException on error
          */
-        public void discover(final ReportStatus pReport) throws OceanusException {
+        public void discover(final MetisThreadStatusReport pReport) throws OceanusException {
             /* Reset the list */
             clear();
 

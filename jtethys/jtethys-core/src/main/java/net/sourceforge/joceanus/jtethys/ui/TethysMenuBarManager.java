@@ -28,9 +28,8 @@ import java.util.function.Consumer;
 
 /**
  * MenuBar Manager.
- * @param <N> the Node type
  */
-public abstract class TethysMenuBarManager<N> {
+public abstract class TethysMenuBarManager {
     /**
      * The Element Map.
      */
@@ -43,12 +42,6 @@ public abstract class TethysMenuBarManager<N> {
         /* Create the map */
         theElementMap = new HashMap<>();
     }
-
-    /**
-     * Obtain the node.
-     * @return the node.
-     */
-    public abstract N getNode();
 
     /**
      * Add subMenu.
@@ -104,7 +97,12 @@ public abstract class TethysMenuBarManager<N> {
      * MenuElement.
      * @param <I> the id type
      */
-    public abstract class TethysMenuElement<I> {
+    public abstract static class TethysMenuElement<I> {
+        /**
+         * The Manager.
+         */
+        private final TethysMenuBarManager theManager;
+
         /**
          * The Id.
          */
@@ -117,20 +115,34 @@ public abstract class TethysMenuBarManager<N> {
 
         /**
          * Constructor.
+         * @param pManager the manager
          * @param pId the id
          */
-        protected TethysMenuElement(final I pId) {
+        protected TethysMenuElement(final TethysMenuBarManager pManager,
+                                    final I pId) {
             /* record details */
+            theManager = pManager;
             theId = pId;
             isEnabled = true;
 
+            /* Access the element map */
+            Map<Object, TethysMenuElement<?>> myElementMap = pManager.theElementMap;
+
             /* Check uniqueness of item */
-            if (theElementMap.containsKey(pId)) {
+            if (myElementMap.containsKey(pId)) {
                 throw new IllegalArgumentException("Duplicate MenuId: " + pId);
             }
 
             /* Store into map */
-            theElementMap.put(pId, this);
+            myElementMap.put(pId, this);
+        }
+
+        /**
+         * Obtain the manager.
+         * @return the manager
+         */
+        protected TethysMenuBarManager getManager() {
+            return theManager;
         }
 
         /**
@@ -181,7 +193,7 @@ public abstract class TethysMenuBarManager<N> {
      * SubMenu.
      * @param <S> the id type
      */
-    public abstract class TethysMenuSubMenu<S>
+    public abstract static class TethysMenuSubMenu<S>
             extends TethysMenuElement<S> {
         /**
          * The item count.
@@ -190,10 +202,12 @@ public abstract class TethysMenuBarManager<N> {
 
         /**
          * Constructor.
+         * @param pManager the manager
          * @param pId the id
          */
-        protected TethysMenuSubMenu(final S pId) {
-            super(pId);
+        protected TethysMenuSubMenu(final TethysMenuBarManager pManager,
+                                    final S pId) {
+            super(pManager, pId);
         }
 
         /**
@@ -246,7 +260,7 @@ public abstract class TethysMenuBarManager<N> {
      * MenuItem.
      * @param <I> the id type
      */
-    public abstract class TethysMenuItem<I>
+    public abstract static class TethysMenuItem<I>
             extends TethysMenuElement<I> {
         /**
          * The consumer.
@@ -258,9 +272,10 @@ public abstract class TethysMenuBarManager<N> {
          * @param pId the id
          * @param pAction the action
          */
-        protected TethysMenuItem(final I pId,
+        protected TethysMenuItem(final TethysMenuBarManager pManager,
+                                 final I pId,
                                  final Consumer<I> pAction) {
-            super(pId);
+            super(pManager, pId);
             theAction = pAction;
         }
 

@@ -37,10 +37,10 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisCancelException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
@@ -60,7 +60,7 @@ public class ThemisCheckOut {
     /**
      * Report object.
      */
-    private final ReportStatus theReport;
+    private final MetisThreadStatusReport theReport;
 
     /**
      * Client manager.
@@ -78,7 +78,7 @@ public class ThemisCheckOut {
      * @param pReport the report object
      */
     public ThemisCheckOut(final ThemisSvnRepository pRepository,
-                          final ReportStatus pReport) {
+                          final MetisThreadStatusReport pReport) {
         /* Store parameters */
         theRepository = pRepository;
         theReport = pReport;

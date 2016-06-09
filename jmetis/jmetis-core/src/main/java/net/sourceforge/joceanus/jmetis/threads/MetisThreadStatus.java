@@ -32,6 +32,11 @@ public class MetisThreadStatus {
     private static final int DEFAULT_NUMBER = 100;
 
     /**
+     * Step name.
+     */
+    private String theStep;
+
+    /**
      * Number of steps.
      */
     private int theNumSteps;
@@ -77,8 +82,17 @@ public class MetisThreadStatus {
         theNumStages = pStatus.getNumStages();
         theStepsDone = pStatus.getStepsDone();
         theStagesDone = pStatus.getStagesDone();
+        theStep = pStatus.getStep();
         theStage = pStatus.getStage();
         theTask = pStatus.getTask();
+    }
+
+    /**
+     * Get step.
+     * @return the step name
+     */
+    public String getStep() {
+        return theStep;
     }
 
     /**
@@ -156,9 +170,18 @@ public class MetisThreadStatus {
 
     /**
      * Set Next step.
+     * @param pStep the next step
+     */
+    public void setNextStep(final String pStep) {
+        theStep = pStep;
+        theStepsDone++;
+    }
+
+    /**
+     * Set Next step.
      */
     public void setNextStep() {
-        theStepsDone++;
+        setNextStep(null);
     }
 
     /**
@@ -185,6 +208,7 @@ public class MetisThreadStatus {
     public void setStage(final String pValue) {
         theStage = pValue;
         theStagesDone++;
+        theStep = null;
         theNumSteps = DEFAULT_NUMBER;
         theStepsDone = -1;
     }
@@ -195,6 +219,7 @@ public class MetisThreadStatus {
      */
     public void setTask(final String pValue) {
         theTask = pValue;
+        theStep = null;
         theStage = null;
         theNumStages = DEFAULT_NUMBER;
         theStagesDone = -1;

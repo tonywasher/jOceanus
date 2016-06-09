@@ -40,10 +40,10 @@ import org.tmatesoft.svn.core.wc.SVNEvent;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch.ScmBranchOpType;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch;
@@ -75,7 +75,7 @@ public class ThemisVersionMgr {
     /**
      * Report object.
      */
-    private final ReportStatus theReport;
+    private final MetisThreadStatusReport theReport;
 
     /**
      * Event Handler.
@@ -90,7 +90,7 @@ public class ThemisVersionMgr {
      */
     public ThemisVersionMgr(final ThemisSvnRepository pRepository,
                             final File pLocation,
-                            final ReportStatus pReport) {
+                            final MetisThreadStatusReport pReport) {
         /* Store Parameters */
         theRepository = pRepository;
         theLocation = pLocation;

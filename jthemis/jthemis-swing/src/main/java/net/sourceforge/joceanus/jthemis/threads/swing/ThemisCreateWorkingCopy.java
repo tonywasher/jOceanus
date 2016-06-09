@@ -27,8 +27,10 @@ import java.util.Collection;
 
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
@@ -37,14 +39,15 @@ import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisCheckOut;
 
 /**
  * Thread to handle creation of working copy.
- * @author Tony Washer
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class ThemisCreateWorkingCopy
-        extends ThemisScmThread {
+public class ThemisCreateWorkingCopy<N, I>
+        implements MetisThread<Void, N, I> {
     /**
      * Branches.
      */
-    private final Collection<ThemisSvnBranch> theBranches;
+    private Collection<ThemisSvnBranch> theBranches;
 
     /**
      * Revision.
@@ -57,11 +60,6 @@ public class ThemisCreateWorkingCopy
     private final File theLocation;
 
     /**
-     * Report object.
-     */
-    private final ReportTask theReport;
-
-    /**
      * The Repository.
      */
     private final ThemisSvnRepository theRepository;
@@ -69,48 +67,21 @@ public class ThemisCreateWorkingCopy
     /**
      * The WorkingCopySet.
      */
-    private SvnWorkingCopySet theWorkingCopySet = null;
-
-    /**
-     * The Error.
-     */
-    private OceanusException theError = null;
+    private SvnWorkingCopySet theWorkingCopySet;
 
     /**
      * Constructor.
      * @param pBranches the branches to create the working copy for
      * @param pRevision the revision to check out
      * @param pLocation the location to create into
-     * @param pReport the report object
      */
     public ThemisCreateWorkingCopy(final ThemisSvnBranch[] pBranches,
                                    final SVNRevision pRevision,
-                                   final File pLocation,
-                                   final ReportTask pReport) {
-        /* Call super-constructor */
-        super(pReport);
-
+                                   final File pLocation) {
         /* Store parameters */
         theLocation = pLocation;
         theRevision = pRevision;
-        theReport = pReport;
         theRepository = pBranches[0].getRepository();
-
-        /* protect against exceptions */
-        try {
-            /* Create new directory for working copy */
-            ThemisDirectory.createDirectory(pLocation);
-
-            /* Access branch list for extract */
-            // myBranches = SvnBranch.getBranchMap(pBranches).values();
-        } catch (OceanusException e) {
-            /* Store the error and cancel thread */
-            theError = e;
-            cancel(true);
-        }
-
-        /* Record branches */
-        theBranches = null;
     }
 
     /**
@@ -122,23 +93,29 @@ public class ThemisCreateWorkingCopy
     }
 
     @Override
-    public OceanusException getError() {
-        return theError;
+    public String getTaskName() {
+        return "CreateWorkingCopy";
     }
 
     @Override
-    protected Void doInBackground() {
+    public void prepareTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Create new directory for working copy */
+        ThemisDirectory.createDirectory(theLocation);
+    }
+
+    @Override
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Protect against exceptions */
         try {
+            /* Access the thread manager */
+            MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+
             /* Check out the branches */
-            ThemisCheckOut myCheckOut = new ThemisCheckOut(theRepository, this);
+            ThemisCheckOut myCheckOut = new ThemisCheckOut(theRepository, myManager);
             myCheckOut.checkOutBranches(theBranches, theRevision, theLocation);
 
             /* Discover workingSet details */
-            theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, this);
-        } catch (OceanusException e) {
-            /* Store the error */
-            theError = e;
+            theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, myManager);
         } finally {
             /* Dispose of any connections */
             if (theRepository != null) {
@@ -148,11 +125,5 @@ public class ThemisCreateWorkingCopy
 
         /* Return null */
         return null;
-    }
-
-    @Override
-    public void done() {
-        /* Report task complete */
-        theReport.completeTask(this);
     }
 }
