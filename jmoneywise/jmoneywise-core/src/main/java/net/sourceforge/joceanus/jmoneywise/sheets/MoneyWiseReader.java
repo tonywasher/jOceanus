@@ -22,8 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetReader;
 
 /**
@@ -33,20 +34,14 @@ import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetReader;
 public class MoneyWiseReader
         extends PrometheusSheetReader<MoneyWiseData> {
     /**
-     * Thread control.
-     */
-    private final TaskControl<MoneyWiseData> theTask;
-
-    /**
      * Constructor.
-     * @param pTask the Task control
+     * @param pReport the report
+     * @param pSecureMgr the security manager
      */
-    public MoneyWiseReader(final TaskControl<MoneyWiseData> pTask) {
+    public MoneyWiseReader(final MetisThreadStatusReport pReport,
+                           final GordianHashManager pSecureMgr) {
         /* Call super-constructor */
-        super(pTask);
-
-        /* Store the task */
-        theTask = pTask;
+        super(pReport, pSecureMgr);
     }
 
     /**
@@ -97,11 +92,5 @@ public class MoneyWiseReader
         addSheet(new SheetTransaction(this));
         addSheet(new SheetTransactionInfo(this));
         addSheet(new SheetSchedule(this));
-    }
-
-    @Override
-    protected MoneyWiseData newDataSet() {
-        /* Create the new DataSet */
-        return theTask.getNewDataSet();
     }
 }

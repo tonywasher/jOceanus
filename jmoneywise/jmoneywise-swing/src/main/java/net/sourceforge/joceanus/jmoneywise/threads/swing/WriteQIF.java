@@ -36,6 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseCancelException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
@@ -45,24 +48,21 @@ import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFFile;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFParser;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFWriter;
+import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.threads.swing.WorkerThread;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * WorkerThread extension to create a QIF archive.
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class WriteQIF
-        extends WorkerThread<Void> {
+public class WriteQIF<N, I>
+        implements MetisThread<Void, N, I> {
     /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(WriteQIF.class);
-
-    /**
-     * Task description.
-     */
-    private static final String TASK_NAME = "QIF Creation";
 
     /**
      * Delete error text.
@@ -72,33 +72,28 @@ public class WriteQIF
     /**
      * Data View.
      */
-    private final View<?, ?> theView;
-
-    /**
-     * Thread Status.
-     */
-    private final MoneyWiseStatus theStatus;
+    private final View<N, I> theView;
 
     /**
      * Constructor (Event Thread).
-     * @param pStatus the thread status
+     * @param pView the view
      */
-    public WriteQIF(final MoneyWiseStatus pStatus) {
-        /* Call super-constructor */
-        super(TASK_NAME, pStatus);
-
-        /* Store passed parameters */
-        theStatus = pStatus;
-        theView = pStatus.getView();
-
-        /* Show the status window */
-        showStatusBar();
+    public WriteQIF(final View<N, I> pView) {
+        theView = pView;
     }
 
     @Override
-    public Void performTask() throws OceanusException {
+    public String getTaskName() {
+        return MoneyWiseThreadId.CREATEQIF.toString();
+    }
+
+    @Override
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Access the thread manager */
+        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+
         /* Initialise the status window */
-        theStatus.initTask("Analysing Data");
+        myManager.initTask("Analysing Data");
 
         /* Assume failure */
         boolean bSuccess = false;
@@ -114,7 +109,7 @@ public class WriteQIF
         QIFFile myQFile = QIFFile.buildQIFFile(theView.getData(), myAnalysis, myPrefs);
 
         /* Initialise the status window */
-        theStatus.initTask("Writing QIF file");
+        myManager.initTask("Writing QIF file");
 
         /* Determine name of output file */
         String myDirectory = myPrefs.getStringValue(MoneyWiseQIFPreferenceKey.QIFDIR);
@@ -124,7 +119,7 @@ public class WriteQIF
         File myOutFile = new File(myDirectory + File.separator + myType.getFileName());
 
         /* Create the Writer */
-        QIFWriter myQWriter = new QIFWriter(theStatus, myQFile);
+        QIFWriter myQWriter = new QIFWriter(myManager, myQFile);
 
         /* Protect against exceptions */
         try (FileOutputStream myOutput = new FileOutputStream(myOutFile);

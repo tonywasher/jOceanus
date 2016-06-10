@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
@@ -79,7 +80,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.Tran
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
@@ -719,19 +719,19 @@ public class MoneyWiseData
      * items that differ between the two DataSets. Items that are in this list, but not in the old
      * list will be viewed as inserted. Items that are in the old list but not in this list will be
      * viewed as deleted. Items that are in both lists but differ will be viewed as changed
-     * @param pTask the task control
+     * @param pReport the report
      * @param pOld The DataSet to compare to
      * @return the difference extract
      * @throws OceanusException on error
      */
     @Override
-    public MoneyWiseData getDifferenceSet(final TaskControl<MoneyWiseData> pTask,
+    public MoneyWiseData getDifferenceSet(final MetisThreadStatusReport pReport,
                                           final MoneyWiseData pOld) throws OceanusException {
         /* Build an empty DataSet */
         MoneyWiseData myDiffers = new MoneyWiseData(this);
 
         /* Obtain underlying differences */
-        myDiffers.deriveDifferences(pTask, this, pOld);
+        myDiffers.deriveDifferences(pReport, this, pOld);
 
         /* Return the differences */
         return myDiffers;

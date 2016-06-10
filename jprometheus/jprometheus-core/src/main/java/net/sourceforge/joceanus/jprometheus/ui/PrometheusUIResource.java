@@ -30,107 +30,52 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
  */
 public enum PrometheusUIResource implements TethysResourceId {
     /**
-     * Data Menu.
+     * Menu Data.
      */
     MENU_DATA("Menu.Data"),
 
     /**
-     * Edit Menu.
-     */
-    MENU_EDIT("Menu.Edit"),
-
-    /**
-     * Backup Menu.
+     * Menu Backup.
      */
     MENU_BACKUP("Menu.Backup"),
 
     /**
-     * Security Menu.
+     * Menu Edit.
+     */
+    MENU_EDIT("Menu.Edit"),
+
+    /**
+     * Menu Security.
      */
     MENU_SECURITY("Menu.Security"),
 
     /**
-     * Help Menu.
+     * Menu Help.
      */
     MENU_HELP("Menu.Help"),
 
     /**
-     * LoadDB MenuItem.
-     */
-    MENUITEM_LOADDB("MenuItem.LoadDB"),
-
-    /**
-     * StoreDB MenuItem.
-     */
-    MENUITEM_STOREDB("MenuItem.StoreDB"),
-
-    /**
-     * CreateDB MenuItem.
-     */
-    MENUITEM_CREATEDB("MenuItem.CreateDB"),
-
-    /**
-     * PurgeDB MenuItem.
-     */
-    MENUITEM_PURGEDB("MenuItem.PurgeDB"),
-
-    /**
-     * UnDo MenuItem.
+     * MenuItem Undo.
      */
     MENUITEM_UNDO("MenuItem.UnDo"),
 
     /**
-     * Reset MenuItem.
+     * MenuItem Reset.
      */
     MENUITEM_RESET("MenuItem.Reset"),
 
     /**
-     * Create Backup MenuItem.
-     */
-    MENUITEM_BACKUPCREATE("MenuItem.CreateBackup"),
-
-    /**
-     * Restore Backup MenuItem.
-     */
-    MENUITEM_BACKUPRESTORE("MenuItem.RestoreBackup"),
-
-    /**
-     * Restore Backup MenuItem.
-     */
-    MENUITEM_XMLCREATE("MenuItem.CreateXml"),
-
-    /**
-     * Restore Backup MenuItem.
-     */
-    MENUITEM_XMLLOAD("MenuItem.RestoreXml"),
-
-    /**
-     * Restore Backup MenuItem.
-     */
-    MENUITEM_XTRACTCREATE("MenuItem.CreateXtract"),
-
-    /**
-     * RenewSecurity MenuItem.
-     */
-    MENUITEM_SECURERENEW("MenuItem.RenewSecurity"),
-
-    /**
-     * Change Password MenuItem.
-     */
-    MENUITEM_CHANGEPASS("MenuItem.ChangePass"),
-
-    /**
-     * Help MenuItem.
+     * MenuItem Help.
      */
     MENUITEM_HELP("MenuItem.Help"),
 
     /**
-     * DataMgr MenuItem.
+     * MenuItem DataViewer.
      */
-    MENUITEM_DATAMGR("MenuItem.DataMgr"),
+    MENUITEM_DATAVIEWER("MenuItem.DataViewer"),
 
     /**
-     * About MenuItem.
+     * MenuItem About.
      */
     MENUITEM_ABOUT("MenuItem.About"),
 

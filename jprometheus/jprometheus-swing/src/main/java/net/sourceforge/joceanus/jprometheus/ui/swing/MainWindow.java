@@ -22,20 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui.swing;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
@@ -44,11 +37,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadEvent;
+import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisViewerWindow;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.threads.swing.CreateBackup;
 import net.sourceforge.joceanus.jprometheus.threads.swing.CreateDatabase;
 import net.sourceforge.joceanus.jprometheus.threads.swing.CreateXmlFile;
@@ -59,13 +55,16 @@ import net.sourceforge.joceanus.jprometheus.threads.swing.PurgeDatabase;
 import net.sourceforge.joceanus.jprometheus.threads.swing.RenewSecurity;
 import net.sourceforge.joceanus.jprometheus.threads.swing.StoreDatabase;
 import net.sourceforge.joceanus.jprometheus.threads.swing.UpdatePassword;
-import net.sourceforge.joceanus.jprometheus.threads.swing.WorkerThread;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusMenuId;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
+import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
 
 /**
  * Main window for application.
@@ -73,117 +72,11 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * @param <T> the data set type
  * @param <E> the data list enum class
  */
-public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
-        implements ThreadControl {
+public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
     /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MainWindow.class);
-
-    /**
-     * Data menu title.
-     */
-    private static final String MENU_DATA = PrometheusUIResource.MENU_DATA.getValue();
-
-    /**
-     * Edit menu title.
-     */
-    private static final String MENU_EDIT = PrometheusUIResource.MENU_EDIT.getValue();
-
-    /**
-     * Backup menu title.
-     */
-    private static final String MENU_BACKUP = PrometheusUIResource.MENU_BACKUP.getValue();
-
-    /**
-     * Security menu title.
-     */
-    private static final String MENU_SECURITY = PrometheusUIResource.MENU_SECURITY.getValue();
-
-    /**
-     * Help menu title.
-     */
-    private static final String MENU_HELP = PrometheusUIResource.MENU_HELP.getValue();
-
-    /**
-     * Load Database menu item.
-     */
-    private static final String ITEM_LOADDB = PrometheusUIResource.MENUITEM_LOADDB.getValue();
-
-    /**
-     * Store Database menu item.
-     */
-    private static final String ITEM_STOREDB = PrometheusUIResource.MENUITEM_STOREDB.getValue();
-
-    /**
-     * Create Database menu item.
-     */
-    private static final String ITEM_CREATEDB = PrometheusUIResource.MENUITEM_CREATEDB.getValue();
-
-    /**
-     * Purge Database menu item.
-     */
-    private static final String ITEM_PURGEDB = PrometheusUIResource.MENUITEM_PURGEDB.getValue();
-
-    /**
-     * Undo Edit menu item.
-     */
-    private static final String ITEM_UNDO = PrometheusUIResource.MENUITEM_UNDO.getValue();
-
-    /**
-     * Reset Edit menu item.
-     */
-    private static final String ITEM_RESET = PrometheusUIResource.MENUITEM_RESET.getValue();
-
-    /**
-     * Create Backup menu item.
-     */
-    private static final String ITEM_MAKEBACKUP = PrometheusUIResource.MENUITEM_BACKUPCREATE.getValue();
-
-    /**
-     * Restore Backup menu item.
-     */
-    private static final String ITEM_RESTOREBACK = PrometheusUIResource.MENUITEM_BACKUPRESTORE.getValue();
-
-    /**
-     * Create Xml menu item.
-     */
-    private static final String ITEM_CREATEXML = PrometheusUIResource.MENUITEM_XMLCREATE.getValue();
-
-    /**
-     * Create Xml Xtract menu item.
-     */
-    private static final String ITEM_CREATEXTRACT = PrometheusUIResource.MENUITEM_XTRACTCREATE.getValue();
-
-    /**
-     * Load Xml menu item.
-     */
-    private static final String ITEM_LOADXML = PrometheusUIResource.MENUITEM_XMLLOAD.getValue();
-
-    /**
-     * Renew Security.
-     */
-    private static final String ITEM_RENEWSEC = PrometheusUIResource.MENUITEM_SECURERENEW.getValue();
-
-    /**
-     * Change Password menu item.
-     */
-    private static final String ITEM_CHGPASS = PrometheusUIResource.MENUITEM_CHANGEPASS.getValue();
-
-    /**
-     * Help menu item.
-     */
-    private static final String ITEM_HELP = PrometheusUIResource.MENUITEM_HELP.getValue();
-
-    /**
-     * Data Manager menu item.
-     */
-    private static final String ITEM_DATAMGR = PrometheusUIResource.MENUITEM_DATAMGR.getValue();
-
-    /**
-     * About menu item.
-     */
-    private static final String ITEM_ABOUT = PrometheusUIResource.MENUITEM_ABOUT.getValue();
 
     /**
      * Discard prompt.
@@ -196,9 +89,14 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private static final String TITLE_CLOSE = PrometheusUIResource.TITLE_CLOSE.getValue();
 
     /**
+     * The GUI Factory.
+     */
+    private TethysSwingGuiFactory theGuiFactory;
+
+    /**
      * The data view.
      */
-    private DataControl<T, E, ?, ?> theView;
+    private DataControl<T, E, JComponent, Icon> theView;
 
     /**
      * The frame.
@@ -211,119 +109,14 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private JPanel thePanel;
 
     /**
-     * The status bar.
-     */
-    private StatusBar theStatusBar;
-
-    /**
      * The data menu.
      */
-    private JMenu theDataMenu;
+    private TethysSwingMenuBarManager theMenuBar;
 
     /**
-     * The edit menu.
+     * The Thread Manager.
      */
-    private JMenu theEditMenu;
-
-    /**
-     * The backup menu.
-     */
-    private JMenu theBackupMenu;
-
-    /**
-     * The security menu.
-     */
-    private JMenu theSecureMenu;
-
-    /**
-     * The Create Database menu item.
-     */
-    private JMenuItem theCreateDBase;
-
-    /**
-     * The Purge Database menu item.
-     */
-    private JMenuItem thePurgeDBase;
-
-    /**
-     * The Load Database menu item.
-     */
-    private JMenuItem theLoadDBase;
-
-    /**
-     * The Save Database menu item.
-     */
-    private JMenuItem theSaveDBase;
-
-    /**
-     * The Undo Edit menu item.
-     */
-    private JMenuItem theUndoEdit;
-
-    /**
-     * The Reset Edit menu item.
-     */
-    private JMenuItem theResetEdit;
-
-    /**
-     * The Write Backup menu item.
-     */
-    private JMenuItem theWriteBackup;
-
-    /**
-     * The Load Backup menu item.
-     */
-    private JMenuItem theLoadBackup;
-
-    /**
-     * The Create XML Extract menu item.
-     */
-    private JMenuItem theCreateXtract;
-
-    /**
-     * The Create XML Backup menu item.
-     */
-    private JMenuItem theCreateXml;
-
-    /**
-     * The Load XML menu item.
-     */
-    private JMenuItem theLoadXml;
-
-    /**
-     * The Update password menu item.
-     */
-    private JMenuItem theUpdatePass;
-
-    /**
-     * The Renew security menu item.
-     */
-    private JMenuItem theRenewSec;
-
-    /**
-     * The Show dataMgr menu item.
-     */
-    private JMenuItem theShowDataMgr;
-
-    /**
-     * The Show about menu item.
-     */
-    private JMenuItem theShowAbout;
-
-    /**
-     * The Show help menu item.
-     */
-    private JMenuItem theHelpMgr;
-
-    /**
-     * The Active thread.
-     */
-    private WorkerThread<?> theThread;
-
-    /**
-     * The Thread executor.
-     */
-    private final ExecutorService theExecutor;
+    private MetisSwingThreadManager theThreadMgr;
 
     /**
      * The Started Help window.
@@ -341,6 +134,11 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private MetisViewerWindow theDataWdw;
 
     /**
+     * The Status window.
+     */
+    private JComponent theStatusBar;
+
+    /**
      * The listener.
      */
     private final MainListener theListener;
@@ -350,9 +148,6 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * @throws OceanusException on error
      */
     protected MainWindow() throws OceanusException {
-        /* Create the Executor service */
-        theExecutor = Executors.newSingleThreadExecutor();
-
         /* create listener */
         theListener = new MainListener();
     }
@@ -361,7 +156,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Get the data view.
      * @return the data view
      */
-    public DataControl<T, E, ?, ?> getView() {
+    public DataControl<T, E, JComponent, Icon> getView() {
         return theView;
     }
 
@@ -382,11 +177,11 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * Get the status bar.
-     * @return the status bar
+     * Get the menu bar.
+     * @return the menu bar
      */
-    public StatusBar getStatusBar() {
-        return theStatusBar;
+    protected TethysMenuBarManager getMenuBar() {
+        return theMenuBar;
     }
 
     /**
@@ -415,22 +210,17 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pUtilitySet the utility set
      * @throws OceanusException on error
      */
-    public void buildMainWindow(final DataControl<T, E, ?, ?> pView,
+    public void buildMainWindow(final DataControl<T, E, JComponent, Icon> pView,
                                 final JOceanusSwingUtilitySet pUtilitySet) throws OceanusException {
         /* Store the view */
         theView = pView;
         theViewerMgr = pUtilitySet.getViewerManager();
+        theGuiFactory = pUtilitySet.getGuiFactory();
+        theThreadMgr = pUtilitySet.getThreadManager();
 
         /* Obtain the active profile */
         MetisProfile myTask = theView.getActiveTask();
         myTask.startTask("buildGUI");
-
-        /* Create the new status bar */
-        theStatusBar = new StatusBar(this, theView);
-        JPanel myProgress = theStatusBar.getProgressPanel();
-        myProgress.setVisible(false);
-        JPanel myStatus = theStatusBar.getStatusPanel();
-        myStatus.setVisible(false);
 
         /* Create the panel */
         thePanel = new JPanel();
@@ -442,10 +232,17 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         /* Build the Main Panel */
         JComponent myMainPanel = buildMainPanel();
 
+        /* Access the status bar and set to invisible */
+        theStatusBar = theThreadMgr.getStatusManager().getNode();
+        theStatusBar.setVisible(false);
+        theThreadMgr.getEventRegistrar().addEventListener(MetisThreadEvent.THREADEND, e -> {
+            setVisibility();
+            theStatusBar.setVisible(false);
+        });
+
         /* Create the layout */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(myStatus);
-        thePanel.add(myProgress);
+        thePanel.add(theThreadMgr.getStatusManager().getNode());
         thePanel.add(myMainPanel);
 
         /* Attach the panel to the frame */
@@ -464,125 +261,86 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      */
     protected void buildMainMenu() {
         /* Create the menu bar */
-        JMenuBar myMainMenu = new JMenuBar();
+        theMenuBar = theGuiFactory.newMenuBar();
 
         /* Add Data Menu Items */
-        theDataMenu = new JMenu(MENU_DATA);
-        addDataMenuItems(theDataMenu);
-        myMainMenu.add(theDataMenu);
+        TethysMenuSubMenu<?> myMenu = theMenuBar.newSubMenu(PrometheusMenuId.DATA);
+        addDataMenuItems(myMenu);
 
         /* Add Edit Menu Items */
-        theEditMenu = new JMenu(MENU_EDIT);
-        addEditMenuItems(theEditMenu);
-        myMainMenu.add(theEditMenu);
+        myMenu = theMenuBar.newSubMenu(PrometheusMenuId.EDIT);
+        addEditMenuItems(myMenu);
 
         /* Add Backup Menu Items */
-        theBackupMenu = new JMenu(MENU_BACKUP);
-        addBackupMenuItems(theBackupMenu);
-        myMainMenu.add(theBackupMenu);
+        myMenu = theMenuBar.newSubMenu(PrometheusMenuId.BACKUP);
+        addBackupMenuItems(myMenu);
 
         /* Add Security Menu Items */
-        theSecureMenu = new JMenu(MENU_SECURITY);
-        addSecurityMenuItems(theSecureMenu);
-        myMainMenu.add(theSecureMenu);
+        myMenu = theMenuBar.newSubMenu(PrometheusMenuId.SECURITY);
+        addSecurityMenuItems(myMenu);
 
         /* Add Help Menu items */
-        JMenu myHelpMenu = new JMenu(MENU_HELP);
-        addHelpMenuItems(myHelpMenu);
-        myMainMenu.add(Box.createHorizontalGlue());
-        myMainMenu.add(myHelpMenu);
+        myMenu = theMenuBar.newSubMenu(PrometheusMenuId.HELP);
+        addHelpMenuItems(myMenu);
 
         /* Add the Menu bar */
-        theFrame.setJMenuBar(myMainMenu);
+        theFrame.setJMenuBar(theMenuBar.getNode());
     }
 
     /**
      * Add Data Menu items.
      * @param pMenu the menu
      */
-    protected void addDataMenuItems(final JMenu pMenu) {
+    protected void addDataMenuItems(final TethysMenuSubMenu<?> pMenu) {
         /* Add Standard Data Menu items */
-        theLoadDBase = new JMenuItem(ITEM_LOADDB);
-        theLoadDBase.addActionListener(theListener);
-        pMenu.add(theLoadDBase);
-        theSaveDBase = new JMenuItem(ITEM_STOREDB);
-        theSaveDBase.addActionListener(theListener);
-        pMenu.add(theSaveDBase);
-        theCreateDBase = new JMenuItem(ITEM_CREATEDB);
-        theCreateDBase.addActionListener(theListener);
-        pMenu.add(theCreateDBase);
-        thePurgeDBase = new JMenuItem(ITEM_PURGEDB);
-        thePurgeDBase.addActionListener(theListener);
-        pMenu.add(thePurgeDBase);
+        pMenu.newMenuItem(PrometheusThreadId.LOADDB, e -> loadDatabase());
+        pMenu.newMenuItem(PrometheusThreadId.STOREDB, e -> storeDatabase());
+        pMenu.newMenuItem(PrometheusThreadId.CREATEDB, e -> createDatabase());
+        pMenu.newMenuItem(PrometheusThreadId.PURGEDB, e -> purgeDatabase());
     }
 
     /**
      * Add EditMenu items.
      * @param pMenu the menu
      */
-    protected void addEditMenuItems(final JMenu pMenu) {
+    protected void addEditMenuItems(final TethysMenuSubMenu<?> pMenu) {
         /* Add Standard Edit Menu items */
-        theUndoEdit = new JMenuItem(ITEM_UNDO);
-        theUndoEdit.addActionListener(theListener);
-        pMenu.add(theUndoEdit);
-        theResetEdit = new JMenuItem(ITEM_RESET);
-        theResetEdit.addActionListener(theListener);
-        pMenu.add(theResetEdit);
+        pMenu.newMenuItem(PrometheusMenuId.UNDO, e -> undoLastEdit());
+        pMenu.newMenuItem(PrometheusMenuId.RESET, e -> resetEdit());
     }
 
     /**
      * Add Backup Menu items.
      * @param pMenu the menu
      */
-    protected void addBackupMenuItems(final JMenu pMenu) {
+    protected void addBackupMenuItems(final TethysMenuSubMenu<?> pMenu) {
         /* Add Standard Backup menu items */
-        theWriteBackup = new JMenuItem(ITEM_MAKEBACKUP);
-        theWriteBackup.addActionListener(theListener);
-        pMenu.add(theWriteBackup);
-        theLoadBackup = new JMenuItem(ITEM_RESTOREBACK);
-        theLoadBackup.addActionListener(theListener);
-        pMenu.add(theLoadBackup);
-        theCreateXml = new JMenuItem(ITEM_CREATEXML);
-        theCreateXml.addActionListener(theListener);
-        pMenu.add(theCreateXml);
-        theCreateXtract = new JMenuItem(ITEM_CREATEXTRACT);
-        theCreateXtract.addActionListener(theListener);
-        pMenu.add(theCreateXtract);
-        theLoadXml = new JMenuItem(ITEM_LOADXML);
-        theLoadXml.addActionListener(theListener);
-        pMenu.add(theLoadXml);
+        pMenu.newMenuItem(PrometheusThreadId.CREATEBACKUP, e -> writeBackup());
+        pMenu.newMenuItem(PrometheusThreadId.RESTOREBACKUP, e -> restoreBackup());
+        pMenu.newMenuItem(PrometheusThreadId.CREATEXML, e -> createXmlBackup());
+        pMenu.newMenuItem(PrometheusThreadId.CREATEXTRACT, e -> createXmlXtract());
+        pMenu.newMenuItem(PrometheusThreadId.RESTOREXML, e -> loadXmlFile());
     }
 
     /**
      * Add Security Menu items.
      * @param pMenu the menu
      */
-    protected void addSecurityMenuItems(final JMenu pMenu) {
+    protected void addSecurityMenuItems(final TethysMenuSubMenu<?> pMenu) {
         /* Add Standard Security menu items */
-        theUpdatePass = new JMenuItem(ITEM_CHGPASS);
-        theUpdatePass.addActionListener(theListener);
-        pMenu.add(theUpdatePass);
-        theRenewSec = new JMenuItem(ITEM_RENEWSEC);
-        theRenewSec.addActionListener(theListener);
-        pMenu.add(theRenewSec);
+        pMenu.newMenuItem(PrometheusThreadId.CHANGEPASS, e -> updatePassword());
+        pMenu.newMenuItem(PrometheusThreadId.RENEWSECURITY, e -> reNewSecurity());
     }
 
     /**
      * Add Help Menu items.
      * @param pMenu the menu
      */
-    protected void addHelpMenuItems(final JMenu pMenu) {
+    protected void addHelpMenuItems(final TethysMenuSubMenu<?> pMenu) {
         /* Create the menu items */
-        theHelpMgr = new JMenuItem(ITEM_HELP);
-        theHelpMgr.addActionListener(theListener);
-        pMenu.add(theHelpMgr);
-        theShowDataMgr = new JMenuItem(ITEM_DATAMGR);
-        theShowDataMgr.addActionListener(theListener);
-        pMenu.add(theShowDataMgr);
-        pMenu.addSeparator();
-        theShowAbout = new JMenuItem(ITEM_ABOUT);
-        theShowAbout.addActionListener(theListener);
-        pMenu.add(theShowAbout);
+        pMenu.newMenuItem(PrometheusMenuId.SHOWHELP, e -> displayHelp());
+        pMenu.newMenuItem(PrometheusMenuId.DATAVIEWER, e -> displayViewerMgr());
+        pMenu.newMenuItem(PrometheusMenuId.ABOUT, e -> displayAbout());
     }
 
     /**
@@ -617,46 +375,35 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         boolean hasWorker = hasWorker();
 
         /* Disable menus if we have a worker thread */
-        theDataMenu.setEnabled(!hasWorker);
-        theBackupMenu.setEnabled(!hasWorker);
-        theSecureMenu.setEnabled(!hasWorker && hasControl);
+        theMenuBar.setEnabled(PrometheusMenuId.DATA, !hasWorker);
+        theMenuBar.setEnabled(PrometheusMenuId.BACKUP, !hasWorker);
+        theMenuBar.setEnabled(PrometheusMenuId.SECURITY, !hasWorker && hasControl);
 
         /* If we have changes but no updates enable the undo/reset options */
         if ((hasWorker) || (!hasControl)) {
-            theEditMenu.setEnabled(false);
+            theMenuBar.setEnabled(PrometheusMenuId.EDIT, false);
         } else {
-            theEditMenu.setEnabled(!hasUpdates && hasChanges);
+            theMenuBar.setEnabled(PrometheusMenuId.EDIT, !hasUpdates && hasChanges);
         }
 
         /* If we have changes disable the create backup options */
-        theWriteBackup.setEnabled(!hasChanges && !hasUpdates && hasControl);
-        theCreateXtract.setEnabled(!hasChanges && !hasUpdates && hasControl);
-        theCreateXml.setEnabled(!hasChanges && !hasUpdates && hasControl);
+        boolean allowBackups = !hasChanges && !hasUpdates && hasControl;
+        theMenuBar.setEnabled(PrometheusThreadId.CREATEBACKUP, allowBackups);
+        theMenuBar.setEnabled(PrometheusThreadId.CREATEXML, allowBackups);
+        theMenuBar.setEnabled(PrometheusThreadId.CREATEXTRACT, allowBackups);
 
         /* If we have changes disable the security options */
-        theUpdatePass.setEnabled(!hasChanges && !hasUpdates);
-        theRenewSec.setEnabled(!hasChanges && !hasUpdates);
+        boolean allowSecurity = !hasChanges && !hasUpdates;
+        theMenuBar.setEnabled(PrometheusThreadId.CHANGEPASS, allowSecurity);
+        theMenuBar.setEnabled(PrometheusThreadId.RENEWSECURITY, allowSecurity);
 
         /* If we have updates disable the load backup/database option */
-        theLoadBackup.setEnabled(!hasUpdates);
-        theLoadXml.setEnabled(!hasUpdates);
-        theLoadDBase.setEnabled(!hasUpdates);
+        theMenuBar.setEnabled(PrometheusThreadId.RESTOREBACKUP, !hasUpdates);
+        theMenuBar.setEnabled(PrometheusThreadId.RESTOREXML, !hasUpdates);
+        theMenuBar.setEnabled(PrometheusThreadId.LOADDB, !hasUpdates);
 
         /* If we have updates or no changes disable the save database */
-        theSaveDBase.setEnabled(!hasUpdates && hasChanges);
-    }
-
-    @Override
-    public void finishThread() {
-        theThread = null;
-        setVisibility();
-    }
-
-    @Override
-    public void performCancel() {
-        if (theThread != null) {
-            theThread.cancel(false);
-        }
+        theMenuBar.setEnabled(PrometheusThreadId.STOREDB, !hasUpdates && hasChanges);
     }
 
     /**
@@ -678,19 +425,19 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * @return true/false
      */
     protected final boolean hasWorker() {
-        return theThread != null;
+        return theThreadMgr.hasWorker();
     }
 
     /**
      * Start a thread.
      * @param pThread the thread to start
      */
-    protected void startThread(final WorkerThread<?> pThread) {
+    protected void startThread(final MetisThread<?, JComponent, Icon> pThread) {
         /* Execute the thread and record it */
-        theExecutor.execute(pThread);
-        theThread = pThread;
+        theThreadMgr.startThread(pThread);
 
         /* Adjust visible threads */
+        theStatusBar.setVisible(true);
         setVisibility();
     }
 
@@ -698,12 +445,8 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Load Database.
      */
     private void loadDatabase() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
-
         /* Create the worker thread */
-        LoadDatabase<T, E> myThread = new LoadDatabase<>(myStatus);
-        myStatus.registerThread(myThread);
+        LoadDatabase<T, E, JComponent, Icon> myThread = new LoadDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -711,12 +454,8 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Store Database.
      */
     private void storeDatabase() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
-
         /* Create the worker thread */
-        StoreDatabase<T, E> myThread = new StoreDatabase<>(myStatus);
-        myStatus.registerThread(myThread);
+        StoreDatabase<T, E, JComponent, Icon> myThread = new StoreDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -724,12 +463,8 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Create Database.
      */
     private void createDatabase() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
-
         /* Create the worker thread */
-        CreateDatabase<T> myThread = new CreateDatabase<>(myStatus);
-        myStatus.registerThread(myThread);
+        CreateDatabase<T, E, JComponent, Icon> myThread = new CreateDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -737,12 +472,8 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Purge Database.
      */
     private void purgeDatabase() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
-
         /* Create the worker thread */
-        PurgeDatabase<T> myThread = new PurgeDatabase<>(myStatus);
-        myStatus.registerThread(myThread);
+        PurgeDatabase<T, E, JComponent, Icon> myThread = new PurgeDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -784,12 +515,8 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Write Backup.
      */
     private void writeBackup() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
-
         /* Create the worker thread */
-        CreateBackup<T, E> myThread = new CreateBackup<>(myStatus);
-        myStatus.registerThread(myThread);
+        CreateBackup<T, E, JComponent, Icon> myThread = new CreateBackup<>(theView);
         startThread(myThread);
     }
 
@@ -797,12 +524,8 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Restore Backup.
      */
     private void restoreBackup() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
-
         /* Create the worker thread */
-        LoadBackup<T, E> myThread = new LoadBackup<>(myStatus);
-        myStatus.registerThread(myThread);
+        LoadBackup<T, E, JComponent, Icon> myThread = new LoadBackup<>(theView);
         startThread(myThread);
     }
 
@@ -810,25 +533,17 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Create XML Backup file.
      */
     private void createXmlBackup() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, getStatusBar());
-
         /* Create the worker thread */
-        CreateXmlFile<T, E> myThread = new CreateXmlFile<>(myStatus, true);
-        myStatus.registerThread(myThread);
+        CreateXmlFile<T, E, JComponent, Icon> myThread = new CreateXmlFile<>(theView, true);
         startThread(myThread);
     }
 
     /**
-     * Create XML Xtract file.
+     * Create XML Extract file.
      */
     private void createXmlXtract() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, getStatusBar());
-
         /* Create the worker thread */
-        CreateXmlFile<T, E> myThread = new CreateXmlFile<>(myStatus, false);
-        myStatus.registerThread(myThread);
+        CreateXmlFile<T, E, JComponent, Icon> myThread = new CreateXmlFile<>(theView, false);
         startThread(myThread);
     }
 
@@ -836,12 +551,8 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Load XML Backup file.
      */
     private void loadXmlFile() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, getStatusBar());
-
         /* Create the worker thread */
-        LoadXmlFile<T, E> myThread = new LoadXmlFile<>(myStatus);
-        myStatus.registerThread(myThread);
+        LoadXmlFile<T, E, JComponent, Icon> myThread = new LoadXmlFile<>(theView);
         startThread(myThread);
     }
 
@@ -849,12 +560,8 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Update password.
      */
     private void updatePassword() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
-
         /* Create the worker thread */
-        UpdatePassword<T, E> myThread = new UpdatePassword<>(myStatus);
-        myStatus.registerThread(myThread);
+        UpdatePassword<T, E, JComponent, Icon> myThread = new UpdatePassword<>(theView);
         startThread(myThread);
     }
 
@@ -862,12 +569,8 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * ReNew Security.
      */
     private void reNewSecurity() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<>(theView, theStatusBar);
-
         /* Create the worker thread */
-        RenewSecurity<T, E> myThread = new RenewSecurity<>(myStatus);
-        myStatus.registerThread(myThread);
+        RenewSecurity<T, E, JComponent, Icon> myThread = new RenewSecurity<>(theView);
         startThread(myThread);
     }
 
@@ -882,7 +585,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         theDataWdw.addWindowListener(theListener);
 
         /* Disable the menu item */
-        theShowDataMgr.setEnabled(false);
+        theMenuBar.setEnabled(PrometheusMenuId.DATAVIEWER, false);
 
         /* Display it */
         theDataWdw.showDialog();
@@ -899,13 +602,13 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
 
             /* Listen for its closure */
             theHelpWdw.getEventRegistrar().addEventListener(e -> {
-                theHelpMgr.setEnabled(true);
+                theMenuBar.setEnabled(PrometheusMenuId.SHOWHELP, true);
                 theHelpWdw.hideDialog();
                 theHelpWdw = null;
             });
 
             /* Disable the menu item */
-            theHelpMgr.setEnabled(false);
+            theMenuBar.setEnabled(PrometheusMenuId.SHOWHELP, false);
 
             /* Display it */
             theHelpWdw.showDialog();
@@ -924,8 +627,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Listener class.
      */
     private class MainListener
-            extends WindowAdapter
-            implements ActionListener {
+            extends WindowAdapter {
         @Override
         public void windowClosing(final WindowEvent evt) {
             Object o = evt.getSource();
@@ -944,7 +646,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
                 }
 
                 /* terminate the executor */
-                theExecutor.shutdown();
+                theThreadMgr.shutdown();
 
                 /* Dispose of the data/help Windows if they exist */
                 if (theDataWdw != null) {
@@ -960,8 +662,8 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
 
                 /* else if this is the Data Window shutting down */
             } else if (o.equals(theDataWdw)) {
-                /* Re-enable the help menu item */
-                theShowDataMgr.setEnabled(true);
+                /* Re-enable the viewer menu item */
+                theMenuBar.setEnabled(PrometheusMenuId.DATAVIEWER, true);
                 theDataWdw.dispose();
                 theDataWdw = null;
 
@@ -971,95 +673,9 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
                 /* else if this is the Help Window shutting down */
             } else if (o.equals(theHelpWdw)) {
                 /* Re-enable the help menu item */
-                theHelpMgr.setEnabled(true);
+                theMenuBar.setEnabled(PrometheusMenuId.SHOWHELP, true);
                 theHelpWdw.hideDialog();
                 theHelpWdw = null;
-            }
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            Object o = evt.getSource();
-
-            /* If this event relates to the Write Backup item */
-            if (theWriteBackup.equals(o)) {
-                /* Start a write backup operation */
-                writeBackup();
-
-                /* If this event relates to the Save Database item */
-            } else if (theSaveDBase.equals(o)) {
-                /* Start a store database operation */
-                storeDatabase();
-
-                /* If this event relates to the Load Database item */
-            } else if (theLoadDBase.equals(o)) {
-                /* Start a load database operation */
-                loadDatabase();
-
-                /* If this event relates to the Create Database item */
-            } else if (theCreateDBase.equals(o)) {
-                /* Start a load database operation */
-                createDatabase();
-
-                /* If this event relates to the Undo Edit item */
-            } else if (theUndoEdit.equals(o)) {
-                /* Undo the last edit */
-                undoLastEdit();
-
-                /* If this event relates to the Reset Edit item */
-            } else if (theResetEdit.equals(o)) {
-                /* Reset the edit */
-                resetEdit();
-
-                /* If this event relates to the Purge Database item */
-            } else if (thePurgeDBase.equals(o)) {
-                /* Start a load database operation */
-                purgeDatabase();
-
-                /* If this event relates to the Load backup item */
-            } else if (theLoadBackup.equals(o)) {
-                /* Start a restore backup operation */
-                restoreBackup();
-
-                /* If this event relates to the Create Xml Backup item */
-            } else if (theCreateXml.equals(o)) {
-                /* Start a createXmlBackup operation */
-                createXmlBackup();
-
-                /* If this event relates to the Create Xml Xtract item */
-            } else if (theCreateXtract.equals(o)) {
-                /* Start a createXmlXtract operation */
-                createXmlXtract();
-
-                /* If this event relates to the Load Xml item */
-            } else if (theLoadXml.equals(o)) {
-                /* Start a loadXml operation */
-                loadXmlFile();
-
-                /* If this event relates to the Update Password item */
-            } else if (theUpdatePass.equals(o)) {
-                /* Start an Update Password operation */
-                updatePassword();
-
-                /* If this event relates to the Renew Security item */
-            } else if (theRenewSec.equals(o)) {
-                /* Start a reNew Security operation */
-                reNewSecurity();
-
-                /* If this event relates to the Display Data item */
-            } else if (theShowDataMgr.equals(o)) {
-                /* Open the ViewerMgr window */
-                displayViewerMgr();
-
-                /* If this event relates to the Display Help item */
-            } else if (theHelpMgr.equals(o)) {
-                /* Open the help window */
-                displayHelp();
-
-                /* If this event relates to the Display About item */
-            } else if (theShowAbout.equals(o)) {
-                /* Open the help window */
-                displayAbout();
             }
         }
     }

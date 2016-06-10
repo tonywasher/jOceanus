@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPrometheus: Application Framework
+ * jMoneyWise: Finance Application
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,24 +20,37 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads;
-
-import net.sourceforge.joceanus.jprometheus.views.StatusData;
+package net.sourceforge.joceanus.jmoneywise.threads;
 
 /**
- * Thread Status Control interface.
- * @author Tony Washer
+ * MoneyWise Thread Ids.
  */
-public interface ThreadStatusControl {
+public enum MoneyWiseThreadId {
     /**
-     * is the thread cancelled?
-     * @return true/false
+     * LoadArchive.
      */
-    boolean isCancelled();
+    LOADARCHIVE(MoneyWiseThreadResource.LOADARCHIVE),
 
     /**
-     * publish status data.
-     * @param pData the data to publish
+     * Create QIF.
      */
-    void publishIt(final StatusData pData);
+    CREATEQIF(MoneyWiseThreadResource.CREATEQIF);
+
+    /**
+     * The name.
+     */
+    private final String theName;
+
+    /**
+     * Constructor.
+     * @param pId the id
+     */
+    MoneyWiseThreadId(final MoneyWiseThreadResource pId) {
+        theName = pId.getValue();
+    }
+
+    @Override
+    public String toString() {
+        return theName;
+    }
 }

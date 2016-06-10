@@ -65,6 +65,7 @@ import net.sourceforge.joceanus.jthemis.threads.ThemisDiscoverData;
 import net.sourceforge.joceanus.jthemis.threads.ThemisRevertWorkingCopy;
 import net.sourceforge.joceanus.jthemis.threads.ThemisSubversionBackup;
 import net.sourceforge.joceanus.jthemis.threads.ThemisSubversionRestore;
+import net.sourceforge.joceanus.jthemis.threads.ThemisThreadId;
 import net.sourceforge.joceanus.jthemis.threads.ThemisUpdateWorkingCopy;
 
 /**
@@ -76,7 +77,7 @@ public abstract class ThemisSvnManager<N, I> {
     /**
      * The Base component.
      */
-    private static final String BASE_COMP = "jmoneywise";
+    private static final String BASE_COMP = "jOceanus";
 
     /**
      * The Base version.
@@ -207,16 +208,16 @@ public abstract class ThemisSvnManager<N, I> {
         myHelp.newMenuItem(ThemisSvnMenuItem.DATAVIEWER, e -> handleViewerClosed());
 
         /* Create the menuItems */
-        myTasks.newMenuItem(ThemisSvnMenuItem.CREATEWORKINGCOPY, e -> runCheckOutWC());
-        myTasks.newMenuItem(ThemisSvnMenuItem.EXTRACTTAG, e -> runCreateTagExtract());
-        myTasks.newMenuItem(ThemisSvnMenuItem.UPDATEWORKINGCOPY, e -> runUpdateWC());
-        myTasks.newMenuItem(ThemisSvnMenuItem.REVERTWORKINGCOPY, e -> runRevertWC());
-        myTasks.newMenuItem(ThemisSvnMenuItem.CREATETAG, e -> runCreateBranchTags());
-        myTasks.newMenuItem(ThemisSvnMenuItem.CREATEBRANCH, e -> runCreateNewBranch());
-        myTasks.newSubMenu(ThemisSvnMenuItem.CREATEGITREPO);
-        myTasks.newMenuItem(ThemisSvnMenuItem.BACKUPSVN, e -> backupSubversion());
-        myTasks.newMenuItem(ThemisSvnMenuItem.RESTORESVN, e -> restoreSubversion());
-        theMenuBar.setEnabled(ThemisSvnMenuItem.CREATEGITREPO, false);
+        myTasks.newMenuItem(ThemisThreadId.CREATEWORKINGCOPY, e -> runCheckOutWC());
+        myTasks.newMenuItem(ThemisThreadId.EXTRACTTAG, e -> runCreateTagExtract());
+        myTasks.newMenuItem(ThemisThreadId.UPDATEWORKINGCOPY, e -> runUpdateWC());
+        myTasks.newMenuItem(ThemisThreadId.REVERTWORKINGCOPY, e -> runRevertWC());
+        myTasks.newMenuItem(ThemisThreadId.CREATETAG, e -> runCreateBranchTags());
+        myTasks.newMenuItem(ThemisThreadId.CREATEBRANCH, e -> runCreateNewBranch());
+        myTasks.newSubMenu(ThemisThreadId.CREATEGITREPO);
+        myTasks.newMenuItem(ThemisThreadId.BACKUPSVN, e -> backupSubversion());
+        myTasks.newMenuItem(ThemisThreadId.RESTORESVN, e -> restoreSubversion());
+        theMenuBar.setEnabled(ThemisThreadId.CREATEGITREPO, false);
 
         /* Create the data window */
         theDataWdw = pToolkit.newViewerWindow();
@@ -283,7 +284,7 @@ public abstract class ThemisSvnManager<N, I> {
         pData.declareExtractPlans(theViewerMgr, myPlanEntry);
 
         /* Access the git menu */
-        TethysMenuSubMenu<?> myMenu = theMenuBar.lookUpSubMenu(ThemisSvnMenuItem.CREATEGITREPO);
+        TethysMenuSubMenu<?> myMenu = theMenuBar.lookUpSubMenu(ThemisThreadId.CREATEGITREPO);
         myMenu.clearItems();
 
         /* If we have a repository */
@@ -299,7 +300,7 @@ public abstract class ThemisSvnManager<N, I> {
         }
 
         /* Enable the GIT menu if we have components */
-        theMenuBar.setEnabled(ThemisSvnMenuItem.CREATEGITREPO, myMenu.countItems() > 0);
+        theMenuBar.setEnabled(ThemisThreadId.CREATEGITREPO, myMenu.countItems() > 0);
     }
 
     /**

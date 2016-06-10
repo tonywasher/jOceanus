@@ -55,6 +55,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
@@ -82,9 +83,14 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     private static final String ERROR_DELETE = "Failed to delete file";
 
     /**
-     * The task control.
+     * The report.
      */
-    private final TaskControl<T> theTask;
+    private final MetisThreadStatusReport theReport;
+
+    /**
+     * The security manager.
+     */
+    private final GordianHashManager theSecurityMgr;
 
     /**
      * The document builder.
@@ -103,12 +109,15 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
     /**
      * Constructor.
-     * @param pTask the task control
+     * @param pReport the report
+     * @param pSecureMgr the security manager
      * @throws PrometheusIOException on error
      */
-    public DataValuesFormatter(final TaskControl<T> pTask) throws PrometheusIOException {
+    public DataValuesFormatter(final MetisThreadStatusReport pReport,
+                               final GordianHashManager pSecureMgr) throws PrometheusIOException {
         /* Store values */
-        theTask = pTask;
+        theReport = pReport;
+        theSecurityMgr = pSecureMgr;
 
         /* protect against exceptions */
         try {
@@ -135,7 +144,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public boolean createBackup(final T pData,
                                 final File pFile) throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theTask.getActiveTask();
+        MetisProfile myTask = theReport.getActiveTask();
         MetisProfile myStage = myTask.startTask("Writing");
 
         /* Create a similar security control */
@@ -147,7 +156,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         theVersion = pData.getControl().getDataVersion();
 
         /* Declare the number of stages */
-        boolean bContinue = theTask.setNumStages(pData.getListMap().size());
+        boolean bContinue = theReport.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, pFile)) {
@@ -157,7 +166,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
                 DataList<?, E> myList = myIterator.next();
 
                 /* Declare the new stage */
-                if (!theTask.setNewStage(myList.listName())) {
+                if (!theReport.setNewStage(myList.listName())) {
                     return false;
                 }
 
@@ -196,14 +205,14 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public boolean createExtract(final T pData,
                                  final File pFile) throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theTask.getActiveTask();
+        MetisProfile myTask = theReport.getActiveTask();
         MetisProfile myStage = myTask.startTask("Writing");
 
         /* Access the data version */
         theVersion = pData.getControl().getDataVersion();
 
         /* Declare the number of stages */
-        boolean bContinue = theTask.setNumStages(pData.getListMap().size());
+        boolean bContinue = theReport.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(pFile)) {
@@ -213,7 +222,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
                 DataList<?, E> myList = myIterator.next();
 
                 /* Declare the new stage */
-                if (!theTask.setNewStage(myList.listName())) {
+                if (!theReport.setNewStage(myList.listName())) {
                     return false;
                 }
 
@@ -294,7 +303,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
         /* Declare the number of steps */
         int myTotal = pList.size();
-        if (!theTask.setNumSteps(myTotal)) {
+        if (!theReport.setNumSteps(myTotal)) {
             return false;
         }
 
@@ -302,10 +311,6 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         myElement.setAttribute(DataValues.ATTR_TYPE, pList.getItemType().name());
         myElement.setAttribute(DataValues.ATTR_SIZE, Integer.toString(myTotal));
         myElement.setAttribute(DataValues.ATTR_VERS, Integer.toString(theVersion));
-
-        /* Access the number of reporting steps */
-        int mySteps = theTask.getReportingSteps();
-        int myCount = 0;
 
         /* Iterate through the list */
         Iterator<?> myIterator = pList.iterator();
@@ -335,8 +340,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             myElement.appendChild(myChild);
 
             /* Report the progress */
-            myCount++;
-            if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
+            if (!theReport.setNextStep()) {
                 return false;
             }
         }
@@ -355,7 +359,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public boolean loadZipFile(final T pData,
                                final File pFile) throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theTask.getActiveTask();
+        MetisProfile myTask = theReport.getActiveTask();
         MetisProfile myStage = myTask.startTask("Loading");
         myStage.startTask("Parsing");
 
@@ -367,11 +371,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
         /* If this is a secure ZipFile */
         if (myHashBytes != null) {
-            /* Access the Security manager */
-            GordianHashManager mySecurity = theTask.getSecurity();
-
             /* Obtain the initialised password hash */
-            GordianKeySetHash myHash = mySecurity.resolveKeySetHash(myHashBytes, pFile.getName());
+            GordianKeySetHash myHash = theSecurityMgr.resolveKeySetHash(myHashBytes, pFile.getName());
 
             /* Associate this keySetHash with the ZipFile */
             myZipFile.setKeySetHash(myHash);
@@ -400,7 +401,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         MetisProfile myStage = pProfile.startTask("Loading");
 
         /* Declare the number of stages */
-        boolean bContinue = theTask.setNumStages(pData.getListMap().size());
+        boolean bContinue = theReport.setNumStages(pData.getListMap().size());
 
         /* Loop through the data lists */
         Iterator<DataList<?, E>> myIterator = pData.iterator();
@@ -408,7 +409,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             DataList<?, E> myList = myIterator.next();
 
             /* Declare the new stage */
-            if (!theTask.setNewStage(myList.listName())) {
+            if (!theReport.setNewStage(myList.listName())) {
                 return false;
             }
 
@@ -502,13 +503,9 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
         /* Declare the number of steps */
         int myTotal = getListCount(myFormatter, myElement);
-        if (!theTask.setNumSteps(myTotal)) {
+        if (!theReport.setNumSteps(myTotal)) {
             return false;
         }
-
-        /* Access the number of reporting steps */
-        int mySteps = theTask.getReportingSteps();
-        int myCount = 0;
 
         /* Loop through the children */
         for (Node myChild = myElement.getFirstChild(); myChild != null; myChild = myChild.getNextSibling()) {
@@ -527,8 +524,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             pList.addValuesItem(myValues);
 
             /* Report the progress */
-            myCount++;
-            if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
+            if (!theReport.setNextStep()) {
                 return false;
             }
         }

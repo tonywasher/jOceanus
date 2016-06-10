@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -61,7 +62,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
     private MetisEncryptionGenerator theGenerator = null;
 
     /**
-     * Standard Constructor. This creates a null encryption generator. This will be overridden when a DataKeySet is assigned to the item.
+     * Standard Constructor. This creates a null encryption generator. This will be overridden when
+     * a DataKeySet is assigned to the item.
      * @param pList the list that this item is associated with
      * @param pId the Id of the new item (or 0 if not yet known)
      */
@@ -83,7 +85,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
     }
 
     /**
-     * Values Constructor. This creates a null encryption generator. This will be overridden when a ControlKey is assigned to the item.
+     * Values Constructor. This creates a null encryption generator. This will be overridden when a
+     * ControlKey is assigned to the item.
      * @param pList the list that this item is associated with
      * @param pValues the data values
      * @throws OceanusException on error
@@ -126,8 +129,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
     public final Integer getDataKeySetId() {
         DataKeySet mySet = getDataKeySet();
         return (mySet == null)
-                              ? null
-                              : mySet.getId();
+                               ? null
+                               : mySet.getId();
     }
 
     /**
@@ -242,12 +245,12 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @return <code>true</code> if the objects differ, <code>false</code> otherwise
      */
     public static MetisDifference getDifference(final MetisEncryptedField<?> pCurr,
-                                           final MetisEncryptedField<?> pNew) {
+                                                final MetisEncryptedField<?> pNew) {
         /* Handle case where current value is null */
         if (pCurr == null) {
             return (pNew != null)
-                                 ? MetisDifference.DIFFERENT
-                                 : MetisDifference.IDENTICAL;
+                                  ? MetisDifference.DIFFERENT
+                                  : MetisDifference.IDENTICAL;
         }
 
         /* Handle case where new value is null */
@@ -366,8 +369,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
         private ControlKey getControlKey() {
             ControlData myControl = getDataSet().getControl();
             return (myControl == null)
-                                      ? null
-                                      : myControl.getControlKey();
+                                       ? null
+                                       : myControl.getControlKey();
         }
 
         /**
@@ -377,30 +380,26 @@ public abstract class EncryptedItem<E extends Enum<E>>
         private DataKeySet getNextDataKeySet() {
             ControlKey myKey = getControlKey();
             return (myKey == null)
-                                  ? null
-                                  : myKey.getNextDataKeySet();
+                                   ? null
+                                   : myKey.getNextDataKeySet();
         }
 
         /**
          * Update Security for items in the list.
-         * @param pTask the task control
+         * @param pReport the report
          * @param pControl the control key to apply
          * @return Continue <code>true/false</code>
          * @throws OceanusException on error
          */
-        public boolean updateSecurity(final TaskControl<?> pTask,
+        public boolean updateSecurity(final MetisThreadStatusReport pReport,
                                       final ControlKey pControl) throws OceanusException {
             /* Declare the new stage */
-            if (!pTask.setNewStage(listName())) {
+            if (!pReport.setNewStage(listName())) {
                 return false;
             }
 
-            /* Access reporting steps */
-            int mySteps = pTask.getReportingSteps();
-            int myCount = 0;
-
             /* Count the Number of items */
-            if (!pTask.setNumSteps(size())) {
+            if (!pReport.setNumSteps(size())) {
                 return false;
             }
 
@@ -416,8 +415,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
                 }
 
                 /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (!pReport.setNextStep()) {
                     return false;
                 }
             }
@@ -427,28 +425,24 @@ public abstract class EncryptedItem<E extends Enum<E>>
         }
 
         /**
-         * Adopt security from underlying list. If a match for the item is found in the underlying list, its security is adopted. If no match is found then the
-         * security is initialised.
-         * @param pTask the task control
+         * Adopt security from underlying list. If a match for the item is found in the underlying
+         * list, its security is adopted. If no match is found then the security is initialised.
+         * @param pReport the report
          * @param pControl the control key to initialise from
          * @param pBase The base list to adopt from
          * @return Continue <code>true/false</code>
          * @throws OceanusException on error
          */
-        protected boolean adoptSecurity(final TaskControl<?> pTask,
+        protected boolean adoptSecurity(final MetisThreadStatusReport pReport,
                                         final ControlKey pControl,
                                         final EncryptedList<?, E> pBase) throws OceanusException {
             /* Declare the new stage */
-            if (!pTask.setNewStage(listName())) {
+            if (!pReport.setNewStage(listName())) {
                 return false;
             }
 
-            /* Access reporting steps */
-            int mySteps = pTask.getReportingSteps();
-            int myCount = 0;
-
             /* Count the Number of items */
-            if (!pTask.setNumSteps(size())) {
+            if (!pReport.setNumSteps(size())) {
                 return false;
             }
 
@@ -486,8 +480,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
                 }
 
                 /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (!pReport.setNextStep()) {
                     return false;
                 }
             }

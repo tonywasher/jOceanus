@@ -28,8 +28,9 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
@@ -38,7 +39,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ArchiveYear;
 import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ParentCache;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -152,14 +152,14 @@ public class SheetTransaction
 
     /**
      * Load the Events from an archive.
-     * @param pTask the task control
+     * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @param pLoader the archive loader
      * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
+    protected static boolean loadArchive(final MetisThreadStatusReport pReport,
                                          final MetisDataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
                                          final ArchiveLoader pLoader) throws OceanusException {
@@ -169,10 +169,6 @@ public class SheetTransaction
 
         /* Protect against exceptions */
         try {
-            /* Access the number of reporting steps */
-            int mySteps = pTask.getReportingSteps();
-            int myCount = 0;
-
             /* Obtain the range iterator */
             ListIterator<ArchiveYear> myIterator = pLoader.getReverseIterator();
 
@@ -185,7 +181,7 @@ public class SheetTransaction
                 MetisDataView myView = pWorkBook.getRangeView(myYear.getRangeName());
 
                 /* Declare the new stage */
-                if (!pTask.setNewStage("Events from " + myYear.getDate().getYear())) {
+                if (!pReport.setNewStage("Events from " + myYear.getDate().getYear())) {
                     return false;
                 }
 
@@ -193,7 +189,7 @@ public class SheetTransaction
                 int myTotal = myView.getRowCount();
 
                 /* Declare the number of steps */
-                if (!pTask.setNumSteps(myTotal)) {
+                if (!pReport.setNumSteps(myTotal)) {
                     return false;
                 }
 
@@ -208,8 +204,7 @@ public class SheetTransaction
                     }
 
                     /* Report the progress */
-                    myCount++;
-                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                    if (!pReport.setNextStep()) {
                         return false;
                     }
                 }
@@ -260,18 +255,18 @@ public class SheetTransaction
         /* Access date */
         MetisDataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
         TethysDate myDate = (myCell != null)
-                                          ? myCell.getDateValue()
-                                          : null;
+                                             ? myCell.getDateValue()
+                                             : null;
 
         /* Access the values */
         myCell = pView.getRowCellByIndex(pRow, iAdjust++);
         String myDebit = (myCell != null)
-                                         ? myCell.getStringValue()
-                                         : null;
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
-        String myCredit = (myCell != null)
                                           ? myCell.getStringValue()
                                           : null;
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myCredit = (myCell != null)
+                                           ? myCell.getStringValue()
+                                           : null;
         String myAmount = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
         String myCategory = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 

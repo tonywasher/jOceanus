@@ -24,66 +24,58 @@ package net.sourceforge.joceanus.jprometheus.threads.swing;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.swing.MetisFileSelector;
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 
 /**
  * LoaderThread extension to load an XML backup.
  * @param <T> the DataSet type
  * @param <E> the Data list type
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
-        extends LoaderThread<T, E> {
-    /**
-     * Task description.
-     */
-    private static final String TASK_NAME = "Load Xml Backup";
-
-    /**
-     * Cancel error text.
-     */
-    private static final String ERROR_CANCEL = "Operation cancelled";
-
+public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+        implements MetisThread<T, N, I> {
     /**
      * Data control.
      */
-    private final DataControl<T, E, ?, ?> theControl;
-
-    /**
-     * Thread Status.
-     */
-    private final ThreadStatus<T, E> theStatus;
+    private final DataControl<T, E, N, I> theControl;
 
     /**
      * Constructor (Event Thread).
-     * @param pStatus the thread status
+     * @param pControl data control
      */
-    public LoadXmlFile(final ThreadStatus<T, E> pStatus) {
-        /* Call super-constructor */
-        super(TASK_NAME, pStatus);
-
-        /* Store passed parameters */
-        theStatus = pStatus;
-        theControl = pStatus.getControl();
-
-        /* Show the Status bar */
-        showStatusBar();
+    public LoadXmlFile(final DataControl<T, E, N, I> pControl) {
+        theControl = pControl;
     }
 
     @Override
-    public T performTask() throws OceanusException {
+    public String getTaskName() {
+        return PrometheusThreadId.RESTOREXML.toString();
+    }
+
+    @Override
+    public T performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Access the thread manager */
+        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        GordianHashManager mySecurity = pToolkit.getSecurityManager();
+
         /* Initialise the status window */
-        theStatus.initTask(TASK_NAME);
+        myManager.initTask(getTaskName());
 
         /* Access the Sheet preferences */
         MetisPreferenceManager myMgr = theControl.getPreferenceManager();
@@ -91,22 +83,22 @@ public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Determine the archive name */
         File myBackupDir = new File(myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR));
-        String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX)
-                          + CreateXmlFile.SUFFIX_FILE;
 
         /* Determine the name of the file to load */
-        MetisFileSelector myDialog = new MetisFileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir, myPrefix, GordianZipReadFile.ZIPFILE_EXT);
-        myDialog.showDialog();
-        File myFile = myDialog.getSelectedFile();
+        TethysFileSelector myDialog = pToolkit.getGuiFactory().newFileSelector();
+        myDialog.setTitle("Select Backup to restore");
+        myDialog.setInitialDirectory(myBackupDir);
+        myDialog.setExtension(GordianZipReadFile.ZIPFILE_EXT);
+        File myFile = myDialog.selectFile();
 
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            throw new PrometheusCancelException(ERROR_CANCEL);
+            throw new PrometheusCancelException("Operation Cancelled");
         }
 
         /* Create a new formatter */
-        DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(theStatus);
+        DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(myManager, mySecurity);
 
         /* Load data */
         T myNewData = theControl.getNewData();
@@ -114,31 +106,37 @@ public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new PrometheusCancelException(ERROR_CANCEL);
+            throw new PrometheusCancelException("Operation Cancelled");
         }
 
         /* Initialise the status window */
-        theStatus.initTask("Accessing DataStore");
+        myManager.initTask("Accessing DataStore");
 
         /* Create interface */
         PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 
         /* Load underlying database */
-        T myStore = myDatabase.loadDatabase(theStatus);
+        T myStore = theControl.getNewData();
+        myDatabase.loadDatabase(myManager, myStore);
 
         /* Check security on the database */
-        myStore.checkSecurity(theStatus);
+        myStore.checkSecurity(myManager);
 
         /* Initialise the status window */
-        theStatus.initTask("Re-applying Security");
+        myManager.initTask("Re-applying Security");
 
         /* Initialise the security, either from database or with a new security control */
-        myNewData.initialiseSecurity(theStatus, myStore);
+        myNewData.initialiseSecurity(myManager, myStore);
 
         /* Re-base the loaded backup onto the database image */
-        myNewData.reBase(theStatus, myStore);
+        myNewData.reBase(myManager, myStore);
 
         /* Return the Data */
         return myNewData;
+    }
+
+    @Override
+    public void processResult(final T pResult) {
+        theControl.setData(pResult);
     }
 }

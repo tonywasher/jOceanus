@@ -185,17 +185,18 @@ public abstract class MetisThreadManager<N, I>
         setNewProfile(myName);
         theThread = pThread;
 
+        /* Create the wrapped thread */
+        Runnable myRunnable = wrapThread(pThread);
+
         /* If we prepared the thread OK */
         if (prepareThread()) {
-            /* Create the wrapped thread */
-            Runnable myRunnable = wrapThread(pThread);
-
             /* Initialise status window */
             theStatus.setTask(myName);
             theStatusManager.setProgress(theStatus);
 
             /* Create thread and record status */
             theExecutor.execute(myRunnable);
+
             /* Note that thread has started */
             theEventManager.fireEvent(MetisThreadEvent.THREADSTART);
         }
@@ -313,6 +314,22 @@ public abstract class MetisThreadManager<N, I>
     }
 
     @Override
+    public boolean setStepsDone(final int pSteps) {
+        /* Check for cancellation */
+        boolean isCancelled = isCancelled();
+        if (!isCancelled) {
+            /* Set Next step */
+            theStatus.setStepsDone(pSteps);
+
+            /* Publish status regardless */
+            publishStatus(theStatus);
+        }
+
+        /* Return to caller */
+        return !isCancelled;
+    }
+
+    @Override
     public boolean setNextStep() {
         /* Check for cancellation */
         boolean isCancelled = isCancelled();
@@ -360,7 +377,7 @@ public abstract class MetisThreadManager<N, I>
      * Create new profile.
      * @param pTask the name of the task
      */
-    private void setNewProfile(final String pTask) {
+    public void setNewProfile(final String pTask) {
         /* Create a new profile */
         theProfile = theToolkit.getNewProfile(pTask);
 
@@ -400,10 +417,7 @@ public abstract class MetisThreadManager<N, I>
         return theProfile;
     }
 
-    /**
-     * Obtain the active task.
-     * @return the active task
-     */
+    @Override
     public MetisProfile getActiveTask() {
         return theProfile == null
                                   ? null

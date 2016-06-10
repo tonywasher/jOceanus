@@ -48,7 +48,7 @@ public class ThemisSubversionRestore<N, I>
         implements MetisThread<Void, N, I> {
     @Override
     public String getTaskName() {
-        return "RestoreSubVersion";
+        return ThemisThreadId.RESTORESVN.toString();
     }
 
     @Override

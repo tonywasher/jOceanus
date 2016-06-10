@@ -43,7 +43,7 @@ public class SwingView
      * @throws OceanusException on error
      */
     public SwingView(final MetisProfile pProfile) throws OceanusException {
-        super(new JOceanusSwingUtilitySet(), pProfile);
+        super(new JOceanusSwingUtilitySet(pProfile), pProfile);
     }
 
     @Override

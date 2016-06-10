@@ -269,6 +269,7 @@ public abstract class TethysMenuBarManager {
 
         /**
          * Constructor.
+         * @param pManager the manager
          * @param pId the id
          * @param pAction the action
          */

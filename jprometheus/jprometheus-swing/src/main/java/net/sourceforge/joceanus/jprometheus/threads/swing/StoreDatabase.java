@@ -22,56 +22,50 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.threads.swing;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Thread to store changes in the DataSet to a database.
- * @author Tony Washer
  * @param <T> the DataSet type
  * @param <E> the data type enum class
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class StoreDatabase<T extends DataSet<T, E>, E extends Enum<E>>
-        extends WorkerThread<Void> {
-    /**
-     * Task description.
-     */
-    private static final String TASK_NAME = "DataBase Store";
-
+public class StoreDatabase<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+        implements MetisThread<Void, N, I> {
     /**
      * Data control.
      */
-    private final DataControl<T, E, ?, ?> theControl;
-
-    /**
-     * Thread Status.
-     */
-    private final ThreadStatus<T, E> theStatus;
+    private final DataControl<T, E, N, I> theControl;
 
     /**
      * Constructor (Event Thread).
-     * @param pStatus the thread status
+     * @param pControl data control
      */
-    public StoreDatabase(final ThreadStatus<T, E> pStatus) {
-        /* Call super-constructor */
-        super(TASK_NAME, pStatus);
-
-        /* Store passed parameters */
-        theStatus = pStatus;
-        theControl = pStatus.getControl();
-
-        /* Show the status window */
-        showStatusBar();
+    public StoreDatabase(final DataControl<T, E, N, I> pControl) {
+        theControl = pControl;
     }
 
     @Override
-    public Void performTask() throws OceanusException {
+    public String getTaskName() {
+        return PrometheusThreadId.STOREDB.toString();
+    }
+
+    @Override
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Access the thread manager */
+        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+
         /* Initialise the status window */
-        theStatus.initTask("Storing to Database");
+        myManager.initTask(getTaskName());
 
         /* Create interface */
         PrometheusDataStore<T> myDatabase = theControl.getDatabase();
@@ -79,17 +73,18 @@ public class StoreDatabase<T extends DataSet<T, E>, E extends Enum<E>>
         /* Protect against failures */
         try {
             /* Store database */
-            myDatabase.updateDatabase(theStatus, theControl.getUpdates());
+            myDatabase.updateDatabase(myManager, theControl.getUpdates());
 
             /* Initialise the status window */
-            theStatus.initTask("Verifying Store");
+            myManager.initTask("Verifying Store");
 
             /* Load database */
-            T myStore = myDatabase.loadDatabase(theStatus);
+            T myStore = theControl.getNewData();
+            myDatabase.loadDatabase(myManager, myStore);
 
             /* Create a difference set between the two data copies */
             T myData = theControl.getData();
-            DataSet<T, ?> myDiff = myData.getDifferenceSet(theStatus, myStore);
+            DataSet<T, ?> myDiff = myData.getDifferenceSet(myManager, myStore);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

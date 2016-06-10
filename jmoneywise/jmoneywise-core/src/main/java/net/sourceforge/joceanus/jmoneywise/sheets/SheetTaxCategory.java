@@ -26,13 +26,13 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -81,13 +81,13 @@ public class SheetTaxCategory
 
     /**
      * Load the Tax Types from an archive.
-     * @param pTask the task control
+     * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
+    protected static boolean loadArchive(final MetisThreadStatusReport pReport,
                                          final MetisDataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws OceanusException {
         /* Access the list of tax categories */
@@ -99,19 +99,15 @@ public class SheetTaxCategory
             MetisDataView myView = pWorkBook.getRangeView(AREA_TAXCATEGORIES);
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_TAXCATEGORIES)) {
+            if (!pReport.setNewStage(AREA_TAXCATEGORIES)) {
                 return false;
             }
-
-            /* Access the number of reporting steps */
-            int mySteps = pTask.getReportingSteps();
-            int myCount = 0;
 
             /* Count the number of TaxCategories */
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
-            if (!pTask.setNumSteps(myTotal)) {
+            if (!pReport.setNumSteps(myTotal)) {
                 return false;
             }
 
@@ -125,8 +121,7 @@ public class SheetTaxCategory
                 myList.addBasicItem(myCell.getStringValue());
 
                 /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (!pReport.setNextStep()) {
                     return false;
                 }
             }

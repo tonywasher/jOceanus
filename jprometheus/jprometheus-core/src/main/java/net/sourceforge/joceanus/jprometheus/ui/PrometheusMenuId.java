@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,26 +20,61 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.ui;
+package net.sourceforge.joceanus.jprometheus.ui;
 
 /**
- * Themis SubVersion Menu items.
+ * Prometheus Thread Ids.
  */
-public enum ThemisSvnMenuItem {
+public enum PrometheusMenuId {
     /**
-     * Tasks.
+     * Data Menu.
      */
-    TASKS("Tasks"),
+    DATA(PrometheusUIResource.MENU_DATA),
 
     /**
-     * Help.
+     * Backup Menu.
      */
-    HELP("Help"),
+    BACKUP(PrometheusUIResource.MENU_BACKUP),
 
     /**
-     * DataViewer.
+     * Edit Menu.
      */
-    DATAVIEWER("DataViewer");
+    EDIT(PrometheusUIResource.MENU_EDIT),
+
+    /**
+     * Security Menu.
+     */
+    SECURITY(PrometheusUIResource.MENU_SECURITY),
+
+    /**
+     * Help Menu.
+     */
+    HELP(PrometheusUIResource.MENU_HELP),
+
+    /**
+     * UnDo Task.
+     */
+    UNDO(PrometheusUIResource.MENUITEM_UNDO),
+
+    /**
+     * Reset Task.
+     */
+    RESET(PrometheusUIResource.MENUITEM_RESET),
+
+    /**
+     * Help Task.
+     */
+    SHOWHELP(PrometheusUIResource.MENUITEM_HELP),
+
+    /**
+     * DataViewer Task.
+     */
+    DATAVIEWER(PrometheusUIResource.MENUITEM_DATAVIEWER),
+
+    /**
+     * About Task.
+     */
+    ABOUT(PrometheusUIResource.MENUITEM_ABOUT);
 
     /**
      * The name.
@@ -48,10 +83,10 @@ public enum ThemisSvnMenuItem {
 
     /**
      * Constructor.
-     * @param pName the name
+     * @param pId the id
      */
-    ThemisSvnMenuItem(final String pName) {
-        theName = pName;
+    PrometheusMenuId(final PrometheusUIResource pId) {
+        theName = pId.getValue();
     }
 
     @Override

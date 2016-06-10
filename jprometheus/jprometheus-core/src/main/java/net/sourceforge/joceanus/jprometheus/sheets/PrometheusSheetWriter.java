@@ -38,10 +38,10 @@ import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -61,9 +61,9 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
     private static final String ERROR_DELETE = "Failed to delete file";
 
     /**
-     * Task control.
+     * Report.
      */
-    private final TaskControl<T> theTask;
+    private final MetisThreadStatusReport theReport;
 
     /**
      * Writable spreadsheet.
@@ -82,18 +82,18 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
 
     /**
      * Constructor.
-     * @param pTask the Task control
+     * @param pReport the report
      */
-    protected PrometheusSheetWriter(final TaskControl<T> pTask) {
-        theTask = pTask;
+    protected PrometheusSheetWriter(final MetisThreadStatusReport pReport) {
+        theReport = pReport;
     }
 
     /**
-     * get thread status.
-     * @return the status
+     * get report.
+     * @return the report
      */
-    protected TaskControl<T> getTask() {
-        return theTask;
+    protected MetisThreadStatusReport getReport() {
+        return theReport;
     }
 
     /**
@@ -131,7 +131,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
                              final File pFile,
                              final MetisWorkBookType pType) throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theTask.getActiveTask();
+        MetisProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Writing");
 
         /* Create a similar security control */
@@ -214,10 +214,10 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
      */
     private void writeWorkBook(final OutputStream pStream) throws OceanusException, IOException {
         /* Obtain the active profile */
-        MetisProfile myTask = theTask.getActiveTask();
+        MetisProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
-        boolean bContinue = theTask.setNumStages(theSheets.size() + 1);
+        boolean bContinue = theReport.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
         Iterator<PrometheusSheetDataItem<?, ?>> myIterator = theSheets.iterator();
@@ -232,7 +232,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
 
         /* If we have built all the sheets */
         if (bContinue) {
-            bContinue = theTask.setNewStage("Writing");
+            bContinue = theReport.setNewStage("Writing");
         }
 
         /* If we have created the workbook OK */

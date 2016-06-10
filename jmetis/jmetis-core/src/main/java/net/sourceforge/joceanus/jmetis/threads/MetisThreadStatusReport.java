@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+
 /**
  * Report status.
  */
@@ -55,6 +57,13 @@ public interface MetisThreadStatusReport {
     boolean setNumSteps(final int pNumSteps);
 
     /**
+     * Set steps done.
+     * @param pSteps the number of steps done
+     * @return continue? true/false
+     */
+    boolean setStepsDone(final int pSteps);
+
+    /**
      * Set next step.
      * @return continue true/false
      */
@@ -72,4 +81,10 @@ public interface MetisThreadStatusReport {
      * @return true/false
      */
     boolean isCancelled();
+
+    /**
+     * Obtain the active task.
+     * @return the active task
+     */
+    MetisProfile getActiveTask();
 }

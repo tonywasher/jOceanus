@@ -70,7 +70,7 @@ public class ThemisCreateTagExtract<N, I>
 
     @Override
     public String getTaskName() {
-        return "CreateTagExtract";
+        return ThemisThreadId.EXTRACTTAG.toString();
     }
 
     @Override

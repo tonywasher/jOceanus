@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -39,6 +40,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
  * @param <I> the icon type
  */
 public abstract class JOceanusUtilitySet<N, I> {
+    /**
+     * Toolkit.
+     */
+    private final MetisToolkit<N, I> theToolkit;
+
     /**
      * Secure Manager.
      */
@@ -60,6 +66,11 @@ public abstract class JOceanusUtilitySet<N, I> {
     private final TethysGuiFactory<N, I> theGuiFactory;
 
     /**
+     * Thread Manager.
+     */
+    private final MetisThreadManager<N, I> theThreadMgr;
+
+    /**
      * Colour Preferences.
      */
     private final MetisColorPreferences theColorPreferences;
@@ -70,10 +81,12 @@ public abstract class JOceanusUtilitySet<N, I> {
      */
     protected JOceanusUtilitySet(final MetisToolkit<N, I> pToolkit) {
         /* Access components */
+        theToolkit = pToolkit;
         theSecureMgr = pToolkit.getSecurityManager();
         thePreferenceMgr = pToolkit.getPreferenceManager();
         theFormatter = pToolkit.getFormatter();
         theGuiFactory = pToolkit.getGuiFactory();
+        theThreadMgr = pToolkit.getThreadManager();
 
         /* Access the Colour Preferences */
         theColorPreferences = thePreferenceMgr.getPreferenceSet(MetisColorPreferences.class);
@@ -113,6 +126,22 @@ public abstract class JOceanusUtilitySet<N, I> {
      */
     public TethysGuiFactory<N, I> getGuiFactory() {
         return theGuiFactory;
+    }
+
+    /**
+     * Obtain the Thread Manager.
+     * @return the thread manager
+     */
+    public MetisThreadManager<N, I> getThreadManager() {
+        return theThreadMgr;
+    }
+
+    /**
+     * Obtain the Toolkit.
+     * @return the toolkit
+     */
+    public MetisToolkit<N, I> getToolkit() {
+        return theToolkit;
     }
 
     /**

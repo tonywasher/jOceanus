@@ -37,10 +37,10 @@ import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -60,9 +60,14 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     private static final String ERROR_CANCEL = "Operation cancelled";
 
     /**
-     * Task control.
+     * Report.
      */
-    private final TaskControl<T> theTask;
+    private final MetisThreadStatusReport theReport;
+
+    /**
+     * The security manager.
+     */
+    private final GordianHashManager theSecurityMgr;
 
     /**
      * Spreadsheet.
@@ -70,7 +75,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     private MetisDataWorkBook theWorkBook;
 
     /**
-     * The DataSet.
+     * DataSet.
      */
     private T theData;
 
@@ -81,18 +86,29 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
 
     /**
      * Constructor.
-     * @param pTask the Task control
+     * @param pReport the report
+     * @param pSecureMgr the security manager
      */
-    public PrometheusSheetReader(final TaskControl<T> pTask) {
-        theTask = pTask;
+    public PrometheusSheetReader(final MetisThreadStatusReport pReport,
+                                 final GordianHashManager pSecureMgr) {
+        theReport = pReport;
+        theSecurityMgr = pSecureMgr;
     }
 
     /**
-     * get task control.
-     * @return the task control
+     * get report.
+     * @return the report
      */
-    protected TaskControl<T> getTask() {
-        return theTask;
+    protected MetisThreadStatusReport getReport() {
+        return theReport;
+    }
+
+    /**
+     * get data.
+     * @return the data
+     */
+    public T getData() {
+        return theData;
     }
 
     /**
@@ -101,14 +117,6 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      */
     protected MetisDataWorkBook getWorkBook() {
         return theWorkBook;
-    }
-
-    /**
-     * get dataSet.
-     * @return the dataSet
-     */
-    public T getData() {
-        return theData;
     }
 
     /**
@@ -122,13 +130,15 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     /**
      * Load a Backup Workbook.
      * @param pFile the backup file to load from
-     * @return the loaded DataSet
+     * @param pData the data to load into
      * @throws OceanusException on error
      */
-    public T loadBackup(final File pFile) throws OceanusException {
+    public void loadBackup(final File pFile,
+                           final T pData) throws OceanusException {
         /* Start the task */
-        MetisProfile myTask = theTask.getActiveTask();
+        MetisProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Loading");
+        theData = pData;
 
         /* Access the zip file */
         GordianZipReadFile myFile = new GordianZipReadFile(pFile);
@@ -136,11 +146,8 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         /* Obtain the hash bytes from the file */
         byte[] myHashBytes = myFile.getHashBytes();
 
-        /* Access the Security manager */
-        GordianHashManager mySecurity = theTask.getSecurity();
-
         /* Obtain the initialised keySetHash */
-        GordianKeySetHash myHash = mySecurity.resolveKeySetHash(myHashBytes, pFile.getName());
+        GordianKeySetHash myHash = theSecurityMgr.resolveKeySetHash(myHashBytes, pFile.getName());
 
         /* Associate this keySetHash with the ZipFile */
         myFile.setKeySetHash(myHash);
@@ -166,9 +173,6 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
 
         /* Complete the task */
         myTask.end();
-
-        /* Return the new DataSet */
-        return theData;
     }
 
     /**
@@ -182,7 +186,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         /* Protect the workbook retrieval */
         try (InputStream myStream = pFile.getInputStream(pEntry)) {
             /* Obtain the active profile */
-            MetisProfile myTask = theTask.getActiveTask();
+            MetisProfile myTask = theReport.getActiveTask();
             myTask.startTask("Parsing");
 
             /* Initialise the workbook */
@@ -214,12 +218,6 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     protected abstract void registerSheets();
 
     /**
-     * Obtain empty DataSet.
-     * @return the dataSet
-     */
-    protected abstract T newDataSet();
-
-    /**
      * Create the list of sheets to load.
      * @param pStream the input stream
      * @return continue true/false
@@ -229,9 +227,6 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      */
     private boolean initialiseWorkBook(final InputStream pStream,
                                        final MetisWorkBookType pType) throws OceanusException, IOException {
-        /* Create the new DataSet */
-        theData = newDataSet();
-
         /* Initialise the list */
         theSheets = new ArrayList<>();
 
@@ -245,11 +240,11 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         registerSheets();
 
         /* Declare the number of stages */
-        boolean bContinue = theTask.setNumStages(theSheets.size() + 2);
+        boolean bContinue = theReport.setNumStages(theSheets.size() + 2);
 
         /* Note the stage */
         if (bContinue) {
-            bContinue = theTask.setNewStage("Loading");
+            bContinue = theReport.setNewStage("Loading");
         }
 
         /* Access the workbook from the stream */
@@ -268,10 +263,10 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      */
     private boolean loadWorkBook() throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theTask.getActiveTask();
+        MetisProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
-        boolean bContinue = theTask.setNumStages(theSheets.size() + 1);
+        boolean bContinue = theReport.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
         Iterator<PrometheusSheetDataItem<?, ?>> myIterator = theSheets.iterator();
@@ -285,7 +280,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         }
 
         /* Analyse the data */
-        if (!theTask.setNewStage("Refreshing data")) {
+        if (!theReport.setNewStage("Refreshing data")) {
             bContinue = false;
         }
 

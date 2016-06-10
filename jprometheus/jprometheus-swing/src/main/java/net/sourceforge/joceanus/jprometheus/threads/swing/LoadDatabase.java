@@ -22,55 +22,49 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.threads.swing;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Thread to load data from the database.
- * @author Tony Washer
  * @param <T> the DataSet type
  * @param <E> the data type enum class
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class LoadDatabase<T extends DataSet<T, E>, E extends Enum<E>>
-        extends LoaderThread<T, E> {
-    /**
-     * Task description.
-     */
-    private static final String TASK_NAME = "DataBase Load";
-
+public class LoadDatabase<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+        implements MetisThread<T, N, I> {
     /**
      * Data control.
      */
-    private final DataControl<T, E, ?, ?> theControl;
-
-    /**
-     * Thread Status.
-     */
-    private final ThreadStatus<T, E> theStatus;
+    private final DataControl<T, E, N, I> theControl;
 
     /**
      * Constructor (Event Thread).
-     * @param pStatus the thread status
+     * @param pControl data control
      */
-    public LoadDatabase(final ThreadStatus<T, E> pStatus) {
-        /* Call super-constructor */
-        super(TASK_NAME, pStatus);
-
-        /* Store passed parameters */
-        theStatus = pStatus;
-        theControl = pStatus.getControl();
-
-        /* Show the status window */
-        showStatusBar();
+    public LoadDatabase(final DataControl<T, E, N, I> pControl) {
+        theControl = pControl;
     }
 
     @Override
-    public T performTask() throws OceanusException {
+    public String getTaskName() {
+        return PrometheusThreadId.LOADDB.toString();
+    }
+
+    @Override
+    public T performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Access the thread manager */
+        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+
         /* Initialise the status window */
-        theStatus.initTask("Loading Database");
+        myManager.initTask(getTaskName());
 
         /* Access database */
         PrometheusDataStore<T> myDatabase = theControl.getDatabase();
@@ -78,10 +72,11 @@ public class LoadDatabase<T extends DataSet<T, E>, E extends Enum<E>>
         /* Protect against failures */
         try {
             /* Load database */
-            T myData = myDatabase.loadDatabase(theStatus);
+            T myData = theControl.getNewData();
+            myDatabase.loadDatabase(myManager, myData);
 
             /* Check security on the database */
-            myData.checkSecurity(theStatus);
+            myData.checkSecurity(myManager);
 
             /* Return the loaded data */
             return myData;
@@ -91,5 +86,10 @@ public class LoadDatabase<T extends DataSet<T, E>, E extends Enum<E>>
             /* Close the database */
             myDatabase.close();
         }
+    }
+
+    @Override
+    public void processResult(final T pResult) {
+        theControl.setData(pResult);
     }
 }

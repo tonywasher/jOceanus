@@ -24,15 +24,19 @@ package net.sourceforge.joceanus.jprometheus.threads.swing;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSpreadSheet;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -42,9 +46,11 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * @author Tony Washer
  * @param <T> the DataSet type
  * @param <E> the data type enum class
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
-        extends LoaderThread<T, E> {
+public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+        implements MetisThread<Void, N, I> {
     /**
      * Buffer length.
      */
@@ -56,44 +62,34 @@ public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
     private static final int TEN = 10;
 
     /**
-     * Task description.
-     */
-    private static final String TASK_NAME = "Backup Creation";
-
-    /**
      * Data Control.
      */
-    private final DataControl<T, E, ?, ?> theControl;
-
-    /**
-     * Thread Status.
-     */
-    private final ThreadStatus<T, E> theStatus;
+    private final DataControl<T, E, N, I> theControl;
 
     /**
      * Constructor (Event Thread).
-     * @param pStatus the thread status
+     * @param pControl data control
      */
-    public CreateBackup(final ThreadStatus<T, E> pStatus) {
-        /* Call super-constructor */
-        super(TASK_NAME, pStatus);
-
-        /* Store passed parameters */
-        theStatus = pStatus;
-        theControl = pStatus.getControl();
-
-        /* Show the status window */
-        showStatusBar();
+    public CreateBackup(final DataControl<T, E, N, I> pControl) {
+        theControl = pControl;
     }
 
     @Override
-    public T performTask() throws OceanusException {
+    public String getTaskName() {
+        return PrometheusThreadId.CREATEBACKUP.toString();
+    }
+
+    @Override
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Access the thread manager */
+        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        GordianHashManager mySecurityMgr = pToolkit.getSecurityManager();
         boolean doDelete = false;
         File myFile = null;
 
         try {
             /* Initialise the status window */
-            theStatus.initTask("Creating Backup");
+            myManager.initTask(getTaskName());
 
             /* Access the Backup preferences */
             MetisPreferenceManager myMgr = theControl.getPreferenceManager();
@@ -133,19 +129,20 @@ public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
             /* Create backup */
             PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
             T myOldData = theControl.getData();
-            mySheet.createBackup(theStatus, myOldData, myFile, myType);
+            mySheet.createBackup(myManager, myOldData, myFile, myType);
 
             /* File created, so delete on error */
             doDelete = true;
 
             /* Initialise the status window */
-            theStatus.initTask("Verifying Backup");
+            myManager.initTask("Verifying Backup");
 
             /* Load workbook */
-            T myNewData = mySheet.loadBackup(theStatus, myFile);
+            T myNewData = theControl.getNewData();
+            mySheet.loadBackup(myManager, mySecurityMgr, myNewData, myFile);
 
             /* Create a difference set between the two data copies */
-            DataSet<T, ?> myDiff = myNewData.getDifferenceSet(theStatus, myOldData);
+            DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myManager, myOldData);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

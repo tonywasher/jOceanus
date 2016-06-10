@@ -39,10 +39,11 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseCancelException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
@@ -81,7 +82,6 @@ import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -212,13 +212,14 @@ public class ArchiveLoader {
 
     /**
      * Load an Archive Workbook.
-     * @param pTask Task Control for task
+     * @param pReport the report
+     * @param pData the data to load into
      * @param pPreferences the backup preferences
-     * @return the newly loaded data
      * @throws OceanusException on error
      */
-    public MoneyWiseData loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                     final PrometheusBackupPreferences pPreferences) throws OceanusException {
+    public void loadArchive(final MetisThreadStatusReport pReport,
+                            final MoneyWiseData pData,
+                            final PrometheusBackupPreferences pPreferences) throws OceanusException {
         /* Determine the archive name */
         String myName = pPreferences.getStringValue(PrometheusBackupPreferenceKey.ARCHIVE);
         theLastEvent = pPreferences.getDateValue(PrometheusBackupPreferenceKey.LASTEVENT);
@@ -231,17 +232,16 @@ public class ArchiveLoader {
             MetisWorkBookType myType = MetisWorkBookType.determineType(myName);
 
             /* Load the data from the stream */
-            MoneyWiseData myData = loadArchiveStream(pTask, myStream, myType);
+            loadArchiveStream(pReport, pData, myStream, myType);
 
             /* If we hit the lastEvent limit */
             if (hitEventLimit) {
                 /* Note the fact in the data */
-                myData.hitEventLimit();
+                pData.hitEventLimit();
             }
 
             /* Close the Stream to force out errors */
             myStream.close();
-            return myData;
 
         } catch (IOException e) {
             /* Report the error */
@@ -251,13 +251,13 @@ public class ArchiveLoader {
 
     /**
      * Load the Static from an archive.
-     * @param pTask the task control
+     * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    private boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
+    private boolean loadArchive(final MetisThreadStatusReport pReport,
                                 final MetisDataWorkBook pWorkBook,
                                 final MoneyWiseData pData) throws OceanusException {
         /* Find the range of cells */
@@ -280,145 +280,145 @@ public class ArchiveLoader {
         int myStages = NUM_ARCHIVE_AREAS + getNumYears();
 
         /* Declare the number of stages */
-        return pTask.setNumStages(myStages);
+        return pReport.setNumStages(myStages);
     }
 
     /**
      * Load an Archive Workbook from a stream.
-     * @param pTask Task Control for task
+     * @param pReport the report
+     * @param pData the data to load into
      * @param pStream Input stream to load from
      * @param pType the workBookType
-     * @return the newly loaded data
      * @throws OceanusException on error
      */
-    private MoneyWiseData loadArchiveStream(final TaskControl<MoneyWiseData> pTask,
-                                            final InputStream pStream,
-                                            final MetisWorkBookType pType) throws OceanusException {
+    private void loadArchiveStream(final MetisThreadStatusReport pReport,
+                                   final MoneyWiseData pData,
+                                   final InputStream pStream,
+                                   final MetisWorkBookType pType) throws OceanusException {
         /* Protect the workbook retrieval */
         try {
             /* Access current profile */
-            MetisProfile myTask = pTask.getActiveTask();
+            MetisProfile myTask = pReport.getActiveTask();
             myTask = myTask.startTask("LoadArchive");
             myTask.startTask("ParseWorkBook");
 
             /* Create the Data */
-            MoneyWiseData myData = pTask.getNewDataSet();
-            theParentCache = new ParentCache(myData);
+            theParentCache = new ParentCache(pData);
 
             /* Access the workbook from the stream */
             MetisDataWorkBook myWorkbook = new MetisDataWorkBook(pStream, pType);
-            boolean bContinue = !pTask.isCancelled();
+            boolean bContinue = !pReport.isCancelled();
 
             /* Determine Year Range */
             MetisProfile myStage = myTask.startTask("LoadSheets");
             if (bContinue) {
                 myStage.startTask("Range");
-                bContinue = loadArchive(pTask, myWorkbook, myData);
+                bContinue = loadArchive(pReport, myWorkbook, pData);
             }
 
             /* Load Tables */
             if (bContinue) {
                 myStage.startTask(DepositCategoryType.LIST_NAME);
-                bContinue = SheetDepositCategoryType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetDepositCategoryType.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(CashCategoryType.LIST_NAME);
-                bContinue = SheetCashCategoryType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetCashCategoryType.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(LoanCategoryType.LIST_NAME);
-                bContinue = SheetLoanCategoryType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetLoanCategoryType.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(SecurityType.LIST_NAME);
-                bContinue = SheetSecurityType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetSecurityType.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(PayeeType.LIST_NAME);
-                bContinue = SheetPayeeType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetPayeeType.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(TransactionCategoryType.LIST_NAME);
-                bContinue = SheetTransCategoryType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTransCategoryType.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(TaxBasis.LIST_NAME);
-                bContinue = SheetTaxBasis.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTaxBasis.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(TaxCategory.LIST_NAME);
-                bContinue = SheetTaxCategory.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTaxCategory.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(AssetCurrency.LIST_NAME);
-                bContinue = SheetAssetCurrency.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetAssetCurrency.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(TaxRegime.LIST_NAME);
-                bContinue = SheetTaxRegime.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTaxRegime.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(Frequency.LIST_NAME);
-                bContinue = SheetFrequency.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetFrequency.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(TaxYearInfoType.LIST_NAME);
-                bContinue = SheetTaxYearInfoType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTaxYearInfoType.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(AccountInfoType.LIST_NAME);
-                bContinue = SheetAccountInfoType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetAccountInfoType.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(TransactionInfoType.LIST_NAME);
-                bContinue = SheetTransInfoType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTransInfoType.loadArchive(pReport, myWorkbook, pData);
             }
 
             if (bContinue) {
                 myStage.startTask(TransactionTag.LIST_NAME);
-                bContinue = SheetTransTag.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTransTag.loadArchive(pReport, myWorkbook, pData);
             }
 
             if (bContinue) {
                 myStage.startTask("AccountCategories");
-                bContinue = SheetAccountCategory.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetAccountCategory.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(TransactionCategory.LIST_NAME);
-                bContinue = SheetTransCategory.loadArchive(pTask, myWorkbook, myData, this);
+                bContinue = SheetTransCategory.loadArchive(pReport, myWorkbook, pData, this);
             }
 
             if (bContinue) {
                 myStage.startTask(TaxYear.LIST_NAME);
-                bContinue = SheetTaxYear.loadArchive(pTask, myWorkbook, myData, this);
+                bContinue = SheetTaxYear.loadArchive(pReport, myWorkbook, pData, this);
             }
             if (bContinue) {
-                myData.calculateDateRange();
+                pData.calculateDateRange();
             }
 
             if (bContinue) {
                 myStage.startTask("Accounts");
-                bContinue = SheetAccount.loadArchive(pTask, myWorkbook, myData, this);
+                bContinue = SheetAccount.loadArchive(pReport, myWorkbook, pData, this);
             }
             if (bContinue) {
                 myStage.startTask(DepositRate.LIST_NAME);
-                bContinue = SheetDepositRate.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetDepositRate.loadArchive(pReport, myWorkbook, pData);
             }
             if (bContinue) {
                 myStage.startTask(SecurityPrice.LIST_NAME);
-                bContinue = SheetSecurityPrice.loadArchive(pTask, myWorkbook, myData, this);
+                bContinue = SheetSecurityPrice.loadArchive(pReport, myWorkbook, pData, this);
             }
 
             if (bContinue) {
                 myStage.startTask(Transaction.LIST_NAME);
-                bContinue = SheetTransaction.loadArchive(pTask, myWorkbook, myData, this);
+                bContinue = SheetTransaction.loadArchive(pReport, myWorkbook, pData, this);
             }
 
             /* Close the stream */
             pStream.close();
 
             /* Set the next stage */
-            if (!pTask.setNewStage("Refreshing data")) {
+            if (!pReport.setNewStage("Refreshing data")) {
                 bContinue = false;
             }
 
@@ -429,9 +429,6 @@ public class ArchiveLoader {
             if (!bContinue) {
                 throw new MoneyWiseCancelException("Operation Cancelled");
             }
-
-            /* Return the data */
-            return myData;
         } catch (IOException e) {
             /* Report the error */
             throw new MoneyWiseIOException("Failed to load Workbook", e);

@@ -84,7 +84,7 @@ public class ThemisCreateBranchTags<N, I>
 
     @Override
     public String getTaskName() {
-        return "CreateBranchTags";
+        return ThemisThreadId.CREATETAG.toString();
     }
 
     @Override

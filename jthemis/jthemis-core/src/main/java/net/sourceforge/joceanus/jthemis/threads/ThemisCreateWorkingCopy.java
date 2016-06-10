@@ -94,7 +94,7 @@ public class ThemisCreateWorkingCopy<N, I>
 
     @Override
     public String getTaskName() {
-        return "CreateWorkingCopy";
+        return ThemisThreadId.CREATEWORKINGCOPY.toString();
     }
 
     @Override

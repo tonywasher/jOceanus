@@ -32,13 +32,13 @@ import java.util.ListIterator;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -83,7 +83,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @param pTable the table name
      */
     protected PrometheusTableDataItem(final PrometheusDataStore<?> pDatabase,
-                            final String pTable) {
+                                      final String pTable) {
         /* Set the table */
         theDatabase = pDatabase;
         theConn = theDatabase.getConn();
@@ -277,25 +277,17 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
 
     /**
      * Load items from the list into the table.
-     * @param pTask the task control
+     * @param pReport the report
      * @param pData the data
      * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected boolean loadItems(final TaskControl<?> pTask,
+    protected boolean loadItems(final MetisThreadStatusReport pReport,
                                 final DataSet<?, ?> pData) throws OceanusException {
-        boolean bContinue = true;
-        String myQuery;
-        int mySteps;
-        int myCount = 0;
-
         /* Declare the new stage */
-        if (!pTask.setNewStage(getTableName())) {
+        if (!pReport.setNewStage(getTableName())) {
             return false;
         }
-
-        /* Access reporting steps */
-        mySteps = pTask.getReportingSteps();
 
         /* Declare the Data */
         declareData(pData);
@@ -303,12 +295,12 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         /* Protect the load */
         try {
             /* Count the Items to be loaded */
-            if (!pTask.setNumSteps(countLoadItems())) {
+            if (!pReport.setNumSteps(countLoadItems())) {
                 return false;
             }
 
             /* Load the items from the table */
-            myQuery = theTable.getLoadString();
+            String myQuery = theTable.getLoadString();
             prepareStatement(myQuery);
             executeQuery();
 
@@ -321,8 +313,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 theList.addValuesItem(loadValues());
 
                 /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (!pReport.setNextStep()) {
                     return false;
                 }
             }
@@ -338,7 +329,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         }
 
         /* Return to caller */
-        return bContinue;
+        return true;
     }
 
     /**
@@ -370,33 +361,28 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
 
     /**
      * Insert new items from the list.
-     * @param pTask the task control
+     * @param pReport the report
      * @param pData the data
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected boolean insertItems(final TaskControl<?> pTask,
+    protected boolean insertItems(final MetisThreadStatusReport pReport,
                                   final DataSet<?, ?> pData,
                                   final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
-        if (!pTask.setNewStage("Inserting " + getTableName())) {
+        if (!pReport.setNewStage("Inserting " + getTableName())) {
             return false;
         }
-
-        /* Access reporting steps */
-        boolean bContinue = true;
-        int mySteps = pTask.getReportingSteps();
-        int myCount = 0;
-        T myCurr = null;
 
         /* Declare the Data */
         declareData(pData);
 
         /* Protect the insert */
+        T myCurr = null;
         try {
             /* Declare the number of steps */
-            if (!pTask.setNumSteps(countStateItems(MetisDataState.NEW))) {
+            if (!pReport.setNumSteps(countStateItems(MetisDataState.NEW))) {
                 return false;
             }
 
@@ -444,8 +430,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 }
 
                 /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (!pReport.setNextStep()) {
                     return false;
                 }
             }
@@ -458,33 +443,28 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         }
 
         /* Return to caller */
-        return bContinue;
+        return true;
     }
 
     /**
      * Update items from the list.
-     * @param pTask the task control
+     * @param pReport the report
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected boolean updateItems(final TaskControl<?> pTask,
+    protected boolean updateItems(final MetisThreadStatusReport pReport,
                                   final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
-        if (!pTask.setNewStage("Updating " + getTableName())) {
+        if (!pReport.setNewStage("Updating " + getTableName())) {
             return false;
         }
 
-        /* Access reporting steps */
-        boolean bContinue = true;
-        int mySteps = pTask.getReportingSteps();
-        int myCount = 0;
-        T myCurr = null;
-
         /* Protect the update */
+        T myCurr = null;
         try {
             /* Declare the number of steps */
-            if (!pTask.setNumSteps(countStateItems(MetisDataState.CHANGED))) {
+            if (!pReport.setNumSteps(countStateItems(MetisDataState.CHANGED))) {
                 return false;
             }
 
@@ -530,8 +510,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                     }
 
                     /* Report the progress */
-                    myCount++;
-                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                    if (!pReport.setNextStep()) {
                         return false;
                     }
                 }
@@ -541,7 +520,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         }
 
         /* Return to caller */
-        return bContinue;
+        return true;
     }
 
     /**
@@ -586,28 +565,23 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
 
     /**
      * Delete items from the list.
-     * @param pTask the task control
+     * @param pReport the report
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected boolean deleteItems(final TaskControl<?> pTask,
+    protected boolean deleteItems(final MetisThreadStatusReport pReport,
                                   final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
-        if (!pTask.setNewStage("Deleting " + getTableName())) {
+        if (!pReport.setNewStage("Deleting " + getTableName())) {
             return false;
         }
 
-        /* Access reporting steps */
-        boolean bContinue = true;
-        int mySteps = pTask.getReportingSteps();
-        int myCount = 0;
-        T myCurr = null;
-
         /* Protect the delete */
+        T myCurr = null;
         try {
             /* Declare the number of steps */
-            if (!pTask.setNumSteps(countStateItems(MetisDataState.DELETED))) {
+            if (!pReport.setNumSteps(countStateItems(MetisDataState.DELETED))) {
                 return false;
             }
 
@@ -653,8 +627,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 }
 
                 /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (!pReport.setNextStep()) {
                     return false;
                 }
             }
@@ -666,7 +639,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         }
 
         /* Return to caller */
-        return bContinue;
+        return true;
     }
 
     /**

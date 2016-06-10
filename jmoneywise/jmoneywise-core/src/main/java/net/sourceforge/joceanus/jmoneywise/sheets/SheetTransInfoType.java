@@ -26,13 +26,13 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -81,13 +81,13 @@ public class SheetTransInfoType
 
     /**
      * Load the InfoTypes from an archive.
-     * @param pTask the task control
+     * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
+    protected static boolean loadArchive(final MetisThreadStatusReport pReport,
                                          final MetisDataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws OceanusException {
         /* Access the list of InfoTypes */
@@ -99,19 +99,15 @@ public class SheetTransInfoType
             MetisDataView myView = pWorkBook.getRangeView(AREA_TRANSINFOTYPES);
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_TRANSINFOTYPES)) {
+            if (!pReport.setNewStage(AREA_TRANSINFOTYPES)) {
                 return false;
             }
-
-            /* Access the number of reporting steps */
-            int myCount = 0;
-            int mySteps = pTask.getReportingSteps();
 
             /* Count the number of InfoTypes */
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
-            if (!pTask.setNumSteps(myTotal)) {
+            if (!pReport.setNumSteps(myTotal)) {
                 return false;
             }
 
@@ -125,8 +121,7 @@ public class SheetTransInfoType
                 myList.addBasicItem(myCell.getStringValue());
 
                 /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (!pReport.setNextStep()) {
                     return false;
                 }
             }

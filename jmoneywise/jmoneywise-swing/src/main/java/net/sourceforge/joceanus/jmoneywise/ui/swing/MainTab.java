@@ -24,17 +24,15 @@ package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.threads.swing.LoadArchive;
-import net.sourceforge.joceanus.jmoneywise.threads.swing.MoneyWiseStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.swing.WriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
@@ -46,13 +44,14 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
+import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.TethysSwingTabItem;
 
 /**
  * Main Window for jMoneyWise.
- * @author Tony Washer
  */
 public class MainTab
         extends MainWindow<MoneyWiseData, MoneyWiseDataType> {
@@ -112,16 +111,6 @@ public class MainTab
     private static final String TITLE_MAINT = MoneyWiseUIResource.MAIN_MAINTENANCE.getValue();
 
     /**
-     * QIF menu title.
-     */
-    private static final String MENU_CREATEQIF = MoneyWiseUIResource.MAIN_MENU_CREATEQIF.getValue();
-
-    /**
-     * Archive menu title.
-     */
-    private static final String MENU_ARCHIVE = MoneyWiseUIResource.MAIN_MENU_LOADARCHIVE.getValue();
-
-    /**
      * Program name.
      */
     private static final String PROGRAM_NAME = ProgramResource.PROGRAM_NAME.getValue();
@@ -160,16 +149,6 @@ public class MainTab
      * The maintenance panel.
      */
     private MaintenanceTab theMaint;
-
-    /**
-     * The Load Sheet menus.
-     */
-    private JMenuItem theLoadSheet;
-
-    /**
-     * The CreateQIF menu.
-     */
-    private JMenuItem theCreateQIF;
 
     /**
      * Constructor.
@@ -277,16 +256,10 @@ public class MainTab
      * @param pMenu the menu
      */
     @Override
-    protected void addDataMenuItems(final JMenu pMenu) {
-        /* Create the file menu items */
-        theLoadSheet = new JMenuItem(MENU_ARCHIVE);
-        theLoadSheet.addActionListener(e -> loadSpreadsheet());
-        pMenu.add(theLoadSheet);
-
-        /* Create the file menu items */
-        theCreateQIF = new JMenuItem(MENU_CREATEQIF);
-        theCreateQIF.addActionListener(e -> createQIF());
-        pMenu.add(theCreateQIF);
+    protected void addDataMenuItems(final TethysMenuSubMenu<?> pMenu) {
+        /* Create the data menu items */
+        pMenu.newMenuItem(MoneyWiseThreadId.LOADARCHIVE, e -> loadSpreadsheet());
+        pMenu.newMenuItem(MoneyWiseThreadId.CREATEQIF, e -> createQIF());
 
         /* Pass call on */
         super.addDataMenuItems(pMenu);
@@ -331,12 +304,8 @@ public class MainTab
      * Load Spreadsheet.
      */
     public void loadSpreadsheet() {
-        /* Allocate the status */
-        MoneyWiseStatus myStatus = new MoneyWiseStatus(theView, getStatusBar());
-
         /* Create the worker thread */
-        LoadArchive myThread = new LoadArchive(myStatus);
-        myStatus.registerThread(myThread);
+        LoadArchive<JComponent, Icon> myThread = new LoadArchive<>(theView);
         startThread(myThread);
     }
 
@@ -344,12 +313,8 @@ public class MainTab
      * Create QIF file.
      */
     public void createQIF() {
-        /* Allocate the status */
-        MoneyWiseStatus myStatus = new MoneyWiseStatus(theView, getStatusBar());
-
         /* Create the worker thread */
-        WriteQIF myThread = new WriteQIF(myStatus);
-        myStatus.registerThread(myThread);
+        WriteQIF<JComponent, Icon> myThread = new WriteQIF<>(theView);
         startThread(myThread);
     }
 
@@ -403,8 +368,11 @@ public class MainTab
         /* Note whether we have data */
         boolean hasControl = theView.getData().getControl() != null;
 
+        /* Obtain the menuBar */
+        TethysMenuBarManager myMenuBar = getMenuBar();
+
         /* Disable menus if we have no data */
-        theCreateQIF.setEnabled(!hasWorker && hasControl);
+        myMenuBar.setEnabled(MoneyWiseThreadId.CREATEQIF, !hasWorker && hasControl);
 
         /* Enable/Disable the reports tab */
         boolean doEnabled = !hasWorker && !hasSession;
@@ -434,7 +402,7 @@ public class MainTab
         theTabs.setEnabled(!hasWorker);
 
         /* If we have updates disable the load backup/database option */
-        theLoadSheet.setEnabled(!hasSession);
+        myMenuBar.setEnabled(MoneyWiseThreadId.LOADARCHIVE, !hasSession);
     }
 
     /**

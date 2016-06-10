@@ -39,7 +39,7 @@ public class ThemisSubversionBackup<N, I>
         implements MetisThread<Void, N, I> {
     @Override
     public String getTaskName() {
-        return "BackupSubVersion";
+        return ThemisThreadId.BACKUPSVN.toString();
     }
 
     @Override

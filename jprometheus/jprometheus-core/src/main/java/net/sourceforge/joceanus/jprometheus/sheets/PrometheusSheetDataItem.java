@@ -31,11 +31,11 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataSheet;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -59,9 +59,9 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
     protected static final int COL_ID = 0;
 
     /**
-     * The task control.
+     * The report.
      */
-    private final TaskControl<?> theTask;
+    private final MetisThreadStatusReport theReport;
 
     /**
      * The input sheet.
@@ -121,7 +121,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
     protected PrometheusSheetDataItem(final PrometheusSheetReader<?> pReader,
                                       final String pRange) {
         /* Store parameters */
-        theTask = pReader.getTask();
+        theReport = pReader.getReport();
         theReader = pReader;
         theRangeName = pRange;
     }
@@ -134,7 +134,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
     protected PrometheusSheetDataItem(final PrometheusSheetWriter<?> pWriter,
                                       final String pRange) {
         /* Store parameters */
-        theTask = pWriter.getTask();
+        theReport = pWriter.getReport();
         theWorkBook = pWriter.getWorkBook();
         theRangeName = pRange;
     }
@@ -180,19 +180,15 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
             Iterator<MetisDataRow> myIterator = theActiveView.iterator();
 
             /* Declare the new stage */
-            if (!theTask.setNewStage(theRangeName)) {
+            if (!theReport.setNewStage(theRangeName)) {
                 return false;
             }
-
-            /* Access the number of reporting steps */
-            int mySteps = theTask.getReportingSteps();
-            int myCount = 0;
 
             /* Determine count of rows */
             int myTotal = theActiveView.getRowCount();
 
             /* Declare the number of steps */
-            if (!theTask.setNumSteps(myTotal)) {
+            if (!theReport.setNumSteps(myTotal)) {
                 return false;
             }
 
@@ -206,8 +202,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
                 theLastItem = theList.addValuesItem(myValues);
 
                 /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
+                if (!theReport.setNextStep()) {
                     return false;
                 }
             }
@@ -233,18 +228,15 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         /* Protect against exceptions */
         try {
             /* Declare the new stage */
-            if (!theTask.setNewStage(theRangeName)) {
+            if (!theReport.setNewStage(theRangeName)) {
                 return false;
             }
-
-            /* Access the number of reporting steps */
-            int mySteps = theTask.getReportingSteps();
 
             /* Count the number of items */
             int myTotal = theList.size();
 
             /* Declare the number of steps */
-            if (!theTask.setNumSteps(myTotal)) {
+            if (!theReport.setNumSteps(myTotal)) {
                 return false;
             }
 
@@ -258,7 +250,6 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
             /* Initialise counts */
             theBaseRow = 0;
             theCurrRow = theBaseRow;
-            int myCount = 0;
 
             /* Access the iterator */
             Iterator<T> myItemIterator = theList.iterator();
@@ -274,9 +265,8 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
                 insertSecureItem(myCurr);
 
                 /* Report the progress */
-                myCount++;
                 theCurrRow++;
-                if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
+                if (!theReport.setNextStep()) {
                     return false;
                 }
             }

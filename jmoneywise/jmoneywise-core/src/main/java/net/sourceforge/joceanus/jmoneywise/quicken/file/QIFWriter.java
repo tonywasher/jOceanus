@@ -27,9 +27,7 @@ import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 
 /**
  * Writer class for QIF Files.
@@ -63,7 +61,7 @@ public class QIFWriter {
     /**
      * Thread Status.
      */
-    private final ThreadStatus<MoneyWiseData, MoneyWiseDataType> theStatus;
+    private final MetisThreadStatusReport theReport;
 
     /**
      * QIF File.
@@ -77,13 +75,13 @@ public class QIFWriter {
 
     /**
      * Constructor.
-     * @param pStatus the thread status
+     * @param pReport the report
      * @param pFile the QIF file.
      */
-    public QIFWriter(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
+    public QIFWriter(final MetisThreadStatusReport pReport,
                      final QIFFile pFile) {
         /* Store parameters */
-        theStatus = pStatus;
+        theReport = pReport;
         theFile = pFile;
 
         /* Allocate the formatter and set date format */
@@ -99,7 +97,7 @@ public class QIFWriter {
      */
     public boolean writeFile(final OutputStreamWriter pStream) throws IOException {
         /* Declare the stages */
-        boolean bContinue = theStatus.setNumStages(NUM_STAGES);
+        boolean bContinue = theReport.setNumStages(NUM_STAGES);
 
         /* Write the classes */
         if (bContinue) {
@@ -145,13 +143,9 @@ public class QIFWriter {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
 
-        /* Access the number of reporting steps */
-        int mySteps = theStatus.getReportingSteps();
-        int myCount = 0;
-
         /* Update status bar */
-        boolean bContinue = (theStatus.setNewStage("Writing classes"))
-                            && (theStatus.setNumSteps(theFile.numClasses()));
+        boolean bContinue = theReport.setNewStage("Writing classes")
+                            && theReport.setNumSteps(theFile.numClasses());
 
         /* Skip stage if we have no classes */
         if (!theFile.hasClasses()) {
@@ -180,8 +174,7 @@ public class QIFWriter {
             myBuilder.setLength(0);
 
             /* Report the progress */
-            myCount++;
-            if (((myCount % mySteps) == 0) && (!theStatus.setStepsDone(myCount))) {
+            if (!theReport.setNextStep()) {
                 return false;
             }
         }
@@ -199,11 +192,10 @@ public class QIFWriter {
     private boolean writeCategories(final OutputStreamWriter pStream) throws IOException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
-        int myCount = 0;
 
         /* Update status bar */
-        boolean bContinue = (theStatus.setNewStage("Writing categories"))
-                            && (theStatus.setNumSteps(theFile.numCategories()));
+        boolean bContinue = theReport.setNewStage("Writing categories")
+                            && theReport.setNumSteps(theFile.numCategories());
         if (!bContinue) {
             return false;
         }
@@ -228,8 +220,7 @@ public class QIFWriter {
             myBuilder.setLength(0);
 
             /* Report the progress */
-            myCount += myCategory.numChildren();
-            if (!theStatus.setStepsDone(myCount)) {
+            if (!theReport.setStepsDone(myCategory.numChildren())) {
                 return false;
             }
         }
@@ -248,13 +239,9 @@ public class QIFWriter {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
 
-        /* Access the number of reporting steps */
-        int mySteps = theStatus.getReportingSteps();
-        int myCount = 0;
-
         /* Update status bar */
-        boolean bContinue = (theStatus.setNewStage("Writing accounts"))
-                            && (theStatus.setNumSteps(theFile.numAccounts()));
+        boolean bContinue = theReport.setNewStage("Writing accounts")
+                            && theReport.setNumSteps(theFile.numAccounts());
         if (!bContinue) {
             return false;
         }
@@ -281,8 +268,7 @@ public class QIFWriter {
             myBuilder.setLength(0);
 
             /* Report the progress */
-            myCount++;
-            if (((myCount % mySteps) == 0) && (!theStatus.setStepsDone(myCount))) {
+            if (!theReport.setNextStep()) {
                 return false;
             }
         }
@@ -301,13 +287,9 @@ public class QIFWriter {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
 
-        /* Access the number of reporting steps */
-        int mySteps = theStatus.getReportingSteps();
-        int myCount = 0;
-
         /* Update status bar */
-        boolean bContinue = (theStatus.setNewStage("Writing securities"))
-                            && (theStatus.setNumSteps(theFile.numSecurities()));
+        boolean bContinue = theReport.setNewStage("Writing securities")
+                            && theReport.setNumSteps(theFile.numSecurities());
 
         /* Skip step if we have no securities */
         if (!theFile.hasSecurities()) {
@@ -340,8 +322,7 @@ public class QIFWriter {
             myBuilder.setLength(0);
 
             /* Report the progress */
-            myCount++;
-            if (((myCount % mySteps) == 0) && (!theStatus.setStepsDone(myCount))) {
+            if (!theReport.setNextStep()) {
                 return false;
             }
         }
@@ -367,13 +348,9 @@ public class QIFWriter {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
 
-        /* Access the number of reporting steps */
-        int mySteps = theStatus.getReportingSteps();
-        int myCount = 0;
-
         /* Update status bar */
-        boolean bContinue = (theStatus.setNewStage("Writing account events"))
-                            && (theStatus.setNumSteps(theFile.numAccounts()));
+        boolean bContinue = theReport.setNewStage("Writing account events")
+                            && theReport.setNumSteps(theFile.numAccounts());
         if (!bContinue) {
             return false;
         }
@@ -411,8 +388,7 @@ public class QIFWriter {
             }
 
             /* Report the progress */
-            myCount++;
-            if (((myCount % mySteps) == 0) && (!theStatus.setStepsDone(myCount))) {
+            if (!theReport.setNextStep()) {
                 return false;
             }
         }
@@ -431,13 +407,9 @@ public class QIFWriter {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
 
-        /* Access the number of reporting steps */
-        int mySteps = theStatus.getReportingSteps();
-        int myCount = 0;
-
         /* Update status bar */
-        boolean bContinue = (theStatus.setNewStage("Writing prices"))
-                            && (theStatus.setNumSteps(theFile.numSecurities()));
+        boolean bContinue = theReport.setNewStage("Writing prices")
+                            && theReport.setNumSteps(theFile.numSecurities());
 
         /* Skip step if we have no prices */
         if (!theFile.hasSecurities()) {
@@ -459,8 +431,7 @@ public class QIFWriter {
             myBuilder.setLength(0);
 
             /* Report the progress */
-            myCount++;
-            if (((myCount % mySteps) == 0) && (!theStatus.setStepsDone(myCount))) {
+            if (!theReport.setNextStep()) {
                 return false;
             }
         }

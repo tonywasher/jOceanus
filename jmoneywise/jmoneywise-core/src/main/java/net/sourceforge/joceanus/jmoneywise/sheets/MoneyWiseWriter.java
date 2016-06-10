@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetWriter;
 
 /**
@@ -34,11 +34,11 @@ public class MoneyWiseWriter
         extends PrometheusSheetWriter<MoneyWiseData> {
     /**
      * Constructor.
-     * @param pTask the Task control.
+     * @param pReport the report
      */
-    public MoneyWiseWriter(final TaskControl<MoneyWiseData> pTask) {
+    public MoneyWiseWriter(final MetisThreadStatusReport pReport) {
         /* Call super-constructor */
-        super(pTask);
+        super(pReport);
     }
 
     /**

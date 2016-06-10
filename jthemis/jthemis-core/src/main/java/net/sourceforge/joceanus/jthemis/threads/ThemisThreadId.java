@@ -20,26 +20,56 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.ui;
+package net.sourceforge.joceanus.jthemis.threads;
 
 /**
- * Themis SubVersion Menu items.
+ * Themis Thread Ids.
  */
-public enum ThemisSvnMenuItem {
+public enum ThemisThreadId {
     /**
-     * Tasks.
+     * Create WorkingCopy.
      */
-    TASKS("Tasks"),
+    CREATEWORKINGCOPY("CreateWorkingCopy"),
 
     /**
-     * Help.
+     * Extract Tag.
      */
-    HELP("Help"),
+    EXTRACTTAG("ExtractTag"),
 
     /**
-     * DataViewer.
+     * Update WorkingCopy.
      */
-    DATAVIEWER("DataViewer");
+    UPDATEWORKINGCOPY("UpdateWorkingCopy"),
+
+    /**
+     * Revert WorkingCopy.
+     */
+    REVERTWORKINGCOPY("RevertWorkingCopy"),
+
+    /**
+     * Create Tag.
+     */
+    CREATETAG("CreateTag"),
+
+    /**
+     * Create Branch.
+     */
+    CREATEBRANCH("CreateNewBranch"),
+
+    /**
+     * Create GitRepo.
+     */
+    CREATEGITREPO("CreateGitRepo"),
+
+    /**
+     * Backup Subversion.
+     */
+    BACKUPSVN("BackupSubversion"),
+
+    /**
+     * Restore Subversion.
+     */
+    RESTORESVN("CreateWorkingCopy");
 
     /**
      * The name.
@@ -50,7 +80,7 @@ public enum ThemisSvnMenuItem {
      * Constructor.
      * @param pName the name
      */
-    ThemisSvnMenuItem(final String pName) {
+    ThemisThreadId(final String pName) {
         theName = pName;
     }
 

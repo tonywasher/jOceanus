@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
@@ -178,7 +179,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pUtilitySet the utility set
      */
     protected DataSet(final Class<E> pEnumClass,
-                      final JOceanusUtilitySet pUtilitySet) {
+                      final JOceanusUtilitySet<?, ?> pUtilitySet) {
         /* Store the security manager and Enum class */
         theSecurity = pUtilitySet.getSecureManager();
         theEnumClass = pEnumClass;
@@ -477,12 +478,12 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * items that differ between the two DataSets. Items that are in the new list, but not in the
      * old list will be viewed as inserted. Items that are in the old list but not in the new list
      * will be viewed as deleted. Items that are in both list but differ will be viewed as changed
-     * @param pTask the task control
+     * @param pReport the report
      * @param pOld The old list to extract from
      * @return the difference set
      * @throws OceanusException on error
      */
-    public abstract T getDifferenceSet(final TaskControl<T> pTask,
+    public abstract T getDifferenceSet(final MetisThreadStatusReport pReport,
                                        final T pOld) throws OceanusException;
 
     /**
@@ -490,16 +491,16 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * items that differ between the two DataSets. Items that are in the new list, but not in the
      * old list will be viewed as inserted. Items that are in the old list but not in the new list
      * will be viewed as deleted. Items that are in both list but differ will be viewed as changed
-     * @param pTask the task control
+     * @param pReport the report
      * @param pNew The new list to compare
      * @param pOld The old list to compare
      * @throws OceanusException on error
      */
-    protected void deriveDifferences(final TaskControl<T> pTask,
+    protected void deriveDifferences(final MetisThreadStatusReport pReport,
                                      final T pNew,
                                      final T pOld) throws OceanusException {
         /* Access current profile */
-        MetisProfile myTask = pTask.getActiveTask();
+        MetisProfile myTask = pReport.getActiveTask();
         MetisProfile myStage = myTask.startTask("checkDifferences");
 
         /* Build the security differences */
@@ -532,14 +533,14 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * ReBase this data set against an earlier version.
-     * @param pTask the task control
+     * @param pReport the report
      * @param pOld The old data to reBase against
      * @throws OceanusException on error
      */
-    public void reBase(final TaskControl<T> pTask,
+    public void reBase(final MetisThreadStatusReport pReport,
                        final T pOld) throws OceanusException {
         /* Access current profile */
-        MetisProfile myTask = pTask.getActiveTask();
+        MetisProfile myTask = pReport.getActiveTask();
         MetisProfile myStage = myTask.startTask("ReBase");
 
         /* ReBase the security items */
@@ -877,19 +878,19 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * Initialise Security from database (if present).
-     * @param pTask the task control
+     * @param pReport the report
      * @param pBase the database data
      * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    public boolean initialiseSecurity(final TaskControl<T> pTask,
+    public boolean initialiseSecurity(final MetisThreadStatusReport pReport,
                                       final T pBase) throws OceanusException {
         /* Access current profile */
-        MetisProfile myTask = pTask.getActiveTask();
+        MetisProfile myTask = pReport.getActiveTask();
         MetisProfile myStage = myTask.startTask("InitSecurity");
 
         /* Set the number of stages */
-        if (!pTask.setNumStages(1 + theNumEncrypted)) {
+        if (!pReport.setNumStages(1 + theNumEncrypted)) {
             return false;
         }
 
@@ -916,7 +917,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
                 /* Adopt the security */
                 myStage.startTask(myList.listName());
                 EncryptedList<?, E> myEncrypted = (EncryptedList<?, E>) myList;
-                if (!myEncrypted.adoptSecurity(pTask, myControl, (EncryptedList<?, E>) myBase)) {
+                if (!myEncrypted.adoptSecurity(pReport, myControl, (EncryptedList<?, E>) myBase)) {
                     return false;
                 }
             }
@@ -931,13 +932,13 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * Renew Security.
-     * @param pTask the task control
+     * @param pReport the report
      * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    public boolean renewSecurity(final TaskControl<T> pTask) throws OceanusException {
+    public boolean renewSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
-        MetisProfile myTask = pTask.getActiveTask();
+        MetisProfile myTask = pReport.getActiveTask();
         MetisProfile myStage = myTask.startTask("ReNewSecurity");
 
         /* Access ControlData */
@@ -950,7 +951,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         myControl.setControlKey(myKey);
 
         /* Update Security */
-        boolean bSuccess = updateSecurity(pTask);
+        boolean bSuccess = updateSecurity(pReport);
 
         /* Complete task */
         myStage.end();
@@ -959,19 +960,19 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * Check Security for incomplete security operations.
-     * @param pTask the task control
+     * @param pReport the report
      * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    public boolean checkSecurity(final TaskControl<T> pTask) throws OceanusException {
+    public boolean checkSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
-        MetisProfile myTask = pTask.getActiveTask();
+        MetisProfile myTask = pReport.getActiveTask();
         MetisProfile myStage = myTask.startTask("CheckSecurity");
 
         /* If there is more than one controlKey */
         if (theControlKeys.size() > 1) {
             /* Update to the selected controlKey */
-            return updateSecurity(pTask);
+            return updateSecurity(pReport);
         } else {
             /* Make sure that password changes are OK */
             ControlKey myKey = getControlKey();
@@ -987,16 +988,16 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * Update Security.
-     * @param pTask the task control
+     * @param pReport the report
      * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    public boolean updateSecurity(final TaskControl<T> pTask) throws OceanusException {
+    public boolean updateSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access the control key */
         ControlKey myControl = getControlKey();
 
         /* Set the number of stages */
-        if (!pTask.setNumStages(1 + theNumEncrypted)) {
+        if (!pReport.setNumStages(1 + theNumEncrypted)) {
             return false;
         }
 
@@ -1009,7 +1010,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             if (myList instanceof EncryptedList) {
                 /* Update the security */
                 EncryptedList<?, E> myEncrypted = (EncryptedList<?, E>) myList;
-                if (!myEncrypted.updateSecurity(pTask, myControl)) {
+                if (!myEncrypted.updateSecurity(pReport, myControl)) {
                     return false;
                 }
             }
@@ -1040,11 +1041,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * Update data with a new password.
-     * @param pTask the task control
+     * @param pReport the report
      * @param pSource the source of the data
      * @throws OceanusException on error
      */
-    public void updatePasswordHash(final TaskControl<T> pTask,
+    public void updatePasswordHash(final MetisThreadStatusReport pReport,
                                    final String pSource) throws OceanusException {
         /* Obtain a new keySet hash */
         GordianKeySetHash myHash = theSecurity.resolveKeySetHash(null, pSource);

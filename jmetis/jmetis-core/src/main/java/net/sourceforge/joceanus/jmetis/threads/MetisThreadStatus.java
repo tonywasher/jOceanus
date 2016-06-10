@@ -178,6 +178,14 @@ public class MetisThreadStatus {
     }
 
     /**
+     * Set StepsDone.
+     * @param pSteps the # of steps done
+     */
+    public void setStepsDone(final int pSteps) {
+        theStepsDone += pSteps;
+    }
+
+    /**
      * Set Next step.
      */
     public void setNextStep() {

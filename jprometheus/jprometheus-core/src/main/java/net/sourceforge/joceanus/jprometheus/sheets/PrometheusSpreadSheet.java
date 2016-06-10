@@ -24,9 +24,10 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -42,48 +43,53 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
 
     /**
      * Obtain a sheet reader.
-     * @param pTask Task Control for task
+     * @param pReport the report
+     * @param pSecureMgr the security manager
      * @return the sheet reader
      */
-    protected abstract PrometheusSheetReader<T> getSheetReader(final TaskControl<T> pTask);
+    protected abstract PrometheusSheetReader<T> getSheetReader(final MetisThreadStatusReport pReport,
+                                                               final GordianHashManager pSecureMgr);
 
     /**
      * Obtain a sheet writer.
-     * @param pTask Task Control for task
+     * @param pReport the report
      * @return the sheet writer
      */
-    protected abstract PrometheusSheetWriter<T> getSheetWriter(final TaskControl<T> pTask);
+    protected abstract PrometheusSheetWriter<T> getSheetWriter(final MetisThreadStatusReport pReport);
 
     /**
      * Load a Backup Workbook.
-     * @param pTask Task Control for task
+     * @param pReport the report
+     * @param pSecureMgr the security manager
+     * @param pData the data to load into
      * @param pFile the backup file to load from
-     * @return the newly loaded data
      * @throws OceanusException on error
      */
-    public T loadBackup(final TaskControl<T> pTask,
-                        final File pFile) throws OceanusException {
+    public void loadBackup(final MetisThreadStatusReport pReport,
+                           final GordianHashManager pSecureMgr,
+                           final T pData,
+                           final File pFile) throws OceanusException {
         /* Create a sheet reader object */
-        PrometheusSheetReader<T> myReader = getSheetReader(pTask);
+        PrometheusSheetReader<T> myReader = getSheetReader(pReport, pSecureMgr);
 
         /* Load the backup */
-        return myReader.loadBackup(pFile);
+        myReader.loadBackup(pFile, pData);
     }
 
     /**
      * Create a Backup Workbook.
-     * @param pTask Task Control for task
+     * @param pReport the report
      * @param pData Data to write out
      * @param pFile the backup file to write to
      * @param pType the workBookType
      * @throws OceanusException on error
      */
-    public void createBackup(final TaskControl<T> pTask,
+    public void createBackup(final MetisThreadStatusReport pReport,
                              final T pData,
                              final File pFile,
                              final MetisWorkBookType pType) throws OceanusException {
         /* Create a sheet writer object */
-        PrometheusSheetWriter<T> myWriter = getSheetWriter(pTask);
+        PrometheusSheetWriter<T> myWriter = getSheetWriter(pReport);
 
         /* Create the backup */
         myWriter.createBackup(pData, pFile, pType);

@@ -68,7 +68,7 @@ public class ThemisCreateGitRepo<N, I>
 
     @Override
     public String getTaskName() {
-        return "createGitRepo";
+        return ThemisThreadId.CREATEGITREPO.toString();
     }
 
     @Override

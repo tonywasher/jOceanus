@@ -25,9 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
@@ -41,7 +42,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -62,14 +62,14 @@ public final class SheetAccount {
 
     /**
      * Load the Accounts from an archive.
-     * @param pTask the task control
+     * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @param pLoader the archive loader
      * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
+    protected static boolean loadArchive(final MetisThreadStatusReport pReport,
                                          final MetisDataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
                                          final ArchiveLoader pLoader) throws OceanusException {
@@ -78,12 +78,8 @@ public final class SheetAccount {
             /* Find the range of cells */
             MetisDataView myView = pWorkBook.getRangeView(SHEET_AREA);
 
-            /* Access the number of reporting steps */
-            int mySteps = pTask.getReportingSteps();
-            int myCount = 0;
-
             /* Declare the new stage */
-            if (!pTask.setNewStage(SHEET_AREA)) {
+            if (!pReport.setNewStage(SHEET_AREA)) {
                 return false;
             }
 
@@ -91,7 +87,7 @@ public final class SheetAccount {
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps (*2) */
-            if (!pTask.setNumSteps(myTotal << 1)) {
+            if (!pReport.setNumSteps(myTotal << 1)) {
                 return false;
             }
 
@@ -104,8 +100,7 @@ public final class SheetAccount {
                 processPayee(pLoader, pData, myView, myRow);
 
                 /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (!pReport.setNextStep()) {
                     return false;
                 }
             }
@@ -122,8 +117,7 @@ public final class SheetAccount {
                 processAccount(pLoader, pData, myView, myRow);
 
                 /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (!pReport.setNextStep()) {
                     return false;
                 }
             }

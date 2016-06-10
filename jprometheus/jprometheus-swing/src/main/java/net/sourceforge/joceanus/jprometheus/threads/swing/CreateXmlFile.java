@@ -24,15 +24,18 @@ package net.sourceforge.joceanus.jprometheus.threads.swing;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -41,9 +44,11 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * LoaderThread extension to create an XML backup.
  * @param <T> the DataSet type
  * @param <E> the Data list type
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
-        extends LoaderThread<T, E> {
+public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+        implements MetisThread<Void, N, I> {
     /**
      * Buffer length.
      */
@@ -60,24 +65,9 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
     protected static final String SUFFIX_FILE = "XML";
 
     /**
-     * Task description.
-     */
-    private static final String TASK_NAME = "Create XML Backup";
-
-    /**
-     * Cancel error text.
-     */
-    private static final String ERROR_CANCEL = "Operation cancelled";
-
-    /**
      * Data Control.
      */
-    private final DataControl<T, E, ?, ?> theControl;
-
-    /**
-     * Thread Status.
-     */
-    private final ThreadStatus<T, E> theStatus;
+    private final DataControl<T, E, N, I> theControl;
 
     /**
      * Is this a Secure backup?
@@ -86,32 +76,34 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * Constructor (Event Thread).
-     * @param pStatus the thread status
+     * @param pControl data control
      * @param pSecure is this a secure backup
      */
-    public CreateXmlFile(final ThreadStatus<T, E> pStatus,
+    public CreateXmlFile(final DataControl<T, E, N, I> pControl,
                          final boolean pSecure) {
-        /* Call super-constructor */
-        super(TASK_NAME, pStatus);
-
-        /* Store passed parameters */
-        theStatus = pStatus;
         isSecure = pSecure;
-        theControl = pStatus.getControl();
-
-        /* Show the status window */
-        showStatusBar();
+        theControl = pControl;
     }
 
     @Override
-    public T performTask() throws OceanusException {
+    public String getTaskName() {
+        return isSecure
+                        ? PrometheusThreadId.CREATEXML.toString()
+                        : PrometheusThreadId.CREATEXTRACT.toString();
+    }
+
+    @Override
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Access the thread manager */
+        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        GordianHashManager mySecurity = pToolkit.getSecurityManager();
         boolean doDelete = false;
         File myFile = null;
 
         /* Catch Exceptions */
         try {
             /* Initialise the status window */
-            theStatus.initTask(TASK_NAME);
+            myManager.initTask(getTaskName());
 
             /* Access the Backup preferences */
             MetisPreferenceManager myMgr = theControl.getPreferenceManager();
@@ -152,7 +144,7 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
             T myOldData = theControl.getData();
 
             /* Create a new formatter */
-            DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(theStatus);
+            DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(myManager, mySecurity);
 
             /* Create backup */
             boolean bContinue = isSecure
@@ -163,45 +155,43 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
             if (isSecure) {
                 /* File created, so delete on error */
                 doDelete = true;
-
-                /* Initialise the status window */
-                theStatus.initTask("Reading Backup");
-
-                /* Load workbook */
-                T myNewData = theControl.getNewData();
-                bContinue = myFormatter.loadZipFile(myNewData, myFile);
+                T myNewData = null;
 
                 /* Check for cancellation */
-                if (!bContinue) {
-                    throw new PrometheusCancelException(ERROR_CANCEL);
+                if (bContinue) {
+                    /* Initialise the status window */
+                    myManager.initTask("Reading Backup");
+
+                    /* Load workbook */
+                    myNewData = theControl.getNewData();
+                    bContinue = myFormatter.loadZipFile(myNewData, myFile);
                 }
 
-                /* Initialise the status window */
-                theStatus.initTask("Re-applying Security");
+                /* Check for cancellation */
+                if (bContinue) {
+                    /* Initialise the status window */
+                    myManager.initTask("Re-applying Security");
 
-                /* Initialise the security, from the original data */
-                myNewData.initialiseSecurity(theStatus, myOldData);
+                    /* Initialise the security, from the original data */
+                    myNewData.initialiseSecurity(myManager, myOldData);
 
-                /* Initialise the status window */
-                theStatus.initTask("Verifying Backup");
+                    /* Initialise the status window */
+                    myManager.initTask("Verifying Backup");
 
-                /* Create a difference set between the two data copies */
-                DataSet<T, ?> myDiff = myNewData.getDifferenceSet(theStatus, myOldData);
+                    /* Create a difference set between the two data copies */
+                    DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myManager, myOldData);
 
-                /* If the difference set is non-empty */
-                if (!myDiff.isEmpty()) {
-                    /* Throw an exception */
-                    throw new PrometheusDataException(myDiff, "Backup is inconsistent");
+                    /* If the difference set is non-empty */
+                    if (!myDiff.isEmpty()) {
+                        /* Throw an exception */
+                        throw new PrometheusDataException(myDiff, "Backup is inconsistent");
+                    }
+
+                    /* OK so switch off flag */
+                    doDelete = false;
                 }
-
-                /* OK so switch off flag */
-                doDelete = false;
             }
 
-            /* Check for cancellation */
-            if (!bContinue) {
-                throw new PrometheusCancelException(ERROR_CANCEL);
-            }
         } finally {
             /* Delete the file */
             if ((doDelete) && (!myFile.delete())) {

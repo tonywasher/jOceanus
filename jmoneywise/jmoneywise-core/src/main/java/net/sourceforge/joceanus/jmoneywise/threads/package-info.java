@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMetis: Java Data Framework
+ * jMoneyWise: Finance Application
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,6 @@
  * $Date$
  ******************************************************************************/
 /**
- * Preference Set Manager.
+ * Thread support for jMoneyWise.
  */
-package net.sourceforge.joceanus.jmetis.preference.swing;
-
+package net.sourceforge.joceanus.jmoneywise.threads;

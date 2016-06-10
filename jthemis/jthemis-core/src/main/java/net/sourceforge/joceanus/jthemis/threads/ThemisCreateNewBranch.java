@@ -85,7 +85,7 @@ public class ThemisCreateNewBranch<N, I>
 
     @Override
     public String getTaskName() {
-        return "CreateNewBranch";
+        return ThemisThreadId.CREATEBRANCH.toString();
     }
 
     /**

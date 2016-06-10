@@ -26,13 +26,13 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -81,13 +81,13 @@ public class SheetTaxRegime
 
     /**
      * Load the Tax Regimes from an archive.
-     * @param pTask the task control
+     * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
+    protected static boolean loadArchive(final MetisThreadStatusReport pReport,
                                          final MetisDataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws OceanusException {
         /* Access the list of tax regimes */
@@ -98,12 +98,8 @@ public class SheetTaxRegime
             /* Find the range of cells */
             MetisDataView myView = pWorkBook.getRangeView(AREA_TAXREGIMES);
 
-            /* Access the number of reporting steps */
-            int mySteps = pTask.getReportingSteps();
-            int myCount = 0;
-
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_TAXREGIMES)) {
+            if (!pReport.setNewStage(AREA_TAXREGIMES)) {
                 return false;
             }
 
@@ -111,7 +107,7 @@ public class SheetTaxRegime
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
-            if (!pTask.setNumSteps(myTotal)) {
+            if (!pReport.setNumSteps(myTotal)) {
                 return false;
             }
 
@@ -125,8 +121,7 @@ public class SheetTaxRegime
                 myList.addBasicItem(myCell.getStringValue());
 
                 /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (!pReport.setNextStep()) {
                     return false;
                 }
             }

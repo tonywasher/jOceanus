@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
@@ -126,7 +127,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
     /**
      * The Active Profile.
      */
-    private MetisProfile theProfile;
+    private final MetisToolkit<N, I> theToolkit;
 
     /**
      * The Data Entry hashMap.
@@ -143,7 +144,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
                           final MetisProfile pProfile) throws OceanusException {
         /* Store the parameters */
         theUtilitySet = pUtilitySet;
-        theProfile = pProfile;
+        theToolkit = pUtilitySet.getToolkit();
 
         /* Create the Debug Map */
         theMap = new HashMap<>();
@@ -153,10 +154,6 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
 
         /* initialise the data manager */
         initDataMgr();
-
-        /* Update the Profile entry */
-        MetisViewerEntry myData = getDataEntry(DATA_PROFILE);
-        myData.setObject(theProfile);
 
         /* Create the error list */
         theErrors = new DataErrorList<>();
@@ -448,15 +445,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * @return the new profile
      */
     public MetisProfile getNewProfile(final String pTask) {
-        /* Create a new profile */
-        theProfile = new MetisProfile(pTask);
-
-        /* Update the Data entry */
-        MetisViewerEntry myData = getDataEntry(DATA_PROFILE);
-        myData.setObject(theProfile);
-
-        /* Return the new profile */
-        return theProfile;
+        return theToolkit.getNewProfile(pTask);
     }
 
     /**
@@ -464,8 +453,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * @return the active profile
      */
     public MetisProfile getActiveProfile() {
-        /* Create a new profile */
-        return theProfile;
+        return theToolkit.getActiveProfile();
     }
 
     /**
@@ -473,9 +461,6 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * @return the active task
      */
     public MetisProfile getActiveTask() {
-        /* Create a new profile */
-        return theProfile == null
-                                  ? null
-                                  : theProfile.getActiveTask();
+        return theToolkit.getActiveTask();
     }
 }

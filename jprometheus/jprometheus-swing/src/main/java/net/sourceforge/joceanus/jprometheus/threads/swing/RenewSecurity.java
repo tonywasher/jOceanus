@@ -22,8 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.threads.swing;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -33,56 +36,52 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * fields in the data set will then be re-encrypted with the new ControlKey, and finally the
  * ControlData will be updated to use the new controlKey. Data will be left in the Updated state
  * ready for committing the change to the database.
- * @author Tony Washer
  * @param <T> the DataSet type
  * @param <E> the data type enum class
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class RenewSecurity<T extends DataSet<T, E>, E extends Enum<E>>
-        extends LoaderThread<T, E> {
-    /**
-     * Task description.
-     */
-    private static final String TASK_NAME = "ReNew Security";
-
+public class RenewSecurity<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+        implements MetisThread<T, N, I> {
     /**
      * Data Control.
      */
-    private final DataControl<T, E, ?, ?> theControl;
-
-    /**
-     * Thread Status.
-     */
-    private final ThreadStatus<T, E> theStatus;
+    private final DataControl<T, E, N, I> theControl;
 
     /**
      * Constructor (Event Thread).
-     * @param pStatus the thread status
+     * @param pControl data control
      */
-    public RenewSecurity(final ThreadStatus<T, E> pStatus) {
-        /* Call super-constructor */
-        super(TASK_NAME, pStatus);
-
-        /* Store passed parameters */
-        theStatus = pStatus;
-        theControl = pStatus.getControl();
-
-        /* show the status window */
-        showStatusBar();
+    public RenewSecurity(final DataControl<T, E, N, I> pControl) {
+        theControl = pControl;
     }
 
     @Override
-    public T performTask() throws OceanusException {
+    public String getTaskName() {
+        return PrometheusThreadId.RENEWSECURITY.toString();
+    }
+
+    @Override
+    public T performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+        /* Access the thread manager */
+        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+
         /* Initialise the status window */
-        theStatus.initTask("Renewing Security");
+        myManager.initTask(getTaskName());
 
         /* Access Data */
         T myData = theControl.getData();
         myData = myData.deriveCloneSet();
 
         /* ReNew Security */
-        myData.renewSecurity(theStatus);
+        myData.renewSecurity(myManager);
 
         /* Return null */
         return myData;
+    }
+
+    @Override
+    public void processResult(final T pResult) {
+        theControl.setData(pResult);
     }
 }

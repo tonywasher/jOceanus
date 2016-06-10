@@ -75,7 +75,7 @@ public class ThemisRevertWorkingCopy<N, I>
 
     @Override
     public String getTaskName() {
-        return "RevertWorkingCopy";
+        return ThemisThreadId.REVERTWORKINGCOPY.toString();
     }
 
     @Override

@@ -25,8 +25,10 @@ package net.sourceforge.joceanus.jprometheus.swing;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
@@ -50,13 +52,12 @@ public class JOceanusSwingUtilitySet
 
     /**
      * Constructor.
-     * @param pParameters the security parameters
-     * @param pPrefMgr the preference manager
+     * @param pProfile the profile
      * @throws OceanusException on error
      */
-    public JOceanusSwingUtilitySet() throws OceanusException {
+    public JOceanusSwingUtilitySet(final MetisProfile pProfile) throws OceanusException {
         /* Create Toolkit */
-        super(new MetisSwingToolkit());
+        super(new MetisSwingToolkit(pProfile));
 
         /* Allocate the FieldManager */
         theFieldManager = new MetisFieldManager(new MetisFieldConfig(getColorPreferences()));
@@ -85,6 +86,11 @@ public class JOceanusSwingUtilitySet
     @Override
     public TethysSwingGuiFactory getGuiFactory() {
         return (TethysSwingGuiFactory) super.getGuiFactory();
+    }
+
+    @Override
+    public MetisSwingThreadManager getThreadManager() {
+        return (MetisSwingThreadManager) super.getThreadManager();
     }
 
     /**
