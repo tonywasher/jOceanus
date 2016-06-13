@@ -105,7 +105,7 @@ public class MetisSwingToolkit
     }
 
     @Override
-    protected MetisSwingThreadSliderStatus newThreadSliderStatus(final MetisThreadManager<JComponent, Icon> pManager) {
-        return new MetisSwingThreadSliderStatus(pManager, getGuiFactory());
+    protected MetisSwingThreadProgressStatus newThreadSliderStatus(final MetisThreadManager<JComponent, Icon> pManager) {
+        return new MetisSwingThreadProgressStatus(pManager, getGuiFactory());
     }
 }

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.threads.swing;
+package net.sourceforge.joceanus.jmoneywise.threads;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -48,7 +48,6 @@ import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFFile;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFParser;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFWriter;
-import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -57,12 +56,12 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class WriteQIF<N, I>
+public class MoneyWiseThreadWriteQIF<N, I>
         implements MetisThread<Void, N, I> {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(WriteQIF.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MoneyWiseThreadWriteQIF.class);
 
     /**
      * Delete error text.
@@ -78,7 +77,7 @@ public class WriteQIF<N, I>
      * Constructor (Event Thread).
      * @param pView the view
      */
-    public WriteQIF(final View<N, I> pView) {
+    public MoneyWiseThreadWriteQIF(final View<N, I> pView) {
         theView = pView;
     }
 

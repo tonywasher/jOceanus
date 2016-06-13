@@ -48,8 +48,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton;
@@ -95,7 +95,7 @@ public class PayeePanel
     public PayeePanel(final TethysSwingGuiFactory pFactory,
                       final MetisFieldManager pFieldMgr,
                       final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                      final PrometheusErrorPanel<JComponent, Icon> pError) {
+                      final MoneyWiseErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 

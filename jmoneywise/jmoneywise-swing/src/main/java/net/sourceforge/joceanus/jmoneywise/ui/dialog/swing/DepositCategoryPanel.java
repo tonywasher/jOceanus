@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryL
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -90,7 +90,7 @@ public class DepositCategoryPanel
     public DepositCategoryPanel(final TethysSwingGuiFactory pFactory,
                                 final MetisFieldManager pFieldMgr,
                                 final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                final PrometheusErrorPanel<JComponent, Icon> pError) {
+                                final MoneyWiseErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 

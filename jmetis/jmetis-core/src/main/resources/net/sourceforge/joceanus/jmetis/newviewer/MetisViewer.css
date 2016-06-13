@@ -11,31 +11,32 @@ h2 {
 }
 	
 /* Define tables */
-table { 
+.-metis-viewer table { 
   width: 90%;
-  margin-left:5%; 
-  margin-right:5%;
+  margin: 0 auto; 
   text-align: center;
   border-spacing: 1px;
   border-collapse: collapse;
+  border-top: solid;
+  border-bottom: solid;
 }
 
 /* Define background colour for oddRow */
-.oddrow td {
+.-metis-oddrow td {
   background-color: ${-jtethys-color-zebra};
   text-align: center; 
   border: 1px solid white;
 }
 
 /* Define background colour for evenRow */
-.evenrow td { 
+.-metis-evenrow td { 
   background-color: ${-jtethys-color-background};
   text-align: center;
   border: 1px solid white;
 }
 
 /* Define table headers */
-th {
+.-metis-viewer th {
   background-color: ${-jtethys-color-header};
   font-weight:bold;
   color: white;
@@ -43,22 +44,22 @@ th {
 }
 
 /* Define alternate colour and style for changed elements */
-.changed {
+.-metis-changed {
   font-style: italic;
   color: ${-jtethys-color-changed};
 }
 
 /* Define alternate colour and style for security changed elements */
-.security {
+.metis-security {
   color: ${-jtethys-color-changed};
 }
 
 /* Set standard link definition */
-a { 
+.-metis-viewer a { 
   text-decoration: underline;
 }
 
 /* Set hover colour for link */
-a:hover { 
+.-metis-viewer a:hover { 
   color: ${-jtethys-color-link};
 }

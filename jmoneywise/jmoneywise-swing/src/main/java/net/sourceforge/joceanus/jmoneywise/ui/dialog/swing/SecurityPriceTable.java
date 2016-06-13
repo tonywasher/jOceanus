@@ -44,12 +44,12 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.ViewSecurityPrice.ViewSecurityPriceList;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -97,7 +97,7 @@ public class SecurityPriceTable
     /**
      * The data view.
      */
-    private final View theView;
+    private final SwingView theView;
 
     /**
      * The field manager.
@@ -112,7 +112,7 @@ public class SecurityPriceTable
     /**
      * The error panel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
 
     /**
      * The panel.
@@ -161,10 +161,10 @@ public class SecurityPriceTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected SecurityPriceTable(final View pView,
+    protected SecurityPriceTable(final SwingView pView,
                                  final MetisFieldManager pFieldMgr,
                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                 final PrometheusErrorPanel<JComponent, Icon> pError) {
+                                 final MoneyWiseErrorPanel<JComponent, Icon> pError) {
         /* initialise the underlying class */
         super((TethysSwingGuiFactory) pView.getUtilitySet().getGuiFactory());
 

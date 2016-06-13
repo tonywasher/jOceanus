@@ -48,8 +48,8 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.D
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
@@ -63,6 +63,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.AnalysisColumnSet;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
@@ -70,9 +71,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisView;
-import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -81,8 +80,8 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -242,7 +241,7 @@ public class TransactionTable
     /**
      * The data view.
      */
-    private final View theView;
+    private final SwingView theView;
 
     /**
      * The updateSet.
@@ -257,12 +256,12 @@ public class TransactionTable
     /**
      * The analysis data entry.
      */
-    private final MetisViewerEntry theDataAnalysis;
+    private final MetisViewerEntry theViewerAnalysis;
 
     /**
      * The filter data entry.
      */
-    private final MetisViewerEntry theDataFilter;
+    private final MetisViewerEntry theViewerFilter;
 
     /**
      * Analysis View.
@@ -282,7 +281,7 @@ public class TransactionTable
     /**
      * The error panel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
 
     /**
      * The table model.
@@ -345,31 +344,28 @@ public class TransactionTable
      */
     public TransactionTable(final SwingView pView) {
         /* initialise the underlying class */
-        super(pView.getUtilitySet().getGuiFactory());
-
-        /* Access the GUI Factory */
-        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        super(pView.getGuiFactory());
 
         /* Record the passed details */
         theView = pView;
         theFieldMgr = pView.getFieldManager();
         setFieldMgr(theFieldMgr);
 
+        /* Access the GUI Factory */
+        TethysSwingGuiFactory myFactory = theView.getGuiFactory();
+        MetisViewerManager myViewer = theView.getViewerManager();
+
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet<>(theView, MoneyWiseDataType.class);
         setUpdateSet(theUpdateSet);
         theBuilder = new TransactionBuilder(theUpdateSet);
 
-        /* Create the top level debug entry for this view */
-        MetisViewerManager myDataMgr = theView.getViewerManager();
-        MetisViewerEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        MetisViewerEntry myDataRegister = myDataMgr.newEntry(NLS_DATAENTRY);
-        myDataRegister.addAsChildOf(mySection);
-        theDataFilter = myDataMgr.newEntry(NLS_FILTERDATAENTRY);
-        theDataFilter.addAsChildOf(myDataRegister);
-        theDataAnalysis = myDataMgr.newEntry(NLS_TRANSDATAENTRY);
-        theDataAnalysis.addAsChildOf(myDataRegister);
-        theDataAnalysis.setObject(theUpdateSet);
+        /* Create the top level viewer entry for this view */
+        MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.VIEW);
+        MetisViewerEntry myRegister = myViewer.newEntry(mySection, NLS_DATAENTRY);
+        theViewerFilter = myViewer.newEntry(myRegister, NLS_FILTERDATAENTRY);
+        theViewerAnalysis = myViewer.newEntry(myRegister, NLS_TRANSDATAENTRY);
+        theViewerAnalysis.setTreeObject(theUpdateSet);
 
         /* Create new button */
         theNewButton = myFactory.newButton();
@@ -385,7 +381,7 @@ public class TransactionTable
         theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, myDataRegister);
+        theError = new MoneyWiseErrorPanel<>(theView, myRegister);
 
         /* Create the table model */
         theModel = new AnalysisTableModel(this);
@@ -467,7 +463,7 @@ public class TransactionTable
         getTable().requestFocusInWindow();
 
         /* Set the required focus */
-        theDataAnalysis.setFocus();
+        theViewerAnalysis.setFocus();
     }
 
     /**
@@ -576,8 +572,8 @@ public class TransactionTable
         fireStateChanged();
 
         /* Touch the filter and updateSet */
-        theDataFilter.setObject(theFilter);
-        theDataAnalysis.setObject(theUpdateSet);
+        theViewerFilter.setObject(theFilter);
+        theViewerAnalysis.setTreeObject(theUpdateSet);
 
         /* Adjust the filter */
         theSelectionModel.handleNewFilter();
@@ -685,7 +681,7 @@ public class TransactionTable
             /* Handle a simple filter change */
             theModel.fireNewDataEvents();
             theSelectionModel.handleNewFilter();
-            theDataFilter.setObject(theFilter);
+            theViewerFilter.setObject(theFilter);
         } else {
             /* Update new lists */
             updateList();

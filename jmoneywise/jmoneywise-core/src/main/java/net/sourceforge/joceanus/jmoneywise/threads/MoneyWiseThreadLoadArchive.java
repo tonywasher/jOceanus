@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.threads.swing;
+package net.sourceforge.joceanus.jmoneywise.threads;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader;
-import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
@@ -39,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class LoadArchive<N, I>
+public class MoneyWiseThreadLoadArchive<N, I>
         implements MetisThread<MoneyWiseData, N, I> {
     /**
      * Data Control.
@@ -50,7 +49,7 @@ public class LoadArchive<N, I>
      * Constructor (Event Thread).
      * @param pView the view
      */
-    public LoadArchive(final View<N, I> pView) {
+    public MoneyWiseThreadLoadArchive(final View<N, I> pView) {
         theView = pView;
     }
 

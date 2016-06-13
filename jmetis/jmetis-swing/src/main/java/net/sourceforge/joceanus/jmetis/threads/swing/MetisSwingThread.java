@@ -147,10 +147,13 @@ public class MetisSwingThread<T>
         } catch (CancellationException e) {
             theManager.handleCancellation();
 
+            /* Catch execution */
+        } catch (ExecutionException e) {
+            theManager.handleFailure(e.getCause());
+
             /* Catch other Exceptions */
         } catch (OceanusException
-                | InterruptedException
-                | ExecutionException e) {
+                | InterruptedException e) {
             theManager.handleFailure(e);
         }
     }

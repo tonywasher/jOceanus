@@ -37,24 +37,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.newviewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadEvent;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.MetisViewerWindow;
+import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadCreateBackup;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadCreateDatabase;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadCreateXmlFile;
 import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
-import net.sourceforge.joceanus.jprometheus.threads.swing.CreateBackup;
-import net.sourceforge.joceanus.jprometheus.threads.swing.CreateDatabase;
-import net.sourceforge.joceanus.jprometheus.threads.swing.CreateXmlFile;
-import net.sourceforge.joceanus.jprometheus.threads.swing.LoadBackup;
-import net.sourceforge.joceanus.jprometheus.threads.swing.LoadDatabase;
-import net.sourceforge.joceanus.jprometheus.threads.swing.LoadXmlFile;
-import net.sourceforge.joceanus.jprometheus.threads.swing.PurgeDatabase;
-import net.sourceforge.joceanus.jprometheus.threads.swing.RenewSecurity;
-import net.sourceforge.joceanus.jprometheus.threads.swing.StoreDatabase;
-import net.sourceforge.joceanus.jprometheus.threads.swing.UpdatePassword;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadLoadBackup;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadLoadDatabase;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadLoadXmlFile;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadPurgeDatabase;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadRenewSecurity;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadStoreDatabase;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadUpdatePassword;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusMenuId;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
@@ -63,6 +63,7 @@ import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
 
@@ -87,6 +88,11 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      * Close Dialog title.
      */
     private static final String TITLE_CLOSE = PrometheusUIResource.TITLE_CLOSE.getValue();
+
+    /**
+     * The Toolkit.
+     */
+    private MetisSwingToolkit theToolkit;
 
     /**
      * The GUI Factory.
@@ -124,14 +130,9 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
     private TethysSwingHelpWindow theHelpWdw;
 
     /**
-     * The Viewer Manager.
-     */
-    private MetisSwingViewerManager theViewerMgr;
-
-    /**
      * The Started data window.
      */
-    private MetisViewerWindow theDataWdw;
+    private MetisSwingViewerWindow theDataWdw;
 
     /**
      * The Status window.
@@ -214,7 +215,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
                                 final JOceanusSwingUtilitySet pUtilitySet) throws OceanusException {
         /* Store the view */
         theView = pView;
-        theViewerMgr = pUtilitySet.getViewerManager();
+        theToolkit = pUtilitySet.getToolkit();
         theGuiFactory = pUtilitySet.getGuiFactory();
         theThreadMgr = pUtilitySet.getThreadManager();
 
@@ -251,6 +252,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
 
         /* Build the Main Menu */
         buildMainMenu();
+
+        /* Create the data window */
+        theDataWdw = theToolkit.newViewerWindow();
+        theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(PrometheusMenuId.DATAVIEWER, true));
 
         /* Complete task */
         myTask.end();
@@ -446,7 +451,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     private void loadDatabase() {
         /* Create the worker thread */
-        LoadDatabase<T, E, JComponent, Icon> myThread = new LoadDatabase<>(theView);
+        PrometheusThreadLoadDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadLoadDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -455,7 +460,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     private void storeDatabase() {
         /* Create the worker thread */
-        StoreDatabase<T, E, JComponent, Icon> myThread = new StoreDatabase<>(theView);
+        PrometheusThreadStoreDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadStoreDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -464,7 +469,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     private void createDatabase() {
         /* Create the worker thread */
-        CreateDatabase<T, E, JComponent, Icon> myThread = new CreateDatabase<>(theView);
+        PrometheusThreadCreateDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -473,7 +478,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     private void purgeDatabase() {
         /* Create the worker thread */
-        PurgeDatabase<T, E, JComponent, Icon> myThread = new PurgeDatabase<>(theView);
+        PrometheusThreadPurgeDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadPurgeDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -516,7 +521,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     private void writeBackup() {
         /* Create the worker thread */
-        CreateBackup<T, E, JComponent, Icon> myThread = new CreateBackup<>(theView);
+        PrometheusThreadCreateBackup<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateBackup<>(theView);
         startThread(myThread);
     }
 
@@ -525,7 +530,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     private void restoreBackup() {
         /* Create the worker thread */
-        LoadBackup<T, E, JComponent, Icon> myThread = new LoadBackup<>(theView);
+        PrometheusThreadLoadBackup<T, E, JComponent, Icon> myThread = new PrometheusThreadLoadBackup<>(theView);
         startThread(myThread);
     }
 
@@ -534,7 +539,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     private void createXmlBackup() {
         /* Create the worker thread */
-        CreateXmlFile<T, E, JComponent, Icon> myThread = new CreateXmlFile<>(theView, true);
+        PrometheusThreadCreateXmlFile<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateXmlFile<>(theView, true);
         startThread(myThread);
     }
 
@@ -543,7 +548,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     private void createXmlXtract() {
         /* Create the worker thread */
-        CreateXmlFile<T, E, JComponent, Icon> myThread = new CreateXmlFile<>(theView, false);
+        PrometheusThreadCreateXmlFile<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateXmlFile<>(theView, false);
         startThread(myThread);
     }
 
@@ -552,7 +557,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     private void loadXmlFile() {
         /* Create the worker thread */
-        LoadXmlFile<T, E, JComponent, Icon> myThread = new LoadXmlFile<>(theView);
+        PrometheusThreadLoadXmlFile<T, E, JComponent, Icon> myThread = new PrometheusThreadLoadXmlFile<>(theView);
         startThread(myThread);
     }
 
@@ -561,7 +566,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     private void updatePassword() {
         /* Create the worker thread */
-        UpdatePassword<T, E, JComponent, Icon> myThread = new UpdatePassword<>(theView);
+        PrometheusThreadUpdatePassword<T, E, JComponent, Icon> myThread = new PrometheusThreadUpdatePassword<>(theView);
         startThread(myThread);
     }
 
@@ -570,7 +575,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     private void reNewSecurity() {
         /* Create the worker thread */
-        RenewSecurity<T, E, JComponent, Icon> myThread = new RenewSecurity<>(theView);
+        PrometheusThreadRenewSecurity<T, E, JComponent, Icon> myThread = new PrometheusThreadRenewSecurity<>(theView);
         startThread(myThread);
     }
 
@@ -578,12 +583,6 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      * Display ViewerMgr.
      */
     private void displayViewerMgr() {
-        /* Create the viewer window */
-        theDataWdw = new MetisViewerWindow(theFrame, theViewerMgr);
-
-        /* Listen for its closure */
-        theDataWdw.addWindowListener(theListener);
-
         /* Disable the menu item */
         theMenuBar.setEnabled(PrometheusMenuId.DATAVIEWER, false);
 
@@ -597,7 +596,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
     private void displayHelp() {
         try {
             /* Create the help window */
-            theHelpWdw = new TethysSwingHelpWindow((TethysSwingGuiFactory) theView.getUtilitySet().getGuiFactory());
+            theHelpWdw = theToolkit.newHelpWindow();
             theHelpWdw.setModule(getHelpModule());
 
             /* Listen for its closure */
@@ -648,10 +647,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
                 /* terminate the executor */
                 theThreadMgr.shutdown();
 
-                /* Dispose of the data/help Windows if they exist */
-                if (theDataWdw != null) {
-                    theDataWdw.dispose();
-                }
+                /* Dispose of the help Window if it exists */
                 if (theHelpWdw != null) {
                     theHelpWdw.hideDialog();
                 }
@@ -659,16 +655,6 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
                 /* Dispose of the frame */
                 theFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 theFrame.dispose();
-
-                /* else if this is the Data Window shutting down */
-            } else if (o.equals(theDataWdw)) {
-                /* Re-enable the viewer menu item */
-                theMenuBar.setEnabled(PrometheusMenuId.DATAVIEWER, true);
-                theDataWdw.dispose();
-                theDataWdw = null;
-
-                /* Notify viewer manager */
-                theViewerMgr.declareWindow(null);
 
                 /* else if this is the Help Window shutting down */
             } else if (o.equals(theHelpWdw)) {

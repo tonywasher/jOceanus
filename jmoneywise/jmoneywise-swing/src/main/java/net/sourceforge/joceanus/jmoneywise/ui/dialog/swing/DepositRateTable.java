@@ -46,9 +46,9 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -101,7 +101,7 @@ public class DepositRateTable
     /**
      * The error panel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
 
     /**
      * The panel.
@@ -148,7 +148,7 @@ public class DepositRateTable
     protected DepositRateTable(final TethysSwingGuiFactory pFactory,
                                final MetisFieldManager pFieldMgr,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                               final PrometheusErrorPanel<JComponent, Icon> pError) {
+                               final MoneyWiseErrorPanel<JComponent, Icon> pError) {
         /* initialise the underlying class */
         super(pFactory);
 

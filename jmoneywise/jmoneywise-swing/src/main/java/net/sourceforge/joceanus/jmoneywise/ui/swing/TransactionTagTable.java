@@ -37,16 +37,16 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.Ico
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TransactionTagPanel;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -107,7 +107,7 @@ public class TransactionTagTable
     /**
      * The error panel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
 
     /**
      * The Table Model.
@@ -157,9 +157,9 @@ public class TransactionTagTable
      */
     public TransactionTagTable(final SwingView pView,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                               final PrometheusErrorPanel<JComponent, Icon> pError) {
+                               final MoneyWiseErrorPanel<JComponent, Icon> pError) {
         /* initialise the underlying class */
-        super(pView.getUtilitySet().getGuiFactory());
+        super(pView.getGuiFactory());
 
         /* Record the passed details */
         theView = pView;
@@ -194,7 +194,7 @@ public class TransactionTagTable
         thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Create new button */
-        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
         theNewButton = myFactory.newButton();
         PrometheusIcon.configureNewIconButton(theNewButton);
 

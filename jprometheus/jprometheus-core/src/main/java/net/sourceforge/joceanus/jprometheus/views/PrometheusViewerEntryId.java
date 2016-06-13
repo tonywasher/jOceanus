@@ -20,8 +20,71 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-/**
- * Package containing utility threads to handle background tasks.
- */
-package net.sourceforge.joceanus.jprometheus.threads.swing;
+package net.sourceforge.joceanus.jprometheus.views;
 
+/**
+ * Standard Viewer Entries.
+ */
+public enum PrometheusViewerEntryId {
+    /**
+     * Error.
+     */
+    ERROR,
+
+    /**
+     * Profile.
+     */
+    PROFILE,
+
+    /**
+     * Data.
+     */
+    DATA,
+
+    /**
+     * View.
+     */
+    VIEW,
+
+    /**
+     * DataSet.
+     */
+    DATASET,
+
+    /**
+     * Updates.
+     */
+    UPDATES,
+
+    /**
+     * Analysis.
+     */
+    ANALYSIS,
+
+    /**
+     * Maintenance.
+     */
+    MAINTENANCE,
+
+    /**
+     * StaticData.
+     */
+    STATIC;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = PrometheusViewResource.getKeyForViewerEntry(this).getValue();
+        }
+
+        /* return the name */
+        return theName;
+    }
+}

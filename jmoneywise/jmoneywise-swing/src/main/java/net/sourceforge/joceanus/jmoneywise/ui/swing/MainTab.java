@@ -32,8 +32,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadId;
-import net.sourceforge.joceanus.jmoneywise.threads.swing.LoadArchive;
-import net.sourceforge.joceanus.jmoneywise.threads.swing.WriteQIF;
+import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadLoadArchive;
+import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadWriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
@@ -305,7 +305,7 @@ public class MainTab
      */
     public void loadSpreadsheet() {
         /* Create the worker thread */
-        LoadArchive<JComponent, Icon> myThread = new LoadArchive<>(theView);
+        MoneyWiseThreadLoadArchive<JComponent, Icon> myThread = new MoneyWiseThreadLoadArchive<>(theView);
         startThread(myThread);
     }
 
@@ -314,7 +314,7 @@ public class MainTab
      */
     public void createQIF() {
         /* Create the worker thread */
-        WriteQIF<JComponent, Icon> myThread = new WriteQIF<>(theView);
+        MoneyWiseThreadWriteQIF<JComponent, Icon> myThread = new MoneyWiseThreadWriteQIF<>(theView);
         startThread(myThread);
     }
 

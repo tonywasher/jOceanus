@@ -67,7 +67,7 @@ public class MetisFXThreadTester
     /**
      * the status panel.
      */
-    private final MetisFXThreadSliderStatus theStatusPanel;
+    private final MetisFXThreadProgressStatus theStatusPanel;
 
     /**
      * the main panel.

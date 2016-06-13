@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.Ico
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -48,11 +48,11 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TaxYearPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
@@ -61,8 +61,8 @@ import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTable
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -124,7 +124,7 @@ public class TaxYearTable
     /**
      * The error panel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
 
     /**
      * Action Buttons.
@@ -132,9 +132,9 @@ public class TaxYearTable
     private final PrometheusActionButtons<JComponent, Icon> theActionButtons;
 
     /**
-     * The data entry.
+     * The viewer entry.
      */
-    private final MetisViewerEntry theDataEntry;
+    private final MetisViewerEntry theViewerEntry;
 
     /**
      * The Column Model.
@@ -167,15 +167,16 @@ public class TaxYearTable
      */
     public TaxYearTable(final SwingView pView) {
         /* initialise the underlying class */
-        super(pView.getUtilitySet().getGuiFactory());
-
-        /* Access the GUI Factory */
-        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        super(pView.getGuiFactory());
 
         /* Record the view */
         theView = pView;
         theFieldMgr = theView.getFieldManager();
         setFieldMgr(theFieldMgr);
+
+        /* Access the GUI Factory */
+        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        MetisViewerManager myViewer = theView.getViewerManager();
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet<>(theView, MoneyWiseDataType.class);
@@ -183,15 +184,13 @@ public class TaxYearTable
         theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.TAXYEARINFO);
         setUpdateSet(theUpdateSet);
 
-        /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
-        MetisViewerManager myDataMgr = theView.getViewerManager();
-        MetisViewerEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataEntry = myDataMgr.newEntry(NLS_DATAENTRY);
-        theDataEntry.addAsChildOf(mySection);
-        theDataEntry.setObject(theUpdateSet);
+        /* Create the top level viewer entry for this view */
+        MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.MAINTENANCE);
+        theViewerEntry = myViewer.newEntry(mySection, NLS_DATAENTRY);
+        theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, theDataEntry);
+        theError = new MoneyWiseErrorPanel<>(theView, theViewerEntry);
 
         /* Create the action buttons */
         theActionButtons = new PrometheusActionButtons<>(pView.getUtilitySet().getGuiFactory(), theUpdateSet, false);
@@ -263,7 +262,7 @@ public class TaxYearTable
         getTable().requestFocusInWindow();
 
         /* Set the required focus */
-        theDataEntry.setFocus();
+        theViewerEntry.setFocus();
     }
 
     /**
@@ -286,6 +285,9 @@ public class TaxYearTable
 
         /* Notify panel of refresh */
         theActiveYear.refreshData();
+
+        /* Touch the updateSet */
+        theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Notify of the change */
         setList(theTaxYears);

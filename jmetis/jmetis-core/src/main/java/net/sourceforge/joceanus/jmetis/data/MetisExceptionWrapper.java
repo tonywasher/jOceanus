@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.data;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -110,8 +110,8 @@ public class MetisExceptionWrapper
             OceanusException myWrapped = (OceanusException) theWrapped;
             Object myObject = myWrapped.getObject();
             return (myObject == null)
-                                     ? MetisFieldValue.SKIP
-                                     : myObject;
+                                      ? MetisFieldValue.SKIP
+                                      : myObject;
         }
         if (FIELD_STACK.equals(pField)) {
             return theWrapped.getStackTrace();
@@ -135,7 +135,7 @@ public class MetisExceptionWrapper
 
     @Override
     public String formatObject() {
-        return theClass;
+        return getMessage();
     }
 
     /**
@@ -143,6 +143,10 @@ public class MetisExceptionWrapper
      * @return the message
      */
     public String getMessage() {
-        return theWrapped.getMessage();
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(theClass);
+        myBuilder.append(": ");
+        myBuilder.append(theWrapped.getMessage());
+        return myBuilder.toString();
     }
 }

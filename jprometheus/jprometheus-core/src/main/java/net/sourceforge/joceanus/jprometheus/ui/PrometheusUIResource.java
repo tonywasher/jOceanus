@@ -205,11 +205,6 @@ public enum PrometheusUIResource implements TethysResourceId {
     PANEL_TAB_DETAILS("Panel.Tab.Details"),
 
     /**
-     * Static DataEntry.
-     */
-    STATIC_DATAENTRY("Static.DataEntry"),
-
-    /**
      * Static Select Title.
      */
     STATIC_TITLE_SELECT("Static.Title.Select"),

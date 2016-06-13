@@ -31,7 +31,6 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceView;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -300,14 +299,6 @@ public class MaintenanceTab
      */
     protected MainTab getTopWindow() {
         return theParent;
-    }
-
-    /**
-     * Obtain the viewer manager.
-     * @return the manager
-     */
-    public MetisViewerManager getViewerManager() {
-        return theView.getViewerManager();
     }
 
     @Override

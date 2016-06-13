@@ -41,8 +41,8 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.C
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseSpotPricesSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
@@ -57,15 +58,14 @@ import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrice.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.YQLDownloader;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -157,14 +157,14 @@ public class SpotPricesTable
     private final PrometheusActionButtons<JComponent, Icon> theActionButtons;
 
     /**
-     * The data entry.
+     * The viewer entry.
      */
-    private final MetisViewerEntry theDataPrice;
+    private final MetisViewerEntry theViewerPrice;
 
     /**
      * The error panel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
 
     /**
      * The account price list.
@@ -187,7 +187,7 @@ public class SpotPricesTable
      */
     public SpotPricesTable(final SwingView pView) {
         /* initialise the underlying class */
-        super(pView.getUtilitySet().getGuiFactory());
+        super(pView.getGuiFactory());
 
         /* Record the passed details */
         theView = pView;
@@ -199,12 +199,11 @@ public class SpotPricesTable
         theUpdateEntry = theUpdateSet.registerType(MoneyWiseDataType.SECURITYPRICE);
         setUpdateSet(theUpdateSet);
 
-        /* Create the top level debug entry for this view */
-        MetisViewerManager myDataMgr = theView.getViewerManager();
-        MetisViewerEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        theDataPrice = myDataMgr.newEntry(NLS_DATAENTRY);
-        theDataPrice.addAsChildOf(mySection);
-        theDataPrice.setObject(theUpdateSet);
+        /* Create the top level viewer entry for this view */
+        MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.VIEW);
+        MetisViewerManager myViewer = theView.getViewerManager();
+        theViewerPrice = myViewer.newEntry(mySection, NLS_DATAENTRY);
+        theViewerPrice.setTreeObject(theUpdateSet);
 
         /* Create the model and declare it to our superclass */
         theModel = new SpotViewModel();
@@ -223,12 +222,12 @@ public class SpotPricesTable
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the sub panels */
-        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
         theSelect = new MoneyWiseSpotPricesSelect<>(myFactory, theView);
         theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, theDataPrice);
+        theError = new MoneyWiseErrorPanel<>(theView, theViewerPrice);
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();
@@ -275,7 +274,7 @@ public class SpotPricesTable
         getTable().requestFocusInWindow();
 
         /* Focus on the Data entry */
-        theDataPrice.setFocus();
+        theViewerPrice.setFocus();
     }
 
     /**

@@ -31,8 +31,7 @@ import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldEnum;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
@@ -43,6 +42,7 @@ import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
@@ -68,11 +68,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
  */
 public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
-    /**
-     * Text for DataEntry Title.
-     */
-    private static final String NLS_DATAENTRY = PrometheusUIResource.STATIC_DATAENTRY.getValue();
-
     /**
      * Text for Selection Title.
      */
@@ -101,7 +96,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     /**
      * The data control.
      */
-    private final DataControl<?, E, ?, ?> theControl;
+    private final DataControl<?, E, JComponent, Icon> theControl;
 
     /**
      * The Panel.
@@ -141,7 +136,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     /**
      * The error panel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final PrometheusErrorPanel<?, E, JComponent, Icon> theError;
 
     /**
      * The action buttons panel.
@@ -154,9 +149,9 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     private final UpdateSet<E> theUpdateSet;
 
     /**
-     * The data entry.
+     * The ViewerEntry.
      */
-    private final MetisViewerEntry theDataEntry;
+    private final MetisViewerEntry theViewerEntry;
 
     /**
      * The list of panels.
@@ -169,7 +164,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
      * @param pUtilitySet the utility set
      * @param pClass the dataType class
      */
-    public StaticDataPanel(final DataControl<?, E, ?, ?> pControl,
+    public StaticDataPanel(final DataControl<?, E, JComponent, Icon> pControl,
                            final JOceanusSwingUtilitySet pUtilitySet,
                            final Class<E> pClass) {
         /* Store control */
@@ -188,15 +183,12 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         /* Build the Update set */
         theUpdateSet = new UpdateSet<>(pControl, pClass);
 
-        /* Create the top level debug entry for this view */
-        MetisViewerManager myDataMgr = theControl.getViewerManager();
-        MetisViewerEntry mySection = theControl.getDataEntry(DataControl.DATA_MAINT);
-        theDataEntry = myDataMgr.newEntry(NLS_DATAENTRY);
-        theDataEntry.addAsChildOf(mySection);
-        theDataEntry.setObject(theUpdateSet);
+        /* Create the top level viewer entry for this view */
+        theViewerEntry = theControl.getViewerEntry(PrometheusViewerEntryId.STATIC);
+        theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Create the error panel */
-        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, theDataEntry);
+        theError = new PrometheusErrorPanel<>(pControl, theViewerEntry);
 
         /* Create the action buttons panel */
         theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
@@ -406,7 +398,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         /* Request the focus */
         StaticDataTable<?, ?, ?, E> myPanel = theTableCard.getActiveCard();
         if (myPanel != null) {
-            myPanel.determineFocus(theDataEntry);
+            myPanel.determineFocus(theViewerEntry);
         }
     }
 
@@ -485,7 +477,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         }
 
         /* Touch the updateSet */
-        theDataEntry.setObject(theUpdateSet);
+        theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Complete the task */
         myTask.end();

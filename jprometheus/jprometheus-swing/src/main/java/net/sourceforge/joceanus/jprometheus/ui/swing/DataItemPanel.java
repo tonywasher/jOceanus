@@ -114,7 +114,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * The ErrorPanel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final PrometheusErrorPanel<?, E, JComponent, Icon> theError;
 
     /**
      * The MainPanel.
@@ -167,7 +167,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     protected DataItemPanel(final TethysSwingGuiFactory pFactory,
                             final MetisFieldManager pFieldMgr,
                             final UpdateSet<E> pUpdateSet,
-                            final PrometheusErrorPanel<JComponent, Icon> pError) {
+                            final PrometheusErrorPanel<?, E, JComponent, Icon> pError) {
         /* Store parameters */
         theUpdateSet = pUpdateSet;
         theError = pError;

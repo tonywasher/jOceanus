@@ -20,34 +20,35 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads.swing;
+package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
-import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
- * LoaderThread extension to create an XML backup.
+ * Thread to create an encrypted backup of a data set.
+ * @author Tony Washer
  * @param <T> the DataSet type
- * @param <E> the Data list type
+ * @param <E> the data type enum class
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         implements MetisThread<Void, N, I> {
     /**
      * Buffer length.
@@ -60,47 +61,31 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>, N, I>
     private static final int TEN = 10;
 
     /**
-     * File indicator.
-     */
-    protected static final String SUFFIX_FILE = "XML";
-
-    /**
      * Data Control.
      */
     private final DataControl<T, E, N, I> theControl;
 
     /**
-     * Is this a Secure backup?
-     */
-    private final boolean isSecure;
-
-    /**
      * Constructor (Event Thread).
      * @param pControl data control
-     * @param pSecure is this a secure backup
      */
-    public CreateXmlFile(final DataControl<T, E, N, I> pControl,
-                         final boolean pSecure) {
-        isSecure = pSecure;
+    public PrometheusThreadCreateBackup(final DataControl<T, E, N, I> pControl) {
         theControl = pControl;
     }
 
     @Override
     public String getTaskName() {
-        return isSecure
-                        ? PrometheusThreadId.CREATEXML.toString()
-                        : PrometheusThreadId.CREATEXTRACT.toString();
+        return PrometheusThreadId.CREATEBACKUP.toString();
     }
 
     @Override
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
         MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
-        GordianHashManager mySecurity = pToolkit.getSecurityManager();
+        GordianHashManager mySecurityMgr = pToolkit.getSecurityManager();
         boolean doDelete = false;
         File myFile = null;
 
-        /* Catch Exceptions */
         try {
             /* Initialise the status window */
             myManager.initTask(getTaskName());
@@ -113,13 +98,13 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>, N, I>
             String myBackupDir = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR);
             String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX);
             Boolean doTimeStamp = myProperties.getBooleanValue(PrometheusBackupPreferenceKey.BACKUPTIME);
+            MetisWorkBookType myType = myProperties.getEnumValue(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisWorkBookType.class);
 
             /* Create the name of the file */
             StringBuilder myName = new StringBuilder(BUFFER_LEN);
             myName.append(myBackupDir);
             myName.append(File.separator);
             myName.append(myPrefix);
-            myName.append(SUFFIX_FILE);
 
             /* If we are doing time-stamps */
             if (doTimeStamp) {
@@ -140,58 +125,34 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>, N, I>
             /* Set the standard backup name */
             myFile = new File(myName.toString() + GordianZipReadFile.ZIPFILE_EXT);
 
-            /* Access the data */
-            T myOldData = theControl.getData();
-
-            /* Create a new formatter */
-            DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(myManager, mySecurity);
-
             /* Create backup */
-            boolean bContinue = isSecure
-                                         ? myFormatter.createBackup(myOldData, myFile)
-                                         : myFormatter.createExtract(myOldData, myFile);
+            PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
+            T myOldData = theControl.getData();
+            mySheet.createBackup(myManager, myOldData, myFile, myType);
 
-            /* If this is a secure backup */
-            if (isSecure) {
-                /* File created, so delete on error */
-                doDelete = true;
-                T myNewData = null;
+            /* File created, so delete on error */
+            doDelete = true;
 
-                /* Check for cancellation */
-                if (bContinue) {
-                    /* Initialise the status window */
-                    myManager.initTask("Reading Backup");
+            /* Initialise the status window */
+            myManager.initTask("Verifying Backup");
 
-                    /* Load workbook */
-                    myNewData = theControl.getNewData();
-                    bContinue = myFormatter.loadZipFile(myNewData, myFile);
-                }
+            /* Load workbook */
+            T myNewData = theControl.getNewData();
+            mySheet.loadBackup(myManager, mySecurityMgr, myNewData, myFile);
 
-                /* Check for cancellation */
-                if (bContinue) {
-                    /* Initialise the status window */
-                    myManager.initTask("Re-applying Security");
+            /* Create a difference set between the two data copies */
+            DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myManager, myOldData);
 
-                    /* Initialise the security, from the original data */
-                    myNewData.initialiseSecurity(myManager, myOldData);
-
-                    /* Initialise the status window */
-                    myManager.initTask("Verifying Backup");
-
-                    /* Create a difference set between the two data copies */
-                    DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myManager, myOldData);
-
-                    /* If the difference set is non-empty */
-                    if (!myDiff.isEmpty()) {
-                        /* Throw an exception */
-                        throw new PrometheusDataException(myDiff, "Backup is inconsistent");
-                    }
-
-                    /* OK so switch off flag */
-                    doDelete = false;
-                }
+            /* If the difference set is non-empty */
+            if (!myDiff.isEmpty()) {
+                /* Throw an exception */
+                throw new PrometheusDataException(myDiff, "Backup is inconsistent");
             }
 
+            /* OK so switch off flag */
+            doDelete = false;
+
+            /* Delete file on error */
         } finally {
             /* Delete the file */
             if ((doDelete) && (!myFile.delete())) {

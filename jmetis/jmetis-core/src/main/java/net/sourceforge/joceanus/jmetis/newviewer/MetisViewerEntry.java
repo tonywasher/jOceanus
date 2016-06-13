@@ -216,6 +216,25 @@ public class MetisViewerEntry {
     }
 
     /**
+     * Set Focus onto child of this entry.
+     * @param pName the name of the child
+     */
+    public void setFocus(final String pName) {
+        /* Loop through the children */
+        Iterator<MetisViewerEntry> myIterator = theChildList.iterator();
+        while (myIterator.hasNext()) {
+            MetisViewerEntry myEntry = myIterator.next();
+
+            /* If we match the object */
+            if (pName.equals(myEntry.getDisplayName())) {
+                /* Set the focus and return */
+                myEntry.setFocus();
+                return;
+            }
+        }
+    }
+
+    /**
      * Set the object referred to by the entry.
      * @param pObject the new object
      */

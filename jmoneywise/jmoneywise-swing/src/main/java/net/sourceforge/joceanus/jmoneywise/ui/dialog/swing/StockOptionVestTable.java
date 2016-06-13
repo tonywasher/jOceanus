@@ -44,9 +44,9 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest.StockOptionVestList;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
@@ -93,7 +93,7 @@ public class StockOptionVestTable
     /**
      * The error panel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
 
     /**
      * The panel.
@@ -140,7 +140,7 @@ public class StockOptionVestTable
     protected StockOptionVestTable(final TethysSwingGuiFactory pFactory,
                                    final MetisFieldManager pFieldMgr,
                                    final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                   final PrometheusErrorPanel<JComponent, Icon> pError) {
+                                   final MoneyWiseErrorPanel<JComponent, Icon> pError) {
         /* initialise the underlying class */
         super(pFactory);
 

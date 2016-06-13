@@ -31,16 +31,21 @@ import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgressBar;
 
 /**
- * Thread Slider Status Manager.
+ * Thread ProgressBar Status Manager.
  * @param <N> the node type
  * @param <I> the icon type
  */
-public abstract class MetisThreadSliderStatus<N, I>
+public abstract class MetisThreadProgressStatus<N, I>
         implements MetisThreadStatusManager<N> {
     /**
      * Timer duration.
      */
     protected static final int TIMER_DURATION = 5000;
+
+    /**
+     * Blank character.
+     */
+    private static final char CHAR_BLANK = ' ';
 
     /**
      * Cancel button text.
@@ -162,8 +167,8 @@ public abstract class MetisThreadSliderStatus<N, I>
      * @param pManager the Thread Manager
      * @param pFactory the GUI factory
      */
-    protected MetisThreadSliderStatus(final MetisThreadManager<N, I> pManager,
-                                      final TethysGuiFactory<N, I> pFactory) {
+    protected MetisThreadProgressStatus(final MetisThreadManager<N, I> pManager,
+                                        final TethysGuiFactory<N, I> pFactory) {
         /* Store parameters */
         theThreadManager = pManager;
         theGuiFactory = pFactory;
@@ -281,11 +286,14 @@ public abstract class MetisThreadSliderStatus<N, I>
         /* Obtain the task name */
         String myTask = getThreadManager().getTaskName();
 
-        /* Initialise the message */
-        String myText = myTask + " " + NLS_SUCCEEDED;
+        /* Build the message */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(myTask);
+        myBuilder.append(CHAR_BLANK);
+        myBuilder.append(NLS_SUCCEEDED);
 
         /* Set the text */
-        theStatusField.setText(myText);
+        theStatusField.setText(myBuilder.toString());
 
         /* Show status */
         showStatus();
@@ -296,14 +304,18 @@ public abstract class MetisThreadSliderStatus<N, I>
         /* Obtain the task name */
         String myTask = getThreadManager().getTaskName();
 
-        /* Initialise the message */
-        String myText = myTask + " " + NLS_FAILED;
-
-        /* Add the first error detail */
-        myText += " " + pException.getMessage();
+        /* Build the message */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(myTask);
+        myBuilder.append(CHAR_BLANK);
+        myBuilder.append(NLS_FAILED);
+        myBuilder.append(CHAR_BLANK);
+        myBuilder.append(pException.getClass().getSimpleName());
+        myBuilder.append(": ");
+        myBuilder.append(pException.getMessage());
 
         /* Set the text */
-        theStatusField.setText(myText);
+        theStatusField.setText(myBuilder.toString());
 
         /* Show status */
         showStatus();
@@ -314,11 +326,14 @@ public abstract class MetisThreadSliderStatus<N, I>
         /* Obtain the task name */
         String myTask = getThreadManager().getTaskName();
 
-        /* Initialise the message */
-        String myText = myTask + " " + NLS_CANCELLED;
+        /* Build the message */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(myTask);
+        myBuilder.append(CHAR_BLANK);
+        myBuilder.append(NLS_CANCELLED);
 
         /* Set the text */
-        theStatusField.setText(myText);
+        theStatusField.setText(myBuilder.toString());
 
         /* Show status */
         showStatus();

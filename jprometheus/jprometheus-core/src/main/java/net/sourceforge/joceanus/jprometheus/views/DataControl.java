@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.views;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import javax.swing.JFrame;
@@ -31,10 +31,11 @@ import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -44,6 +45,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 
 /**
  * Provides top-level control of data.
@@ -54,46 +56,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  */
 public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         implements TethysEventProvider<PrometheusDataEvent> {
-    /**
-     * Debug View Name.
-     */
-    public static final String DATA_UNDERLYING = PrometheusViewResource.DATAENTRY_UNDERLYING.getValue();
-
-    /**
-     * Underlying Data Name.
-     */
-    private static final String DATA_DATASET = PrometheusViewResource.DATAENTRY_DATASET.getValue();
-
-    /**
-     * Data Updates Name.
-     */
-    private static final String DATA_UPDATES = PrometheusViewResource.DATAENTRY_UPDATES.getValue();
-
-    /**
-     * Analysis Name.
-     */
-    public static final String DATA_ANALYSIS = PrometheusViewResource.DATAENTRY_ANALYSIS.getValue();
-
-    /**
-     * Debug Edit Name.
-     */
-    public static final String DATA_VIEWS = PrometheusViewResource.DATAENTRY_VIEWS.getValue();
-
-    /**
-     * Debug Maintenance Name.
-     */
-    public static final String DATA_MAINT = PrometheusViewResource.DATAENTRY_MAINT.getValue();
-
-    /**
-     * Error Name.
-     */
-    public static final String DATA_ERROR = PrometheusViewResource.DATAENTRY_ERROR.getValue();
-
-    /**
-     * Active Profile.
-     */
-    private static final String DATA_PROFILE = PrometheusViewResource.DATAENTRY_PROFILE.getValue();
-
     /**
      * The Event Manager.
      */
@@ -130,9 +92,9 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
     private final MetisToolkit<N, I> theToolkit;
 
     /**
-     * The Data Entry hashMap.
+     * The Viewer Entry hashMap.
      */
-    private final Map<String, MetisViewerEntry> theMap;
+    private final Map<PrometheusViewerEntryId, MetisViewerEntry> theViewerMap;
 
     /**
      * Constructor for default control.
@@ -146,14 +108,12 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
         theUtilitySet = pUtilitySet;
         theToolkit = pUtilitySet.getToolkit();
 
-        /* Create the Debug Map */
-        theMap = new HashMap<>();
+        /* Create the Viewer Map and initialise it */
+        theViewerMap = new EnumMap<>(PrometheusViewerEntryId.class);
+        initViewerMap();
 
         /* Create event manager */
         theEventManager = new TethysEventManager<>();
-
-        /* initialise the data manager */
-        initDataMgr();
 
         /* Create the error list */
         theErrors = new DataErrorList<>();
@@ -179,8 +139,8 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
         theData = pData;
 
         /* Update the Data entry */
-        MetisViewerEntry myData = getDataEntry(DATA_DATASET);
-        myData.setObject(pData);
+        MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.DATASET);
+        myData.setTreeObject(pData);
 
         /* Analyse the data */
         analyseData(false);
@@ -215,8 +175,8 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
         theUpdates = theData.deriveUpdateSet();
 
         /* Update the Data entry */
-        MetisViewerEntry myData = getDataEntry(DATA_UPDATES);
-        myData.setObject(theUpdates);
+        MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.UPDATES);
+        myData.setTreeObject(theUpdates);
     }
 
     /**
@@ -279,15 +239,15 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * @return the DataFormatter
      */
     public MetisDataFormatter getDataFormatter() {
-        return theUtilitySet.getDataFormatter();
+        return theToolkit.getFormatter();
     }
 
     /**
-     * Obtain SecureManager.
-     * @return the SecureManager
+     * Obtain SecurityManager.
+     * @return the SecurityManager
      */
-    public GordianHashManager getSecureManager() {
-        return theUtilitySet.getSecureManager();
+    public GordianHashManager getSecurityManager() {
+        return theToolkit.getSecurityManager();
     }
 
     /**
@@ -295,7 +255,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * @return the PreferenceManager
      */
     public MetisPreferenceManager getPreferenceManager() {
-        return theUtilitySet.getPreferenceManager();
+        return theToolkit.getPreferenceManager();
     }
 
     /**
@@ -303,55 +263,54 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * @return the ViewerManager
      */
     public MetisViewerManager getViewerManager() {
-        return theUtilitySet.getViewerManager();
+        return theToolkit.getViewerManager();
     }
 
     /**
-     * Initialise Data Manager.
+     * Obtain GuiFactory.
+     * @return the GuiFactory
      */
-    private void initDataMgr() {
-        /* Create Debug Entries */
-        MetisViewerEntry myUnderlying = getDataEntry(DATA_UNDERLYING);
-        MetisViewerEntry myData = getDataEntry(DATA_DATASET);
-        MetisViewerEntry myAnalysis = getDataEntry(DATA_ANALYSIS);
-        MetisViewerEntry myUpdates = getDataEntry(DATA_UPDATES);
-        MetisViewerEntry myViews = getDataEntry(DATA_VIEWS);
-        MetisViewerEntry myMaint = getDataEntry(DATA_MAINT);
-        MetisViewerEntry myError = getDataEntry(DATA_ERROR);
-        MetisViewerEntry myProfile = getDataEntry(DATA_PROFILE);
+    public TethysGuiFactory<N, I> getGuiFactory() {
+        return theToolkit.getGuiFactory();
+    }
 
-        /* Create the structure */
-        myProfile.addAsRootChild();
-        myUnderlying.addAsRootChild();
-        myViews.addAsRootChild();
-        myError.addAsRootChild();
-        myData.addAsChildOf(myUnderlying);
-        myAnalysis.addAsChildOf(myUnderlying);
-        myUpdates.addAsChildOf(myUnderlying);
-        myMaint.addAsChildOf(myViews);
+    /**
+     * Initialise ViewerMap.
+     */
+    private void initViewerMap() {
+        /* Access the viewer manager */
+        MetisViewerManager myViewer = getViewerManager();
 
-        /* Hide the Error Entry */
-        myError.hideEntry();
+        /* Access standard entries */
+        theViewerMap.put(PrometheusViewerEntryId.ERROR, myViewer.getStandardEntry(MetisViewerStandardEntry.ERROR));
+        theViewerMap.put(PrometheusViewerEntryId.PROFILE, myViewer.getStandardEntry(MetisViewerStandardEntry.PROFILE));
+        theViewerMap.put(PrometheusViewerEntryId.DATA, myViewer.getStandardEntry(MetisViewerStandardEntry.DATA));
+        theViewerMap.put(PrometheusViewerEntryId.VIEW, myViewer.getStandardEntry(MetisViewerStandardEntry.VIEW));
+
+        /* Create Data entries */
+        MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.DATA);
+        theViewerMap.put(PrometheusViewerEntryId.DATASET, myViewer.newEntry(myData, PrometheusViewerEntryId.DATASET.toString()));
+        theViewerMap.put(PrometheusViewerEntryId.UPDATES, myViewer.newEntry(myData, PrometheusViewerEntryId.UPDATES.toString()));
+        theViewerMap.put(PrometheusViewerEntryId.ANALYSIS, myViewer.newEntry(myData, PrometheusViewerEntryId.ANALYSIS.toString()));
+
+        /* Create View entries */
+        MetisViewerEntry myView = getViewerEntry(PrometheusViewerEntryId.VIEW);
+        MetisViewerEntry myMaint = myViewer.newEntry(myView, PrometheusViewerEntryId.MAINTENANCE.toString());
+        theViewerMap.put(PrometheusViewerEntryId.MAINTENANCE, myMaint);
+        theViewerMap.put(PrometheusViewerEntryId.STATIC, myViewer.newEntry(myMaint, PrometheusViewerEntryId.STATIC.toString()));
+
+        /* Hide the error entry */
+        MetisViewerEntry myError = theViewerMap.get(PrometheusViewerEntryId.ERROR);
+        myError.setVisible(myError.getObject() != null);
     }
 
     /**
      * Get viewer Entry.
-     * @param pName the Name of the entry
-     * @return the Debug Entry
+     * @param pId the id of the entry
+     * @return the Viewer Entry
      */
-    public final MetisViewerEntry getDataEntry(final String pName) {
-        /* Access any existing entry */
-        MetisViewerEntry myEntry = theMap.get(pName);
-
-        /* If the entry does not exist */
-        if (myEntry == null) {
-            /* Build the entry and add to the map */
-            myEntry = getViewerManager().newEntry(pName);
-            theMap.put(pName, myEntry);
-        }
-
-        /* Return the entry */
-        return myEntry;
+    public final MetisViewerEntry getViewerEntry(final PrometheusViewerEntryId pId) {
+        return theViewerMap.get(pId);
     }
 
     /**

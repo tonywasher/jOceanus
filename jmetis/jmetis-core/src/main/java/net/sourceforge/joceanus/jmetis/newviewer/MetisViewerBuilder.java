@@ -118,24 +118,29 @@ public class MetisViewerBuilder {
     private static final String ATTR_HREF = "href";
 
     /**
+     * Name of table class.
+     */
+    private static final String CLASS_VIEWER = "-metis-viewer";
+
+    /**
      * Name of odd table row class.
      */
-    private static final String CLASS_ODDROW = "oddrow";
+    private static final String CLASS_ODDROW = "-metis-oddrow";
 
     /**
      * Name of even table row class.
      */
-    private static final String CLASS_EVENROW = "evenrow";
+    private static final String CLASS_EVENROW = "-metis-evenrow";
 
     /**
      * Name of changed cell class.
      */
-    private static final String CLASS_CHANGED = "changed";
+    private static final String CLASS_CHANGED = "-metis-changed";
 
     /**
      * Name of security changed cell class.
      */
-    private static final String CLASS_SECCHANGED = "security";
+    private static final String CLASS_SECCHANGED = "-metis-security";
 
     /**
      * The data formatter.
@@ -279,6 +284,7 @@ public class MetisViewerBuilder {
     protected void newTable() {
         /* Create the table */
         Element myTable = theDocument.createElement(ELEMENT_TABLE);
+        myTable.setAttribute(ATTR_CLASS, CLASS_VIEWER);
         theBody.appendChild(myTable);
         Element myHead = theDocument.createElement(ELEMENT_THEAD);
         myTable.appendChild(myHead);

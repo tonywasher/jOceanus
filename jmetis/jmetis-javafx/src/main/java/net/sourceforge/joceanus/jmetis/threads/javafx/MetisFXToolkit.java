@@ -103,7 +103,7 @@ public class MetisFXToolkit
     }
 
     @Override
-    protected MetisFXThreadSliderStatus newThreadSliderStatus(final MetisThreadManager<Node, Node> pManager) {
-        return new MetisFXThreadSliderStatus(pManager, getGuiFactory());
+    protected MetisFXThreadProgressStatus newThreadSliderStatus(final MetisThreadManager<Node, Node> pManager) {
+        return new MetisFXThreadProgressStatus(pManager, getGuiFactory());
     }
 }

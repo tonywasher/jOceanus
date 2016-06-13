@@ -61,8 +61,8 @@ public class MetisFXThreadManager
     }
 
     @Override
-    public MetisFXThreadSliderStatus getStatusManager() {
-        return (MetisFXThreadSliderStatus) super.getStatusManager();
+    public MetisFXThreadProgressStatus getStatusManager() {
+        return (MetisFXThreadProgressStatus) super.getStatusManager();
     }
 
     @Override

@@ -26,13 +26,15 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
-import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
@@ -41,14 +43,14 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 public class JOceanusSwingUtilitySet
         extends JOceanusUtilitySet<JComponent, Icon> {
     /**
-     * Viewer Manager.
-     */
-    private final MetisSwingViewerManager theViewerManager;
-
-    /**
      * Field Manager.
      */
     private final MetisFieldManager theFieldManager;
+
+    /**
+     * Colour Preferences.
+     */
+    private final MetisColorPreferences theColorPreferences;
 
     /**
      * Constructor.
@@ -59,28 +61,26 @@ public class JOceanusSwingUtilitySet
         /* Create Toolkit */
         super(new MetisSwingToolkit(pProfile));
 
-        /* Allocate the FieldManager */
-        theFieldManager = new MetisFieldManager(new MetisFieldConfig(getColorPreferences()));
+        /* Access the Colour Preferences */
+        theColorPreferences = getPreferenceManager().getPreferenceSet(MetisColorPreferences.class);
 
-        /* Create components */
-        theViewerManager = new MetisSwingViewerManager(theFieldManager);
+        /* Allocate the FieldManager */
+        theFieldManager = new MetisFieldManager(new MetisFieldConfig(theColorPreferences));
 
         /* Process the colour preferences */
         processColorPreferences();
+
+        /* Create listener */
+        TethysEventRegistrar<MetisPreferenceEvent> myRegistrar = theColorPreferences.getEventRegistrar();
+        myRegistrar.addEventListener(e -> processColorPreferences());
     }
 
-    @Override
-    protected void processColorPreferences() {
-        /* Call underlying class */
-        super.processColorPreferences();
-
+    /**
+     * Process colour preferences.
+     */
+    private void processColorPreferences() {
         /* Update the field manager */
-        theFieldManager.setConfig(new MetisFieldConfig(getColorPreferences()));
-    }
-
-    @Override
-    public MetisSwingViewerManager getViewerManager() {
-        return theViewerManager;
+        theFieldManager.setConfig(new MetisFieldConfig(theColorPreferences));
     }
 
     @Override
@@ -91,6 +91,11 @@ public class JOceanusSwingUtilitySet
     @Override
     public MetisSwingThreadManager getThreadManager() {
         return (MetisSwingThreadManager) super.getThreadManager();
+    }
+
+    @Override
+    public MetisSwingToolkit getToolkit() {
+        return (MetisSwingToolkit) super.getToolkit();
     }
 
     /**

@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.Ico
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -95,7 +95,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * The Data view.
      */
-    private final DataControl<?, E, ?, ?> theControl;
+    private final DataControl<?, E, JComponent, Icon> theControl;
 
     /**
      * The field manager.
@@ -155,7 +155,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     /**
      * The Error panel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final PrometheusErrorPanel<?, E, JComponent, Icon> theError;
 
     /**
      * Constructor.
@@ -166,10 +166,10 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      * @param pItemType the item type
      * @param pListClass the list class
      */
-    public StaticDataTable(final DataControl<?, E, ?, ?> pControl,
+    public StaticDataTable(final DataControl<?, E, JComponent, Icon> pControl,
                            final UpdateSet<E> pUpdateSet,
                            final JOceanusSwingUtilitySet pUtilitySet,
-                           final PrometheusErrorPanel<JComponent, Icon> pError,
+                           final PrometheusErrorPanel<?, E, JComponent, Icon> pError,
                            final E pItemType,
                            final Class<L> pListClass) {
         /* initialise the underlying class */

@@ -26,8 +26,8 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
@@ -38,13 +38,13 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
@@ -164,12 +164,12 @@ public class AccountPanel
     /**
      * The data entry.
      */
-    private final MetisViewerEntry theDataEntry;
+    private final MetisViewerEntry theViewerEntry;
 
     /**
      * The error panel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
 
     /**
      * The action buttons panel.
@@ -196,6 +196,7 @@ public class AccountPanel
 
         /* Access GUI Factory */
         TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        MetisViewerManager myViewer = pView.getViewerManager();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -206,15 +207,13 @@ public class AccountPanel
         /* Create the Panel */
         thePanel = myFactory.newBorderPane();
 
-        /* Create the top level debug entry for this view */
-        MetisViewerManager myDataMgr = pView.getViewerManager();
-        MetisViewerEntry mySection = pView.getDataEntry(DataControl.DATA_MAINT);
-        theDataEntry = myDataMgr.newEntry(NLS_DATAENTRY);
-        theDataEntry.addAsChildOf(mySection);
-        theDataEntry.setObject(theUpdateSet);
+        /* Create the top level viewer entry for this view */
+        MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.MAINTENANCE);
+        theViewerEntry = myViewer.newEntry(mySection, NLS_DATAENTRY);
+        theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Create the error panel */
-        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, theDataEntry);
+        theError = new MoneyWiseErrorPanel<>(theView, theViewerEntry);
 
         /* Create the action buttons panel */
         theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
@@ -405,7 +404,7 @@ public class AccountPanel
         setVisibility();
 
         /* Touch the updateSet */
-        theDataEntry.setObject(theUpdateSet);
+        theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Complete the task */
         myTask.end();
@@ -418,25 +417,25 @@ public class AccountPanel
         /* Switch on active component */
         switch (theActive) {
             case DEPOSITS:
-                theDepositTable.determineFocus(theDataEntry);
+                theDepositTable.determineFocus(theViewerEntry);
                 break;
             case CASH:
-                theCashTable.determineFocus(theDataEntry);
+                theCashTable.determineFocus(theViewerEntry);
                 break;
             case LOANS:
-                theLoanTable.determineFocus(theDataEntry);
+                theLoanTable.determineFocus(theViewerEntry);
                 break;
             case PORTFOLIOS:
-                thePortfolioTable.determineFocus(theDataEntry);
+                thePortfolioTable.determineFocus(theViewerEntry);
                 break;
             case SECURITIES:
-                theSecurityTable.determineFocus(theDataEntry);
+                theSecurityTable.determineFocus(theViewerEntry);
                 break;
             case PAYEES:
-                thePayeeTable.determineFocus(theDataEntry);
+                thePayeeTable.determineFocus(theViewerEntry);
                 break;
             case OPTIONS:
-                theOptionTable.determineFocus(theDataEntry);
+                theOptionTable.determineFocus(theViewerEntry);
                 break;
             default:
                 break;

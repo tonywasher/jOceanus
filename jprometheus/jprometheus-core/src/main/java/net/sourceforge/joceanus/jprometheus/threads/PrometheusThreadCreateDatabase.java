@@ -20,29 +20,29 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads.swing;
+package net.sourceforge.joceanus.jprometheus.threads;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Thread to store changes in the DataSet to a database.
+ * Thread to create tables in a database to represent a data set. Existing tables will be dropped
+ * and redefined. Existing loaded data will be marked as new so that it will be written to the
+ * database via the store command.
  * @param <T> the DataSet type
  * @param <E> the data type enum class
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class StoreDatabase<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+public class PrometheusThreadCreateDatabase<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         implements MetisThread<Void, N, I> {
     /**
-     * Data control.
+     * Data Control.
      */
     private final DataControl<T, E, N, I> theControl;
 
@@ -50,13 +50,13 @@ public class StoreDatabase<T extends DataSet<T, E>, E extends Enum<E>, N, I>
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public StoreDatabase(final DataControl<T, E, N, I> pControl) {
+    public PrometheusThreadCreateDatabase(final DataControl<T, E, N, I> pControl) {
         theControl = pControl;
     }
 
     @Override
     public String getTaskName() {
-        return PrometheusThreadId.STOREDB.toString();
+        return PrometheusThreadId.CREATEDB.toString();
     }
 
     @Override
@@ -67,38 +67,23 @@ public class StoreDatabase<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         /* Initialise the status window */
         myManager.initTask(getTaskName());
 
-        /* Create interface */
+        /* Access Database */
         PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {
-            /* Store database */
-            myDatabase.updateDatabase(myManager, theControl.getUpdates());
+            /* Create database */
+            myDatabase.createTables(myManager);
 
-            /* Initialise the status window */
-            myManager.initTask("Verifying Store");
-
-            /* Load database */
-            T myStore = theControl.getNewData();
-            myDatabase.loadDatabase(myManager, myStore);
-
-            /* Create a difference set between the two data copies */
+            /* Re-base this set on a null set */
+            T myNull = theControl.getNewData();
             T myData = theControl.getData();
-            DataSet<T, ?> myDiff = myData.getDifferenceSet(myManager, myStore);
+            myData.reBase(myManager, myNull);
 
-            /* If the difference set is non-empty */
-            if (!myDiff.isEmpty()) {
-                /* Throw an exception */
-                throw new PrometheusDataException(myDiff, "DataStore is inconsistent");
-            }
-
-            /* DataSet version is now zero */
-            myData.setVersion(0);
-
-            /* Derive new update list */
+            /* Derive the new set of updates */
             theControl.deriveUpdates();
 
-            /* Return null */
+            /* Return null value */
             return null;
 
             /* Make sure that the database is closed */

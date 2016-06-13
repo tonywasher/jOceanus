@@ -43,8 +43,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -52,14 +52,14 @@ import net.sourceforge.joceanus.jmoneywise.reports.ReportBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jmoneywise.reports.swing.SwingReportManager;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseReportSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
@@ -129,7 +129,7 @@ public class ReportTab
     /**
      * The Error Panel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
 
     /**
      * The Report Manager.
@@ -151,7 +151,7 @@ public class ReportTab
         theView = pView;
 
         /* Access GUI Factory */
-        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
         theId = myFactory.getNextId();
 
         /* Create the event manager */
@@ -162,12 +162,10 @@ public class ReportTab
 
         /* Create the top level debug entry for this view */
         MetisViewerManager myDataMgr = theView.getViewerManager();
-        MetisViewerEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        MetisViewerEntry myDataReport = myDataMgr.newEntry(NLS_DATAENTRY);
-        myDataReport.addAsChildOf(mySection);
-        theSpotEntry = myDataMgr.newEntry(DataControl.DATA_ANALYSIS);
-        theSpotEntry.addAsChildOf(myDataReport);
-        theSpotEntry.hideEntry();
+        MetisViewerEntry mySection = theView.getViewerEntry(PrometheusViewerEntryId.VIEW);
+        MetisViewerEntry myReport = myDataMgr.newEntry(mySection, NLS_DATAENTRY);
+        theSpotEntry = myDataMgr.newEntry(myReport, PrometheusViewerEntryId.ANALYSIS.toString());
+        theSpotEntry.setVisible(false);
 
         /* Create the editor pane as non-editable */
         theEditor = new JEditorPane();
@@ -187,7 +185,7 @@ public class ReportTab
         theSelect = new MoneyWiseReportSelect<>(myFactory);
 
         /* Create the error panel for this view */
-        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, myDataReport);
+        theError = new MoneyWiseErrorPanel<>(theView, myReport);
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();
@@ -249,7 +247,7 @@ public class ReportTab
         /* Protect against exceptions */
         try {
             /* Hide the instant debug since it is now invalid */
-            theSpotEntry.hideEntry();
+            theSpotEntry.setVisible(false);
 
             /* Refresh the data */
             theSelect.setRange(theView.getRange());
@@ -329,7 +327,7 @@ public class ReportTab
 
         /* Declare to debugger */
         theSpotEntry.setObject(myAnalysis);
-        theSpotEntry.showEntry();
+        theSpotEntry.setVisible(true);
 
         /* Declare the document */
         theManager.setDocument(myDoc);

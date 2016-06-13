@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMetis: Java Data Framework
+ * jMoneyWise: Finance Application
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,8 +20,28 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-/**
- * Class to provide a Data window allowing a user to walk the various data chains.
- */
-package net.sourceforge.joceanus.jmetis.viewer.swing;
+package net.sourceforge.joceanus.jmoneywise.ui;
 
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
+
+/**
+ * Error panel.
+ * @param <N> the node type
+ * @param <I> the icon type
+ */
+public class MoneyWiseErrorPanel<N, I>
+        extends PrometheusErrorPanel<MoneyWiseData, MoneyWiseDataType, N, I> {
+    /**
+     * Constructor.
+     * @param pView the view
+     * @param pParent the parent data entry
+     */
+    public MoneyWiseErrorPanel(final View<N, I> pView,
+                               final MetisViewerEntry pParent) {
+        super(pView, pParent);
+    }
+}

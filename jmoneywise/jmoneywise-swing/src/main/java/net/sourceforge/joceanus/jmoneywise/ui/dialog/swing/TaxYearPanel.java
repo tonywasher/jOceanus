@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
@@ -104,7 +104,7 @@ public class TaxYearPanel
     public TaxYearPanel(final TethysSwingGuiFactory pFactory,
                         final MetisFieldManager pFieldMgr,
                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                        final PrometheusErrorPanel<JComponent, Icon> pError) {
+                        final MoneyWiseErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 

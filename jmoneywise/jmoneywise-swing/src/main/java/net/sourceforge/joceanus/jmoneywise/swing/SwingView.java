@@ -27,10 +27,10 @@ import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerManager;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Extension of view to cast utilities properly.
@@ -51,16 +51,19 @@ public class SwingView
         return (JOceanusSwingUtilitySet) super.getUtilitySet();
     }
 
-    @Override
-    public MetisSwingViewerManager getViewerManager() {
-        return (MetisSwingViewerManager) super.getViewerManager();
-    }
-
     /**
      * Obtain the field manager.
      * @return the field manager
      */
     public MetisFieldManager getFieldManager() {
         return getUtilitySet().getFieldManager();
+    }
+
+    /**
+     * Obtain the GUI factory.
+     * @return the GuiFactory
+     */
+    public TethysSwingGuiFactory getGuiFactory() {
+        return (TethysSwingGuiFactory) super.getGuiFactory();
     }
 }

@@ -22,6 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.views;
 
+import java.util.EnumMap;
+import java.util.Map;
+
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerResource;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -31,49 +35,39 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
  */
 public enum PrometheusViewResource implements TethysResourceId {
     /**
-     * DataEntry Underlying Data.
+     * ViewerEntry DataSet.
      */
-    DATAENTRY_UNDERLYING("DataEntry.Underlying"),
+    VIEWERENTRY_DATASET("ViewerEntry.DataSet"),
 
     /**
-     * DataEntry DataSet.
+     * ViewerEntry Updates.
      */
-    DATAENTRY_DATASET("DataEntry.DataSet"),
+    VIEWERENTRY_UPDATES("ViewerEntry.Updates"),
 
     /**
-     * DataEntry Updates.
+     * ViewerEntry Analysis.
      */
-    DATAENTRY_UPDATES("DataEntry.Updates"),
+    VIEWERENTRY_ANALYSIS("ViewerEntry.Analysis"),
 
     /**
-     * DataEntry Analysis.
+     * ViewerEntry Maintenance.
      */
-    DATAENTRY_ANALYSIS("DataEntry.Analysis"),
+    VIEWERENTRY_MAINT("ViewerEntry.Maint"),
 
     /**
-     * DataEntry DataViews.
+     * ViewerEntry StaticData.
      */
-    DATAENTRY_VIEWS("DataEntry.DataViews"),
-
-    /**
-     * DataEntry Maintenance.
-     */
-    DATAENTRY_MAINT("DataEntry.Maint"),
-
-    /**
-     * DataEntry Error.
-     */
-    DATAENTRY_ERROR("DataEntry.Error"),
-
-    /**
-     * DataEntry Profile.
-     */
-    DATAENTRY_PROFILE("DataEntry.Profile"),
+    VIEWERENTRY_STATIC("ViewerEntry.Static"),
 
     /**
      * UpdateSet Name.
      */
     UPDATESET_NAME("UpdateSet.Name");
+
+    /**
+     * The Entry Map.
+     */
+    private static final Map<PrometheusViewerEntryId, TethysResourceId> ENTRY_MAP = buildEntryMap();
 
     /**
      * The Resource Builder.
@@ -118,5 +112,33 @@ public enum PrometheusViewResource implements TethysResourceId {
 
         /* return the value */
         return theValue;
+    }
+
+    /**
+     * Build entry map.
+     * @return the map
+     */
+    private static Map<PrometheusViewerEntryId, TethysResourceId> buildEntryMap() {
+        /* Create the map and return it */
+        Map<PrometheusViewerEntryId, TethysResourceId> myMap = new EnumMap<>(PrometheusViewerEntryId.class);
+        myMap.put(PrometheusViewerEntryId.ERROR, MetisViewerResource.VIEWER_ENTRY_ERROR);
+        myMap.put(PrometheusViewerEntryId.PROFILE, MetisViewerResource.VIEWER_ENTRY_PROFILE);
+        myMap.put(PrometheusViewerEntryId.DATA, MetisViewerResource.VIEWER_ENTRY_DATA);
+        myMap.put(PrometheusViewerEntryId.VIEW, MetisViewerResource.VIEWER_ENTRY_VIEW);
+        myMap.put(PrometheusViewerEntryId.DATASET, VIEWERENTRY_DATASET);
+        myMap.put(PrometheusViewerEntryId.UPDATES, VIEWERENTRY_UPDATES);
+        myMap.put(PrometheusViewerEntryId.ANALYSIS, VIEWERENTRY_ANALYSIS);
+        myMap.put(PrometheusViewerEntryId.MAINTENANCE, VIEWERENTRY_MAINT);
+        myMap.put(PrometheusViewerEntryId.STATIC, VIEWERENTRY_STATIC);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for stdEntry.
+     * @param pEntry the entry
+     * @return the resource key
+     */
+    protected static TethysResourceId getKeyForViewerEntry(final PrometheusViewerEntryId pEntry) {
+        return TethysResourceBuilder.getKeyForEnum(ENTRY_MAP, pEntry);
     }
 }

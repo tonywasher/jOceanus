@@ -223,7 +223,7 @@ public class MetisViewerControl<N, I>
 
         /* Set the active mode */
         MetisViewerMode myMode = pPage.getMode();
-        boolean isList = !MetisViewerMode.SUMMARY.equals(myMode);
+        boolean isList = !MetisViewerMode.CONTENTS.equals(myMode);
 
         /* Set the Mode Button */
         theModeButton.setValue(myMode);

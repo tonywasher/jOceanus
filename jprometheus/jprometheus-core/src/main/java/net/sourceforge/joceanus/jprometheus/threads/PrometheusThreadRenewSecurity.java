@@ -20,28 +20,30 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads.swing;
+package net.sourceforge.joceanus.jprometheus.threads;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Thread to load data from the database.
+ * Thread to renew security in the data set. A new ControlKey will be created using the same
+ * password as the existing security, together with a new set of encryption DataKeys. All encrypted
+ * fields in the data set will then be re-encrypted with the new ControlKey, and finally the
+ * ControlData will be updated to use the new controlKey. Data will be left in the Updated state
+ * ready for committing the change to the database.
  * @param <T> the DataSet type
  * @param <E> the data type enum class
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class LoadDatabase<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+public class PrometheusThreadRenewSecurity<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         implements MetisThread<T, N, I> {
     /**
-     * Data control.
+     * Data Control.
      */
     private final DataControl<T, E, N, I> theControl;
 
@@ -49,13 +51,13 @@ public class LoadDatabase<T extends DataSet<T, E>, E extends Enum<E>, N, I>
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public LoadDatabase(final DataControl<T, E, N, I> pControl) {
+    public PrometheusThreadRenewSecurity(final DataControl<T, E, N, I> pControl) {
         theControl = pControl;
     }
 
     @Override
     public String getTaskName() {
-        return PrometheusThreadId.LOADDB.toString();
+        return PrometheusThreadId.RENEWSECURITY.toString();
     }
 
     @Override
@@ -66,26 +68,15 @@ public class LoadDatabase<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         /* Initialise the status window */
         myManager.initTask(getTaskName());
 
-        /* Access database */
-        PrometheusDataStore<T> myDatabase = theControl.getDatabase();
+        /* Access Data */
+        T myData = theControl.getData();
+        myData = myData.deriveCloneSet();
 
-        /* Protect against failures */
-        try {
-            /* Load database */
-            T myData = theControl.getNewData();
-            myDatabase.loadDatabase(myManager, myData);
+        /* ReNew Security */
+        myData.renewSecurity(myManager);
 
-            /* Check security on the database */
-            myData.checkSecurity(myManager);
-
-            /* Return the loaded data */
-            return myData;
-
-            /* Make sure that the database is closed */
-        } finally {
-            /* Close the database */
-            myDatabase.close();
-        }
+        /* Return null */
+        return myData;
     }
 
     @Override

@@ -20,31 +20,27 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads.swing;
+package net.sourceforge.joceanus.jprometheus.threads;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Thread to change the password. The user will be prompted for a new password and this will be used
- * to create a new Password Hash. The controlKey will be updated with this Hash and the encryption
- * DataKeys will be updated with their new wrapped format. Since the DataKeys do not themselves
- * change there is no need to re-encrypt and data fields. Data will be left in the Updated state
- * ready for committing the change to the database.
+ * Thread to load data from the database.
  * @param <T> the DataSet type
  * @param <E> the data type enum class
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class UpdatePassword<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+public class PrometheusThreadLoadDatabase<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         implements MetisThread<T, N, I> {
     /**
-     * Data Control.
+     * Data control.
      */
     private final DataControl<T, E, N, I> theControl;
 
@@ -52,13 +48,13 @@ public class UpdatePassword<T extends DataSet<T, E>, E extends Enum<E>, N, I>
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public UpdatePassword(final DataControl<T, E, N, I> pControl) {
+    public PrometheusThreadLoadDatabase(final DataControl<T, E, N, I> pControl) {
         theControl = pControl;
     }
 
     @Override
     public String getTaskName() {
-        return PrometheusThreadId.CHANGEPASS.toString();
+        return PrometheusThreadId.LOADDB.toString();
     }
 
     @Override
@@ -69,15 +65,26 @@ public class UpdatePassword<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         /* Initialise the status window */
         myManager.initTask(getTaskName());
 
-        /* Access Data */
-        T myData = theControl.getData();
-        myData = myData.deriveCloneSet();
+        /* Access database */
+        PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 
-        /* Update password */
-        myData.updatePasswordHash(myManager, "Database");
+        /* Protect against failures */
+        try {
+            /* Load database */
+            T myData = theControl.getNewData();
+            myDatabase.loadDatabase(myManager, myData);
 
-        /* Return data */
-        return myData;
+            /* Check security on the database */
+            myData.checkSecurity(myManager);
+
+            /* Return the loaded data */
+            return myData;
+
+            /* Make sure that the database is closed */
+        } finally {
+            /* Close the database */
+            myDatabase.close();
+        }
     }
 
     @Override

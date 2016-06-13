@@ -20,29 +20,26 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads.swing;
+package net.sourceforge.joceanus.jprometheus.threads;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Thread to renew security in the data set. A new ControlKey will be created using the same
- * password as the existing security, together with a new set of encryption DataKeys. All encrypted
- * fields in the data set will then be re-encrypted with the new ControlKey, and finally the
- * ControlData will be updated to use the new controlKey. Data will be left in the Updated state
- * ready for committing the change to the database.
+ * Thread to purge tables in a database that represent a data set. Existing loaded data will be
+ * marked as new so that it will be written to the database via the store command.
  * @param <T> the DataSet type
  * @param <E> the data type enum class
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class RenewSecurity<T extends DataSet<T, E>, E extends Enum<E>, N, I>
-        implements MetisThread<T, N, I> {
+public class PrometheusThreadPurgeDatabase<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+        implements MetisThread<Void, N, I> {
     /**
      * Data Control.
      */
@@ -52,36 +49,46 @@ public class RenewSecurity<T extends DataSet<T, E>, E extends Enum<E>, N, I>
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public RenewSecurity(final DataControl<T, E, N, I> pControl) {
+    public PrometheusThreadPurgeDatabase(final DataControl<T, E, N, I> pControl) {
         theControl = pControl;
     }
 
     @Override
     public String getTaskName() {
-        return PrometheusThreadId.RENEWSECURITY.toString();
+        return PrometheusThreadId.PURGEDB.toString();
     }
 
     @Override
-    public T performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
         MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());
 
-        /* Access Data */
-        T myData = theControl.getData();
-        myData = myData.deriveCloneSet();
+        /* Create interface */
+        PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 
-        /* ReNew Security */
-        myData.renewSecurity(myManager);
+        /* Protect against failures */
+        try {
+            /* Purge database */
+            myDatabase.purgeTables(myManager);
 
-        /* Return null */
-        return myData;
-    }
+            /* Re-base this set on a null set */
+            T myNull = theControl.getNewData();
+            T myData = theControl.getData();
+            myData.reBase(myManager, myNull);
 
-    @Override
-    public void processResult(final T pResult) {
-        theControl.setData(pResult);
+            /* Derive the new set of updates */
+            theControl.deriveUpdates();
+
+            /* Return null */
+            return null;
+
+            /* Make sure that the database is closed */
+        } finally {
+            /* Close the database */
+            myDatabase.close();
+        }
     }
 }

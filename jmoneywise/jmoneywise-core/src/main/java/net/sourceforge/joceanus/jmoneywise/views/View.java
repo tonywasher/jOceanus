@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.views;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
@@ -227,8 +228,8 @@ public class View<N, I>
             hasActiveSecurities = theAnalysisMgr.haveActiveSecurities();
 
             /* Update the Data entry */
-            MetisViewerEntry myData = getDataEntry(DATA_ANALYSIS);
-            myData.setObject(theAnalysisMgr);
+            MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.ANALYSIS);
+            myData.setTreeObject(theAnalysisMgr);
 
             /* Access the dilutions */
             theDilutions = myAnalyser.getDilutions();

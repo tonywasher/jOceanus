@@ -26,8 +26,8 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
@@ -35,13 +35,13 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIEvent;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
@@ -154,9 +154,9 @@ public class CategoryPanel
     private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
-     * The data entry.
+     * The viewer entry.
      */
-    private final MetisViewerEntry theDataEntry;
+    private final MetisViewerEntry theViewerEntry;
 
     /**
      * The action buttons panel.
@@ -166,7 +166,7 @@ public class CategoryPanel
     /**
      * The error panel.
      */
-    private final PrometheusErrorPanel<JComponent, Icon> theError;
+    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
 
     /**
      * Are we refreshing?
@@ -186,8 +186,9 @@ public class CategoryPanel
         /* Store details */
         theView = pView;
 
-        /* Access Gui Factory */
-        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        /* Access GUI Factory */
+        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        MetisViewerManager myViewer = pView.getViewerManager();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -198,15 +199,13 @@ public class CategoryPanel
         /* Create the Panel */
         thePanel = myFactory.newBorderPane();
 
-        /* Create the top level debug entry for this view */
-        MetisViewerManager myDataMgr = pView.getViewerManager();
-        MetisViewerEntry mySection = pView.getDataEntry(DataControl.DATA_MAINT);
-        theDataEntry = myDataMgr.newEntry(NLS_DATAENTRY);
-        theDataEntry.addAsChildOf(mySection);
-        theDataEntry.setObject(theUpdateSet);
+        /* Create the top level viewer entry for this view */
+        MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.MAINTENANCE);
+        theViewerEntry = myViewer.newEntry(mySection, NLS_DATAENTRY);
+        theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Create the error panel */
-        theError = new PrometheusErrorPanel<>(myFactory, myDataMgr, theDataEntry);
+        theError = new MoneyWiseErrorPanel<>(pView, theViewerEntry);
 
         /* Create the action buttons panel */
         theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
@@ -357,7 +356,7 @@ public class CategoryPanel
         setVisibility();
 
         /* Touch the updateSet */
-        theDataEntry.setObject(theUpdateSet);
+        theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Complete the task */
         myTask.end();
@@ -370,19 +369,19 @@ public class CategoryPanel
         /* Switch on active component */
         switch (theActive) {
             case DEPOSITS:
-                theDepositTable.determineFocus(theDataEntry);
+                theDepositTable.determineFocus(theViewerEntry);
                 break;
             case CASH:
-                theCashTable.determineFocus(theDataEntry);
+                theCashTable.determineFocus(theViewerEntry);
                 break;
             case LOANS:
-                theLoanTable.determineFocus(theDataEntry);
+                theLoanTable.determineFocus(theViewerEntry);
                 break;
             case EVENTS:
-                theEventTable.determineFocus(theDataEntry);
+                theEventTable.determineFocus(theViewerEntry);
                 break;
             case EVENTTAGS:
-                theTagTable.determineFocus(theDataEntry);
+                theTagTable.determineFocus(theViewerEntry);
                 break;
             default:
                 break;

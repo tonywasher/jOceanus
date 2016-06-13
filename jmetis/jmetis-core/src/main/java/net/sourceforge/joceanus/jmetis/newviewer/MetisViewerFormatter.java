@@ -278,8 +278,11 @@ public class MetisViewerFormatter {
 
         /* If there are items in the list */
         if (!pList.isEmpty()) {
+            /* Calculate start point */
+            int myStart = (pStart - 1) * ITEMS_PER_PAGE;
+
             /* Create iterator at start */
-            Iterator<?> myIterator = pList.listIterator(pStart - 1);
+            Iterator<?> myIterator = pList.listIterator(myStart);
 
             /* Loop up to the limit */
             int myCount = ITEMS_PER_PAGE;
@@ -314,9 +317,11 @@ public class MetisViewerFormatter {
 
         /* If there are items in the list */
         if (!pMap.isEmpty()) {
+            /* Calculate start point */
+            int myCount = (pStart - 1) * ITEMS_PER_PAGE;
+
             /* Create iterator and shift to start */
             Iterator<?> myIterator = pMap.entrySet().iterator();
-            int myCount = pStart - 1;
             if (myCount > 0) {
                 /* Skip leading entries */
                 while (myIterator.hasNext()

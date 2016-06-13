@@ -26,17 +26,21 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelPair;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerWindow;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceView;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 
 /**
  * Metis Toolkit.
@@ -80,6 +84,11 @@ public abstract class MetisToolkit<N, I> {
     private final MetisViewerEntry theProfileEntry;
 
     /**
+     * Colour Preferences.
+     */
+    private final MetisColorPreferences theColorPreferences;
+
+    /**
      * The Active Profile.
      */
     private MetisProfile theProfile;
@@ -117,6 +126,16 @@ public abstract class MetisToolkit<N, I> {
 
         /* create the thread manager */
         theThreadManager = newThreadManager(pSlider);
+
+        /* Access the Colour Preferences */
+        theColorPreferences = thePreferenceManager.getPreferenceSet(MetisColorPreferences.class);
+
+        /* Process the colour preferences */
+        processColorPreferences();
+
+        /* Create listener */
+        TethysEventRegistrar<MetisPreferenceEvent> myRegistrar = theColorPreferences.getEventRegistrar();
+        myRegistrar.addEventListener(e -> processColorPreferences());
     }
 
     /**
@@ -185,7 +204,7 @@ public abstract class MetisToolkit<N, I> {
      * @param pManager the thread manager
      * @return the thread status manager
      */
-    protected abstract MetisThreadSliderStatus<N, I> newThreadSliderStatus(final MetisThreadManager<N, I> pManager);
+    protected abstract MetisThreadProgressStatus<N, I> newThreadSliderStatus(final MetisThreadManager<N, I> pManager);
 
     /**
      * Create a Thread TextArea Status.
@@ -231,6 +250,16 @@ public abstract class MetisToolkit<N, I> {
      */
     public MetisFieldSetPanelPair<N, I> newFieldSetPanelPair() {
         return new MetisFieldSetPanelPair<>(getGuiFactory());
+    }
+
+    /**
+     * Process Colour preferences.
+     */
+    private void processColorPreferences() {
+        /* Update the value Set with the preferences */
+        TethysGuiFactory<?, ?> myFactory = getGuiFactory();
+        TethysValueSet myValueSet = myFactory.getValueSet();
+        theColorPreferences.updateValueSet(myValueSet);
     }
 
     /**

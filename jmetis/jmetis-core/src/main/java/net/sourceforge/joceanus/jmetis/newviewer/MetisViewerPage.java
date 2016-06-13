@@ -362,7 +362,7 @@ public class MetisViewerPage {
     private int determinePages() {
         return theSize == -1
                              ? -1
-                             : ((theSize - 1) % MetisViewerFormatter.ITEMS_PER_PAGE) + 1;
+                             : ((theSize - 1) / MetisViewerFormatter.ITEMS_PER_PAGE) + 1;
     }
 
     /**

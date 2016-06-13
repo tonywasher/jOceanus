@@ -205,7 +205,7 @@ public abstract class ThemisSvnManager<N, I> {
         TethysMenuSubMenu<ThemisSvnMenuItem> myHelp = theMenuBar.newSubMenu(ThemisSvnMenuItem.HELP);
 
         /* Create the Viewer menuItem */
-        myHelp.newMenuItem(ThemisSvnMenuItem.DATAVIEWER, e -> handleViewerClosed());
+        myHelp.newMenuItem(ThemisSvnMenuItem.DATAVIEWER, e -> handleDataViewer());
 
         /* Create the menuItems */
         myTasks.newMenuItem(ThemisThreadId.CREATEWORKINGCOPY, e -> runCheckOutWC());
@@ -460,7 +460,7 @@ public abstract class ThemisSvnManager<N, I> {
     /**
      * Handle ViewerClosed.
      */
-    private void handleViewerClosed() {
+    private void handleDataViewer() {
         theMenuBar.setEnabled(ThemisSvnMenuItem.DATAVIEWER, false);
         theDataWdw.showDialog();
     }

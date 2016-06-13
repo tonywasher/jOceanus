@@ -24,15 +24,11 @@ package net.sourceforge.joceanus.jprometheus;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
+import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 
 /**
  * JOceanus Utility Set.
@@ -66,14 +62,14 @@ public abstract class JOceanusUtilitySet<N, I> {
     private final TethysGuiFactory<N, I> theGuiFactory;
 
     /**
+     * Viewer Manager.
+     */
+    private final MetisViewerManager theViewerMgr;
+
+    /**
      * Thread Manager.
      */
     private final MetisThreadManager<N, I> theThreadMgr;
-
-    /**
-     * Colour Preferences.
-     */
-    private final MetisColorPreferences theColorPreferences;
 
     /**
      * Constructor.
@@ -86,14 +82,8 @@ public abstract class JOceanusUtilitySet<N, I> {
         thePreferenceMgr = pToolkit.getPreferenceManager();
         theFormatter = pToolkit.getFormatter();
         theGuiFactory = pToolkit.getGuiFactory();
+        theViewerMgr = pToolkit.getViewerManager();
         theThreadMgr = pToolkit.getThreadManager();
-
-        /* Access the Colour Preferences */
-        theColorPreferences = thePreferenceMgr.getPreferenceSet(MetisColorPreferences.class);
-
-        /* Create listener */
-        TethysEventRegistrar<MetisPreferenceEvent> myRegistrar = theColorPreferences.getEventRegistrar();
-        myRegistrar.addEventListener(e -> processColorPreferences());
     }
 
     /**
@@ -129,6 +119,14 @@ public abstract class JOceanusUtilitySet<N, I> {
     }
 
     /**
+     * Obtain the viewer manager.
+     * @return the manager
+     */
+    public MetisViewerManager getViewerManager() {
+        return theViewerMgr;
+    }
+
+    /**
      * Obtain the Thread Manager.
      * @return the thread manager
      */
@@ -143,28 +141,4 @@ public abstract class JOceanusUtilitySet<N, I> {
     public MetisToolkit<N, I> getToolkit() {
         return theToolkit;
     }
-
-    /**
-     * Obtain the colour preferences.
-     * @return the colour preferences
-     */
-    protected MetisColorPreferences getColorPreferences() {
-        return theColorPreferences;
-    }
-
-    /**
-     * Process Colour preferences.
-     */
-    protected void processColorPreferences() {
-        /* Update the value Set with the preferences */
-        TethysGuiFactory<?, ?> myFactory = getGuiFactory();
-        TethysValueSet myValueSet = myFactory.getValueSet();
-        theColorPreferences.updateValueSet(myValueSet);
-    }
-
-    /**
-     * Obtain the viewer manager.
-     * @return the manager
-     */
-    public abstract MetisViewerManager getViewerManager();
 }

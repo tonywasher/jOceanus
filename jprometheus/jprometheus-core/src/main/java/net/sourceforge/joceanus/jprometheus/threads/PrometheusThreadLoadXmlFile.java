@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads.swing;
+package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.io.File;
 
@@ -32,51 +32,46 @@ import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
-import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSpreadSheet;
-import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 
 /**
- * Thread to load changes from an encrypted backup. Once the backup is loaded, the current database
- * is loaded and the backup is re-based onto the database so that a correct list of additions,
- * changes and deletions is built. These changes remain in memory and should be committed to the
- * database later.
- * @author Tony Washer
+ * LoaderThread extension to load an XML backup.
  * @param <T> the DataSet type
- * @param <E> the data type enum class
+ * @param <E> the Data list type
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class LoadBackup<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         implements MetisThread<T, N, I> {
     /**
      * Data control.
      */
-    private final DataControl<T, E, ?, ?> theControl;
+    private final DataControl<T, E, N, I> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public LoadBackup(final DataControl<T, E, N, I> pControl) {
+    public PrometheusThreadLoadXmlFile(final DataControl<T, E, N, I> pControl) {
         theControl = pControl;
     }
 
     @Override
     public String getTaskName() {
-        return PrometheusThreadId.RESTOREBACKUP.toString();
+        return PrometheusThreadId.RESTOREXML.toString();
     }
 
     @Override
     public T performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
         MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
-        GordianHashManager mySecurityMgr = pToolkit.getSecurityManager();
+        GordianHashManager mySecurity = pToolkit.getSecurityManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());
@@ -101,10 +96,17 @@ public class LoadBackup<T extends DataSet<T, E>, E extends Enum<E>, N, I>
             throw new PrometheusCancelException("Operation Cancelled");
         }
 
-        /* Load workbook */
-        PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
-        T myData = theControl.getNewData();
-        mySheet.loadBackup(myManager, mySecurityMgr, myData, myFile);
+        /* Create a new formatter */
+        DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(myManager, mySecurity);
+
+        /* Load data */
+        T myNewData = theControl.getNewData();
+        boolean bContinue = myFormatter.loadZipFile(myNewData, myFile);
+
+        /* Check for cancellation */
+        if (!bContinue) {
+            throw new PrometheusCancelException("Operation Cancelled");
+        }
 
         /* Initialise the status window */
         myManager.initTask("Accessing DataStore");
@@ -119,11 +121,17 @@ public class LoadBackup<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         /* Check security on the database */
         myStore.checkSecurity(myManager);
 
+        /* Initialise the status window */
+        myManager.initTask("Re-applying Security");
+
+        /* Initialise the security, either from database or with a new security control */
+        myNewData.initialiseSecurity(myManager, myStore);
+
         /* Re-base the loaded backup onto the database image */
-        myData.reBase(myManager, myStore);
+        myNewData.reBase(myManager, myStore);
 
         /* Return the Data */
-        return myData;
+        return myNewData;
     }
 
     @Override

@@ -189,7 +189,7 @@ public enum MetisViewerResource implements TethysResourceId {
     }
 
     /**
-     * Build preference map.
+     * Build entry map.
      * @return the map
      */
     private static Map<MetisViewerStandardEntry, TethysResourceId> buildEntryMap() {
