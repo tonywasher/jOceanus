@@ -26,8 +26,8 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;

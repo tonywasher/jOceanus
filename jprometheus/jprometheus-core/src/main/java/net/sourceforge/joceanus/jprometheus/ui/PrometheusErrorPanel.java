@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jprometheus.ui;
 
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;

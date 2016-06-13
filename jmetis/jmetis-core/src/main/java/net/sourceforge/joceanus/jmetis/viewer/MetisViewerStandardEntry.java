@@ -20,7 +20,51 @@
  * $Author$
  * $Date$
  ******************************************************************************/
+package net.sourceforge.joceanus.jmetis.viewer;
+
 /**
- * Java Viewer.
+ * Standard Viewer Entries.
  */
-package net.sourceforge.joceanus.jmetis.newviewer;
+public enum MetisViewerStandardEntry {
+    /**
+     * Error entry.
+     */
+    ERROR,
+
+    /**
+     * Profile entry.
+     */
+    PROFILE,
+
+    /**
+     * Data entry.
+     */
+    DATA,
+
+    /**
+     * View entry.
+     */
+    VIEW,
+
+    /**
+     * Preferences entry.
+     */
+    PREFERENCES;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = MetisViewerResource.getKeyForStdEntry(this).getValue();
+        }
+
+        /* return the name */
+        return theName;
+    }
+}

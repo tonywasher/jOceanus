@@ -30,8 +30,8 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldEnum;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;

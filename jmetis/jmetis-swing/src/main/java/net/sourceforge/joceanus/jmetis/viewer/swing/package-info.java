@@ -20,44 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.newviewer;
-
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
-
 /**
- * Viewer Icon IDs.
+ * Swing Viewer.
  */
-public enum MetisViewerIcon implements TethysIconId {
-    /**
-     * Parent.
-     */
-    PARENT("BlueJellyParent.png"),
-
-    /**
-     * Next.
-     */
-    NEXT("BlueJellyNext.png"),
-
-    /**
-     * Disabled.
-     */
-    PREV("BlueJellyPrevious.png");
-
-    /**
-     * Source name.
-     */
-    private final String theSource;
-
-    /**
-     * Constructor.
-     * @param pSourceName the source name
-     */
-    MetisViewerIcon(final String pSourceName) {
-        theSource = pSourceName;
-    }
-
-    @Override
-    public String getSourceName() {
-        return theSource;
-    }
-}
+package net.sourceforge.joceanus.jmetis.viewer.swing;

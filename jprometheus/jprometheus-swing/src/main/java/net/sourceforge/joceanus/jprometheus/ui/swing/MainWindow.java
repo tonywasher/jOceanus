@@ -37,11 +37,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jmetis.newviewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadEvent;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
+import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadCreateBackup;

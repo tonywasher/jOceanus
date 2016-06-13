@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.newviewer;
+package net.sourceforge.joceanus.jmetis.viewer;
 
 import java.util.ArrayList;
 import java.util.Iterator;

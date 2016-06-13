@@ -20,29 +20,29 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.newviewer;
+package net.sourceforge.joceanus.jmetis.viewer;
 
 /**
- * Viewer Events.
+ * Viewer Mode.
  */
-public enum MetisViewerEvent {
+public enum MetisViewerMode {
     /**
-     * Entry.
+     * Contents.
      */
-    ENTRY,
+    CONTENTS,
 
     /**
-     * Value.
+     * Summary.
      */
-    VALUE,
+    SUMMARY,
 
     /**
-     * Visibility.
+     * Items.
      */
-    VISIBILITY,
+    ITEMS,
 
     /**
-     * Focus.
+     * Null.
      */
-    FOCUS;
+    NULL;
 }

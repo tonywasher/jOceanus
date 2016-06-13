@@ -23,4 +23,4 @@
 /**
  * JavaFX Viewer.
  */
-package net.sourceforge.joceanus.jmetis.newviewer.javafx;
+package net.sourceforge.joceanus.jmetis.viewer.javafx;

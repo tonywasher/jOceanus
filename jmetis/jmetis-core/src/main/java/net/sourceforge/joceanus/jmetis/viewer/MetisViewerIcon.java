@@ -20,29 +20,44 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.newviewer;
+package net.sourceforge.joceanus.jmetis.viewer;
+
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
 /**
- * Viewer Mode.
+ * Viewer Icon IDs.
  */
-public enum MetisViewerMode {
+public enum MetisViewerIcon implements TethysIconId {
     /**
-     * Contents.
+     * Parent.
      */
-    CONTENTS,
+    PARENT("BlueJellyParent.png"),
 
     /**
-     * Summary.
+     * Next.
      */
-    SUMMARY,
+    NEXT("BlueJellyNext.png"),
 
     /**
-     * Items.
+     * Disabled.
      */
-    ITEMS,
+    PREV("BlueJellyPrevious.png");
 
     /**
-     * Null.
+     * Source name.
      */
-    NULL;
+    private final String theSource;
+
+    /**
+     * Constructor.
+     * @param pSourceName the source name
+     */
+    MetisViewerIcon(final String pSourceName) {
+        theSource = pSourceName;
+    }
+
+    @Override
+    public String getSourceName() {
+        return theSource;
+    }
 }

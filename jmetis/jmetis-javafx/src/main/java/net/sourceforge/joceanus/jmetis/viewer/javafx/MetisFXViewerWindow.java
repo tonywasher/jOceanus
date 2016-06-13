@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.newviewer.javafx;
+package net.sourceforge.joceanus.jmetis.viewer.javafx;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -28,10 +28,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerResource;
-import net.sourceforge.joceanus.jmetis.newviewer.MetisViewerWindow;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
