@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.threads.javafx;
 import javafx.concurrent.Worker.State;
 import javafx.scene.Node;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatus;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -93,20 +94,23 @@ public class MetisFXThreadManager
     }
 
     @Override
-    public boolean isCancelled() {
-        return theWorker == null
-               || theWorker.isCancelled();
+    public void checkForCancellation() throws OceanusException {
+        if ((theWorker != null)
+            && theWorker.isCancelled()) {
+            throw new MetisThreadCancelException("Cancelled");
+        }
     }
 
     @Override
-    protected void publishStatus(final MetisThreadStatus pStatus) {
-        if (!isCancelled()) {
-            /* Take a copy as the active status */
-            theActiveStatus = new MetisThreadStatus(pStatus);
+    protected void publishStatus(final MetisThreadStatus pStatus) throws OceanusException {
+        /* Check for cancellation */
+        checkForCancellation();
 
-            /* update status */
-            theWorker.publishStatus();
-        }
+        /* Take a copy as the active status */
+        theActiveStatus = new MetisThreadStatus(pStatus);
+
+        /* update status */
+        theWorker.publishStatus();
     }
 
     /**
@@ -171,9 +175,16 @@ public class MetisFXThreadManager
      * @param pException the exception
      */
     private void handleFailure(final Throwable pException) {
-        endTask();
-        setError(pException);
-        getStatusManager().setFailure(pException);
+        /* Handle cancellation exception as cancel */
+        if (pException instanceof MetisThreadCancelException) {
+            handleCancellation();
+
+            /* handle standard exception */
+        } else {
+            endTask();
+            setError(pException);
+            getStatusManager().setFailure(pException);
+        }
     }
 
     @Override

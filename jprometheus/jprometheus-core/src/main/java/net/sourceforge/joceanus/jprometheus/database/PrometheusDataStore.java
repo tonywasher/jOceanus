@@ -36,9 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
-import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusDatabase.PrometheusDatabasePreferenceKey;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusDatabase.PrometheusDatabasePreferences;
@@ -211,13 +209,9 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      */
     public void loadDatabase(final MetisThreadStatusReport pReport,
                              final T pData) throws OceanusException {
-        /* Initialise the flag */
-        boolean bContinue = true;
-
-        /* Set the number of stages */
-        if (!pReport.setNumStages(1 + theTables.size())) {
-            return;
-        }
+        /* Initialise task */
+        pReport.initTask("loadDatabase");
+        pReport.setNumStages(theTables.size());
 
         /* Obtain the active profile */
         MetisProfile myTask = pReport.getActiveTask();
@@ -225,28 +219,18 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
 
         /* Loop through the tables */
         Iterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.iterator();
-        while ((bContinue) && (myIterator.hasNext())) {
+        while (myIterator.hasNext()) {
             PrometheusTableDataItem<?, ?> myTable = myIterator.next();
 
             /* Note the new step */
             myTask.startTask(myTable.getTableName());
 
             /* Load the items */
-            bContinue = myTable.loadItems(pReport, pData);
-        }
-
-        /* analyse the data */
-        if (bContinue) {
-            bContinue = pReport.setNewStage("Refreshing data");
+            myTable.loadItems(pReport, pData);
         }
 
         /* Complete the task */
         myTask.end();
-
-        /* Check for cancellation */
-        if (!bContinue) {
-            throw new PrometheusLogicException("Operation Cancelled");
-        }
     }
 
     /**
@@ -257,13 +241,10 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      */
     public void updateDatabase(final MetisThreadStatusReport pReport,
                                final T pData) throws OceanusException {
-        boolean bContinue = true;
         PrometheusBatchControl myBatch = new PrometheusBatchControl(theBatchSize);
 
         /* Set the number of stages */
-        if (!pReport.setNumStages(NUM_STEPS_PER_TABLE * theTables.size())) {
-            return;
-        }
+        pReport.setNumStages(NUM_STEPS_PER_TABLE * theTables.size());
 
         /* Obtain the active profile */
         MetisProfile myTask = pReport.getActiveTask();
@@ -272,43 +253,43 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         /* Loop through the tables */
         MetisProfile myStage = myTask.startTask("insertData");
         Iterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.iterator();
-        while ((bContinue) && (myIterator.hasNext())) {
+        while (myIterator.hasNext()) {
             PrometheusTableDataItem<?, ?> myTable = myIterator.next();
 
             /* Note the new step */
             myStage.startTask(myTable.getTableName());
 
             /* insert the items */
-            bContinue = myTable.insertItems(pReport, pData, myBatch);
+            myTable.insertItems(pReport, pData, myBatch);
         }
 
         /* Loop through the tables */
         myStage = myTask.startTask("updateData");
         ListIterator<PrometheusTableDataItem<?, ?>> myListIterator = theTables.listIterator();
-        while ((bContinue) && (myListIterator.hasNext())) {
+        while (myListIterator.hasNext()) {
             PrometheusTableDataItem<?, ?> myTable = myListIterator.next();
 
             /* Note the new step */
             myStage.startTask(myTable.getTableName());
 
             /* Load the items */
-            bContinue = myTable.updateItems(pReport, myBatch);
+            myTable.updateItems(pReport, myBatch);
         }
 
         /* Loop through the tables in reverse order */
         myStage = myTask.startTask("deleteData");
-        while ((bContinue) && (myListIterator.hasPrevious())) {
+        while (myListIterator.hasPrevious()) {
             PrometheusTableDataItem<?, ?> myTable = myListIterator.previous();
 
             /* Note the new step */
             myStage.startTask(myTable.getTableName());
 
             /* Delete items from the table */
-            bContinue = myTable.deleteItems(pReport, myBatch);
+            myTable.deleteItems(pReport, myBatch);
         }
 
         /* If we have active work in the batch */
-        if ((bContinue) && (myBatch.isActive())) {
+        if (myBatch.isActive()) {
             /* Commit the database */
             try {
                 theConn.commit();
@@ -323,11 +304,6 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
 
         /* Complete the task */
         myTask.end();
-
-        /* Check for cancellation */
-        if (!bContinue) {
-            throw new PrometheusCancelException("Operation Cancelled");
-        }
     }
 
     /**
@@ -336,13 +312,11 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      * @throws OceanusException on error
      */
     public void createTables(final MetisThreadStatusReport pReport) throws OceanusException {
+        /* Set the number of stages */
+        pReport.setNumStages(2);
+
         /* Drop any existing tables */
         dropTables(pReport);
-
-        /* Set the number of stages */
-        if (!pReport.setNumStages(1)) {
-            return;
-        }
 
         /* Obtain the active profile */
         MetisProfile myTask = pReport.getActiveTask();
@@ -352,6 +326,9 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         Iterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.iterator();
         while (myIterator.hasNext()) {
             PrometheusTableDataItem<?, ?> myTable = myIterator.next();
+
+            /* Check for cancellation */
+            pReport.checkForCancellation();
 
             /* Note the new step */
             myTask.startTask(myTable.getTableName());
@@ -370,11 +347,6 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      * @throws OceanusException on error
      */
     private void dropTables(final MetisThreadStatusReport pReport) throws OceanusException {
-        /* Set the number of stages */
-        if (!pReport.setNumStages(1)) {
-            return;
-        }
-
         /* Obtain the active profile */
         MetisProfile myTask = pReport.getActiveTask();
         myTask = myTask.startTask("dropTables");
@@ -383,6 +355,9 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         ListIterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.listIterator(theTables.size());
         while (myIterator.hasPrevious()) {
             PrometheusTableDataItem<?, ?> myTable = myIterator.previous();
+
+            /* Check for cancellation */
+            pReport.checkForCancellation();
 
             /* Note the new step */
             myTask.startTask(myTable.getTableName());
@@ -402,9 +377,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      */
     public void purgeTables(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Set the number of stages */
-        if (!pReport.setNumStages(1)) {
-            return;
-        }
+        pReport.setNumStages(1);
 
         /* Obtain the active profile */
         MetisProfile myTask = pReport.getActiveTask();
@@ -414,6 +387,9 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         ListIterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.listIterator(theTables.size());
         while (myIterator.hasPrevious()) {
             PrometheusTableDataItem<?, ?> myTable = myIterator.previous();
+
+            /* Check for cancellation */
+            pReport.checkForCancellation();
 
             /* Note the new step */
             myTask.startTask(myTable.getTableName());

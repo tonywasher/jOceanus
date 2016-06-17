@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
@@ -128,13 +129,12 @@ public class SheetTransCategory
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @param pLoader the archive loader
-     * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected static boolean loadArchive(final MetisThreadStatusReport pReport,
-                                         final MetisDataWorkBook pWorkBook,
-                                         final MoneyWiseData pData,
-                                         final ArchiveLoader pLoader) throws OceanusException {
+    protected static void loadArchive(final MetisThreadStatusReport pReport,
+                                      final MetisDataWorkBook pWorkBook,
+                                      final MoneyWiseData pData,
+                                      final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of categories */
         TransactionCategoryList myList = pData.getTransCategories();
 
@@ -144,17 +144,13 @@ public class SheetTransCategory
             MetisDataView myView = pWorkBook.getRangeView(AREA_TRANSCATEGORIES);
 
             /* Declare the new stage */
-            if (!pReport.setNewStage(TransactionCategory.LIST_NAME)) {
-                return false;
-            }
+            pReport.setNewStage(TransactionCategory.LIST_NAME);
 
             /* Count the number of Categories */
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
-            if (!pReport.setNumSteps(myTotal)) {
-                return false;
-            }
+            pReport.setNumSteps(myTotal);
 
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
@@ -190,20 +186,17 @@ public class SheetTransCategory
                 pLoader.declareCategory(myCategory);
 
                 /* Report the progress */
-                if (!pReport.setNextStep()) {
-                    return false;
-                }
+                pReport.setNextStep();
             }
 
             /* PostProcess on load */
             myList.postProcessOnLoad();
 
             /* Handle exceptions */
+        } catch (MetisThreadCancelException e) {
+            throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
-
-        /* Return to caller */
-        return true;
     }
 }

@@ -279,15 +279,12 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * Load items from the list into the table.
      * @param pReport the report
      * @param pData the data
-     * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected boolean loadItems(final MetisThreadStatusReport pReport,
-                                final DataSet<?, ?> pData) throws OceanusException {
+    protected void loadItems(final MetisThreadStatusReport pReport,
+                             final DataSet<?, ?> pData) throws OceanusException {
         /* Declare the new stage */
-        if (!pReport.setNewStage(getTableName())) {
-            return false;
-        }
+        pReport.setNewStage(getTableName());
 
         /* Declare the Data */
         declareData(pData);
@@ -295,9 +292,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         /* Protect the load */
         try {
             /* Count the Items to be loaded */
-            if (!pReport.setNumSteps(countLoadItems())) {
-                return false;
-            }
+            pReport.setNumSteps(countLoadItems());
 
             /* Load the items from the table */
             String myQuery = theTable.getLoadString();
@@ -313,9 +308,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 theList.addValuesItem(loadValues());
 
                 /* Report the progress */
-                if (!pReport.setNextStep()) {
-                    return false;
-                }
+                pReport.setNextStep();
             }
 
             /* Close the Statement */
@@ -327,9 +320,6 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         } catch (SQLException e) {
             throw new PrometheusIOException("Failed to load " + getTableName(), e);
         }
-
-        /* Return to caller */
-        return true;
     }
 
     /**
@@ -364,16 +354,13 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @param pReport the report
      * @param pData the data
      * @param pBatch the batch control
-     * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected boolean insertItems(final MetisThreadStatusReport pReport,
-                                  final DataSet<?, ?> pData,
-                                  final PrometheusBatchControl pBatch) throws OceanusException {
+    protected void insertItems(final MetisThreadStatusReport pReport,
+                               final DataSet<?, ?> pData,
+                               final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
-        if (!pReport.setNewStage("Inserting " + getTableName())) {
-            return false;
-        }
+        pReport.setNewStage("Inserting " + getTableName());
 
         /* Declare the Data */
         declareData(pData);
@@ -382,9 +369,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         T myCurr = null;
         try {
             /* Declare the number of steps */
-            if (!pReport.setNumSteps(countStateItems(MetisDataState.NEW))) {
-                return false;
-            }
+            pReport.setNumSteps(countStateItems(MetisDataState.NEW));
 
             /* Declare the table and mode */
             pBatch.setCurrentTable(this, MetisDataState.NEW);
@@ -430,9 +415,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 }
 
                 /* Report the progress */
-                if (!pReport.setNextStep()) {
-                    return false;
-                }
+                pReport.setNextStep();
             }
 
             /* Close the Statement */
@@ -441,32 +424,24 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         } catch (SQLException e) {
             throw new PrometheusDataException(myCurr, "Failed to insert " + getTableName(), e);
         }
-
-        /* Return to caller */
-        return true;
     }
 
     /**
      * Update items from the list.
      * @param pReport the report
      * @param pBatch the batch control
-     * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected boolean updateItems(final MetisThreadStatusReport pReport,
-                                  final PrometheusBatchControl pBatch) throws OceanusException {
+    protected void updateItems(final MetisThreadStatusReport pReport,
+                               final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
-        if (!pReport.setNewStage("Updating " + getTableName())) {
-            return false;
-        }
+        pReport.setNewStage("Updating " + getTableName());
 
         /* Protect the update */
         T myCurr = null;
         try {
             /* Declare the number of steps */
-            if (!pReport.setNumSteps(countStateItems(MetisDataState.CHANGED))) {
-                return false;
-            }
+            pReport.setNumSteps(countStateItems(MetisDataState.CHANGED));
 
             /* Declare the table and mode */
             pBatch.setCurrentTable(this, MetisDataState.CHANGED);
@@ -478,49 +453,42 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             while (myIterator.hasNext()) {
                 /* Ignore non-changed items */
                 myCurr = myIterator.next();
-                if (myCurr.getState() != MetisDataState.CHANGED) {
+                if ((myCurr.getState() != MetisDataState.CHANGED)
+                    || !updateItem(myCurr)) {
                     continue;
                 }
 
-                /* Update the item */
-                if (updateItem(myCurr)) {
-                    /* Record the id and access the update string */
-                    theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
-                    String myUpdate = theTable.getUpdateString();
+                /* Record the id and access the update string */
+                theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
+                String myUpdate = theTable.getUpdateString();
 
-                    /* Prepare the statement and declare values */
-                    prepareStatement(myUpdate);
-                    theTable.updateValues(theStmt);
-                    pBatch.addBatchItem();
+                /* Prepare the statement and declare values */
+                prepareStatement(myUpdate);
+                theTable.updateValues(theStmt);
+                pBatch.addBatchItem();
 
-                    /* Execute the update */
-                    execute();
-                    myCurr = null;
+                /* Execute the update */
+                execute();
+                myCurr = null;
 
-                    /* Close the Statement */
-                    closeStmt();
+                /* Close the Statement */
+                closeStmt();
 
-                    /* If we have no further space in the batch */
-                    if (pBatch.isFull()) {
-                        /* Commit the database */
-                        commit();
+                /* If we have no further space in the batch */
+                if (pBatch.isFull()) {
+                    /* Commit the database */
+                    commit();
 
-                        /* Commit the batch */
-                        pBatch.commitItems();
-                    }
-
-                    /* Report the progress */
-                    if (!pReport.setNextStep()) {
-                        return false;
-                    }
+                    /* Commit the batch */
+                    pBatch.commitItems();
                 }
+
+                /* Report the progress */
+                pReport.setNextStep();
             }
         } catch (SQLException e) {
             throw new PrometheusDataException(myCurr, "Failed to update " + getTableName(), e);
         }
-
-        /* Return to caller */
-        return true;
     }
 
     /**
@@ -538,7 +506,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
 
         /* Loop through the fields */
         for (PrometheusColumnDefinition myCol : theTable.getColumns()) {
-            /* Skip null columns */
+            /* Skip null and Id columns */
             if (myCol == null) {
                 continue;
             }
@@ -546,13 +514,9 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             /* Access the column id */
             MetisField iField = myCol.getColumnId();
 
-            /* Ignore ID column */
-            if (DataItem.FIELD_ID.equals(iField)) {
-                continue;
-            }
-
-            /* If the field has changed */
-            if (myCurr.fieldChanged(iField, myBase).isDifferent()) {
+            /* If the non-Id field has changed */
+            if (!DataItem.FIELD_ID.equals(myCol.getColumnId())
+                && myCurr.fieldChanged(iField, myBase).isDifferent()) {
                 /* Record the change */
                 isUpdated = true;
                 setFieldValue(pItem, iField);
@@ -567,23 +531,18 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * Delete items from the list.
      * @param pReport the report
      * @param pBatch the batch control
-     * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected boolean deleteItems(final MetisThreadStatusReport pReport,
-                                  final PrometheusBatchControl pBatch) throws OceanusException {
+    protected void deleteItems(final MetisThreadStatusReport pReport,
+                               final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
-        if (!pReport.setNewStage("Deleting " + getTableName())) {
-            return false;
-        }
+        pReport.setNewStage("Deleting " + getTableName());
 
         /* Protect the delete */
         T myCurr = null;
         try {
             /* Declare the number of steps */
-            if (!pReport.setNumSteps(countStateItems(MetisDataState.DELETED))) {
-                return false;
-            }
+            pReport.setNumSteps(countStateItems(MetisDataState.DELETED));
 
             /* Declare the table and mode */
             pBatch.setCurrentTable(this, MetisDataState.DELETED);
@@ -627,9 +586,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 }
 
                 /* Report the progress */
-                if (!pReport.setNextStep()) {
-                    return false;
-                }
+                pReport.setNextStep();
             }
 
             /* Close the Statement */
@@ -637,9 +594,6 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         } catch (SQLException e) {
             throw new PrometheusDataException(myCurr, "Failed to delete " + getTableName(), e);
         }
-
-        /* Return to caller */
-        return true;
     }
 
     /**

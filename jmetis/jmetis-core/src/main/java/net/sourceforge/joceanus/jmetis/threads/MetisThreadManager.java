@@ -256,122 +256,115 @@ public abstract class MetisThreadManager<N, I>
     public abstract void cancelWorker();
 
     @Override
-    public boolean initTask(final String pTask) {
+    public void initTask(final String pTask) throws OceanusException {
         /* Check for cancellation */
-        boolean isCancelled = isCancelled();
-        if (!isCancelled) {
-            /* Record task */
-            theStatus.setTask(pTask);
+        checkForCancellation();
 
+        /* If we already have a task */
+        if (theStatus.getTask() != null) {
+            /* make sure that task is completed */
+            theStatus.setCompletion();
+        }
+
+        /* Record task */
+        theStatus.setTask(pTask);
+
+        /* Publish status */
+        publishStatus(theStatus);
+    }
+
+    @Override
+    public void setNumStages(final int pNumStages) throws OceanusException {
+        /* Check for cancellation */
+        checkForCancellation();
+
+        /* Initialise the number of stages */
+        theStatus.setNumStages(pNumStages);
+    }
+
+    @Override
+    public void setNewStage(final String pStage) throws OceanusException {
+        /* Check for cancellation */
+        checkForCancellation();
+
+        /* Store the stage and increment stages done */
+        theStatus.setStage(pStage);
+
+        /* Publish status */
+        publishStatus(theStatus);
+    }
+
+    @Override
+    public void setNumSteps(final int pNumSteps) throws OceanusException {
+        /* Check for cancellation */
+        checkForCancellation();
+
+        /* Set number of Steps */
+        theStatus.setNumSteps(pNumSteps);
+    }
+
+    @Override
+    public void setStepsDone(final int pSteps) throws OceanusException {
+        /* Check for cancellation */
+        checkForCancellation();
+
+        /* Set Next step */
+        theStatus.setStepsDone(pSteps);
+
+        /* Publish status regardless */
+        publishStatus(theStatus);
+    }
+
+    @Override
+    public void setNextStep() throws OceanusException {
+        /* Check for cancellation */
+        checkForCancellation();
+
+        /* Set Next step */
+        theStatus.setNextStep();
+
+        /* Determine step */
+        int myStep = theStatus.getStepsDone() + 1;
+
+        /* If we need to report the step */
+        if ((myStep % theReportingSteps) == 0) {
             /* Publish status */
             publishStatus(theStatus);
         }
-
-        /* Return to caller */
-        return !isCancelled;
     }
 
     @Override
-    public boolean setNumStages(final int pNumStages) {
+    public void setNextStep(final String pStep) throws OceanusException {
         /* Check for cancellation */
-        boolean isCancelled = isCancelled();
-        if (!isCancelled) {
-            /* Initialise the number of stages */
-            theStatus.setNumStages(pNumStages);
-        }
+        checkForCancellation();
 
-        /* Return to caller */
-        return !isCancelled;
+        /* Set Next step */
+        theStatus.setNextStep(pStep);
+
+        /* Publish status */
+        publishStatus(theStatus);
     }
 
     @Override
-    public boolean setNewStage(final String pStage) {
-        /* Check for cancellation */
-        boolean isCancelled = isCancelled();
-        if (!isCancelled) {
-            /* Store the stage and increment stages done */
-            theStatus.setStage(pStage);
+    public void setCompletion() throws OceanusException {
+        /* Set Completion */
+        theStatus.setCompletion();
 
-            /* Publish status */
-            publishStatus(theStatus);
-        }
-
-        /* Return to caller */
-        return !isCancelled;
+        /* Publish status */
+        publishStatus(theStatus);
     }
 
     @Override
-    public boolean setNumSteps(final int pNumSteps) {
-        /* Check for cancellation */
-        boolean isCancelled = isCancelled();
-        if (!isCancelled) {
-            /* Set number of Steps */
-            theStatus.setNumSteps(pNumSteps);
-        }
-
-        /* Return to caller */
-        return !isCancelled;
-    }
-
-    @Override
-    public boolean setStepsDone(final int pSteps) {
-        /* Check for cancellation */
-        boolean isCancelled = isCancelled();
-        if (!isCancelled) {
-            /* Set Next step */
-            theStatus.setStepsDone(pSteps);
-
-            /* Publish status regardless */
-            publishStatus(theStatus);
-        }
-
-        /* Return to caller */
-        return !isCancelled;
-    }
-
-    @Override
-    public boolean setNextStep() {
-        /* Check for cancellation */
-        boolean isCancelled = isCancelled();
-        if (!isCancelled) {
-            /* Set Next step */
-            theStatus.setNextStep();
-
-            /* Determine step */
-            int myStep = theStatus.getStepsDone() + 1;
-
-            /* If we need to report the step */
-            if ((myStep % theReportingSteps) == 0) {
-                /* Publish status */
-                publishStatus(theStatus);
-            }
-        }
-
-        /* Return to caller */
-        return !isCancelled;
-    }
-
-    @Override
-    public boolean setNextStep(final String pStep) {
-        /* Check for cancellation */
-        boolean isCancelled = isCancelled();
-        if (!isCancelled) {
-            /* Set Next step */
-            theStatus.setNextStep(pStep);
-
-            /* Publish status */
-            publishStatus(theStatus);
-        }
-
-        /* Return to caller */
-        return !isCancelled;
+    public void throwCancelException() throws OceanusException {
+        throw new MetisThreadCancelException("Cancelled");
     }
 
     /**
      * Publish the status.
      * @param pStatus the status to publish
+     * @throws OceanusException on cancellation
      */
-    protected abstract void publishStatus(final MetisThreadStatus pStatus);
+    protected abstract void publishStatus(final MetisThreadStatus pStatus) throws OceanusException;
 
     /**
      * Create new profile.

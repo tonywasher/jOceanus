@@ -22,24 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.print.PrinterAbortException;
-import java.awt.print.PrinterException;
-
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.Element;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
@@ -48,9 +33,10 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportBuilder;
+import net.sourceforge.joceanus.jmoneywise.reports.ReportManager;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
-import net.sourceforge.joceanus.jmoneywise.reports.swing.SwingReportManager;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
@@ -66,10 +52,14 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 
 /**
  * Report panel.
@@ -84,12 +74,7 @@ public class ReportTab
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReportTab.class);
-
-    /**
-     * The Id.
-     */
-    private final Integer theId;
+    // private static final Logger LOGGER = LoggerFactory.getLogger(ReportTab.class);
 
     /**
      * The Event Manager.
@@ -104,17 +89,12 @@ public class ReportTab
     /**
      * The Panel.
      */
-    private final JPanel thePanel;
+    private final TethysSwingBorderPaneManager thePanel;
 
     /**
-     * The Scroll Pane.
+     * The HTML pane.
      */
-    private final JScrollPane theScroll;
-
-    /**
-     * The display version of the report.
-     */
-    private final JEditorPane theEditor;
+    private final TethysSwingHTMLManager theHTMLPane;
 
     /**
      * The Report selection Panel.
@@ -134,7 +114,7 @@ public class ReportTab
     /**
      * The Report Manager.
      */
-    private final SwingReportManager theManager;
+    private final ReportManager theManager;
 
     /**
      * The ReportBuilder.
@@ -152,13 +132,12 @@ public class ReportTab
 
         /* Access GUI Factory */
         TethysSwingGuiFactory myFactory = pView.getGuiFactory();
-        theId = myFactory.getNextId();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the Panel */
-        thePanel = new TethysSwingEnablePanel();
+        thePanel = myFactory.newBorderPane();
 
         /* Create the top level debug entry for this view */
         MetisViewerManager myDataMgr = theView.getViewerManager();
@@ -167,19 +146,14 @@ public class ReportTab
         theSpotEntry = myDataMgr.newEntry(myReport, PrometheusViewerEntryId.ANALYSIS.toString());
         theSpotEntry.setVisible(false);
 
-        /* Create the editor pane as non-editable */
-        theEditor = new JEditorPane();
-        theEditor.setEditable(false);
+        /* Create the HTML Pane */
+        theHTMLPane = myFactory.newHTMLManager();
 
         /* Create Report Manager */
-        theManager = new SwingReportManager(theView, theEditor);
+        theManager = new ReportManager(new HTMLBuilder(pView.getDataFormatter()));
 
         /* Create the report builder */
         theBuilder = new ReportBuilder(theManager);
-
-        /* Create a scroll-pane for the editor */
-        theScroll = new JScrollPane();
-        theScroll.setViewportView(theEditor);
 
         /* Create the Report Selection panel */
         theSelect = new MoneyWiseReportSelect<>(myFactory);
@@ -187,29 +161,38 @@ public class ReportTab
         /* Create the error panel for this view */
         theError = new MoneyWiseErrorPanel<>(theView, myReport);
 
+        /* Create a scroll pane */
+        TethysSwingScrollPaneManager myHTMLScroll = myFactory.newScrollPane();
+        myHTMLScroll.setContent(theHTMLPane);
+
         /* Create the header panel */
-        JPanel myHeader = new TethysSwingEnablePanel();
-        myHeader.setLayout(new BorderLayout());
-        myHeader.add(theSelect.getNode(), BorderLayout.CENTER);
-        myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
+        TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
+        myHeader.setCentre(theSelect);
+        myHeader.setNorth(theError);
 
         /* Now define the panel */
-        thePanel.setLayout(new BorderLayout());
-        thePanel.add(myHeader, BorderLayout.PAGE_START);
-        thePanel.add(theScroll, BorderLayout.CENTER);
+        thePanel.setNorth(myHeader);
+        thePanel.setCentre(myHTMLScroll);
 
-        /* Create listener */
+        /* Load the CSS */
+        loadCSS("MoneyWiseReports.css");
+
+        /* Create listeners */
         theView.getEventRegistrar().addEventListener(e -> refreshData());
         theManager.getEventRegistrar().addEventListener(this::handleGoToRequest);
         theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
-        theSelect.getEventRegistrar().addEventListener(e -> handleReportRequest());
-        theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.PRINT, e -> printIt());
-        theEditor.addMouseListener(new ReportMouseListener());
+        TethysEventRegistrar<PrometheusDataEvent> myRegistrar = theSelect.getEventRegistrar();
+        myRegistrar.addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
+        myRegistrar.addEventListener(PrometheusDataEvent.PRINT, e -> theHTMLPane.printIt());
+        theHTMLPane.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -> {
+            theManager.processReference(e.getDetails(String.class), theHTMLPane);
+            e.consume();
+        });
     }
 
     @Override
     public Integer getId() {
-        return theId;
+        return thePanel.getId();
     }
 
     @Override
@@ -219,7 +202,7 @@ public class ReportTab
 
     @Override
     public JComponent getNode() {
-        return thePanel;
+        return thePanel.getNode();
     }
 
     @Override
@@ -227,13 +210,22 @@ public class ReportTab
         /* Pass on to important elements */
         theSelect.setEnabled(pEnabled);
         theError.setEnabled(pEnabled);
-        theScroll.setEnabled(pEnabled);
-        theEditor.setEnabled(pEnabled);
+        theHTMLPane.setEnabled(pEnabled);
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
         thePanel.setVisible(pVisible);
+    }
+
+    /**
+     * Load CSS.
+     * @param pName the name of the CSS
+     * @throws OceanusException on error
+     */
+    private void loadCSS(final String pName) throws OceanusException {
+        String myCSS = TethysResourceBuilder.loadResourceToString(ReportManager.class, pName);
+        theHTMLPane.setCSSContent(myCSS);
     }
 
     /**
@@ -265,22 +257,6 @@ public class ReportTab
 
         /* Complete the task */
         myTask.end();
-    }
-
-    /**
-     * Print the report.
-     */
-    private void printIt() {
-        /* Print the current report */
-        try {
-            /* Print the data */
-            theEditor.print();
-
-        } catch (PrinterAbortException e) {
-            return;
-        } catch (PrinterException e) {
-            LOGGER.error("Failed to print", e);
-        }
     }
 
     /**
@@ -334,11 +310,7 @@ public class ReportTab
 
         /* Create initial display version */
         String myText = theManager.formatXML();
-        theEditor.setText(myText);
-
-        /* Initialise the window */
-        theEditor.setCaretPosition(0);
-        theEditor.requestFocusInWindow();
+        theHTMLPane.setHTMLContent(myText, "");
     }
 
     /**
@@ -351,8 +323,8 @@ public class ReportTab
         /* Hide selection panel on error */
         theSelect.setVisible(!isError);
 
-        /* Lock scroll area */
-        theScroll.setEnabled(!isError);
+        /* Lock HTML area */
+        theHTMLPane.setEnabled(!isError);
     }
 
     /**
@@ -392,62 +364,5 @@ public class ReportTab
             /* Restore SavePoint */
             theSelect.restoreSavePoint();
         }
-    }
-
-    /**
-     * Listener class.
-     */
-    private final class ReportMouseListener
-            extends MouseAdapter {
-        @Override
-        public void mouseClicked(final MouseEvent evt) {
-            /* If this is a left click event */
-            if (evt.getButton() == MouseEvent.BUTTON1) {
-                /* Determine the document element that we right clicked on */
-                Element myElement = getHyperlinkElement(evt);
-                if (myElement != null) {
-                    /* Obtain the attributes */
-                    Object myAttrs = myElement.getAttributes().getAttribute(HTML.Tag.A);
-                    if (myAttrs instanceof AttributeSet) {
-                        AttributeSet mySet = (AttributeSet) myAttrs;
-
-                        /* Access the reference name */
-                        String myRef = (String) mySet.getAttribute(HTML.Attribute.HREF);
-                        if (myRef != null) {
-                            /* Process the link reference */
-                            theManager.processReference(myRef, theEditor);
-                        }
-                    }
-                }
-            }
-        }
-
-        /**
-         * Work out which element the mouse event relates to.
-         * @param pEvent the mouse event
-         * @return the element
-         */
-        private Element getHyperlinkElement(final MouseEvent pEvent) {
-            /* Access the editor and locate mouse position */
-            JEditorPane myEditor = (JEditorPane) pEvent.getSource();
-            int myPos = myEditor.getUI().viewToModel(myEditor, pEvent.getPoint());
-
-            /* If all looks OK so far */
-            if ((myPos >= 0) && (myEditor.getDocument() instanceof HTMLDocument)) {
-
-                /* Access the document element for the position */
-                HTMLDocument myDoc = (HTMLDocument) myEditor.getDocument();
-                Element myElem = myDoc.getCharacterElement(myPos);
-
-                /* If there is an anchor reference, return the element */
-                if (myElem.getAttributes().getAttribute(HTML.Tag.A) != null) {
-                    return myElem;
-                }
-            }
-
-            /* Return no element */
-            return null;
-        }
-
     }
 }

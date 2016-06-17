@@ -22,14 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.threads;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
 import org.slf4j.Logger;
@@ -39,7 +36,6 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseCancelException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferenceKey;
@@ -47,6 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.Mon
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFFile;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFParser;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFStreamWriter;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFWriter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -94,9 +91,6 @@ public class MoneyWiseThreadWriteQIF<N, I>
         /* Initialise the status window */
         myManager.initTask("Analysing Data");
 
-        /* Assume failure */
-        boolean bSuccess = false;
-
         /* Load configuration */
         MetisPreferenceManager myMgr = theView.getPreferenceManager();
         MoneyWiseQIFPreferences myPrefs = myMgr.getPreferenceSet(MoneyWiseQIFPreferences.class);
@@ -121,26 +115,19 @@ public class MoneyWiseThreadWriteQIF<N, I>
         QIFWriter myQWriter = new QIFWriter(myManager, myQFile);
 
         /* Protect against exceptions */
-        try (FileOutputStream myOutput = new FileOutputStream(myOutFile);
-             BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
-             OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, StandardCharsets.ISO_8859_1)) {
-
+        boolean doDelete = true;
+        try (QIFStreamWriter myWriter = new QIFStreamWriter(myOutFile)) {
             /* Output the data */
-            boolean isSuccess = myQWriter.writeFile(myWriter);
+            myQWriter.writeFile(myWriter);
             myWriter.close();
-            bSuccess = isSuccess;
-
-            /* Check for cancellation */
-            if (!isSuccess) {
-                throw new MoneyWiseCancelException("Operation Cancelled");
-            }
+            doDelete = false;
 
         } catch (IOException e) {
             /* Report the error */
             throw new MoneyWiseIOException("Failed to write to file: " + myOutFile.getName(), e);
         } finally {
-            /* Delete the file */
-            if ((!bSuccess) && (!myOutFile.delete())) {
+            /* Delete the file on failure */
+            if ((doDelete) && (!myOutFile.delete())) {
                 /* Nothing that we can do. At least we tried */
                 LOGGER.error(ERROR_DELETE);
             }
@@ -167,6 +154,9 @@ public class MoneyWiseThreadWriteQIF<N, I>
             /* Report the error */
             throw new MoneyWiseIOException("Failed to load to file: " + myOutFile.getName(), e);
         }
+
+        /* State that we have completed */
+        myManager.setCompletion();
 
         /* Return nothing */
         return null;

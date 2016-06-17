@@ -123,15 +123,10 @@ public class ThemisSvnRepository
         theRevisionHistory = new ThemisSvnRevisionHistoryMap(this);
 
         /* Report start of analysis */
-        if (pReport.initTask("Analysing components")) {
-            /* Discover components */
-            myComponents.discover(pReport);
+        pReport.initTask("Analysing components");
 
-            /* Report completion of pass */
-            if (!pReport.isCancelled()) {
-                pReport.initTask("Component Analysis complete");
-            }
-        }
+        /* Discover components */
+        myComponents.discover(pReport);
     }
 
     @Override

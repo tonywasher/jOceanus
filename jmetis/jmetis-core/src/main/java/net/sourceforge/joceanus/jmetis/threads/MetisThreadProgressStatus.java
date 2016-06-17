@@ -43,6 +43,11 @@ public abstract class MetisThreadProgressStatus<N, I>
     protected static final int TIMER_DURATION = 5000;
 
     /**
+     * Gap width.
+     */
+    protected static final int GAP_WIDTH = 20;
+
+    /**
      * Blank character.
      */
     private static final char CHAR_BLANK = ' ';
@@ -148,6 +153,11 @@ public abstract class MetisThreadProgressStatus<N, I>
     private final TethysBorderPaneManager<N, I> theProgressNode;
 
     /**
+     * The Stage Panel.
+     */
+    private final TethysBorderPaneManager<N, I> theStagePanel;
+
+    /**
      * The Node.
      */
     private final TethysCardPaneManager<N, I, TethysBorderPaneManager<N, I>> theNode;
@@ -190,29 +200,34 @@ public abstract class MetisThreadProgressStatus<N, I>
 
         /* Create the status pane */
         theStatusNode = theGuiFactory.newBorderPane();
+        theStatusNode.setHGap(GAP_WIDTH);
         theStatusNode.setCentre(theStatusField);
         theStatusNode.setWest(theClearButton);
         theStatusNode.setBorderTitle(NLS_STATUS);
 
         /* Create the task progress pane */
         TethysBorderPaneManager<N, I> myTaskProgress = theGuiFactory.newBorderPane();
+        myTaskProgress.setHGap(GAP_WIDTH);
         myTaskProgress.setCentre(theTaskProgress);
         myTaskProgress.setWest(theTaskField);
 
         /* Create the stage progress pane */
-        TethysBorderPaneManager<N, I> myStageProgress = theGuiFactory.newBorderPane();
-        myStageProgress.setCentre(theStageProgress);
-        myStageProgress.setWest(theStageField);
+        theStagePanel = theGuiFactory.newBorderPane();
+        theStagePanel.setHGap(GAP_WIDTH);
+        theStagePanel.setCentre(theStageProgress);
+        theStagePanel.setWest(theStageField);
 
         /* Create the stage progress pane */
         TethysGridPaneManager<N, I> myProgressGrid = theGuiFactory.newGridPane();
+        myProgressGrid.setHGap(GAP_WIDTH);
         myProgressGrid.addCell(myTaskProgress);
         myProgressGrid.allowCellGrowth(myTaskProgress);
-        myProgressGrid.addCell(myStageProgress);
-        myProgressGrid.allowCellGrowth(myStageProgress);
+        myProgressGrid.addCell(theStagePanel);
+        myProgressGrid.allowCellGrowth(theStagePanel);
 
         /* Create the progress pane */
         theProgressNode = theGuiFactory.newBorderPane();
+        theProgressNode.setHGap(GAP_WIDTH);
         theProgressNode.setCentre(myProgressGrid);
         theProgressNode.setEast(theCancelButton);
         theProgressNode.setBorderTitle(NLS_PROGRESS);
@@ -265,6 +280,9 @@ public abstract class MetisThreadProgressStatus<N, I>
 
     @Override
     public void setProgress(final MetisThreadStatus pStatus) {
+        /* Obtain the stage name */
+        String myStage = pStatus.getStage();
+
         /* Set the task name */
         theTaskField.setText(pStatus.getTask());
 
@@ -272,10 +290,13 @@ public abstract class MetisThreadProgressStatus<N, I>
         theTaskProgress.setProgress(pStatus.getTaskProgress());
 
         /* Set the stage name */
-        theStageField.setText(pStatus.getStage());
+        theStageField.setText(myStage);
 
         /* Set the stage progress */
         theStageProgress.setProgress(pStatus.getStageProgress());
+
+        /* Set stage visibility */
+        theStagePanel.setVisible(myStage != null);
 
         /* Make sure that the progress node is visible */
         showProgress();

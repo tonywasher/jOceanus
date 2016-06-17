@@ -82,6 +82,9 @@ public class PrometheusThreadPurgeDatabase<T extends DataSet<T, E>, E extends En
             /* Derive the new set of updates */
             theControl.deriveUpdates();
 
+            /* State that we have completed */
+            myManager.setCompletion();
+
             /* Return null */
             return null;
 

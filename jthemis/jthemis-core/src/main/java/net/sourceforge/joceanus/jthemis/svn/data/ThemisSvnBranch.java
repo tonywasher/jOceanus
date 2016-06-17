@@ -362,9 +362,7 @@ public final class ThemisSvnBranch
             /* If we have a trunk */
             if (myTrunk != null) {
                 /* Report stage */
-                if (!pReport.setNewStage("Analysing branch " + myTrunk.getBranchName())) {
-                    return;
-                }
+                pReport.setNewStage("Analysing branch " + myTrunk.getBranchName());
 
                 /* Analyse history map */
                 myTrunk.discoverHistory();
@@ -385,9 +383,7 @@ public final class ThemisSvnBranch
                 }
 
                 /* Report stage */
-                if (!pReport.setNewStage("Analysing branch " + myBranch.getBranchName())) {
-                    break;
-                }
+                pReport.setNewStage("Analysing branch " + myBranch.getBranchName());
 
                 /* If this is not a virtual branch */
                 if (!myBranch.isVirtual()) {

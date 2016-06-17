@@ -31,15 +31,13 @@ import org.w3c.dom.Node;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Build a report document.
  */
-public abstract class HTMLBuilder {
+public class HTMLBuilder {
     /**
      * The class attribute.
      */
@@ -247,16 +245,14 @@ public abstract class HTMLBuilder {
 
     /**
      * Constructor.
-     * @param pView the view
-     * @param pUtilitySet the utility set
+     * @param pFormatter the formatter
      * @throws OceanusException on error
      */
-    protected HTMLBuilder(final View<?, ?> pView,
-                          final JOceanusUtilitySet<?, ?> pUtilitySet) throws OceanusException {
+    public HTMLBuilder(final MetisDataFormatter pFormatter) throws OceanusException {
         /* Protect against exceptions */
         try {
-            /* Create the formatter */
-            theFormatter = new MetisDataFormatter();
+            /* Store the formatter */
+            theFormatter = pFormatter;
 
             /* Create the document builder */
             DocumentBuilderFactory myDocFactory = DocumentBuilderFactory.newInstance();

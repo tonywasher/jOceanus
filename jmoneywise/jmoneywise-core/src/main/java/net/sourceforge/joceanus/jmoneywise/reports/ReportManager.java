@@ -33,27 +33,33 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 
 /**
  * Provides functionality to hide and restore sections of an HTML document. This is useful for
  * displaying HTML documents in a jEditorPane, allowing a click to open/close sections of the
  * document.
  */
-public abstract class ReportManager
+public class ReportManager
         implements TethysEventProvider<PrometheusDataEvent> {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportManager.class);
+
     /**
      * The id attribute.
      */
@@ -77,12 +83,17 @@ public abstract class ReportManager
     /**
      * The Current document.
      */
-    private Document theDocument = null;
+    private Document theDocument;
+
+    /**
+     * The Current report.
+     */
+    private BasicReport theReport;
 
     /**
      * The Current text.
      */
-    private String theText = null;
+    private String theText;
 
     /**
      * The hidden element map.
@@ -91,14 +102,10 @@ public abstract class ReportManager
 
     /**
      * Constructor.
-     * @param pView the view
-     * @param pUtilitySet the utility set
      * @param pBuilder the HTML builder
      * @throws OceanusException on error
      */
-    public ReportManager(final View<?, ?> pView,
-                         final JOceanusUtilitySet<?, ?> pUtilitySet,
-                         final HTMLBuilder pBuilder) throws OceanusException {
+    public ReportManager(final HTMLBuilder pBuilder) throws OceanusException {
         /* Create the builder */
         theBuilder = pBuilder;
 
@@ -140,6 +147,9 @@ public abstract class ReportManager
     public void setReport(final BasicReport pReport) {
         /* Clear the maps */
         theHiddenMap.clear();
+
+        /* Store the report */
+        theReport = pReport;
     }
 
     /**
@@ -316,6 +326,76 @@ public abstract class ReportManager
         } catch (TransformerException e) {
             throw new MoneyWiseIOException("Failed to format", e);
         }
+    }
+
+    /**
+     * Process link reference.
+     * @param pId the id of the reference.
+     * @param pHTMLPane the HTML pane
+     */
+    public void processReference(final String pId,
+                                 final TethysHTMLManager<?, ?> pHTMLPane) {
+        /* Process the reference */
+        String myText = processReference(pId);
+
+        /* If we have new text */
+        if (myText != null) {
+            /* Set it into the window and adjust the scroll */
+            pHTMLPane.setHTMLContent(myText, "");
+            String myId = HTMLBuilder.REF_ID
+                          + pId.substring(HTMLBuilder.REF_TAB.length());
+            pHTMLPane.scrollToReference(myId);
+        }
+    }
+
+    /**
+     * Process link reference.
+     * @param pId the id of the reference.
+     * @return the new text
+     */
+    private String processReference(final String pId) {
+        /* Allocate the text */
+        String myText = null;
+
+        /* Protected against exceptions */
+        try {
+            /* If this is a table reference */
+            if (pId.startsWith(HTMLBuilder.REF_TAB)) {
+                /* If the section is hidden */
+                if (isHiddenId(pId)) {
+                    /* Restore the section and access text */
+                    myText = restoreSection(pId);
+
+                    /* else try to hide the section */
+                } else {
+                    myText = hideSection(pId);
+                }
+
+                /* else if this is a delayed table reference */
+            } else if (pId.startsWith(HTMLBuilder.REF_DELAY)) {
+                /* Process the delayed reference and format text */
+                if (theReport.processDelayedReference(getBuilder(), pId)) {
+                    /* Format the text */
+                    myText = formatXML();
+                }
+
+                /* else if this is a filter reference */
+            } else if (pId.startsWith(HTMLBuilder.REF_FILTER)) {
+                /* Process the filter reference */
+                AnalysisFilter<?, ?> myFilter = theReport.processFilterReference(pId);
+
+                /* Fire Action event if necessary */
+                if (myFilter != null) {
+                    fireActionEvent(myFilter);
+                }
+            }
+        } catch (OceanusException e) {
+            LOGGER.error("Failed to process reference", e);
+            myText = null;
+        }
+
+        /* Return the new text */
+        return myText;
     }
 
     /**

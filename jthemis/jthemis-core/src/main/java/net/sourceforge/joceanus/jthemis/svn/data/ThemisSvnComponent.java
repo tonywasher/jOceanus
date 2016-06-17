@@ -386,9 +386,7 @@ public final class ThemisSvnComponent
             }
 
             /* Report number of stages */
-            if (!pReport.setNumStages(size() + 2)) {
-                return;
-            }
+            pReport.setNumStages(size() + 2);
 
             /* Loop through the components */
             Iterator<ThemisSvnComponent> myIterator = iterator();
@@ -398,9 +396,7 @@ public final class ThemisSvnComponent
                 SvnBranchList myBranches = myComponent.getBranches();
 
                 /* Report discovery of component */
-                if (!pReport.setNewStage("Analysing component " + myComponent.getName())) {
-                    break;
-                }
+                pReport.setNewStage("Analysing component " + myComponent.getName());
 
                 /* Discover branches for the component */
                 myBranches.discover(pReport);

@@ -223,7 +223,12 @@ public abstract class TethysHTMLManager<N, I>
      * Scroll to reference.
      * @param pReference the reference
      */
-    protected abstract void scrollToReference(final String pReference);
+    public abstract void scrollToReference(final String pReference);
+
+    /**
+     * Print the contents.
+     */
+    public abstract void printIt();
 
     /**
      * Load new page.

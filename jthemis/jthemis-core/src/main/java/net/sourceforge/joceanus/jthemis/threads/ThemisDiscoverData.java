@@ -133,14 +133,12 @@ public class ThemisDiscoverData<N, I>
             theRepository = new ThemisSvnRepository(myPreferences, myManager);
 
             /* Discover workingSet details */
-            if (!myManager.isCancelled()) {
-                theWorkingCopySet = new SvnWorkingCopySet(theRepository, myManager);
-            }
+            myManager.checkForCancellation();
+            theWorkingCopySet = new SvnWorkingCopySet(theRepository, myManager);
 
             /* Build the Extract Plans */
-            if (!myManager.isCancelled()) {
-                deriveExtractPlans();
-            }
+            myManager.checkForCancellation();
+            deriveExtractPlans();
 
             /* Return null */
             return null;

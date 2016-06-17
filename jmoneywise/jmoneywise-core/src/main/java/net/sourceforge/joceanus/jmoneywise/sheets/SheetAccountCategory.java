@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
@@ -61,29 +62,24 @@ public final class SheetAccountCategory {
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
-     * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected static boolean loadArchive(final MetisThreadStatusReport pReport,
-                                         final MetisDataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws OceanusException {
+    protected static void loadArchive(final MetisThreadStatusReport pReport,
+                                      final MetisDataWorkBook pWorkBook,
+                                      final MoneyWiseData pData) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
             MetisDataView myView = pWorkBook.getRangeView(AREA_ACTCATEGORIES);
 
             /* Declare the new stage */
-            if (!pReport.setNewStage(AREA_ACTCATEGORIES)) {
-                return false;
-            }
+            pReport.setNewStage(AREA_ACTCATEGORIES);
 
             /* Count the number of Categories */
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
-            if (!pReport.setNumSteps(myTotal)) {
-                return false;
-            }
+            pReport.setNumSteps(myTotal);
 
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
@@ -94,21 +90,18 @@ public final class SheetAccountCategory {
                 processCategory(pData, myView, myRow);
 
                 /* Report the progress */
-                if (!pReport.setNextStep()) {
-                    return false;
-                }
+                pReport.setNextStep();
             }
 
             /* Resolve Category lists */
             resolveCategoryLists(pData);
 
             /* Handle exceptions */
+        } catch (MetisThreadCancelException e) {
+            throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to Load " + AREA_ACTCATEGORIES, e);
         }
-
-        /* Return to caller */
-        return true;
     }
 
     /**

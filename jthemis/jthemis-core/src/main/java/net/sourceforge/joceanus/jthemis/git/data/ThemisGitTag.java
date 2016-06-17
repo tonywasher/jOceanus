@@ -276,9 +276,7 @@ public final class ThemisGitTag
                 ThemisGitTag myTag = myIterator.next();
 
                 /* Report stage */
-                if (!pReport.setNewStage("Analysing tag " + myTag.getTagName())) {
-                    break;
-                }
+                pReport.setNewStage("Analysing tag " + myTag.getTagName());
 
                 /* Parse project file */
                 ThemisMvnProjectDefinition myProject = theComponent.parseProjectObject(myTag.getCommitId(), "");

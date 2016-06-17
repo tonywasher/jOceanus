@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmetis.threads;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Report status.
@@ -31,56 +32,68 @@ public interface MetisThreadStatusReport {
     /**
      * Initialise Task.
      * @param pTask the task
-     * @return continue? true/false
+     * @throws OceanusException on cancellation
      */
-    boolean initTask(final String pTask);
+    void initTask(final String pTask) throws OceanusException;
 
     /**
      * Set number of stages.
      * @param pNumStages the number of stages
-     * @return continue? true/false
+     * @throws OceanusException on cancellation
      */
-    boolean setNumStages(final int pNumStages);
+    void setNumStages(final int pNumStages) throws OceanusException;
 
     /**
      * Set new stage.
      * @param pStage the new stage
-     * @return continue? true/false
+     * @throws OceanusException on cancellation
      */
-    boolean setNewStage(final String pStage);
+    void setNewStage(final String pStage) throws OceanusException;
 
     /**
      * Set number of steps.
      * @param pNumSteps the number of steps
-     * @return continue? true/false
+     * @throws OceanusException on cancellation
      */
-    boolean setNumSteps(final int pNumSteps);
+    void setNumSteps(final int pNumSteps) throws OceanusException;
 
     /**
      * Set steps done.
      * @param pSteps the number of steps done
-     * @return continue? true/false
+     * @throws OceanusException on cancellation
      */
-    boolean setStepsDone(final int pSteps);
+    void setStepsDone(final int pSteps) throws OceanusException;
 
     /**
      * Set next step.
-     * @return continue true/false
+     * @throws OceanusException on cancellation
      */
-    boolean setNextStep();
+    void setNextStep() throws OceanusException;
 
     /**
      * Set next step.
      * @param pStep the step to set
-     * @return continue true/false
+     * @throws OceanusException on cancellation
      */
-    boolean setNextStep(final String pStep);
+    void setNextStep(final String pStep) throws OceanusException;
+
+    /**
+     * Set Completion.
+     * @throws OceanusException on cancellation
+     */
+    void setCompletion() throws OceanusException;
 
     /**
      * Is the task cancelled?
-     * @return true/false
+     * @throws OceanusException on cancellation
      */
-    boolean isCancelled();
+    void checkForCancellation() throws OceanusException;
+
+    /**
+     * Throw cancellation exception.
+     * @throws OceanusException on error
+     */
+    void throwCancelException() throws OceanusException;
 
     /**
      * Obtain the active task.

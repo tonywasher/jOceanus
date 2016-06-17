@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
@@ -113,12 +114,11 @@ public class SheetTransTag
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
-     * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected static boolean loadArchive(final MetisThreadStatusReport pReport,
-                                         final MetisDataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws OceanusException {
+    protected static void loadArchive(final MetisThreadStatusReport pReport,
+                                      final MetisDataWorkBook pWorkBook,
+                                      final MoneyWiseData pData) throws OceanusException {
         /* Access the list of tags */
         TransactionTagList myList = pData.getTransactionTags();
 
@@ -128,17 +128,13 @@ public class SheetTransTag
             MetisDataView myView = pWorkBook.getRangeView(AREA_TRANSTAGS);
 
             /* Declare the new stage */
-            if (!pReport.setNewStage(TransactionTag.LIST_NAME)) {
-                return false;
-            }
+            pReport.setNewStage(TransactionTag.LIST_NAME);
 
             /* Count the number of tags */
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
-            if (!pReport.setNumSteps(myTotal)) {
-                return false;
-            }
+            pReport.setNumSteps(myTotal);
 
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
@@ -158,20 +154,17 @@ public class SheetTransTag
                 myList.addValuesItem(myValues);
 
                 /* Report the progress */
-                if (!pReport.setNextStep()) {
-                    return false;
-                }
+                pReport.setNextStep();
             }
 
             /* PostProcess on load */
             myList.postProcessOnLoad();
 
             /* Handle exceptions */
+        } catch (MetisThreadCancelException e) {
+            throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
-
-        /* Return to caller */
-        return true;
     }
 }

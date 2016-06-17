@@ -29,57 +29,57 @@ public enum PrometheusThreadId {
     /**
      * Create Database.
      */
-    CREATEDB(PrometheusThreadResource.CREATEDB),
+    CREATEDB(PrometheusThreadResource.THREAD_CREATEDB),
 
     /**
      * Load Database.
      */
-    LOADDB(PrometheusThreadResource.LOADDB),
+    LOADDB(PrometheusThreadResource.THREAD_LOADDB),
 
     /**
      * Store Database.
      */
-    STOREDB(PrometheusThreadResource.STOREDB),
+    STOREDB(PrometheusThreadResource.THREAD_STOREDB),
 
     /**
      * Purge Database.
      */
-    PURGEDB(PrometheusThreadResource.PURGEDB),
+    PURGEDB(PrometheusThreadResource.THREAD_PURGEDB),
 
     /**
      * Create Backup.
      */
-    CREATEBACKUP(PrometheusThreadResource.BACKUPCREATE),
+    CREATEBACKUP(PrometheusThreadResource.THREAD_BACKUPCREATE),
 
     /**
      * Restore Backup.
      */
-    RESTOREBACKUP(PrometheusThreadResource.BACKUPRESTORE),
+    RESTOREBACKUP(PrometheusThreadResource.THREAD_BACKUPRESTORE),
 
     /**
      * Create XML Backup.
      */
-    CREATEXML(PrometheusThreadResource.XMLCREATE),
+    CREATEXML(PrometheusThreadResource.THREAD_XMLCREATE),
 
     /**
      * Create XML Extract.
      */
-    CREATEXTRACT(PrometheusThreadResource.XTRACTCREATE),
+    CREATEXTRACT(PrometheusThreadResource.THREAD_XTRACTCREATE),
 
     /**
      * Restore XML Backup.
      */
-    RESTOREXML(PrometheusThreadResource.XMLLOAD),
+    RESTOREXML(PrometheusThreadResource.THREAD_XMLLOAD),
 
     /**
      * Renew Security.
      */
-    RENEWSECURITY(PrometheusThreadResource.SECURERENEW),
+    RENEWSECURITY(PrometheusThreadResource.THREAD_SECURERENEW),
 
     /**
      * Change Password.
      */
-    CHANGEPASS(PrometheusThreadResource.CHANGEPASS);
+    CHANGEPASS(PrometheusThreadResource.THREAD_CHANGEPASS);
 
     /**
      * The name.

@@ -509,9 +509,7 @@ public final class ThemisSvnWorkingCopy
             locateWorkingDirectories(theLocation);
 
             /* Report number of stages */
-            if (!pReport.setNumStages(size() + 2)) {
-                return;
-            }
+            pReport.setNumStages(size() + 2);
 
             /* Access list iterator */
             Iterator<ThemisSvnWorkingCopy> myIterator = iterator();
@@ -522,9 +520,7 @@ public final class ThemisSvnWorkingCopy
                 ThemisSvnWorkingCopy myCopy = myIterator.next();
 
                 /* Report stage of analysis */
-                if (!pReport.setNewStage("Analysing WC at " + myCopy.getLocation().getName())) {
-                    return;
-                }
+                pReport.setNewStage("Analysing WC at " + myCopy.getLocation().getName());
 
                 /* Discover updates */
                 myCopy.discoverUpdates(pReport);

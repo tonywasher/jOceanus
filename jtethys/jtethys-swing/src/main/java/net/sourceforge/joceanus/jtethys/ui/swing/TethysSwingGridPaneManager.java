@@ -89,7 +89,7 @@ public class TethysSwingGridPaneManager
 
         /* Obtain the padding size */
         Integer myHPad = getHGap() >> 1;
-        Integer myVPad = getHGap() >> 1;
+        Integer myVPad = getVGap() >> 1;
 
         /* Create constraints */
         GridBagConstraints myConstraints = new GridBagConstraints();

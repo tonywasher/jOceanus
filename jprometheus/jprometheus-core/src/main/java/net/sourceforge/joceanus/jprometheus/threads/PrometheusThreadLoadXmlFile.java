@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
@@ -49,6 +48,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
  */
 public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         implements MetisThread<T, N, I> {
+    /**
+     * Select Backup Task.
+     */
+    private static final String TASK_SELECTFILE = PrometheusThreadResource.TASK_SELECT_BACKUP.getValue();
+
     /**
      * Data control.
      */
@@ -85,7 +89,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
 
         /* Determine the name of the file to load */
         TethysFileSelector myDialog = pToolkit.getGuiFactory().newFileSelector();
-        myDialog.setTitle("Select Backup to restore");
+        myDialog.setTitle(TASK_SELECTFILE);
         myDialog.setInitialDirectory(myBackupDir);
         myDialog.setExtension(GordianZipReadFile.ZIPFILE_EXT);
         File myFile = myDialog.selectFile();
@@ -93,7 +97,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            throw new PrometheusCancelException("Operation Cancelled");
+            myManager.throwCancelException();
         }
 
         /* Create a new formatter */
@@ -101,15 +105,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
 
         /* Load data */
         T myNewData = theControl.getNewData();
-        boolean bContinue = myFormatter.loadZipFile(myNewData, myFile);
-
-        /* Check for cancellation */
-        if (!bContinue) {
-            throw new PrometheusCancelException("Operation Cancelled");
-        }
-
-        /* Initialise the status window */
-        myManager.initTask("Accessing DataStore");
+        myFormatter.loadZipFile(myNewData, myFile);
 
         /* Create interface */
         PrometheusDataStore<T> myDatabase = theControl.getDatabase();
@@ -121,14 +117,14 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
         /* Check security on the database */
         myStore.checkSecurity(myManager);
 
-        /* Initialise the status window */
-        myManager.initTask("Re-applying Security");
-
         /* Initialise the security, either from database or with a new security control */
         myNewData.initialiseSecurity(myManager, myStore);
 
         /* Re-base the loaded backup onto the database image */
         myNewData.reBase(myManager, myStore);
+
+        /* State that we have completed */
+        myManager.setCompletion();
 
         /* Return the Data */
         return myNewData;

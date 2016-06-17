@@ -6,7 +6,10 @@ body {
 }
 
 /* Define standard alignment for headers */
-h1,h2 {
+h1 {
+  text-align: center;
+}
+h2 {
   text-align: center;
 }
 
@@ -42,7 +45,7 @@ td {
 }
 
 /* Define background colour for alternate category row */
-.altSummRow {
+.altSummRow { 
   background-color: ${-jtethys-color-background};
 }
 
@@ -67,14 +70,14 @@ td {
 }
 
 /* Define alignment for link values */
-.linkValue {
+.linkValue  {
   text-align: left;	
 }
 
 /* Define colour and alignment for data values */
 .dataValue {
   text-align: right;	
-  color: ${-jtethys-color-value};	
+  color: ${-jtethys-color-data};	
 }
 
 /* Define colour and alignment for data values */
@@ -93,5 +96,9 @@ td {
 a {
   font-weight: bold;
   text-decoration: none;
-  color: ${-jtethys-color-link};	
+}
+
+/* Set hover colour for link */
+a:hover { 
+  color: ${-jtethys-color-link};
 }

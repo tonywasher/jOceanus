@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -140,10 +139,10 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
         GordianKeySetHash myHash = mySecure.similarKeySetHash(myBase);
 
         /* Assume failure */
-        boolean bSuccess = false;
         String myName = PrometheusSpreadSheet.FILE_NAME + pType.getExtension();
 
         /* Protect the workbook access */
+        boolean bDelete = true;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, pFile);
              OutputStream myStream = myZipFile.getOutputStream(new File(myName))) {
             /* Record the DataSet */
@@ -160,16 +159,14 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
 
             /* Close the Zip file */
             myZipFile.close();
-
-            /* Set success to avoid deleting file */
-            bSuccess = true;
+            bDelete = false;
 
         } catch (IOException e) {
             /* Report the error */
             throw new PrometheusIOException("Failed to create Backup Workbook: " + pFile.getName(), e);
         } finally {
             /* Delete the file on error */
-            if ((!bSuccess) && (!pFile.delete())) {
+            if (bDelete && !pFile.delete()) {
                 /* Nothing that we can do. At least we tried */
                 LOGGER.error(ERROR_DELETE);
             }
@@ -217,34 +214,25 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
         MetisProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
-        boolean bContinue = theReport.setNumStages(theSheets.size() + 1);
+        theReport.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
         Iterator<PrometheusSheetDataItem<?, ?>> myIterator = theSheets.iterator();
-        while ((bContinue) && (myIterator.hasNext())) {
+        while (myIterator.hasNext()) {
             /* Access the next sheet */
             PrometheusSheetDataItem<?, ?> mySheet = myIterator.next();
 
             /* Write data for the sheet */
             myTask.startTask(mySheet.toString());
-            bContinue = mySheet.writeSpreadSheet();
+            mySheet.writeSpreadSheet();
         }
 
         /* If we have built all the sheets */
-        if (bContinue) {
-            bContinue = theReport.setNewStage("Writing");
-        }
+        theReport.setNewStage("Writing");
 
         /* If we have created the workbook OK */
-        if (bContinue) {
-            /* Write it out to disk and close the stream */
-            myTask.startTask("Saving");
-            theWorkBook.saveToStream(pStream);
-        }
-
-        /* Check for cancellation */
-        if (!bContinue) {
-            throw new PrometheusCancelException("Operation Cancelled");
-        }
+        /* Write it out to disk and close the stream */
+        myTask.startTask("Saving");
+        theWorkBook.saveToStream(pStream);
     }
 }

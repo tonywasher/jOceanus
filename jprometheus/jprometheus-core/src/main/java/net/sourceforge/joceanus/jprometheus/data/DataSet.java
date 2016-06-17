@@ -84,11 +84,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public static final MetisField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
 
     /**
-     * Security Field Id.
-     */
-    public static final MetisField FIELD_SECURITY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_SECURITY.getValue());
-
-    /**
      * ControlKeys Field Id.
      */
     public static final MetisField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEY_LIST.getValue());
@@ -109,6 +104,36 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public static final MetisField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLDATA_LIST.getValue());
 
     /**
+     * SecurityInit Task.
+     */
+    private static final String TASK_SECINIT = PrometheusDataResource.TASK_SECURITY_INIT.getValue();
+
+    /**
+     * SecurityCheck Task.
+     */
+    private static final String TASK_SECCHECK = PrometheusDataResource.TASK_SECURITY_CHECK.getValue();
+
+    /**
+     * SecurityUpdate Task.
+     */
+    private static final String TASK_SECUPDATE = PrometheusDataResource.TASK_SECURITY_UPDATE.getValue();
+
+    /**
+     * SecurityReNew Task.
+     */
+    private static final String TASK_SECRENEW = PrometheusDataResource.TASK_SECURITY_RENEW.getValue();
+
+    /**
+     * DataReBase Task.
+     */
+    private static final String TASK_DATAREBASE = PrometheusDataResource.TASK_DATA_REBASE.getValue();
+
+    /**
+     * DataDiff Task.
+     */
+    private static final String TASK_DATADIFF = PrometheusDataResource.TASK_DATA_DIFF.getValue();
+
+    /**
      * Security Manager.
      */
     private final GordianHashManager theSecurity;
@@ -121,22 +146,22 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * ControlKeys.
      */
-    private ControlKeyList theControlKeys = null;
+    private ControlKeyList theControlKeys;
 
     /**
      * DataKeySets.
      */
-    private DataKeySetList theDataKeySets = null;
+    private DataKeySetList theDataKeySets;
 
     /**
      * DataKeys.
      */
-    private DataKeyList theDataKeys = null;
+    private DataKeyList theDataKeys;
 
     /**
      * ControlData.
      */
-    private ControlDataList theControlData = null;
+    private ControlDataList theControlData;
 
     /**
      * Number of activeKeySets.
@@ -146,12 +171,12 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Number of encrypted lists.
      */
-    private int theNumEncrypted = 0;
+    private int theNumEncrypted;
 
     /**
      * Generation of dataSet.
      */
-    private int theGeneration = 0;
+    private int theGeneration;
 
     /**
      * Granularity of dataSet.
@@ -161,7 +186,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Version of dataSet.
      */
-    private int theVersion = 0;
+    private int theVersion;
 
     /**
      * The DataList Map.
@@ -243,9 +268,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
         if (FIELD_VERSION.equals(pField)) {
             return theVersion;
-        }
-        if (FIELD_SECURITY.equals(pField)) {
-            return theSecurity;
         }
         if (FIELD_CONTROLKEYS.equals(pField)) {
             return theControlKeys.isEmpty()
@@ -501,7 +523,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
                                      final T pOld) throws OceanusException {
         /* Access current profile */
         MetisProfile myTask = pReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask("checkDifferences");
+        MetisProfile myStage = myTask.startTask(TASK_DATADIFF);
 
         /* Build the security differences */
         theControlKeys = pNew.getControlKeys().deriveDifferences(this, pOld.getControlKeys());
@@ -541,7 +563,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
                        final T pOld) throws OceanusException {
         /* Access current profile */
         MetisProfile myTask = pReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask("ReBase");
+        MetisProfile myStage = myTask.startTask(TASK_DATAREBASE);
 
         /* ReBase the security items */
         boolean bUpdates = theControlKeys.reBase(pOld.getControlKeys());
@@ -880,19 +902,17 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Initialise Security from database (if present).
      * @param pReport the report
      * @param pBase the database data
-     * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    public boolean initialiseSecurity(final MetisThreadStatusReport pReport,
-                                      final T pBase) throws OceanusException {
+    public void initialiseSecurity(final MetisThreadStatusReport pReport,
+                                   final T pBase) throws OceanusException {
         /* Access current profile */
         MetisProfile myTask = pReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask("InitSecurity");
+        MetisProfile myStage = myTask.startTask(TASK_SECINIT);
 
         /* Set the number of stages */
-        if (!pReport.setNumStages(1 + theNumEncrypted)) {
-            return false;
-        }
+        pReport.initTask(TASK_SECINIT);
+        pReport.setNumStages(theNumEncrypted);
 
         /* Initialise Security */
         theControlKeys.initialiseSecurity(pBase);
@@ -917,29 +937,23 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
                 /* Adopt the security */
                 myStage.startTask(myList.listName());
                 EncryptedList<?, E> myEncrypted = (EncryptedList<?, E>) myList;
-                if (!myEncrypted.adoptSecurity(pReport, myControl, (EncryptedList<?, E>) myBase)) {
-                    return false;
-                }
+                myEncrypted.adoptSecurity(pReport, myControl, (EncryptedList<?, E>) myBase);
             }
         }
 
         /* Complete the task */
         myStage.end();
-
-        /* Return success */
-        return true;
     }
 
     /**
      * Renew Security.
      * @param pReport the report
-     * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    public boolean renewSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
+    public void renewSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
         MetisProfile myTask = pReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask("ReNewSecurity");
+        MetisProfile myStage = myTask.startTask(TASK_SECRENEW);
 
         /* Access ControlData */
         ControlData myControl = getControl();
@@ -951,28 +965,26 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         myControl.setControlKey(myKey);
 
         /* Update Security */
-        boolean bSuccess = updateSecurity(pReport);
+        updateSecurity(pReport);
 
         /* Complete task */
         myStage.end();
-        return bSuccess;
     }
 
     /**
      * Check Security for incomplete security operations.
      * @param pReport the report
-     * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    public boolean checkSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
+    public void checkSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
         MetisProfile myTask = pReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask("CheckSecurity");
+        MetisProfile myStage = myTask.startTask(TASK_SECCHECK);
 
         /* If there is more than one controlKey */
         if (theControlKeys.size() > 1) {
             /* Update to the selected controlKey */
-            return updateSecurity(pReport);
+            updateSecurity(pReport);
         } else {
             /* Make sure that password changes are OK */
             ControlKey myKey = getControlKey();
@@ -981,25 +993,22 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             }
         }
 
-        /* Return success */
+        /* Complete task */
         myStage.end();
-        return true;
     }
 
     /**
      * Update Security.
      * @param pReport the report
-     * @return Continue <code>true/false</code>
      * @throws OceanusException on error
      */
-    public boolean updateSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
+    public void updateSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access the control key */
         ControlKey myControl = getControlKey();
 
         /* Set the number of stages */
-        if (!pReport.setNumStages(1 + theNumEncrypted)) {
-            return false;
-        }
+        pReport.initTask(TASK_SECUPDATE);
+        pReport.setNumStages(theNumEncrypted);
 
         /* Loop through the List values */
         Iterator<DataList<?, E>> myIterator = iterator();
@@ -1010,18 +1019,13 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             if (myList instanceof EncryptedList) {
                 /* Update the security */
                 EncryptedList<?, E> myEncrypted = (EncryptedList<?, E>) myList;
-                if (!myEncrypted.updateSecurity(pReport, myControl)) {
-                    return false;
-                }
+                myEncrypted.updateSecurity(pReport, myControl);
             }
         }
 
         /* Delete old ControlSets */
         theControlKeys.purgeOldControlKeys();
         setVersion(1);
-
-        /* Return success */
-        return true;
     }
 
     /**

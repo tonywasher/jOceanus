@@ -168,14 +168,10 @@ public class ThemisBackup {
             Long myNumRevs = myEntry.getUserLongProperty(PROP_NUMREV);
 
             /* Declare the stage */
-            if (!theStatus.setNewStage("Repository")) {
-                return;
-            }
+            theStatus.setNewStage("Repository");
 
             /* Declare the number of revisions */
-            if (!theStatus.setNumSteps(myNumRevs.intValue())) {
-                return;
-            }
+            theStatus.setNumSteps(myNumRevs.intValue());
 
             /* Access the input stream for the relevant file */
             InputStream myStream = myFile.getInputStream(myEntry);
@@ -273,9 +269,7 @@ public class ThemisBackup {
 
         /* Declare the number of revisions */
         int myNumRevisions = (int) revLast;
-        if (!theStatus.setNumSteps(myNumRevisions)) {
-            return;
-        }
+        theStatus.setNumSteps(myNumRevisions);
 
         /* Note presumption of failure */
         boolean doDelete = true;
@@ -331,9 +325,7 @@ public class ThemisBackup {
         File myBackup = new File(myBUPreferences.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR));
 
         /* Report start of backup */
-        if (!theStatus.initTask("Backing up subVersion")) {
-            return;
-        }
+        theStatus.initTask("Backing up subVersion");
 
         /* Loop through the repository directories */
         int iNumStages = 0;
@@ -345,12 +337,7 @@ public class ThemisBackup {
         }
 
         /* Declare the number of stages */
-        boolean bContinue = theStatus.setNumStages(iNumStages);
-
-        /* Ignore if cancelled */
-        if (!bContinue) {
-            return;
-        }
+        theStatus.setNumStages(iNumStages);
 
         /* Loop through the repository directories */
         for (File myRepository : myRepo.listFiles()) {
@@ -360,17 +347,10 @@ public class ThemisBackup {
             }
 
             /* Set new stage and break if cancelled */
-            if (!theStatus.setNewStage(myRepository.getName())) {
-                break;
-            }
+            theStatus.setNewStage(myRepository.getName());
 
             /* Backup the repositories */
             backUpRepository(pManager, myRepository, myBackup);
-        }
-
-        /* Report end of backup */
-        if (!theStatus.isCancelled()) {
-            theStatus.initTask("Backup completed");
         }
     }
 
@@ -382,7 +362,9 @@ public class ThemisBackup {
 
         @Override
         public void checkCancelled() throws SVNCancelException {
-            if (theStatus.isCancelled()) {
+            try {
+                theStatus.checkForCancellation();
+            } catch (OceanusException e) {
                 throw new SVNCancelException();
             }
         }
@@ -394,8 +376,12 @@ public class ThemisBackup {
             SVNAdminEventAction myAction = pEvent.getAction();
             if (myAction.equals(SVNAdminEventAction.REVISION_DUMPED)
                 || myAction.equals(SVNAdminEventAction.REVISION_LOADED)) {
-                /* Set new step */
-                theStatus.setNextStep("Revision");
+                try {
+                    /* Set new step */
+                    theStatus.setNextStep("Revision");
+                } catch (OceanusException e) {
+                    throw new SVNCancelException();
+                }
             }
         }
 

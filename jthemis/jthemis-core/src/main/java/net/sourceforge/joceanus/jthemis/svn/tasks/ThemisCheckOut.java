@@ -39,7 +39,6 @@ import org.tmatesoft.svn.core.wc.SVNWCClient;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisCancelException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
@@ -218,9 +217,7 @@ public class ThemisCheckOut {
         /* Loop through branches */
         for (ThemisSvnBranch myBranch : pBranches) {
             /* Check for cancellation */
-            if (theReport.isCancelled()) {
-                throw new ThemisCancelException("Operation Cancelled");
-            }
+            theReport.checkForCancellation();
 
             /* Build path */
             File myPath = new File(pPath, myBranch.getComponent().getName());
@@ -291,9 +288,7 @@ public class ThemisCheckOut {
         /* Loop through tags */
         for (ThemisSvnTag myTag : pTags) {
             /* Check for cancellation */
-            if (theReport.isCancelled()) {
-                throw new ThemisCancelException("Operation Cancelled");
-            }
+            theReport.checkForCancellation();
 
             /* Build path */
             File myPath = new File(pPath, myTag.getComponent().getName());
@@ -315,7 +310,9 @@ public class ThemisCheckOut {
 
         @Override
         public void checkCancelled() throws SVNCancelException {
-            if (theReport.isCancelled()) {
+            try {
+                theReport.checkForCancellation();
+            } catch (OceanusException e) {
                 throw new SVNCancelException();
             }
         }
@@ -338,35 +335,39 @@ public class ThemisCheckOut {
         @Override
         public void handleEvent(final SVNEvent pEvent,
                                 final double pProgress) throws SVNException {
-            /* Access the Action */
-            SVNEventAction myAction = pEvent.getAction();
+            try {
+                /* Access the Action */
+                SVNEventAction myAction = pEvent.getAction();
 
-            /* If this is the start of the checkOut */
-            if (myAction.equals(SVNEventAction.UPDATE_STARTED)) {
-                /* Record the prefix */
-                thePrefix = pEvent.getFile().getPath();
+                /* If this is the start of the checkOut */
+                if (myAction.equals(SVNEventAction.UPDATE_STARTED)) {
+                    /* Record the prefix */
+                    thePrefix = pEvent.getFile().getPath();
 
-            } else if (myAction.equals(SVNEventAction.UPDATE_COMPLETED)) {
-                /* Clear the prefix */
-                thePrefix = null;
+                } else if (myAction.equals(SVNEventAction.UPDATE_COMPLETED)) {
+                    /* Clear the prefix */
+                    thePrefix = null;
 
-            } else if (myAction.equals(SVNEventAction.UPDATE_ADD)) {
-                /* Report activity */
-                theReport.setNewStage("A "
-                                      + adjustName(pEvent));
+                } else if (myAction.equals(SVNEventAction.UPDATE_ADD)) {
+                    /* Report activity */
+                    theReport.setNewStage("A "
+                                          + adjustName(pEvent));
 
-            } else if (myAction.equals(SVNEventAction.UPDATE_UPDATE)) {
-                /* Report activity */
-                theReport.setNewStage("U "
-                                      + adjustName(pEvent));
+                } else if (myAction.equals(SVNEventAction.UPDATE_UPDATE)) {
+                    /* Report activity */
+                    theReport.setNewStage("U "
+                                          + adjustName(pEvent));
 
-            } else if (myAction.equals(SVNEventAction.UPDATE_DELETE)) {
-                /* Report activity */
-                theReport.setNewStage("D "
-                                      + adjustName(pEvent));
+                } else if (myAction.equals(SVNEventAction.UPDATE_DELETE)) {
+                    /* Report activity */
+                    theReport.setNewStage("D "
+                                          + adjustName(pEvent));
 
-            } else {
-                theReport.setNewStage(pEvent.getFile().getPath());
+                } else {
+                    theReport.setNewStage(pEvent.getFile().getPath());
+                }
+            } catch (OceanusException e) {
+                throw new SVNCancelException();
             }
         }
     }

@@ -75,6 +75,9 @@ public class PrometheusThreadUpdatePassword<T extends DataSet<T, E>, E extends E
         /* Update password */
         myData.updatePasswordHash(myManager, "Database");
 
+        /* State that we have completed */
+        myManager.setCompletion();
+
         /* Return data */
         return myData;
     }

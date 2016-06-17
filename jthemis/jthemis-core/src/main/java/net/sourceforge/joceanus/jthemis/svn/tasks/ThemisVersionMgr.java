@@ -343,7 +343,9 @@ public class ThemisVersionMgr {
 
         @Override
         public void checkCancelled() throws SVNCancelException {
-            if (theReport.isCancelled()) {
+            try {
+                theReport.checkForCancellation();
+            } catch (OceanusException e) {
                 throw new SVNCancelException();
             }
         }
@@ -352,7 +354,11 @@ public class ThemisVersionMgr {
         public void handleEvent(final SVNEvent pEvent,
                                 final double pProgress) throws SVNException {
             /* Report activity */
-            theReport.setNewStage(pEvent.getFile().getPath());
+            try {
+                theReport.setNewStage(pEvent.getFile().getPath());
+            } catch (OceanusException e) {
+                throw new SVNCancelException();
+            }
         }
     }
 }

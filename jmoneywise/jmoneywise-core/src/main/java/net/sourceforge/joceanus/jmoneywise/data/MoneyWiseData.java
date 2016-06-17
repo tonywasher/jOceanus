@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
@@ -116,7 +117,7 @@ public class MoneyWiseData
     /**
      * DataSet range.
      */
-    private TethysDateRange theDateRange = null;
+    private TethysDateRange theDateRange;
 
     /**
      * Default Currency.
@@ -164,13 +165,19 @@ public class MoneyWiseData
     @Override
     public Object getFieldValue(final MetisField pField) {
         if (FIELD_DATERANGE.equals(pField)) {
-            return theDateRange;
+            return theDateRange == null
+                                        ? MetisFieldValue.SKIP
+                                        : theDateRange;
         }
         if (FIELD_DEFCURR.equals(pField)) {
-            return theDefaultCurrency;
+            return theDefaultCurrency == null
+                                              ? MetisFieldValue.SKIP
+                                              : theDefaultCurrency;
         }
         if (FIELD_HOLDINGSMAP.equals(pField)) {
-            return theSecurityHoldings;
+            return theSecurityHoldings == null
+                                               ? MetisFieldValue.SKIP
+                                               : theSecurityHoldings;
         }
 
         /* Handle List fields */

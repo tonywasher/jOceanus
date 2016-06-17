@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
@@ -53,6 +52,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
  */
 public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<E>, N, I>
         implements MetisThread<T, N, I> {
+    /**
+     * Select Backup Task.
+     */
+    private static final String TASK_SELECTFILE = PrometheusThreadResource.TASK_SELECT_BACKUP.getValue();
+
     /**
      * Data control.
      */
@@ -89,7 +93,7 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<
 
         /* Determine the name of the file to load */
         TethysFileSelector myDialog = pToolkit.getGuiFactory().newFileSelector();
-        myDialog.setTitle("Select Backup to restore");
+        myDialog.setTitle(TASK_SELECTFILE);
         myDialog.setInitialDirectory(myBackupDir);
         myDialog.setExtension(GordianZipReadFile.ZIPFILE_EXT);
         File myFile = myDialog.selectFile();
@@ -97,16 +101,13 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            throw new PrometheusCancelException("Operation Cancelled");
+            myManager.throwCancelException();
         }
 
         /* Load workbook */
         PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
         T myData = theControl.getNewData();
         mySheet.loadBackup(myManager, mySecurityMgr, myData, myFile);
-
-        /* Initialise the status window */
-        myManager.initTask("Accessing DataStore");
 
         /* Create interface */
         PrometheusDataStore<T> myDatabase = theControl.getDatabase();
@@ -120,6 +121,9 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<
 
         /* Re-base the loaded backup onto the database image */
         myData.reBase(myManager, myStore);
+
+        /* State that we have completed */
+        myManager.setCompletion();
 
         /* Return the Data */
         return myData;

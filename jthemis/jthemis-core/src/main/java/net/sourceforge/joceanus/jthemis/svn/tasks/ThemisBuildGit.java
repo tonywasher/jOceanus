@@ -124,9 +124,7 @@ public class ThemisBuildGit {
         pReport.initTask("Building Git Component");
 
         /* Report number of stages */
-        if (!pReport.setNumStages(thePlan.numPlans())) {
-            return;
-        }
+        pReport.setNumStages(thePlan.numPlans());
 
         /* Report stage */
         pReport.initTask("Building Trunk");
@@ -155,10 +153,10 @@ public class ThemisBuildGit {
         /* If we are complete */
         if (myStatus.isComplete()) {
             /* Report stage */
-            if (pReport.initTask("Collecting garbage")) {
-                /* Perform garbage collection */
-                garbageCollect();
-            }
+            pReport.initTask("Collecting garbage");
+
+            /* Perform garbage collection */
+            garbageCollect();
         }
     }
 
@@ -193,9 +191,7 @@ public class ThemisBuildGit {
             RevCommit myLastCommit = theCommitMap.getCommit(myAnchor);
             if (myLastCommit != null) {
                 /* Report stage */
-                if (!pReport.initTask("Building branch " + myPlan.getOwner())) {
-                    return SvnExtractStatus.CANCELLED;
-                }
+                pReport.initTask("Building branch " + myPlan.getOwner());
 
                 /* Build the branch */
                 buildBranch(pReport, myPlan, myLastCommit);
@@ -245,9 +241,7 @@ public class ThemisBuildGit {
             RevCommit myLastCommit = theCommitMap.getCommit(myAnchor);
             if (myLastCommit != null) {
                 /* Report stage */
-                if (!pReport.initTask("Building tag " + myPlan.getOwner())) {
-                    return SvnExtractStatus.CANCELLED;
-                }
+                pReport.initTask("Building tag " + myPlan.getOwner());
 
                 /* Build the tag */
                 buildTag(pReport, myPlan, myLastCommit);
@@ -277,10 +271,10 @@ public class ThemisBuildGit {
         Object myOwner = myPlan.getOwner();
 
         /* Report plan steps */
-        if (pReport.setNumSteps(myPlan.numViews())) {
-            /* Commit the plan */
-            commitPlan(pReport, myOwner, null, myPlan.viewIterator());
-        }
+        pReport.setNumSteps(myPlan.numViews());
+
+        /* Commit the plan */
+        commitPlan(pReport, myOwner, null, myPlan.viewIterator());
     }
 
     /**
@@ -313,10 +307,10 @@ public class ThemisBuildGit {
             myCheckout.call();
 
             /* Report plan steps */
-            if (pReport.setNumSteps(pBranchPlan.numViews())) {
-                /* Commit the plan */
-                commitPlan(pReport, myOwner, pLastCommit, pBranchPlan.viewIterator());
-            }
+            pReport.setNumSteps(pBranchPlan.numViews());
+
+            /* Commit the plan */
+            commitPlan(pReport, myOwner, pLastCommit, pBranchPlan.viewIterator());
 
             /* Catch Git exceptions */
         } catch (GitAPIException e) {
@@ -352,20 +346,19 @@ public class ThemisBuildGit {
             myCheckout.call();
 
             /* Report plan steps */
-            if (pReport.setNumSteps(pTagPlan.numViews())) {
-                /* Commit the plan */
-                commitPlan(pReport, myOwner, pLastCommit, pTagPlan.viewIterator());
+            pReport.setNumSteps(pTagPlan.numViews());
+            /* Commit the plan */
+            commitPlan(pReport, myOwner, pLastCommit, pTagPlan.viewIterator());
 
-                /* Create tag if no cancellation */
-                if (!pReport.isCancelled()) {
-                    /* Create the tag */
-                    TagCommand myTag = theGit.tag();
-                    myTag.setName(myOwner.getTagName());
-                    myTag.setAnnotated(true);
-                    myTag.setTagger(new PersonIdent(theCommitter, new Date()));
-                    myTag.call();
-                }
-            }
+            /* Create tag if no cancellation */
+            pReport.checkForCancellation();
+
+            /* Create the tag */
+            TagCommand myTag = theGit.tag();
+            myTag.setName(myOwner.getTagName());
+            myTag.setAnnotated(true);
+            myTag.setTagger(new PersonIdent(theCommitter, new Date()));
+            myTag.call();
 
             /* Catch Git exceptions */
         } catch (GitAPIException e) {
@@ -399,9 +392,7 @@ public class ThemisBuildGit {
 
                 /* Report plan step */
                 String myFormat = myFormatter.formatDate(myView.getDate());
-                if (!pReport.setNextStep(myFormat)) {
-                    return;
-                }
+                pReport.setNextStep(myFormat);
 
                 /* Extract the details to the directory, preserving the GitDir */
                 myView.extractItem(theWorkDir, ThemisGitComponent.NAME_GITDIR);

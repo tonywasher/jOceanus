@@ -27,6 +27,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
@@ -119,13 +120,12 @@ public class SheetTaxYear
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @param pLoader the archive loader
-     * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected static boolean loadArchive(final MetisThreadStatusReport pReport,
-                                         final MetisDataWorkBook pWorkBook,
-                                         final MoneyWiseData pData,
-                                         final ArchiveLoader pLoader) throws OceanusException {
+    protected static void loadArchive(final MetisThreadStatusReport pReport,
+                                      final MetisDataWorkBook pWorkBook,
+                                      final MoneyWiseData pData,
+                                      final ArchiveLoader pLoader) throws OceanusException {
         /* Access the lists */
         TaxYearList myList = pData.getTaxYears();
         TaxInfoList myInfoList = pData.getTaxInfo();
@@ -136,17 +136,13 @@ public class SheetTaxYear
             MetisDataView myView = pWorkBook.getRangeView(AREA_TAXYEARS);
 
             /* Declare the new stage */
-            if (!pReport.setNewStage(AREA_TAXYEARS)) {
-                return false;
-            }
+            pReport.setNewStage(AREA_TAXYEARS);
 
             /* Count the number of TaxYears */
             int myTotal = myView.getColumnCount();
 
             /* Declare the number of steps */
-            if (!pReport.setNumSteps(myTotal)) {
-                return false;
-            }
+            pReport.setNumSteps(myTotal);
 
             /* Obtain the range iterator */
             Iterator<ArchiveYear> myIterator = pLoader.getIterator();
@@ -256,9 +252,7 @@ public class SheetTaxYear
 
                 /* Report the progress */
                 iRow++;
-                if (!pReport.setNextStep()) {
-                    return false;
-                }
+                pReport.setNextStep();
             }
 
             /* PostProcess the lists */
@@ -266,11 +260,10 @@ public class SheetTaxYear
             myInfoList.postProcessOnLoad();
 
             /* Handle exceptions */
+        } catch (MetisThreadCancelException e) {
+            throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
-
-        /* Return to caller */
-        return true;
     }
 }

@@ -42,20 +42,16 @@ public class MetisTestThread<N, I>
         /* Access the Thread Manager */
         MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
 
-        /* Set stage */
-        boolean bContinue = myManager.setNumStages(2);
+        /* Set stages */
+        myManager.setNumStages(2);
 
         /* Perform first task */
-        if (bContinue) {
-            bContinue = myManager.setNewStage("First")
-                        && singleTask(myManager, 500);
-        }
+        myManager.setNewStage("First");
+        singleTask(myManager, 500);
 
         /* Perform second task */
-        if (bContinue) {
-            bContinue = myManager.setNewStage("Second")
-                        && singleTask(myManager, 200);
-        }
+        myManager.setNewStage("Second");
+        singleTask(myManager, 200);
 
         /* No result */
         return null;
@@ -65,15 +61,12 @@ public class MetisTestThread<N, I>
      * Perform one task.
      * @param pManager the thread manager
      * @param pNumSteps the number of steps
-     * @return continue true/false
      * @throws OceanusException on error
      */
-    private boolean singleTask(final MetisThreadManager<N, I> pManager,
-                               final int pNumSteps) throws OceanusException {
+    private void singleTask(final MetisThreadManager<N, I> pManager,
+                            final int pNumSteps) throws OceanusException {
         /* Record task details */
-        if (!pManager.setNumSteps(500)) {
-            return false;
-        }
+        pManager.setNumSteps(500);
 
         /* Protect against exceptions */
         try {
@@ -83,15 +76,10 @@ public class MetisTestThread<N, I>
                 Thread.sleep(10);
 
                 /* Set status */
-                if (!pManager.setNextStep()) {
-                    return false;
-                }
+                pManager.setNextStep();
             }
         } catch (InterruptedException e) {
-            return false;
+            Thread.currentThread().interrupt();
         }
-
-        /* Continue */
-        return true;
     }
 }

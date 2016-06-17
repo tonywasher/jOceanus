@@ -35,9 +35,15 @@ import org.w3c.dom.events.EventTarget;
 
 import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
+import javafx.print.PageLayout;
+import javafx.print.PageOrientation;
+import javafx.print.Paper;
+import javafx.print.Printer;
+import javafx.print.PrinterJob;
 import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import netscape.javascript.JSObject;
 
@@ -77,6 +83,11 @@ public class TethysFXHTMLManager
     private static final String ATTR_REF = "href";
 
     /**
+     * The Stage.
+     */
+    private final Stage theStage;
+
+    /**
      * WebView.
      */
     private final WebView theWebView;
@@ -103,6 +114,9 @@ public class TethysFXHTMLManager
     protected TethysFXHTMLManager(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
+
+        /* Store the stage */
+        theStage = pFactory.getStage();
 
         /* Create WebView and access the engine */
         theWebView = new WebView();
@@ -145,7 +159,7 @@ public class TethysFXHTMLManager
     }
 
     @Override
-    protected void scrollToReference(final String pReference) {
+    public void scrollToReference(final String pReference) {
         /* If the webPage is fully loaded */
         if (theWebEngine.getLoadWorker().getState().equals(Worker.State.SUCCEEDED)) {
             /* Obtain the key objects */
@@ -238,6 +252,25 @@ public class TethysFXHTMLManager
     private void handleStateChange(final State pNewState) {
         if (pNewState == Worker.State.SUCCEEDED) {
             attachListenerToDoc();
+        }
+    }
+
+    @Override
+    public void printIt() {
+        /* Prepare to print the webPage */
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if ((job != null)
+            && job.showPrintDialog(theStage)) {
+            /* Access printer and determine orientation */
+            Printer myPrinter = job.getPrinter();
+
+            /* Create page layout of correct type */
+            PageLayout myLayout = myPrinter.createPageLayout(Paper.A4, PageOrientation.PORTRAIT, Printer.MarginType.DEFAULT);
+            job.getJobSettings().setPageLayout(myLayout);
+
+            /* Print the WebPage */
+            theWebEngine.print(job);
+            job.endJob();
         }
     }
 

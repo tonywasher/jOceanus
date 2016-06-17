@@ -33,57 +33,62 @@ public enum PrometheusThreadResource
     /**
      * LoadDB.
      */
-    LOADDB("LoadDB"),
+    THREAD_LOADDB("LoadDB"),
 
     /**
      * StoreDB.
      */
-    STOREDB("StoreDB"),
+    THREAD_STOREDB("StoreDB"),
 
     /**
      * CreateDB.
      */
-    CREATEDB("CreateDB"),
+    THREAD_CREATEDB("CreateDB"),
 
     /**
      * PurgeDB.
      */
-    PURGEDB("PurgeDB"),
+    THREAD_PURGEDB("PurgeDB"),
 
     /**
      * Create Backup.
      */
-    BACKUPCREATE("CreateBackup"),
+    THREAD_BACKUPCREATE("CreateBackup"),
 
     /**
      * Restore Backup.
      */
-    BACKUPRESTORE("RestoreBackup"),
+    THREAD_BACKUPRESTORE("RestoreBackup"),
 
     /**
      * Create XML Backup.
      */
-    XMLCREATE("CreateXml"),
+    THREAD_XMLCREATE("CreateXml"),
 
     /**
      * Restore XMLBackup MenuItem.
      */
-    XMLLOAD("RestoreXml"),
+    THREAD_XMLLOAD("RestoreXml"),
 
     /**
      * Create XmlExtract.
      */
-    XTRACTCREATE("CreateXtract"),
+    THREAD_XTRACTCREATE("CreateXtract"),
 
     /**
      * RenewSecurity.
      */
-    SECURERENEW("RenewSecurity"),
+    THREAD_SECURERENEW("RenewSecurity"),
 
     /**
      * Change Password.
      */
-    CHANGEPASS("ChangePass");
+    THREAD_CHANGEPASS("ChangePass"),
+
+    /**
+     * Seloect Backup File.
+     */
+    TASK_SELECT_BACKUP("task.SelectBackup");
 
     /**
      * The Resource Builder.

@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmetis;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * JMetis IO Exception.
+ * Metis IO Exception.
  */
 public class MetisIOException
         extends OceanusException {

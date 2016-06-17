@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
@@ -122,13 +123,12 @@ public class SheetSecurityPrice
      * @param pWorkBook the workbook
      * @param pLoader the archive loader
      * @param pData the data set to load into
-     * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected static boolean loadArchive(final MetisThreadStatusReport pReport,
-                                         final MetisDataWorkBook pWorkBook,
-                                         final MoneyWiseData pData,
-                                         final ArchiveLoader pLoader) throws OceanusException {
+    protected static void loadArchive(final MetisThreadStatusReport pReport,
+                                      final MetisDataWorkBook pWorkBook,
+                                      final MoneyWiseData pData,
+                                      final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of prices */
         SecurityPriceList myList = pData.getSecurityPrices();
 
@@ -138,9 +138,7 @@ public class SheetSecurityPrice
             MetisDataView myView = pWorkBook.getRangeView(AREA_PRICES);
 
             /* Declare the new stage */
-            if (!pReport.setNewStage(AREA_PRICES)) {
-                return false;
-            }
+            pReport.setNewStage(AREA_PRICES);
 
             /* Count the number of Prices */
             int myRows = myView.getRowCount();
@@ -148,9 +146,7 @@ public class SheetSecurityPrice
             int myTotal = (myRows - 1) * (myCols - 1);
 
             /* Declare the number of steps */
-            if (!pReport.setNumSteps(myTotal)) {
-                return false;
-            }
+            pReport.setNumSteps(myTotal);
 
             /* Loop through the rows of the table */
             MetisDataRow myActRow = myView.getRowByIndex(0);
@@ -194,9 +190,7 @@ public class SheetSecurityPrice
                     }
 
                     /* Report the progress */
-                    if (!pReport.setNextStep()) {
-                        return false;
-                    }
+                    pReport.setNextStep();
                 }
             }
 
@@ -204,11 +198,10 @@ public class SheetSecurityPrice
             myList.postProcessOnLoad();
 
             /* Handle exceptions */
+        } catch (MetisThreadCancelException e) {
+            throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
-
-        /* Return to caller */
-        return true;
     }
 }

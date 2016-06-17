@@ -138,11 +138,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * Create a Backup ZipFile.
      * @param pData Data to write out
      * @param pFile the backup file to write to
-     * @return success true/false
      * @throws OceanusException on error
      */
-    public boolean createBackup(final T pData,
-                                final File pFile) throws OceanusException {
+    public void createBackup(final T pData,
+                             final File pFile) throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = theReport.getActiveTask();
         MetisProfile myStage = myTask.startTask("Writing");
@@ -156,39 +155,36 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         theVersion = pData.getControl().getDataVersion();
 
         /* Declare the number of stages */
-        boolean bContinue = theReport.setNumStages(pData.getListMap().size());
+        theReport.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
+        boolean bDelete = true;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, pFile)) {
             /* Loop through the data lists */
             Iterator<DataList<?, E>> myIterator = pData.iterator();
-            while (bContinue && myIterator.hasNext()) {
+            while (myIterator.hasNext()) {
                 DataList<?, E> myList = myIterator.next();
 
                 /* Declare the new stage */
-                if (!theReport.setNewStage(myList.listName())) {
-                    return false;
-                }
+                theReport.setNewStage(myList.listName());
 
                 /* If this list should be written */
                 if (myList.includeDataXML()) {
                     /* Write the list details */
                     myStage.startTask(myList.listName());
-                    bContinue = writeXMLListToFile(myList, myZipFile, true);
+                    writeXMLListToFile(myList, myZipFile, true);
                 }
             }
 
             /* Complete the task */
             myStage.end();
-
-            /* return success */
-            return bContinue;
+            bDelete = false;
 
         } catch (IOException e) {
             throw new PrometheusIOException("Failed to create backup XML", e);
         } finally {
             /* Delete the file on error */
-            if (!bContinue && !pFile.delete()) {
+            if (bDelete && !pFile.delete()) {
                 /* Nothing that we can do. At least we tried */
                 LOGGER.error(ERROR_DELETE);
             }
@@ -199,11 +195,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * Create an Extract ZipFile.
      * @param pData Data to write out
      * @param pFile the extract file to write to
-     * @return success true/false
      * @throws OceanusException on error
      */
-    public boolean createExtract(final T pData,
-                                 final File pFile) throws OceanusException {
+    public void createExtract(final T pData,
+                              final File pFile) throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = theReport.getActiveTask();
         MetisProfile myStage = myTask.startTask("Writing");
@@ -212,39 +207,36 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         theVersion = pData.getControl().getDataVersion();
 
         /* Declare the number of stages */
-        boolean bContinue = theReport.setNumStages(pData.getListMap().size());
+        theReport.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
+        boolean bDelete = true;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(pFile)) {
             /* Loop through the data lists */
             Iterator<DataList<?, E>> myIterator = pData.iterator();
-            while (bContinue && myIterator.hasNext()) {
+            while (myIterator.hasNext()) {
                 DataList<?, E> myList = myIterator.next();
 
                 /* Declare the new stage */
-                if (!theReport.setNewStage(myList.listName())) {
-                    return false;
-                }
+                theReport.setNewStage(myList.listName());
 
                 /* If this list should be written */
                 if (myList.includeDataXML()) {
                     /* Write the list details */
                     myStage.startTask(myList.listName());
-                    bContinue = writeXMLListToFile(myList, myZipFile, false);
+                    writeXMLListToFile(myList, myZipFile, false);
                 }
             }
 
             /* Complete the task */
             myStage.end();
-
-            /* return success */
-            return bContinue;
+            bDelete = false;
 
         } catch (IOException e) {
             throw new PrometheusIOException("Failed to create extract XML", e);
         } finally {
             /* Delete the file on error */
-            if (!bContinue && !pFile.delete()) {
+            if (bDelete && !pFile.delete()) {
                 /* Nothing that we can do. At least we tried */
                 LOGGER.error(ERROR_DELETE);
             }
@@ -256,12 +248,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pList the data list
      * @param pZipFile the output zipFile
      * @param pStoreIds do we include IDs in XML
-     * @return continue true/false
      * @throws OceanusException on error
      */
-    private boolean writeXMLListToFile(final DataList<?, E> pList,
-                                       final GordianZipWriteFile pZipFile,
-                                       final boolean pStoreIds) throws OceanusException {
+    private void writeXMLListToFile(final DataList<?, E> pList,
+                                    final GordianZipWriteFile pZipFile,
+                                    final boolean pStoreIds) throws OceanusException {
         /* Access the list name */
         String myName = pList.listName() + SUFFIX_ENTRY;
 
@@ -271,13 +262,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             Document myDocument = theBuilder.newDocument();
 
             /* Populate the document from the list */
-            boolean bContinue = populateXML(myDocument, pList, pStoreIds);
+            populateXML(myDocument, pList, pStoreIds);
 
             /* Format the XML and write to stream */
             theXformer.transform(new DOMSource(myDocument), new StreamResult(myStream));
-
-            /* Return success */
-            return bContinue;
 
         } catch (TransformerException | IOException e) {
             throw new PrometheusIOException("Failed to transform XML", e);
@@ -289,11 +277,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pDocument the document to hold the list.
      * @param pList the data list
      * @param pStoreIds do we include IDs in XML
-     * @return continue true/false
+     * @throws OceanusException on error
      */
-    private boolean populateXML(final Document pDocument,
-                                final DataList<?, E> pList,
-                                final boolean pStoreIds) {
+    private void populateXML(final Document pDocument,
+                             final DataList<?, E> pList,
+                             final boolean pStoreIds) throws OceanusException {
         /* Create an element for the item */
         Element myElement = pDocument.createElement(pList.listName());
         pDocument.appendChild(myElement);
@@ -303,9 +291,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
         /* Declare the number of steps */
         int myTotal = pList.size();
-        if (!theReport.setNumSteps(myTotal)) {
-            return false;
-        }
+        theReport.setNumSteps(myTotal);
 
         /* Set the list type and size */
         myElement.setAttribute(DataValues.ATTR_TYPE, pList.getItemType().name());
@@ -340,24 +326,18 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             myElement.appendChild(myChild);
 
             /* Report the progress */
-            if (!theReport.setNextStep()) {
-                return false;
-            }
+            theReport.setNextStep();
         }
-
-        /* return success */
-        return true;
     }
 
     /**
      * Load a ZipFile.
      * @param pData DataSet to load into
      * @param pFile the file to load
-     * @return success true/false
      * @throws OceanusException on error
      */
-    public boolean loadZipFile(final T pData,
-                               final File pFile) throws OceanusException {
+    public void loadZipFile(final T pData,
+                            final File pFile) throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = theReport.getActiveTask();
         MetisProfile myStage = myTask.startTask("Loading");
@@ -379,11 +359,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         }
 
         /* Parse the Zip File */
-        boolean bSuccess = parseZipFile(myStage, pData, myZipFile);
+        parseZipFile(myStage, pData, myZipFile);
 
         /* Complete the task */
         myStage.end();
-        return bSuccess;
     }
 
     /**
@@ -391,33 +370,30 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pProfile the active profile
      * @param pData DataSet to load into
      * @param pZipFile the file to parse
-     * @return success true/false
      * @throws OceanusException on error
      */
-    private boolean parseZipFile(final MetisProfile pProfile,
-                                 final T pData,
-                                 final GordianZipReadFile pZipFile) throws OceanusException {
+    private void parseZipFile(final MetisProfile pProfile,
+                              final T pData,
+                              final GordianZipReadFile pZipFile) throws OceanusException {
         /* Start new stage */
         MetisProfile myStage = pProfile.startTask("Loading");
 
         /* Declare the number of stages */
-        boolean bContinue = theReport.setNumStages(pData.getListMap().size());
+        theReport.setNumStages(pData.getListMap().size());
 
         /* Loop through the data lists */
         Iterator<DataList<?, E>> myIterator = pData.iterator();
-        while (bContinue && myIterator.hasNext()) {
+        while (myIterator.hasNext()) {
             DataList<?, E> myList = myIterator.next();
 
             /* Declare the new stage */
-            if (!theReport.setNewStage(myList.listName())) {
-                return false;
-            }
+            theReport.setNewStage(myList.listName());
 
             /* If this list should be read */
             if (myList.includeDataXML()) {
                 /* Write the list details */
                 myStage.startTask(myList.listName());
-                bContinue = readXMLListFromFile(myList, pZipFile);
+                readXMLListFromFile(myList, pZipFile);
             }
 
             /* postProcessList after load */
@@ -425,26 +401,20 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         }
 
         /* Create the control data */
-        if (bContinue) {
-            pData.getControlData().addNewControl(theVersion);
-        }
+        pData.getControlData().addNewControl(theVersion);
 
         /* Complete the task */
         myStage.end();
-
-        /* return success */
-        return bContinue;
     }
 
     /**
      * Read XML list from file.
      * @param pList the data list
      * @param pZipFile the input zipFile
-     * @return continue true/false
      * @throws OceanusException on error
      */
-    private boolean readXMLListFromFile(final DataList<?, E> pList,
-                                        final GordianZipReadFile pZipFile) throws OceanusException {
+    private void readXMLListFromFile(final DataList<?, E> pList,
+                                     final GordianZipReadFile pZipFile) throws OceanusException {
         /* Access the list name */
         String myName = pList.listName() + SUFFIX_ENTRY;
 
@@ -461,9 +431,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             Document myDocument = theBuilder.parse(myStream);
 
             /* Populate the list from the document */
-            return parseXMLDocument(myDocument, pList);
+            parseXMLDocument(myDocument, pList);
 
-        } catch (IOException | SAXException e) {
+        } catch (IOException
+                | SAXException e) {
             throw new PrometheusIOException("Failed to parse XML", e);
         }
     }
@@ -472,11 +443,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * parse an XML document into DataValues.
      * @param pDocument the document that holds the list.
      * @param pList the data list
-     * @return continue true/false
      * @throws OceanusException on error
      */
-    private boolean parseXMLDocument(final Document pDocument,
-                                     final DataList<?, E> pList) throws OceanusException {
+    private void parseXMLDocument(final Document pDocument,
+                                  final DataList<?, E> pList) throws OceanusException {
         /* Access the parent element */
         Element myElement = pDocument.getDocumentElement();
         E myItemType = pList.getItemType();
@@ -503,9 +473,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
         /* Declare the number of steps */
         int myTotal = getListCount(myFormatter, myElement);
-        if (!theReport.setNumSteps(myTotal)) {
-            return false;
-        }
+        theReport.setNumSteps(myTotal);
 
         /* Loop through the children */
         for (Node myChild = myElement.getFirstChild(); myChild != null; myChild = myChild.getNextSibling()) {
@@ -524,13 +492,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             pList.addValuesItem(myValues);
 
             /* Report the progress */
-            if (!theReport.setNextStep()) {
-                return false;
-            }
+            theReport.setNextStep();
         }
-
-        /* Return success */
-        return true;
     }
 
     /**

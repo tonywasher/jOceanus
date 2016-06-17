@@ -22,10 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Thread Status.
  */
 public class MetisThreadStatus {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetisThreadStatus.class);
+
     /**
      * Default Number of steps/stages.
      */
@@ -233,5 +241,17 @@ public class MetisThreadStatus {
         theStagesDone = -1;
         theNumSteps = DEFAULT_NUMBER;
         theStepsDone = -1;
+    }
+
+    /**
+     * Set Completion.
+     */
+    public void setCompletion() {
+        theStagesDone++;
+        theNumSteps = -1;
+        theStepsDone = -1;
+        if (theStagesDone != theNumStages) {
+            LOGGER.info("Incorrect # of stages for Task: $1 ($2/$3)", theTask, theStagesDone, theNumStages);
+        }
     }
 }

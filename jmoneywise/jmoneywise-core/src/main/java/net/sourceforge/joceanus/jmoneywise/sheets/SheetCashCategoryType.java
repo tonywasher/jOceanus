@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
@@ -84,12 +85,11 @@ public class SheetCashCategoryType
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
-     * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected static boolean loadArchive(final MetisThreadStatusReport pReport,
-                                         final MetisDataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws OceanusException {
+    protected static void loadArchive(final MetisThreadStatusReport pReport,
+                                      final MetisDataWorkBook pWorkBook,
+                                      final MoneyWiseData pData) throws OceanusException {
         /* Access the list of cash types */
         CashCategoryTypeList myList = pData.getCashCategoryTypes();
 
@@ -99,17 +99,13 @@ public class SheetCashCategoryType
             MetisDataView myView = pWorkBook.getRangeView(AREA_CASHCATTYPES);
 
             /* Declare the new stage */
-            if (!pReport.setNewStage(AREA_CASHCATTYPES)) {
-                return false;
-            }
+            pReport.setNewStage(AREA_CASHCATTYPES);
 
             /* Count the number of AccountCategoryTypes */
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
-            if (!pReport.setNumSteps(myTotal)) {
-                return false;
-            }
+            pReport.setNumSteps(myTotal);
 
             /* Loop through the rows of the single column range */
             for (int i = 0; i < myTotal; i++) {
@@ -121,20 +117,17 @@ public class SheetCashCategoryType
                 myList.addBasicItem(myCell.getStringValue());
 
                 /* Report the progress */
-                if (!pReport.setNextStep()) {
-                    return false;
-                }
+                pReport.setNextStep();
             }
 
             /* PostProcess the list */
             myList.postProcessOnLoad();
 
             /* Handle exceptions */
+        } catch (MetisThreadCancelException e) {
+            throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
-
-        /* Return to caller */
-        return true;
     }
 }

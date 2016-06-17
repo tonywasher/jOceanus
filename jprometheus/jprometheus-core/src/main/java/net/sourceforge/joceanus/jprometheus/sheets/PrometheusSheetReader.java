@@ -38,7 +38,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jprometheus.PrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -49,16 +48,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <T> the DataSet type
  */
 public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
-    /**
-     * Close error text.
-     */
-    protected static final String ERROR_CLOSE = "Close failure";
-
-    /**
-     * Cancel error text.
-     */
-    private static final String ERROR_CANCEL = "Operation cancelled";
-
     /**
      * Report.
      */
@@ -190,22 +179,16 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
             myTask.startTask("Parsing");
 
             /* Initialise the workbook */
-            boolean bContinue = initialiseWorkBook(myStream, MetisWorkBookType.determineType(pEntry.getFileName()));
+            initialiseWorkBook(myStream, MetisWorkBookType.determineType(pEntry.getFileName()));
 
             /* Load the workbook */
-            if (bContinue) {
-                myTask.startTask("Reading");
-                bContinue = loadWorkBook();
-            }
+            myTask.startTask("Reading");
+            loadWorkBook();
 
             /* Close the Stream to force out errors */
             myTask.startTask("Closing");
             myStream.close();
 
-            /* Check for cancellation */
-            if (!bContinue) {
-                throw new PrometheusCancelException(ERROR_CANCEL);
-            }
         } catch (IOException e) {
             /* Report the error */
             throw new PrometheusIOException("Failed to load Backup Workbook: " + pEntry.getFileName(), e);
@@ -220,13 +203,12 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     /**
      * Create the list of sheets to load.
      * @param pStream the input stream
-     * @return continue true/false
      * @param pType the workBookType
      * @throws OceanusException on error
      * @throws IOException on read error
      */
-    private boolean initialiseWorkBook(final InputStream pStream,
-                                       final MetisWorkBookType pType) throws OceanusException, IOException {
+    private void initialiseWorkBook(final InputStream pStream,
+                                    final MetisWorkBookType pType) throws OceanusException, IOException {
         /* Initialise the list */
         theSheets = new ArrayList<>();
 
@@ -240,51 +222,35 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         registerSheets();
 
         /* Declare the number of stages */
-        boolean bContinue = theReport.setNumStages(theSheets.size() + 2);
+        theReport.setNumStages(theSheets.size() + 2);
 
         /* Note the stage */
-        if (bContinue) {
-            bContinue = theReport.setNewStage("Loading");
-        }
+        theReport.setNewStage("Loading");
 
         /* Access the workbook from the stream */
-        if (bContinue) {
-            theWorkBook = new MetisDataWorkBook(pStream, pType);
-        }
-
-        /* Return continue status */
-        return bContinue;
+        theWorkBook = new MetisDataWorkBook(pStream, pType);
     }
 
     /**
      * Load the WorkBook.
-     * @return continue true/false
      * @throws OceanusException on error
      */
-    private boolean loadWorkBook() throws OceanusException {
+    private void loadWorkBook() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
-        boolean bContinue = theReport.setNumStages(theSheets.size() + 1);
+        theReport.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
         Iterator<PrometheusSheetDataItem<?, ?>> myIterator = theSheets.iterator();
-        while ((bContinue) && (myIterator.hasNext())) {
+        while (myIterator.hasNext()) {
             /* Access the next sheet */
             PrometheusSheetDataItem<?, ?> mySheet = myIterator.next();
 
             /* Load data for the sheet */
             myTask.startTask(mySheet.toString());
-            bContinue = mySheet.loadSpreadSheet();
+            mySheet.loadSpreadSheet();
         }
-
-        /* Analyse the data */
-        if (!theReport.setNewStage("Refreshing data")) {
-            bContinue = false;
-        }
-
-        /* Return continue status */
-        return bContinue;
     }
 }

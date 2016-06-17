@@ -93,14 +93,14 @@ public class MoneyWiseThreadLoadArchive<N, I>
             /* Check security on the database */
             myStore.checkSecurity(myManager);
 
-            /* Initialise the status window */
-            myManager.initTask("Applying Security");
-
             /* Initialise the security, either from database or with a new security control */
             myData.initialiseSecurity(myManager, myStore);
 
             /* Re-base the loaded spreadsheet onto the database image */
             myData.reBase(myManager, myStore);
+
+            /* State that we have completed */
+            myManager.setCompletion();
 
             /* Return the loaded data */
             return myData;

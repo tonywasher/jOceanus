@@ -74,9 +74,6 @@ public class PrometheusThreadStoreDatabase<T extends DataSet<T, E>, E extends En
             /* Store database */
             myDatabase.updateDatabase(myManager, theControl.getUpdates());
 
-            /* Initialise the status window */
-            myManager.initTask("Verifying Store");
-
             /* Load database */
             T myStore = theControl.getNewData();
             myDatabase.loadDatabase(myManager, myStore);
@@ -96,6 +93,9 @@ public class PrometheusThreadStoreDatabase<T extends DataSet<T, E>, E extends En
 
             /* Derive new update list */
             theControl.deriveUpdates();
+
+            /* State that we have completed */
+            myManager.setCompletion();
 
             /* Return null */
             return null;

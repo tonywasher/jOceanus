@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
@@ -156,13 +157,12 @@ public class SheetTransaction
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @param pLoader the archive loader
-     * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected static boolean loadArchive(final MetisThreadStatusReport pReport,
-                                         final MetisDataWorkBook pWorkBook,
-                                         final MoneyWiseData pData,
-                                         final ArchiveLoader pLoader) throws OceanusException {
+    protected static void loadArchive(final MetisThreadStatusReport pReport,
+                                      final MetisDataWorkBook pWorkBook,
+                                      final MoneyWiseData pData,
+                                      final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of transactions */
         TransactionList myList = pData.getTransactions();
         TransactionInfoList myInfoList = pData.getTransactionInfo();
@@ -181,17 +181,13 @@ public class SheetTransaction
                 MetisDataView myView = pWorkBook.getRangeView(myYear.getRangeName());
 
                 /* Declare the new stage */
-                if (!pReport.setNewStage("Events from " + myYear.getDate().getYear())) {
-                    return false;
-                }
+                pReport.setNewStage("Events from " + myYear.getDate().getYear());
 
                 /* Count the number of Transactions */
                 int myTotal = myView.getRowCount();
 
                 /* Declare the number of steps */
-                if (!pReport.setNumSteps(myTotal)) {
-                    return false;
-                }
+                pReport.setNumSteps(myTotal);
 
                 /* Loop through the rows of the table */
                 for (int i = 0; i < myTotal; i++) {
@@ -204,9 +200,7 @@ public class SheetTransaction
                     }
 
                     /* Report the progress */
-                    if (!pReport.setNextStep()) {
-                        return false;
-                    }
+                    pReport.setNextStep();
                 }
 
                 /* If we have finished */
@@ -227,12 +221,11 @@ public class SheetTransaction
             myList.validateOnLoad();
 
             /* Handle Exceptions */
+        } catch (MetisThreadCancelException e) {
+            throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);
         }
-
-        /* Return to caller */
-        return true;
     }
 
     /**

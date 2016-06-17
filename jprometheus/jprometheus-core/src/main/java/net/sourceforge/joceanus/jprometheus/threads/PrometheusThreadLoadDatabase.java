@@ -62,9 +62,6 @@ public class PrometheusThreadLoadDatabase<T extends DataSet<T, E>, E extends Enu
         /* Access the thread manager */
         MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
 
-        /* Initialise the status window */
-        myManager.initTask(getTaskName());
-
         /* Access database */
         PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 
@@ -76,6 +73,9 @@ public class PrometheusThreadLoadDatabase<T extends DataSet<T, E>, E extends Enu
 
             /* Check security on the database */
             myData.checkSecurity(myManager);
+
+            /* State that we have completed */
+            myManager.setCompletion();
 
             /* Return the loaded data */
             return myData;

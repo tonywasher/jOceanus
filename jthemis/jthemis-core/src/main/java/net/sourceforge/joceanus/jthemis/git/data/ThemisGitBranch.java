@@ -224,14 +224,12 @@ public final class ThemisGitBranch
             discoverBranches(myGit);
 
             /* Discover virtual branches */
-            if (!pReport.isCancelled()) {
-                discoverVirtualBranches(myGit);
-            }
+            pReport.checkForCancellation();
+            discoverVirtualBranches(myGit);
 
             /* Discover tags for the branches */
-            if (!pReport.isCancelled()) {
-                discoverTags(pReport);
-            }
+            pReport.checkForCancellation();
+            discoverTags(pReport);
         }
 
         /**
@@ -366,9 +364,7 @@ public final class ThemisGitBranch
             ThemisGitBranch myTrunk = locateTrunk();
             if (myTrunk != null) {
                 /* Report stage */
-                if (!pReport.setNewStage("Analysing branch " + myTrunk.getBranchName())) {
-                    return;
-                }
+                pReport.setNewStage("Analysing branch " + myTrunk.getBranchName());
 
                 /* Parse project file */
                 ThemisMvnProjectDefinition myProject = theComponent.parseProjectObject(myTrunk.getCommitId(), "");
@@ -395,9 +391,7 @@ public final class ThemisGitBranch
                 }
 
                 /* Report stage */
-                if (!pReport.setNewStage("Analysing branch " + myBranch.getBranchName())) {
-                    break;
-                }
+                pReport.setNewStage("Analysing branch " + myBranch.getBranchName());
 
                 /* If this is a real branch */
                 if (!myBranch.isVirtual()) {

@@ -75,6 +75,9 @@ public class PrometheusThreadRenewSecurity<T extends DataSet<T, E>, E extends En
         /* ReNew Security */
         myData.renewSecurity(myManager);
 
+        /* State that we have completed */
+        myManager.setCompletion();
+
         /* Return null */
         return myData;
     }

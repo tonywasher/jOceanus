@@ -163,10 +163,9 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
 
     /**
      * Load the DataItems from a spreadsheet.
-     * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    public boolean loadSpreadSheet() throws OceanusException {
+    public void loadSpreadSheet() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the workbook */
@@ -175,25 +174,22 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
             /* Access the view of the range */
             theActiveView = theWorkBook.getRangeView(theRangeName);
             if (theActiveView == null) {
-                return true;
+                return;
             }
             Iterator<MetisDataRow> myIterator = theActiveView.iterator();
 
             /* Declare the new stage */
-            if (!theReport.setNewStage(theRangeName)) {
-                return false;
-            }
+            theReport.setNewStage(theRangeName);
 
             /* Determine count of rows */
             int myTotal = theActiveView.getRowCount();
 
             /* Declare the number of steps */
-            if (!theReport.setNumSteps(myTotal)) {
-                return false;
-            }
+            theReport.setNumSteps(myTotal);
 
             /* Loop through the rows of the range */
-            for (theCurrRow = 0; myIterator.hasNext(); theCurrRow++) {
+            theCurrRow = 0;
+            while (myIterator.hasNext()) {
                 /* Access the row */
                 theActiveRow = myIterator.next();
 
@@ -202,9 +198,8 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
                 theLastItem = theList.addValuesItem(myValues);
 
                 /* Report the progress */
-                if (!theReport.setNextStep()) {
-                    return false;
-                }
+                theReport.setNextStep();
+                theCurrRow++;
             }
 
             /* Post process the load */
@@ -214,31 +209,23 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         } catch (OceanusException e) {
             throw new PrometheusIOException("Failed to Load " + theRangeName, e);
         }
-
-        /* Return to caller */
-        return true;
     }
 
     /**
      * Write the DataItems to a spreadsheet.
-     * @return continue to write <code>true/false</code>
      * @throws OceanusException on error
      */
-    protected boolean writeSpreadSheet() throws OceanusException {
+    protected void writeSpreadSheet() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Declare the new stage */
-            if (!theReport.setNewStage(theRangeName)) {
-                return false;
-            }
+            theReport.setNewStage(theRangeName);
 
             /* Count the number of items */
             int myTotal = theList.size();
 
             /* Declare the number of steps */
-            if (!theReport.setNumSteps(myTotal)) {
-                return false;
-            }
+            theReport.setNumSteps(myTotal);
 
             /* Determine size of sheet */
             int myNumRows = myTotal;
@@ -266,9 +253,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
 
                 /* Report the progress */
                 theCurrRow++;
-                if (!theReport.setNextStep()) {
-                    return false;
-                }
+                theReport.setNextStep();
             }
 
             /* If data was written then name the range */
@@ -278,9 +263,6 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         } catch (OceanusException e) {
             throw new PrometheusIOException("Failed to create " + theRangeName, e);
         }
-
-        /* Return to caller */
-        return true;
     }
 
     /**

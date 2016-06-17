@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseCancelException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
@@ -254,12 +253,11 @@ public class ArchiveLoader {
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
-     * @return continue to load <code>true/false</code>
      * @throws OceanusException on error
      */
-    private boolean loadArchive(final MetisThreadStatusReport pReport,
-                                final MetisDataWorkBook pWorkBook,
-                                final MoneyWiseData pData) throws OceanusException {
+    private void loadArchive(final MetisThreadStatusReport pReport,
+                             final MetisDataWorkBook pWorkBook,
+                             final MoneyWiseData pData) throws OceanusException {
         /* Find the range of cells */
         MetisDataView myView = pWorkBook.getRangeView(AREA_YEARRANGE);
 
@@ -280,7 +278,7 @@ public class ArchiveLoader {
         int myStages = NUM_ARCHIVE_AREAS + getNumYears();
 
         /* Declare the number of stages */
-        return pReport.setNumStages(myStages);
+        pReport.setNumStages(myStages);
     }
 
     /**
@@ -307,128 +305,76 @@ public class ArchiveLoader {
 
             /* Access the workbook from the stream */
             MetisDataWorkBook myWorkbook = new MetisDataWorkBook(pStream, pType);
-            boolean bContinue = !pReport.isCancelled();
+            pReport.checkForCancellation();
 
             /* Determine Year Range */
             MetisProfile myStage = myTask.startTask("LoadSheets");
-            if (bContinue) {
-                myStage.startTask("Range");
-                bContinue = loadArchive(pReport, myWorkbook, pData);
-            }
+            myStage.startTask("Range");
+            loadArchive(pReport, myWorkbook, pData);
 
-            /* Load Tables */
-            if (bContinue) {
-                myStage.startTask(DepositCategoryType.LIST_NAME);
-                bContinue = SheetDepositCategoryType.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(CashCategoryType.LIST_NAME);
-                bContinue = SheetCashCategoryType.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(LoanCategoryType.LIST_NAME);
-                bContinue = SheetLoanCategoryType.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(SecurityType.LIST_NAME);
-                bContinue = SheetSecurityType.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(PayeeType.LIST_NAME);
-                bContinue = SheetPayeeType.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(TransactionCategoryType.LIST_NAME);
-                bContinue = SheetTransCategoryType.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(TaxBasis.LIST_NAME);
-                bContinue = SheetTaxBasis.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(TaxCategory.LIST_NAME);
-                bContinue = SheetTaxCategory.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(AssetCurrency.LIST_NAME);
-                bContinue = SheetAssetCurrency.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(TaxRegime.LIST_NAME);
-                bContinue = SheetTaxRegime.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(Frequency.LIST_NAME);
-                bContinue = SheetFrequency.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(TaxYearInfoType.LIST_NAME);
-                bContinue = SheetTaxYearInfoType.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(AccountInfoType.LIST_NAME);
-                bContinue = SheetAccountInfoType.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(TransactionInfoType.LIST_NAME);
-                bContinue = SheetTransInfoType.loadArchive(pReport, myWorkbook, pData);
-            }
+            /* Load Static Tables */
+            myStage.startTask(DepositCategoryType.LIST_NAME);
+            SheetDepositCategoryType.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(CashCategoryType.LIST_NAME);
+            SheetCashCategoryType.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(LoanCategoryType.LIST_NAME);
+            SheetLoanCategoryType.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(SecurityType.LIST_NAME);
+            SheetSecurityType.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(PayeeType.LIST_NAME);
+            SheetPayeeType.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(TransactionCategoryType.LIST_NAME);
+            SheetTransCategoryType.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(TaxBasis.LIST_NAME);
+            SheetTaxBasis.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(TaxCategory.LIST_NAME);
+            SheetTaxCategory.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(AssetCurrency.LIST_NAME);
+            SheetAssetCurrency.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(TaxRegime.LIST_NAME);
+            SheetTaxRegime.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(Frequency.LIST_NAME);
+            SheetFrequency.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(TaxYearInfoType.LIST_NAME);
+            SheetTaxYearInfoType.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(AccountInfoType.LIST_NAME);
+            SheetAccountInfoType.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(TransactionInfoType.LIST_NAME);
+            SheetTransInfoType.loadArchive(pReport, myWorkbook, pData);
 
-            if (bContinue) {
-                myStage.startTask(TransactionTag.LIST_NAME);
-                bContinue = SheetTransTag.loadArchive(pReport, myWorkbook, pData);
-            }
+            /* Load Tags */
+            myStage.startTask(TransactionTag.LIST_NAME);
+            SheetTransTag.loadArchive(pReport, myWorkbook, pData);
 
-            if (bContinue) {
-                myStage.startTask("AccountCategories");
-                bContinue = SheetAccountCategory.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(TransactionCategory.LIST_NAME);
-                bContinue = SheetTransCategory.loadArchive(pReport, myWorkbook, pData, this);
-            }
+            /* Load Categories */
+            myStage.startTask("AccountCategories");
+            SheetAccountCategory.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(TransactionCategory.LIST_NAME);
+            SheetTransCategory.loadArchive(pReport, myWorkbook, pData, this);
 
-            if (bContinue) {
-                myStage.startTask(TaxYear.LIST_NAME);
-                bContinue = SheetTaxYear.loadArchive(pReport, myWorkbook, pData, this);
-            }
-            if (bContinue) {
-                pData.calculateDateRange();
-            }
+            /* Load TaxYears */
+            myStage.startTask(TaxYear.LIST_NAME);
+            SheetTaxYear.loadArchive(pReport, myWorkbook, pData, this);
+            pData.calculateDateRange();
 
-            if (bContinue) {
-                myStage.startTask("Accounts");
-                bContinue = SheetAccount.loadArchive(pReport, myWorkbook, pData, this);
-            }
-            if (bContinue) {
-                myStage.startTask(DepositRate.LIST_NAME);
-                bContinue = SheetDepositRate.loadArchive(pReport, myWorkbook, pData);
-            }
-            if (bContinue) {
-                myStage.startTask(SecurityPrice.LIST_NAME);
-                bContinue = SheetSecurityPrice.loadArchive(pReport, myWorkbook, pData, this);
-            }
+            /* Load Accounts */
+            myStage.startTask("Accounts");
+            SheetAccount.loadArchive(pReport, myWorkbook, pData, this);
+            myStage.startTask(DepositRate.LIST_NAME);
+            SheetDepositRate.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(SecurityPrice.LIST_NAME);
+            SheetSecurityPrice.loadArchive(pReport, myWorkbook, pData, this);
 
-            if (bContinue) {
-                myStage.startTask(Transaction.LIST_NAME);
-                bContinue = SheetTransaction.loadArchive(pReport, myWorkbook, pData, this);
-            }
+            /* Load Transactions */
+            myStage.startTask(Transaction.LIST_NAME);
+            SheetTransaction.loadArchive(pReport, myWorkbook, pData, this);
 
             /* Close the stream */
             pStream.close();
 
-            /* Set the next stage */
-            if (!pReport.setNewStage("Refreshing data")) {
-                bContinue = false;
-            }
-
             /* Complete task */
             myTask.end();
 
-            /* Check for cancellation */
-            if (!bContinue) {
-                throw new MoneyWiseCancelException("Operation Cancelled");
-            }
         } catch (IOException e) {
             /* Report the error */
             throw new MoneyWiseIOException("Failed to load Workbook", e);

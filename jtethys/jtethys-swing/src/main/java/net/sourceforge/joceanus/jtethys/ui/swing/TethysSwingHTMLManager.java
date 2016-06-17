@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.print.PrinterAbortException;
+import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.net.URL;
 
@@ -30,7 +32,6 @@ import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.text.Document;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
@@ -83,15 +84,18 @@ public class TethysSwingHTMLManager
         /* Create EditorPane */
         theEditor = new JEditorPane();
         theEditor.setEditable(false);
+        theEditor.setContentType("text/html");
 
         /* Add an editor kit to the editor */
         theEditorKit = new HTMLEditorKit();
         theEditor.setEditorKit(theEditorKit);
-        theBaseStyleSheet = theEditorKit.getStyleSheet();
 
         /* Create the document for the window */
-        Document myDoc = theEditorKit.createDefaultDocument();
+        HTMLDocument myDoc = (HTMLDocument) theEditorKit.createDefaultDocument();
         theEditor.setDocument(myDoc);
+
+        /* Obtain the base styleSheet */
+        theBaseStyleSheet = myDoc.getStyleSheet();
 
         /* Add hyperLink listener */
         theEditor.addHyperlinkListener(new HTMLListener());
@@ -142,9 +146,23 @@ public class TethysSwingHTMLManager
     }
 
     @Override
-    protected void scrollToReference(final String pReference) {
+    public void scrollToReference(final String pReference) {
         /* Execute the function call */
         theEditor.scrollToReference(pReference);
+    }
+
+    @Override
+    public void printIt() {
+        /* Print the current report */
+        try {
+            /* Print the data */
+            theEditor.print();
+
+        } catch (PrinterAbortException e) {
+            return;
+        } catch (PrinterException e) {
+            LOGGER.error("Failed to print", e);
+        }
     }
 
     /**

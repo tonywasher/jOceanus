@@ -501,7 +501,37 @@ public enum PrometheusDataResource implements TethysResourceId {
     /**
      * ControlData Already Exists Error.
      */
-    CONTROLDATA_ERROR_EXISTS("ControlData.Error.Exists");
+    CONTROLDATA_ERROR_EXISTS("ControlData.Error.Exists"),
+
+    /**
+     * Initialise Security Task.
+     */
+    TASK_SECURITY_INIT("Task.Security.Init"),
+
+    /**
+     * UpDate Security Task.
+     */
+    TASK_SECURITY_UPDATE("Task.Security.Update"),
+
+    /**
+     * Check Security Task.
+     */
+    TASK_SECURITY_CHECK("Task.Security.Check"),
+
+    /**
+     * ReNew Security Task.
+     */
+    TASK_SECURITY_RENEW("Task.Security.ReNew"),
+
+    /**
+     * ReBase Data Task.
+     */
+    TASK_DATA_REBASE("Task.Data.ReBase"),
+
+    /**
+     * Difference Data Task.
+     */
+    TASK_DATA_DIFF("Task.Data.Diff");
 
     /**
      * The Name Map.

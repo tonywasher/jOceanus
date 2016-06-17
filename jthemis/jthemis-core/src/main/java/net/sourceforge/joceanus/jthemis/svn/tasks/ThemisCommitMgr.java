@@ -173,7 +173,9 @@ public class ThemisCommitMgr {
             implements ISVNEventHandler {
         @Override
         public void checkCancelled() throws SVNCancelException {
-            if (theReport.isCancelled()) {
+            try {
+                theReport.checkForCancellation();
+            } catch (OceanusException e) {
                 throw new SVNCancelException();
             }
         }
@@ -181,37 +183,41 @@ public class ThemisCommitMgr {
         @Override
         public void handleEvent(final SVNEvent pEvent,
                                 final double pProgress) throws SVNException {
-            /* Access the Action */
-            SVNEventAction myAction = pEvent.getAction();
+            try {
+                /* Access the Action */
+                SVNEventAction myAction = pEvent.getAction();
 
-            /* If this is the start of the checkOut */
-            if (myAction.equals(SVNEventAction.COMMIT_COMPLETED)) {
-                /* Record the revision */
-                theReport.setNewStage("Commit completed at revision "
-                                      + pEvent.getRevision());
+                /* If this is the start of the checkOut */
+                if (myAction.equals(SVNEventAction.COMMIT_COMPLETED)) {
+                    /* Record the revision */
+                    theReport.setNewStage("Commit completed at revision "
+                                          + pEvent.getRevision());
 
-            } else if (myAction.equals(SVNEventAction.COMMIT_ADDED)) {
-                /* Report activity */
-                theReport.setNewStage("A "
-                                      + pEvent.getFile().getPath());
+                } else if (myAction.equals(SVNEventAction.COMMIT_ADDED)) {
+                    /* Report activity */
+                    theReport.setNewStage("A "
+                                          + pEvent.getFile().getPath());
 
-            } else if (myAction.equals(SVNEventAction.COMMIT_MODIFIED)) {
-                /* Report activity */
-                theReport.setNewStage("M "
-                                      + pEvent.getFile().getPath());
+                } else if (myAction.equals(SVNEventAction.COMMIT_MODIFIED)) {
+                    /* Report activity */
+                    theReport.setNewStage("M "
+                                          + pEvent.getFile().getPath());
 
-            } else if (myAction.equals(SVNEventAction.COMMIT_DELETED)) {
-                /* Report activity */
-                theReport.setNewStage("D "
-                                      + pEvent.getFile().getPath());
+                } else if (myAction.equals(SVNEventAction.COMMIT_DELETED)) {
+                    /* Report activity */
+                    theReport.setNewStage("D "
+                                          + pEvent.getFile().getPath());
 
-            } else if (myAction.equals(SVNEventAction.COMMIT_REPLACED)) {
-                /* Report activity */
-                theReport.setNewStage("R "
-                                      + pEvent.getFile().getPath());
+                } else if (myAction.equals(SVNEventAction.COMMIT_REPLACED)) {
+                    /* Report activity */
+                    theReport.setNewStage("R "
+                                          + pEvent.getFile().getPath());
 
-            } else {
-                theReport.setNewStage(pEvent.getFile().getPath());
+                } else {
+                    theReport.setNewStage(pEvent.getFile().getPath());
+                }
+            } catch (OceanusException e) {
+                throw new SVNCancelException();
             }
         }
     }

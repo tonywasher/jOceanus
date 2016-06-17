@@ -22,12 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Writer class for QIF Files.
@@ -92,66 +91,47 @@ public class QIFWriter {
     /**
      * Write to Stream.
      * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
+     * @throws OceanusException on error
      */
-    public boolean writeFile(final OutputStreamWriter pStream) throws IOException {
+    public void writeFile(final QIFStreamWriter pStream) throws OceanusException {
         /* Declare the stages */
-        boolean bContinue = theReport.setNumStages(NUM_STAGES);
+        theReport.setNumStages(NUM_STAGES);
 
         /* Write the classes */
-        if (bContinue) {
-            bContinue = writeClasses(pStream);
-        }
+        writeClasses(pStream);
 
         /* Write the categories */
-        if (bContinue) {
-            bContinue = writeCategories(pStream);
-        }
+        writeCategories(pStream);
 
         /* Write the accounts */
-        if (bContinue) {
-            bContinue = writeAccounts(pStream);
-        }
+        writeAccounts(pStream);
 
         /* Write the securities */
-        if (bContinue) {
-            bContinue = writeSecurities(pStream);
-        }
+        writeSecurities(pStream);
 
         /* Write the events */
-        if (bContinue) {
-            bContinue = writeEvents(pStream);
-        }
+        writeEvents(pStream);
 
         /* Write the prices */
-        if (bContinue) {
-            bContinue = writePrices(pStream);
-        }
-
-        /* Return success */
-        return bContinue;
+        writePrices(pStream);
     }
 
     /**
      * Write Classes.
      * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
+     * @throws OceanusException on error
      */
-    private boolean writeClasses(final OutputStreamWriter pStream) throws IOException {
+    private void writeClasses(final QIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
 
         /* Update status bar */
-        boolean bContinue = theReport.setNewStage("Writing classes")
-                            && theReport.setNumSteps(theFile.numClasses());
+        theReport.setNewStage("Writing classes");
+        theReport.setNumSteps(theFile.numClasses());
 
         /* Skip stage if we have no classes */
         if (!theFile.hasClasses()) {
-            return true;
-        } else if (!bContinue) {
-            return false;
+            return;
         }
 
         /* Format Item Type header */
@@ -174,31 +154,22 @@ public class QIFWriter {
             myBuilder.setLength(0);
 
             /* Report the progress */
-            if (!theReport.setNextStep()) {
-                return false;
-            }
+            theReport.setNextStep();
         }
-
-        /* Return success */
-        return true;
     }
 
     /**
      * Write Categories.
      * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
+     * @throws OceanusException on error
      */
-    private boolean writeCategories(final OutputStreamWriter pStream) throws IOException {
+    private void writeCategories(final QIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
 
         /* Update status bar */
-        boolean bContinue = theReport.setNewStage("Writing categories")
-                            && theReport.setNumSteps(theFile.numCategories());
-        if (!bContinue) {
-            return false;
-        }
+        theReport.setNewStage("Writing categories");
+        theReport.setNumSteps(theFile.numCategories());
 
         /* Format Item Type header */
         QIFRecord.formatItemType(QIFEventCategory.QIF_ITEM, myBuilder);
@@ -220,31 +191,22 @@ public class QIFWriter {
             myBuilder.setLength(0);
 
             /* Report the progress */
-            if (!theReport.setStepsDone(myCategory.numChildren())) {
-                return false;
-            }
+            theReport.setStepsDone(myCategory.numChildren());
         }
-
-        /* Return success */
-        return true;
     }
 
     /**
      * Write Accounts.
      * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
+     * @throws OceanusException on error
      */
-    private boolean writeAccounts(final OutputStreamWriter pStream) throws IOException {
+    private void writeAccounts(final QIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
 
         /* Update status bar */
-        boolean bContinue = theReport.setNewStage("Writing accounts")
-                            && theReport.setNumSteps(theFile.numAccounts());
-        if (!bContinue) {
-            return false;
-        }
+        theReport.setNewStage("Writing accounts");
+        theReport.setNumSteps(theFile.numAccounts());
 
         /* Set AutoSwitch and header */
         QIFRecord.setSwitch(QIF_AUTOSWITCH, myBuilder);
@@ -268,34 +230,26 @@ public class QIFWriter {
             myBuilder.setLength(0);
 
             /* Report the progress */
-            if (!theReport.setNextStep()) {
-                return false;
-            }
+            theReport.setNextStep();
         }
-
-        /* Return success */
-        return true;
     }
 
     /**
      * Write Securities.
      * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
+     * @throws OceanusException on error
      */
-    private boolean writeSecurities(final OutputStreamWriter pStream) throws IOException {
+    private void writeSecurities(final QIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
 
         /* Update status bar */
-        boolean bContinue = theReport.setNewStage("Writing securities")
-                            && theReport.setNumSteps(theFile.numSecurities());
+        theReport.setNewStage("Writing securities");
+        theReport.setNumSteps(theFile.numSecurities());
 
         /* Skip step if we have no securities */
         if (!theFile.hasSecurities()) {
-            return true;
-        } else if (!bContinue) {
-            return false;
+            return;
         }
 
         /* Clear AutoSwitch */
@@ -322,9 +276,7 @@ public class QIFWriter {
             myBuilder.setLength(0);
 
             /* Report the progress */
-            if (!theReport.setNextStep()) {
-                return false;
-            }
+            theReport.setNextStep();
         }
 
         /* Set AutoSwitch */
@@ -333,27 +285,20 @@ public class QIFWriter {
         /* Write Securities header */
         pStream.write(myBuilder.toString());
         myBuilder.setLength(0);
-
-        /* Return success */
-        return true;
     }
 
     /**
      * Write Prices.
      * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
+     * @throws OceanusException on error
      */
-    private boolean writeEvents(final OutputStreamWriter pStream) throws IOException {
+    private void writeEvents(final QIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
 
         /* Update status bar */
-        boolean bContinue = theReport.setNewStage("Writing account events")
-                            && theReport.setNumSteps(theFile.numAccounts());
-        if (!bContinue) {
-            return false;
-        }
+        theReport.setNewStage("Writing account events");
+        theReport.setNumSteps(theFile.numAccounts());
 
         /* Loop through the accounts */
         Iterator<QIFAccountEvents> myIterator = theFile.accountIterator();
@@ -388,34 +333,26 @@ public class QIFWriter {
             }
 
             /* Report the progress */
-            if (!theReport.setNextStep()) {
-                return false;
-            }
+            theReport.setNextStep();
         }
-
-        /* Return success */
-        return true;
     }
 
     /**
      * Write Prices.
      * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
+     * @throws OceanusException on error
      */
-    private boolean writePrices(final OutputStreamWriter pStream) throws IOException {
+    private void writePrices(final QIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
 
         /* Update status bar */
-        boolean bContinue = theReport.setNewStage("Writing prices")
-                            && theReport.setNumSteps(theFile.numSecurities());
+        theReport.setNewStage("Writing prices");
+        theReport.setNumSteps(theFile.numSecurities());
 
         /* Skip step if we have no prices */
         if (!theFile.hasSecurities()) {
-            return true;
-        } else if (!bContinue) {
-            return false;
+            return;
         }
 
         /* Loop through the prices */
@@ -431,12 +368,7 @@ public class QIFWriter {
             myBuilder.setLength(0);
 
             /* Report the progress */
-            if (!theReport.setNextStep()) {
-                return false;
-            }
+            theReport.setNextStep();
         }
-
-        /* Return success */
-        return true;
     }
 }

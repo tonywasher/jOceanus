@@ -330,9 +330,7 @@ public final class ThemisGitComponent
             }
 
             /* Report number of stages */
-            if (!pReport.setNumStages(size() + 2)) {
-                return;
-            }
+            pReport.setNumStages(size() + 2);
 
             /* Loop through the components */
             Iterator<ThemisGitComponent> myIterator = iterator();
@@ -342,9 +340,7 @@ public final class ThemisGitComponent
                 GitBranchList myBranches = myComponent.getBranches();
 
                 /* Report discovery of component */
-                if (!pReport.setNewStage("Analysing component " + myComponent.getName())) {
-                    break;
-                }
+                pReport.setNewStage("Analysing component " + myComponent.getName());
 
                 /* Discover branches for the component */
                 myBranches.discover(pReport);

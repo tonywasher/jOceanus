@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,8 +20,25 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-/**
- * Reports of MoneyWise data.
- */
-package net.sourceforge.joceanus.jmoneywise.reports.swing;
+package net.sourceforge.joceanus.jmetis.threads;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
+/**
+ * MetisThread Cancellation Exception.
+ */
+public class MetisThreadCancelException
+        extends OceanusException {
+    /**
+     * Serial Id.
+     */
+    private static final long serialVersionUID = 5500219673770564855L;
+
+    /**
+     * Thread Cancellation Exception.
+     * @param s the reason
+     */
+    public MetisThreadCancelException(final String s) {
+        super(s);
+    }
+}

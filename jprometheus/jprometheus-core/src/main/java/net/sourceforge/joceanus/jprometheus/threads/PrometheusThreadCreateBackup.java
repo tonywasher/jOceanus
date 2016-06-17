@@ -152,6 +152,9 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
             /* OK so switch off flag */
             doDelete = false;
 
+            /* State that we have completed */
+            myManager.setCompletion();
+
             /* Delete file on error */
         } finally {
             /* Delete the file */

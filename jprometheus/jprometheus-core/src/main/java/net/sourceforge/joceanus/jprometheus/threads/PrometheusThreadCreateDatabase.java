@@ -83,6 +83,9 @@ public class PrometheusThreadCreateDatabase<T extends DataSet<T, E>, E extends E
             /* Derive the new set of updates */
             theControl.deriveUpdates();
 
+            /* State that we have completed */
+            myManager.setCompletion();
+
             /* Return null value */
             return null;
 
