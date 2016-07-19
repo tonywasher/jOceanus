@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jPrometheus: Application Framework
- * Copyright 2012,2014 Tony Washer
+ * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Date;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
@@ -52,7 +52,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @param <S> the Info Class that applies to this item
  * @param <E> the data type enum class
  */
-public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
+public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
+                               O extends DataItem<E>,
+                               I extends StaticData<I, S, E>,
+                               S extends Enum<S> & DataInfoClass,
+                               E extends Enum<E>>
         extends EncryptedItem<E>
         implements Comparable<DataInfo<T, O, I, S, E>> {
     /**
@@ -400,8 +404,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     public static <X> X getValue(final MetisEncryptedValueSet pValueSet,
                                  final Class<X> pClass) {
         return pValueSet.isDeletion()
-                                     ? null
-                                     : pValueSet.getEncryptedFieldValue(FIELD_VALUE, pClass);
+                                      ? null
+                                      : pValueSet.getEncryptedFieldValue(FIELD_VALUE, pClass);
     }
 
     /**
@@ -411,8 +415,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      */
     public static MetisEncryptedField<?> getField(final MetisEncryptedValueSet pValueSet) {
         return pValueSet.isDeletion()
-                                     ? null
-                                     : pValueSet.getValue(FIELD_VALUE, MetisEncryptedField.class);
+                                      ? null
+                                      : pValueSet.getValue(FIELD_VALUE, MetisEncryptedField.class);
     }
 
     /**
@@ -425,8 +429,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     public static <X extends DataItem<?>> X getLink(final MetisValueSet pValueSet,
                                                     final Class<X> pClass) {
         return pValueSet.isDeletion()
-                                     ? null
-                                     : pValueSet.getValue(FIELD_LINK, pClass);
+                                      ? null
+                                      : pValueSet.getValue(FIELD_LINK, pClass);
     }
 
     /**
@@ -926,7 +930,11 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param <S> the Info Class that applies to this item
      * @param <E> the data type enum class
      */
-    public abstract static class DataInfoList<T extends DataInfo<T, O, I, S, E> & Comparable<DataInfo<T, O, I, S, E>>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
+    public abstract static class DataInfoList<T extends DataInfo<T, O, I, S, E> & Comparable<DataInfo<T, O, I, S, E>>,
+                                              O extends DataItem<E>,
+                                              I extends StaticData<I, S, E>,
+                                              S extends Enum<S> & DataInfoClass,
+                                              E extends Enum<E>>
             extends EncryptedList<T, E> {
         /**
          * Local Report fields.

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMetis: Java Data Framework
- * Copyright 2012,2014 Tony Washer
+ * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@
  * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.data;
+
+import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
@@ -72,6 +75,12 @@ public final class MetisDataObject {
         MetisValueSet getValueSet();
 
         /**
+         * Obtain Object ValueSet History.
+         * @return the ValueSet of the object
+         */
+        MetisValueSetHistory getValueSetHistory();
+
+        /**
          * Should we skip a ValueSet object?.
          * @param pField the field
          * @return true/false
@@ -83,6 +92,30 @@ public final class MetisDataObject {
          * @param pValues the active values
          */
         void declareValues(final MetisValueSet pValues);
+    }
+
+    /**
+     * List interface.
+     */
+    @FunctionalInterface
+    public interface MetisDataList {
+        /**
+         * Obtain underlying list.
+         * @return the list
+         */
+        List<?> getUnderlyingList();
+    }
+
+    /**
+     * Map interface.
+     */
+    @FunctionalInterface
+    public interface MetisDataMap {
+        /**
+         * Obtain underlying map.
+         * @return the map
+         */
+        Map<?, ?> getUnderlyingMap();
     }
 
     /**

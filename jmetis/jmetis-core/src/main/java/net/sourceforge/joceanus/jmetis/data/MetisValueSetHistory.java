@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMetis: Java Data Framework
- * Copyright 2012,2014 Tony Washer
+ * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,12 +40,12 @@ public class MetisValueSetHistory
     /**
      * The current set of values for this object.
      */
-    private MetisValueSet theCurr = null;
+    private MetisValueSet theCurr;
 
     /**
      * The original set of values if any changes have been made.
      */
-    private MetisValueSet theOriginal = null;
+    private MetisValueSet theOriginal;
 
     /**
      * The stack of valueSet changes.

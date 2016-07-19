@@ -73,16 +73,16 @@
     <JDateButtonVersion>v2.1.0-SNAPSHOT</JDateButtonVersion>
     <BouncyCastleVersion>1.54</BouncyCastleVersion>
     <SvnKitVersion>1.8.12</SvnKitVersion>
-    <JGitVersion>4.3.1.201605051710-r</JGitVersion>
+    <JGitVersion>4.4.1.201607150455-r</JGitVersion>
     <HttpClientVersion>4.5.2</HttpClientVersion>
     <JSONVersion>20160212</JSONVersion>
     <ApacheMavenVersion>3.3.9</ApacheMavenVersion>
-    <MySQLVersion>6.0.2</MySQLVersion>
-    <PostGreSQLVersion>9.4.1208.jre7</PostGreSQLVersion>
+    <MySQLVersion>6.0.3</MySQLVersion>
+    <PostGreSQLVersion>9.4.1209.jre7</PostGreSQLVersion>
     <ApachePOIVersion>3.14</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.21</SLF4JVersion>
-    <LOG4JVersion>2.6.1</LOG4JVersion>
+    <LOG4JVersion>2.6.2</LOG4JVersion>
     <JSoupVersion>1.9.2</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
   </properties>
@@ -193,7 +193,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.6</version>
+          <version>3.0.2</version>
           <executions>
             <execution>
               <goals>
@@ -264,7 +264,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.3</version>
+        <version>2.10.4</version>
         <configuration>
           <show>public</show>
           <aggregate>true</aggregate>

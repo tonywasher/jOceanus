@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMetis: Java Data Framework
- * Copyright 2012,2014 Tony Washer
+ * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataList;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataMap;
 
 /**
  * Data Viewer Page.
@@ -400,6 +402,12 @@ public class MetisViewerPage {
                                                                  ? ((MetisDataDifference) pObject).getObject()
                                                                  : pObject;
 
+        /* Handle extended Lists/Maps */
+        if (myObject instanceof MetisDataList
+            || myObject instanceof MetisDataMap) {
+            return true;
+        }
+
         /* Handle multi-page objects */
         return myObject instanceof List
                || myObject instanceof Map;
@@ -415,6 +423,11 @@ public class MetisViewerPage {
         Object myObject = pObject instanceof MetisDataDifference
                                                                  ? ((MetisDataDifference) pObject).getObject()
                                                                  : pObject;
+
+        /* handle embedded objects */
+        if (myObject instanceof MetisDataList) {
+            myObject = ((MetisDataList) myObject).getUnderlyingList();
+        }
 
         /* Handle non-empty lists */
         return myObject instanceof List

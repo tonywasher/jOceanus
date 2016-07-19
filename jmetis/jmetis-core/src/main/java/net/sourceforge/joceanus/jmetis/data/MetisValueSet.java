@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMetis: Java Data Framework
- * Copyright 2012,2014 Tony Washer
+ * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmetis.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
  * ValueSet class.
@@ -310,7 +310,6 @@ public class MetisValueSet {
 
         /* Return the hash */
         return iHashCode;
-
     }
 
     /**
@@ -364,7 +363,7 @@ public class MetisValueSet {
      * @return the difference
      */
     public MetisDifference fieldChanged(final MetisField pField,
-                                   final MetisValueSet pOriginal) {
+                                        final MetisValueSet pOriginal) {
         /*
          * No difference if field does not exist, is not-equality or is not valueSet
          */

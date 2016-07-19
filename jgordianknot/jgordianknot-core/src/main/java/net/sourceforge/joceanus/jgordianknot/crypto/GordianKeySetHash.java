@@ -1,6 +1,6 @@
 /*********************************-=--=**********************************************
  * jGordianKnot: Security Suite
- * Copyright 2012,2014 Tony Washer
+ * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

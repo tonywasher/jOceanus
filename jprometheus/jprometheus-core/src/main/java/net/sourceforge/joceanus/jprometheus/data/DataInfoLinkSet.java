@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jPrometheus: Application Framework
- * Copyright 2012,2014 Tony Washer
+ * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <S> the Info type class
  * @param <E> the data type enum class
  */
-public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
+public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
+                             O extends DataItem<E>,
+                             I extends StaticData<I, S, E>,
+                             S extends Enum<S> & DataInfoClass,
+                             E extends Enum<E>>
         extends DataInfo<T, O, I, S, E> {
     /**
      * Item separator.

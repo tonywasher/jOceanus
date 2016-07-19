@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMetis: Java Data Framework
- * Copyright 2012,2014 Tony Washer
+ * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataList;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
@@ -163,6 +165,13 @@ public class MetisViewerFormatter {
                                                                  ? ((MetisDataDifference) pObject).getObject()
                                                                  : pObject;
 
+        /* handle embedded objects */
+        if (myObject instanceof MetisDataList) {
+            myObject = ((MetisDataList) myObject).getUnderlyingList();
+        } else if (myObject instanceof MetisDataMap) {
+            myObject = ((MetisDataMap) myObject).getUnderlyingMap();
+        }
+
         /* If we are List */
         if (myObject instanceof List) {
             formatHTMLListSection((List<?>) myObject, pStart);
@@ -184,6 +193,11 @@ public class MetisViewerFormatter {
         Object myObject = pObject instanceof MetisDataDifference
                                                                  ? ((MetisDataDifference) pObject).getObject()
                                                                  : pObject;
+
+        /* handle embedded objects */
+        if (myObject instanceof MetisDataList) {
+            myObject = ((MetisDataList) myObject).getUnderlyingList();
+        }
 
         /* If we are List */
         if (myObject instanceof List) {

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jPrometheus: Application Framework
- * Copyright 2012,2014 Tony Washer
+ * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -411,6 +411,11 @@ public abstract class DataItem<E extends Enum<E>>
     @Override
     public MetisValueSet getValueSet() {
         return theValueSet;
+    }
+
+    @Override
+    public MetisValueSetHistory getValueSetHistory() {
+        return theHistory;
     }
 
     /**
