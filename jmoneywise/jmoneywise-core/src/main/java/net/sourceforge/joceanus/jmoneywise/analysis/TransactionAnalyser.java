@@ -206,8 +206,9 @@ public class TransactionAnalyser
         myTask.startTask("Initialise");
         theAnalysis = new Analysis(pData, pPreferenceMgr);
 
-        /* Create new helper */
+        /* Create new helper and set opening balances */
         theHelper = new TransactionHelper(pData);
+        theAnalysis.addOpeningBalances(theHelper);
 
         /* Access details from the analysis */
         theDepositBuckets = theAnalysis.getDeposits();
@@ -565,7 +566,7 @@ public class TransactionAnalyser
             /* Unknown combination */
         } else {
             throw new MoneyWiseLogicException("Invalid Asset Pair: "
-                                               + pTrans.getAssetPair());
+                                              + pTrans.getAssetPair());
         }
     }
 
@@ -612,7 +613,7 @@ public class TransactionAnalyser
             /* Throw an Exception */
             default:
                 throw new MoneyWiseLogicException(ERROR_CATEGORY
-                                                   + myCat.getCategoryTypeClass());
+                                                  + myCat.getCategoryTypeClass());
         }
     }
 
@@ -655,7 +656,7 @@ public class TransactionAnalyser
             /* Throw an Exception */
             default:
                 throw new MoneyWiseLogicException(ERROR_CATEGORY
-                                                   + myCat.getCategoryTypeClass());
+                                                  + myCat.getCategoryTypeClass());
         }
     }
 
@@ -670,7 +671,7 @@ public class TransactionAnalyser
         /* Input asset must be AssetBase */
         if (!(pDebit instanceof AssetBase)) {
             throw new MoneyWiseLogicException("Invalid Debit Asset: "
-                                               + pDebit.getAssetType());
+                                              + pDebit.getAssetType());
         }
         AssetBase<?> myDebit = (AssetBase<?>) pDebit;
 
@@ -688,7 +689,7 @@ public class TransactionAnalyser
             /* Throw an Exception */
             default:
                 throw new MoneyWiseLogicException(ERROR_CATEGORY
-                                                   + myCat.getCategoryTypeClass());
+                                                  + myCat.getCategoryTypeClass());
         }
     }
 

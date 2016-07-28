@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetPairManager;
 import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
+import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
@@ -356,6 +357,10 @@ public class ArchiveLoader {
             myStage.startTask(TaxYear.LIST_NAME);
             SheetTaxYear.loadArchive(pReport, myWorkbook, pData, this);
             pData.calculateDateRange();
+
+            /* Load ExchangeRates */
+            myStage.startTask(ExchangeRate.LIST_NAME);
+            SheetExchangeRate.loadArchive(pReport, myWorkbook, pData, this);
 
             /* Load Accounts */
             myStage.startTask("Accounts");

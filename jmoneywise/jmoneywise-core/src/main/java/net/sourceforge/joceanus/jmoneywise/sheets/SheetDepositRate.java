@@ -134,73 +134,90 @@ public class SheetDepositRate
     protected static void loadArchive(final MetisThreadStatusReport pReport,
                                       final MetisDataWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
-        /* Access the list of rates */
-        DepositRateList myList = pData.getDepositRates();
-
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
             MetisDataView myView = pWorkBook.getRangeView(AREA_RATES);
 
-            /* Declare the new stage */
-            pReport.setNewStage(AREA_RATES);
-
-            /* Count the number of Rates */
-            int myTotal = myView.getRowCount();
-
-            /* Declare the number of steps */
-            pReport.setNumSteps(myTotal);
-
-            /* Loop through the rows of the table */
-            for (int i = 0; i < myTotal; i++) {
-                /* Access the cell by reference */
-                MetisDataRow myRow = myView.getRowByIndex(i);
-                int iAdjust = 0;
-
-                /* Access deposit */
-                MetisDataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myDeposit = myCell.getStringValue();
-
-                /* Handle Rate */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myRate = myCell.getStringValue();
-
-                /* Handle bonus which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myBonus = null;
-                if (myCell != null) {
-                    myBonus = myCell.getStringValue();
-                }
-
-                /* Handle expiration which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                TethysDate myExpiry = null;
-                if (myCell != null) {
-                    myExpiry = myCell.getDateValue();
-                }
-
-                /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositRate.OBJECT_NAME);
-                myValues.addValue(DepositRate.FIELD_DEPOSIT, myDeposit);
-                myValues.addValue(DepositRate.FIELD_RATE, myRate);
-                myValues.addValue(DepositRate.FIELD_BONUS, myBonus);
-                myValues.addValue(DepositRate.FIELD_ENDDATE, myExpiry);
-
-                /* Add the value into the list */
-                myList.addValuesItem(myValues);
-
-                /* Report the progress */
-                pReport.setNextStep();
+            /* If the view is present */
+            if (myView != null) {
+                /* Load from it */
+                loadArchiveRows(pReport, pData, myView);
             }
-
-            /* PostProcess the rates */
-            myList.postProcessOnLoad();
 
             /* Handle exceptions */
         } catch (MetisThreadCancelException e) {
             throw e;
         } catch (OceanusException e) {
-            throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
+            throw new MoneyWiseIOException("Failed to Load " + MoneyWiseDataType.DEPOSITRATE.getListName(), e);
         }
+    }
+
+    /**
+     * Load the DepositRates from an archive.
+     * @param pReport the report
+     * @param pData the data set to load into
+     * @param pView the view to load from
+     * @throws OceanusException on error
+     */
+    protected static void loadArchiveRows(final MetisThreadStatusReport pReport,
+                                          final MoneyWiseData pData,
+                                          final MetisDataView pView) throws OceanusException {
+        /* Access the list of rates */
+        DepositRateList myList = pData.getDepositRates();
+
+        /* Declare the new stage */
+        pReport.setNewStage(AREA_RATES);
+
+        /* Count the number of Rates */
+        int myTotal = pView.getRowCount();
+
+        /* Declare the number of steps */
+        pReport.setNumSteps(myTotal);
+
+        /* Loop through the rows of the table */
+        for (int i = 0; i < myTotal; i++) {
+            /* Access the cell by reference */
+            MetisDataRow myRow = pView.getRowByIndex(i);
+            int iAdjust = 0;
+
+            /* Access deposit */
+            MetisDataCell myCell = pView.getRowCellByIndex(myRow, iAdjust++);
+            String myDeposit = myCell.getStringValue();
+
+            /* Handle Rate */
+            myCell = pView.getRowCellByIndex(myRow, iAdjust++);
+            String myRate = myCell.getStringValue();
+
+            /* Handle bonus which may be missing */
+            myCell = pView.getRowCellByIndex(myRow, iAdjust++);
+            String myBonus = null;
+            if (myCell != null) {
+                myBonus = myCell.getStringValue();
+            }
+
+            /* Handle expiration which may be missing */
+            myCell = pView.getRowCellByIndex(myRow, iAdjust++);
+            TethysDate myExpiry = null;
+            if (myCell != null) {
+                myExpiry = myCell.getDateValue();
+            }
+
+            /* Build data values */
+            DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositRate.OBJECT_NAME);
+            myValues.addValue(DepositRate.FIELD_DEPOSIT, myDeposit);
+            myValues.addValue(DepositRate.FIELD_RATE, myRate);
+            myValues.addValue(DepositRate.FIELD_BONUS, myBonus);
+            myValues.addValue(DepositRate.FIELD_ENDDATE, myExpiry);
+
+            /* Add the value into the list */
+            myList.addValuesItem(myValues);
+
+            /* Report the progress */
+            pReport.setNextStep();
+        }
+
+        /* PostProcess the rates */
+        myList.postProcessOnLoad();
     }
 }

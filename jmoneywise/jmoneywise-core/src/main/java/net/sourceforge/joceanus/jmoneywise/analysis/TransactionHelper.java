@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
- * Resource IDs for jMoneyWise Analysis Fields.
+ * Transaction Analysis Helper.
  */
 public class TransactionHelper {
     /**
@@ -311,6 +311,17 @@ public class TransactionHelper {
     }
 
     /**
+     * Convert amount to reporting currency.
+     * @param pCurrency the currency
+     * @param pDate the date for the conversion
+     * @return the reporting amount
+     */
+    protected TethysRatio getExchangeRate(final AssetCurrency pCurrency,
+                                          final TethysDate pDate) {
+        return theRateCursor.getExchangeRate(pCurrency, pDate);
+    }
+
+    /**
      * Transaction Detail class.
      */
     private final class TransactionDetail {
@@ -426,25 +437,25 @@ public class TransactionHelper {
 
             /* Determine account prices */
             theAccountPrice = (theAccount instanceof SecurityHolding)
-                                                                     ? thePriceCursor.getSecurityPrice(((SecurityHolding) theAccount).getSecurity(), theDate)
-                                                                     : null;
+                                                                      ? thePriceCursor.getSecurityPrice(((SecurityHolding) theAccount).getSecurity(), theDate)
+                                                                      : null;
             thePartnerPrice = (thePartner instanceof SecurityHolding)
-                                                                     ? thePriceCursor.getSecurityPrice(((SecurityHolding) thePartner).getSecurity(), theDate)
-                                                                     : null;
+                                                                      ? thePriceCursor.getSecurityPrice(((SecurityHolding) thePartner).getSecurity(), theDate)
+                                                                      : null;
 
             /* Determine foreign account detail */
             AssetCurrency myActCurrency = theAccount.getAssetCurrency();
             theForeignAccount = MetisDifference.isEqual(myActCurrency, theCurrency)
-                                                                              ? null
-                                                                              : new ForeignAccountDetail(this, myActCurrency);
+                                                                                    ? null
+                                                                                    : new ForeignAccountDetail(this, myActCurrency);
 
             /* If we have a partner amount */
             if (thePartnerAmount != null) {
                 /* Determine foreign partner detail */
                 myActCurrency = thePartner.getAssetCurrency();
                 theForeignPartner = MetisDifference.isEqual(myActCurrency, theCurrency)
-                                                                                  ? null
-                                                                                  : new ForeignPartnerDetail(this, myActCurrency);
+                                                                                        ? null
+                                                                                        : new ForeignPartnerDetail(this, myActCurrency);
             } else {
                 theForeignPartner = null;
             }
@@ -480,8 +491,8 @@ public class TransactionHelper {
          */
         private TransactionAsset getDebitAsset() {
             return theDirection.isFrom()
-                                        ? thePartner
-                                        : theAccount;
+                                         ? thePartner
+                                         : theAccount;
         }
 
         /**
@@ -490,8 +501,8 @@ public class TransactionHelper {
          */
         private TransactionAsset getCreditAsset() {
             return theDirection.isTo()
-                                      ? thePartner
-                                      : theAccount;
+                                       ? thePartner
+                                       : theAccount;
         }
 
         /**
@@ -533,8 +544,8 @@ public class TransactionHelper {
          */
         private TethysMoney getDebitAmount() {
             return theDirection.isFrom() || thePartnerAmount == null
-                                                                    ? theAmount
-                                                                    : thePartnerAmount;
+                                                                     ? theAmount
+                                                                     : thePartnerAmount;
         }
 
         /**
@@ -543,8 +554,8 @@ public class TransactionHelper {
          */
         private TethysMoney getLocalDebitAmount() {
             return theDirection.isFrom() && thePartnerAmount != null
-                                                                    ? getLocalPartnerAmount()
-                                                                    : getLocalAmount();
+                                                                     ? getLocalPartnerAmount()
+                                                                     : getLocalAmount();
         }
 
         /**
@@ -553,8 +564,8 @@ public class TransactionHelper {
          */
         private TethysMoney getLocalAmount() {
             return theForeignAccount != null
-                                            ? theForeignAccount.theAmount
-                                            : theAmount;
+                                             ? theForeignAccount.theAmount
+                                             : theAmount;
         }
 
         /**
@@ -563,8 +574,8 @@ public class TransactionHelper {
          */
         private TethysMoney getLocalPartnerAmount() {
             return theForeignPartner != null
-                                            ? theForeignPartner.theAmount
-                                            : thePartnerAmount;
+                                             ? theForeignPartner.theAmount
+                                             : thePartnerAmount;
         }
 
         /**
@@ -573,8 +584,8 @@ public class TransactionHelper {
          */
         private TethysRatio getDebitExchangeRate() {
             return theDirection.isFrom() || theForeignPartner == null
-                                                                     ? theForeignAccount.theExchangeRate
-                                                                     : theForeignPartner.theExchangeRate;
+                                                                      ? theForeignAccount.theExchangeRate
+                                                                      : theForeignPartner.theExchangeRate;
         }
 
         /**
@@ -583,8 +594,8 @@ public class TransactionHelper {
          */
         private TethysMoney getCreditAmount() {
             return theDirection.isTo() && thePartnerAmount != null
-                                                                  ? thePartnerAmount
-                                                                  : theAmount;
+                                                                   ? thePartnerAmount
+                                                                   : theAmount;
         }
 
         /**
@@ -593,8 +604,8 @@ public class TransactionHelper {
          */
         private TethysMoney getLocalCreditAmount() {
             return theDirection.isTo() && thePartnerAmount != null
-                                                                  ? getLocalPartnerAmount()
-                                                                  : getLocalAmount();
+                                                                   ? getLocalPartnerAmount()
+                                                                   : getLocalAmount();
         }
 
         /**
@@ -603,8 +614,8 @@ public class TransactionHelper {
          */
         private TethysRatio getCreditExchangeRate() {
             return theDirection.isTo() && theForeignPartner != null
-                                                                   ? theForeignPartner.theExchangeRate
-                                                                   : theForeignAccount.theExchangeRate;
+                                                                    ? theForeignPartner.theExchangeRate
+                                                                    : theForeignAccount.theExchangeRate;
         }
 
         /**
@@ -613,8 +624,8 @@ public class TransactionHelper {
          */
         private TethysPrice getDebitPrice() {
             return theDirection.isFrom()
-                                        ? thePartnerPrice
-                                        : theAccountPrice;
+                                         ? thePartnerPrice
+                                         : theAccountPrice;
         }
 
         /**
@@ -623,8 +634,8 @@ public class TransactionHelper {
          */
         private TethysPrice getCreditPrice() {
             return theDirection.isTo()
-                                      ? thePartnerPrice
-                                      : theAccountPrice;
+                                       ? thePartnerPrice
+                                       : theAccountPrice;
         }
 
         /**
@@ -633,8 +644,8 @@ public class TransactionHelper {
          */
         private TethysMoney getTaxCredit() {
             return theForeignAccount != null
-                                            ? theForeignAccount.theTaxCredit
-                                            : theTaxCredit;
+                                             ? theForeignAccount.theTaxCredit
+                                             : theTaxCredit;
         }
 
         /**
@@ -643,8 +654,8 @@ public class TransactionHelper {
          */
         private TethysMoney getNatInsurance() {
             return theForeignAccount != null
-                                            ? theForeignAccount.theNatIns
-                                            : theNatIns;
+                                             ? theForeignAccount.theNatIns
+                                             : theNatIns;
         }
 
         /**
@@ -653,8 +664,8 @@ public class TransactionHelper {
          */
         private TethysMoney getBenefit() {
             return theForeignAccount != null
-                                            ? theForeignAccount.theBenefit
-                                            : theBenefit;
+                                             ? theForeignAccount.theBenefit
+                                             : theBenefit;
         }
 
         /**
@@ -663,8 +674,8 @@ public class TransactionHelper {
          */
         private TethysMoney getDonation() {
             return theForeignAccount != null
-                                            ? theForeignAccount.theDonation
-                                            : theDonation;
+                                             ? theForeignAccount.theDonation
+                                             : theDonation;
         }
 
         /**
@@ -745,25 +756,25 @@ public class TransactionHelper {
             /* Obtain tax value */
             myValue = pTrans.theTaxCredit;
             theTaxCredit = (myValue != null)
-                                            ? myValue.convertCurrency(myCurrency, myRate)
-                                            : null;
+                                             ? myValue.convertCurrency(myCurrency, myRate)
+                                             : null;
             /* Obtain NatIns */
             myValue = pTrans.theNatIns;
             theNatIns = (myValue != null)
-                                         ? myValue.convertCurrency(myCurrency, myRate)
-                                         : null;
+                                          ? myValue.convertCurrency(myCurrency, myRate)
+                                          : null;
 
             /* Obtain benefit */
             myValue = pTrans.theBenefit;
             theBenefit = (myValue != null)
-                                          ? myValue.convertCurrency(myCurrency, myRate)
-                                          : null;
+                                           ? myValue.convertCurrency(myCurrency, myRate)
+                                           : null;
 
             /* Obtain donation */
             myValue = pTrans.theDonation;
             theDonation = (myValue != null)
-                                           ? myValue.convertCurrency(myCurrency, myRate)
-                                           : null;
+                                            ? myValue.convertCurrency(myCurrency, myRate)
+                                            : null;
         }
     }
 

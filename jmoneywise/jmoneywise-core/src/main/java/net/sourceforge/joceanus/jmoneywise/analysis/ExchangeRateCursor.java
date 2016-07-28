@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
@@ -99,7 +99,7 @@ public class ExchangeRateCursor {
         /**
          * Exchange Rate iterator.
          */
-        private final Iterator<ExchangeRate> theIterator;
+        private final ListIterator<ExchangeRate> theIterator;
 
         /**
          * The current exchange rate.
@@ -109,12 +109,12 @@ public class ExchangeRateCursor {
         /**
          * The next date.
          */
-        private TethysDate theNextDate = null;
+        private TethysDate theNextDate;
 
         /**
          * The next exchange rate.
          */
-        private TethysRatio theNextRate = null;
+        private TethysRatio theNextRate;
 
         /**
          * Constructor.
@@ -136,9 +136,9 @@ public class ExchangeRateCursor {
          */
         private void moveCursor() {
             /* If we have an iterator */
-            if (theIterator.hasNext()) {
+            if (theIterator.hasPrevious()) {
                 /* access next rate and record */
-                ExchangeRate myRate = theIterator.next();
+                ExchangeRate myRate = theIterator.previous();
                 theNextRate = myRate.getExchangeRate();
                 theNextDate = myRate.getDate();
             } else {

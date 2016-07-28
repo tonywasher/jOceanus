@@ -174,9 +174,7 @@ public final class SecurityBucket
 
         /* Determine currency */
         AssetCurrency myReportingCurrency = pAnalysis.getCurrency();
-        AssetCurrency myHoldingCurrency = (pHolding == null)
-                                                             ? myReportingCurrency
-                                                             : pHolding.getAssetCurrency();
+        AssetCurrency myHoldingCurrency = pHolding.getAssetCurrency();
 
         /* Determine whether we are a foreign currency */
         isForeignCurrency = !MetisDifference.isEqual(myReportingCurrency, myHoldingCurrency);

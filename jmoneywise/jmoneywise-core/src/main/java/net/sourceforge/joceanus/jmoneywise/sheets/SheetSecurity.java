@@ -25,12 +25,13 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -212,11 +213,19 @@ public class SheetSecurity
         /* Access Symbol */
         String mySymbol = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
+        /* Handle currency which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        AssetCurrency myCurrency = pData.getDefaultCurrency();
+        if (myCell != null) {
+            String myCurrName = myCell.getStringValue();
+            myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
+        }
+
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = new DataValues<>(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_NAME, myName);
         myValues.addValue(Security.FIELD_SECTYPE, mySecType);
-        myValues.addValue(Security.FIELD_CURRENCY, pData.getDefaultCurrency());
+        myValues.addValue(Security.FIELD_CURRENCY, myCurrency);
         myValues.addValue(Security.FIELD_PARENT, myParent);
         myValues.addValue(Security.FIELD_SYMBOL, mySymbol);
         myValues.addValue(Security.FIELD_CLOSED, isClosed);

@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -212,11 +213,22 @@ public class SheetDeposit
             myBalance = myCell.getStringValue();
         }
 
+        /* Skip symbol column */
+        iAdjust++;
+
+        /* Handle currency which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        AssetCurrency myCurrency = pData.getDefaultCurrency();
+        if (myCell != null) {
+            String myCurrName = myCell.getStringValue();
+            myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
+        }
+
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = new DataValues<>(Deposit.OBJECT_NAME);
         myValues.addValue(Deposit.FIELD_NAME, myName);
         myValues.addValue(Deposit.FIELD_CATEGORY, myType);
-        myValues.addValue(Deposit.FIELD_CURRENCY, pData.getDefaultCurrency());
+        myValues.addValue(Deposit.FIELD_CURRENCY, myCurrency);
         myValues.addValue(Deposit.FIELD_PARENT, myParent);
         myValues.addValue(Deposit.FIELD_GROSS, isGross);
         myValues.addValue(Deposit.FIELD_TAXFREE, isTaxFree);

@@ -170,16 +170,16 @@ public final class DepositBucket
     @Override
     protected AccountValues allocateStandardValues(final Currency pCurrency) {
         return getAccount().isDepositClass(DepositCategoryClass.PEER2PEER)
-                                                                          ? new Peer2PeerValues(pCurrency)
-                                                                          : super.allocateStandardValues(pCurrency);
+                                                                           ? new Peer2PeerValues(pCurrency)
+                                                                           : super.allocateStandardValues(pCurrency);
     }
 
     @Override
     protected AccountValues allocateForeignValues(final Currency pCurrency,
                                                   final Currency pReportingCurrency) {
         return getAccount().isDepositClass(DepositCategoryClass.PEER2PEER)
-                                                                          ? new Peer2PeerValues(pCurrency, pReportingCurrency)
-                                                                          : super.allocateForeignValues(pCurrency, pReportingCurrency);
+                                                                           ? new Peer2PeerValues(pCurrency, pReportingCurrency)
+                                                                           : super.allocateForeignValues(pCurrency, pReportingCurrency);
     }
 
     @Override
@@ -209,12 +209,12 @@ public final class DepositBucket
     }
 
     @Override
-    protected void adjustForDebit(final TransactionHelper pTrans) {
+    protected void adjustForDebit(final TransactionHelper pHelper) {
         /* If this is a peer2peer and a bad debt transaction */
-        if ((isPeer2Peer)
-            && pTrans.isCategoryClass(TransactionCategoryClass.BADDEBT)) {
+        if (isPeer2Peer
+            && pHelper.isCategoryClass(TransactionCategoryClass.BADDEBT)) {
             /* Access the amount */
-            TethysMoney myAmount = pTrans.getDebitAmount();
+            TethysMoney myAmount = pHelper.getDebitAmount();
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
@@ -224,16 +224,16 @@ public final class DepositBucket
         }
 
         /* Pass call on */
-        super.adjustForDebit(pTrans);
+        super.adjustForDebit(pHelper);
     }
 
     @Override
-    protected void adjustForCredit(final TransactionHelper pTrans) {
+    protected void adjustForCredit(final TransactionHelper pHelper) {
         /* If this is a peer2peer and a bad debt transaction */
-        if ((isPeer2Peer)
-            && pTrans.isCategoryClass(TransactionCategoryClass.BADDEBT)) {
+        if (isPeer2Peer
+            && pHelper.isCategoryClass(TransactionCategoryClass.BADDEBT)) {
             /* Access the amount */
-            TethysMoney myAmount = pTrans.getCreditAmount();
+            TethysMoney myAmount = pHelper.getCreditAmount();
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
@@ -245,7 +245,7 @@ public final class DepositBucket
         }
 
         /* Pass call on */
-        super.adjustForCredit(pTrans);
+        super.adjustForCredit(pHelper);
     }
 
     /**

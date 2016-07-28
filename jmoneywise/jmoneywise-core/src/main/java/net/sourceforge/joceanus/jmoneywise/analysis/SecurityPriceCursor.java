@@ -111,12 +111,12 @@ public class SecurityPriceCursor {
         /**
          * The next date.
          */
-        private TethysDate theNextDate = null;
+        private TethysDate theNextDate;
 
         /**
          * The next price.
          */
-        private TethysPrice theNextPrice = null;
+        private TethysPrice theNextPrice;
 
         /**
          * Constructor.

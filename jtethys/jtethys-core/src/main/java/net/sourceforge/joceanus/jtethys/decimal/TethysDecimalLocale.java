@@ -35,6 +35,16 @@ import java.util.Map;
  */
 public class TethysDecimalLocale {
     /**
+     * The dollar.
+     */
+    private static final String DOLLAR = "$";
+
+    /**
+     * The pound.
+     */
+    private static final String POUND = "£";
+
+    /**
      * The locale.
      */
     private final Locale theLocale;
@@ -42,7 +52,12 @@ public class TethysDecimalLocale {
     /**
      * The currencies map.
      */
-    private final Map<String, Currency> theMap;
+    private final Map<String, Currency> theCurrencyMap;
+
+    /**
+     * The currency symbols map.
+     */
+    private final Map<String, String> theSymbolMap;
 
     /**
      * The grouping size.
@@ -100,8 +115,9 @@ public class TethysDecimalLocale {
         /* Store the locale */
         theLocale = pLocale;
 
-        /* Create currency map */
-        theMap = new HashMap<>();
+        /* Create currency maps */
+        theCurrencyMap = new HashMap<>();
+        theSymbolMap = new HashMap<>();
 
         /* Access decimal formats */
         DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(theLocale);
@@ -118,7 +134,16 @@ public class TethysDecimalLocale {
 
         /* Access the default currency */
         theCurrency = mySymbols.getCurrency();
-        theMap.put(theCurrency.getSymbol(theLocale), theCurrency);
+        String myCurrSymbol = theCurrency.getSymbol(theLocale);
+        declareSymbol(myCurrSymbol, theCurrency);
+
+        /* Declare simplified USD/GBP if possible */
+        if (!DOLLAR.equals(myCurrSymbol)) {
+            declareSymbol(DOLLAR, Currency.getInstance(Locale.US));
+        }
+        if (!POUND.equals(myCurrSymbol)) {
+            declareSymbol(POUND, Currency.getInstance(Locale.UK));
+        }
     }
 
     /**
@@ -193,7 +218,7 @@ public class TethysDecimalLocale {
      */
     protected Currency parseCurrencySymbol(final String pSymbol) {
         /* Look for the currency in the map */
-        Currency myCurrency = theMap.get(pSymbol);
+        Currency myCurrency = theCurrencyMap.get(pSymbol);
 
         /* If this is a new currency */
         if (myCurrency == null) {
@@ -203,7 +228,7 @@ public class TethysDecimalLocale {
                 if (pSymbol.equals(myCurr.getSymbol(theLocale))) {
                     /* Record currency and break the loop */
                     myCurrency = myCurr;
-                    theMap.put(pSymbol, myCurrency);
+                    declareSymbol(pSymbol, myCurrency);
                     break;
                 }
             }
@@ -221,12 +246,32 @@ public class TethysDecimalLocale {
     }
 
     /**
+     * Declare symbol.
+     * @param pSymbol the symbol
+     * @param pCurrency the currency
+     */
+    private void declareSymbol(final String pSymbol,
+                               final Currency pCurrency) {
+        /* Store in currency map */
+        theCurrencyMap.put(pSymbol, pCurrency);
+
+        /* Store symbol if not already declared */
+        String myCode = pCurrency.getCurrencyCode();
+        if (theSymbolMap.get(myCode) == null) {
+            theSymbolMap.put(myCode, pSymbol);
+        }
+    }
+
+    /**
      * Get currency symbol.
      * @param pCurrency the currency
      * @return the symbol
      */
     protected String getSymbol(final Currency pCurrency) {
-        return pCurrency.getSymbol(theLocale);
+        /* Look for the currency in the map */
+        String mySymbol = theSymbolMap.get(pCurrency.getCurrencyCode());
+        return mySymbol == null
+                                ? pCurrency.getSymbol(theLocale)
+                                : mySymbol;
     }
-
 }

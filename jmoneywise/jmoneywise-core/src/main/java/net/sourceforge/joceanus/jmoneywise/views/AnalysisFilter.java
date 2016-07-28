@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.views;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
@@ -124,8 +124,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
         if (FIELD_BUCKET.equals(pField)) {
             return theBucket == null
-                                    ? MetisFieldValue.SKIP
-                                    : theBucket;
+                                     ? MetisFieldValue.SKIP
+                                     : theBucket;
         }
 
         /* Unknown */
@@ -231,8 +231,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     public TethysDecimal getBalanceForTransaction(final Transaction pTrans) {
         BucketValues<?, T> myValues = getValuesForTransaction(pTrans);
         return (myValues == null)
-                                 ? null
-                                 : myValues.getDecimalValue(getCurrentAttribute());
+                                  ? null
+                                  : myValues.getDecimalValue(getCurrentAttribute());
     }
 
     /**
@@ -251,8 +251,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
             }
         }
         return (myValue != null)
-                                ? myValue
-                                : null;
+                                 ? myValue
+                                 : null;
     }
 
     /**
@@ -264,8 +264,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         TethysDecimal myValue = getDeltaValueForTransaction(pTrans);
         return ((myValue != null)
                 && myValue.isPositive() && myValue.isNonZero())
-                                                               ? myValue
-                                                               : null;
+                                                                ? myValue
+                                                                : null;
     }
 
     /**
@@ -276,26 +276,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     private TethysDecimal getDeltaValueForTransaction(final Transaction pTrans) {
         return getDeltaForTransaction(pTrans);
     }
-
-    /**
-     * Add decimal values.
-     * @param pFirst the first decimal
-     * @param pSecond the second decimal
-     * @return the sum
-     */
-    // private JDecimal addDecimals(final JDecimal pFirst,
-    // final JDecimal pSecond) {
-    // switch (theAttr.getDataType()) {
-    // case MONEY:
-    // ((JMoney) pFirst).addAmount((JMoney) pSecond);
-    // return pFirst;
-    // case UNITS:
-    // ((JUnits) pFirst).addUnits((JUnits) pSecond);
-    // return pFirst;
-    // default:
-    // return null;
-    // }
-    // }
 
     /**
      * Obtain analysis name.
@@ -402,10 +382,9 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                 case BADDEBT:
                     return getBucket().isPeer2Peer();
                 case FOREIGNVALUE:
-                case LOCALVALUE:
                     return getBucket().isForeignCurrency();
                 case VALUATION:
-                    return !getBucket().isForeignCurrency();
+                    return true;
                 case SPEND:
                     return false;
                 default:
@@ -444,10 +423,9 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                 case SPEND:
                     return false;
                 case FOREIGNVALUE:
-                case LOCALVALUE:
                     return getBucket().isForeignCurrency();
                 case VALUATION:
-                    return !getBucket().isForeignCurrency();
+                    return true;
                 default:
                     return true;
             }
@@ -485,10 +463,9 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                 case BADDEBT:
                     return false;
                 case FOREIGNVALUE:
-                case LOCALVALUE:
                     return getBucket().isForeignCurrency();
                 case VALUATION:
-                    return !getBucket().isForeignCurrency();
+                    return true;
                 default:
                     return true;
             }
@@ -631,10 +608,9 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
 
             switch ((AccountAttribute) pCounter) {
                 case FOREIGNVALUE:
-                case LOCALVALUE:
                     return getBucket().isForeignCurrency();
                 case VALUATION:
-                    return !getBucket().isForeignCurrency();
+                    return true;
                 case BADDEBT:
                 case SPEND:
                     return false;

@@ -930,10 +930,10 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
         } else {
             /* Holding currency combo must be valid */
-            if ((myAccount instanceof SecurityHolding)
-                && !((SecurityHolding) myAccount).validCurrencies()) {
-                addError(SecurityHolding.ERROR_CURRENCYCOMBO, FIELD_ACCOUNT);
-            }
+            // if ((myAccount instanceof SecurityHolding)
+            // && !((SecurityHolding) myAccount).validCurrencies()) {
+            // addError(SecurityHolding.ERROR_CURRENCYCOMBO, FIELD_ACCOUNT);
+            // }
 
             /* Account must be valid */
             if (!TransactionValidator.isValidAccount(myAccount)) {
@@ -971,10 +971,10 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
         } else {
             /* Holding currency combo must be valid */
-            if ((myPartner instanceof SecurityHolding)
-                && !((SecurityHolding) myPartner).validCurrencies()) {
-                addError(SecurityHolding.ERROR_CURRENCYCOMBO, FIELD_PARTNER);
-            }
+            // if ((myPartner instanceof SecurityHolding)
+            // && !((SecurityHolding) myPartner).validCurrencies()) {
+            // addError(SecurityHolding.ERROR_CURRENCYCOMBO, FIELD_PARTNER);
+            // }
 
             /* Partner must be valid for Account */
             if (doCheckCombo && !TransactionValidator.isValidPartner(myAccount, myCategory, myPartner)) {

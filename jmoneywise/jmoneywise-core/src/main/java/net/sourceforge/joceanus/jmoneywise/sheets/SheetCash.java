@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
@@ -160,13 +161,29 @@ public class SheetCash
             isClosed = myCell.getBooleanValue();
         }
 
-        /* Skip parent, alias, portfolio, maturity, openingBalance and symbol columns */
+        /* Skip parent, alias, portfolio, and maturity columns */
         iAdjust++;
         iAdjust++;
         iAdjust++;
         iAdjust++;
+
+        /* Handle opening balance which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myBalance = null;
+        if (myCell != null) {
+            myBalance = myCell.getStringValue();
+        }
+
+        /* Skip symbol column */
         iAdjust++;
-        iAdjust++;
+
+        /* Handle currency which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        AssetCurrency myCurrency = pData.getDefaultCurrency();
+        if (myCell != null) {
+            String myCurrName = myCell.getStringValue();
+            myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
+        }
 
         /* Handle autoExpense which may be missing */
         myCell = pView.getRowCellByIndex(pRow, iAdjust++);
@@ -181,7 +198,7 @@ public class SheetCash
         DataValues<MoneyWiseDataType> myValues = new DataValues<>(Cash.OBJECT_NAME);
         myValues.addValue(Cash.FIELD_NAME, myName);
         myValues.addValue(Cash.FIELD_CATEGORY, myType);
-        myValues.addValue(Cash.FIELD_CURRENCY, pData.getDefaultCurrency());
+        myValues.addValue(Cash.FIELD_CURRENCY, myCurrency);
         myValues.addValue(Cash.FIELD_CLOSED, isClosed);
 
         /* Add the value into the list */
@@ -192,6 +209,7 @@ public class SheetCash
         CashInfoList myInfoList = pData.getCashInfo();
         myInfoList.addInfoItem(null, myCash, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
         myInfoList.addInfoItem(null, myCash, AccountInfoClass.AUTOPAYEE, myAutoPayee);
+        myInfoList.addInfoItem(null, myCash, AccountInfoClass.OPENINGBALANCE, myBalance);
 
         /* Declare the cash */
         pLoader.declareAsset(myCash);
@@ -226,7 +244,8 @@ public class SheetCash
             isClosed = myCell.getBooleanValue();
         }
 
-        /* Skip parent, alias, portfolio, maturity, openingBalance and symbol columns */
+        /* Skip parent, alias, portfolio, maturity, openingBalance, symbol and currency columns */
+        iAdjust++;
         iAdjust++;
         iAdjust++;
         iAdjust++;

@@ -78,26 +78,22 @@ public class ExchangeRate
     /**
      * Date Field Id.
      */
-    public static final MetisField FIELD_DATE = FIELD_DEFS
-            .declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    public static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * From Currency Field Id.
      */
-    public static final MetisField FIELD_FROM = FIELD_DEFS
-            .declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_FROM.getValue());
+    public static final MetisField FIELD_FROM = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_FROM.getValue());
 
     /**
      * To Currency Field Id.
      */
-    public static final MetisField FIELD_TO = FIELD_DEFS
-            .declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_TO.getValue());
+    public static final MetisField FIELD_TO = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_TO.getValue());
 
     /**
      * Rate Type Field Id.
      */
-    public static final MetisField FIELD_RATE = FIELD_DEFS
-            .declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_RATE.getValue());
+    public static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_RATE.getValue());
 
     /**
      * Circular Rate Error.
@@ -635,6 +631,14 @@ public class ExchangeRate
         return checkForHistory();
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public void adjustMapForItem() {
+        ExchangeRateBaseList<? extends ExchangeRate> myList = getList();
+        ExchangeRateDataMap<ExchangeRate> myMap = (ExchangeRateDataMap<ExchangeRate>) myList.getDataMap();
+        myMap.adjustForItem(this);
+    }
+
     /**
      * Price List.
      * @param <T> the data type
@@ -687,13 +691,12 @@ public class ExchangeRate
         /**
          * Default Field Id.
          */
-        private static final MetisField FIELD_DEFAULT = FIELD_DEFS
-                .declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
+        private static final MetisField FIELD_DEFAULT = FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
         /**
          * The default currency.
          */
-        private AssetCurrency theDefault = null;
+        private AssetCurrency theDefault;
 
         /**
          * Construct an empty CORE ExchangeRate list.
@@ -914,27 +917,6 @@ public class ExchangeRate
             /* Set the new default currency */
             theDefault = pCurrency;
         }
-
-        @Override
-        public void postProcessOnLoad() throws OceanusException {
-            /* Resolve links and sort the data */
-            resolveDataSetLinks();
-            reSort();
-
-            /* Validate the exchangeRates */
-            validateOnLoad();
-        }
-
-        @Override
-        public void prepareForAnalysis() {
-            /* Just ensure the map */
-            ensureMap();
-        }
-
-        @Override
-        protected void ensureMap() {
-            /* Null operation */
-        }
     }
 
     /**
@@ -946,20 +928,17 @@ public class ExchangeRate
         /**
          * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(
-                MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
+        protected static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
 
         /**
          * CategoryMap Field Id.
          */
-        public static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS
-                .declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+        public static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
 
         /**
          * RateMap Field Id.
          */
-        private static final MetisField FIELD_MAPOFRATES = FIELD_DEFS
-                .declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_MAP_MAPOFRATES.getValue());
+        private static final MetisField FIELD_MAPOFRATES = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_MAP_MAPOFRATES.getValue());
 
         /**
          * Map of Maps.
@@ -1091,9 +1070,9 @@ public class ExchangeRate
             RateList myList = theMapOfRates.get(pCurrency);
             if (myList != null) {
                 /* Loop through the rates */
-                ListIterator<ExchangeRate> myIterator = myList.listIterator(myList.size());
-                while (myIterator.hasPrevious()) {
-                    ExchangeRate myCurr = myIterator.previous();
+                ListIterator<ExchangeRate> myIterator = myList.listIterator();
+                while (myIterator.hasNext()) {
+                    ExchangeRate myCurr = myIterator.next();
 
                     /* Access the date */
                     TethysDate myDate = myCurr.getDate();
@@ -1114,11 +1093,11 @@ public class ExchangeRate
          * @param pCurrency the currency
          * @return the latest rate for the date.
          */
-        public Iterator<ExchangeRate> rateIterator(final AssetCurrency pCurrency) {
+        public ListIterator<ExchangeRate> rateIterator(final AssetCurrency pCurrency) {
             /* Access list for currency */
             RateList myList = theMapOfRates.get(pCurrency);
             return (myList != null)
-                                    ? myList.listIterator()
+                                    ? myList.listIterator(myList.size())
                                     : null;
         }
 

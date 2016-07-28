@@ -26,9 +26,9 @@ import java.text.DecimalFormatSymbols;
 import java.util.Currency;
 import java.util.Locale;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -85,7 +85,7 @@ public class AssetCurrency
                           final String pName) throws OceanusException {
         super(pList, pName);
         setValueDefault(Boolean.FALSE);
-        setValueEnabled(Boolean.FALSE);
+        setValueEnabled(Boolean.TRUE);
         setValueDesc(getCurrencyClass().getCurrency().getDisplayName());
     }
 
@@ -162,8 +162,8 @@ public class AssetCurrency
      */
     private void setValueDefault(final Boolean pValue) {
         getValueSet().setValue(FIELD_DEFAULT, (pValue != null)
-                                                              ? pValue
-                                                              : Boolean.FALSE);
+                                                               ? pValue
+                                                               : Boolean.FALSE);
     }
 
     /**
@@ -205,8 +205,8 @@ public class AssetCurrency
         /* Handle differences in default value */
         if (!isDefault().equals(pThat.isDefault())) {
             return isDefault()
-                              ? -1
-                              : 1;
+                               ? -1
+                               : 1;
         }
 
         /* Handle normally */
@@ -459,8 +459,8 @@ public class AssetCurrency
             /* look up the default in the map */
             CurrencyDataMap myMap = getDataMap();
             return myMap == null
-                                ? null
-                                : myMap.getDefault();
+                                 ? null
+                                 : myMap.getDefault();
         }
 
         @Override
@@ -575,8 +575,8 @@ public class AssetCurrency
             if (pItem.isDefault()) {
                 theDefault = pItem;
                 theDefaultCount = theDefaultCount == null
-                                                         ? ONE
-                                                         : theDefaultCount + 1;
+                                                          ? ONE
+                                                          : theDefaultCount + 1;
             }
 
             /* Adjust name/order count */

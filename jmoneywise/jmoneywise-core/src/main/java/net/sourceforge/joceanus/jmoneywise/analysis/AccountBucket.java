@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 
 /**
  * The Account Bucket class.
@@ -523,11 +524,11 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
     /**
      * Adjust account for debit.
-     * @param pTrans the transaction helper
+     * @param pHelper the transaction helper
      */
-    protected void adjustForDebit(final TransactionHelper pTrans) {
+    protected void adjustForDebit(final TransactionHelper pHelper) {
         /* Access event amount */
-        TethysMoney myAmount = pTrans.getDebitAmount();
+        TethysMoney myAmount = pHelper.getDebitAmount();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
@@ -538,16 +539,16 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         }
 
         /* Register the transaction in the history */
-        registerTransaction(pTrans);
+        registerTransaction(pHelper);
     }
 
     /**
      * Adjust account for credit.
-     * @param pTrans the transaction helper
+     * @param pHelper the transaction helper
      */
-    protected void adjustForCredit(final TransactionHelper pTrans) {
+    protected void adjustForCredit(final TransactionHelper pHelper) {
         /* Access event amount */
-        TethysMoney myAmount = pTrans.getCreditAmount();
+        TethysMoney myAmount = pHelper.getCreditAmount();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
@@ -556,26 +557,48 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         }
 
         /* Register the transaction in the history */
-        registerTransaction(pTrans);
+        registerTransaction(pHelper);
     }
 
     /**
      * Set opening balance.
+     * @param pHelper the transaction helper
      * @param pBalance the opening balance
      */
-    protected void setOpeningBalance(final TethysMoney pBalance) {
-        /* Set the base value (this will set the current value as well) */
-        TethysMoney myBaseValue = getBaseValues().getMoneyValue(AccountAttribute.VALUATION);
-        myBaseValue.addAmount(pBalance);
+    protected void setOpeningBalance(final TransactionHelper pHelper,
+                                     final TethysMoney pBalance) {
+        /* Obtain the base valuation */
+        AccountValues myValues = getBaseValues();
+        TethysMoney myBaseValue = myValues.getMoneyValue(AccountAttribute.VALUATION);
+
+        /* If we are a foreign account */
+        if (isForeignCurrency) {
+            /* Obtain the foreign valuation */
+            TethysMoney myForeignValue = myValues.getMoneyValue(AccountAttribute.FOREIGNVALUE);
+
+            /* Obtain exchange rate and reporting value */
+            TethysRatio myRate = pHelper.getExchangeRate(theAccount.getAssetCurrency(), theData.getDateRange().getStart());
+            TethysMoney myLocalAmount = pBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
+
+            /* Record details */
+            myBaseValue.addAmount(myLocalAmount);
+            myForeignValue.addAmount(pBalance);
+            myValues.setValue(AccountAttribute.EXCHANGERATE, myRate);
+
+            /* else this is a standard account */
+        } else {
+            /* Set the base value (this will set the current value as well) */
+            myBaseValue.addAmount(pBalance);
+        }
     }
 
     /**
      * Register the transaction.
-     * @param pTrans the transaction helper
+     * @param pHelper the transaction helper
      */
-    protected void registerTransaction(final TransactionHelper pTrans) {
+    protected void registerTransaction(final TransactionHelper pHelper) {
         /* Register the transaction in the history */
-        theHistory.registerTransaction(pTrans.getTransaction(), theValues);
+        theHistory.registerTransaction(pHelper.getTransaction(), theValues);
     }
 
     /**
@@ -592,15 +615,29 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     protected void calculateDelta() {
         /* Obtain a copy of the value */
-        TethysMoney myValue = theValues.getMoneyValue(AccountAttribute.VALUATION);
-        myValue = new TethysMoney(myValue);
+        TethysMoney myDelta = theValues.getMoneyValue(AccountAttribute.VALUATION);
+        myDelta = new TethysMoney(myDelta);
 
         /* Subtract any base value */
         TethysMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
-        myValue.subtractAmount(myBase);
+        myDelta.subtractAmount(myBase);
 
         /* Set the delta */
-        setValue(AccountAttribute.VALUEDELTA, myValue);
+        setValue(AccountAttribute.VALUEDELTA, myDelta);
+
+        /* If this is a foreign Cash account */
+        if (isForeignCurrency()) {
+            /* Calculate the foreign Delta */
+            TethysMoney myForeignDelta = theValues.getMoneyValue(AccountAttribute.FOREIGNVALUE);
+            myForeignDelta = new TethysMoney(myForeignDelta);
+
+            /* Subtract any base value */
+            myBase = theBaseValues.getMoneyValue(AccountAttribute.FOREIGNVALUE);
+            myForeignDelta.subtractAmount(myBase);
+
+            /* Set the delta */
+            setValue(AccountAttribute.FOREIGNVALUEDELTA, myDelta);
+        }
 
         /* Adjust to base values */
         theValues.adjustToBaseValues(theBaseValues);
@@ -640,7 +677,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             /* Initialise class */
             super(AccountAttribute.class);
 
-            /* Initialise valuation and spend to zero */
+            /* Initialise valuation to zero */
             put(AccountAttribute.VALUATION, new TethysMoney(pCurrency));
         }
 
@@ -652,10 +689,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         protected AccountValues(final Currency pCurrency,
                                 final Currency pReportingCurrency) {
             /* Initialise class */
-            super(AccountAttribute.class);
+            this(pReportingCurrency);
 
-            /* Initialise valuation and spend to zero */
-            put(AccountAttribute.LOCALVALUE, new TethysMoney(pReportingCurrency));
+            /* Initialise valuation to zero */
             put(AccountAttribute.FOREIGNVALUE, new TethysMoney(pCurrency));
         }
 

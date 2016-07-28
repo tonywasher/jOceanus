@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -165,11 +166,26 @@ public class SheetLoan
         /* Access Parent account */
         String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
+        /* Skip alias, portfolio, maturity, openingBalance and symbol columns */
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+
+        /* Handle currency which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        AssetCurrency myCurrency = pData.getDefaultCurrency();
+        if (myCell != null) {
+            String myCurrName = myCell.getStringValue();
+            myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
+        }
+
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = new DataValues<>(Loan.OBJECT_NAME);
         myValues.addValue(Loan.FIELD_NAME, myName);
         myValues.addValue(Loan.FIELD_CATEGORY, myType);
-        myValues.addValue(Loan.FIELD_CURRENCY, pData.getDefaultCurrency());
+        myValues.addValue(Loan.FIELD_CURRENCY, myCurrency);
         myValues.addValue(Loan.FIELD_PARENT, myParent);
         myValues.addValue(Loan.FIELD_CLOSED, isClosed);
 

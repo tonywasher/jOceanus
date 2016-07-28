@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
@@ -269,9 +269,6 @@ public class Analysis
         /* Create the Dilution/Chargeable Event List */
         theCharges = new ChargeableEventList();
         theDilutions = new DilutionEventMap();
-
-        /* Add opening balances */
-        addOpeningBalances();
     }
 
     /**
@@ -632,8 +629,9 @@ public class Analysis
 
     /**
      * Add opening balances for accounts.
+     * @param pHelper the transaction helper
      */
-    private void addOpeningBalances() {
+    protected void addOpeningBalances(final TransactionHelper pHelper) {
         /* Iterate through the deposits */
         Iterator<Deposit> myDepIterator = theData.getDeposits().iterator();
         while (myDepIterator.hasNext()) {
@@ -644,7 +642,7 @@ public class Analysis
             if (myBalance != null) {
                 /* Obtain the actual deposit bucket */
                 DepositBucket myBucket = theDeposits.getBucket(myDeposit);
-                myBucket.setOpeningBalance(myBalance);
+                myBucket.setOpeningBalance(pHelper, myBalance);
             }
         }
 
@@ -658,7 +656,7 @@ public class Analysis
             if (myBalance != null) {
                 /* Obtain the actual cash bucket */
                 CashBucket myBucket = theCash.getBucket(myCash);
-                myBucket.setOpeningBalance(myBalance);
+                myBucket.setOpeningBalance(pHelper, myBalance);
             }
         }
 
@@ -672,7 +670,7 @@ public class Analysis
             if (myBalance != null) {
                 /* Obtain the actual loan bucket */
                 LoanBucket myBucket = theLoans.getBucket(myLoan);
-                myBucket.setOpeningBalance(myBalance);
+                myBucket.setOpeningBalance(pHelper, myBalance);
             }
         }
     }

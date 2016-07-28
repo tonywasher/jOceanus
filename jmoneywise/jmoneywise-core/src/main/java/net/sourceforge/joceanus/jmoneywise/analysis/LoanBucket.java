@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Currency;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
@@ -166,24 +166,24 @@ public final class LoanBucket
     @Override
     protected AccountValues allocateStandardValues(final Currency pCurrency) {
         return getAccount().isLoanClass(LoanCategoryClass.CREDITCARD)
-                                                                     ? new CreditCardValues(pCurrency)
-                                                                     : super.allocateStandardValues(pCurrency);
+                                                                      ? new CreditCardValues(pCurrency)
+                                                                      : super.allocateStandardValues(pCurrency);
     }
 
     @Override
     protected AccountValues allocateForeignValues(final Currency pCurrency,
                                                   final Currency pReportingCurrency) {
         return getAccount().isLoanClass(LoanCategoryClass.CREDITCARD)
-                                                                     ? new CreditCardValues(pCurrency, pReportingCurrency)
-                                                                     : super.allocateForeignValues(pCurrency, pReportingCurrency);
+                                                                      ? new CreditCardValues(pCurrency, pReportingCurrency)
+                                                                      : super.allocateForeignValues(pCurrency, pReportingCurrency);
     }
 
     @Override
-    protected void adjustForDebit(final TransactionHelper pTrans) {
+    protected void adjustForDebit(final TransactionHelper pHelper) {
         /* If this is a credit card */
         if (isCreditCard) {
             /* Access the amount */
-            TethysMoney myAmount = pTrans.getDebitAmount();
+            TethysMoney myAmount = pHelper.getDebitAmount();
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
@@ -193,7 +193,7 @@ public final class LoanBucket
         }
 
         /* Pass call on */
-        super.adjustForDebit(pTrans);
+        super.adjustForDebit(pHelper);
     }
 
     /**

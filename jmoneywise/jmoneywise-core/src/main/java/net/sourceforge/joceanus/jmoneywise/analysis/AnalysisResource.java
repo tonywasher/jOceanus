@@ -320,11 +320,6 @@ public enum AnalysisResource implements TethysResourceId {
     ACCOUNTATTR_VALUATION("AccountAttr.Valuation"),
 
     /**
-     * AccountAttr ForeignValuation.
-     */
-    ACCOUNTATTR_FOREIGNVALUE("AccountAttr.ForeignValue"),
-
-    /**
      * AccountAttr DepositRate.
      */
     ACCOUNTATTR_DEPOSITRATE(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE),
@@ -345,9 +340,9 @@ public enum AnalysisResource implements TethysResourceId {
     ACCOUNTATTR_FOREIGNVALUEDELTA("AccountAttr.ForeignValueDelta"),
 
     /**
-     * AccountAttr Local Valuation.
+     * AccountAttr Foreign Valuation.
      */
-    ACCOUNTATTR_LOCALVALUE("AccountAttr.LocalValue"),
+    ACCOUNTATTR_FOREIGNVALUE("AccountAttr.ForeignValue"),
 
     /**
      * AccountAttr CurrencyFluctuation.
@@ -582,7 +577,6 @@ public enum AnalysisResource implements TethysResourceId {
         Map<AccountAttribute, TethysResourceId> myMap = new EnumMap<>(AccountAttribute.class);
         myMap.put(AccountAttribute.VALUATION, ACCOUNTATTR_VALUATION);
         myMap.put(AccountAttribute.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);
-        myMap.put(AccountAttribute.LOCALVALUE, ACCOUNTATTR_LOCALVALUE);
         myMap.put(AccountAttribute.DEPOSITRATE, ACCOUNTATTR_DEPOSITRATE);
         myMap.put(AccountAttribute.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);
         myMap.put(AccountAttribute.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
@@ -655,7 +649,6 @@ public enum AnalysisResource implements TethysResourceId {
         /* Create the map and return it */
         Map<SecurityAttribute, TethysResourceId> myMap = new EnumMap<>(SecurityAttribute.class);
         myMap.put(SecurityAttribute.VALUATION, ACCOUNTATTR_VALUATION);
-        myMap.put(SecurityAttribute.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);
         myMap.put(SecurityAttribute.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
         myMap.put(SecurityAttribute.FOREIGNVALUEDELTA, ACCOUNTATTR_FOREIGNVALUEDELTA);
         myMap.put(SecurityAttribute.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);
