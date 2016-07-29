@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.Currency;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
@@ -81,8 +81,8 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     protected AccountCategoryBucket(final AssetCurrency pCurrency) {
         /* Create the value maps */
         Currency myCurrency = pCurrency == null
-                                               ? AccountBucket.DEFAULT_CURRENCY
-                                               : pCurrency.getCurrency();
+                                                ? AccountBucket.DEFAULT_CURRENCY
+                                                : pCurrency.getCurrency();
         theValues = new AccountValues(myCurrency);
         theBaseValues = new AccountValues(myCurrency);
     }
@@ -99,8 +99,8 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
-                                                       ? myValue
-                                                       : MetisFieldValue.SKIP;
+                                                             ? myValue
+                                                             : MetisFieldValue.SKIP;
             }
             return myValue;
         }
@@ -168,8 +168,8 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
 
         /* Return the value */
         return (myValue != null)
-                                ? myValue
-                                : MetisFieldValue.SKIP;
+                                 ? myValue
+                                 : MetisFieldValue.SKIP;
     }
 
     /**

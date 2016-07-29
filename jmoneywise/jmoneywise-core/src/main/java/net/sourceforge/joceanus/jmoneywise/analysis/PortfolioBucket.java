@@ -26,11 +26,11 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
@@ -140,13 +140,13 @@ public final class PortfolioBucket
 
         /* Create the securities list */
         theSecurities = (pPortfolio != null)
-                                            ? new SecurityBucketList(pAnalysis)
-                                            : null;
+                                             ? new SecurityBucketList(pAnalysis)
+                                             : null;
 
         /* Create the value maps and initialise them */
         Currency myCurrency = theCurrency == null
-                                                 ? AccountBucket.DEFAULT_CURRENCY
-                                                 : theCurrency.getCurrency();
+                                                  ? AccountBucket.DEFAULT_CURRENCY
+                                                  : theCurrency.getCurrency();
         theValues = new SecurityValues(myCurrency);
         theBaseValues = new SecurityValues(myCurrency);
         initValues();
@@ -172,8 +172,8 @@ public final class PortfolioBucket
 
         /* Create the securities list */
         theSecurities = (thePortfolio != null)
-                                              ? new SecurityBucketList(pAnalysis, pBase.getSecurities())
-                                              : null;
+                                               ? new SecurityBucketList(pAnalysis, pBase.getSecurities())
+                                               : null;
 
         /* Create the value maps and initialise them */
         Currency myCurrency = theCurrency.getCurrency();
@@ -201,8 +201,8 @@ public final class PortfolioBucket
 
         /* Create the securities list */
         theSecurities = (thePortfolio != null)
-                                              ? new SecurityBucketList(pAnalysis, pBase.getSecurities(), pDate)
-                                              : null;
+                                               ? new SecurityBucketList(pAnalysis, pBase.getSecurities(), pDate)
+                                               : null;
 
         /* Create the value maps and initialise them */
         Currency myCurrency = theCurrency.getCurrency();
@@ -230,8 +230,8 @@ public final class PortfolioBucket
 
         /* Create the securities list */
         theSecurities = (thePortfolio != null)
-                                              ? new SecurityBucketList(pAnalysis, pBase.getSecurities(), pRange)
-                                              : null;
+                                               ? new SecurityBucketList(pAnalysis, pBase.getSecurities(), pRange)
+                                               : null;
 
         /* Create the value maps and initialise them */
         Currency myCurrency = theCurrency.getCurrency();
@@ -266,8 +266,8 @@ public final class PortfolioBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
-                                                       ? myValue
-                                                       : MetisFieldValue.SKIP;
+                                                             ? myValue
+                                                             : MetisFieldValue.SKIP;
             }
             return myValue;
         }
@@ -299,8 +299,8 @@ public final class PortfolioBucket
      */
     public String getName() {
         return (thePortfolio == null)
-                                     ? NAME_TOTALS
-                                     : thePortfolio.getName();
+                                      ? NAME_TOTALS
+                                      : thePortfolio.getName();
     }
 
     @Override
@@ -386,8 +386,8 @@ public final class PortfolioBucket
 
         /* Return the value */
         return (myValue != null)
-                                ? myValue
-                                : MetisFieldValue.SKIP;
+                                 ? myValue
+                                 : MetisFieldValue.SKIP;
     }
 
     /**
@@ -416,8 +416,8 @@ public final class PortfolioBucket
     private void initValues() {
         /* Determine currency */
         Currency myCurrency = theCurrency == null
-                                                 ? AccountBucket.DEFAULT_CURRENCY
-                                                 : theCurrency.getCurrency();
+                                                  ? AccountBucket.DEFAULT_CURRENCY
+                                                  : theCurrency.getCurrency();
 
         /* Create valuation fields for the portfolio */
         theValues.setValue(SecurityAttribute.VALUATION, new TethysMoney(myCurrency));
@@ -669,8 +669,8 @@ public final class PortfolioBucket
     public TethysMoney getCashValue(final boolean pBase) {
         /* Obtain the cash valuation */
         AccountValues myCashValues = pBase
-                                          ? theCash.getBaseValues()
-                                          : theCash.getValues();
+                                           ? theCash.getBaseValues()
+                                           : theCash.getValues();
         return new TethysMoney(myCashValues.getMoneyValue(AccountAttribute.VALUATION));
     }
 
@@ -682,8 +682,8 @@ public final class PortfolioBucket
     public TethysMoney getNonCashValue(final boolean pBase) {
         /* Handle valuation by subtracting the cash valuation */
         SecurityValues myValues = pBase
-                                       ? theBaseValues
-                                       : theValues;
+                                        ? theBaseValues
+                                        : theValues;
         TethysMoney myValue = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
         myValue.subtractAmount(getCashValue(pBase));
         return myValue;
@@ -952,10 +952,10 @@ public final class PortfolioBucket
 
         /**
          * Analyse securities.
+         * @param pMarket the market analysis
          */
-        protected void analyseSecurities() {
-            /* Market Analysis */
-            MarketAnalysis myMarket = new MarketAnalysis();
+        protected void analyseSecurities(final MarketAnalysis pMarket) {
+            /* Access details */
             TethysDateRange myRange = theAnalysis.getDateRange();
             PortfolioCashBucket myCashTotals = theTotals.getPortfolioCash();
 
@@ -986,7 +986,7 @@ public final class PortfolioBucket
                     myCurr.analyseBucket(myRange);
 
                     /* Process market movements */
-                    myMarket.processSecurity(myCurr);
+                    pMarket.processSecurity(myCurr);
 
                     /* Add to the portfolio bucket and add values */
                     myPortfolio.addValues(myCurr);
@@ -1002,9 +1002,6 @@ public final class PortfolioBucket
 
             /* Calculate delta for the totals */
             theTotals.calculateDelta();
-
-            /* Propagate totals */
-            myMarket.propagateTotals(theAnalysis);
         }
 
         /**

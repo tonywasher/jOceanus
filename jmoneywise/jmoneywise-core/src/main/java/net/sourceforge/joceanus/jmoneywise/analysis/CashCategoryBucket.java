@@ -271,9 +271,11 @@ public final class CashCategoryBucket
 
         /**
          * Analyse cash accounts.
+         * @param pMarket the market analysis
          * @param pCash the cash account buckets
          */
-        protected void analyseCash(final CashBucketList pCash) {
+        protected void analyseCash(final MarketAnalysis pMarket,
+                                   final CashBucketList pCash) {
             /* Loop through the buckets */
             Iterator<CashBucket> myIterator = pCash.iterator();
             while (myIterator.hasNext()) {
@@ -291,6 +293,7 @@ public final class CashCategoryBucket
 
                 /* Note foreign currency */
                 if (myCurr.isForeignCurrency()) {
+                    pMarket.processAccount(myCurr);
                     haveForeignCurrency = Boolean.TRUE;
                 }
             }

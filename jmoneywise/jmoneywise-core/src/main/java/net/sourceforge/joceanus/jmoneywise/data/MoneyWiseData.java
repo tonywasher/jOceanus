@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryL
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
+import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
@@ -580,6 +581,14 @@ public class MoneyWiseData
      */
     public DepositRateDataMap getDepositRateDataMap() {
         return getDepositRates().getDataMap();
+    }
+
+    /**
+     * Obtain exchange rates map.
+     * @return the rates map
+     */
+    public ExchangeRateDataMap<ExchangeRate> getExchangeRateDataMap() {
+        return getExchangeRates().getDataMap();
     }
 
     /**

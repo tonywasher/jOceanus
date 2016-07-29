@@ -36,6 +36,8 @@ import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
+import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
@@ -535,7 +537,34 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             /* Adjust valuation */
             myAmount = new TethysMoney(myAmount);
             myAmount.negate();
-            adjustCounter(AccountAttribute.VALUATION, myAmount);
+
+            /* If we are a foreign account */
+            if (isForeignCurrency) {
+                /* Access local amount amount */
+                TethysMoney myLocalAmount = pHelper.getLocalAmount();
+
+                /* Adjust counters */
+                adjustCounter(AccountAttribute.FOREIGNVALUE, myAmount);
+                adjustCounter(AccountAttribute.LOCALVALUE, myLocalAmount);
+
+                /* Obtain the debit exchangeRate and convert the foreign valuation */
+                TethysRatio myRate = pHelper.getDebitExchangeRate();
+                TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
+
+                /* Set the valuation */
+                setValue(AccountAttribute.VALUATION, myLocalValue);
+                setValue(AccountAttribute.EXCHANGERATE, myRate);
+
+                /* Determine currency fluctuation */
+                TethysMoney myFluct = new TethysMoney(myLocalValue);
+                myFluct.subtractAmount(theValues.getMoneyValue(AccountAttribute.LOCALVALUE));
+                adjustCounter(AccountAttribute.CURRENCYFLUCT, myFluct);
+
+                /* else this is a standard account */
+            } else {
+                /* Adjust valuation */
+                adjustCounter(AccountAttribute.VALUATION, myAmount);
+            }
         }
 
         /* Register the transaction in the history */
@@ -552,8 +581,33 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
-            /* Adjust valuation */
-            adjustCounter(AccountAttribute.VALUATION, myAmount);
+            /* If we are a foreign account */
+            if (isForeignCurrency) {
+                /* Access local amount amount */
+                TethysMoney myLocalAmount = pHelper.getLocalAmount();
+
+                /* Adjust counters */
+                adjustCounter(AccountAttribute.FOREIGNVALUE, myAmount);
+                adjustCounter(AccountAttribute.LOCALVALUE, myLocalAmount);
+
+                /* Obtain the credit exchangeRate and convert the foreign valuation */
+                TethysRatio myRate = pHelper.getCreditExchangeRate();
+                TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
+
+                /* Set the valuation */
+                setValue(AccountAttribute.VALUATION, myLocalValue);
+                setValue(AccountAttribute.EXCHANGERATE, myRate);
+
+                /* Determine currency fluctuation */
+                TethysMoney myFluct = new TethysMoney(myLocalValue);
+                myFluct.subtractAmount(theValues.getMoneyValue(AccountAttribute.LOCALVALUE));
+                setValue(AccountAttribute.CURRENCYFLUCT, myFluct);
+
+                /* else this is a standard account */
+            } else {
+                /* Adjust valuation */
+                adjustCounter(AccountAttribute.VALUATION, myAmount);
+            }
         }
 
         /* Register the transaction in the history */
@@ -575,6 +629,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         if (isForeignCurrency) {
             /* Obtain the foreign valuation */
             TethysMoney myForeignValue = myValues.getMoneyValue(AccountAttribute.FOREIGNVALUE);
+            TethysMoney myLocalValue = myValues.getMoneyValue(AccountAttribute.LOCALVALUE);
 
             /* Obtain exchange rate and reporting value */
             TethysRatio myRate = pHelper.getExchangeRate(theAccount.getAssetCurrency(), theData.getDateRange().getStart());
@@ -582,6 +637,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
             /* Record details */
             myBaseValue.addAmount(myLocalAmount);
+            myLocalValue.addAmount(myLocalAmount);
             myForeignValue.addAmount(pBalance);
             myValues.setValue(AccountAttribute.EXCHANGERATE, myRate);
 
@@ -614,6 +670,28 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * Calculate delta.
      */
     protected void calculateDelta() {
+        /* If we are a foreign account */
+        if (isForeignCurrency) {
+            /* Obtain the foreign valuation */
+            TethysMoney myForeignValue = theValues.getMoneyValue(AccountAttribute.FOREIGNVALUE);
+            TethysMoney myLocalValue = theValues.getMoneyValue(AccountAttribute.LOCALVALUE);
+
+            /* Obtain exchange rate and reporting value */
+            MoneyWiseData myData = theAnalysis.getData();
+            ExchangeRateDataMap<ExchangeRate> myRateMap = myData.getExchangeRateDataMap();
+            TethysRatio myRate = myRateMap.getRateForDate(theAccount.getAssetCurrency(), theData.getDateRange().getEnd());
+            TethysMoney myLocalValuation = myForeignValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
+
+            /* Set the valuation */
+            setValue(AccountAttribute.VALUATION, myLocalValuation);
+            setValue(AccountAttribute.EXCHANGERATE, myRate);
+
+            /* Determine currency fluctuation */
+            TethysMoney myFluct = new TethysMoney(myLocalValuation);
+            myFluct.subtractAmount(myLocalValue);
+            setValue(AccountAttribute.CURRENCYFLUCT, myFluct);
+        }
+
         /* Obtain a copy of the value */
         TethysMoney myDelta = theValues.getMoneyValue(AccountAttribute.VALUATION);
         myDelta = new TethysMoney(myDelta);
@@ -624,20 +702,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
         /* Set the delta */
         setValue(AccountAttribute.VALUEDELTA, myDelta);
-
-        /* If this is a foreign Cash account */
-        if (isForeignCurrency()) {
-            /* Calculate the foreign Delta */
-            TethysMoney myForeignDelta = theValues.getMoneyValue(AccountAttribute.FOREIGNVALUE);
-            myForeignDelta = new TethysMoney(myForeignDelta);
-
-            /* Subtract any base value */
-            myBase = theBaseValues.getMoneyValue(AccountAttribute.FOREIGNVALUE);
-            myForeignDelta.subtractAmount(myBase);
-
-            /* Set the delta */
-            setValue(AccountAttribute.FOREIGNVALUEDELTA, myDelta);
-        }
 
         /* Adjust to base values */
         theValues.adjustToBaseValues(theBaseValues);
@@ -693,6 +757,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
             /* Initialise valuation to zero */
             put(AccountAttribute.FOREIGNVALUE, new TethysMoney(pCurrency));
+            put(AccountAttribute.LOCALVALUE, new TethysMoney(pReportingCurrency));
+            put(AccountAttribute.CURRENCYFLUCT, new TethysMoney(pReportingCurrency));
         }
 
         /**
@@ -716,6 +782,29 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         public boolean isActive() {
             TethysMoney myValuation = getMoneyValue(AccountAttribute.VALUATION);
             return (myValuation != null) && (myValuation.isNonZero());
+        }
+
+        @Override
+        protected void adjustToBaseValues(final AccountValues pBase) {
+            /* If we have a currency fluctuation */
+            if (getMoneyValue(AccountAttribute.CURRENCYFLUCT) != null) {
+                /* Adjust currency fluctuation values */
+                adjustMoneyToBase(pBase, AccountAttribute.CURRENCYFLUCT);
+            }
+        }
+
+        @Override
+        protected void resetBaseValues() {
+            /* If we have a currency fluctuation */
+            TethysMoney myValue = getMoneyValue(AccountAttribute.CURRENCYFLUCT);
+            if (myValue != null) {
+                /* Create zero value */
+                myValue = new TethysMoney(myValue);
+                myValue.setZero();
+
+                /* Adjust currency fluctuation values */
+                put(AccountAttribute.CURRENCYFLUCT, myValue);
+            }
         }
     }
 

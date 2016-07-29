@@ -832,19 +832,19 @@ public class ExchangeRate
             /* If the value is not already the default currency */
             if (!myCurrent.equals(myDefault)) {
                 /* Find the required exchange rate */
-                ExchangeRate myRate = findRate(myCurrencies.findCurrency(myCurrent), pDate);
+                TethysRatio myRate = findRate(myCurrencies.findCurrency(myCurrent), pDate);
 
                 /* Convert the currency */
-                myValue = myValue.convertCurrency(myDefault, myRate.getInverseRate());
+                myValue = myValue.convertCurrency(myDefault, myRate.getInverseRatio());
             }
 
             /* If we need to convert to a non-default currency */
             if (!myDefault.equals(myTarget)) {
                 /* Find the required exchange rate */
-                ExchangeRate myRate = findRate(pCurrency, pDate);
+                TethysRatio myRate = findRate(pCurrency, pDate);
 
                 /* Convert the currency */
-                myValue = myValue.convertCurrency(myTarget, myRate.getExchangeRate());
+                myValue = myValue.convertCurrency(myTarget, myRate);
             }
 
             /* Return the converted currency */
@@ -857,8 +857,8 @@ public class ExchangeRate
          * @param pDate the date to find the exchange rate for
          * @return the exchange rate
          */
-        private ExchangeRate findRate(final AssetCurrency pCurrency,
-                                      final TethysDate pDate) {
+        private TethysRatio findRate(final AssetCurrency pCurrency,
+                                     final TethysDate pDate) {
             /* pass call to data map */
             return getDataMap().getRateForDate(pCurrency, pDate);
         }
@@ -889,7 +889,7 @@ public class ExchangeRate
                      * TODO This must exist on the same date or else the currency cannot be set as
                      * default
                      */
-                    myCurrRate = findRate(pCurrency, myDate).getExchangeRate();
+                    myCurrRate = findRate(pCurrency, myDate);
                     myCurrDate = myDate;
                 }
 
@@ -1064,8 +1064,8 @@ public class ExchangeRate
          * @param pDate the date
          * @return the latest rate for the date.
          */
-        public ExchangeRate getRateForDate(final AssetCurrency pCurrency,
-                                           final TethysDate pDate) {
+        public TethysRatio getRateForDate(final AssetCurrency pCurrency,
+                                          final TethysDate pDate) {
             /* Access list for currency */
             RateList myList = theMapOfRates.get(pCurrency);
             if (myList != null) {
@@ -1079,13 +1079,56 @@ public class ExchangeRate
 
                     /* break loop if we have the correct record */
                     if (myDate.compareTo(pDate) >= 0) {
-                        return myCurr;
+                        return myCurr.getExchangeRate();
                     }
                 }
             }
 
             /* return null */
             return null;
+        }
+
+        /**
+         * Obtain rates for range.
+         * @param pCurrency the currency
+         * @param pRange the date range
+         * @return the two deep array of rates for the range.
+         */
+        public TethysRatio[] getRatesForRange(final AssetCurrency pCurrency,
+                                              final TethysDateRange pRange) {
+            /* Set rate */
+            TethysRatio myFirst = TethysRatio.ONE;
+            TethysRatio myLatest = null;
+
+            /* Access list for security */
+            RateList myList = theMapOfRates.get(pCurrency);
+            if (myList != null) {
+                /* Loop through the rates */
+                ListIterator<ExchangeRate> myIterator = myList.listIterator(myList.size());
+                while (myIterator.hasPrevious()) {
+                    ExchangeRate myCurr = myIterator.previous();
+
+                    /* Check for the range of the date */
+                    int iComp = pRange.compareTo(myCurr.getDate());
+
+                    /* If this is later than the range we are finished */
+                    if (iComp < 0) {
+                        break;
+                    }
+
+                    /* Record as best rate */
+                    myLatest = myCurr.getExchangeRate();
+
+                    /* Record early rate */
+                    if (iComp > 0) {
+                        myFirst = myLatest;
+                    }
+                }
+            }
+
+            /* Return the rates */
+            return new TethysRatio[]
+            { myFirst, myLatest };
         }
 
         /**

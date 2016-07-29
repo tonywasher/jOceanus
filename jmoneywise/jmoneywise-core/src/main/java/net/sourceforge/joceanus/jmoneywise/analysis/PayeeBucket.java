@@ -444,7 +444,7 @@ public final class PayeeBucket
         TethysMoney myExpense = null;
 
         /* Access amount */
-        TethysMoney myAmount = pTrans.getLocalDebitAmount();
+        TethysMoney myAmount = pTrans.getLocalAmount();
         if (myAmount.isNonZero()) {
             /* If this is an income */
             if (isIncome) {
@@ -546,7 +546,7 @@ public final class PayeeBucket
         TethysMoney myIncome = null;
 
         /* Access amount */
-        TethysMoney myAmount = pTrans.getLocalCreditAmount();
+        TethysMoney myAmount = pTrans.getLocalAmount();
         if (myAmount.isNonZero()) {
             /* If this is an expense */
             if (isExpense) {

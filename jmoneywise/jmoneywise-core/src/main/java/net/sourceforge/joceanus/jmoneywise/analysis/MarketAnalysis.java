@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
@@ -53,6 +54,38 @@ public class MarketAnalysis {
      * MarketGrowth Expense.
      */
     private final TethysMoney theGrowthExpense = new TethysMoney();
+
+    /**
+     * CurrencyFluctuation Income.
+     */
+    private final TethysMoney theFluctIncome = new TethysMoney();
+
+    /**
+     * CurrencyFluctuation Expense.
+     */
+    private final TethysMoney theFluctExpense = new TethysMoney();
+
+    /**
+     * Process account bucket.
+     * @param pBucket the account bucket.
+     */
+    protected void processAccount(final AccountBucket<?> pBucket) {
+        /* Access market and gains */
+        AccountValues myValues = pBucket.getValues();
+        TethysMoney myFluct = myValues.getMoneyValue(AccountAttribute.CURRENCYFLUCT);
+
+        /* If there are fluctuations in the period */
+        if (myFluct != null && myFluct.isNonZero()) {
+            /* Add to CurrencyFluctuation income/expense */
+            if (myFluct.isPositive()) {
+                theFluctIncome.addAmount(myFluct);
+                theMarketIncome.addAmount(myFluct);
+            } else {
+                theFluctExpense.subtractAmount(myFluct);
+                theMarketExpense.subtractAmount(myFluct);
+            }
+        }
+    }
 
     /**
      * Process security bucket.
@@ -125,6 +158,20 @@ public class MarketAnalysis {
 
             /* Adjust tax basis */
             myTaxBasis.adjustMarket(theGrowthIncome, theGrowthExpense);
+        }
+
+        /* If we have currencyFluctuation */
+        if ((theFluctIncome.isNonZero())
+            || (theFluctExpense.isNonZero())) {
+            /* Access currecyFluctuation category */
+            TransactionCategoryBucket myFluct = myCategories.getBucket(TransactionCategoryClass.CURRENCYFLUCTUATION);
+
+            /* Adjust totals */
+            myFluct.addIncome(theFluctIncome);
+            myFluct.addExpense(theFluctExpense);
+
+            /* Adjust tax basis */
+            myTaxBasis.adjustMarket(theFluctIncome, theFluctExpense);
         }
     }
 }

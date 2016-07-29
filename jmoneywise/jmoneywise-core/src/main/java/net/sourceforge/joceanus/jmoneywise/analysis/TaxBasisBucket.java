@@ -1185,7 +1185,7 @@ public class TaxBasisBucket
         protected void adjustAutoExpense(final TransactionHelper pTrans,
                                          final boolean isExpense) {
             /* Determine value */
-            TethysMoney myAmount = pTrans.getLocalDebitAmount();
+            TethysMoney myAmount = pTrans.getLocalAmount();
             if (!isExpense) {
                 myAmount = new TethysMoney(myAmount);
                 myAmount.negate();

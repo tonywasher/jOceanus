@@ -335,9 +335,9 @@ public enum AnalysisResource implements TethysResourceId {
     ACCOUNTATTR_PROFIT("AccountAttr.Profit"),
 
     /**
-     * AccountAttr ForeignDelta.
+     * AccountAttr LocalValue.
      */
-    ACCOUNTATTR_FOREIGNVALUEDELTA("AccountAttr.ForeignValueDelta"),
+    ACCOUNTATTR_LOCALVALUE("AccountAttr.LocalValue"),
 
     /**
      * AccountAttr Foreign Valuation.
@@ -577,11 +577,11 @@ public enum AnalysisResource implements TethysResourceId {
         Map<AccountAttribute, TethysResourceId> myMap = new EnumMap<>(AccountAttribute.class);
         myMap.put(AccountAttribute.VALUATION, ACCOUNTATTR_VALUATION);
         myMap.put(AccountAttribute.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);
+        myMap.put(AccountAttribute.LOCALVALUE, ACCOUNTATTR_LOCALVALUE);
+        myMap.put(AccountAttribute.CURRENCYFLUCT, ACCOUNTATTR_CURRENCYFLUCT);
         myMap.put(AccountAttribute.DEPOSITRATE, ACCOUNTATTR_DEPOSITRATE);
         myMap.put(AccountAttribute.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);
         myMap.put(AccountAttribute.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
-        myMap.put(AccountAttribute.FOREIGNVALUEDELTA, ACCOUNTATTR_FOREIGNVALUEDELTA);
-        myMap.put(AccountAttribute.CURRENCYFLUCT, ACCOUNTATTR_CURRENCYFLUCT);
         myMap.put(AccountAttribute.MATURITY, ACCOUNTATTR_MATURITY);
         myMap.put(AccountAttribute.SPEND, ACCOUNTATTR_SPEND);
         myMap.put(AccountAttribute.BADDEBT, ACCOUNTATTR_BADDEBT);
@@ -650,7 +650,6 @@ public enum AnalysisResource implements TethysResourceId {
         Map<SecurityAttribute, TethysResourceId> myMap = new EnumMap<>(SecurityAttribute.class);
         myMap.put(SecurityAttribute.VALUATION, ACCOUNTATTR_VALUATION);
         myMap.put(SecurityAttribute.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
-        myMap.put(SecurityAttribute.FOREIGNVALUEDELTA, ACCOUNTATTR_FOREIGNVALUEDELTA);
         myMap.put(SecurityAttribute.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);
         myMap.put(SecurityAttribute.UNITS, SECURITYATTR_UNITS);
         myMap.put(SecurityAttribute.COST, SECURITYATTR_COST);

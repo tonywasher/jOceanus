@@ -271,9 +271,11 @@ public final class LoanCategoryBucket
 
         /**
          * Analyse loan accounts.
+         * @param pMarket the market analysis
          * @param pLoans the loan account buckets
          */
-        protected void analyseLoans(final LoanBucketList pLoans) {
+        protected void analyseLoans(final MarketAnalysis pMarket,
+                                    final LoanBucketList pLoans) {
             /* Loop through the buckets */
             Iterator<LoanBucket> myIterator = pLoans.iterator();
             while (myIterator.hasNext()) {
@@ -291,6 +293,7 @@ public final class LoanCategoryBucket
 
                 /* Note foreign currency */
                 if (myCurr.isForeignCurrency()) {
+                    pMarket.processAccount(myCurr);
                     haveForeignCurrency = Boolean.TRUE;
                 }
             }

@@ -39,6 +39,16 @@ public enum AccountAttribute implements BucketAttribute {
     FOREIGNVALUE,
 
     /**
+     * Local Valuation.
+     */
+    LOCALVALUE,
+
+    /**
+     * Currency Fluctuation.
+     */
+    CURRENCYFLUCT,
+
+    /**
      * Deposit Rate.
      */
     DEPOSITRATE,
@@ -52,16 +62,6 @@ public enum AccountAttribute implements BucketAttribute {
      * Valuation Delta.
      */
     VALUEDELTA,
-
-    /**
-     * Foreign Valuation Delta.
-     */
-    FOREIGNVALUEDELTA,
-
-    /**
-     * Currency Fluctuation.
-     */
-    CURRENCYFLUCT,
 
     /**
      * Maturity.
@@ -100,6 +100,8 @@ public enum AccountAttribute implements BucketAttribute {
         switch (this) {
             case VALUATION:
             case FOREIGNVALUE:
+            case LOCALVALUE:
+            case CURRENCYFLUCT:
             case SPEND:
             case BADDEBT:
                 return true;
@@ -107,8 +109,6 @@ public enum AccountAttribute implements BucketAttribute {
             case EXCHANGERATE:
             case MATURITY:
             case VALUEDELTA:
-            case FOREIGNVALUEDELTA:
-            case CURRENCYFLUCT:
             default:
                 return false;
         }
@@ -125,8 +125,8 @@ public enum AccountAttribute implements BucketAttribute {
                 return MetisDataType.DATEDAY;
             case VALUATION:
             case FOREIGNVALUE:
+            case LOCALVALUE:
             case VALUEDELTA:
-            case FOREIGNVALUEDELTA:
             case CURRENCYFLUCT:
             case SPEND:
             case BADDEBT:

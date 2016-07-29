@@ -272,9 +272,11 @@ public final class DepositCategoryBucket
 
         /**
          * Analyse deposit accounts.
+         * @param pMarket the market analysis
          * @param pDeposits the deposit account buckets
          */
-        protected void analyseDeposits(final DepositBucketList pDeposits) {
+        protected void analyseDeposits(final MarketAnalysis pMarket,
+                                       final DepositBucketList pDeposits) {
             /* Loop through the buckets */
             Iterator<DepositBucket> myIterator = pDeposits.iterator();
             while (myIterator.hasNext()) {
@@ -292,6 +294,7 @@ public final class DepositCategoryBucket
 
                 /* Note foreign currency */
                 if (myCurr.isForeignCurrency()) {
+                    pMarket.processAccount(myCurr);
                     haveForeignCurrency = Boolean.TRUE;
                 }
             }
@@ -317,6 +320,7 @@ public final class DepositCategoryBucket
 
         /**
          * Produce totals for the categories.
+         * @param pMarket the market analysis
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */

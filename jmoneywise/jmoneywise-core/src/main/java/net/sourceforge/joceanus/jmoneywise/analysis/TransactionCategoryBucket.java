@@ -551,7 +551,7 @@ public final class TransactionCategoryBucket
         TransactionCategoryClass myClass = pTrans.getCategoryClass();
         AssetDirection myDir = pTrans.getDirection();
         boolean isExpense = myClass.isExpense();
-        TethysMoney myAmount = new TethysMoney(pTrans.getLocalDebitAmount());
+        TethysMoney myAmount = new TethysMoney(pTrans.getLocalAmount());
 
         /* If this is an expense */
         if (isExpense) {
@@ -1143,7 +1143,7 @@ public final class TransactionCategoryBucket
             theTaxableGains.adjustValues(pTrans);
 
             /* Obtain normalised value */
-            TethysMoney myGains = new TethysMoney(pTrans.getLocalDebitAmount());
+            TethysMoney myGains = new TethysMoney(pTrans.getLocalAmount());
             myGains.subtractAmount(pReduction);
 
             /* Adjust for Tax Credit */

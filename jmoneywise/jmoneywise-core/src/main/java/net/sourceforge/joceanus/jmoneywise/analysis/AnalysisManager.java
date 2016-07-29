@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jmetis.list.MetisNestedHashMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
@@ -38,9 +41,6 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Analysis manager.
@@ -193,32 +193,38 @@ public class AnalysisManager
      * @param pAnalysis the analysis.
      */
     private void produceTotals(final Analysis pAnalysis) {
+        /* Create the market analysis */
+        MarketAnalysis myMarket = new MarketAnalysis();
+
         /* Analyse the deposits */
         DepositBucketList myDeposits = pAnalysis.getDeposits();
         DepositCategoryBucketList myDepositCategories = pAnalysis.getDepositCategories();
-        myDepositCategories.analyseDeposits(myDeposits);
+        myDepositCategories.analyseDeposits(myMarket, myDeposits);
         myDepositCategories.produceTotals();
         haveForeignCurrency = myDepositCategories.haveForeignCurrency();
 
         /* Analyse the cash */
         CashBucketList myCash = pAnalysis.getCash();
         CashCategoryBucketList myCashCategories = pAnalysis.getCashCategories();
-        myCashCategories.analyseCash(myCash);
+        myCashCategories.analyseCash(myMarket, myCash);
         myCashCategories.produceTotals();
         haveForeignCurrency |= myCashCategories.haveForeignCurrency();
 
         /* Analyse the loans */
         LoanBucketList myLoans = pAnalysis.getLoans();
         LoanCategoryBucketList myLoanCategories = pAnalysis.getLoanCategories();
-        myLoanCategories.analyseLoans(myLoans);
+        myLoanCategories.analyseLoans(myMarket, myLoans);
         myLoanCategories.produceTotals();
         haveForeignCurrency |= myLoanCategories.haveForeignCurrency();
 
         /* Analyse the securities */
         PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
-        myPortfolios.analyseSecurities();
+        myPortfolios.analyseSecurities(myMarket);
         haveForeignCurrency |= myPortfolios.haveForeignCurrency();
         haveActiveSecurities = myPortfolios.haveActiveSecurities();
+
+        /* Propagate market totals */
+        myMarket.propagateTotals(pAnalysis);
 
         /* Analyse the Payees */
         PayeeBucketList myPayees = pAnalysis.getPayees();
