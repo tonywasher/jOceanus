@@ -428,7 +428,7 @@ public final class PortfolioBucket
         theBaseValues.setValue(SecurityAttribute.PROFIT, new TethysMoney(myCurrency));
 
         /* Create market fields for the portfolio */
-        theValues.setValue(SecurityAttribute.MARKET, new TethysMoney(myCurrency));
+        theValues.setValue(SecurityAttribute.MARKETGROWTH, new TethysMoney(myCurrency));
         theValues.setValue(SecurityAttribute.MARKETPROFIT, new TethysMoney(myCurrency));
     }
 
@@ -590,8 +590,8 @@ public final class PortfolioBucket
         myValue.addAmount(mySrcValue);
 
         /* Add market values */
-        myValue = pTotals.getMoneyValue(SecurityAttribute.MARKET);
-        mySrcValue = pSource.getMoneyValue(SecurityAttribute.MARKET);
+        myValue = pTotals.getMoneyValue(SecurityAttribute.MARKETGROWTH);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         if (mySrcValue != null) {
             myValue.addAmount(mySrcValue);
         }
@@ -964,17 +964,21 @@ public final class PortfolioBucket
             while (myIterator.hasNext()) {
                 PortfolioBucket myPortfolio = myIterator.next();
 
-                /* Add the cash bucket */
+                /* Access the cash bucket */
                 PortfolioCashBucket myCash = myPortfolio.getPortfolioCash();
+
+                /* Handle foreign asset */
+                if (myCash.isForeignCurrency()) {
+                    myCash.calculateFluctuations(myRange);
+                    pMarket.processAccount(myCash);
+                    haveForeignCurrency = Boolean.TRUE;
+                }
+
+                /* Calculate the delta */
                 myCash.calculateDelta();
                 myPortfolio.addValues(myCash);
                 theTotals.addValues(myCash);
                 myCashTotals.addValues(myCash);
-
-                /* Note foreign currency */
-                if (myPortfolio.isForeignCurrency()) {
-                    haveForeignCurrency = Boolean.TRUE;
-                }
 
                 /* Loop through the buckets */
                 Iterator<SecurityBucket> mySecIterator = myPortfolio.securityIterator();

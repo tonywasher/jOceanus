@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.Currency;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
@@ -84,6 +86,11 @@ public final class TaxCalcBucket
     private final Analysis theAnalysis;
 
     /**
+     * The reporting currency.
+     */
+    private final Currency theCurrency;
+
+    /**
      * Tax Category.
      */
     private final TaxCategory theTaxCategory;
@@ -101,7 +108,7 @@ public final class TaxCalcBucket
     /**
      * The parent.
      */
-    private TaxCalcBucket theParent = null;
+    private TaxCalcBucket theParent;
 
     /**
      * Constructor.
@@ -114,6 +121,12 @@ public final class TaxCalcBucket
         theTaxCategory = pTaxCategory;
         theAnalysis = pAnalysis;
 
+        /* Determine currency */
+        AssetCurrency myCurrency = pAnalysis.getCurrency();
+        theCurrency = myCurrency == null
+                                         ? AccountBucket.DEFAULT_CURRENCY
+                                         : myCurrency.getCurrency();
+
         /* Determine the tax section */
         theTaxSection = theTaxCategory.getTaxClass().getClassSection();
 
@@ -121,7 +134,7 @@ public final class TaxCalcBucket
         theAttributes = new EnumMap<>(TaxAttribute.class);
 
         /* Create all possible values */
-        setAttribute(TaxAttribute.AMOUNT, new TethysMoney());
+        setAttribute(TaxAttribute.AMOUNT, new TethysMoney(theCurrency));
     }
 
     @Override
@@ -362,7 +375,7 @@ public final class TaxCalcBucket
         /* Calculate the tax if we have a rate */
         TethysMoney myTaxation = (myRate != null)
                                                   ? myAmount.valueAtRate(myRate)
-                                                  : new TethysMoney();
+                                                  : new TethysMoney(theCurrency);
 
         /* Return the taxation amount */
         setAttribute(TaxAttribute.TAXATION, myTaxation);

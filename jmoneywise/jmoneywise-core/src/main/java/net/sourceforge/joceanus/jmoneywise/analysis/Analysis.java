@@ -317,7 +317,7 @@ public class Analysis
         theData = pSource.getData();
         theCurrency = pSource.getCurrency();
         thePreferences = pSource.getPreferenceMgr();
-        theDateRange = new TethysDateRange(null, pDate);
+        theDateRange = new TethysDateRange(theData.getDateRange().getStart(), pDate);
 
         /* Access the underlying maps/lists */
         theCharges = pSource.getCharges();

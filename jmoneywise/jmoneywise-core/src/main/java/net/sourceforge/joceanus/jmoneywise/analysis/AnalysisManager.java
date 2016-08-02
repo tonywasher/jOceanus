@@ -194,7 +194,7 @@ public class AnalysisManager
      */
     private void produceTotals(final Analysis pAnalysis) {
         /* Create the market analysis */
-        MarketAnalysis myMarket = new MarketAnalysis();
+        MarketAnalysis myMarket = new MarketAnalysis(pAnalysis);
 
         /* Analyse the deposits */
         DepositBucketList myDeposits = pAnalysis.getDeposits();
@@ -224,7 +224,7 @@ public class AnalysisManager
         haveActiveSecurities = myPortfolios.haveActiveSecurities();
 
         /* Propagate market totals */
-        myMarket.propagateTotals(pAnalysis);
+        myMarket.propagateTotals();
 
         /* Analyse the Payees */
         PayeeBucketList myPayees = pAnalysis.getPayees();

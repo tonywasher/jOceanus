@@ -667,31 +667,51 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     }
 
     /**
+     * calculate currency fluctuations over the range.
+     * @param pRange the range of valuation
+     */
+    protected void calculateFluctuations(final TethysDateRange pRange) {
+        /* Obtain the appropriate rates */
+        MoneyWiseData myData = theAnalysis.getData();
+        ExchangeRateDataMap<ExchangeRate> myRateMap = myData.getExchangeRateDataMap();
+        TethysRatio[] myRates = myRateMap.getRatesForRange(theAccount.getAssetCurrency(), pRange);
+        Currency myBaseCurrency = theAnalysis.getCurrency().getCurrency();
+
+        /* Access the base value */
+        TethysRatio myRate = myRates[0];
+        TethysMoney myForeignValue = theBaseValues.getMoneyValue(AccountAttribute.FOREIGNVALUE);
+        TethysMoney myLocalValue = theBaseValues.getMoneyValue(AccountAttribute.LOCALVALUE);
+
+        /* Calculate the base value */
+        TethysMoney myLocalValuation = myForeignValue.convertCurrency(myBaseCurrency, myRate.getInverseRatio());
+        theBaseValues.setValue(AccountAttribute.EXCHANGERATE, myRate);
+        theBaseValues.setValue(AccountAttribute.VALUATION, myLocalValuation);
+
+        /* Determine currency fluctuation */
+        TethysMoney myFluct = new TethysMoney(myLocalValuation);
+        myFluct.subtractAmount(myLocalValue);
+        theBaseValues.setValue(AccountAttribute.CURRENCYFLUCT, myFluct);
+
+        /* Access current values */
+        myRate = myRates[1];
+        myForeignValue = theValues.getMoneyValue(AccountAttribute.FOREIGNVALUE);
+        myLocalValue = theValues.getMoneyValue(AccountAttribute.LOCALVALUE);
+
+        /* Calculate the current value */
+        myLocalValuation = myForeignValue.convertCurrency(myBaseCurrency, myRate.getInverseRatio());
+        theValues.setValue(AccountAttribute.EXCHANGERATE, myRate);
+        theValues.setValue(AccountAttribute.VALUATION, myLocalValuation);
+
+        /* Determine currency fluctuation */
+        myFluct = new TethysMoney(myLocalValuation);
+        myFluct.subtractAmount(myLocalValue);
+        theValues.setValue(AccountAttribute.CURRENCYFLUCT, myFluct);
+    }
+
+    /**
      * Calculate delta.
      */
     protected void calculateDelta() {
-        /* If we are a foreign account */
-        if (isForeignCurrency) {
-            /* Obtain the foreign valuation */
-            TethysMoney myForeignValue = theValues.getMoneyValue(AccountAttribute.FOREIGNVALUE);
-            TethysMoney myLocalValue = theValues.getMoneyValue(AccountAttribute.LOCALVALUE);
-
-            /* Obtain exchange rate and reporting value */
-            MoneyWiseData myData = theAnalysis.getData();
-            ExchangeRateDataMap<ExchangeRate> myRateMap = myData.getExchangeRateDataMap();
-            TethysRatio myRate = myRateMap.getRateForDate(theAccount.getAssetCurrency(), theData.getDateRange().getEnd());
-            TethysMoney myLocalValuation = myForeignValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
-
-            /* Set the valuation */
-            setValue(AccountAttribute.VALUATION, myLocalValuation);
-            setValue(AccountAttribute.EXCHANGERATE, myRate);
-
-            /* Determine currency fluctuation */
-            TethysMoney myFluct = new TethysMoney(myLocalValuation);
-            myFluct.subtractAmount(myLocalValue);
-            setValue(AccountAttribute.CURRENCYFLUCT, myFluct);
-        }
-
         /* Obtain a copy of the value */
         TethysMoney myDelta = theValues.getMoneyValue(AccountAttribute.VALUATION);
         myDelta = new TethysMoney(myDelta);

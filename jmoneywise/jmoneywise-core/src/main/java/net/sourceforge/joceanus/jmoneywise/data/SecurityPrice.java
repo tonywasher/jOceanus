@@ -911,7 +911,8 @@ public class SecurityPrice
             /* Set price */
             Currency myCurrency = pSecurity.getCurrency();
             TethysPrice myFirst = TethysPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
-            TethysPrice myLatest = null;
+            TethysPrice myLatest = myFirst;
+            TethysDate myStart = pRange.getStart();
 
             /* Access list for security */
             PriceList myList = theMapOfPrices.get(pSecurity);
@@ -922,7 +923,8 @@ public class SecurityPrice
                     SecurityPrice myCurr = myIterator.previous();
 
                     /* Check for the range of the date */
-                    int iComp = pRange.compareTo(myCurr.getDate());
+                    TethysDate myDate = myCurr.getDate();
+                    int iComp = pRange.compareTo(myDate);
 
                     /* If this is later than the range we are finished */
                     if (iComp < 0) {
@@ -933,7 +935,8 @@ public class SecurityPrice
                     myLatest = myCurr.getPrice();
 
                     /* Record early price */
-                    if (iComp > 0) {
+                    if ((iComp > 0) ||
+                        (myDate.compareTo(myStart) == 0)) {
                         myFirst = myLatest;
                     }
                 }

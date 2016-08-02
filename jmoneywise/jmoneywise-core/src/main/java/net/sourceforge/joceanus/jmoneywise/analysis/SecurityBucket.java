@@ -620,12 +620,12 @@ public final class SecurityBucket
 
     /**
      * Register the transaction.
-     * @param pTrans the transaction
+     * @param pHelper the helper
      * @return the registered values
      */
-    protected SecurityValues registerTransaction(final TransactionHelper pTrans) {
+    protected SecurityValues registerTransaction(final TransactionHelper pHelper) {
         /* Register the event in the history */
-        return theHistory.registerTransaction(pTrans.getTransaction(), theValues);
+        return theHistory.registerTransaction(pHelper.getTransaction(), theValues);
     }
 
     /**
@@ -721,7 +721,7 @@ public final class SecurityBucket
         myValue.subtractAmount(theValues.getMoneyValue(SecurityAttribute.INVESTED));
 
         /* Set the delta */
-        setValue(SecurityAttribute.MARKET, myValue);
+        setValue(SecurityAttribute.MARKETGROWTH, myValue);
     }
 
     /**
@@ -767,18 +767,11 @@ public final class SecurityBucket
         protected SecurityValues(final Currency pCurrency,
                                  final Currency pReportingCurrency) {
             /* Initialise class */
-            super(SecurityAttribute.class);
+            this(pReportingCurrency);
 
-            /* Initialise units etc. to zero */
-            put(SecurityAttribute.UNITS, new TethysUnits());
-            put(SecurityAttribute.COST, new TethysMoney(pCurrency));
+            /* Initialise additional values to zero */
             put(SecurityAttribute.FOREIGNINVESTED, new TethysMoney(pCurrency));
-            put(SecurityAttribute.LOCALINVESTED, new TethysMoney(pReportingCurrency));
-            put(SecurityAttribute.FOREIGNGAINS, new TethysMoney(pCurrency));
-            put(SecurityAttribute.LOCALGAINS, new TethysMoney(pReportingCurrency));
-            put(SecurityAttribute.GROWTHADJUST, new TethysMoney(pCurrency));
             put(SecurityAttribute.FOREIGNDIVIDEND, new TethysMoney(pCurrency));
-            put(SecurityAttribute.LOCALDIVIDEND, new TethysMoney(pReportingCurrency));
         }
 
         /**
@@ -800,7 +793,7 @@ public final class SecurityBucket
          * @return true/false
          */
         private boolean isForeignSecurity() {
-            return get(SecurityAttribute.LOCALINVESTED) != null;
+            return get(SecurityAttribute.FOREIGNINVESTED) != null;
         }
 
         @Override
@@ -813,7 +806,8 @@ public final class SecurityBucket
 
             /* If we are a foreign security */
             if (isForeignSecurity()) {
-                adjustMoneyToBase(pBase, SecurityAttribute.LOCALINVESTED);
+                adjustMoneyToBase(pBase, SecurityAttribute.FOREIGNDIVIDEND);
+                adjustMoneyToBase(pBase, SecurityAttribute.FOREIGNINVESTED);
             }
         }
 
@@ -825,27 +819,21 @@ public final class SecurityBucket
             myValue.setZero();
 
             /* Reset Growth Adjust values */
-            put(SecurityAttribute.GROWTHADJUST, new TethysMoney(myValue));
+            put(SecurityAttribute.GROWTHADJUST, myValue);
+            put(SecurityAttribute.INVESTED, new TethysMoney(myValue));
+            put(SecurityAttribute.GAINS, new TethysMoney(myValue));
+            put(SecurityAttribute.DIVIDEND, new TethysMoney(myValue));
 
             /* If we are a foreign security */
             if (isForeignSecurity()) {
-                /* Reset Invested, Gains and Dividend values */
-                put(SecurityAttribute.FOREIGNINVESTED, myValue);
-                put(SecurityAttribute.FOREIGNGAINS, new TethysMoney(myValue));
-                put(SecurityAttribute.FOREIGNDIVIDEND, new TethysMoney(myValue));
-
-                /* Create a zero value in the reporting currency */
-                myValue = getMoneyValue(SecurityAttribute.LOCALINVESTED);
+                /* Create a zero value in the correct currency */
+                myValue = getMoneyValue(SecurityAttribute.FOREIGNINVESTED);
                 myValue = new TethysMoney(myValue);
                 myValue.setZero();
-                put(SecurityAttribute.LOCALDIVIDEND, myValue);
-                put(SecurityAttribute.LOCALGAINS, myValue);
-                put(SecurityAttribute.LOCALINVESTED, myValue);
-            } else {
-                /* Reset Invested, Gains and Dividend values */
-                put(SecurityAttribute.INVESTED, myValue);
-                put(SecurityAttribute.GAINS, new TethysMoney(myValue));
-                put(SecurityAttribute.DIVIDEND, new TethysMoney(myValue));
+
+                /* Reset Invested and Dividend values */
+                put(SecurityAttribute.FOREIGNINVESTED, myValue);
+                put(SecurityAttribute.FOREIGNDIVIDEND, new TethysMoney(myValue));
             }
         }
 

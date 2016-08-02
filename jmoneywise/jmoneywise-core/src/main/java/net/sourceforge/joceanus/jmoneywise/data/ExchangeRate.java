@@ -1098,7 +1098,8 @@ public class ExchangeRate
                                               final TethysDateRange pRange) {
             /* Set rate */
             TethysRatio myFirst = TethysRatio.ONE;
-            TethysRatio myLatest = null;
+            TethysRatio myLatest = TethysRatio.ONE;
+            TethysDate myStart = pRange.getStart();
 
             /* Access list for security */
             RateList myList = theMapOfRates.get(pCurrency);
@@ -1109,7 +1110,8 @@ public class ExchangeRate
                     ExchangeRate myCurr = myIterator.previous();
 
                     /* Check for the range of the date */
-                    int iComp = pRange.compareTo(myCurr.getDate());
+                    TethysDate myDate = myCurr.getDate();
+                    int iComp = pRange.compareTo(myDate);
 
                     /* If this is later than the range we are finished */
                     if (iComp < 0) {
@@ -1119,8 +1121,9 @@ public class ExchangeRate
                     /* Record as best rate */
                     myLatest = myCurr.getExchangeRate();
 
-                    /* Record early rate */
-                    if (iComp > 0) {
+                    /* Adjust first rate */
+                    if ((iComp > 0) ||
+                        (myDate.compareTo(myStart) == 0)) {
                         myFirst = myLatest;
                     }
                 }

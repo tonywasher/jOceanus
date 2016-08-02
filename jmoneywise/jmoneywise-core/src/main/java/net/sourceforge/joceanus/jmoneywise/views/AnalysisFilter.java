@@ -383,8 +383,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                     return getBucket().isPeer2Peer();
                 case FOREIGNVALUE:
                     return getBucket().isForeignCurrency();
-                case VALUATION:
-                    return true;
                 case SPEND:
                     return false;
                 default:
@@ -424,8 +422,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                     return false;
                 case FOREIGNVALUE:
                     return getBucket().isForeignCurrency();
-                case VALUATION:
-                    return true;
                 default:
                     return true;
             }
@@ -464,8 +460,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                     return false;
                 case FOREIGNVALUE:
                     return getBucket().isForeignCurrency();
-                case VALUATION:
-                    return true;
                 default:
                     return true;
             }
@@ -525,18 +519,17 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
 
             switch ((SecurityAttribute) pCounter) {
                 case FOREIGNINVESTED:
-                case LOCALINVESTED:
                 case FOREIGNDIVIDEND:
-                case LOCALDIVIDEND:
-                case FOREIGNGAINS:
-                case LOCALGAINS:
                     return getBucket().isForeignCurrency();
                 case INVESTED:
                 case DIVIDEND:
+                case COST:
                 case GAINS:
-                    return !getBucket().isForeignCurrency();
-                default:
+                case UNITS:
+                case GROWTHADJUST:
                     return true;
+                default:
+                    return false;
             }
         }
     }

@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * Deposit Category Bucket.
@@ -278,11 +279,19 @@ public final class DepositCategoryBucket
         protected void analyseDeposits(final MarketAnalysis pMarket,
                                        final DepositBucketList pDeposits) {
             /* Loop through the buckets */
+            TethysDateRange myRange = theAnalysis.getDateRange();
             Iterator<DepositBucket> myIterator = pDeposits.iterator();
             while (myIterator.hasNext()) {
                 /* Access bucket and category */
                 DepositBucket myCurr = myIterator.next();
                 DepositCategory myCategory = myCurr.getCategory();
+
+                /* Handle foreign asset */
+                if (myCurr.isForeignCurrency()) {
+                    myCurr.calculateFluctuations(myRange);
+                    pMarket.processAccount(myCurr);
+                    haveForeignCurrency = Boolean.TRUE;
+                }
 
                 /* Calculate the delta */
                 myCurr.calculateDelta();
@@ -291,12 +300,6 @@ public final class DepositCategoryBucket
                 DepositCategoryBucket myBucket = getBucket(myCategory);
                 myBucket.addValues(myCurr);
                 myBucket.updateActive(myCurr);
-
-                /* Note foreign currency */
-                if (myCurr.isForeignCurrency()) {
-                    pMarket.processAccount(myCurr);
-                    haveForeignCurrency = Boolean.TRUE;
-                }
             }
         }
 

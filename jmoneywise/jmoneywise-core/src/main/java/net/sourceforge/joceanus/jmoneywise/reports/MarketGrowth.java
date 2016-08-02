@@ -24,6 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
@@ -37,11 +42,6 @@ import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * MarketGrowth report builder.
@@ -86,7 +86,7 @@ public class MarketGrowth
     /**
      * The Growth text.
      */
-    private static final String TEXT_GROWTH = AnalysisResource.SECURITYATTR_MARKET.getValue();
+    private static final String TEXT_GROWTH = AnalysisResource.SECURITYATTR_MARKETGROWTH.getValue();
 
     /**
      * The Profit text.
@@ -159,7 +159,7 @@ public class MarketGrowth
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
-                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
+                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH));
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT));
                 checkPortfolioGrowth(myBucket);
 
@@ -179,7 +179,7 @@ public class MarketGrowth
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT));
         checkPortfolioGrowth(myTotals);
 
@@ -234,7 +234,7 @@ public class MarketGrowth
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT));
             checkSecurityGrowth(myBucket);
 
@@ -266,7 +266,7 @@ public class MarketGrowth
         /* Check market growth */
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
         myCalcGrowth.subtractAmount(myAdjust);
-        TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKET);
+        TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for portfolio {} of {}", pBucket.getName(), myCalcGrowth);
         }
@@ -293,7 +293,7 @@ public class MarketGrowth
         /* Check market growth */
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
         myCalcGrowth.subtractAmount(myAdjust);
-        TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKET);
+        TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);
         }

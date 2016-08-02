@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * Loan Category Bucket.
@@ -277,11 +278,19 @@ public final class LoanCategoryBucket
         protected void analyseLoans(final MarketAnalysis pMarket,
                                     final LoanBucketList pLoans) {
             /* Loop through the buckets */
+            TethysDateRange myRange = theAnalysis.getDateRange();
             Iterator<LoanBucket> myIterator = pLoans.iterator();
             while (myIterator.hasNext()) {
                 /* Access bucket and category */
                 LoanBucket myCurr = myIterator.next();
                 LoanCategory myCategory = myCurr.getCategory();
+
+                /* Handle foreign asset */
+                if (myCurr.isForeignCurrency()) {
+                    myCurr.calculateFluctuations(myRange);
+                    pMarket.processAccount(myCurr);
+                    haveForeignCurrency = Boolean.TRUE;
+                }
 
                 /* Calculate the delta */
                 myCurr.calculateDelta();
@@ -290,12 +299,6 @@ public final class LoanCategoryBucket
                 LoanCategoryBucket myBucket = getBucket(myCategory);
                 myBucket.addValues(myCurr);
                 myBucket.updateActive(myCurr);
-
-                /* Note foreign currency */
-                if (myCurr.isForeignCurrency()) {
-                    pMarket.processAccount(myCurr);
-                    haveForeignCurrency = Boolean.TRUE;
-                }
             }
         }
 

@@ -395,29 +395,19 @@ public enum AnalysisResource implements TethysResourceId {
     SECURITYATTR_GAINS("SecurityAttr.Gains"),
 
     /**
-     * SecurityAttr Local Gains.
-     */
-    SECURITYATTR_LOCALGAINS("SecurityAttr.LocalGains"),
-
-    /**
-     * SecurityAttr Foreign Gains.
-     */
-    SECURITYATTR_FOREIGNGAINS("SecurityAttr.ForeignGains"),
-
-    /**
      * SecurityAttr GrowthAdjustment.
      */
     SECURITYATTR_GROWTHADJUST("SecurityAttr.GrowthAdjust"),
 
     /**
+     * SecurityAttr ForeignValueDelta.
+     */
+    SECURITYATTR_FOREIGNVALUEDELTA("SecurityAttr.ForeignValueDelta"),
+
+    /**
      * SecurityAttr Invested.
      */
     SECURITYATTR_INVESTED("SecurityAttr.Invested"),
-
-    /**
-     * SecurityAttr Local Invested.
-     */
-    SECURITYATTR_LOCALINVESTED("SecurityAttr.LocalInvested"),
 
     /**
      * SecurityAttr Foreign Invested.
@@ -430,19 +420,29 @@ public enum AnalysisResource implements TethysResourceId {
     SECURITYATTR_DIVIDEND("SecurityAttr.Dividend"),
 
     /**
-     * SecurityAttr Local Dividend.
-     */
-    SECURITYATTR_LOCALDIVIDEND("SecurityAttr.LocalDividend"),
-
-    /**
      * SecurityAttr Foreign Dividend.
      */
     SECURITYATTR_FOREIGNDIVIDEND("SecurityAttr.ForeignDividend"),
 
     /**
-     * SecurityAttr Market.
+     * SecurityAttr MarketGrowth.
      */
-    SECURITYATTR_MARKET("SecurityAttr.Market"),
+    SECURITYATTR_MARKETGROWTH("SecurityAttr.MarketGrowth"),
+
+    /**
+     * SecurityAttr ForeignMarketGrowth.
+     */
+    SECURITYATTR_FOREIGNMARKETGROWTH("SecurityAttr.ForeignMarketGrowth"),
+
+    /**
+     * SecurityAttr LocalMarketGrowth.
+     */
+    SECURITYATTR_LOCALMARKETGROWTH("SecurityAttr.LocalMarketGrowth"),
+
+    /**
+     * SecurityAttr BaseMarketGrowth.
+     */
+    SECURITYATTR_BASEMARKETGROWTH("SecurityAttr.BaseMarketGrowth"),
 
     /**
      * SecurityAttr MarketProfit.
@@ -649,21 +649,23 @@ public enum AnalysisResource implements TethysResourceId {
         /* Create the map and return it */
         Map<SecurityAttribute, TethysResourceId> myMap = new EnumMap<>(SecurityAttribute.class);
         myMap.put(SecurityAttribute.VALUATION, ACCOUNTATTR_VALUATION);
+        myMap.put(SecurityAttribute.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);
         myMap.put(SecurityAttribute.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
+        myMap.put(SecurityAttribute.FOREIGNVALUEDELTA, SECURITYATTR_FOREIGNVALUEDELTA);
         myMap.put(SecurityAttribute.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);
         myMap.put(SecurityAttribute.UNITS, SECURITYATTR_UNITS);
         myMap.put(SecurityAttribute.COST, SECURITYATTR_COST);
         myMap.put(SecurityAttribute.GAINS, SECURITYATTR_GAINS);
-        myMap.put(SecurityAttribute.LOCALGAINS, SECURITYATTR_LOCALGAINS);
-        myMap.put(SecurityAttribute.FOREIGNGAINS, SECURITYATTR_FOREIGNGAINS);
         myMap.put(SecurityAttribute.GROWTHADJUST, SECURITYATTR_GROWTHADJUST);
         myMap.put(SecurityAttribute.INVESTED, SECURITYATTR_INVESTED);
-        myMap.put(SecurityAttribute.LOCALINVESTED, SECURITYATTR_LOCALINVESTED);
         myMap.put(SecurityAttribute.FOREIGNINVESTED, SECURITYATTR_FOREIGNINVESTED);
         myMap.put(SecurityAttribute.DIVIDEND, SECURITYATTR_DIVIDEND);
-        myMap.put(SecurityAttribute.LOCALDIVIDEND, SECURITYATTR_LOCALDIVIDEND);
         myMap.put(SecurityAttribute.FOREIGNDIVIDEND, SECURITYATTR_FOREIGNDIVIDEND);
-        myMap.put(SecurityAttribute.MARKET, SECURITYATTR_MARKET);
+        myMap.put(SecurityAttribute.MARKETGROWTH, SECURITYATTR_MARKETGROWTH);
+        myMap.put(SecurityAttribute.FOREIGNMARKETGROWTH, SECURITYATTR_FOREIGNMARKETGROWTH);
+        myMap.put(SecurityAttribute.LOCALMARKETGROWTH, SECURITYATTR_LOCALMARKETGROWTH);
+        myMap.put(SecurityAttribute.BASEMARKETGROWTH, SECURITYATTR_BASEMARKETGROWTH);
+        myMap.put(SecurityAttribute.CURRENCYFLUCT, ACCOUNTATTR_CURRENCYFLUCT);
         myMap.put(SecurityAttribute.MARKETPROFIT, SECURITYATTR_MARKETPROFIT);
         myMap.put(SecurityAttribute.PROFIT, SECURITYATTR_PROFIT);
         myMap.put(SecurityAttribute.PRICE, SECURITYATTR_PRICE);

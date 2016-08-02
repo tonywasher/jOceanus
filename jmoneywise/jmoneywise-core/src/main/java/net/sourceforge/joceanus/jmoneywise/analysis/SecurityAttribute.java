@@ -69,16 +69,6 @@ public enum SecurityAttribute implements BucketAttribute {
     GAINS,
 
     /**
-     * Local Gains.
-     */
-    LOCALGAINS,
-
-    /**
-     * Foreign Gains.
-     */
-    FOREIGNGAINS,
-
-    /**
      * GrowthAdjust.
      */
     GROWTHADJUST,
@@ -87,11 +77,6 @@ public enum SecurityAttribute implements BucketAttribute {
      * Invested.
      */
     INVESTED,
-
-    /**
-     * Local Invested Amount.
-     */
-    LOCALINVESTED,
 
     /**
      * Foreign Invested Amount.
@@ -104,19 +89,34 @@ public enum SecurityAttribute implements BucketAttribute {
     DIVIDEND,
 
     /**
-     * Local Dividend Amount.
-     */
-    LOCALDIVIDEND,
-
-    /**
      * Foreign Dividend Amount.
      */
     FOREIGNDIVIDEND,
 
     /**
-     * Market.
+     * MarketGrowth.
      */
-    MARKET,
+    MARKETGROWTH,
+
+    /**
+     * BaseMarketGrowth.
+     */
+    BASEMARKETGROWTH,
+
+    /**
+     * ForeignMarketGrowth.
+     */
+    FOREIGNMARKETGROWTH,
+
+    /**
+     * LocalMarketGrowth.
+     */
+    LOCALMARKETGROWTH,
+
+    /**
+     * Currency Fluctuation.
+     */
+    CURRENCYFLUCT,
 
     /**
      * Profit.
@@ -156,17 +156,17 @@ public enum SecurityAttribute implements BucketAttribute {
             case UNITS:
             case COST:
             case GAINS:
-            case LOCALGAINS:
-            case FOREIGNGAINS:
             case GROWTHADJUST:
             case DIVIDEND:
-            case LOCALDIVIDEND:
             case FOREIGNDIVIDEND:
             case INVESTED:
-            case LOCALINVESTED:
             case FOREIGNINVESTED:
                 return true;
-            case MARKET:
+            case MARKETGROWTH:
+            case BASEMARKETGROWTH:
+            case FOREIGNMARKETGROWTH:
+            case LOCALMARKETGROWTH:
+            case CURRENCYFLUCT:
             case PROFIT:
             case MARKETPROFIT:
             case VALUATION:
@@ -195,16 +195,16 @@ public enum SecurityAttribute implements BucketAttribute {
             case FOREIGNVALUEDELTA:
             case COST:
             case GAINS:
-            case LOCALGAINS:
-            case FOREIGNGAINS:
             case GROWTHADJUST:
             case INVESTED:
-            case LOCALINVESTED:
             case FOREIGNINVESTED:
             case DIVIDEND:
-            case LOCALDIVIDEND:
             case FOREIGNDIVIDEND:
-            case MARKET:
+            case MARKETGROWTH:
+            case BASEMARKETGROWTH:
+            case FOREIGNMARKETGROWTH:
+            case LOCALMARKETGROWTH:
+            case CURRENCYFLUCT:
             case MARKETPROFIT:
             case PROFIT:
             default:

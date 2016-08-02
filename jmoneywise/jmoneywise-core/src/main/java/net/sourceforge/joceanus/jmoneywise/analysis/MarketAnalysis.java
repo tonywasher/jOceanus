@@ -22,11 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.Currency;
+
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -36,34 +39,62 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  */
 public class MarketAnalysis {
     /**
+     * Analysis.
+     */
+    private final Analysis theAnalysis;
+
+    /**
      * Market Payee Income.
      */
-    private final TethysMoney theMarketIncome = new TethysMoney();
+    private final TethysMoney theMarketIncome;
 
     /**
      * Market Payee Expense.
      */
-    private final TethysMoney theMarketExpense = new TethysMoney();
+    private final TethysMoney theMarketExpense;
 
     /**
      * MarketGrowth Income.
      */
-    private final TethysMoney theGrowthIncome = new TethysMoney();
+    private final TethysMoney theGrowthIncome;
 
     /**
      * MarketGrowth Expense.
      */
-    private final TethysMoney theGrowthExpense = new TethysMoney();
+    private final TethysMoney theGrowthExpense;
 
     /**
      * CurrencyFluctuation Income.
      */
-    private final TethysMoney theFluctIncome = new TethysMoney();
+    private final TethysMoney theFluctIncome;
 
     /**
      * CurrencyFluctuation Expense.
      */
-    private final TethysMoney theFluctExpense = new TethysMoney();
+    private final TethysMoney theFluctExpense;
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis.
+     */
+    protected MarketAnalysis(final Analysis pAnalysis) {
+        /* Store parameters */
+        theAnalysis = pAnalysis;
+
+        /* Determine the currency */
+        AssetCurrency myCurr = pAnalysis.getCurrency();
+        Currency myCurrency = myCurr == null
+                                             ? AccountBucket.DEFAULT_CURRENCY
+                                             : myCurr.getCurrency();
+
+        /* Create buckets */
+        theMarketIncome = new TethysMoney(myCurrency);
+        theMarketExpense = new TethysMoney(myCurrency);
+        theGrowthIncome = new TethysMoney(myCurrency);
+        theGrowthExpense = new TethysMoney(myCurrency);
+        theFluctIncome = new TethysMoney(myCurrency);
+        theFluctExpense = new TethysMoney(myCurrency);
+    }
 
     /**
      * Process account bucket.
@@ -94,7 +125,7 @@ public class MarketAnalysis {
     protected void processSecurity(final SecurityBucket pBucket) {
         /* Access market and gains */
         SecurityValues myValues = pBucket.getValues();
-        TethysMoney myMarket = myValues.getMoneyValue(SecurityAttribute.MARKET);
+        TethysMoney myMarket = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         TethysMoney myGains = myValues.getMoneyValue(SecurityAttribute.GAINS);
 
         /* If there are gains in the period */
@@ -127,13 +158,12 @@ public class MarketAnalysis {
 
     /**
      * Propagate totals.
-     * @param pAnalysis the analysis
      */
-    protected void propagateTotals(final Analysis pAnalysis) {
+    protected void propagateTotals() {
         /* Access lists */
-        PayeeBucketList myPayees = pAnalysis.getPayees();
-        TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
-        TransactionCategoryBucketList myCategories = pAnalysis.getTransCategories();
+        PayeeBucketList myPayees = theAnalysis.getPayees();
+        TaxBasisBucketList myTaxBasis = theAnalysis.getTaxBasis();
+        TransactionCategoryBucketList myCategories = theAnalysis.getTransCategories();
 
         /* If we have market income/expense */
         if ((theMarketIncome.isNonZero())
