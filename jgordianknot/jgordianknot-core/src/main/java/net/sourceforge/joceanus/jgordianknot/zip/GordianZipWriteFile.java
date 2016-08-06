@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.stream.GordianStreamDefinition;
 import net.sourceforge.joceanus.jgordianknot.crypto.stream.GordianStreamManager;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Class used to build a ZipFile.
@@ -78,7 +78,7 @@ public class GordianZipWriteFile
     /**
      * The underlying Zip output stream.
      */
-    private ZipOutputStream theStream = null;
+    private ZipOutputStream theStream;
 
     /**
      * The list of contents.
@@ -88,27 +88,27 @@ public class GordianZipWriteFile
     /**
      * The active zipEntry.
      */
-    private ZipEntry theEntry = null;
+    private ZipEntry theEntry;
 
     /**
      * The active zipFileEntry.
      */
-    private GordianZipFileEntry theFileEntry = null;
+    private GordianZipFileEntry theFileEntry;
 
     /**
      * The active filename.
      */
-    private String theFileName = null;
+    private String theFileName;
 
     /**
      * The active output stream.
      */
-    private OutputStream theOutput = null;
+    private OutputStream theOutput;
 
     /**
      * The fileNumber.
      */
-    private int theFileNo = 0;
+    private int theFileNo;
 
     /**
      * Constructor for new output zip file with security.

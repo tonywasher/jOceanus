@@ -615,6 +615,49 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     }
 
     /**
+     * Adjust account for credit.
+     * @param pHelper the transaction helper
+     */
+    protected void adjustForThirdPartyCredit(final TransactionHelper pHelper) {
+        /* Access event amount */
+        TethysMoney myAmount = pHelper.getThirdPartyAmount();
+
+        /* If we have a non-zero amount */
+        if (myAmount.isNonZero()) {
+            /* If we are a foreign account */
+            if (isForeignCurrency) {
+                /* Access local amount amount */
+                TethysMoney myLocalAmount = pHelper.getLocalThirdPartyAmount();
+
+                /* Adjust counters */
+                adjustCounter(AccountAttribute.FOREIGNVALUE, myAmount);
+                adjustCounter(AccountAttribute.LOCALVALUE, myLocalAmount);
+
+                /* Obtain the credit exchangeRate and convert the foreign valuation */
+                TethysRatio myRate = pHelper.getThirdPartyExchangeRate();
+                TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
+
+                /* Set the valuation */
+                setValue(AccountAttribute.VALUATION, myLocalValue);
+                setValue(AccountAttribute.EXCHANGERATE, myRate);
+
+                /* Determine currency fluctuation */
+                TethysMoney myFluct = new TethysMoney(myLocalValue);
+                myFluct.subtractAmount(theValues.getMoneyValue(AccountAttribute.LOCALVALUE));
+                setValue(AccountAttribute.CURRENCYFLUCT, myFluct);
+
+                /* else this is a standard account */
+            } else {
+                /* Adjust valuation */
+                adjustCounter(AccountAttribute.VALUATION, myAmount);
+            }
+        }
+
+        /* Register the transaction in the history */
+        registerTransaction(pHelper);
+    }
+
+    /**
      * Set opening balance.
      * @param pHelper the transaction helper
      * @param pBalance the opening balance

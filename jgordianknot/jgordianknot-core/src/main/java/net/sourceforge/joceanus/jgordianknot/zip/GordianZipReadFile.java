@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.jgordianknot.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.stream.GordianStreamManager;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Class used to extract from a ZipFile.
@@ -67,12 +67,12 @@ public class GordianZipReadFile {
     /**
      * The name of the Zip file.
      */
-    private File theZipFile = null;
+    private File theZipFile;
 
     /**
      * KeySet for this zip file.
      */
-    private GordianKeySet theKeySet = null;
+    private GordianKeySet theKeySet;
 
     /**
      * The header bytes.

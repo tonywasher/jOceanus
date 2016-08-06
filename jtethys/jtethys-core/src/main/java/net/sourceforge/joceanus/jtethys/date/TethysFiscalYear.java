@@ -67,7 +67,7 @@ public enum TethysFiscalYear {
     /**
      * The month of the first day of fiscal year.
      */
-    private final Month theMonth;
+    private final transient Month theMonth;
 
     /**
      * Constructor.

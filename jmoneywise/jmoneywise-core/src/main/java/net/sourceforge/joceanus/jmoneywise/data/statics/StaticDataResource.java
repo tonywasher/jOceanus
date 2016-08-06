@@ -327,6 +327,11 @@ public enum StaticDataResource implements TethysResourceId {
     TRANSTYPE_UTDIVIDEND("TransType.UnitTrustDividend"),
 
     /**
+     * TransType ForeignDividend.
+     */
+    TRANSTYPE_FOREIGNDIVIDEND("TransType.ForeignDividend"),
+
+    /**
      * TransType TaxFreeDividend.
      */
     TRANSTYPE_TAXFREEDIVIDEND("TransType.TaxFreeDividend"),
@@ -445,6 +450,11 @@ public enum StaticDataResource implements TethysResourceId {
      * TaxBasis UnitTrustDividend.
      */
     TAXBASIS_UTDIVIDEND("TaxBasis.UnitTrustDividend"),
+
+    /**
+     * TaxBasis ForeignDividend.
+     */
+    TAXBASIS_FOREIGNDIVIDEND("TaxBasis.ForeignDividend"),
 
     /**
      * TaxBasis TaxableGains.
@@ -972,6 +982,11 @@ public enum StaticDataResource implements TethysResourceId {
     TRANSINFO_PARTNERAMOUNT("TransInfoType.PartnerAmount"),
 
     /**
+     * TransInfo ThirdPartyAmount.
+     */
+    TRANSINFO_THIRDPARTYAMOUNT("TransInfoType.ThirdPartyAmount"),
+
+    /**
      * TransInfo Dilution.
      */
     TRANSINFO_DILUTION("MoneyWiseData.Field.Dilution"),
@@ -1264,6 +1279,8 @@ public enum StaticDataResource implements TethysResourceId {
                 return TRANSTYPE_SHAREDIVIDEND;
             case UNITTRUSTDIVIDEND:
                 return TRANSTYPE_UTDIVIDEND;
+            case FOREIGNDIVIDEND:
+                return TRANSTYPE_FOREIGNDIVIDEND;
             case TAXFREEDIVIDEND:
                 return TRANSTYPE_TAXFREEDIVIDEND;
             case TAXEDLOYALTYBONUS:
@@ -1324,6 +1341,8 @@ public enum StaticDataResource implements TethysResourceId {
                 return TAXBASIS_DIVIDEND;
             case UNITTRUSTDIVIDEND:
                 return TAXBASIS_UTDIVIDEND;
+            case FOREIGNDIVIDEND:
+                return TAXBASIS_FOREIGNDIVIDEND;
             case TAXABLEGAINS:
                 return TAXBASIS_TAXABLEGAINS;
             case CAPITALGAINS:
@@ -1610,6 +1629,8 @@ public enum StaticDataResource implements TethysResourceId {
                 return TRANSINFO_DEBITUNITS;
             case PARTNERAMOUNT:
                 return TRANSINFO_PARTNERAMOUNT;
+            case THIRDPARTYAMOUNT:
+                return TRANSINFO_THIRDPARTYAMOUNT;
             case CREDITDATE:
                 return TRANSINFO_CREDITDATE;
             case DILUTION:

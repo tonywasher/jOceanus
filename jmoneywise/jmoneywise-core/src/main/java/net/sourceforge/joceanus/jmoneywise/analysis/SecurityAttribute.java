@@ -89,19 +89,9 @@ public enum SecurityAttribute implements BucketAttribute {
     DIVIDEND,
 
     /**
-     * Foreign Dividend Amount.
-     */
-    FOREIGNDIVIDEND,
-
-    /**
      * MarketGrowth.
      */
     MARKETGROWTH,
-
-    /**
-     * BaseMarketGrowth.
-     */
-    BASEMARKETGROWTH,
 
     /**
      * ForeignMarketGrowth.
@@ -158,12 +148,10 @@ public enum SecurityAttribute implements BucketAttribute {
             case GAINS:
             case GROWTHADJUST:
             case DIVIDEND:
-            case FOREIGNDIVIDEND:
             case INVESTED:
             case FOREIGNINVESTED:
                 return true;
             case MARKETGROWTH:
-            case BASEMARKETGROWTH:
             case FOREIGNMARKETGROWTH:
             case LOCALMARKETGROWTH:
             case CURRENCYFLUCT:
@@ -199,9 +187,7 @@ public enum SecurityAttribute implements BucketAttribute {
             case INVESTED:
             case FOREIGNINVESTED:
             case DIVIDEND:
-            case FOREIGNDIVIDEND:
             case MARKETGROWTH:
-            case BASEMARKETGROWTH:
             case FOREIGNMARKETGROWTH:
             case LOCALMARKETGROWTH:
             case CURRENCYFLUCT:

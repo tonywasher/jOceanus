@@ -265,12 +265,12 @@ public final class SecurityHolding
 
     @Override
     public AssetCurrency getAssetCurrency() {
-        return thePortfolio.getAssetCurrency();
+        return theSecurity.getAssetCurrency();
     }
 
     @Override
     public Currency getCurrency() {
-        return thePortfolio.getCurrency();
+        return getAssetCurrency().getCurrency();
     }
 
     /**

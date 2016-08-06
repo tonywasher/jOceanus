@@ -93,39 +93,44 @@ public enum TransactionInfoClass implements DataInfoClass {
     PARTNERAMOUNT(12, 11, MetisDataType.MONEY),
 
     /**
+     * ThirdParty Amount.
+     */
+    THIRDPARTYAMOUNT(13, 12, MetisDataType.MONEY),
+
+    /**
      * ThirdParty.
      */
-    THIRDPARTY(13, 12, MetisDataType.LINK),
+    THIRDPARTY(14, 13, MetisDataType.LINK),
 
     /**
      * Comments.
      */
-    COMMENTS(14, 13, MetisDataType.STRING),
+    COMMENTS(15, 14, MetisDataType.STRING),
 
     /**
      * Price.
      */
-    PRICE(15, 14, MetisDataType.PRICE),
+    PRICE(16, 15, MetisDataType.PRICE),
 
     /**
      * Comments.
      */
-    COMMISSION(16, 15, MetisDataType.MONEY),
+    COMMISSION(17, 16, MetisDataType.MONEY),
 
     /**
      * Grant.
      */
-    OPTIONSGRANT(17, 16, MetisDataType.LINK),
+    OPTIONSGRANT(18, 17, MetisDataType.LINK),
 
     /**
      * TransactionTag.
      */
-    TRANSTAG(18, 17, MetisDataType.LINKSET),
+    TRANSTAG(19, 18, MetisDataType.LINKSET),
 
     /**
      * ExchangeRate.
      */
-    XCHANGERATE(19, 18, MetisDataType.RATIO);
+    XCHANGERATE(20, 19, MetisDataType.RATIO);
 
     /**
      * The String name.

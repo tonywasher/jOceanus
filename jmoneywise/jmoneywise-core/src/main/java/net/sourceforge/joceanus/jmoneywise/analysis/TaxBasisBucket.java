@@ -1111,6 +1111,11 @@ public class TaxBasisBucket
                     myBucket = getBucket(TaxBasisClass.UNITTRUSTDIVIDEND);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
+                case FOREIGNDIVIDEND:
+                    /* Adjust the Gross Foreign dividend bucket */
+                    myBucket = getBucket(TaxBasisClass.FOREIGNDIVIDEND);
+                    myBucket.addIncomeTransaction(pTrans);
+                    break;
                 case ROOMRENTALINCOME:
                     /* Adjust the Gross rental bucket */
                     myBucket = getBucket(TaxBasisClass.RENTALINCOME);

@@ -109,7 +109,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * Zero Amount Error Text.
      */
-    private static final String ERROR_ZEROAMOUNT = MoneyWiseDataResource.TRANSACTION_ERROR_ZERO.getValue();
+    protected static final String ERROR_ZEROAMOUNT = MoneyWiseDataResource.TRANSACTION_ERROR_ZERO.getValue();
 
     /**
      * Currency Error Text.

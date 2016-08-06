@@ -62,44 +62,49 @@ public enum TaxBasisClass implements StaticInterface {
     UNITTRUSTDIVIDEND(6, 5),
 
     /**
+     * Foreign Dividend Income.
+     */
+    FOREIGNDIVIDEND(7, 6),
+
+    /**
      * Taxable gains.
      */
-    TAXABLEGAINS(7, 6),
+    TAXABLEGAINS(8, 7),
 
     /**
      * Capital gains.
      */
-    CAPITALGAINS(8, 7),
+    CAPITALGAINS(9, 8),
 
     /**
      * Tax Free Income.
      */
-    TAXFREE(9, 8),
+    TAXFREE(10, 9),
 
     /**
      * BadDebt.
      */
-    BADDEBT(10, 9),
+    BADDEBT(11, 10),
 
     /**
      * Market Growth.
      */
-    MARKET(11, 10),
+    MARKET(12, 11),
 
     /**
      * Total Tax Paid.
      */
-    TAXPAID(12, 11),
+    TAXPAID(13, 12),
 
     /**
      * Gross Expense.
      */
-    EXPENSE(13, 12),
+    EXPENSE(14, 13),
 
     /**
      * Virtual Income.
      */
-    VIRTUAL(14, 13);
+    VIRTUAL(15, 14);
 
     /**
      * The String name.
@@ -177,6 +182,7 @@ public enum TaxBasisClass implements StaticInterface {
             case UNTAXEDINTEREST:
             case DIVIDEND:
             case UNITTRUSTDIVIDEND:
+            case FOREIGNDIVIDEND:
             case TAXABLEGAINS:
             case CAPITALGAINS:
             case TAXFREE:

@@ -60,7 +60,12 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     /**
      * Last values.
      */
-    private transient T theLastValues = null;
+    private transient T theLastValues;
+
+    /**
+     * Last transaction id.
+     */
+    private transient Integer theLastId;
 
     /**
      * Constructor.
@@ -239,10 +244,15 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      */
     protected T registerTransaction(final Transaction pTrans,
                                     final T pValues) {
-        /* Allocate the transaction and add to map */
-        BucketSnapShot<T, E> myTrans = new BucketSnapShot<>(pTrans, pValues, theLastValues);
-        put(pTrans.getId(), myTrans);
-        theLastValues = myTrans.getSnapShot();
+        /* Check whether this is re-registering the transaction */
+        Integer myId = pTrans.getId();
+        if (!myId.equals(theLastId)) {
+            /* Allocate the transaction and add to map */
+            BucketSnapShot<T, E> myTrans = new BucketSnapShot<>(pTrans, pValues, theLastValues);
+            put(pTrans.getId(), myTrans);
+            theLastValues = myTrans.getSnapShot();
+            theLastId = myId;
+        }
 
         /* Return the values */
         return theLastValues;

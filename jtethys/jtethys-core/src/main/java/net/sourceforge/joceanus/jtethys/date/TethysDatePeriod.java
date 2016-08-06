@@ -102,7 +102,7 @@ public enum TethysDatePeriod {
     /**
      * The calendar field.
      */
-    private final ChronoUnit theField;
+    private final transient ChronoUnit theField;
 
     /**
      * The adjustments amount.

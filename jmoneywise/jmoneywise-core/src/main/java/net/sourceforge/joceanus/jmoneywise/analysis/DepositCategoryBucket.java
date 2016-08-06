@@ -323,7 +323,6 @@ public final class DepositCategoryBucket
 
         /**
          * Produce totals for the categories.
-         * @param pMarket the market analysis
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */

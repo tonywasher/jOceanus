@@ -206,84 +206,89 @@ public enum TransactionCategoryClass implements CategoryInterface {
     UNITTRUSTDIVIDEND(35, 38),
 
     /**
+     * Foreign Dividend.
+     */
+    FOREIGNDIVIDEND(36, 39),
+
+    /**
      * Tax Free Dividend.
      */
-    TAXFREEDIVIDEND(36, 39),
+    TAXFREEDIVIDEND(37, 40),
 
     /**
      * Taxed Loyalty Bonus.
      */
-    TAXEDLOYALTYBONUS(37, 40),
+    TAXEDLOYALTYBONUS(38, 41),
 
     /**
      * Gross LoyaltyBonus.
      */
-    GROSSLOYALTYBONUS(38, 41),
+    GROSSLOYALTYBONUS(39, 42),
 
     /**
      * Tax Free LoyaltyBonus.
      */
-    TAXFREELOYALTYBONUS(39, 42),
+    TAXFREELOYALTYBONUS(40, 43),
 
     /**
      * Taxable Gain.
      */
-    TAXABLEGAIN(40, 43),
+    TAXABLEGAIN(41, 44),
 
     /**
      * Capital Gain.
      */
-    CAPITALGAIN(41, 44),
+    CAPITALGAIN(42, 45),
 
     /**
      * TaxFreeCapital Gain.
      */
-    TAXFREEGAIN(42, 45),
+    TAXFREEGAIN(43, 46),
 
     /**
      * Market Growth.
      */
-    MARKETGROWTH(43, 46),
+    MARKETGROWTH(44, 47),
 
     /**
      * CurrencyFluctuation.
      */
-    CURRENCYFLUCTUATION(44, 47),
+    CURRENCYFLUCTUATION(45, 48),
 
     /**
      * Tax Credit.
      * <p>
      * This is a singular category catching tax credits associated with an event.
      */
-    TAXCREDIT(45, 48),
+    TAXCREDIT(46, 49),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NATINSURANCE(46, 49),
+    NATINSURANCE(47, 50),
 
     /**
      * Deemed Benefit.
      * <p>
      * This is a singular category catching deemed benefit payments associated with an event.
      */
-    DEEMEDBENEFIT(47, 50),
+    DEEMEDBENEFIT(48, 51),
 
     /**
      * CharityDonation.
      * <p>
      * This is a singular category catching charity donations associated with an event.
      */
-    CHARITYDONATION(48, 51),
+    CHARITYDONATION(49, 52),
 
     /**
      * OpeningBalance.
      * <p>
      * This is a singular category catching opening balances.
      */
-    OPENINGBALANCE(49, 52),
+    OPENINGBALANCE(50, 53),
 
     /**
      * Income Totals.
@@ -291,7 +296,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of income sub-categories and is used
      * purely for reporting purposes.
      */
-    INCOMETOTALS(50, 1),
+    INCOMETOTALS(51, 1),
 
     /**
      * Expense Totals.
@@ -299,7 +304,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of expense sub-categories and is used
      * purely for reporting purposes.
      */
-    EXPENSETOTALS(51, 2),
+    EXPENSETOTALS(52, 2),
 
     /**
      * Security Parent.
@@ -307,7 +312,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of security transfer sub-categories and is
      * used purely for holding purposes.
      */
-    SECURITYPARENT(52, 3),
+    SECURITYPARENT(53, 3),
 
     /**
      * Totals.
@@ -315,7 +320,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for the total of all non-transfer categories and is used purely for reporting
      * purposes.
      */
-    TOTALS(53, 0);
+    TOTALS(54, 0);
 
     /**
      * The String name.
@@ -389,6 +394,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case SHAREDIVIDEND:
             case UNITTRUSTDIVIDEND:
             case TAXFREEDIVIDEND:
+            case FOREIGNDIVIDEND:
             case TAXEDINTEREST:
             case GROSSINTEREST:
             case TAXFREEINTEREST:
@@ -463,6 +469,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
         switch (this) {
             case SHAREDIVIDEND:
             case UNITTRUSTDIVIDEND:
+            case FOREIGNDIVIDEND:
             case TAXFREEDIVIDEND:
             case TAXEDINTEREST:
             case GROSSINTEREST:
@@ -504,6 +511,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case DIVIDEND:
             case SHAREDIVIDEND:
             case UNITTRUSTDIVIDEND:
+            case FOREIGNDIVIDEND:
                 return true;
             default:
                 return false;
@@ -530,6 +538,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case DIVIDEND:
             case SHAREDIVIDEND:
             case UNITTRUSTDIVIDEND:
+            case FOREIGNDIVIDEND:
             case TAXFREEDIVIDEND:
             case TAXEDLOYALTYBONUS:
             case GROSSLOYALTYBONUS:
@@ -578,6 +587,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case DIVIDEND:
             case SHAREDIVIDEND:
             case UNITTRUSTDIVIDEND:
+            case FOREIGNDIVIDEND:
             case TAXFREEDIVIDEND:
                 return true;
             default:
@@ -629,6 +639,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case STOCKSPLIT:
             case UNITSADJUST:
             case STOCKDEMERGER:
+            case STOCKTAKEOVER:
             case PORTFOLIOXFER:
             case OPTIONSVEST:
             case SECURITYREPLACE:

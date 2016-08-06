@@ -358,6 +358,20 @@ public class SheetTransaction
             myThirdParty = myCell.getStringValue();
         }
 
+        /* Handle ThirdPartyAmount which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myThirdPartyAmount = null;
+        if (myCell != null) {
+            myThirdPartyAmount = myCell.getStringValue();
+        }
+
+        /* Handle PartnerAmount which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myPartnerAmount = null;
+        if (myCell != null) {
+            myPartnerAmount = myCell.getStringValue();
+        }
+
         /* Handle TagList which may be missing */
         myCell = pView.getRowCellByIndex(pRow, iAdjust++);
         String myTagList = null;
@@ -378,6 +392,8 @@ public class SheetTransaction
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.QUALIFYYEARS, myYears);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.CHARITYDONATION, myDonation);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.THIRDPARTY, myThirdParty);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.THIRDPARTYAMOUNT, myThirdPartyAmount);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PARTNERAMOUNT, myPartnerAmount);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TRANSTAG, myTagList);
 
         /* Continue */

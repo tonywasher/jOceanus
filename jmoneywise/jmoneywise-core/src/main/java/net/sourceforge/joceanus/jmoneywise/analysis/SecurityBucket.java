@@ -35,6 +35,8 @@ import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
+import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -52,6 +54,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
@@ -656,9 +659,53 @@ public final class SecurityBucket
     }
 
     /**
+     * value the foreign asset for a particular range.
+     * @param pRange the range of valuation
+     */
+    private void valueForeignAsset(final TethysDateRange pRange) {
+        /* Obtain the appropriate price */
+        MoneyWiseData myData = theAnalysis.getData();
+        SecurityPriceDataMap<SecurityPrice> myPriceMap = myData.getSecurityPriceDataMap();
+        TethysPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
+        ExchangeRateDataMap<ExchangeRate> myRateMap = myData.getExchangeRateDataMap();
+        TethysRatio[] myRates = myRateMap.getRatesForRange(theSecurity.getAssetCurrency(), pRange);
+        Currency myCurrency = theAnalysis.getCurrency().getCurrency();
+
+        /* Access base units */
+        TethysUnits myUnits = theBaseValues.getUnitsValue(SecurityAttribute.UNITS);
+        TethysPrice myPrice = myPrices[0];
+        TethysRatio myRate = myRates[0];
+
+        /* Calculate the value */
+        TethysMoney myValue = myUnits.valueAtPrice(myPrice);
+        TethysMoney myLocalValue = myValue.convertCurrency(myCurrency, myRate.getInverseRatio());
+
+        /* Record it */
+        theBaseValues.setValue(SecurityAttribute.PRICE, myPrice);
+        theBaseValues.setValue(SecurityAttribute.FOREIGNVALUE, myValue);
+        theBaseValues.setValue(SecurityAttribute.EXCHANGERATE, myRate);
+        theBaseValues.setValue(SecurityAttribute.VALUATION, myLocalValue);
+
+        /* Access units */
+        myUnits = theValues.getUnitsValue(SecurityAttribute.UNITS);
+        myPrice = myPrices[1];
+        myRate = myRates[1];
+
+        /* Calculate the value */
+        myValue = myUnits.valueAtPrice(myPrice);
+        myLocalValue = myValue.convertCurrency(myCurrency, myRate.getInverseRatio());
+
+        /* Record it */
+        setValue(SecurityAttribute.PRICE, myPrice);
+        setValue(SecurityAttribute.EXCHANGERATE, myRate);
+        setValue(SecurityAttribute.FOREIGNVALUE, myValue);
+        setValue(SecurityAttribute.VALUATION, myLocalValue);
+    }
+
+    /**
      * calculate the profit for a priced asset.
      */
-    protected void calculateProfit() {
+    private void calculateProfit() {
         /* Calculate the profit */
         TethysMoney myValuation = theValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
         TethysMoney myProfit = new TethysMoney(myValuation);
@@ -676,13 +723,9 @@ public final class SecurityBucket
     }
 
     /**
-     * Analyse the bucket.
-     * @param pRange the range of valuation
+     * calculate the deltas for a priced asset.
      */
-    protected void analyseBucket(final TethysDateRange pRange) {
-        /* Value the asset over the range */
-        valueAsset(pRange);
-
+    private void calculateDeltas() {
         /* Obtain a copy of the value */
         TethysMoney myValue = theValues.getMoneyValue(SecurityAttribute.VALUATION);
         myValue = new TethysMoney(myValue);
@@ -693,11 +736,43 @@ public final class SecurityBucket
         /* Set the delta */
         setValue(SecurityAttribute.VALUEDELTA, myValue);
 
+        if (isForeignCurrency) {
+            /* Obtain a copy of the value */
+            myValue = theValues.getMoneyValue(SecurityAttribute.FOREIGNVALUE);
+            myValue = new TethysMoney(myValue);
+
+            /* Subtract any base value */
+            myValue.subtractAmount(theBaseValues.getMoneyValue(SecurityAttribute.FOREIGNVALUE));
+
+            /* Set the delta */
+            setValue(SecurityAttribute.FOREIGNVALUEDELTA, myValue);
+        }
+    }
+
+    /**
+     * Analyse the bucket.
+     * @param pRange the range of valuation
+     */
+    protected void analyseBucket(final TethysDateRange pRange) {
+        /* Value the asset over the range */
+        if (isForeignCurrency) {
+            valueForeignAsset(pRange);
+        } else {
+            valueAsset(pRange);
+        }
+
+        /* Calculate the deltas */
+        calculateDeltas();
+
         /* Calculate the profit */
         calculateProfit();
 
         /* Calculate the market movement */
-        calculateMarket();
+        if (isForeignCurrency) {
+            calculateForeignMarket();
+        } else {
+            calculateMarket();
+        }
     }
 
     /**
@@ -722,6 +797,44 @@ public final class SecurityBucket
 
         /* Set the delta */
         setValue(SecurityAttribute.MARKETGROWTH, myValue);
+    }
+
+    /**
+     * Calculate foreign market movement.
+     */
+    private void calculateForeignMarket() {
+        /* Obtain the local market growth */
+        TethysMoney myBaseValue = theValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
+        myBaseValue = new TethysMoney(myBaseValue);
+
+        /* Subtract the investment */
+        myBaseValue.subtractAmount(theValues.getMoneyValue(SecurityAttribute.INVESTED));
+
+        /* Set the basic growth */
+        setValue(SecurityAttribute.LOCALMARKETGROWTH, myBaseValue);
+
+        /* Obtain the foreign growth */
+        TethysMoney myValue = theValues.getMoneyValue(SecurityAttribute.FOREIGNVALUEDELTA);
+        myValue = new TethysMoney(myValue);
+
+        /* Subtract the investment */
+        myValue.subtractAmount(theValues.getMoneyValue(SecurityAttribute.FOREIGNINVESTED));
+
+        /* Set the foreign growth */
+        setValue(SecurityAttribute.FOREIGNMARKETGROWTH, myValue);
+
+        /* Calculate the local equivalent */
+        Currency myCurrency = theAnalysis.getCurrency().getCurrency();
+        TethysRatio myRate = theValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
+        myValue = myValue.convertCurrency(myCurrency, myRate.getInverseRatio());
+
+        /* Set the market growth */
+        setValue(SecurityAttribute.MARKETGROWTH, myValue);
+
+        /* Calculate the fluctuation */
+        TethysMoney myFluct = new TethysMoney(myBaseValue);
+        myFluct.subtractAmount(myValue);
+        setValue(SecurityAttribute.CURRENCYFLUCT, myFluct);
     }
 
     /**
@@ -771,7 +884,6 @@ public final class SecurityBucket
 
             /* Initialise additional values to zero */
             put(SecurityAttribute.FOREIGNINVESTED, new TethysMoney(pCurrency));
-            put(SecurityAttribute.FOREIGNDIVIDEND, new TethysMoney(pCurrency));
         }
 
         /**
@@ -806,7 +918,6 @@ public final class SecurityBucket
 
             /* If we are a foreign security */
             if (isForeignSecurity()) {
-                adjustMoneyToBase(pBase, SecurityAttribute.FOREIGNDIVIDEND);
                 adjustMoneyToBase(pBase, SecurityAttribute.FOREIGNINVESTED);
             }
         }
@@ -831,9 +942,8 @@ public final class SecurityBucket
                 myValue = new TethysMoney(myValue);
                 myValue.setZero();
 
-                /* Reset Invested and Dividend values */
+                /* Reset Invested values */
                 put(SecurityAttribute.FOREIGNINVESTED, myValue);
-                put(SecurityAttribute.FOREIGNDIVIDEND, new TethysMoney(myValue));
             }
         }
 

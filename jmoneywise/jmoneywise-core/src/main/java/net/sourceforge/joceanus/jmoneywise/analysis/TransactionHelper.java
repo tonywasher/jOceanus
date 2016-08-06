@@ -207,6 +207,22 @@ public class TransactionHelper {
     }
 
     /**
+     * Obtain local thirdParty amount.
+     * @return the amount.
+     */
+    public TethysMoney getLocalThirdPartyAmount() {
+        return theAccountDetail.getLocalThirdPartyAmount();
+    }
+
+    /**
+     * Obtain thirdParty amount.
+     * @return the amount.
+     */
+    public TethysMoney getThirdPartyAmount() {
+        return theAccountDetail.getThirdPartyAmount();
+    }
+
+    /**
      * Obtain tax credit.
      * @return the tax credit.
      */
@@ -303,6 +319,14 @@ public class TransactionHelper {
     }
 
     /**
+     * Obtain thirdParty exchangeRate.
+     * @return the rate
+     */
+    public TethysRatio getThirdPartyExchangeRate() {
+        return theAccountDetail.getThirdPartyExchangeRate();
+    }
+
+    /**
      * Convert amount to reporting currency.
      * @param pCurrency the currency
      * @param pDate the date for the conversion
@@ -346,6 +370,11 @@ public class TransactionHelper {
          * The ThirdParty.
          */
         private final Deposit theThirdParty;
+
+        /**
+         * The thirdParty amount.
+         */
+        private final TethysMoney theThirdPartyAmount;
 
         /**
          * The tax credit.
@@ -403,6 +432,11 @@ public class TransactionHelper {
         private final ForeignPartnerDetail theForeignPartner;
 
         /**
+         * The foreign thirdParty details.
+         */
+        private final ForeignPartnerDetail theForeignThirdParty;
+
+        /**
          * Constructor.
          */
         private TransactionDetail() {
@@ -423,6 +457,7 @@ public class TransactionHelper {
             /* Obtain the amounts */
             TethysMoney myAmount = theCurrent.getAmount();
             TethysMoney myPartnerAmount = theCurrent.getPartnerAmount();
+            TethysMoney myThirdPartyAmount = theCurrent.getThirdPartyAmount();
 
             /* Determine account prices */
             theAccountPrice = (theAccount instanceof SecurityHolding)
@@ -449,12 +484,26 @@ public class TransactionHelper {
                 theForeignPartner = null;
             }
 
-            /* Determine the local amount */
+            /* If we have a thirdParty amount */
+            if (myThirdPartyAmount != null) {
+                /* Determine foreign thirdParty detail */
+                myActCurrency = theThirdParty.getAssetCurrency();
+                theForeignThirdParty = MetisDifference.isEqual(myActCurrency, theCurrency)
+                                                                                           ? null
+                                                                                           : new ForeignPartnerDetail(myActCurrency, myThirdPartyAmount);
+            } else {
+                theForeignThirdParty = null;
+            }
+
+            /* Determine the local amounts */
             theAmount = theForeignAccount == null
                                                   ? myAmount
                                                   : theForeignPartner == null
                                                                               ? myPartnerAmount
                                                                               : theForeignAccount.theAmount;
+            theThirdPartyAmount = theForeignThirdParty == null
+                                                               ? myThirdPartyAmount
+                                                               : theForeignThirdParty.theAmount;
         }
 
         /**
@@ -571,6 +620,24 @@ public class TransactionHelper {
         }
 
         /**
+         * Obtain local thirdParty amount.
+         * @return the local thirdParty amount
+         */
+        private TethysMoney getLocalThirdPartyAmount() {
+            return theThirdPartyAmount;
+        }
+
+        /**
+         * Obtain thirdParty amount.
+         * @return the thirdParty amount
+         */
+        private TethysMoney getThirdPartyAmount() {
+            return theForeignThirdParty == null
+                                                ? theThirdPartyAmount
+                                                : theForeignThirdParty.theBase;
+        }
+
+        /**
          * Obtain debit price.
          * @return the debit price
          */
@@ -596,8 +663,12 @@ public class TransactionHelper {
          */
         private TethysRatio getDebitExchangeRate() {
             return theDirection.isFrom()
-                                         ? theForeignAccount.theExchangeRate
-                                         : theForeignPartner.theExchangeRate;
+                                         ? theForeignAccount == null
+                                                                     ? null
+                                                                     : theForeignAccount.theExchangeRate
+                                         : theForeignPartner == null
+                                                                     ? null
+                                                                     : theForeignPartner.theExchangeRate;
         }
 
         /**
@@ -606,8 +677,22 @@ public class TransactionHelper {
          */
         private TethysRatio getCreditExchangeRate() {
             return theDirection.isTo()
-                                       ? theForeignPartner.theExchangeRate
-                                       : theForeignAccount.theExchangeRate;
+                                       ? theForeignPartner == null
+                                                                   ? null
+                                                                   : theForeignPartner.theExchangeRate
+                                       : theForeignAccount == null
+                                                                   ? null
+                                                                   : theForeignAccount.theExchangeRate;
+        }
+
+        /**
+         * Obtain thirdParty exchangeRate.
+         * @return the rate
+         */
+        private TethysRatio getThirdPartyExchangeRate() {
+            return theForeignThirdParty == null
+                                                ? null
+                                                : theForeignThirdParty.theExchangeRate;
         }
 
         /**
@@ -772,6 +857,11 @@ public class TransactionHelper {
         private final TethysMoney theBase;
 
         /**
+         * The local amount.
+         */
+        private final TethysMoney theAmount;
+
+        /**
          * Constructor.
          * @param pCurrency the foreign currency
          * @param pAmount the amount
@@ -781,6 +871,11 @@ public class TransactionHelper {
             /* Obtain the required exchange rate */
             theBase = pAmount;
             theExchangeRate = theRateCursor.getExchangeRate(pCurrency, theDate);
+            TethysRatio myRate = theExchangeRate.getInverseRatio();
+            Currency myCurrency = theCurrency.getCurrency();
+
+            /* Obtain local amount */
+            theAmount = pAmount.convertCurrency(myCurrency, myRate);
         }
     }
 }

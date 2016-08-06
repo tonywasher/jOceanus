@@ -519,7 +519,6 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
 
             switch ((SecurityAttribute) pCounter) {
                 case FOREIGNINVESTED:
-                case FOREIGNDIVIDEND:
                     return getBucket().isForeignCurrency();
                 case INVESTED:
                 case DIVIDEND:

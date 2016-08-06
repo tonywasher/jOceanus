@@ -935,8 +935,8 @@ public class SecurityPrice
                     myLatest = myCurr.getPrice();
 
                     /* Record early price */
-                    if ((iComp > 0) ||
-                        (myDate.compareTo(myStart) == 0)) {
+                    if ((iComp > 0)
+                        || (myDate.compareTo(myStart) == 0)) {
                         myFirst = myLatest;
                     }
                 }

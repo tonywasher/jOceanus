@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
@@ -31,11 +32,10 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldRequired;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
@@ -408,6 +408,16 @@ public class Transaction
     }
 
     /**
+     * Obtain ThirdParty Amount.
+     * @return the ThirdParty Amount
+     */
+    public final TethysMoney getThirdPartyAmount() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(TransactionInfoClass.THIRDPARTYAMOUNT, TethysMoney.class)
+                          : null;
+    }
+
+    /**
      * Obtain Exchange Rate.
      * @return the Donation
      */
@@ -724,8 +734,8 @@ public class Transaction
 
         /* Determine the tax credit rate */
         TethysRate myRate = isInterest()
-                                    ? myTax.getIntTaxRate()
-                                    : myTax.getDivTaxRate();
+                                         ? myTax.getIntTaxRate()
+                                         : myTax.getDivTaxRate();
 
         /* Calculate the tax credit */
         return getAmount().taxCreditAtRate(myRate);
@@ -838,6 +848,15 @@ public class Transaction
      */
     public final void setPartnerAmount(final TethysMoney pValue) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.PARTNERAMOUNT, pValue);
+    }
+
+    /**
+     * Set a new ThidParty Amount.
+     * @param pValue the new thirdParty amount
+     * @throws OceanusException on error
+     */
+    public final void setThirdPartyAmount(final TethysMoney pValue) throws OceanusException {
+        setInfoSetValue(TransactionInfoClass.THIRDPARTYAMOUNT, pValue);
     }
 
     /**

@@ -420,11 +420,6 @@ public enum AnalysisResource implements TethysResourceId {
     SECURITYATTR_DIVIDEND("SecurityAttr.Dividend"),
 
     /**
-     * SecurityAttr Foreign Dividend.
-     */
-    SECURITYATTR_FOREIGNDIVIDEND("SecurityAttr.ForeignDividend"),
-
-    /**
      * SecurityAttr MarketGrowth.
      */
     SECURITYATTR_MARKETGROWTH("SecurityAttr.MarketGrowth"),
@@ -438,11 +433,6 @@ public enum AnalysisResource implements TethysResourceId {
      * SecurityAttr LocalMarketGrowth.
      */
     SECURITYATTR_LOCALMARKETGROWTH("SecurityAttr.LocalMarketGrowth"),
-
-    /**
-     * SecurityAttr BaseMarketGrowth.
-     */
-    SECURITYATTR_BASEMARKETGROWTH("SecurityAttr.BaseMarketGrowth"),
 
     /**
      * SecurityAttr MarketProfit.
@@ -660,11 +650,9 @@ public enum AnalysisResource implements TethysResourceId {
         myMap.put(SecurityAttribute.INVESTED, SECURITYATTR_INVESTED);
         myMap.put(SecurityAttribute.FOREIGNINVESTED, SECURITYATTR_FOREIGNINVESTED);
         myMap.put(SecurityAttribute.DIVIDEND, SECURITYATTR_DIVIDEND);
-        myMap.put(SecurityAttribute.FOREIGNDIVIDEND, SECURITYATTR_FOREIGNDIVIDEND);
         myMap.put(SecurityAttribute.MARKETGROWTH, SECURITYATTR_MARKETGROWTH);
         myMap.put(SecurityAttribute.FOREIGNMARKETGROWTH, SECURITYATTR_FOREIGNMARKETGROWTH);
         myMap.put(SecurityAttribute.LOCALMARKETGROWTH, SECURITYATTR_LOCALMARKETGROWTH);
-        myMap.put(SecurityAttribute.BASEMARKETGROWTH, SECURITYATTR_BASEMARKETGROWTH);
         myMap.put(SecurityAttribute.CURRENCYFLUCT, ACCOUNTATTR_CURRENCYFLUCT);
         myMap.put(SecurityAttribute.MARKETPROFIT, SECURITYATTR_MARKETPROFIT);
         myMap.put(SecurityAttribute.PROFIT, SECURITYATTR_PROFIT);

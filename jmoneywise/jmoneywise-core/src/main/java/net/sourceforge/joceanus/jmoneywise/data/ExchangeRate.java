@@ -1122,8 +1122,8 @@ public class ExchangeRate
                     myLatest = myCurr.getExchangeRate();
 
                     /* Adjust first rate */
-                    if ((iComp > 0) ||
-                        (myDate.compareTo(myStart) == 0)) {
+                    if ((iComp > 0)
+                        || (myDate.compareTo(myStart) == 0)) {
                         myFirst = myLatest;
                     }
                 }

@@ -163,7 +163,7 @@ public class TethysSwingDateDialog
     /**
      * Is the Null button active.
      */
-    private boolean isNullActive = false;
+    private boolean isNullActive;
 
     /**
      * The Date Configuration.
@@ -183,7 +183,7 @@ public class TethysSwingDateDialog
     /**
      * Have we selected a date?
      */
-    private boolean haveSelected = false;
+    private boolean haveSelected;
 
     /**
      * Constructor.
@@ -605,7 +605,7 @@ public class TethysSwingDateDialog
         /**
          * The array of days of week (in column order).
          */
-        private final DayOfWeek[] theDaysOfWk = new DayOfWeek[DAYS_IN_WEEK];
+        private final transient DayOfWeek[] theDaysOfWk = new DayOfWeek[DAYS_IN_WEEK];
 
         /**
          * The Array of Day Names.
