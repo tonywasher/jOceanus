@@ -120,6 +120,8 @@ public class AssetCurrency
         } else if (myValue instanceof String) {
             MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
             setValueDefault(myFormatter.parseValue((String) myValue, Boolean.class));
+        } else {
+            setValueDefault(Boolean.FALSE);
         }
     }
 

@@ -125,6 +125,11 @@ public final class PortfolioBucket
     private final Boolean isForeignCurrency;
 
     /**
+     * Does this portfolio have foreign currency values?
+     */
+    private boolean hasForeignCurrency;
+
+    /**
      * Constructor.
      * @param pAnalysis the analysis
      * @param pPortfolio the portfolio account
@@ -153,6 +158,7 @@ public final class PortfolioBucket
 
         /* Determine whether the portfolio is a foreign currency */
         isForeignCurrency = !MetisDifference.isEqual(pAnalysis.getCurrency(), theCurrency);
+        hasForeignCurrency = isForeignCurrency;
     }
 
     /**
@@ -166,6 +172,7 @@ public final class PortfolioBucket
         thePortfolio = pBase.getPortfolio();
         theCurrency = pBase.getCurrency();
         isForeignCurrency = pBase.isForeignCurrency();
+        hasForeignCurrency = pBase.hasForeignCurrency();
 
         /* Create the cash bucket */
         theCash = new PortfolioCashBucket(pAnalysis, pBase.getPortfolioCash());
@@ -291,6 +298,14 @@ public final class PortfolioBucket
      */
     public Boolean isForeignCurrency() {
         return isForeignCurrency;
+    }
+
+    /**
+     * Does this portfolio hold foreign currency accounts/securities?
+     * @return true/false
+     */
+    public Boolean hasForeignCurrency() {
+        return hasForeignCurrency;
     }
 
     /**
@@ -525,6 +540,9 @@ public final class PortfolioBucket
 
         /* Add base values */
         addValues(theBaseValues, pBucket.getBaseValues());
+
+        /* Adjust foreign currency indication */
+        hasForeignCurrency |= pBucket.isForeignCurrency();
     }
 
     /**
@@ -998,6 +1016,11 @@ public final class PortfolioBucket
 
                     /* Note active security */
                     haveActiveSecurities = Boolean.TRUE;
+
+                    /* Handle foreign asset */
+                    if (myCurr.isForeignCurrency()) {
+                        haveForeignCurrency = Boolean.TRUE;
+                    }
                 }
 
                 /* Calculate delta for the portfolio */

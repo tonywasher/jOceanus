@@ -24,8 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
@@ -67,9 +70,6 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 /**
  * NetWorth report builder.
  */
@@ -94,6 +94,11 @@ public class NetWorth
      * The Price text.
      */
     private static final String TEXT_PRICE = MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue();
+
+    /**
+     * The ForeignValue text.
+     */
+    private static final String TEXT_FOREIGNVALUE = AnalysisResource.ACCOUNTATTR_FOREIGNVALUE.getValue();
 
     /**
      * The Value text.
@@ -495,6 +500,7 @@ public class NetWorth
         /* Access the category */
         DepositBucketList myAccounts = theAnalysis.getDeposits();
         DepositCategory myCategory = pSource.getAccountCategory();
+        boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create a new table */
         HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
@@ -504,6 +510,9 @@ public class NetWorth
         theBuilder.makeTitleCell(myTable, TEXT_ACCOUNT);
         theBuilder.makeTitleCell(myTable, TEXT_RATE);
         theBuilder.makeTitleCell(myTable, TEXT_MATURITY);
+        if (isForeign) {
+            theBuilder.makeTitleCell(myTable, TEXT_FOREIGNVALUE);
+        }
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
 
         /* Loop through the Deposit Buckets */
@@ -528,7 +537,18 @@ public class NetWorth
             theBuilder.makeFilterLinkCell(myTable, myName);
             theBuilder.makeValueCell(myTable, myValues.getRateValue(AccountAttribute.DEPOSITRATE));
             theBuilder.makeValueCell(myTable, myValues.getDateValue(AccountAttribute.MATURITY));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+
+            /* Handle foreign accounts */
+            if (isForeign) {
+                if (myBucket.isForeignCurrency()) {
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.FOREIGNVALUE));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                } else {
+                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                }
+            } else {
+                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+            }
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
@@ -549,9 +569,18 @@ public class NetWorth
         /* Access the category and class */
         CashBucketList myCash = theAnalysis.getCash();
         CashCategory myCategory = pSource.getAccountCategory();
+        boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create a new table */
         HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+
+        /* Build the headers */
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, TEXT_ACCOUNT);
+        if (isForeign) {
+            theBuilder.makeTitleCell(myTable, TEXT_FOREIGNVALUE);
+        }
+        theBuilder.makeTitleCell(myTable, TEXT_VALUE);
 
         /* Loop through the Cash Buckets */
         Iterator<CashBucket> myIterator = myCash.iterator();
@@ -573,7 +602,18 @@ public class NetWorth
             /* Create the detail row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+
+            /* Handle foreign accounts */
+            if (isForeign) {
+                if (myBucket.isForeignCurrency()) {
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.FOREIGNVALUE));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                } else {
+                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                }
+            } else {
+                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+            }
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
@@ -594,9 +634,18 @@ public class NetWorth
         /* Access the category */
         LoanBucketList myLoans = theAnalysis.getLoans();
         LoanCategory myCategory = pSource.getAccountCategory();
+        boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create a new table */
         HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+
+        /* Build the headers */
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, TEXT_ACCOUNT);
+        if (isForeign) {
+            theBuilder.makeTitleCell(myTable, TEXT_FOREIGNVALUE);
+        }
+        theBuilder.makeTitleCell(myTable, TEXT_VALUE);
 
         /* Loop through the Loan Buckets */
         Iterator<LoanBucket> myIterator = myLoans.iterator();
@@ -618,7 +667,18 @@ public class NetWorth
             /* Create the detail row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+
+            /* Handle foreign accounts */
+            if (isForeign) {
+                if (myBucket.isForeignCurrency()) {
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.FOREIGNVALUE));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                } else {
+                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                }
+            } else {
+                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+            }
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
@@ -639,6 +699,7 @@ public class NetWorth
         /* Access the securities */
         PortfolioCashBucket myCash = pSource.getPortfolioCash();
         SecurityBucketList mySecurities = pSource.getSecurities();
+        boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create a new table */
         HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
@@ -648,6 +709,9 @@ public class NetWorth
         theBuilder.makeTitleCell(myTable, TEXT_ASSET);
         theBuilder.makeTitleCell(myTable, TEXT_UNITS);
         theBuilder.makeTitleCell(myTable, TEXT_PRICE);
+        if (isForeign) {
+            theBuilder.makeTitleCell(myTable, TEXT_FOREIGNVALUE);
+        }
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
 
         /* If the portfolio cash is active */
@@ -663,7 +727,18 @@ public class NetWorth
             theBuilder.makeFilterLinkCell(myTable, myName, BalanceSheet.TEXT_CASH);
             theBuilder.makeValueCell(myTable);
             theBuilder.makeValueCell(myTable);
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+
+            /* Handle foreign accounts */
+            if (isForeign) {
+                if (myCash.isForeignCurrency()) {
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.FOREIGNVALUE));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                } else {
+                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                }
+            } else {
+                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+            }
 
             /* Record the filter */
             setFilterForId(myName, pSource);
@@ -690,7 +765,18 @@ public class NetWorth
             theBuilder.makeFilterLinkCell(myTable, myName);
             theBuilder.makeValueCell(myTable, myValues.getUnitsValue(SecurityAttribute.UNITS));
             theBuilder.makeValueCell(myTable, myValues.getPriceValue(SecurityAttribute.PRICE));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+
+            /* Handle foreign securities */
+            if (isForeign) {
+                if (myBucket.isForeignCurrency()) {
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.FOREIGNVALUE));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+                } else {
+                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+                }
+            } else {
+                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+            }
 
             /* Record the filter */
             setFilterForId(myName, myBucket);

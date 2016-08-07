@@ -422,12 +422,14 @@ public class TransactionPanel
         JTextField myCredUnits = new JTextField();
         JTextField myDebUnits = new JTextField();
         JTextField myDilution = new JTextField();
+        JTextField myThirdPartyAmount = new JTextField();
 
         /* Restrict the fields */
         int myWidth = Transaction.DESCLEN >> 1;
         restrictField(myCredUnits, myWidth);
         restrictField(myDebUnits, myWidth);
         restrictField(myDilution, myWidth);
+        restrictField(myThirdPartyAmount, myWidth);
         restrictField(theThirdPartyButton, myWidth);
 
         /* Build the FieldSet */
@@ -435,6 +437,7 @@ public class TransactionPanel
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS), MetisDataType.UNITS, myDebUnits);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), MetisDataType.DILUTION, myDilution);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY), Deposit.class, theThirdPartyButton);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTYAMOUNT), MetisDataType.MONEY, myThirdPartyAmount);
 
         /* Create the Tax panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -446,6 +449,7 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY), myPanel);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTYAMOUNT), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -718,6 +722,9 @@ public class TransactionPanel
                     break;
                 case THIRDPARTY:
                     myTrans.setThirdParty(pUpdate.getValue(Deposit.class));
+                    break;
+                case THIRDPARTYAMOUNT:
+                    myTrans.setThirdPartyAmount(pUpdate.getMoney());
                     break;
                 case TAXCREDIT:
                     myTrans.setTaxCredit(pUpdate.getMoney());

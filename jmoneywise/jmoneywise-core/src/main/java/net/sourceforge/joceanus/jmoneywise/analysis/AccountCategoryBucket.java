@@ -75,6 +75,11 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     private final AccountValues theBaseValues;
 
     /**
+     * Does this bucket have foreign currency values?
+     */
+    private boolean hasForeignCurrency;
+
+    /**
      * Constructor.
      * @param pCurrency the currency
      */
@@ -216,6 +221,14 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     }
 
     /**
+     * Does this category hold foreign currency accounts?
+     * @return true/false
+     */
+    public Boolean hasForeignCurrency() {
+        return hasForeignCurrency;
+    }
+
+    /**
      * Calculate delta.
      */
     protected void calculateDelta() {
@@ -253,6 +266,9 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
 
         /* Add base values */
         addValues(theBaseValues, pBucket.getBaseValues());
+
+        /* Adjust foreign currency indication */
+        hasForeignCurrency |= pBucket.isForeignCurrency();
     }
 
     /**
