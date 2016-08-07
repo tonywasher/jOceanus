@@ -662,13 +662,13 @@ public class TransactionHelper {
          * @return the rate
          */
         private TethysRatio getDebitExchangeRate() {
-            return theDirection.isFrom()
-                                         ? theForeignAccount == null
-                                                                     ? null
-                                                                     : theForeignAccount.theExchangeRate
-                                         : theForeignPartner == null
-                                                                     ? null
-                                                                     : theForeignPartner.theExchangeRate;
+            return theDirection.isTo()
+                                       ? theForeignAccount == null
+                                                                   ? null
+                                                                   : theForeignAccount.theExchangeRate
+                                       : theForeignPartner == null
+                                                                   ? null
+                                                                   : theForeignPartner.theExchangeRate;
         }
 
         /**

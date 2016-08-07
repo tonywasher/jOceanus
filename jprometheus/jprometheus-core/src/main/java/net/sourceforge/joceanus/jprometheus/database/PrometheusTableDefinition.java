@@ -594,7 +594,9 @@ public class PrometheusTableDefinition {
         }
 
         /* Store the Id */
-        myId.storeValue(theStatement, myIndex);
+        if (myId != null) {
+            myId.storeValue(theStatement, myIndex);
+        }
     }
 
     /**
@@ -1448,7 +1450,7 @@ public class PrometheusTableDefinition {
         }
 
         /* If we have no values then just return null */
-        if (myFirst) {
+        if (myFirst || myId == null) {
             return null;
         }
 

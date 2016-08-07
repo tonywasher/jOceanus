@@ -830,11 +830,13 @@ public abstract class PrometheusColumnDefinition {
             TethysDate myValue = getValue();
 
             /* Build the date as a SQL date */
-            if (myValue != null) {
+            if (myValue == null) {
+                pStatement.setNull(pIndex, Types.DATE);
+            } else {
                 Date myDateValue = myValue.toDate();
                 myDate = new java.sql.Date(myDateValue.getTime());
+                pStatement.setDate(pIndex, myDate);
             }
-            pStatement.setDate(pIndex, myDate);
         }
     }
 
@@ -958,7 +960,12 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            pStatement.setString(pIndex, getValue());
+            String myValue = getValue();
+            if (myValue == null) {
+                pStatement.setNull(pIndex, Types.VARCHAR);
+            } else {
+                pStatement.setString(pIndex, myValue);
+            }
         }
     }
 
@@ -999,12 +1006,13 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            BigDecimal myDecimal = null;
             String myValue = getValue();
             if (myValue != null) {
-                myDecimal = new BigDecimal(myValue);
+                BigDecimal myDecimal = new BigDecimal(myValue);
+                pStatement.setBigDecimal(pIndex, myDecimal);
+            } else {
+                pStatement.setNull(pIndex, Types.DECIMAL);
             }
-            pStatement.setBigDecimal(pIndex, myDecimal);
         }
 
         /**
@@ -1064,12 +1072,13 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            BigDecimal myDecimal = null;
             String myValue = getValue();
             if (myValue != null) {
-                myDecimal = new BigDecimal(myValue);
+                BigDecimal myDecimal = new BigDecimal(myValue);
+                pStatement.setBigDecimal(pIndex, myDecimal);
+            } else {
+                pStatement.setNull(pIndex, Types.DECIMAL);
             }
-            pStatement.setBigDecimal(pIndex, myDecimal);
         }
 
         /**
@@ -1126,6 +1135,18 @@ public abstract class PrometheusColumnDefinition {
             super.setObject(myString);
         }
 
+        @Override
+        protected void storeValue(final PreparedStatement pStatement,
+                                  final int pIndex) throws SQLException {
+            String myValue = getValue();
+            if (myValue != null) {
+                BigDecimal myDecimal = new BigDecimal(myValue);
+                pStatement.setBigDecimal(pIndex, myDecimal);
+            } else {
+                pStatement.setNull(pIndex, Types.DECIMAL);
+            }
+        }
+
         /**
          * Obtain the value.
          * @param pFormatter the data formatter
@@ -1178,6 +1199,18 @@ public abstract class PrometheusColumnDefinition {
                 myString = pValue.toString();
             }
             super.setObject(myString);
+        }
+
+        @Override
+        protected void storeValue(final PreparedStatement pStatement,
+                                  final int pIndex) throws SQLException {
+            String myValue = getValue();
+            if (myValue != null) {
+                BigDecimal myDecimal = new BigDecimal(myValue);
+                pStatement.setBigDecimal(pIndex, myDecimal);
+            } else {
+                pStatement.setNull(pIndex, Types.DECIMAL);
+            }
         }
 
         /**
@@ -1234,6 +1267,18 @@ public abstract class PrometheusColumnDefinition {
             super.setObject(myString);
         }
 
+        @Override
+        protected void storeValue(final PreparedStatement pStatement,
+                                  final int pIndex) throws SQLException {
+            String myValue = getValue();
+            if (myValue != null) {
+                BigDecimal myDecimal = new BigDecimal(myValue);
+                pStatement.setBigDecimal(pIndex, myDecimal);
+            } else {
+                pStatement.setNull(pIndex, Types.DECIMAL);
+            }
+        }
+
         /**
          * Obtain the value.
          * @param pFormatter the data formatter
@@ -1286,6 +1331,18 @@ public abstract class PrometheusColumnDefinition {
                 myString = pValue.toString();
             }
             super.setObject(myString);
+        }
+
+        @Override
+        protected void storeValue(final PreparedStatement pStatement,
+                                  final int pIndex) throws SQLException {
+            String myValue = getValue();
+            if (myValue != null) {
+                BigDecimal myDecimal = new BigDecimal(myValue);
+                pStatement.setBigDecimal(pIndex, myDecimal);
+            } else {
+                pStatement.setNull(pIndex, Types.DECIMAL);
+            }
         }
 
         /**

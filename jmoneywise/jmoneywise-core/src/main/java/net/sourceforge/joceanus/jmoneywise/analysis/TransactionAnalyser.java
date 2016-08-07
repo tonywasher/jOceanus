@@ -1630,7 +1630,7 @@ public class TransactionAnalyser
         TethysMoney myForeignDebit = null;
         if (isForeignDebit) {
             myForeignDebit = myDebitValue;
-            myDebitValue = myForeignDebit.convertCurrency(myCurrency, myDebitRate);
+            myDebitValue = myForeignDebit.convertCurrency(myCurrency, myDebitRate.getInverseRatio());
         }
 
         /* Handle foreign credit */
@@ -1638,7 +1638,7 @@ public class TransactionAnalyser
         TethysMoney myForeignCredit = null;
         if (isForeignCredit) {
             myForeignCredit = myCreditValue;
-            myCreditValue = myForeignCredit.convertCurrency(myCurrency, myCreditRate);
+            myCreditValue = myForeignCredit.convertCurrency(myCurrency, myCreditRate.getInverseRatio());
         }
 
         /* Access the current debit cost */
