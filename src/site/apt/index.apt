@@ -35,6 +35,8 @@ the <<BigDecimal>> class
 
   * Secure Preferences Support.
 
+  * a set of classes providing generic thread support on top of both javaFX and Swing
+
 * SourceControl classes (<<jThemis>>)
 
   * Classes for analysing a subversion repository and creating an equivalent Git repository.
