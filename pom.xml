@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>v1.5.0-SNAPSHOT</version>
+  <version>v1.5.1-SNAPSHOT</version>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
   <inceptionYear>2012</inceptionYear>
@@ -64,7 +64,7 @@
     <svnRepository>Finance</svnRepository>
     <svnParent>jOceanus</svnParent>
     <svnComponent>${svnParent}</svnComponent>
-    <svnBranch>v1.5.0</svnBranch>
+    <svnBranch>v1.5.1</svnBranch>
     <svnTag>SNAPSHOT</svnTag>
     <svnBase>${svnParent}/trunk</svnBase>
     <packageKey>net.sourceforge.joceanus</packageKey>
