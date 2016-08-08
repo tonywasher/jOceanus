@@ -433,8 +433,9 @@ public class ExchangeRate
     }
 
     @Override
-    public ExchangeRateList getList() {
-        return (ExchangeRateList) super.getList();
+    @SuppressWarnings("unchecked")
+    public ExchangeRateBaseList<? extends ExchangeRate> getList() {
+        return (ExchangeRateBaseList<? extends ExchangeRate>) super.getList();
     }
 
     @Override
@@ -523,7 +524,7 @@ public class ExchangeRate
 
     @Override
     public void validate() {
-        ExchangeRateList myList = getList();
+        ExchangeRateBaseList<? extends ExchangeRate> myList = getList();
         AssetCurrency myFrom = getFromCurrency();
         AssetCurrency myTo = getToCurrency();
         TethysDate myDate = getDate();

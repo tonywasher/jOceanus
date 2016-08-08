@@ -182,6 +182,8 @@ public class TaxAnalysis {
         /* Store the analysis */
         theAnalysis = pAnalysis;
         theCharges = theAnalysis.getCharges();
+        hasGainsSlices = Boolean.FALSE;
+        hasReducedAllow = Boolean.FALSE;
 
         /* Determine tax details */
         TaxCalcBucketList myTax = theAnalysis.getTaxCalculations();
@@ -390,7 +392,7 @@ public class TaxAnalysis {
             myBucket = myList.getBucket(TaxCategoryClass.ADJUSTEDALLOWANCE);
             myBucket.setAmount(myBands.theAllowance);
             myBucket.setParent(myParentBucket);
-            hasReducedAllow = true;
+            hasReducedAllow = Boolean.TRUE;
         }
 
         /* Set Allowance and Tax Bands */
@@ -1143,7 +1145,7 @@ public class TaxAnalysis {
         if (!isFinished) {
             /* Access the taxable slice */
             TethysMoney mySlice = theCharges.getSliceTotal();
-            hasGainsSlices = true;
+            hasGainsSlices = Boolean.TRUE;
 
             /* Access the TaxDueSlice Bucket */
             TaxCalcBucket mySliceBucket = myList.getBucket(TaxCategoryClass.TAXDUESLICE);

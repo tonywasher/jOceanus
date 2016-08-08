@@ -1661,7 +1661,8 @@ public class TransactionAnalyser
 
             /* Determine the gain */
             TethysMoney myGain = new TethysMoney(myAmount);
-            myGain.subtractAmount(myCostXfer);
+            myGain.subtractAmount(myCost);
+            myGain.addAmount(myCostXfer);
 
             /* Record the delta gains */
             myDebitAsset.adjustCounter(SecurityAttribute.GAINS, myGain);

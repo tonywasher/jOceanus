@@ -186,7 +186,7 @@ public class MoneyWiseSpotRatesSelect<N, I>
 
         /* Add the listeners */
         theDateButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDate());
-        theDownloadButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
+        theDownloadButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
         theNext.getEventRegistrar().addEventListener(e -> {
             theState.setNext();
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);

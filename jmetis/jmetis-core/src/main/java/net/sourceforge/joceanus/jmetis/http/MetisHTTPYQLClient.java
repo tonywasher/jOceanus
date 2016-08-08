@@ -239,9 +239,6 @@ public class MetisHTTPYQLClient
         }
         myBuilder.append(YQLSEL_END);
 
-        /* Note that we will be expecting large responses */
-        expectLargeResponses(true);
-
         /* Create the result map */
         Map<String, TethysPrice> myMap = new HashMap<>();
 

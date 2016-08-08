@@ -127,6 +127,7 @@ public class MarketAnalysis {
         SecurityValues myValues = pBucket.getValues();
         TethysMoney myMarket = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         TethysMoney myGains = myValues.getMoneyValue(SecurityAttribute.GAINS);
+        TethysMoney myFluct = myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT);
 
         /* If there are gains in the period */
         if (myGains.isNonZero()) {
@@ -152,6 +153,18 @@ public class MarketAnalysis {
             } else {
                 theGrowthExpense.subtractAmount(myMarket);
                 theMarketExpense.subtractAmount(myMarket);
+            }
+        }
+
+        /* If there are fluctuations in the period */
+        if (myFluct != null && myFluct.isNonZero()) {
+            /* Add to CurrencyFluctuation income/expense */
+            if (myFluct.isPositive()) {
+                theFluctIncome.addAmount(myFluct);
+                theMarketIncome.addAmount(myFluct);
+            } else {
+                theFluctExpense.subtractAmount(myFluct);
+                theMarketExpense.subtractAmount(myFluct);
             }
         }
     }

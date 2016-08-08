@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmetis.http;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -106,11 +105,6 @@ public abstract class MetisHTTPDataClient
     private final String theAuth;
 
     /**
-     * Prepare for large responses.
-     */
-    private boolean doLargeResponses = false;
-
-    /**
      * Constructor.
      * @param pBaseAddress the base address for the client.
      * @throws OceanusException on error
@@ -137,17 +131,6 @@ public abstract class MetisHTTPDataClient
         } else {
             theAuth = null;
         }
-    }
-
-    /**
-     * Set whether we expect large responses.
-     * @param pLargeResponses true/false
-     * @return the previous setting
-     */
-    protected boolean expectLargeResponses(final boolean pLargeResponses) {
-        boolean myCurr = doLargeResponses;
-        doLargeResponses = pLargeResponses;
-        return myCurr;
     }
 
     /**
@@ -335,17 +318,9 @@ public abstract class MetisHTTPDataClient
                 /* Access the response as a JSON Object */
                 HttpEntity myEntity = myResponse.getEntity();
 
-                /* If we are expecting large responses */
-                if (doLargeResponses) {
-                    /* Parse into string to prevent timeouts */
-                    String myRes = EntityUtils.toString(myEntity);
-                    return new JSONTokener(myRes);
-
-                    /* else parse directly from stream */
-                } else {
-                    InputStream myStream = myEntity.getContent();
-                    return new JSONTokener(myStream);
-                }
+                /* Parse into string to prevent timeouts */
+                String myRes = EntityUtils.toString(myEntity);
+                return new JSONTokener(myRes);
             }
 
             /* Notify of failure */
