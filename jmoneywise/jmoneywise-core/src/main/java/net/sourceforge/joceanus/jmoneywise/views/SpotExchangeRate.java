@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
+import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
@@ -239,12 +240,12 @@ public final class SpotExchangeRate
         /**
          * The next date.
          */
-        private TethysDate theNext = null;
+        private TethysDate theNext;
 
         /**
          * The previous date.
          */
-        private TethysDate thePrev = null;
+        private TethysDate thePrev;
 
         /**
          * Constructor.
@@ -292,9 +293,9 @@ public final class SpotExchangeRate
             setBase(myRates);
 
             /* Loop through the rates */
-            Iterator<ExchangeRate> myIterator = myRates.iterator();
-            while (myIterator.hasNext()) {
-                ExchangeRate myRate = myIterator.next();
+            ListIterator<ExchangeRate> myIterator = myRates.listIterator();
+            while (myIterator.hasPrevious()) {
+                ExchangeRate myRate = myIterator.previous();
 
                 /* Ignore deleted rates */
                 if (myRate.isDeleted()) {

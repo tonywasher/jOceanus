@@ -34,6 +34,11 @@ public enum CoeusLoanMarketProvider {
     FUNDINGCIRCLE,
 
     /**
+     * LendingWorks.
+     */
+    LENDINGWORKS,
+
+    /**
      * RateSetter.
      */
     RATESETTER,

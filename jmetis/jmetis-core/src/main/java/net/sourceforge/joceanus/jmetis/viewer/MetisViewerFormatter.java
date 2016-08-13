@@ -237,7 +237,7 @@ public class MetisViewerFormatter {
             Object myValue;
 
             /* Access the value */
-            if ((myField.isValueSetField())
+            if ((myField.getStorage().isValueSet())
                 && (myValues != null)) {
                 myValue = myValueCtl.skipField(myField)
                                                         ? MetisFieldValue.SKIP

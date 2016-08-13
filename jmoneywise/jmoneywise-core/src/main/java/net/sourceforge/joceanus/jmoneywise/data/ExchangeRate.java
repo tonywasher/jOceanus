@@ -78,17 +78,17 @@ public class ExchangeRate
     /**
      * Date Field Id.
      */
-    public static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    public static final MetisField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * From Currency Field Id.
      */
-    public static final MetisField FIELD_FROM = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_FROM.getValue());
+    public static final MetisField FIELD_FROM = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.XCHGRATE_FROM.getValue());
 
     /**
      * To Currency Field Id.
      */
-    public static final MetisField FIELD_TO = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_TO.getValue());
+    public static final MetisField FIELD_TO = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.XCHGRATE_TO.getValue());
 
     /**
      * Rate Type Field Id.

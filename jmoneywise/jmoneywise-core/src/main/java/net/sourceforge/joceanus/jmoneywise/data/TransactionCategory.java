@@ -64,7 +64,7 @@ public final class TransactionCategory
     /**
      * Category Type Field Id.
      */
-    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TRANSTYPE.getItemName());
+    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.TRANSTYPE.getItemName());
 
     /**
      * Different Parent Error.

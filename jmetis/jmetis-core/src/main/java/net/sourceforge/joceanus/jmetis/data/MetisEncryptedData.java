@@ -133,17 +133,17 @@ public final class MetisEncryptedData {
         /**
          * Encryption KeySet.
          */
-        private GordianKeySet theKeySet = null;
+        private GordianKeySet theKeySet;
 
         /**
          * Encrypted value.
          */
-        private byte[] theEncrypted = null;
+        private byte[] theEncrypted;
 
         /**
          * Decrypted value.
          */
-        private T theDecrypted = null;
+        private T theDecrypted;
 
         /**
          * Data formatter.
@@ -1017,12 +1017,12 @@ public final class MetisEncryptedData {
         /**
          * Decimal Formatter.
          */
-        private TethysDecimalFormatter theDecimalFormatter = null;
+        private TethysDecimalFormatter theDecimalFormatter;
 
         /**
          * Decimal Parser.
          */
-        private TethysDecimalParser theDecimalParser = null;
+        private TethysDecimalParser theDecimalParser;
 
         /**
          * Constructor.

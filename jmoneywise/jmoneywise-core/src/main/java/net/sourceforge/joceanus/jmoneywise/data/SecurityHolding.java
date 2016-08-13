@@ -74,22 +74,22 @@ public final class SecurityHolding
     /**
      * Id Field Id.
      */
-    public static final MetisField FIELD_ID = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID.getValue());
+    private static final MetisField FIELD_ID = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID.getValue());
 
     /**
      * Name Field Id.
      */
-    public static final MetisField FIELD_NAME = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
+    private static final MetisField FIELD_NAME = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
 
     /**
      * Portfolio Field Id.
      */
-    public static final MetisField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
+    private static final MetisField FIELD_PORTFOLIO = FIELD_DEFS.declareComparisonField(MoneyWiseDataType.PORTFOLIO.getItemName());
 
     /**
      * Security Field Id.
      */
-    public static final MetisField FIELD_SECURITY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getItemName());
+    private static final MetisField FIELD_SECURITY = FIELD_DEFS.declareComparisonField(MoneyWiseDataType.SECURITY.getItemName());
 
     /**
      * Invalid currency combo error.

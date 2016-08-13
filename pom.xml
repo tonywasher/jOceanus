@@ -75,7 +75,7 @@
     <SvnKitVersion>1.8.12</SvnKitVersion>
     <JGitVersion>4.4.1.201607150455-r</JGitVersion>
     <HttpClientVersion>4.5.2</HttpClientVersion>
-    <JSONVersion>20160807</JSONVersion>
+    <JSONVersion>20160810</JSONVersion>
     <ApacheMavenVersion>3.3.9</ApacheMavenVersion>
     <MySQLVersion>6.0.3</MySQLVersion>
     <PostGreSQLVersion>9.4.1209.jre7</PostGreSQLVersion>

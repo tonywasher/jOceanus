@@ -89,12 +89,12 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * Amount Field Id.
      */
-    public static final MetisField FIELD_AMOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_AMOUNT.getValue());
+    public static final MetisField FIELD_AMOUNT = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.TRANSACTION_AMOUNT.getValue());
 
     /**
      * Category Field Id.
      */
-    public static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TRANSCATEGORY.getItemName());
+    public static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.TRANSCATEGORY.getItemName());
 
     /**
      * Reconciled Field Id.

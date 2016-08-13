@@ -60,7 +60,7 @@ public class LoanCategory
     /**
      * Category Type Field Id.
      */
-    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.LOANTYPE.getItemName());
+    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.LOANTYPE.getItemName());
 
     /**
      * Copy Constructor.
@@ -126,8 +126,8 @@ public class LoanCategory
     public LoanCategoryClass getCategoryTypeClass() {
         LoanCategoryType myType = getCategoryType();
         return (myType == null)
-                               ? null
-                               : myType.getLoanClass();
+                                ? null
+                                : myType.getLoanClass();
     }
 
     @Override
@@ -201,8 +201,8 @@ public class LoanCategory
         /* Set values */
         LoanCategoryTypeList myTypes = getDataSet().getLoanCategoryTypes();
         setCategoryType(myTypes.findItemByClass(pParent == null
-                                                               ? LoanCategoryClass.PARENT
-                                                               : LoanCategoryClass.LOAN));
+                                                                ? LoanCategoryClass.PARENT
+                                                                : LoanCategoryClass.LOAN));
         setParentCategory(pParent);
         setSubCategoryName(getList().getUniqueName(pParent));
     }

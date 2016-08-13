@@ -149,7 +149,8 @@ public class DataValues<E extends Enum<E>> {
             MetisField myField = myIterator.next();
 
             /* Ignore field if it is irrelevant */
-            if (!myField.isValueSetField() || !myField.isEqualityField()) {
+            if (!myField.getStorage().isValueSet()
+                || !myField.getEquality().isEquality()) {
                 continue;
             }
 
@@ -296,7 +297,8 @@ public class DataValues<E extends Enum<E>> {
             MetisField myField = myIterator.next();
 
             /* If the field is an equality valueSet item */
-            if (myField.isValueSetField() && myField.isEqualityField()) {
+            if (myField.getStorage().isValueSet()
+                && myField.getEquality().isEquality()) {
                 /* Access element */
                 Element myChild = getChild(pElement, myField.getName());
                 if (myChild != null) {

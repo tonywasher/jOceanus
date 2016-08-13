@@ -72,17 +72,17 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
     /**
      * InfoType Field Id.
      */
-    public static final MetisField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAINFO_TYPE.getValue());
+    public static final MetisField FIELD_INFOTYPE = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_TYPE.getValue());
 
     /**
      * Owner Field Id.
      */
-    public static final MetisField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAINFO_OWNER.getValue());
+    public static final MetisField FIELD_OWNER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_OWNER.getValue());
 
     /**
      * Value Field Id.
      */
-    public static final MetisField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAINFO_VALUE.getValue());
+    public static final MetisField FIELD_VALUE = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAINFO_VALUE.getValue());
 
     /**
      * Link Field Id.

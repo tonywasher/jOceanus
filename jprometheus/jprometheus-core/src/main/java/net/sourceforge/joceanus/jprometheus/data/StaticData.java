@@ -56,12 +56,12 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Name Field Id.
      */
-    public static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
+    public static final MetisField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
 
     /**
      * Description Field Id.
      */
-    public static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
+    public static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
 
     /**
      * Enabled Field Id.
@@ -71,12 +71,12 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Order Field Id.
      */
-    public static final MetisField FIELD_ORDER = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATA_SORT.getValue());
+    public static final MetisField FIELD_ORDER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.STATICDATA_SORT.getValue());
 
     /**
      * Class Field Id.
      */
-    public static final MetisField FIELD_CLASS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATA_CLASS.getValue());
+    public static final MetisField FIELD_CLASS = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.STATICDATA_CLASS.getValue());
 
     /**
      * BadId error.

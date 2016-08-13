@@ -78,22 +78,22 @@ public class DepositRate
     /**
      * Deposit Field Id.
      */
-    public static final MetisField FIELD_DEPOSIT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.DEPOSIT.getItemName());
+    public static final MetisField FIELD_DEPOSIT = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.DEPOSIT.getItemName());
 
     /**
      * Rate Field Id.
      */
-    public static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE.getValue());
+    public static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE.getValue());
 
     /**
      * Bonus Field Id.
      */
-    public static final MetisField FIELD_BONUS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_BONUS.getValue());
+    public static final MetisField FIELD_BONUS = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.DEPOSITRATE_BONUS.getValue());
 
     /**
      * EndDate Field Id.
      */
-    public static final MetisField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_ENDDATE.getValue());
+    public static final MetisField FIELD_ENDDATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.DEPOSITRATE_ENDDATE.getValue());
 
     /**
      * Null Date Error.

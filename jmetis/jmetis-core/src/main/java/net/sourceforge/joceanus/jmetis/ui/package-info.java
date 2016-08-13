@@ -21,6 +21,6 @@
  * $Date$
  ******************************************************************************/
 /**
- * Java Field Set.
+ * Java Metis User Interface.
  */
-package net.sourceforge.joceanus.jmetis.newfield;
+package net.sourceforge.joceanus.jmetis.ui;

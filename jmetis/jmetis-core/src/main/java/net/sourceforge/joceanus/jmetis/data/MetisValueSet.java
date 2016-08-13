@@ -189,7 +189,7 @@ public class MetisValueSet {
     public void setValue(final MetisField pField,
                          final Object pValue) {
         /* Ignore if not in valueSet */
-        if (!pField.isValueSetField()) {
+        if (!pField.getStorage().isValueSet()) {
             return;
         }
 
@@ -204,7 +204,7 @@ public class MetisValueSet {
      */
     public Object getValue(final MetisField pField) {
         /* Return null if not in valueSet */
-        if (!pField.isValueSetField()) {
+        if (!pField.getStorage().isValueSet()) {
             return null;
         }
 
@@ -265,8 +265,8 @@ public class MetisValueSet {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-valueSet fields */
             MetisField myField = myIterator.next();
-            if ((!myField.isEqualityField())
-                || (!myField.isValueSetField())) {
+            if ((!myField.getEquality().isEquality())
+                || (!myField.getStorage().isValueSet())) {
                 continue;
             }
 
@@ -293,8 +293,8 @@ public class MetisValueSet {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-valueSet fields */
             MetisField myField = myIterator.next();
-            if ((!myField.isEqualityField())
-                || (!myField.isValueSetField())) {
+            if ((!myField.getEquality().isEquality())
+                || (!myField.getStorage().isValueSet())) {
                 continue;
             }
 
@@ -334,8 +334,8 @@ public class MetisValueSet {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-valueSet fields */
             MetisField myField = myIterator.next();
-            if ((!myField.isEqualityField())
-                || (!myField.isValueSetField())) {
+            if ((!myField.getEquality().isEquality())
+                || (!myField.getStorage().isValueSet())) {
                 continue;
             }
 
@@ -368,8 +368,8 @@ public class MetisValueSet {
          * No difference if field does not exist, is not-equality or is not valueSet
          */
         if ((pField == null)
-            || (!pField.isEqualityField())
-            || (!pField.isValueSetField())) {
+            || (!pField.getEquality().isEquality())
+            || (!pField.getStorage().isValueSet())) {
             return MetisDifference.IDENTICAL;
         }
 

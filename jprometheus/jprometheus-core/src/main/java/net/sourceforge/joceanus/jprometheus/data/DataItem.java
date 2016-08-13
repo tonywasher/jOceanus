@@ -140,7 +140,7 @@ public abstract class DataItem<E extends Enum<E>>
     /**
      * Id Field Id.
      */
-    public static final MetisField FIELD_ID = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATAITEM_ID.getValue());
+    public static final MetisField FIELD_ID = FIELD_DEFS.declareComparisonField(PrometheusDataResource.DATAITEM_ID.getValue());
 
     /**
      * Type Field Id.
@@ -439,7 +439,7 @@ public abstract class DataItem<E extends Enum<E>>
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* If this is a valueSet field */
-        if (pField.isValueSetField()) {
+        if (pField.getStorage().isValueSet()) {
             /* Access from valueSet */
             return theValueSet.getValue(pField);
         }
@@ -866,9 +866,10 @@ public abstract class DataItem<E extends Enum<E>>
      * @return <code>true/false</code>
      */
     public MetisDifference fieldChanged(final MetisField pField) {
-        return ((pField != null) && (pField.isValueSetField()))
-                                                                ? theHistory.fieldChanged(pField)
-                                                                : MetisDifference.IDENTICAL;
+        return ((pField != null)
+                && (pField.getStorage().isValueSet()))
+                                                       ? theHistory.fieldChanged(pField)
+                                                       : MetisDifference.IDENTICAL;
     }
 
     /**
@@ -1058,7 +1059,7 @@ public abstract class DataItem<E extends Enum<E>>
             MetisField myField = myIterator.next();
 
             /* Skip if not used in equality */
-            if (!myField.isEqualityField()) {
+            if (!myField.getEquality().isEquality()) {
                 continue;
             }
 

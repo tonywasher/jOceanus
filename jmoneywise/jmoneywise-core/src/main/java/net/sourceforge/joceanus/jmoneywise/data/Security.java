@@ -36,8 +36,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
@@ -89,7 +89,7 @@ public class Security
     /**
      * SecurityType Field Id.
      */
-    public static final MetisField FIELD_SECTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.SECURITYTYPE.getItemName());
+    public static final MetisField FIELD_SECTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.SECURITYTYPE.getItemName());
 
     /**
      * Parent Field Id.
@@ -99,7 +99,7 @@ public class Security
     /**
      * Symbol Field Id.
      */
-    public static final MetisField FIELD_SYMBOL = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOL.getValue());
+    public static final MetisField FIELD_SYMBOL = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.SECURITY_SYMBOL.getValue());
 
     /**
      * Currency Field Id.

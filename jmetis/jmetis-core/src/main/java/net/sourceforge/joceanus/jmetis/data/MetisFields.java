@@ -72,6 +72,11 @@ public final class MetisFields {
     private final MetisFields theParent;
 
     /**
+     * Is the item encrypted?
+     */
+    private boolean isEncrypted;
+
+    /**
      * Constructor.
      * @param pName the name of the item
      */
@@ -97,10 +102,13 @@ public final class MetisFields {
         /* Initialise the list */
         theName = pName;
         theParent = pParent;
-        theNextValue = (theParent == null)
-                                           ? 0
-                                           : theParent.getNumValues();
         theFields = new ArrayList<>();
+        if (theParent != null) {
+            theNextValue = theParent.getNumValues();
+            isEncrypted = theParent.isEncrypted();
+        } else {
+            theNextValue = Integer.valueOf(0);
+        }
 
         /* Store the anchorId */
         theAnchorId = theNextAnchorId.getAndIncrement();
@@ -134,6 +142,14 @@ public final class MetisFields {
     }
 
     /**
+     * Is the item encrypted?
+     * @return true/false
+     */
+    public boolean isEncrypted() {
+        return isEncrypted;
+    }
+
+    /**
      * Obtain the number of values.
      * @return the number of values
      */
@@ -150,30 +166,30 @@ public final class MetisFields {
     }
 
     /**
-     * Declare field used for equality test.
-     * @param pName the name of the field
-     * @return the field
-     */
-    public MetisField declareEqualityField(final String pName) {
-        return declareDataField(pName, true, false);
-    }
-
-    /**
      * Declare local field not used for equality.
      * @param pName the name of the field
      * @return the field
      */
     public MetisField declareLocalField(final String pName) {
-        return declareDataField(pName, false, false);
+        return declareDataField(pName, MetisFieldEquality.DERIVED, MetisFieldStorage.LOCAL);
     }
 
     /**
-     * Declare valueSet field used for equality test.
+     * Declare field used for equality test.
      * @param pName the name of the field
      * @return the field
      */
-    public MetisField declareEqualityValueField(final String pName) {
-        return declareDataField(pName, true, true);
+    public MetisField declareEqualityField(final String pName) {
+        return declareDataField(pName, MetisFieldEquality.EQUALITY, MetisFieldStorage.LOCAL);
+    }
+
+    /**
+     * Declare field used for equality and comparison test.
+     * @param pName the name of the field
+     * @return the field
+     */
+    public MetisField declareComparisonField(final String pName) {
+        return declareDataField(pName, MetisFieldEquality.COMPARISON, MetisFieldStorage.LOCAL);
     }
 
     /**
@@ -182,7 +198,43 @@ public final class MetisFields {
      * @return the field
      */
     public MetisField declareDerivedValueField(final String pName) {
-        return declareDataField(pName, false, true);
+        return declareDataField(pName, MetisFieldEquality.DERIVED, MetisFieldStorage.VALUESET);
+    }
+
+    /**
+     * Declare valueSet field used for equality test.
+     * @param pName the name of the field
+     * @return the field
+     */
+    public MetisField declareEqualityValueField(final String pName) {
+        return declareDataField(pName, MetisFieldEquality.EQUALITY, MetisFieldStorage.VALUESET);
+    }
+
+    /**
+     * Declare valueSet field used for equality and comparison test.
+     * @param pName the name of the field
+     * @return the field
+     */
+    public MetisField declareComparisonValueField(final String pName) {
+        return declareDataField(pName, MetisFieldEquality.COMPARISON, MetisFieldStorage.VALUESET);
+    }
+
+    /**
+     * Declare encrypted valueSet field used for equality test.
+     * @param pName the name of the field
+     * @return the field
+     */
+    public MetisField declareEqualityEncryptedField(final String pName) {
+        return declareDataField(pName, MetisFieldEquality.EQUALITY, MetisFieldStorage.ENCRYPTED);
+    }
+
+    /**
+     * Declare encrypted valueSet field used for equality and comparison test.
+     * @param pName the name of the field
+     * @return the field
+     */
+    public MetisField declareComparisonEncryptedField(final String pName) {
+        return declareDataField(pName, MetisFieldEquality.COMPARISON, MetisFieldStorage.ENCRYPTED);
     }
 
     /**
@@ -197,22 +249,27 @@ public final class MetisFields {
     /**
      * Declare field.
      * @param pName the name of the field
-     * @param isEqualityField is the field used in equality test
-     * @param isValueSetField is the field held in a ValueSet
+     * @param pEquality the equality class
+     * @param pStorage the storage class
      * @return the field
      */
 
     private synchronized MetisField declareDataField(final String pName,
-                                                     final boolean isEqualityField,
-                                                     final boolean isValueSetField) {
+                                                     final MetisFieldEquality pEquality,
+                                                     final MetisFieldStorage pStorage) {
         /* Check the name */
         checkUniqueName(pName);
 
         /* Create the field */
-        MetisField myField = new MetisField(this, pName, isEqualityField, isValueSetField);
+        MetisField myField = new MetisField(this, pName, pEquality, pStorage);
 
         /* Add it to the list */
         theFields.add(myField);
+
+        /* Adjust encrypted indication */
+        if (pStorage.isEncrypted()) {
+            isEncrypted = true;
+        }
 
         /* Return the index */
         return myField;
@@ -363,36 +420,36 @@ public final class MetisFields {
         private final String theName;
 
         /**
-         * Is the field used in equality test.
+         * The field equality type.
          */
-        private final boolean isEqualityField;
+        private final MetisFieldEquality theEquality;
 
         /**
-         * Is the field held in a valueSet.
+         * The field storage type.
          */
-        private final boolean isValueSetField;
+        private final MetisFieldStorage theStorage;
 
         /**
          * Constructor.
          * @param pAnchor the anchor
          * @param pName the name of the field
-         * @param isEquality is the field used in equality test
-         * @param isValueSet is the field held in a ValueSet
+         * @param pEquality the field equality type
+         * @param pStorage the field storage type
          */
         public MetisField(final MetisFields pAnchor,
                           final String pName,
-                          final boolean isEquality,
-                          final boolean isValueSet) {
+                          final MetisFieldEquality pEquality,
+                          final MetisFieldStorage pStorage) {
             /* Store parameters */
             theAnchor = pAnchor;
             theName = pName;
-            isEqualityField = isEquality;
-            isValueSetField = isValueSet;
+            theEquality = pEquality;
+            theStorage = pStorage;
 
             /* Allocate value index if required */
-            theIndex = isValueSetField
-                                       ? theAnchor.getNextValue()
-                                       : -1;
+            theIndex = theStorage.isValueSet()
+                                               ? theAnchor.getNextValue()
+                                               : -1;
         }
 
         /**
@@ -405,8 +462,8 @@ public final class MetisFields {
             /* Store parameters */
             theAnchor = pAnchor;
             theName = pName;
-            isEqualityField = false;
-            isValueSetField = false;
+            theEquality = MetisFieldEquality.DERIVED;
+            theStorage = MetisFieldStorage.LOCAL;
 
             /* Allocate value index */
             theIndex = theAnchor.getNextValue();
@@ -429,19 +486,19 @@ public final class MetisFields {
         }
 
         /**
-         * Is this an equality field.
+         * Obtain the equality type.
          * @return true/false
          */
-        public boolean isEqualityField() {
-            return isEqualityField;
+        public MetisFieldEquality getEquality() {
+            return theEquality;
         }
 
         /**
-         * Is this a valueSet field.
+         * Obtain the storage type.
          * @return true/false
          */
-        public boolean isValueSetField() {
-            return isValueSetField;
+        public MetisFieldStorage getStorage() {
+            return theStorage;
         }
 
         /**
@@ -566,6 +623,78 @@ public final class MetisFields {
          * Not Allowed.
          */
         NOTALLOWED;
+    }
+
+    /**
+     * Field Storage.
+     */
+    public enum MetisFieldStorage {
+        /**
+         * Local.
+         */
+        LOCAL,
+
+        /**
+         * ValueSet.
+         */
+        VALUESET,
+
+        /**
+         * Encrypted.
+         */
+        ENCRYPTED;
+
+        /**
+         * Is the field stored in valueSet?
+         * @return true/false
+         */
+        public boolean isValueSet() {
+            return this != LOCAL;
+        }
+
+        /**
+         * Is the field encrypted?
+         * @return true/false
+         */
+        public boolean isEncrypted() {
+            return this == ENCRYPTED;
+        }
+    }
+
+    /**
+     * Field Equality.
+     */
+    public enum MetisFieldEquality {
+        /**
+         * Derived.
+         */
+        DERIVED,
+
+        /**
+         * Equality.
+         */
+        EQUALITY,
+
+        /**
+         * Comparison.
+         */
+        COMPARISON;
+
+        /**
+         * Is the field used in equality?
+         * @return true/false
+         */
+        public boolean isEquality() {
+            return this != DERIVED;
+        }
+
+        /**
+         * Is the field used in comparison?
+         * @return true/false
+         */
+        public boolean isComparison() {
+            return this == COMPARISON;
+        }
     }
 
     /**

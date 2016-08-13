@@ -276,10 +276,10 @@ public class MetisValueSetHistory
      */
     public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle irrelevant cases */
-        if (!pField.isValueSetField()) {
+        if (!pField.getStorage().isValueSet()) {
             return MetisDifference.IDENTICAL;
         }
-        if (!pField.isEqualityField()) {
+        if (!pField.getEquality().isEquality()) {
             return MetisDifference.IDENTICAL;
         }
 

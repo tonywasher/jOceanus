@@ -60,7 +60,7 @@ public class CashCategory
     /**
      * Category Type Field Id.
      */
-    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CASHTYPE.getItemName());
+    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.CASHTYPE.getItemName());
 
     /**
      * Copy Constructor.
@@ -126,8 +126,8 @@ public class CashCategory
     public CashCategoryClass getCategoryTypeClass() {
         CashCategoryType myType = getCategoryType();
         return (myType == null)
-                               ? null
-                               : myType.getCashClass();
+                                ? null
+                                : myType.getCashClass();
     }
 
     @Override
@@ -201,8 +201,8 @@ public class CashCategory
         /* Set values */
         CashCategoryTypeList myTypes = getDataSet().getCashCategoryTypes();
         setCategoryType(myTypes.findItemByClass(pParent == null
-                                                               ? CashCategoryClass.PARENT
-                                                               : CashCategoryClass.CASH));
+                                                                ? CashCategoryClass.PARENT
+                                                                : CashCategoryClass.CASH));
         setParentCategory(pParent);
         setSubCategoryName(getList().getUniqueName(pParent));
     }

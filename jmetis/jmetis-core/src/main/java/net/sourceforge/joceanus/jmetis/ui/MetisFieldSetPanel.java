@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.newfield;
+package net.sourceforge.joceanus.jmetis.ui;
 
 import java.util.ArrayList;
 import java.util.Currency;
@@ -31,22 +31,22 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetCharArrayItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetDateItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetDilutionItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetIconItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetIntegerItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetListItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetLongItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetMoneyItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetPriceItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetRateItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetRatioItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetScrollItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetShortItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetStateIconItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetStringItem;
-import net.sourceforge.joceanus.jmetis.newfield.MetisFieldSetPanelItem.MetisFieldSetUnitsItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetCharArrayItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetDateItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetDilutionItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetIconItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetIntegerItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetListItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetLongItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetMoneyItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetPriceItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetRateItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetRatioItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetScrollItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetShortItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetStateIconItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetStringItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetUnitsItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;

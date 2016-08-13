@@ -80,17 +80,17 @@ public class SecurityPrice
     /**
      * Security Field Id.
      */
-    public static final MetisField FIELD_SECURITY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.SECURITY.getItemName());
+    public static final MetisField FIELD_SECURITY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.SECURITY.getItemName());
 
     /**
      * Date Field Id.
      */
-    public static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    public static final MetisField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * Price Field Id.
      */
-    public static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue());
+    public static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue());
 
     /**
      * Invalid currency error.

@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmetis.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
  * Provides the implementation of delta between two valueSets.
@@ -50,7 +50,7 @@ public class MetisValueSetDelta
      * @param pOld the old valueSet.
      */
     protected MetisValueSetDelta(final MetisValueSet pNew,
-                            final MetisValueSet pOld) {
+                                 final MetisValueSet pOld) {
         /* Store parameters */
         theOldSet = pOld;
         theNewSet = pNew;
@@ -72,8 +72,8 @@ public class MetisValueSetDelta
 
         /* Initialise number of differences */
         int myNumDiffs = (theOldSet.isDeletion() == theNewSet.isDeletion())
-                                                                           ? 0
-                                                                           : 1;
+                                                                            ? 0
+                                                                            : 1;
 
         /* Loop through the objects */
         for (int i = 0; i < myNewValues.length; i++) {
@@ -112,7 +112,7 @@ public class MetisValueSetDelta
             MetisField myField = myIterator.next();
 
             /* Skip if the field is not valueSet */
-            if (!myField.isValueSetField()) {
+            if (!myField.getStorage().isValueSet()) {
                 continue;
             }
 
@@ -136,8 +136,8 @@ public class MetisValueSetDelta
             /* If this is the deletion field, return the flag */
         } else if (myIndex == 1) {
             return (theOldSet.isDeletion() == theNewSet.isDeletion())
-                                                                     ? MetisFieldValue.SKIP
-                                                                     : new MetisDataDifference(theOldSet.isDeletion(), MetisDifference.DIFFERENT);
+                                                                      ? MetisFieldValue.SKIP
+                                                                      : new MetisDataDifference(theOldSet.isDeletion(), MetisDifference.DIFFERENT);
         }
 
         /* Adjust index */

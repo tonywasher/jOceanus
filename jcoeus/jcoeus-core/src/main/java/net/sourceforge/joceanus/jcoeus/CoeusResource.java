@@ -43,6 +43,11 @@ public enum CoeusResource
     MARKET_FUNDINGCIRCLE("market.fundingcircle"),
 
     /**
+     * LendingWorks Market.
+     */
+    MARKET_LENDINGWORKS("market.lendingworks"),
+
+    /**
      * RateSetter Market.
      */
     MARKET_RATESETTER("market.ratesetter"),
@@ -490,6 +495,7 @@ public enum CoeusResource
         /* Create the map and return it */
         Map<CoeusLoanMarketProvider, TethysResourceId> myMap = new EnumMap<>(CoeusLoanMarketProvider.class);
         myMap.put(CoeusLoanMarketProvider.FUNDINGCIRCLE, MARKET_FUNDINGCIRCLE);
+        myMap.put(CoeusLoanMarketProvider.LENDINGWORKS, MARKET_LENDINGWORKS);
         myMap.put(CoeusLoanMarketProvider.RATESETTER, MARKET_RATESETTER);
         myMap.put(CoeusLoanMarketProvider.ZOPA, MARKET_ZOPA);
         return myMap;

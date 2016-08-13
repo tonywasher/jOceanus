@@ -60,7 +60,7 @@ public class DepositCategory
     /**
      * Category Type Field Id.
      */
-    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.DEPOSITTYPE.getItemName());
+    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.DEPOSITTYPE.getItemName());
 
     /**
      * Copy Constructor.
@@ -126,8 +126,8 @@ public class DepositCategory
     public DepositCategoryClass getCategoryTypeClass() {
         DepositCategoryType myType = getCategoryType();
         return (myType == null)
-                               ? null
-                               : myType.getDepositClass();
+                                ? null
+                                : myType.getDepositClass();
     }
 
     @Override
@@ -201,8 +201,8 @@ public class DepositCategory
         /* Set values */
         DepositCategoryTypeList myTypes = getDataSet().getDepositCategoryTypes();
         setCategoryType(myTypes.findItemByClass(pParent == null
-                                                               ? DepositCategoryClass.PARENT
-                                                               : DepositCategoryClass.SAVINGS));
+                                                                ? DepositCategoryClass.PARENT
+                                                                : DepositCategoryClass.SAVINGS));
         setParentCategory(pParent);
         setSubCategoryName(getList().getUniqueName(pParent));
     }

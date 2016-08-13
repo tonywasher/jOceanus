@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedListIterator;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
@@ -63,7 +63,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     /**
      * TaxYear field Id.
      */
-    public static final MetisField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TAXYEAR.getItemName());
+    public static final MetisField FIELD_TAXYEAR = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.TAXYEAR.getItemName());
 
     /**
      * DateRange field Id.
@@ -264,8 +264,8 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     private void setValueTaxYear(final TethysDate pValue) {
         getValueSet().setValue(FIELD_TAXYEAR, pValue);
         TethysDateRange myRange = (pValue != null)
-                                                 ? deriveRange(pValue)
-                                                 : null;
+                                                   ? deriveRange(pValue)
+                                                   : null;
         getValueSet().setValue(FIELD_DATERANGE, myRange);
     }
 

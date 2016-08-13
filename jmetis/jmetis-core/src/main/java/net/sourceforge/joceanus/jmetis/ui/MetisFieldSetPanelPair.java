@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.newfield;
+package net.sourceforge.joceanus.jmetis.ui;
 
 import java.util.ArrayList;
 import java.util.Currency;

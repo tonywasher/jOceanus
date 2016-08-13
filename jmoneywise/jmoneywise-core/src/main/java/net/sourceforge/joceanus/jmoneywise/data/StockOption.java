@@ -36,8 +36,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
@@ -84,22 +84,22 @@ public class StockOption
     /**
      * StockHolding Field Id.
      */
-    public static final MetisField FIELD_STOCKHOLDING = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_STOCKHOLDING.getValue());
+    public static final MetisField FIELD_STOCKHOLDING = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.STOCKOPTION_STOCKHOLDING.getValue());
 
     /**
      * GrantDate Field Id.
      */
-    public static final MetisField FIELD_GRANTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_GRANTDATE.getValue());
+    public static final MetisField FIELD_GRANTDATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.STOCKOPTION_GRANTDATE.getValue());
 
     /**
-     * Portfolio Field Id.
+     * ExpiryDate Field Id.
      */
     public static final MetisField FIELD_EXPIREDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_EXPIRYDATE.getValue());
 
     /**
      * Price Field Id.
      */
-    public static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue());
+    public static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue());
 
     /**
      * StockOptionInfoSet field Id.
