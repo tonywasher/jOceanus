@@ -238,7 +238,7 @@ public class MetisVersionedList<T extends MetisVersionedItem>
      * @param pVersion the version to reWind to
      */
     public void reWindToVersion(final int pVersion) {
-        /* Version must be List versions must be 0 */
+        /* Version must be less than current version and positive */
         if ((theVersion < pVersion)
             || (pVersion < 0)) {
             throw new IllegalArgumentException("Invalid Version");
@@ -293,7 +293,7 @@ public class MetisVersionedList<T extends MetisVersionedItem>
     }
 
     /**
-     * Create a New "deleted" item.
+     * Create a New "deleted" item for an update/difference/reBased list.
      * @param pBase the base item
      * @return the new item
      */
@@ -320,7 +320,7 @@ public class MetisVersionedList<T extends MetisVersionedItem>
     }
 
     /**
-     * Create a New "delNew" item.
+     * Create a New "delNew" item for an update list.
      * @param pBase the base item
      * @return the new item
      */
@@ -343,7 +343,7 @@ public class MetisVersionedList<T extends MetisVersionedItem>
     }
 
     /**
-     * Create a New "changed" item.
+     * Create a New "changed" item for a difference list.
      * @param pCurr the current item
      * @param pBase the base item
      * @return the new item
@@ -371,7 +371,7 @@ public class MetisVersionedList<T extends MetisVersionedItem>
     }
 
     /**
-     * Create a New "changed" item.
+     * Create a New "changed" item for an update list.
      * @param pCurr the current item
      * @return the new item
      */
@@ -398,7 +398,7 @@ public class MetisVersionedList<T extends MetisVersionedItem>
     }
 
     /**
-     * Create a New "added" item.
+     * Create a New "added" item for an update/difference list.
      * @param pCurr the current item
      * @return the new item
      */
@@ -420,7 +420,7 @@ public class MetisVersionedList<T extends MetisVersionedItem>
     }
 
     /**
-     * Create a New "added" item.
+     * Create a New "added" item from an edit list.
      * @param pCurr the current item
      * @return the new item
      */
@@ -429,8 +429,9 @@ public class MetisVersionedList<T extends MetisVersionedItem>
         T myItem = newItem();
 
         /* Obtain a clone of the value set as the current value */
-        MetisValueSet mySet = pCurr.getValueSet();
+        MetisValueSet mySet = myItem.getValueSet();
         mySet = mySet.cloneIt();
+        mySet.copyFrom(pCurr.getValueSet());
         mySet.setVersion(theVersion + 1);
 
         /* Record as the history of the item */
@@ -442,24 +443,24 @@ public class MetisVersionedList<T extends MetisVersionedItem>
     }
 
     /**
-     * Commit new values.
+     * Commit new values from an edit list.
      * @param pNew the new item
+     * @return the updated item
      */
-    protected void newItemValues(final T pNew) {
+    protected T newItemValues(final T pNew) {
         /* Obtain the item to be updated */
         Integer myId = pNew.getIndexedId();
         T myBase = getItemById(myId);
 
-        /* Obtain the new values */
-        MetisValueSet mySet = myBase.getValueSet();
-        MetisValueSet myNew = pNew.getValueSet();
-        mySet = mySet.cloneIt();
-        mySet.copyFrom(myNew);
-        mySet.setVersion(theVersion + 1);
-
         /* Adjust the history */
         MetisValueSetHistory myHistory = myBase.getValueSetHistory();
-        myHistory.setValues(mySet);
+        myHistory.pushHistory(theVersion + 1);
+        MetisValueSet mySet = myBase.getValueSet();
+        MetisValueSet myNew = pNew.getValueSet();
+        mySet.copyFrom(myNew);
+
+        /* Return the updated item */
+        return myBase;
     }
 
     /**

@@ -123,6 +123,7 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
     public void commitItems() {
         /* Create a new Change Detail */
         MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.COMMIT);
+        MetisListChange<B> myBaseChange = new MetisListChange<>(MetisListEvent.COMMIT);
 
         /* Loop through the list */
         Iterator<T> myIterator = iterator();
@@ -133,7 +134,7 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
             /* Switch on state */
             switch (MetisDataState.determineState(myHistory)) {
                 case NEW:
-                    handleNewCommit(myCurr, myChange);
+                    handleNewCommit(myCurr, myChange, myBaseChange);
                     break;
                 case DELNEW:
                     handleDelNewCommit(myCurr, myChange);
@@ -141,7 +142,7 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
                 case CHANGED:
                 case DELETED:
                 case RECOVERED:
-                    handleCommit(myCurr, myChange);
+                    handleCommit(myCurr, myChange, myBaseChange);
                     break;
                 default:
                     break;
@@ -151,23 +152,26 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
             addToList(myItem);
         }
 
-        /* Fire the event */
-        fireEvent(myChange);
-
         /* If there are changes to the base list */
-        if (myChange.haveChanged()) {
+        if (myBaseChange.haveChanged()) {
             /* Update the version */
             theSource.setVersion(theSource.getVersion() + 1);
         }
+
+        /* Fire the events */
+        fireEvent(myChange);
+        theSource.fireEvent(myBaseChange);
     }
 
     /**
      * handle delNew commit.
      * @param pItem the item
      * @param pChange the change details
+     * @param pBaseChange the change details
      */
     private void handleNewCommit(final T pItem,
-                                 final MetisListChange<T> pChange) {
+                                 final MetisListChange<T> pChange,
+                                 final MetisListChange<B> pBaseChange) {
         /* Commit the item */
         B myItem = theSource.newCommittedItem(pItem);
         theSource.addToList(myItem);
@@ -175,6 +179,7 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
 
         /* Add to the change */
         pChange.registerChanged(pItem);
+        pBaseChange.registerAdded(myItem);
     }
 
     /**
@@ -192,15 +197,18 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
      * handle commit.
      * @param pItem the item
      * @param pChange the change details
+     * @param pBaseChange the change details
      */
     private void handleCommit(final T pItem,
-                              final MetisListChange<T> pChange) {
+                              final MetisListChange<T> pChange,
+                              final MetisListChange<B> pBaseChange) {
         /* Commit the item */
-        theSource.newItemValues(pItem);
+        B myItem = theSource.newItemValues(pItem);
         pItem.getValueSetHistory().clearHistory();
 
         /* Add to the change */
         pChange.registerChanged(pItem);
+        pBaseChange.registerChanged(myItem);
     }
 
     /**
@@ -231,6 +239,7 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
         /* Access the change detail */
         @SuppressWarnings("unchecked")
         MetisListChange<B> myBaseChange = (MetisListChange<B>) pChange.getDetails(MetisListChange.class);
+        MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REWIND);
 
         /* Loop through the deleted items */
         Iterator<Integer> myIdIterator = myBaseChange.deletedIterator();
@@ -240,6 +249,9 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
             /* Obtain the item to be deleted */
             T myItem = getItemById(myId);
             removeFromList(myItem);
+
+            /* Record deletion */
+            myChange.registerDeleted(myItem);
         }
 
         /* Loop through the changed items */
@@ -256,7 +268,13 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
             /* Obtain a clone of the value set as the base value */
             MetisValueSet myBase = myCurr.getValueSet();
             mySet.copyFrom(myBase);
+
+            /* Record change */
+            myChange.registerChanged(myItem);
         }
+
+        /* Fire the events */
+        fireEvent(myChange);
     }
 
     /**
@@ -267,6 +285,7 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
         /* Access the change detail */
         @SuppressWarnings("unchecked")
         MetisListChange<B> myBaseChange = (MetisListChange<B>) pChange.getDetails(MetisListChange.class);
+        MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REWIND);
 
         /* Loop through the deleted items */
         Iterator<Integer> myIterator = myBaseChange.deletedIterator();
@@ -276,6 +295,12 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
             /* Obtain the item to be deleted */
             T myItem = getItemById(myId);
             removeFromList(myItem);
+
+            /* Record deletion */
+            myChange.registerDeleted(myItem);
         }
+
+        /* Fire the events */
+        fireEvent(myChange);
     }
 }

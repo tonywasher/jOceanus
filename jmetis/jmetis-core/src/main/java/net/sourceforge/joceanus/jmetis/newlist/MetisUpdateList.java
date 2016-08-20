@@ -31,6 +31,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
 import net.sourceforge.joceanus.jmetis.newlist.MetisListChange.MetisListEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 
 /**
  * Update List.
@@ -59,7 +61,7 @@ public class MetisUpdateList<T extends MetisVersionedItem>
      */
     public MetisUpdateList(final MetisVersionedList<T> pSource) {
         super(pSource.getTheClass());
-        theSource = pSource;
+        setSource(pSource);
     }
 
     @Override
@@ -70,11 +72,26 @@ public class MetisUpdateList<T extends MetisVersionedItem>
     @Override
     public Object getFieldValue(final MetisField pField) {
         if (FIELD_SOURCE.equals(pField)) {
-            return theSource.isEmpty()
-                                       ? MetisFieldValue.SKIP
-                                       : theSource;
+            return theSource == null || theSource.isEmpty()
+                                                            ? MetisFieldValue.SKIP
+                                                            : theSource;
         }
         return super.getFieldValue(pField);
+    }
+
+    /**
+     * Derive update items.
+     * @param pSource the source list
+     */
+    public void setSource(final MetisVersionedList<T> pSource) {
+        /* Store source and initialise the update list */
+        theSource = pSource;
+        deriveUpdates();
+
+        /* Listen for updates */
+        TethysEventRegistrar<MetisListEvent> myRegistrar = theSource.getEventRegistrar();
+        myRegistrar.addEventListener(MetisListEvent.COMMIT, this::handleBaseChanges);
+        myRegistrar.addEventListener(MetisListEvent.REWIND, this::handleBaseChanges);
     }
 
     /**
@@ -89,33 +106,42 @@ public class MetisUpdateList<T extends MetisVersionedItem>
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
 
-            /* Obtain the valueSet history */
-            MetisValueSetHistory myHistory = myCurr.getValueSetHistory();
-            MetisDataState myState = MetisDataState.determineState(myHistory);
-
-            /* Switch on the state */
-            switch (myState) {
-                case NEW:
-                    handleNewUpdate(myCurr);
-                    break;
-                case CHANGED:
-                    handleChangedUpdate(myCurr);
-                    break;
-                case DELETED:
-                    handleDeletedUpdate(myCurr);
-                    break;
-                case DELNEW:
-                    handleDelNewUpdate(myCurr);
-                    break;
-                default:
-                    break;
-            }
+            /* process update item */
+            processUpdate(myCurr);
         }
 
         /* Make sure that the version is correct */
         setVersion(isEmpty()
                              ? 0
                              : 1);
+    }
+
+    /**
+     * process update item.
+     * @param pBase the base update
+     */
+    public void processUpdate(final T pBase) {
+        /* Obtain the valueSet history */
+        MetisValueSetHistory myHistory = pBase.getValueSetHistory();
+        MetisDataState myState = MetisDataState.determineState(myHistory);
+
+        /* Switch on the state */
+        switch (myState) {
+            case NEW:
+                handleNewUpdate(pBase);
+                break;
+            case CHANGED:
+                handleChangedUpdate(pBase);
+                break;
+            case DELETED:
+                handleDeletedUpdate(pBase);
+                break;
+            case DELNEW:
+                handleDelNewUpdate(pBase);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -191,7 +217,6 @@ public class MetisUpdateList<T extends MetisVersionedItem>
                     myChange.registerDeleted(myBase);
                 } else {
                     myBase.getValueSetHistory().clearHistory();
-                    myChange.registerChanged(myBase);
                 }
 
                 /* Adjust update list */
@@ -228,6 +253,70 @@ public class MetisUpdateList<T extends MetisVersionedItem>
                 return MetisUpdatePhase.DELETE.equals(pPhase);
             default:
                 return false;
+        }
+    }
+
+    /**
+     * Derive update items as a result of reWind/Commit in the base list.
+     * @param pEvent the event
+     */
+    private void handleBaseChanges(final TethysEvent<MetisListEvent> pEvent) {
+        /* Access the change details */
+        @SuppressWarnings("unchecked")
+        MetisListChange<T> myChange = (MetisListChange<T>) pEvent.getDetails(MetisListChange.class);
+
+        /* Process added entries (can only happen from a commit) */
+        Iterator<T> myIterator = myChange.addedIterator();
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+            handleNewUpdate(myCurr);
+        }
+
+        /* Obtain changed entries */
+        myIterator = myChange.changedIterator();
+        while (myIterator.hasNext()) {
+            T myBase = myIterator.next();
+            int myId = myBase.getIndexedId();
+            T myCurr = getItemById(myId);
+
+            /* If we do not currently have the item */
+            if (myCurr == null) {
+                /* Handle as newly discovered item */
+                processUpdate(myBase);
+            } else {
+                /* Process as a changed update */
+                processChangedUpdate(myCurr, myBase);
+            }
+        }
+
+        /* Process deleted entries (can only happen from a rewind) */
+        Iterator<Integer> myIdIterator = myChange.deletedIterator();
+        while (myIdIterator.hasNext()) {
+            Integer myId = myIdIterator.next();
+            T myCurr = getItemById(myId);
+            removeFromList(myCurr);
+        }
+    }
+
+    /**
+     * process update item.
+     * @param pCurr the current update
+     * @param pBase the base update
+     */
+    public void processChangedUpdate(final T pCurr,
+                                     final T pBase) {
+        /* Obtain the valueSet history */
+        MetisValueSetHistory myHistory = pBase.getValueSetHistory();
+        MetisDataState myState = MetisDataState.determineState(myHistory);
+
+        /* If we are now clean */
+        if (MetisDataState.CLEAN.equals(myState)) {
+            /* Delete the entry */
+            removeFromList(pCurr);
+        } else {
+            /* Replace the current values */
+            MetisValueSet mySet = pCurr.getValueSet();
+            mySet.copyFrom(pBase.getValueSet());
         }
     }
 
