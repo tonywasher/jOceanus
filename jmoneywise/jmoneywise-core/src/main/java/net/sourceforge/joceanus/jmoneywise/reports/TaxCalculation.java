@@ -24,6 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent;
@@ -39,9 +42,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * TaxCalculation report builder.
@@ -169,7 +169,11 @@ public class TaxCalculation
      */
     public void makeTaxParameters(final Element pBody,
                                   final TaxYear pYear) {
+        /* Obtain details as to the tax regime */
         boolean hasAdditionalBand = pYear.hasAdditionalTaxBand();
+        boolean hasResidentialGains = pYear.hasResidentialCapitalGains();
+        boolean hasAgeAllowance = pYear.hasAgeRelatedAllowance();
+        boolean hasSavingsAllowance = pYear.hasSavingsAllowance();
 
         /* Access the bucket lists */
         TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
@@ -186,25 +190,40 @@ public class TaxCalculation
         theBuilder.startRow(myTable);
         theBuilder.makeValueCell(myTable, "PersonalAllowance");
         theBuilder.makeValueCell(myTable, pYear.getAllowance());
-        theBuilder.startRow(myTable);
-        theBuilder.makeValueCell(myTable, "Age 65-74 PersonalAllowance");
-        theBuilder.makeValueCell(myTable, pYear.getLoAgeAllow());
-        theBuilder.startRow(myTable);
-        theBuilder.makeValueCell(myTable, "Age 75+ PersonalAllowance");
-        theBuilder.makeValueCell(myTable, pYear.getHiAgeAllow());
+        if (hasAgeAllowance) {
+            theBuilder.startRow(myTable);
+            theBuilder.makeValueCell(myTable, "Age 65-74 PersonalAllowance");
+            theBuilder.makeValueCell(myTable, pYear.getLoAgeAllow());
+            theBuilder.startRow(myTable);
+            theBuilder.makeValueCell(myTable, "Age 75+ PersonalAllowance");
+            theBuilder.makeValueCell(myTable, pYear.getHiAgeAllow());
+        }
         theBuilder.startRow(myTable);
         theBuilder.makeValueCell(myTable, "RentalAllowance");
         theBuilder.makeValueCell(myTable, pYear.getRentalAllowance());
+        if (hasSavingsAllowance) {
+            theBuilder.startRow(myTable);
+            theBuilder.makeValueCell(myTable, "SavingsAllowance");
+            theBuilder.makeValueCell(myTable, pYear.getSavingsAllow());
+            theBuilder.startRow(myTable);
+            theBuilder.makeValueCell(myTable, "HiSavingsAllowance");
+            theBuilder.makeValueCell(myTable, pYear.getHiSavingsAllow());
+            theBuilder.startRow(myTable);
+            theBuilder.makeValueCell(myTable, "DividendAllowance");
+            theBuilder.makeValueCell(myTable, pYear.getDividendAllow());
+        }
         theBuilder.startRow(myTable);
         theBuilder.makeValueCell(myTable, "CapitalAllowance");
         theBuilder.makeValueCell(myTable, pYear.getCapitalAllow());
-        theBuilder.startRow(myTable);
-        theBuilder.makeValueCell(myTable, "Income Limit for AgeAllowance");
-        theBuilder.makeValueCell(myTable, pYear.getAgeAllowLimit());
         if (hasAdditionalBand) {
             theBuilder.startRow(myTable);
             theBuilder.makeValueCell(myTable, "Income Limit for PersonalAllowance");
             theBuilder.makeValueCell(myTable, pYear.getAddAllowLimit());
+        }
+        if (hasAgeAllowance) {
+            theBuilder.startRow(myTable);
+            theBuilder.makeValueCell(myTable, "Income Limit for AgeAllowance");
+            theBuilder.makeValueCell(myTable, pYear.getAgeAllowLimit());
         }
 
         /* Format the Rates */
@@ -221,8 +240,8 @@ public class TaxCalculation
         theBuilder.startRow(myTable);
         theBuilder.makeTitleCell(myTable, "Salary/Rental");
         theBuilder.makeValueCell(myTable, pYear.hasLoSalaryBand()
-                                                                 ? pYear.getLoTaxRate()
-                                                                 : null);
+                                                                  ? pYear.getLoTaxRate()
+                                                                  : null);
         theBuilder.makeValueCell(myTable, pYear.getBasicTaxRate());
         theBuilder.makeValueCell(myTable, pYear.getHiTaxRate());
         if (hasAdditionalBand) {
@@ -252,6 +271,16 @@ public class TaxCalculation
         if (hasAdditionalBand) {
             theBuilder.makeValueCell(myTable, pYear.getAddTaxRate());
         }
+        if (hasResidentialGains) {
+            theBuilder.startRow(myTable);
+            theBuilder.makeTitleCell(myTable, "ResidentialGains");
+            theBuilder.makeValueCell(myTable);
+            theBuilder.makeValueCell(myTable, pYear.getResidentTaxRate());
+            theBuilder.makeValueCell(myTable, pYear.getHiResidentTaxRate());
+            if (hasAdditionalBand) {
+                theBuilder.makeValueCell(myTable);
+            }
+        }
         theBuilder.startRow(myTable);
         theBuilder.makeTitleCell(myTable, "CapitalGains");
         theBuilder.makeValueCell(myTable);
@@ -267,9 +296,11 @@ public class TaxCalculation
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable, "Name");
         theBuilder.makeTitleCell(myTable, "Value");
-        theBuilder.startRow(myTable);
-        theBuilder.makeTitleCell(myTable, "Age for Tax Year");
-        theBuilder.makeValueCell(myTable, myList.getAge());
+        if (hasAgeAllowance) {
+            theBuilder.startRow(myTable);
+            theBuilder.makeTitleCell(myTable, "Age for Tax Year");
+            theBuilder.makeValueCell(myTable, myList.getAge());
+        }
 
         /* Access the original allowance */
         TaxCalcBucket myTax = myList.getBucket(TaxCategoryClass.ORIGINALALLOWANCE);

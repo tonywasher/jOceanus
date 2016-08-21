@@ -124,8 +124,8 @@ public class TaxYearInfoSet
 
         /* Return the value */
         return (myValue != null)
-                                ? myValue
-                                : MetisFieldValue.SKIP;
+                                 ? myValue
+                                 : MetisFieldValue.SKIP;
     }
 
     /**
@@ -165,8 +165,8 @@ public class TaxYearInfoSet
     public MetisFieldRequired isFieldRequired(final MetisField pField) {
         TaxYearInfoClass myClass = getClassForField(pField);
         return myClass == null
-                              ? MetisFieldRequired.NOTALLOWED
-                              : isClassRequired(myClass);
+                               ? MetisFieldRequired.NOTALLOWED
+                               : isClassRequired(myClass);
     }
 
     @Override
@@ -183,28 +183,51 @@ public class TaxYearInfoSet
         /* Switch on class */
         switch (pClass) {
 
-        /* Handle Additional Tax Details */
+            /* Handle Additional Tax Details */
             case ADDITIONALALLOWANCELIMIT:
             case ADDITIONALINCOMETHRESHOLD:
             case ADDITIONALTAXRATE:
             case ADDITIONALDIVIDENDTAXRATE:
                 return myRegime.hasAdditionalTaxBand()
+                                                       ? MetisFieldRequired.MUSTEXIST
+                                                       : MetisFieldRequired.NOTALLOWED;
+
+            /* Handle CapitalIncome Tax Details */
+            case CAPITALTAXRATE:
+                return myRegime.hasCapitalGainsAsIncome()
+                                                          ? MetisFieldRequired.NOTALLOWED
+                                                          : MetisFieldRequired.MUSTEXIST;
+
+            /* Handle CapitalIncome Tax Details */
+            case HICAPITALTAXRATE:
+                return myRegime.hasCapitalGainsAsIncome()
+                                                          ? MetisFieldRequired.NOTALLOWED
+                                                          : MetisFieldRequired.CANEXIST;
+
+            /* Handle ResidentialCapitalIncome Tax Details */
+            case RESIDENTIALTAXRATE:
+            case HIRESIDENTIALTAXRATE:
+                return myRegime.hasResidentialCapitalGains()
+                                                             ? MetisFieldRequired.MUSTEXIST
+                                                             : MetisFieldRequired.NOTALLOWED;
+
+            /* Handle SavingsAllowance */
+            case SAVINGSALLOWANCE:
+            case HISAVINGSALLOWANCE:
+            case DIVIDENDALLOWANCE:
+                return myRegime.hasSavingsAllowance()
                                                       ? MetisFieldRequired.MUSTEXIST
                                                       : MetisFieldRequired.NOTALLOWED;
 
-                /* Handle CapitalIncome Tax Details */
-            case CAPITALTAXRATE:
-                return myRegime.hasCapitalGainsAsIncome()
-                                                         ? MetisFieldRequired.NOTALLOWED
-                                                         : MetisFieldRequired.MUSTEXIST;
+            /* Handle AgeAllowance */
+            case LOAGEALLOWANCE:
+            case HIAGEALLOWANCE:
+            case AGEALLOWANCELIMIT:
+                return myRegime.hasAgeRelatedAllowance()
+                                                         ? MetisFieldRequired.MUSTEXIST
+                                                         : MetisFieldRequired.NOTALLOWED;
 
-                /* Handle CapitalIncome Tax Details */
-            case HICAPITALTAXRATE:
-                return myRegime.hasCapitalGainsAsIncome()
-                                                         ? MetisFieldRequired.NOTALLOWED
-                                                         : MetisFieldRequired.CANEXIST;
-
-                /* Handle all other fields */
+            /* Handle all other fields */
             default:
                 return MetisFieldRequired.MUSTEXIST;
         }
@@ -254,8 +277,8 @@ public class TaxYearInfoSet
                 /* Obtain Allowance value */
                 TaxYearInfo myAllowInfo = getInfo(TaxYearInfoClass.ALLOWANCE);
                 TethysDecimal myAllowance = (myAllowInfo != null)
-                                                            ? myInfo.getValue(TethysDecimal.class)
-                                                            : null;
+                                                                  ? myInfo.getValue(TethysDecimal.class)
+                                                                  : null;
                 if ((myAllowance != null) && (myValue.compareTo(myAllowance) < 0)) {
                     myTaxYear.addError(ERROR_ALLOW, getFieldForClass(myClass));
                 }
@@ -266,8 +289,8 @@ public class TaxYearInfoSet
                 /* Obtain LoAgeAllowance value */
                 TaxYearInfo myAllowInfo = getInfo(TaxYearInfoClass.LOAGEALLOWANCE);
                 TethysDecimal myAllowance = (myAllowInfo != null)
-                                                            ? myInfo.getValue(TethysDecimal.class)
-                                                            : null;
+                                                                  ? myInfo.getValue(TethysDecimal.class)
+                                                                  : null;
                 if ((myAllowance != null) && (myValue.compareTo(myAllowance) < 0)) {
                     myTaxYear.addError(ERROR_LOALLOW, getFieldForClass(myClass));
                 }
@@ -282,6 +305,14 @@ public class TaxYearInfoSet
         switch (pClass) {
             case CAPITALTAXRATE:
                 TethysRate myRate = getValue(TaxYearInfoClass.BASICTAXRATE, TethysRate.class);
+                setValue(pClass, myRate);
+                break;
+            case RESIDENTIALTAXRATE:
+                myRate = getValue(TaxYearInfoClass.CAPITALTAXRATE, TethysRate.class);
+                setValue(pClass, myRate);
+                break;
+            case HIRESIDENTIALTAXRATE:
+                myRate = getValue(TaxYearInfoClass.HICAPITALTAXRATE, TethysRate.class);
                 setValue(pClass, myRate);
                 break;
             case ADDITIONALTAXRATE:

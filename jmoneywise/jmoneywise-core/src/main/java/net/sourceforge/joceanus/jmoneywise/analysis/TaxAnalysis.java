@@ -281,6 +281,10 @@ public class TaxAnalysis {
 
         /* Access the rental bucket */
         mySrcBucket = myBasis.getBucket(TaxBasisClass.RENTALINCOME);
+        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+
+        /* Access the rental bucket */
+        mySrcBucket = myBasis.getBucket(TaxBasisClass.ROOMRENTAL);
         TethysMoney myChargeable = new TethysMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* If we have a chargeable element */
@@ -310,9 +314,13 @@ public class TaxAnalysis {
         mySrcBucket = myBasis.getBucket(TaxBasisClass.TAXABLEGAINS);
         myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
+        /* Access the residential gains bucket */
+        mySrcBucket = myBasis.getBucket(TaxBasisClass.RESIDENTIALGAINS);
+        myChargeable = new TethysMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+
         /* Access the capital gains bucket */
         mySrcBucket = myBasis.getBucket(TaxBasisClass.CAPITALGAINS);
-        myChargeable = new TethysMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        myChargeable.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* If we have a chargeable element */
         if (myChargeable.compareTo(theYear.getCapitalAllow()) > 0) {
@@ -340,19 +348,24 @@ public class TaxAnalysis {
         TethysMoney myAllowance;
         TethysMoney myAdjust;
 
-        /* Access the taxation properties */
-        MoneyWiseTaxPreferences myPreferences = pManager.getPreferenceSet(MoneyWiseTaxPreferences.class);
+        /* If we have age allowances */
+        if (!theYear.hasSavingsAllowance()) {
+            /* Access the taxation properties */
+            MoneyWiseTaxPreferences myPreferences = pManager.getPreferenceSet(MoneyWiseTaxPreferences.class);
 
-        /* Determine the relevant age for this tax year */
-        theAge = myPreferences.getDateValue(MoneyWiseTaxPreferenceKey.BIRTHDATE).ageOn(theYear.getTaxYear());
+            /* Determine the relevant age for this tax year */
+            theAge = myPreferences.getDateValue(MoneyWiseTaxPreferenceKey.BIRTHDATE).ageOn(theYear.getTaxYear());
 
-        /* Determine the relevant allowance */
-        if (theAge >= LIMIT_AGE_HI) {
-            myAllowance = theYear.getHiAgeAllow();
-            hasAgeAllowance = true;
-        } else if (theAge >= LIMIT_AGE_LO) {
-            myAllowance = theYear.getLoAgeAllow();
-            hasAgeAllowance = true;
+            /* Determine the relevant allowance */
+            if (theAge >= LIMIT_AGE_HI) {
+                myAllowance = theYear.getHiAgeAllow();
+                hasAgeAllowance = true;
+            } else if (theAge >= LIMIT_AGE_LO) {
+                myAllowance = theYear.getLoAgeAllow();
+                hasAgeAllowance = true;
+            } else {
+                myAllowance = theYear.getAllowance();
+            }
         } else {
             myAllowance = theYear.getAllowance();
         }
@@ -439,6 +452,12 @@ public class TaxAnalysis {
                 myBucket.setParent(myParentBucket);
                 hasReducedAllow = true;
             }
+        }
+
+        /* If we have savings allowances */
+        if (theYear.hasSavingsAllowance()) {
+            myBands.theSavingsAllowance = new TethysMoney(theYear.getSavingsAllow());
+            myBands.theDividendAllowance = new TethysMoney(theYear.getDividendAllow());
         }
 
         /* Return to caller */
@@ -1366,21 +1385,31 @@ public class TaxAnalysis {
         /**
          * The allowance.
          */
-        private TethysMoney theAllowance = null;
+        private TethysMoney theAllowance;
 
         /**
          * The Lo Tax Band.
          */
-        private TethysMoney theLoBand = null;
+        private TethysMoney theLoBand;
 
         /**
          * The Basic Tax Band.
          */
-        private TethysMoney theBasicBand = null;
+        private TethysMoney theBasicBand;
 
         /**
          * The High Tax Band.
          */
-        private TethysMoney theHiBand = null;
+        private TethysMoney theHiBand;
+
+        /**
+         * The Savings Allowance.
+         */
+        private TethysMoney theSavingsAllowance;
+
+        /**
+         * The Dividend Allowance.
+         */
+        private TethysMoney theDividendAllowance;
     }
 }

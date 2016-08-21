@@ -58,79 +58,104 @@ public enum TaxYearInfoClass implements DataInfoClass {
     CAPITALALLOWANCE(5, 4, MetisDataType.MONEY),
 
     /**
+     * Savings Allowance.
+     */
+    SAVINGSALLOWANCE(6, 5, MetisDataType.MONEY),
+
+    /**
+     * HiSavings Allowance.
+     */
+    HISAVINGSALLOWANCE(7, 6, MetisDataType.MONEY),
+
+    /**
+     * Dividend Allowance.
+     */
+    DIVIDENDALLOWANCE(8, 7, MetisDataType.MONEY),
+
+    /**
      * Low Age Allowance.
      */
-    LOAGEALLOWANCE(6, 5, MetisDataType.MONEY),
+    LOAGEALLOWANCE(9, 8, MetisDataType.MONEY),
 
     /**
      * High Age Allowance.
      */
-    HIAGEALLOWANCE(7, 6, MetisDataType.MONEY),
+    HIAGEALLOWANCE(10, 9, MetisDataType.MONEY),
 
     /**
      * Age Allowance Limit.
      */
-    AGEALLOWANCELIMIT(8, 7, MetisDataType.MONEY),
+    AGEALLOWANCELIMIT(11, 10, MetisDataType.MONEY),
 
     /**
      * Additional Allowance Limit.
      */
-    ADDITIONALALLOWANCELIMIT(9, 8, MetisDataType.MONEY),
+    ADDITIONALALLOWANCELIMIT(12, 11, MetisDataType.MONEY),
 
     /**
      * Additional Income Threshold.
      */
-    ADDITIONALINCOMETHRESHOLD(10, 9, MetisDataType.MONEY),
+    ADDITIONALINCOMETHRESHOLD(13, 12, MetisDataType.MONEY),
 
     /**
      * Low Tax Rate.
      */
-    LOTAXRATE(11, 10, MetisDataType.RATE),
+    LOTAXRATE(14, 13, MetisDataType.RATE),
 
     /**
      * Basic Tax Rate.
      */
-    BASICTAXRATE(12, 11, MetisDataType.RATE),
+    BASICTAXRATE(15, 14, MetisDataType.RATE),
 
     /**
      * High Tax Rate.
      */
-    HITAXRATE(13, 12, MetisDataType.RATE),
+    HITAXRATE(16, 15, MetisDataType.RATE),
 
     /**
      * Interest Tax Rate.
      */
-    INTERESTTAXRATE(14, 13, MetisDataType.RATE),
+    INTERESTTAXRATE(17, 16, MetisDataType.RATE),
 
     /**
      * Dividend Tax Rate.
      */
-    DIVIDENDTAXRATE(15, 14, MetisDataType.RATE),
+    DIVIDENDTAXRATE(18, 17, MetisDataType.RATE),
 
     /**
      * High Dividend Tax Rate.
      */
-    HIDIVIDENDTAXRATE(16, 15, MetisDataType.RATE),
+    HIDIVIDENDTAXRATE(19, 18, MetisDataType.RATE),
 
     /**
      * Additional Tax Rate.
      */
-    ADDITIONALTAXRATE(17, 16, MetisDataType.RATE),
+    ADDITIONALTAXRATE(20, 19, MetisDataType.RATE),
 
     /**
      * Additional Dividend Tax Rate.
      */
-    ADDITIONALDIVIDENDTAXRATE(18, 17, MetisDataType.RATE),
+    ADDITIONALDIVIDENDTAXRATE(21, 20, MetisDataType.RATE),
 
     /**
      * Capital Tax Rate.
      */
-    CAPITALTAXRATE(19, 18, MetisDataType.RATE),
+    CAPITALTAXRATE(22, 21, MetisDataType.RATE),
 
     /**
      * High Capital Tax Rate.
      */
-    HICAPITALTAXRATE(20, 19, MetisDataType.RATE);
+    HICAPITALTAXRATE(23, 22, MetisDataType.RATE),
+
+    /**
+     * Residential Tax Rate.
+     */
+    RESIDENTIALTAXRATE(24, 23, MetisDataType.RATE),
+
+    /**
+     * High Residential Tax Rate.
+     */
+    HIRESIDENTIALTAXRATE(25, 24, MetisDataType.RATE);
 
     /**
      * The String name.

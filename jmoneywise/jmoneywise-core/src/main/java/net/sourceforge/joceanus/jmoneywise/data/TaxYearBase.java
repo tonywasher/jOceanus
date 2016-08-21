@@ -258,6 +258,30 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     }
 
     /**
+     * Determine whether this tax year supports a savings allowance.
+     * @return <code>true/false</code>
+     */
+    public boolean hasSavingsAllowance() {
+        return getTaxRegime().hasSavingsAllowance();
+    }
+
+    /**
+     * Determine whether this tax year supports age related allowances.
+     * @return <code>true/false</code>
+     */
+    public boolean hasAgeRelatedAllowance() {
+        return getTaxRegime().hasAgeRelatedAllowance();
+    }
+
+    /**
+     * Determine whether this tax year splits out residential capital gains.
+     * @return <code>true/false</code>
+     */
+    public boolean hasResidentialCapitalGains() {
+        return getTaxRegime().hasResidentialCapitalGains();
+    }
+
+    /**
      * Set Tax Year value.
      * @param pValue the value
      */

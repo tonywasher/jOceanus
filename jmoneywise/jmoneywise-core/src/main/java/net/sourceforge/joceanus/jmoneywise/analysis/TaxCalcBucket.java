@@ -489,7 +489,7 @@ public final class TaxCalcBucket
         /**
          * User age.
          */
-        private Integer theAge = 0;
+        private Integer theAge;
 
         /**
          * Are there Gains slices.
@@ -504,7 +504,7 @@ public final class TaxCalcBucket
         /**
          * has tax been calculated?
          */
-        private boolean taxCalculated = false;
+        private boolean taxCalculated;
 
         /**
          * Construct a top-level List.
@@ -613,7 +613,7 @@ public final class TaxCalcBucket
         }
 
         /**
-         * Obtain the EventCategoryBucket for a given event category class.
+         * Obtain the TaxCalcBucket for a given tax category class.
          * @param pClass the event category class
          * @return the bucket
          */
@@ -639,10 +639,8 @@ public final class TaxCalcBucket
          * Prune the list to remove irrelevant items.
          */
         protected void prune() {
-            /* Access the iterator */
-            Iterator<TaxCalcBucket> myIterator = listIterator();
-
             /* Loop through the buckets */
+            Iterator<TaxCalcBucket> myIterator = listIterator();
             while (myIterator.hasNext()) {
                 TaxCalcBucket myCurr = myIterator.next();
 

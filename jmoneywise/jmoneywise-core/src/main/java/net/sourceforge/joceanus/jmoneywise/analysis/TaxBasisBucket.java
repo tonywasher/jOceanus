@@ -1082,7 +1082,6 @@ public class TaxBasisBucket
             switch (pCategory.getCategoryTypeClass()) {
                 case TAXEDINCOME:
                 case BENEFITINCOME:
-                case RENTALINCOME:
                     /* Adjust the Gross salary bucket */
                     myBucket = getBucket(TaxBasisClass.SALARY);
                     myBucket.addIncomeTransaction(pTrans);
@@ -1116,9 +1115,14 @@ public class TaxBasisBucket
                     myBucket = getBucket(TaxBasisClass.FOREIGNDIVIDEND);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
-                case ROOMRENTALINCOME:
+                case RENTALINCOME:
                     /* Adjust the Gross rental bucket */
                     myBucket = getBucket(TaxBasisClass.RENTALINCOME);
+                    myBucket.addIncomeTransaction(pTrans);
+                    break;
+                case ROOMRENTALINCOME:
+                    /* Adjust the Gross roomrental bucket */
+                    myBucket = getBucket(TaxBasisClass.ROOMRENTAL);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
                 case TAXSETTLEMENT:
@@ -1153,6 +1157,11 @@ public class TaxBasisBucket
                 case OTHERINCOME:
                     /* Adjust the Expense bucket */
                     myBucket = getBucket(TaxBasisClass.EXPENSE);
+                    myBucket.addExpenseTransaction(pTrans);
+                    break;
+                case RENTALEXPENSE:
+                    /* Adjust the RentalIncome bucket */
+                    myBucket = getBucket(TaxBasisClass.RENTALINCOME);
                     myBucket.addExpenseTransaction(pTrans);
                     break;
                 case UNITSADJUST:

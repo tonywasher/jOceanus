@@ -184,10 +184,26 @@ public class SheetTaxYear
                     myAddDivTaxRate = myCell.getStringValue();
                 }
 
-                /* Access the values */
-                String myLoAgeAllow = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
-                String myHiAgeAllow = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
-                String myAgeAllowLimit = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                /* Handle LoAgeAllowance which may be missing */
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                String myLoAgeAllow = null;
+                if (myCell != null) {
+                    myLoAgeAllow = myCell.getStringValue();
+                }
+
+                /* Handle HiAgeAllowance which may be missing */
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                String myHiAgeAllow = null;
+                if (myCell != null) {
+                    myHiAgeAllow = myCell.getStringValue();
+                }
+
+                /* Handle AgeAllowanceLimit which may be missing */
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                String myAgeAllowLimit = null;
+                if (myCell != null) {
+                    myAgeAllowLimit = myCell.getStringValue();
+                }
 
                 /* Handle AddAllowLimit which may be missing */
                 myCell = myView.getCellByPosition(iAdjust++, iRow);
@@ -206,6 +222,27 @@ public class SheetTaxYear
                 /* Access the values */
                 String myCapitalAllow = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
 
+                /* Handle SavingsAllowance which may be missing */
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                String mySavingAllow = null;
+                if (myCell != null) {
+                    mySavingAllow = myCell.getStringValue();
+                }
+
+                /* Handle HiSavingsAllowance which may be missing */
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                String myHiSavingAllow = null;
+                if (myCell != null) {
+                    myHiSavingAllow = myCell.getStringValue();
+                }
+
+                /* Handle DividendAllowance which may be missing */
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                String myDividendAllow = null;
+                if (myCell != null) {
+                    myDividendAllow = myCell.getStringValue();
+                }
+
                 /* Handle CapTaxRate which may be missing */
                 myCell = myView.getCellByPosition(iAdjust++, iRow);
                 String myCapTaxRate = null;
@@ -218,6 +255,20 @@ public class SheetTaxYear
                 String myHiCapTaxRate = null;
                 if (myCell != null) {
                     myHiCapTaxRate = myCell.getStringValue();
+                }
+
+                /* Handle ResidentialTaxRate which may be missing */
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                String myResTaxRate = null;
+                if (myCell != null) {
+                    myResTaxRate = myCell.getStringValue();
+                }
+
+                /* Handle HiResTaxRate which may be missing */
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                String myHiResTaxRate = null;
+                if (myCell != null) {
+                    myHiResTaxRate = myCell.getStringValue();
                 }
 
                 /* Build data values */
@@ -234,6 +285,9 @@ public class SheetTaxYear
                 myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.LOTAXBAND, myLoTaxBand);
                 myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.BASICTAXBAND, myBasicTaxBand);
                 myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.CAPITALALLOWANCE, myCapitalAllow);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.SAVINGSALLOWANCE, mySavingAllow);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.HISAVINGSALLOWANCE, myHiSavingAllow);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.DIVIDENDALLOWANCE, myDividendAllow);
                 myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.LOAGEALLOWANCE, myLoAgeAllow);
                 myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.HIAGEALLOWANCE, myHiAgeAllow);
                 myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.AGEALLOWANCELIMIT, myAgeAllowLimit);
@@ -249,6 +303,8 @@ public class SheetTaxYear
                 myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, myAddDivTaxRate);
                 myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.CAPITALTAXRATE, myCapTaxRate);
                 myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.HICAPITALTAXRATE, myHiCapTaxRate);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.RESIDENTIALTAXRATE, myResTaxRate);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.HIRESIDENTIALTAXRATE, myHiResTaxRate);
 
                 /* Report the progress */
                 iRow++;

@@ -213,6 +213,9 @@ public class TaxYearPanel
         JTextField myHiAgeAllow = new JTextField();
         JTextField myCapitalAllow = new JTextField();
         JTextField myRentalAllow = new JTextField();
+        JTextField mySavingsAllow = new JTextField();
+        JTextField myHiSavingsAllow = new JTextField();
+        JTextField myDividendAllow = new JTextField();
 
         /* Allocate Dimension */
         Dimension myDims = new Dimension(FIELD_WIDTH, FIELD_HEIGHT);
@@ -223,6 +226,9 @@ public class TaxYearPanel
         myHiAgeAllow.setMaximumSize(myDims);
         myCapitalAllow.setMaximumSize(myDims);
         myRentalAllow.setMaximumSize(myDims);
+        mySavingsAllow.setMaximumSize(myDims);
+        myHiSavingsAllow.setMaximumSize(myDims);
+        myDividendAllow.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
         theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ALLOWANCE), MetisDataType.MONEY, myAllowance);
@@ -230,6 +236,9 @@ public class TaxYearPanel
         theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), MetisDataType.MONEY, myHiAgeAllow);
         theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), MetisDataType.MONEY, myCapitalAllow);
         theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), MetisDataType.MONEY, myRentalAllow);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.SAVINGSALLOWANCE), MetisDataType.MONEY, mySavingsAllow);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HISAVINGSALLOWANCE), MetisDataType.MONEY, myHiSavingsAllow);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDALLOWANCE), MetisDataType.MONEY, myDividendAllow);
 
         /* Create the allow panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -242,6 +251,9 @@ public class TaxYearPanel
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.SAVINGSALLOWANCE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HISAVINGSALLOWANCE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDALLOWANCE), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -412,17 +424,21 @@ public class TaxYearPanel
         /* Allocate text fields */
         JTextField myCapTaxRate = new JTextField();
         JTextField myHiCapTaxRate = new JTextField();
+        JTextField myResTaxRate = new JTextField();
+        JTextField myHiResTaxRate = new JTextField();
 
         /* Allocate Dimension */
         Dimension myDims = new Dimension(FIELD_WIDTH, FIELD_HEIGHT);
 
         /* Adjust maximum sizes */
-        myCapTaxRate.setMaximumSize(myDims);
-        myHiCapTaxRate.setMaximumSize(myDims);
+        myResTaxRate.setMaximumSize(myDims);
+        myHiResTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
         theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), MetisDataType.RATE, myCapTaxRate);
         theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), MetisDataType.RATE, myHiCapTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.RESIDENTIALTAXRATE), MetisDataType.RATE, myResTaxRate);
+        theFieldSet.addFieldElement(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIRESIDENTIALTAXRATE), MetisDataType.RATE, myHiResTaxRate);
 
         /* Create the rates panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -432,6 +448,8 @@ public class TaxYearPanel
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), myPanel);
         theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.RESIDENTIALTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIRESIDENTIALTAXRATE), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -460,6 +478,8 @@ public class TaxYearPanel
         TaxRegime myRegime = myYear.getTaxRegime();
         boolean hasAdditionalTaxBand = myRegime.hasAdditionalTaxBand();
         boolean hasCapitalGainsAsIncome = myRegime.hasCapitalGainsAsIncome();
+        boolean hasSavingsAllowance = myRegime.hasSavingsAllowance();
+        boolean hasResidentialCapitalGains = myRegime.hasResidentialCapitalGains();
 
         /* Set the Year */
         theYear.setText(Integer.toString(myYear.getTaxYear().getYear()));
@@ -471,6 +491,14 @@ public class TaxYearPanel
         theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), hasAdditionalTaxBand);
         theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), !hasCapitalGainsAsIncome);
         theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), !hasCapitalGainsAsIncome);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.RESIDENTIALTAXRATE), hasResidentialCapitalGains);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIRESIDENTIALTAXRATE), hasResidentialCapitalGains);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.SAVINGSALLOWANCE), hasSavingsAllowance);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HISAVINGSALLOWANCE), hasSavingsAllowance);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDALLOWANCE), hasSavingsAllowance);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.LOAGEALLOWANCE), !hasSavingsAllowance);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), !hasSavingsAllowance);
+        theFieldSet.setVisibility(TaxYearInfoSet.getFieldForClass(TaxYearInfoClass.AGEALLOWANCELIMIT), !hasSavingsAllowance);
     }
 
     @Override
@@ -497,6 +525,15 @@ public class TaxYearPanel
                     break;
                 case CAPITALALLOWANCE:
                     myYear.setCapitalAllow(pUpdate.getMoney());
+                    break;
+                case SAVINGSALLOWANCE:
+                    myYear.setSavingsAllow(pUpdate.getMoney());
+                    break;
+                case HISAVINGSALLOWANCE:
+                    myYear.setHiSavingsAllow(pUpdate.getMoney());
+                    break;
+                case DIVIDENDALLOWANCE:
+                    myYear.setDividendAllow(pUpdate.getMoney());
                     break;
                 case RENTALALLOWANCE:
                     myYear.setRentalAllowance(pUpdate.getMoney());
@@ -545,6 +582,12 @@ public class TaxYearPanel
                     break;
                 case HICAPITALTAXRATE:
                     myYear.setHiCapTaxRate(pUpdate.getRate());
+                    break;
+                case RESIDENTIALTAXRATE:
+                    myYear.setResidentTaxRate(pUpdate.getRate());
+                    break;
+                case HIRESIDENTIALTAXRATE:
+                    myYear.setHiResidentTaxRate(pUpdate.getRate());
                     break;
                 default:
                     break;

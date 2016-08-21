@@ -24,17 +24,17 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedListIterator;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
@@ -233,6 +233,36 @@ public class TaxYear
     }
 
     /**
+     * Obtain Savings Allowance.
+     * @return the allowance
+     */
+    public TethysMoney getSavingsAllow() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(TaxYearInfoClass.SAVINGSALLOWANCE, TethysMoney.class)
+                          : null;
+    }
+
+    /**
+     * Obtain HiSavings Allowance.
+     * @return the allowance
+     */
+    public TethysMoney getHiSavingsAllow() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(TaxYearInfoClass.HISAVINGSALLOWANCE, TethysMoney.class)
+                          : null;
+    }
+
+    /**
+     * Obtain Dividend Allowance.
+     * @return the allowance
+     */
+    public TethysMoney getDividendAllow() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(TaxYearInfoClass.DIVIDENDALLOWANCE, TethysMoney.class)
+                          : null;
+    }
+
+    /**
      * Obtain LoAge Allowance.
      * @return the allowance
      */
@@ -383,6 +413,26 @@ public class TaxYear
     }
 
     /**
+     * Obtain ResidentialTaxRate.
+     * @return the rate
+     */
+    public TethysRate getResidentTaxRate() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(TaxYearInfoClass.RESIDENTIALTAXRATE, TethysRate.class)
+                          : null;
+    }
+
+    /**
+     * Obtain HiResidentialTaxRate.
+     * @return the rate
+     */
+    public TethysRate getHiResidentTaxRate() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(TaxYearInfoClass.HIRESIDENTIALTAXRATE, TethysRate.class)
+                          : null;
+    }
+
+    /**
      * Set a new allowance.
      * @param pAllowance the allowance
      * @throws OceanusException on error
@@ -407,6 +457,33 @@ public class TaxYear
      */
     public void setCapitalAllow(final TethysMoney pAllowance) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.CAPITALALLOWANCE, pAllowance);
+    }
+
+    /**
+     * Set a new savings allowance.
+     * @param pAllowance the allowance
+     * @throws OceanusException on error
+     */
+    public void setSavingsAllow(final TethysMoney pAllowance) throws OceanusException {
+        setInfoSetValue(TaxYearInfoClass.SAVINGSALLOWANCE, pAllowance);
+    }
+
+    /**
+     * Set a new hiSavings allowance.
+     * @param pAllowance the allowance
+     * @throws OceanusException on error
+     */
+    public void setHiSavingsAllow(final TethysMoney pAllowance) throws OceanusException {
+        setInfoSetValue(TaxYearInfoClass.HISAVINGSALLOWANCE, pAllowance);
+    }
+
+    /**
+     * Set a new dividend allowance.
+     * @param pAllowance the allowance
+     * @throws OceanusException on error
+     */
+    public void setDividendAllow(final TethysMoney pAllowance) throws OceanusException {
+        setInfoSetValue(TaxYearInfoClass.DIVIDENDALLOWANCE, pAllowance);
     }
 
     /**
@@ -560,6 +637,24 @@ public class TaxYear
      */
     public void setHiCapTaxRate(final TethysRate pRate) throws OceanusException {
         setInfoSetValue(TaxYearInfoClass.HICAPITALTAXRATE, pRate);
+    }
+
+    /**
+     * Set a new residential tax rate.
+     * @param pRate the residential tax rate
+     * @throws OceanusException on error
+     */
+    public void setResidentTaxRate(final TethysRate pRate) throws OceanusException {
+        setInfoSetValue(TaxYearInfoClass.RESIDENTIALTAXRATE, pRate);
+    }
+
+    /**
+     * Set a high residential tax rate.
+     * @param pRate the high residential tax rate
+     * @throws OceanusException on error
+     */
+    public void setHiResidentTaxRate(final TethysRate pRate) throws OceanusException {
+        setInfoSetValue(TaxYearInfoClass.HIRESIDENTIALTAXRATE, pRate);
     }
 
     /**

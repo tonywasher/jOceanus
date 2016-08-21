@@ -49,7 +49,12 @@ public enum TaxRegimeClass implements StaticInterface {
     /**
      * Additional tax band.
      */
-    ADDITIONALBAND(4, 3);
+    ADDITIONALBAND(4, 3),
+
+    /**
+     * Savings Allowance.
+     */
+    SAVINGSALLOWANCE(5, 4);
 
     /**
      * The String name.
@@ -121,7 +126,6 @@ public enum TaxRegimeClass implements StaticInterface {
     public boolean hasLoSalaryBand() {
         switch (this) {
             case ARCHIVE:
-                return true;
             case STANDARD:
                 return true;
             default:
@@ -134,12 +138,7 @@ public enum TaxRegimeClass implements StaticInterface {
      * @return <code>true/false</code>
      */
     public boolean hasCapitalGainsAsIncome() {
-        switch (this) {
-            case STANDARD:
-                return true;
-            default:
-                return false;
-        }
+        return this == TaxRegimeClass.STANDARD;
     }
 
     /**
@@ -149,9 +148,34 @@ public enum TaxRegimeClass implements StaticInterface {
     public boolean hasAdditionalTaxBand() {
         switch (this) {
             case ADDITIONALBAND:
+            case SAVINGSALLOWANCE:
                 return true;
             default:
                 return false;
         }
+    }
+
+    /**
+     * Determine whether this tax regime supports a savings allowance.
+     * @return <code>true/false</code>
+     */
+    public boolean hasSavingsAllowance() {
+        return this == TaxRegimeClass.SAVINGSALLOWANCE;
+    }
+
+    /**
+     * Determine whether this tax regime supports age related allowances.
+     * @return <code>true/false</code>
+     */
+    public boolean hasAgeRelatedAllowance() {
+        return this != TaxRegimeClass.SAVINGSALLOWANCE;
+    }
+
+    /**
+     * Determine whether this tax regime splits out residential capital gains.
+     * @return <code>true/false</code>
+     */
+    public boolean hasResidentialCapitalGains() {
+        return this == TaxRegimeClass.SAVINGSALLOWANCE;
     }
 }

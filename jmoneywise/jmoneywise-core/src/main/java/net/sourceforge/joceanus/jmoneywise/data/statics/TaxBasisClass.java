@@ -37,74 +37,84 @@ public enum TaxBasisClass implements StaticInterface {
     SALARY(1, 0),
 
     /**
+     * RoomRental.
+     */
+    ROOMRENTAL(2, 1),
+
+    /**
      * Rental Income.
      */
-    RENTALINCOME(2, 1),
+    RENTALINCOME(3, 2),
 
     /**
      * Taxed Interest Income.
      */
-    TAXEDINTEREST(3, 2),
+    TAXEDINTEREST(4, 3),
 
     /**
      * UnTaxed Interest Income.
      */
-    UNTAXEDINTEREST(4, 3),
+    UNTAXEDINTEREST(5, 4),
 
     /**
      * Dividend Income.
      */
-    DIVIDEND(5, 4),
+    DIVIDEND(6, 5),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UNITTRUSTDIVIDEND(6, 5),
+    UNITTRUSTDIVIDEND(7, 6),
 
     /**
      * Foreign Dividend Income.
      */
-    FOREIGNDIVIDEND(7, 6),
+    FOREIGNDIVIDEND(8, 7),
 
     /**
      * Taxable gains.
      */
-    TAXABLEGAINS(8, 7),
+    TAXABLEGAINS(9, 8),
+
+    /**
+     * Residential gains.
+     */
+    RESIDENTIALGAINS(10, 9),
 
     /**
      * Capital gains.
      */
-    CAPITALGAINS(9, 8),
+    CAPITALGAINS(11, 10),
 
     /**
      * Tax Free Income.
      */
-    TAXFREE(10, 9),
+    TAXFREE(12, 11),
 
     /**
      * BadDebt.
      */
-    BADDEBT(11, 10),
+    BADDEBT(13, 12),
 
     /**
      * Market Growth.
      */
-    MARKET(12, 11),
+    MARKET(14, 13),
 
     /**
      * Total Tax Paid.
      */
-    TAXPAID(13, 12),
+    TAXPAID(15, 14),
 
     /**
      * Gross Expense.
      */
-    EXPENSE(14, 13),
+    EXPENSE(16, 15),
 
     /**
      * Virtual Income.
      */
-    VIRTUAL(15, 14);
+    VIRTUAL(17, 16);
 
     /**
      * The String name.
@@ -177,6 +187,7 @@ public enum TaxBasisClass implements StaticInterface {
     public boolean analyseAccounts() {
         switch (this) {
             case SALARY:
+            case ROOMRENTAL:
             case RENTALINCOME:
             case TAXEDINTEREST:
             case UNTAXEDINTEREST:
@@ -185,6 +196,7 @@ public enum TaxBasisClass implements StaticInterface {
             case FOREIGNDIVIDEND:
             case TAXABLEGAINS:
             case CAPITALGAINS:
+            case RESIDENTIALGAINS:
             case TAXFREE:
             case BADDEBT:
                 return true;

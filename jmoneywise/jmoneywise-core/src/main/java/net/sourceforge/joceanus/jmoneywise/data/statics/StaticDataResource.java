@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
@@ -287,6 +290,11 @@ public enum StaticDataResource implements TethysResourceId {
     TRANSTYPE_WRITEOFF("TransType.WriteOff"),
 
     /**
+     * TransType RentalExpense.
+     */
+    TRANSTYPE_RENTALEXPENSE("TransType.RentalExpense"),
+
+    /**
      * TransType LoanInterestCharged.
      */
     TRANSTYPE_LOANINTCHARGE("TransType.LoanInterestCharged"),
@@ -362,6 +370,11 @@ public enum StaticDataResource implements TethysResourceId {
     TRANSTYPE_TAXFREEGAIN("TransType.TaxFreeGain"),
 
     /**
+     * TransType ResidentialGain.
+     */
+    TRANSTYPE_RESIDENTIALGAIN("TransType.ResidentialGain"),
+
+    /**
      * TransType CapitalGain.
      */
     TRANSTYPE_CAPITALGAIN("TransType.CapitalGain"),
@@ -427,6 +440,11 @@ public enum StaticDataResource implements TethysResourceId {
     TAXBASIS_SALARY("TaxBasis.Salary"),
 
     /**
+     * TaxBasis RoomRental.
+     */
+    TAXBASIS_ROOMRENTAL("TaxBasis.RoomRental"),
+
+    /**
      * TaxBasis RentalIncome.
      */
     TAXBASIS_RENTALINCOME("TaxBasis.RentalIncome"),
@@ -460,6 +478,11 @@ public enum StaticDataResource implements TethysResourceId {
      * TaxBasis TaxableGains.
      */
     TAXBASIS_TAXABLEGAINS("TaxBasis.TaxableGains"),
+
+    /**
+     * TaxBasis ResidentialGains.
+     */
+    TAXBASIS_RESIDENTIALGAINS("TaxBasis.ResidentialGains"),
 
     /**
      * TaxBasis CapitalGains.
@@ -712,9 +735,14 @@ public enum StaticDataResource implements TethysResourceId {
     TAXREGIME_LOINTEREST("TaxRegime.LoInterest"),
 
     /**
-     * TaxRegime Archive.
+     * TaxRegime Additional Band.
      */
     TAXREGIME_ADDBAND("TaxRegime.AdditionalBand"),
+
+    /**
+     * TaxRegime SavingsAllowance.
+     */
+    TAXREGIME_SAVINGSALLOW("TaxRegime.SavingsAllowance"),
 
     /**
      * Frequency Once.
@@ -822,6 +850,21 @@ public enum StaticDataResource implements TethysResourceId {
     TAXINFO_CAPITALALLOWANCE("TaxInfoType.CapitalAllowance"),
 
     /**
+     * TaxInfo Savings Allowance.
+     */
+    TAXINFO_SAVINGSALLOWANCE("TaxInfoType.SavingsAllowance"),
+
+    /**
+     * TaxInfo HiSavings Allowance.
+     */
+    TAXINFO_HISAVINGSALLOWANCE("TaxInfoType.HiSavingsAllowance"),
+
+    /**
+     * TaxInfo Dividend Allowance.
+     */
+    TAXINFO_DIVIDENDALLOWANCE("TaxInfoType.DividendAllowance"),
+
+    /**
      * TaxInfo LoAgeAllowance.
      */
     TAXINFO_LOAGEALLOWANCE("TaxInfoType.LoAgeAllowance"),
@@ -895,6 +938,16 @@ public enum StaticDataResource implements TethysResourceId {
      * TaxInfo High Capital TaxRate.
      */
     TAXINFO_HICAPRATE("TaxInfoType.HiCapitalTaxRate"),
+
+    /**
+     * TaxInfo Residential TaxRate.
+     */
+    TAXINFO_RESRATE("TaxInfoType.ResidentialTaxRate"),
+
+    /**
+     * TaxInfo High Residential TaxRate.
+     */
+    TAXINFO_HIRESRATE("TaxInfoType.HiResidentialTaxRate"),
 
     /**
      * AccountInfo Maturity.
@@ -1037,6 +1090,66 @@ public enum StaticDataResource implements TethysResourceId {
     TRANSINFO_XCHANGERATE("TransInfoType.XchangeRate");
 
     /**
+     * The DepositType Map.
+     */
+    private static final Map<DepositCategoryClass, TethysResourceId> DEPOSIT_MAP = buildDepositMap();
+
+    /**
+     * The CashType Map.
+     */
+    private static final Map<CashCategoryClass, TethysResourceId> CASH_MAP = buildCashMap();
+
+    /**
+     * The LoanType Map.
+     */
+    private static final Map<LoanCategoryClass, TethysResourceId> LOAN_MAP = buildLoanMap();
+
+    /**
+     * The SecurityType Map.
+     */
+    private static final Map<SecurityTypeClass, TethysResourceId> SECURITY_MAP = buildSecurityMap();
+
+    /**
+     * The PayeeType Map.
+     */
+    private static final Map<PayeeTypeClass, TethysResourceId> PAYEE_MAP = buildPayeeMap();
+
+    /**
+     * The TransactionType Map.
+     */
+    private static final Map<TransactionCategoryClass, TethysResourceId> TRANSACTION_MAP = buildTransactionMap();
+
+    /**
+     * The TaxBasis Map.
+     */
+    private static final Map<TaxBasisClass, TethysResourceId> TAXBASIS_MAP = buildTaxBasisMap();
+
+    /**
+     * The TaxRegime Map.
+     */
+    private static final Map<TaxRegimeClass, TethysResourceId> TAXREGIME_MAP = buildTaxRegimeMap();
+
+    /**
+     * The Frequency Map.
+     */
+    private static final Map<FrequencyClass, TethysResourceId> FREQUENCY_MAP = buildFrequencyMap();
+
+    /**
+     * The TaxInfo Map.
+     */
+    private static final Map<TaxYearInfoClass, TethysResourceId> TAXINFO_MAP = buildTaxInfoMap();
+
+    /**
+     * The AccountInfo Map.
+     */
+    private static final Map<AccountInfoClass, TethysResourceId> ACCOUNTINFO_MAP = buildAccountInfoMap();
+
+    /**
+     * The TransInfo Map.
+     */
+    private static final Map<TransactionInfoClass, TethysResourceId> TRANSINFO_MAP = buildTransInfoMap();
+
+    /**
      * The Resource Builder.
      */
     private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
@@ -1091,25 +1204,40 @@ public enum StaticDataResource implements TethysResourceId {
     }
 
     /**
+     * Build deposit type map.
+     * @return the map
+     */
+    private static Map<DepositCategoryClass, TethysResourceId> buildDepositMap() {
+        /* Create the map and return it */
+        Map<DepositCategoryClass, TethysResourceId> myMap = new EnumMap<>(DepositCategoryClass.class);
+        myMap.put(DepositCategoryClass.CHECKING, DEPOSITTYPE_CHECKING);
+        myMap.put(DepositCategoryClass.SAVINGS, DEPOSITTYPE_SAVINGS);
+        myMap.put(DepositCategoryClass.PEER2PEER, DEPOSITTYPE_PEER2PEER);
+        myMap.put(DepositCategoryClass.BOND, DEPOSITTYPE_BOND);
+        myMap.put(DepositCategoryClass.PARENT, CATEGORYTYPE_PARENT);
+        return myMap;
+    }
+
+    /**
      * Obtain key for deposit type.
      * @param pValue the Value
      * @return the resource key
      */
     protected static TethysResourceId getKeyForDepositType(final DepositCategoryClass pValue) {
-        switch (pValue) {
-            case CHECKING:
-                return DEPOSITTYPE_CHECKING;
-            case SAVINGS:
-                return DEPOSITTYPE_SAVINGS;
-            case PEER2PEER:
-                return DEPOSITTYPE_PEER2PEER;
-            case BOND:
-                return DEPOSITTYPE_BOND;
-            case PARENT:
-                return CATEGORYTYPE_PARENT;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(DEPOSIT_MAP, pValue);
+    }
+
+    /**
+     * Build cash type map.
+     * @return the map
+     */
+    private static Map<CashCategoryClass, TethysResourceId> buildCashMap() {
+        /* Create the map and return it */
+        Map<CashCategoryClass, TethysResourceId> myMap = new EnumMap<>(CashCategoryClass.class);
+        myMap.put(CashCategoryClass.CASH, CASHTYPE_CASH);
+        myMap.put(CashCategoryClass.AUTOEXPENSE, CASHTYPE_AUTO);
+        myMap.put(CashCategoryClass.PARENT, CATEGORYTYPE_PARENT);
+        return myMap;
     }
 
     /**
@@ -1118,16 +1246,21 @@ public enum StaticDataResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForCashType(final CashCategoryClass pValue) {
-        switch (pValue) {
-            case CASH:
-                return CASHTYPE_CASH;
-            case AUTOEXPENSE:
-                return CASHTYPE_AUTO;
-            case PARENT:
-                return CATEGORYTYPE_PARENT;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(CASH_MAP, pValue);
+    }
+
+    /**
+     * Build loan type map.
+     * @return the map
+     */
+    private static Map<LoanCategoryClass, TethysResourceId> buildLoanMap() {
+        /* Create the map and return it */
+        Map<LoanCategoryClass, TethysResourceId> myMap = new EnumMap<>(LoanCategoryClass.class);
+        myMap.put(LoanCategoryClass.CREDITCARD, LOANTYPE_CREDIT);
+        myMap.put(LoanCategoryClass.PRIVATELOAN, LOANTYPE_PRIVATE);
+        myMap.put(LoanCategoryClass.LOAN, LOANTYPE_LOAN);
+        myMap.put(LoanCategoryClass.PARENT, CATEGORYTYPE_PARENT);
+        return myMap;
     }
 
     /**
@@ -1136,18 +1269,24 @@ public enum StaticDataResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForLoanType(final LoanCategoryClass pValue) {
-        switch (pValue) {
-            case CREDITCARD:
-                return LOANTYPE_CREDIT;
-            case PRIVATELOAN:
-                return LOANTYPE_PRIVATE;
-            case LOAN:
-                return LOANTYPE_LOAN;
-            case PARENT:
-                return CATEGORYTYPE_PARENT;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(LOAN_MAP, pValue);
+    }
+
+    /**
+     * Build security type map.
+     * @return the map
+     */
+    private static Map<SecurityTypeClass, TethysResourceId> buildSecurityMap() {
+        /* Create the map and return it */
+        Map<SecurityTypeClass, TethysResourceId> myMap = new EnumMap<>(SecurityTypeClass.class);
+        myMap.put(SecurityTypeClass.SHARES, SECURITYTYPE_SHARES);
+        myMap.put(SecurityTypeClass.UNITTRUST, SECURITYTYPE_UNIT);
+        myMap.put(SecurityTypeClass.LIFEBOND, SECURITYTYPE_LIFEBOND);
+        myMap.put(SecurityTypeClass.ENDOWMENT, SECURITYTYPE_ENDOWMENT);
+        myMap.put(SecurityTypeClass.PROPERTY, SECURITYTYPE_PROPERTY);
+        myMap.put(SecurityTypeClass.VEHICLE, SECURITYTYPE_VEHICLE);
+        myMap.put(SecurityTypeClass.ASSET, SECURITYTYPE_ASSET);
+        return myMap;
     }
 
     /**
@@ -1156,24 +1295,24 @@ public enum StaticDataResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForSecurityType(final SecurityTypeClass pValue) {
-        switch (pValue) {
-            case SHARES:
-                return SECURITYTYPE_SHARES;
-            case UNITTRUST:
-                return SECURITYTYPE_UNIT;
-            case LIFEBOND:
-                return SECURITYTYPE_LIFEBOND;
-            case ENDOWMENT:
-                return SECURITYTYPE_ENDOWMENT;
-            case PROPERTY:
-                return SECURITYTYPE_PROPERTY;
-            case VEHICLE:
-                return SECURITYTYPE_VEHICLE;
-            case ASSET:
-                return SECURITYTYPE_ASSET;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(SECURITY_MAP, pValue);
+    }
+
+    /**
+     * Build payee type map.
+     * @return the map
+     */
+    private static Map<PayeeTypeClass, TethysResourceId> buildPayeeMap() {
+        /* Create the map and return it */
+        Map<PayeeTypeClass, TethysResourceId> myMap = new EnumMap<>(PayeeTypeClass.class);
+        myMap.put(PayeeTypeClass.TAXMAN, PAYEETYPE_TAXMAN);
+        myMap.put(PayeeTypeClass.GOVERNMENT, PAYEETYPE_GOVERNMENT);
+        myMap.put(PayeeTypeClass.MARKET, PAYEETYPE_MARKET);
+        myMap.put(PayeeTypeClass.EMPLOYER, PAYEETYPE_EMPLOYER);
+        myMap.put(PayeeTypeClass.INSTITUTION, PAYEETYPE_INSTITUTION);
+        myMap.put(PayeeTypeClass.INDIVIDUAL, PAYEETYPE_INDIVIDUAL);
+        myMap.put(PayeeTypeClass.PAYEE, PAYEETYPE_PAYEE);
+        return myMap;
     }
 
     /**
@@ -1182,24 +1321,73 @@ public enum StaticDataResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForPayeeType(final PayeeTypeClass pValue) {
-        switch (pValue) {
-            case TAXMAN:
-                return PAYEETYPE_TAXMAN;
-            case GOVERNMENT:
-                return PAYEETYPE_GOVERNMENT;
-            case MARKET:
-                return PAYEETYPE_MARKET;
-            case EMPLOYER:
-                return PAYEETYPE_EMPLOYER;
-            case INSTITUTION:
-                return PAYEETYPE_INSTITUTION;
-            case INDIVIDUAL:
-                return PAYEETYPE_INDIVIDUAL;
-            case PAYEE:
-                return PAYEETYPE_PAYEE;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(PAYEE_MAP, pValue);
+    }
+
+    /**
+     * Build transaction type map.
+     * @return the map
+     */
+    private static Map<TransactionCategoryClass, TethysResourceId> buildTransactionMap() {
+        /* Create the map and return it */
+        Map<TransactionCategoryClass, TethysResourceId> myMap = new EnumMap<>(TransactionCategoryClass.class);
+        myMap.put(TransactionCategoryClass.TAXEDINCOME, TRANSTYPE_TAXEDINCOME);
+        myMap.put(TransactionCategoryClass.RENTALINCOME, TRANSTYPE_RENTALINCOME);
+        myMap.put(TransactionCategoryClass.ROOMRENTALINCOME, TRANSTYPE_ROOMRENTINCOME);
+        myMap.put(TransactionCategoryClass.INTEREST, TRANSTYPE_INTEREST);
+        myMap.put(TransactionCategoryClass.DIVIDEND, TRANSTYPE_DIVIDEND);
+        myMap.put(TransactionCategoryClass.GRANTINCOME, TRANSTYPE_GRANTINCOME);
+        myMap.put(TransactionCategoryClass.BENEFITINCOME, TRANSTYPE_BENEFITINCOME);
+        myMap.put(TransactionCategoryClass.GIFTEDINCOME, TRANSTYPE_GIFTEDINCOME);
+        myMap.put(TransactionCategoryClass.INHERITED, TRANSTYPE_INHERITED);
+        myMap.put(TransactionCategoryClass.LOANINTERESTEARNED, TRANSTYPE_LOANINTEARNED);
+        myMap.put(TransactionCategoryClass.CASHBACK, TRANSTYPE_CASHBACK);
+        myMap.put(TransactionCategoryClass.LOYALTYBONUS, TRANSTYPE_LOYALTYBONUS);
+        myMap.put(TransactionCategoryClass.OTHERINCOME, TRANSTYPE_OTHERINCOME);
+        myMap.put(TransactionCategoryClass.TRANSFER, TRANSTYPE_TRANSFER);
+        myMap.put(TransactionCategoryClass.UNITSADJUST, TRANSTYPE_UNITSADJUST);
+        myMap.put(TransactionCategoryClass.STOCKSPLIT, TRANSTYPE_STOCKSPLIT);
+        myMap.put(TransactionCategoryClass.STOCKDEMERGER, TRANSTYPE_STOCKDEMERGER);
+        myMap.put(TransactionCategoryClass.STOCKTAKEOVER, TRANSTYPE_STOCKTAKEOVER);
+        myMap.put(TransactionCategoryClass.SECURITYREPLACE, TRANSTYPE_SECURITYREPLACE);
+        myMap.put(TransactionCategoryClass.STOCKRIGHTSISSUE, TRANSTYPE_STOCKRIGHTSISSUE);
+        myMap.put(TransactionCategoryClass.PORTFOLIOXFER, TRANSTYPE_PORTFOLIOXFER);
+        myMap.put(TransactionCategoryClass.OPTIONSVEST, TRANSTYPE_OPTIONSVEST);
+        myMap.put(TransactionCategoryClass.OPTIONSEXERCISE, TRANSTYPE_OPTIONSEXERCISE);
+        myMap.put(TransactionCategoryClass.EXPENSE, TRANSTYPE_EXPENSE);
+        myMap.put(TransactionCategoryClass.BADDEBT, TRANSTYPE_BADDEBT);
+        myMap.put(TransactionCategoryClass.LOCALTAXES, TRANSTYPE_LOCALTAXES);
+        myMap.put(TransactionCategoryClass.WRITEOFF, TRANSTYPE_WRITEOFF);
+        myMap.put(TransactionCategoryClass.RENTALEXPENSE, TRANSTYPE_RENTALEXPENSE);
+        myMap.put(TransactionCategoryClass.LOANINTERESTCHARGED, TRANSTYPE_LOANINTCHARGE);
+        myMap.put(TransactionCategoryClass.TAXRELIEF, TRANSTYPE_TAXRELIEF);
+        myMap.put(TransactionCategoryClass.TAXSETTLEMENT, TRANSTYPE_TAXSETTLE);
+        myMap.put(TransactionCategoryClass.TAXEDINTEREST, TRANSTYPE_TAXEDINTEREST);
+        myMap.put(TransactionCategoryClass.TAXFREEINTEREST, TRANSTYPE_TAXFREEINTEREST);
+        myMap.put(TransactionCategoryClass.GROSSINTEREST, TRANSTYPE_GROSSINTEREST);
+        myMap.put(TransactionCategoryClass.SHAREDIVIDEND, TRANSTYPE_SHAREDIVIDEND);
+        myMap.put(TransactionCategoryClass.UNITTRUSTDIVIDEND, TRANSTYPE_UTDIVIDEND);
+        myMap.put(TransactionCategoryClass.FOREIGNDIVIDEND, TRANSTYPE_FOREIGNDIVIDEND);
+        myMap.put(TransactionCategoryClass.TAXFREEDIVIDEND, TRANSTYPE_TAXFREEDIVIDEND);
+        myMap.put(TransactionCategoryClass.TAXEDLOYALTYBONUS, TRANSTYPE_TAXEDLOYALTYBONUS);
+        myMap.put(TransactionCategoryClass.GROSSLOYALTYBONUS, TRANSTYPE_GROSSLOYALTYBONUS);
+        myMap.put(TransactionCategoryClass.TAXFREELOYALTYBONUS, TRANSTYPE_TAXFREELOYALTYBONUS);
+        myMap.put(TransactionCategoryClass.TAXABLEGAIN, TRANSTYPE_TAXABLEGAIN);
+        myMap.put(TransactionCategoryClass.TAXFREEGAIN, TRANSTYPE_TAXFREEGAIN);
+        myMap.put(TransactionCategoryClass.RESIDENTIALGAIN, TRANSTYPE_RESIDENTIALGAIN);
+        myMap.put(TransactionCategoryClass.CAPITALGAIN, TRANSTYPE_CAPITALGAIN);
+        myMap.put(TransactionCategoryClass.MARKETGROWTH, TRANSTYPE_MARKETGROWTH);
+        myMap.put(TransactionCategoryClass.CURRENCYFLUCTUATION, TRANSTYPE_CURRFLUCT);
+        myMap.put(TransactionCategoryClass.TAXCREDIT, TRANSTYPE_TAXCREDIT);
+        myMap.put(TransactionCategoryClass.NATINSURANCE, TRANSTYPE_NATINS);
+        myMap.put(TransactionCategoryClass.DEEMEDBENEFIT, TRANSTYPE_BENEFIT);
+        myMap.put(TransactionCategoryClass.CHARITYDONATION, TRANSTYPE_CHARDONATION);
+        myMap.put(TransactionCategoryClass.OPENINGBALANCE, TRANSTYPE_OPENINGBALANCE);
+        myMap.put(TransactionCategoryClass.INCOMETOTALS, TRANSTYPE_INCOMETOTALS);
+        myMap.put(TransactionCategoryClass.EXPENSETOTALS, TRANSTYPE_EXPENSETOTALS);
+        myMap.put(TransactionCategoryClass.SECURITYPARENT, TRANSTYPE_SECURITYPARENT);
+        myMap.put(TransactionCategoryClass.TOTALS, TRANSTYPE_TOTALS);
+        return myMap;
     }
 
     /**
@@ -1208,160 +1396,43 @@ public enum StaticDataResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForTransType(final TransactionCategoryClass pValue) {
-        switch (pValue) {
-            case TAXEDINCOME:
-                return TRANSTYPE_TAXEDINCOME;
-            case RENTALINCOME:
-                return TRANSTYPE_RENTALINCOME;
-            case ROOMRENTALINCOME:
-                return TRANSTYPE_ROOMRENTINCOME;
-            case INTEREST:
-                return TRANSTYPE_INTEREST;
-            case DIVIDEND:
-                return TRANSTYPE_DIVIDEND;
-            case GRANTINCOME:
-                return TRANSTYPE_GRANTINCOME;
-            case BENEFITINCOME:
-                return TRANSTYPE_BENEFITINCOME;
-            case GIFTEDINCOME:
-                return TRANSTYPE_GIFTEDINCOME;
-            case INHERITED:
-                return TRANSTYPE_INHERITED;
-            case LOANINTERESTEARNED:
-                return TRANSTYPE_LOANINTEARNED;
-            case CASHBACK:
-                return TRANSTYPE_CASHBACK;
-            case LOYALTYBONUS:
-                return TRANSTYPE_LOYALTYBONUS;
-            case OTHERINCOME:
-                return TRANSTYPE_OTHERINCOME;
-            case TRANSFER:
-                return TRANSTYPE_TRANSFER;
-            case UNITSADJUST:
-                return TRANSTYPE_UNITSADJUST;
-            case STOCKSPLIT:
-                return TRANSTYPE_STOCKSPLIT;
-            case STOCKDEMERGER:
-                return TRANSTYPE_STOCKDEMERGER;
-            case STOCKTAKEOVER:
-                return TRANSTYPE_STOCKTAKEOVER;
-            case SECURITYREPLACE:
-                return TRANSTYPE_SECURITYREPLACE;
-            case STOCKRIGHTSISSUE:
-                return TRANSTYPE_STOCKRIGHTSISSUE;
-            case PORTFOLIOXFER:
-                return TRANSTYPE_PORTFOLIOXFER;
-            case OPTIONSVEST:
-                return TRANSTYPE_OPTIONSVEST;
-            case OPTIONSEXERCISE:
-                return TRANSTYPE_OPTIONSEXERCISE;
-            case EXPENSE:
-                return TRANSTYPE_EXPENSE;
-            case BADDEBT:
-                return TRANSTYPE_BADDEBT;
-            case LOCALTAXES:
-                return TRANSTYPE_LOCALTAXES;
-            case WRITEOFF:
-                return TRANSTYPE_WRITEOFF;
-            case LOANINTERESTCHARGED:
-                return TRANSTYPE_LOANINTCHARGE;
-            case TAXRELIEF:
-                return TRANSTYPE_TAXRELIEF;
-            case TAXSETTLEMENT:
-                return TRANSTYPE_TAXSETTLE;
-            case TAXEDINTEREST:
-                return TRANSTYPE_TAXEDINTEREST;
-            case TAXFREEINTEREST:
-                return TRANSTYPE_TAXFREEINTEREST;
-            case GROSSINTEREST:
-                return TRANSTYPE_GROSSINTEREST;
-            case SHAREDIVIDEND:
-                return TRANSTYPE_SHAREDIVIDEND;
-            case UNITTRUSTDIVIDEND:
-                return TRANSTYPE_UTDIVIDEND;
-            case FOREIGNDIVIDEND:
-                return TRANSTYPE_FOREIGNDIVIDEND;
-            case TAXFREEDIVIDEND:
-                return TRANSTYPE_TAXFREEDIVIDEND;
-            case TAXEDLOYALTYBONUS:
-                return TRANSTYPE_TAXEDLOYALTYBONUS;
-            case TAXFREELOYALTYBONUS:
-                return TRANSTYPE_TAXFREELOYALTYBONUS;
-            case GROSSLOYALTYBONUS:
-                return TRANSTYPE_GROSSLOYALTYBONUS;
-            case TAXABLEGAIN:
-                return TRANSTYPE_TAXABLEGAIN;
-            case TAXFREEGAIN:
-                return TRANSTYPE_TAXFREEGAIN;
-            case CAPITALGAIN:
-                return TRANSTYPE_CAPITALGAIN;
-            case MARKETGROWTH:
-                return TRANSTYPE_MARKETGROWTH;
-            case CURRENCYFLUCTUATION:
-                return TRANSTYPE_CURRFLUCT;
-            case TAXCREDIT:
-                return TRANSTYPE_TAXCREDIT;
-            case NATINSURANCE:
-                return TRANSTYPE_NATINS;
-            case DEEMEDBENEFIT:
-                return TRANSTYPE_BENEFIT;
-            case CHARITYDONATION:
-                return TRANSTYPE_CHARDONATION;
-            case OPENINGBALANCE:
-                return TRANSTYPE_OPENINGBALANCE;
-            case INCOMETOTALS:
-                return TRANSTYPE_INCOMETOTALS;
-            case EXPENSETOTALS:
-                return TRANSTYPE_EXPENSETOTALS;
-            case SECURITYPARENT:
-                return TRANSTYPE_SECURITYPARENT;
-            case TOTALS:
-                return TRANSTYPE_TOTALS;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(TRANSACTION_MAP, pValue);
     }
 
     /**
-     * Obtain key for tax basis.
+     * Build tax basis map.
+     * @return the map
+     */
+    private static Map<TaxBasisClass, TethysResourceId> buildTaxBasisMap() {
+        /* Create the map and return it */
+        Map<TaxBasisClass, TethysResourceId> myMap = new EnumMap<>(TaxBasisClass.class);
+        myMap.put(TaxBasisClass.SALARY, TAXBASIS_SALARY);
+        myMap.put(TaxBasisClass.ROOMRENTAL, TAXBASIS_ROOMRENTAL);
+        myMap.put(TaxBasisClass.RENTALINCOME, TAXBASIS_RENTALINCOME);
+        myMap.put(TaxBasisClass.TAXEDINTEREST, TAXBASIS_TAXEDINTEREST);
+        myMap.put(TaxBasisClass.UNTAXEDINTEREST, TAXBASIS_UNTAXEDINTEREST);
+        myMap.put(TaxBasisClass.DIVIDEND, TAXBASIS_DIVIDEND);
+        myMap.put(TaxBasisClass.UNITTRUSTDIVIDEND, TAXBASIS_UTDIVIDEND);
+        myMap.put(TaxBasisClass.FOREIGNDIVIDEND, TAXBASIS_FOREIGNDIVIDEND);
+        myMap.put(TaxBasisClass.TAXABLEGAINS, TAXBASIS_TAXABLEGAINS);
+        myMap.put(TaxBasisClass.RESIDENTIALGAINS, TAXBASIS_RESIDENTIALGAINS);
+        myMap.put(TaxBasisClass.CAPITALGAINS, TAXBASIS_CAPITALGAINS);
+        myMap.put(TaxBasisClass.BADDEBT, TAXBASIS_BADDEBT);
+        myMap.put(TaxBasisClass.TAXPAID, TAXBASIS_TAXPAID);
+        myMap.put(TaxBasisClass.MARKET, TAXBASIS_MARKET);
+        myMap.put(TaxBasisClass.TAXFREE, TAXBASIS_TAXFREE);
+        myMap.put(TaxBasisClass.EXPENSE, TAXBASIS_EXPENSE);
+        myMap.put(TaxBasisClass.VIRTUAL, TAXBASIS_VIRTUAL);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for taxBasis.
      * @param pValue the Value
      * @return the resource key
      */
     protected static TethysResourceId getKeyForTaxBasis(final TaxBasisClass pValue) {
-        switch (pValue) {
-            case SALARY:
-                return TAXBASIS_SALARY;
-            case RENTALINCOME:
-                return TAXBASIS_RENTALINCOME;
-            case TAXEDINTEREST:
-                return TAXBASIS_TAXEDINTEREST;
-            case UNTAXEDINTEREST:
-                return TAXBASIS_UNTAXEDINTEREST;
-            case DIVIDEND:
-                return TAXBASIS_DIVIDEND;
-            case UNITTRUSTDIVIDEND:
-                return TAXBASIS_UTDIVIDEND;
-            case FOREIGNDIVIDEND:
-                return TAXBASIS_FOREIGNDIVIDEND;
-            case TAXABLEGAINS:
-                return TAXBASIS_TAXABLEGAINS;
-            case CAPITALGAINS:
-                return TAXBASIS_CAPITALGAINS;
-            case BADDEBT:
-                return TAXBASIS_BADDEBT;
-            case TAXPAID:
-                return TAXBASIS_TAXPAID;
-            case MARKET:
-                return TAXBASIS_MARKET;
-            case TAXFREE:
-                return TAXBASIS_TAXFREE;
-            case EXPENSE:
-                return TAXBASIS_EXPENSE;
-            case VIRTUAL:
-                return TAXBASIS_VIRTUAL;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(TAXBASIS_MAP, pValue);
     }
 
     /**
@@ -1457,23 +1528,52 @@ public enum StaticDataResource implements TethysResourceId {
     }
 
     /**
-     * Obtain key for tax regime.
+     * Build tax regime map.
+     * @return the map
+     */
+    private static Map<TaxRegimeClass, TethysResourceId> buildTaxRegimeMap() {
+        /* Create the map and return it */
+        Map<TaxRegimeClass, TethysResourceId> myMap = new EnumMap<>(TaxRegimeClass.class);
+        myMap.put(TaxRegimeClass.ARCHIVE, TAXREGIME_ARCHIVE);
+        myMap.put(TaxRegimeClass.STANDARD, TAXREGIME_STANDARD);
+        myMap.put(TaxRegimeClass.LOINTEREST, TAXREGIME_LOINTEREST);
+        myMap.put(TaxRegimeClass.ADDITIONALBAND, TAXREGIME_ADDBAND);
+        myMap.put(TaxRegimeClass.SAVINGSALLOWANCE, TAXREGIME_SAVINGSALLOW);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for taxRegime.
      * @param pValue the Value
      * @return the resource key
      */
     protected static TethysResourceId getKeyForTaxRegime(final TaxRegimeClass pValue) {
-        switch (pValue) {
-            case ARCHIVE:
-                return TAXREGIME_ARCHIVE;
-            case STANDARD:
-                return TAXREGIME_STANDARD;
-            case LOINTEREST:
-                return TAXREGIME_LOINTEREST;
-            case ADDITIONALBAND:
-                return TAXREGIME_ADDBAND;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(TAXREGIME_MAP, pValue);
+    }
+
+    /**
+     * Build frequency map.
+     * @return the map
+     */
+    private static Map<FrequencyClass, TethysResourceId> buildFrequencyMap() {
+        /* Create the map and return it */
+        Map<FrequencyClass, TethysResourceId> myMap = new EnumMap<>(FrequencyClass.class);
+        myMap.put(FrequencyClass.ONCE, FREQUENCY_ONCE);
+        myMap.put(FrequencyClass.DAILY, FREQUENCY_DAILY);
+        myMap.put(FrequencyClass.WEEKLY, FREQUENCY_WEEKLY);
+        myMap.put(FrequencyClass.MONTHLY, FREQUENCY_MONTHLY);
+        myMap.put(FrequencyClass.ANNUALLY, FREQUENCY_ANNUALLY);
+        myMap.put(FrequencyClass.EVERY, FREQUENCY_EVERY);
+        myMap.put(FrequencyClass.ALTERNATE, FREQUENCY_ALTERNATE);
+        myMap.put(FrequencyClass.EVERYTHIRD, FREQUENCY_EVERYTHIRD);
+        myMap.put(FrequencyClass.EVERYFOURTH, FREQUENCY_EVERYFOURTH);
+        myMap.put(FrequencyClass.EVERYSIXTH, FREQUENCY_EVERYSIXTH);
+        myMap.put(FrequencyClass.FIRSTWEEK, FREQUENCY_FIRSTWEEK);
+        myMap.put(FrequencyClass.SECONDWEEK, FREQUENCY_SECONDWEEK);
+        myMap.put(FrequencyClass.THIRDWEEK, FREQUENCY_THIRDWEEK);
+        myMap.put(FrequencyClass.FOURTHWEEK, FREQUENCY_FOURTHWEEK);
+        myMap.put(FrequencyClass.LASTWEEK, FREQUENCY_LASTWEEK);
+        return myMap;
     }
 
     /**
@@ -1482,92 +1582,73 @@ public enum StaticDataResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForFrequency(final FrequencyClass pValue) {
-        switch (pValue) {
-            case ONCE:
-                return FREQUENCY_ONCE;
-            case DAILY:
-                return FREQUENCY_DAILY;
-            case WEEKLY:
-                return FREQUENCY_WEEKLY;
-            case MONTHLY:
-                return FREQUENCY_MONTHLY;
-            case ANNUALLY:
-                return FREQUENCY_ANNUALLY;
-            case EVERY:
-                return FREQUENCY_EVERY;
-            case ALTERNATE:
-                return FREQUENCY_ALTERNATE;
-            case EVERYTHIRD:
-                return FREQUENCY_EVERYTHIRD;
-            case EVERYFOURTH:
-                return FREQUENCY_EVERYFOURTH;
-            case EVERYSIXTH:
-                return FREQUENCY_EVERYSIXTH;
-            case FIRSTWEEK:
-                return FREQUENCY_FIRSTWEEK;
-            case SECONDWEEK:
-                return FREQUENCY_SECONDWEEK;
-            case THIRDWEEK:
-                return FREQUENCY_THIRDWEEK;
-            case FOURTHWEEK:
-                return FREQUENCY_FOURTHWEEK;
-            case LASTWEEK:
-                return FREQUENCY_LASTWEEK;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(FREQUENCY_MAP, pValue);
     }
 
     /**
-     * Obtain key for transInfoType.
+     * Build taxInfo map.
+     * @return the map
+     */
+    private static Map<TaxYearInfoClass, TethysResourceId> buildTaxInfoMap() {
+        /* Create the map and return it */
+        Map<TaxYearInfoClass, TethysResourceId> myMap = new EnumMap<>(TaxYearInfoClass.class);
+        myMap.put(TaxYearInfoClass.ALLOWANCE, TAXINFO_ALLOWANCE);
+        myMap.put(TaxYearInfoClass.LOTAXBAND, TAXINFO_LOBAND);
+        myMap.put(TaxYearInfoClass.BASICTAXBAND, TAXINFO_BASICBAND);
+        myMap.put(TaxYearInfoClass.RENTALALLOWANCE, TAXINFO_RENTALALLOWANCE);
+        myMap.put(TaxYearInfoClass.CAPITALALLOWANCE, TAXINFO_CAPITALALLOWANCE);
+        myMap.put(TaxYearInfoClass.SAVINGSALLOWANCE, TAXINFO_SAVINGSALLOWANCE);
+        myMap.put(TaxYearInfoClass.HISAVINGSALLOWANCE, TAXINFO_HISAVINGSALLOWANCE);
+        myMap.put(TaxYearInfoClass.DIVIDENDALLOWANCE, TAXINFO_DIVIDENDALLOWANCE);
+        myMap.put(TaxYearInfoClass.LOAGEALLOWANCE, TAXINFO_LOAGEALLOWANCE);
+        myMap.put(TaxYearInfoClass.HIAGEALLOWANCE, TAXINFO_HIAGEALLOWANCE);
+        myMap.put(TaxYearInfoClass.AGEALLOWANCELIMIT, TAXINFO_AGEALLOWLIMIT);
+        myMap.put(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, TAXINFO_ADDALLOWLIMIT);
+        myMap.put(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, TAXINFO_ADDINCTHRES);
+        myMap.put(TaxYearInfoClass.LOTAXRATE, TAXINFO_LORATE);
+        myMap.put(TaxYearInfoClass.BASICTAXRATE, TAXINFO_BASICRATE);
+        myMap.put(TaxYearInfoClass.HITAXRATE, TAXINFO_HIRATE);
+        myMap.put(TaxYearInfoClass.ADDITIONALTAXRATE, TAXINFO_ADDRATE);
+        myMap.put(TaxYearInfoClass.INTERESTTAXRATE, TAXINFO_INTRATE);
+        myMap.put(TaxYearInfoClass.DIVIDENDTAXRATE, TAXINFO_DIVRATE);
+        myMap.put(TaxYearInfoClass.HIDIVIDENDTAXRATE, TAXINFO_HIDIVRATE);
+        myMap.put(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, TAXINFO_ADDDIVRATE);
+        myMap.put(TaxYearInfoClass.CAPITALTAXRATE, TAXINFO_CAPRATE);
+        myMap.put(TaxYearInfoClass.HICAPITALTAXRATE, TAXINFO_HICAPRATE);
+        myMap.put(TaxYearInfoClass.RESIDENTIALTAXRATE, TAXINFO_RESRATE);
+        myMap.put(TaxYearInfoClass.HIRESIDENTIALTAXRATE, TAXINFO_HIRESRATE);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for taxInfoType.
      * @param pValue the Value
      * @return the resource key
      */
     protected static TethysResourceId getKeyForTaxInfo(final TaxYearInfoClass pValue) {
-        switch (pValue) {
-            case ALLOWANCE:
-                return TAXINFO_ALLOWANCE;
-            case LOTAXBAND:
-                return TAXINFO_LOBAND;
-            case BASICTAXBAND:
-                return TAXINFO_BASICBAND;
-            case RENTALALLOWANCE:
-                return TAXINFO_RENTALALLOWANCE;
-            case CAPITALALLOWANCE:
-                return TAXINFO_CAPITALALLOWANCE;
-            case LOAGEALLOWANCE:
-                return TAXINFO_LOAGEALLOWANCE;
-            case HIAGEALLOWANCE:
-                return TAXINFO_HIAGEALLOWANCE;
-            case AGEALLOWANCELIMIT:
-                return TAXINFO_AGEALLOWLIMIT;
-            case ADDITIONALALLOWANCELIMIT:
-                return TAXINFO_ADDALLOWLIMIT;
-            case ADDITIONALINCOMETHRESHOLD:
-                return TAXINFO_ADDINCTHRES;
-            case LOTAXRATE:
-                return TAXINFO_LORATE;
-            case BASICTAXRATE:
-                return TAXINFO_BASICRATE;
-            case HITAXRATE:
-                return TAXINFO_HIRATE;
-            case ADDITIONALTAXRATE:
-                return TAXINFO_ADDRATE;
-            case INTERESTTAXRATE:
-                return TAXINFO_INTRATE;
-            case DIVIDENDTAXRATE:
-                return TAXINFO_DIVRATE;
-            case HIDIVIDENDTAXRATE:
-                return TAXINFO_HIDIVRATE;
-            case ADDITIONALDIVIDENDTAXRATE:
-                return TAXINFO_ADDDIVRATE;
-            case CAPITALTAXRATE:
-                return TAXINFO_CAPRATE;
-            case HICAPITALTAXRATE:
-                return TAXINFO_HICAPRATE;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(TAXINFO_MAP, pValue);
+    }
+
+    /**
+     * Build accountInfo map.
+     * @return the map
+     */
+    private static Map<AccountInfoClass, TethysResourceId> buildAccountInfoMap() {
+        /* Create the map and return it */
+        Map<AccountInfoClass, TethysResourceId> myMap = new EnumMap<>(AccountInfoClass.class);
+        myMap.put(AccountInfoClass.MATURITY, ACCOUNTINFO_MATURITY);
+        myMap.put(AccountInfoClass.OPENINGBALANCE, ACCOUNTINFO_OPENING);
+        myMap.put(AccountInfoClass.AUTOEXPENSE, ACCOUNTINFO_AUTOEXPENSE);
+        myMap.put(AccountInfoClass.AUTOPAYEE, ACCOUNTINFO_AUTOPAYEE);
+        myMap.put(AccountInfoClass.WEBSITE, ACCOUNTINFO_WEBSITE);
+        myMap.put(AccountInfoClass.CUSTOMERNO, ACCOUNTINFO_CUSTNO);
+        myMap.put(AccountInfoClass.USERID, ACCOUNTINFO_USERID);
+        myMap.put(AccountInfoClass.PASSWORD, ACCOUNTINFO_PASSWORD);
+        myMap.put(AccountInfoClass.SORTCODE, ACCOUNTINFO_SORTCODE);
+        myMap.put(AccountInfoClass.ACCOUNT, ACCOUNTINFO_ACCOUNT);
+        myMap.put(AccountInfoClass.REFERENCE, ACCOUNTINFO_REFERENCE);
+        myMap.put(AccountInfoClass.NOTES, ACCOUNTINFO_NOTES);
+        return myMap;
     }
 
     /**
@@ -1576,34 +1657,37 @@ public enum StaticDataResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForAccountInfo(final AccountInfoClass pValue) {
-        switch (pValue) {
-            case MATURITY:
-                return ACCOUNTINFO_MATURITY;
-            case OPENINGBALANCE:
-                return ACCOUNTINFO_OPENING;
-            case AUTOEXPENSE:
-                return ACCOUNTINFO_AUTOEXPENSE;
-            case AUTOPAYEE:
-                return ACCOUNTINFO_AUTOPAYEE;
-            case WEBSITE:
-                return ACCOUNTINFO_WEBSITE;
-            case CUSTOMERNO:
-                return ACCOUNTINFO_CUSTNO;
-            case USERID:
-                return ACCOUNTINFO_USERID;
-            case PASSWORD:
-                return ACCOUNTINFO_PASSWORD;
-            case SORTCODE:
-                return ACCOUNTINFO_SORTCODE;
-            case ACCOUNT:
-                return ACCOUNTINFO_ACCOUNT;
-            case REFERENCE:
-                return ACCOUNTINFO_REFERENCE;
-            case NOTES:
-                return ACCOUNTINFO_NOTES;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(ACCOUNTINFO_MAP, pValue);
+    }
+
+    /**
+     * Build transInfo map.
+     * @return the map
+     */
+    private static Map<TransactionInfoClass, TethysResourceId> buildTransInfoMap() {
+        /* Create the map and return it */
+        Map<TransactionInfoClass, TethysResourceId> myMap = new EnumMap<>(TransactionInfoClass.class);
+        myMap.put(TransactionInfoClass.TAXCREDIT, TRANSTYPE_TAXCREDIT);
+        myMap.put(TransactionInfoClass.NATINSURANCE, TRANSTYPE_NATINS);
+        myMap.put(TransactionInfoClass.DEEMEDBENEFIT, TRANSTYPE_BENEFIT);
+        myMap.put(TransactionInfoClass.CHARITYDONATION, TRANSTYPE_CHARDONATION);
+        myMap.put(TransactionInfoClass.PENSION, TRANSINFO_PENSION);
+        myMap.put(TransactionInfoClass.CREDITUNITS, TRANSINFO_CREDITUNITS);
+        myMap.put(TransactionInfoClass.DEBITUNITS, TRANSINFO_DEBITUNITS);
+        myMap.put(TransactionInfoClass.PARTNERAMOUNT, TRANSINFO_PARTNERAMOUNT);
+        myMap.put(TransactionInfoClass.THIRDPARTYAMOUNT, TRANSINFO_THIRDPARTYAMOUNT);
+        myMap.put(TransactionInfoClass.CREDITDATE, TRANSINFO_CREDITDATE);
+        myMap.put(TransactionInfoClass.DILUTION, TRANSINFO_DILUTION);
+        myMap.put(TransactionInfoClass.QUALIFYYEARS, TRANSINFO_QUALYEARS);
+        myMap.put(TransactionInfoClass.REFERENCE, TRANSINFO_REFERENCE);
+        myMap.put(TransactionInfoClass.COMMENTS, TRANSINFO_COMMENTS);
+        myMap.put(TransactionInfoClass.THIRDPARTY, TRANSINFO_THIRDPARTY);
+        myMap.put(TransactionInfoClass.PRICE, TRANSINFO_PRICE);
+        myMap.put(TransactionInfoClass.COMMISSION, TRANSINFO_COMMISSION);
+        myMap.put(TransactionInfoClass.OPTIONSGRANT, TRANSINFO_OPTIONS);
+        myMap.put(TransactionInfoClass.TRANSTAG, TRANSINFO_TRANSTAG);
+        myMap.put(TransactionInfoClass.XCHANGERATE, TRANSINFO_XCHANGERATE);
+        return myMap;
     }
 
     /**
@@ -1612,49 +1696,6 @@ public enum StaticDataResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForTransInfo(final TransactionInfoClass pValue) {
-        switch (pValue) {
-            case TAXCREDIT:
-                return TRANSTYPE_TAXCREDIT;
-            case NATINSURANCE:
-                return TRANSTYPE_NATINS;
-            case DEEMEDBENEFIT:
-                return TRANSTYPE_BENEFIT;
-            case CHARITYDONATION:
-                return TRANSTYPE_CHARDONATION;
-            case PENSION:
-                return TRANSINFO_PENSION;
-            case CREDITUNITS:
-                return TRANSINFO_CREDITUNITS;
-            case DEBITUNITS:
-                return TRANSINFO_DEBITUNITS;
-            case PARTNERAMOUNT:
-                return TRANSINFO_PARTNERAMOUNT;
-            case THIRDPARTYAMOUNT:
-                return TRANSINFO_THIRDPARTYAMOUNT;
-            case CREDITDATE:
-                return TRANSINFO_CREDITDATE;
-            case DILUTION:
-                return TRANSINFO_DILUTION;
-            case QUALIFYYEARS:
-                return TRANSINFO_QUALYEARS;
-            case REFERENCE:
-                return TRANSINFO_REFERENCE;
-            case COMMENTS:
-                return TRANSINFO_COMMENTS;
-            case THIRDPARTY:
-                return TRANSINFO_THIRDPARTY;
-            case PRICE:
-                return TRANSINFO_PRICE;
-            case COMMISSION:
-                return TRANSINFO_COMMISSION;
-            case OPTIONSGRANT:
-                return TRANSINFO_OPTIONS;
-            case TRANSTAG:
-                return TRANSINFO_TRANSTAG;
-            case XCHANGERATE:
-                return TRANSINFO_XCHANGERATE;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
-        }
+        return TethysResourceBuilder.getKeyForEnum(TRANSINFO_MAP, pValue);
     }
 }

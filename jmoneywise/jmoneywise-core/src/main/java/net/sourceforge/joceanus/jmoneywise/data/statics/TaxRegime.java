@@ -143,6 +143,30 @@ public class TaxRegime
     }
 
     /**
+     * Determine whether this tax regime supports a savings allowance.
+     * @return <code>true/false</code>
+     */
+    public boolean hasSavingsAllowance() {
+        return getStaticClass().hasSavingsAllowance();
+    }
+
+    /**
+     * Determine whether this tax regime supports age related allowances.
+     * @return <code>true/false</code>
+     */
+    public boolean hasAgeRelatedAllowance() {
+        return getStaticClass().hasAgeRelatedAllowance();
+    }
+
+    /**
+     * Determine whether this tax regime splits out residential capital gains.
+     * @return <code>true/false</code>
+     */
+    public boolean hasResidentialCapitalGains() {
+        return getStaticClass().hasResidentialCapitalGains();
+    }
+
+    /**
      * Represents a list of {@link TaxRegime} objects.
      */
     public static class TaxRegimeList
