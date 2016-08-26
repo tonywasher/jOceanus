@@ -200,6 +200,7 @@ public class TransactionInfoSet
         TransactionAsset myPartner = myTransaction.getPartner();
         AssetDirection myDir = myTransaction.getDirection();
         TransactionCategory myCategory = myTransaction.getCategory();
+        TaxYear myYear = myTransaction.getTaxYear();
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
@@ -236,7 +237,7 @@ public class TransactionInfoSet
 
             /* Handle Tax Credit */
             case TAXCREDIT:
-                return isTaxCreditClassRequired(myAccount, myClass);
+                return isTaxCreditClassRequired(myAccount, myClass, myYear);
 
             /* Handle debit units separately */
             case DEBITUNITS:
@@ -302,10 +303,12 @@ public class TransactionInfoSet
      * Determine if a TaxCredit infoSet class is required.
      * @param pDebit the debit account
      * @param pClass the category class
+     * @param pYear the TaxYear
      * @return the status
      */
-    protected static MetisFieldRequired isTaxCreditClassRequired(final TransactionAsset pDebit,
-                                                                 final TransactionCategoryClass pClass) {
+    private static MetisFieldRequired isTaxCreditClassRequired(final TransactionAsset pDebit,
+                                                               final TransactionCategoryClass pClass,
+                                                               final TaxYear pYear) {
         /* Switch on class */
         switch (pClass) {
             case TAXEDINCOME:
@@ -314,15 +317,18 @@ public class TransactionInfoSet
             case GRANTINCOME:
             case LOANINTERESTCHARGED:
                 return MetisFieldRequired.CANEXIST;
-            case INTEREST:
             case LOYALTYBONUS:
                 return (pDebit.isTaxFree() || pDebit.isGross())
                                                                 ? MetisFieldRequired.NOTALLOWED
                                                                 : MetisFieldRequired.MUSTEXIST;
+            case INTEREST:
+                return (pDebit.isTaxFree() || pDebit.isGross() || pYear.hasSavingsAllowance())
+                                                                                               ? MetisFieldRequired.NOTALLOWED
+                                                                                               : MetisFieldRequired.MUSTEXIST;
             case DIVIDEND:
-                return pDebit.isTaxFree()
-                                          ? MetisFieldRequired.NOTALLOWED
-                                          : MetisFieldRequired.MUSTEXIST;
+                return pDebit.isTaxFree() || pYear.hasSavingsAllowance()
+                                                                         ? MetisFieldRequired.NOTALLOWED
+                                                                         : MetisFieldRequired.MUSTEXIST;
             case TRANSFER:
                 return (pDebit instanceof SecurityHolding)
                        && (((SecurityHolding) pDebit).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND))

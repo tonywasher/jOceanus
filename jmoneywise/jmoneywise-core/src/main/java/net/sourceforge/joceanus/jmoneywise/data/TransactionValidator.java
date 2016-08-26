@@ -105,6 +105,7 @@ public final class TransactionValidator {
                 return checkLoyaltyBonus(pAccount);
 
             case RENTALINCOME:
+            case RENTALEXPENSE:
             case ROOMRENTALINCOME:
                 /* Account must be property */
                 return (pAccount instanceof SecurityHolding)
@@ -143,7 +144,7 @@ public final class TransactionValidator {
             case TRANSFER:
                 return true;
 
-                /* Reject other categories */
+            /* Reject other categories */
             default:
                 return false;
         }
@@ -185,8 +186,12 @@ public final class TransactionValidator {
 
             case RENTALINCOME:
             case ROOMRENTALINCOME:
-                /* Cannot refund Rental Income yet */
+                /* Cannot refund Rental Income */
                 return pDirection.isTo();
+
+            case RENTALEXPENSE:
+                /* Cannot refund Rental Expense */
+                return pDirection.isFrom();
 
             case INTEREST:
                 /* Cannot refund Interest yet */
@@ -254,14 +259,14 @@ public final class TransactionValidator {
                 case TRANSFER:
                     /* Transfer must be to/from deposit/cash/loan */
                     return myPartnerType.isAutoExpense()
-                                                        ? myAccountType.isValued()
-                                                        : myPartnerType.isValued();
+                                                         ? myAccountType.isValued()
+                                                         : myPartnerType.isValued();
 
                 case EXPENSE:
                     /* Transfer must be to/from payee */
                     return pPartner instanceof Payee;
 
-                    /* Auto Expense cannot be used for other categories */
+                /* Auto Expense cannot be used for other categories */
                 default:
                     return false;
             }
@@ -296,8 +301,9 @@ public final class TransactionValidator {
                        && ((Payee) pPartner).isPayeeClass(PayeeTypeClass.INDIVIDUAL);
 
             case RENTALINCOME:
+            case RENTALEXPENSE:
             case ROOMRENTALINCOME:
-                /* RentalIncome must have a loan partner */
+                /* RentalIncome/Expense must have a loan partner */
                 return myPartnerType.isLoan();
 
             case WRITEOFF:

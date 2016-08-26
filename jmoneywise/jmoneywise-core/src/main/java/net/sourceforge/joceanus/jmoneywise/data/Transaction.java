@@ -87,6 +87,11 @@ public class Transaction
     public static final MetisField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
+     * TaxYear Field Id.
+     */
+    public static final MetisField FIELD_TAXYEAR = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataType.TAXYEAR.getItemName());
+
+    /**
      * EventInfoSet field Id.
      */
     private static final MetisField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
@@ -213,6 +218,9 @@ public class Transaction
         if (FIELD_DATE.equals(pField)) {
             return true;
         }
+        if (FIELD_TAXYEAR.equals(pField)) {
+            return false;
+        }
 
         /* Pass call on */
         return super.includeXmlField(pField);
@@ -260,6 +268,33 @@ public class Transaction
      */
     private void setValueDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_DATE, pValue);
+        TaxYearList myYears = getDataSet().getTaxYears();
+        setValueTaxYear(myYears.findTaxYearForDate(pValue));
+    }
+
+    /**
+     * Obtain TaxYear.
+     * @return the taxYear
+     */
+    public TaxYear getTaxYear() {
+        return getTaxYear(getValueSet());
+    }
+
+    /**
+     * Obtain TaxYear.
+     * @param pValueSet the valueSet
+     * @return the TaxYear
+     */
+    public static TaxYear getTaxYear(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_TAXYEAR, TaxYear.class);
+    }
+
+    /**
+     * Set taxYear value.
+     * @param pValue the value
+     */
+    private void setValueTaxYear(final TaxYear pValue) {
+        getValueSet().setValue(FIELD_TAXYEAR, pValue);
     }
 
     @Override
@@ -615,6 +650,9 @@ public class Transaction
     public void resolveDataSetLinks() throws OceanusException {
         /* Update the Transaction details */
         super.resolveDataSetLinks();
+
+        /* Resolve taxYear */
+        resolveDataLink(FIELD_TAXYEAR, getDataSet().getTaxYears());
 
         /* Sort linkSets */
         if (hasInfoSet) {

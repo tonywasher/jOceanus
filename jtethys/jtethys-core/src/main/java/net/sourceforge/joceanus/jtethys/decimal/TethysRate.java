@@ -64,12 +64,24 @@ public class TethysRate
 
     /**
      * Construct a new Rate by setting the value explicitly.
-     * @param pValue the unscaled value
+     * @param pValue the unscaled value of a whole percentage (e.g. 2 = 2%)
      * @return the new Rate
      */
     public static TethysRate getWholePercentage(final long pValue) {
         TethysRate myRate = new TethysRate();
         myRate.setValue(adjustDecimals(pValue, NUM_DECIMALS
+                                               - TethysDecimalParser.ADJUST_PERCENT), NUM_DECIMALS);
+        return myRate;
+    }
+
+    /**
+     * Construct a new Rate by setting the value explicitly.
+     * @param pValue the unscaled value of a whole percentage (e.g. 25 = 2.5%)
+     * @return the new Rate
+     */
+    public static TethysRate getWholePermille(final long pValue) {
+        TethysRate myRate = new TethysRate();
+        myRate.setValue(adjustDecimals(pValue, NUM_DECIMALS - 1
                                                - TethysDecimalParser.ADJUST_PERCENT), NUM_DECIMALS);
         return myRate;
     }
