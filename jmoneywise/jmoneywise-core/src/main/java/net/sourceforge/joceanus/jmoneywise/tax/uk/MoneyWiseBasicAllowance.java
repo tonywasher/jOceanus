@@ -22,12 +22,42 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Basic UK Tax Allowance.
  */
-public abstract class MoneyWiseBasicAllowance {
+public abstract class MoneyWiseBasicAllowance
+        implements MetisDataContents {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseBasicAllowance.class.getSimpleName());
+
+    /**
+     * Allowance Field Id.
+     */
+    private static final MetisField FIELD_ALLOWANCE = FIELD_DEFS.declareEqualityField("Allowance");
+
+    /**
+     * RentalAllowance Field Id.
+     */
+    private static final MetisField FIELD_RENTAL = FIELD_DEFS.declareEqualityField("RentalAllowance");
+
+    /**
+     * CapitalAllowance Field Id.
+     */
+    private static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField("CapitalAllowance");
+
+    /**
+     * MarginalReduction Field Id.
+     */
+    private static final MetisField FIELD_MARGINAL = FIELD_DEFS.declareEqualityField("MarginalReduction");
+
     /**
      * Allowance.
      */
@@ -140,5 +170,33 @@ public abstract class MoneyWiseBasicAllowance {
         TethysMoney myAllowance = new TethysMoney(theAllowance);
         myAllowance.setZero();
         return myAllowance;
+    }
+
+    /**
+     * Obtain the data fields.
+     * @return the data fields
+     */
+    protected static MetisFields getBaseFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_ALLOWANCE.equals(pField)) {
+            return theAllowance;
+        }
+        if (FIELD_RENTAL.equals(pField)) {
+            return theRentalAllowance;
+        }
+        if (FIELD_CAPITAL.equals(pField)) {
+            return theCapitalAllowance;
+        }
+        if (FIELD_MARGINAL.equals(pField)) {
+            return theMarginalReduction;
+        }
+
+        /* Not recognised */
+        return MetisFieldValue.UNKNOWN;
     }
 }

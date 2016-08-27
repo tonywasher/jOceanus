@@ -22,6 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
@@ -32,7 +37,73 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 /**
  * Tax configuration.
  */
-public class MoneyWiseTaxConfig {
+public class MoneyWiseTaxConfig
+        implements MetisDataContents {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseTaxConfig.class.getSimpleName());
+
+    /**
+     * TaxYear Field Id.
+     */
+    private static final MetisField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityField("TaxYear");
+
+    /**
+     * TaxBasis Field Id.
+     */
+    private static final MetisField FIELD_TAXBASIS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXBASIS.getListName());
+
+    /**
+     * GrossTaxable Field Id.
+     */
+    private static final MetisField FIELD_GROSS = FIELD_DEFS.declareEqualityField("GrossTaxable");
+
+    /**
+     * Birthday Field Id.
+     */
+    private static final MetisField FIELD_BIRTHDAY = FIELD_DEFS.declareEqualityField("Birthday");
+
+    /**
+     * ClientAge Field Id.
+     */
+    private static final MetisField FIELD_AGE = FIELD_DEFS.declareEqualityField("Age");
+
+    /**
+     * AgeRelatedAllowances Field Id.
+     */
+    private static final MetisField FIELD_AGERELATED = FIELD_DEFS.declareEqualityField("AgeRelatedAllowances");
+
+    /**
+     * Allowance Field Id.
+     */
+    private static final MetisField FIELD_ALLOWANCE = FIELD_DEFS.declareEqualityField("Allowance");
+
+    /**
+     * Rental Allowance Field Id.
+     */
+    private static final MetisField FIELD_RENTAL = FIELD_DEFS.declareEqualityField("RentalAllowance");
+
+    /**
+     * Savings Allowance Field Id.
+     */
+    private static final MetisField FIELD_SAVINGS = FIELD_DEFS.declareEqualityField("SavingsAllowance");
+
+    /**
+     * Dividend Allowance Field Id.
+     */
+    private static final MetisField FIELD_DIVIDEND = FIELD_DEFS.declareEqualityField("DividendsAllowance");
+
+    /**
+     * Capital Allowance Field Id.
+     */
+    private static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField("CapitalAllowance");
+
+    /**
+     * TaxBands Field Id.
+     */
+    private static final MetisField FIELD_TAXBANDS = FIELD_DEFS.declareEqualityField("TaxBands");
+
     /**
      * TaxYear.
      */
@@ -89,6 +160,11 @@ public class MoneyWiseTaxConfig {
     private final TethysMoney theCapitalAllowance;
 
     /**
+     * Tax Bands.
+     */
+    private final MoneyWiseTaxBands theTaxBands;
+
+    /**
      * Constructor.
      * @param pTaxYear the taxYear
      * @param pTaxBasis the tax basis list
@@ -115,6 +191,9 @@ public class MoneyWiseTaxConfig {
         theSavingsAllowance = myAllowances.calculateSavingsAllowance(this);
         theDividendAllowance = myAllowances.calculateDividendAllowance();
         theCapitalAllowance = myAllowances.getCapitalAllowance();
+
+        /* Access the taxBands */
+        theTaxBands = theTaxYear.getStandardBands();
     }
 
     /**
@@ -136,6 +215,9 @@ public class MoneyWiseTaxConfig {
         theSavingsAllowance = new TethysMoney(pSource.getSavingsAllowance());
         theDividendAllowance = new TethysMoney(pSource.getDividendAllowance());
         theCapitalAllowance = new TethysMoney(pSource.getCapitalAllowance());
+
+        /* Copy the taxBands */
+        theTaxBands = new MoneyWiseTaxBands(pSource.getTaxBands());
     }
 
     /**
@@ -232,6 +314,80 @@ public class MoneyWiseTaxConfig {
      */
     public TethysMoney getCapitalAllowance() {
         return theCapitalAllowance;
+    }
+
+    /**
+     * Obtain the tax bands.
+     * @return the tax bands
+     */
+    public MoneyWiseTaxBands getTaxBands() {
+        return theTaxBands;
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_TAXYEAR.equals(pField)) {
+            return theTaxYear;
+        }
+        if (FIELD_TAXBASIS.equals(pField)) {
+            return theTaxBases;
+        }
+        if (FIELD_GROSS.equals(pField)) {
+            return theGrossTaxable;
+        }
+        if (FIELD_BIRTHDAY.equals(pField)) {
+            return theBirthday;
+        }
+        if (FIELD_AGE.equals(pField)) {
+            return theClientAge;
+        }
+        if (FIELD_AGERELATED.equals(pField)) {
+            return hasAgeRelatedAllowance
+                                          ? Boolean.TRUE
+                                          : MetisFieldValue.SKIP;
+        }
+        if (FIELD_ALLOWANCE.equals(pField)) {
+            return theAllowance.isNonZero()
+                                            ? theAllowance
+                                            : MetisFieldValue.SKIP;
+        }
+        if (FIELD_RENTAL.equals(pField)) {
+            return theRentalAllowance.isNonZero()
+                                                  ? theRentalAllowance
+                                                  : MetisFieldValue.SKIP;
+        }
+        if (FIELD_SAVINGS.equals(pField)) {
+            return theSavingsAllowance.isNonZero()
+                                                   ? theSavingsAllowance
+                                                   : MetisFieldValue.SKIP;
+        }
+        if (FIELD_DIVIDEND.equals(pField)) {
+            return theDividendAllowance.isNonZero()
+                                                    ? theDividendAllowance
+                                                    : MetisFieldValue.SKIP;
+        }
+        if (FIELD_CAPITAL.equals(pField)) {
+            return theCapitalAllowance.isNonZero()
+                                                   ? theCapitalAllowance
+                                                   : MetisFieldValue.SKIP;
+        }
+        if (FIELD_TAXBANDS.equals(pField)) {
+            return theTaxBands;
+        }
+
+        /* Not recognised */
+        return MetisFieldValue.UNKNOWN;
+    }
+
+    @Override
+    public String formatObject() {
+        return FIELD_DEFS.getName();
     }
 
     /**

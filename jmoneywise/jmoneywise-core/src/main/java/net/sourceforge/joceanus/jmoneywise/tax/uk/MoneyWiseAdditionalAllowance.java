@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
@@ -30,9 +32,19 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 public class MoneyWiseAdditionalAllowance
         extends MoneyWiseAgeAllowance {
     /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseAdditionalAllowance.class.getSimpleName(), MoneyWiseAgeAllowance.getBaseFields());
+
+    /**
+     * AdditionalAllowanceLimit Field Id.
+     */
+    private static final MetisField FIELD_ADDALLOWLIMIT = FIELD_DEFS.declareEqualityField("AdditionalAllowanceLimit");
+
+    /**
      * IncomeBoundary.
      */
-    private final TethysMoney theIncomeBoundary;
+    private final TethysMoney theAddAllowLimit;
 
     /**
      * Constructor.
@@ -42,7 +54,7 @@ public class MoneyWiseAdditionalAllowance
      * @param pLoAgeAllowance the low age allowance
      * @param pHiAgeAllowance the high age allowance
      * @param pAgeAllowanceLimit the age allowance limit
-     * @param pIncomeBoundary the income boundary
+     * @param pAddAllowLimit the additional allowance limit
      */
     protected MoneyWiseAdditionalAllowance(final TethysMoney pAllowance,
                                            final TethysMoney pRentalAllowance,
@@ -50,17 +62,17 @@ public class MoneyWiseAdditionalAllowance
                                            final TethysMoney pLoAgeAllowance,
                                            final TethysMoney pHiAgeAllowance,
                                            final TethysMoney pAgeAllowanceLimit,
-                                           final TethysMoney pIncomeBoundary) {
-        super(pAllowance, pRentalAllowance, pCapitalAllowance, pLoAgeAllowance, pHiAgeAllowance, pIncomeBoundary);
-        theIncomeBoundary = pIncomeBoundary;
+                                           final TethysMoney pAddAllowLimit) {
+        super(pAllowance, pRentalAllowance, pCapitalAllowance, pLoAgeAllowance, pHiAgeAllowance, pAgeAllowanceLimit);
+        theAddAllowLimit = pAddAllowLimit;
     }
 
     /**
-     * Obtain the income boundary.
-     * @return the Boundary
+     * Obtain the additional Allowance limit.
+     * @return the Limit
      */
-    protected TethysMoney getIncomeBoundary() {
-        return theIncomeBoundary;
+    protected TethysMoney getAdditionalAllowanceLimit() {
+        return theAddAllowLimit;
     }
 
     @Override
@@ -70,9 +82,9 @@ public class MoneyWiseAdditionalAllowance
 
         /* If we have additional tax possible and we are above the allowance limit */
         TethysMoney myGross = pConfig.getGrossTaxable();
-        if (myGross.compareTo(theIncomeBoundary) > 0) {
+        if (myGross.compareTo(theAddAllowLimit) > 0) {
             /* Calculate and apply the reduction */
-            TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theIncomeBoundary);
+            TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);
             myAllowance = new TethysMoney(myAllowance);
             myAllowance.subtractAmount(myReduction);
 
@@ -85,5 +97,25 @@ public class MoneyWiseAdditionalAllowance
 
         /* Return the allowance */
         return myAllowance;
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        if (FIELD_ADDALLOWLIMIT.equals(pField)) {
+            return theAddAllowLimit;
+        }
+
+        /* Pass call on */
+        return super.getFieldValue(pField);
+    }
+
+    @Override
+    public String formatObject() {
+        return FIELD_DEFS.getName();
     }
 }

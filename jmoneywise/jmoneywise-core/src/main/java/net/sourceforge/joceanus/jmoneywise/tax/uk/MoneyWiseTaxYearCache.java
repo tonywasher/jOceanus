@@ -25,13 +25,15 @@ package net.sourceforge.joceanus.jmoneywise.tax.uk;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataMap;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 
 /**
  * Tax Year cache.
  */
-public class MoneyWiseTaxYearCache {
+public class MoneyWiseTaxYearCache
+        implements MetisDataMap {
     /**
      * The cache.
      */
@@ -100,5 +102,15 @@ public class MoneyWiseTaxYearCache {
     public MoneyWiseTaxYear getTaxYearForDate(final TethysDate pDate) {
         TethysDate myDate = TethysFiscalYear.UK.endOfYear(pDate);
         return theCache.get(myDate);
+    }
+
+    @Override
+    public Map<?, ?> getUnderlyingMap() {
+        return theCache;
+    }
+
+    @Override
+    public String toString() {
+        return MoneyWiseTaxYearCache.class.getSimpleName();
     }
 }

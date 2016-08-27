@@ -69,7 +69,7 @@ public enum ThemisThreadId {
     /**
      * Restore Subversion.
      */
-    RESTORESVN("CreateWorkingCopy");
+    RESTORESVN("RestoreSubversion");
 
     /**
      * The name.

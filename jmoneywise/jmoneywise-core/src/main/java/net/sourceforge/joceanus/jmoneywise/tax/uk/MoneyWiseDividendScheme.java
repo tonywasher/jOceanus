@@ -22,19 +22,24 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * Dividend Tax Scheme.
  */
 public abstract class MoneyWiseDividendScheme
-        extends MoneyWiseIncomeScheme {
+        extends MoneyWiseIncomeScheme
+        implements MetisDataContents {
     /**
      * Is tax relief available?
      * @return true/false
      */
-    public boolean taxReliefAvailable() {
-        return true;
+    public Boolean taxReliefAvailable() {
+        return Boolean.TRUE;
     }
 
     /**
@@ -42,6 +47,26 @@ public abstract class MoneyWiseDividendScheme
      */
     public static class MoneyWiseDividendAsIncomeScheme
             extends MoneyWiseDividendScheme {
+        /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDividendAsIncomeScheme.class.getSimpleName());
+
+        @Override
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final MetisField pField) {
+            /* Not recognised */
+            return MetisFieldValue.UNKNOWN;
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
     }
 
     /**
@@ -50,6 +75,21 @@ public abstract class MoneyWiseDividendScheme
     public static class MoneyWiseDividendBaseRateScheme
             extends MoneyWiseDividendScheme {
         /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDividendBaseRateScheme.class.getSimpleName());
+
+        /**
+         * Base Rate Field Id.
+         */
+        private static final MetisField FIELD_BASERATE = FIELD_DEFS.declareEqualityField("BaseRate");
+
+        /**
+         * Relief Available Field Id.
+         */
+        private static final MetisField FIELD_RELIEF = FIELD_DEFS.declareEqualityField("ReliefAvailable");
+
+        /**
          * The Base Rate.
          */
         private final TethysRate theBaseRate;
@@ -57,7 +97,7 @@ public abstract class MoneyWiseDividendScheme
         /**
          * Tax Relief available.
          */
-        private final boolean reliefAvailable;
+        private final Boolean reliefAvailable;
 
         /**
          * Constructor.
@@ -65,7 +105,7 @@ public abstract class MoneyWiseDividendScheme
          * @param pReliefAvailable Is tax relief available?
          */
         protected MoneyWiseDividendBaseRateScheme(final TethysRate pRate,
-                                                  final boolean pReliefAvailable) {
+                                                  final Boolean pReliefAvailable) {
             theBaseRate = pRate;
             reliefAvailable = pReliefAvailable;
         }
@@ -75,7 +115,7 @@ public abstract class MoneyWiseDividendScheme
          * @param pRate the base rate
          */
         protected MoneyWiseDividendBaseRateScheme(final TethysRate pRate) {
-            this(pRate, true);
+            this(pRate, Boolean.TRUE);
         }
 
         /**
@@ -87,8 +127,40 @@ public abstract class MoneyWiseDividendScheme
         }
 
         @Override
-        public boolean taxReliefAvailable() {
+        public Boolean taxReliefAvailable() {
             return reliefAvailable;
+        }
+
+        /**
+         * Obtain the data fields.
+         * @return the data fields
+         */
+        protected static MetisFields getBaseFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final MetisField pField) {
+            /* Handle standard fields */
+            if (FIELD_BASERATE.equals(pField)) {
+                return theBaseRate;
+            }
+            if (FIELD_RELIEF.equals(pField)) {
+                return reliefAvailable;
+            }
+
+            /* Not recognised */
+            return MetisFieldValue.UNKNOWN;
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
         }
     }
 
@@ -97,6 +169,16 @@ public abstract class MoneyWiseDividendScheme
      */
     public static class MoneyWiseDividendHigherRateScheme
             extends MoneyWiseDividendBaseRateScheme {
+        /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDividendHigherRateScheme.class.getSimpleName(), MoneyWiseDividendBaseRateScheme.getBaseFields());
+
+        /**
+         * Rate Field Id.
+         */
+        private static final MetisField FIELD_HIGHRATE = FIELD_DEFS.declareEqualityField("HighRate");
+
         /**
          * The Higher Rate.
          */
@@ -109,7 +191,7 @@ public abstract class MoneyWiseDividendScheme
          */
         protected MoneyWiseDividendHigherRateScheme(final TethysRate pRate,
                                                     final TethysRate pHighRate) {
-            super(pRate, false);
+            super(pRate, Boolean.FALSE);
             theHighRate = pHighRate;
         }
 
@@ -122,8 +204,37 @@ public abstract class MoneyWiseDividendScheme
         }
 
         @Override
-        public boolean taxReliefAvailable() {
-            return false;
+        public Boolean taxReliefAvailable() {
+            return Boolean.FALSE;
+        }
+
+        /**
+         * Obtain the data fields.
+         * @return the data fields
+         */
+        protected static MetisFields getBaseFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final MetisField pField) {
+            /* Handle standard fields */
+            if (FIELD_HIGHRATE.equals(pField)) {
+                return theHighRate;
+            }
+
+            /* Not recognised */
+            return MetisFieldValue.UNKNOWN;
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
         }
     }
 
@@ -132,6 +243,16 @@ public abstract class MoneyWiseDividendScheme
      */
     public static class MoneyWiseDividendAdditionalRateScheme
             extends MoneyWiseDividendHigherRateScheme {
+        /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDividendAdditionalRateScheme.class.getSimpleName(), MoneyWiseDividendHigherRateScheme.getBaseFields());
+
+        /**
+         * Rate Field Id.
+         */
+        private static final MetisField FIELD_ADDRATE = FIELD_DEFS.declareEqualityField("AdditionalRate");
+
         /**
          * The Additional Rate.
          */
@@ -156,6 +277,27 @@ public abstract class MoneyWiseDividendScheme
          */
         protected TethysRate getAdditionalRate() {
             return theAdditionalRate;
+        }
+
+        @Override
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final MetisField pField) {
+            /* Handle standard fields */
+            if (FIELD_ADDRATE.equals(pField)) {
+                return theAdditionalRate;
+            }
+
+            /* Not recognised */
+            return MetisFieldValue.UNKNOWN;
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
         }
     }
 }

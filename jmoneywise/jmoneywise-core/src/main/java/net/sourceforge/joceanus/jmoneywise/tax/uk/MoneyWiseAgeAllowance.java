@@ -24,6 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
 import java.util.Calendar;
 
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -33,6 +36,26 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  */
 public class MoneyWiseAgeAllowance
         extends MoneyWiseBasicAllowance {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseAgeAllowance.class.getSimpleName(), MoneyWiseBasicAllowance.getBaseFields());
+
+    /**
+     * LoAgeAllowance Field Id.
+     */
+    private static final MetisField FIELD_LOAGEALLOWANCE = FIELD_DEFS.declareEqualityField("LoAgeAllowance");
+
+    /**
+     * HiAgeAllowance Field Id.
+     */
+    private static final MetisField FIELD_HIAGEALLOWANCE = FIELD_DEFS.declareEqualityField("HiAgeAllowance");
+
+    /**
+     * AgeAllowanceLimit Field Id.
+     */
+    private static final MetisField FIELD_AGEALLOWLIMIT = FIELD_DEFS.declareEqualityField("AgeAllowanceLimit");
+
     /**
      * Age Allowance minimum.
      */
@@ -206,5 +229,42 @@ public class MoneyWiseAgeAllowance
 
         /* return the allowance */
         return myAllowance;
+    }
+
+    /**
+     * Obtain the data fields.
+     * @return the data fields
+     */
+    protected static MetisFields getBaseFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_LOAGEALLOWANCE.equals(pField)) {
+            return theLoAgeAllowance;
+        }
+        if (FIELD_HIAGEALLOWANCE.equals(pField)) {
+            return theHiAgeAllowance == null
+                                             ? MetisFieldValue.SKIP
+                                             : theHiAgeAllowance;
+        }
+        if (FIELD_AGEALLOWLIMIT.equals(pField)) {
+            return theAgeAllowanceLimit;
+        }
+
+        /* Pass call on */
+        return super.getFieldValue(pField);
+    }
+
+    @Override
+    public String formatObject() {
+        return FIELD_DEFS.getName();
     }
 }

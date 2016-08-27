@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseTaxBands.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -32,6 +34,26 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  */
 public class MoneyWiseSavingsAllowance
         extends MoneyWiseBasicAllowance {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseSavingsAllowance.class.getSimpleName(), MoneyWiseBasicAllowance.getBaseFields());
+
+    /**
+     * SavingsAllowance Field Id.
+     */
+    private static final MetisField FIELD_SAVINGSALLOWANCE = FIELD_DEFS.declareEqualityField("SavingsAllowance");
+
+    /**
+     * DividendsAllowance Field Id.
+     */
+    private static final MetisField FIELD_DIVIDENDALLOWANCE = FIELD_DEFS.declareEqualityField("DividendAllowance");
+
+    /**
+     * AdditionalAllowanceLimit Field Id.
+     */
+    private static final MetisField FIELD_ADDALLOWLIMIT = FIELD_DEFS.declareEqualityField("AdditionalAllowanceLimit");
+
     /**
      * SavingsAllowance.
      */
@@ -43,9 +65,9 @@ public class MoneyWiseSavingsAllowance
     private final TethysMoney theDividendAllowance;
 
     /**
-     * IncomeBoundary.
+     * AdditionalAllowanceLimit.
      */
-    private final TethysMoney theIncomeBoundary;
+    private final TethysMoney theAddAllowLimit;
 
     /**
      * Constructor.
@@ -54,18 +76,18 @@ public class MoneyWiseSavingsAllowance
      * @param pCapitalAllowance the capital allowance
      * @param pSavingsAllowance the savings allowance
      * @param pDividendAllowance the dividend allowance
-     * @param pIncomeBoundary the income boundary
+     * @param pAddAllowLimit the additional allowance limit
      */
     protected MoneyWiseSavingsAllowance(final TethysMoney pAllowance,
                                         final TethysMoney pRentalAllowance,
                                         final TethysMoney pCapitalAllowance,
                                         final TethysMoney pSavingsAllowance,
                                         final TethysMoney pDividendAllowance,
-                                        final TethysMoney pIncomeBoundary) {
+                                        final TethysMoney pAddAllowLimit) {
         super(pAllowance, pRentalAllowance, pCapitalAllowance, MoneyWiseMarginalReduction.ONEINTWO);
         theSavingsAllowance = pSavingsAllowance;
         theDividendAllowance = pDividendAllowance;
-        theIncomeBoundary = pIncomeBoundary;
+        theAddAllowLimit = pAddAllowLimit;
     }
 
     /**
@@ -85,11 +107,11 @@ public class MoneyWiseSavingsAllowance
     }
 
     /**
-     * Obtain the income boundary.
-     * @return the Boundary
+     * Obtain the additional Allowance limit.
+     * @return the Limit
      */
-    protected TethysMoney getIncomeBoundary() {
-        return theIncomeBoundary;
+    protected TethysMoney getAdditionalAllowanceLimit() {
+        return theAddAllowLimit;
     }
 
     @Override
@@ -99,9 +121,9 @@ public class MoneyWiseSavingsAllowance
 
         /* If we have additional tax possible and we are above the allowance limit */
         TethysMoney myGross = pConfig.getGrossTaxable();
-        if (myGross.compareTo(theIncomeBoundary) > 0) {
+        if (myGross.compareTo(theAddAllowLimit) > 0) {
             /* Calculate and apply the reduction */
-            TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theIncomeBoundary);
+            TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);
             myAllowance = new TethysMoney(myAllowance);
             myAllowance.subtractAmount(myReduction);
 
@@ -154,5 +176,31 @@ public class MoneyWiseSavingsAllowance
     @Override
     protected TethysMoney calculateDividendAllowance() {
         return theDividendAllowance;
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        if (FIELD_SAVINGSALLOWANCE.equals(pField)) {
+            return theSavingsAllowance;
+        }
+        if (FIELD_DIVIDENDALLOWANCE.equals(pField)) {
+            return theDividendAllowance;
+        }
+        if (FIELD_ADDALLOWLIMIT.equals(pField)) {
+            return theAddAllowLimit;
+        }
+
+        /* Pass call on */
+        return super.getFieldValue(pField);
+    }
+
+    @Override
+    public String formatObject() {
+        return FIELD_DEFS.getName();
     }
 }

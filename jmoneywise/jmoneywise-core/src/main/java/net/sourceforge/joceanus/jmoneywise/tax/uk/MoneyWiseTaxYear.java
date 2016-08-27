@@ -22,13 +22,53 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 
 /**
  * The Tax Year.
  */
-public class MoneyWiseTaxYear {
+public class MoneyWiseTaxYear
+        implements MetisDataContents {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseTaxYear.class.getSimpleName());
+
+    /**
+     * Date Field Id.
+     */
+    private static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityField("EndOfTaxYear");
+
+    /**
+     * Allowances Field Id.
+     */
+    private static final MetisField FIELD_ALLOWANCES = FIELD_DEFS.declareEqualityField("Allowances");
+
+    /**
+     * StandardBands Field Id.
+     */
+    private static final MetisField FIELD_STANDARD = FIELD_DEFS.declareEqualityField("StandardBands");
+
+    /**
+     * InterestScheme Field Id.
+     */
+    private static final MetisField FIELD_INTEREST = FIELD_DEFS.declareEqualityField("InterestScheme");
+
+    /**
+     * DividendScheme Field Id.
+     */
+    private static final MetisField FIELD_DIVIDEND = FIELD_DEFS.declareEqualityField("DividendScheme");
+
+    /**
+     * CapitalScheme Field Id.
+     */
+    private static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField("CapitalScheme");
+
     /**
      * The Date.
      */
@@ -180,5 +220,46 @@ public class MoneyWiseTaxYear {
     private static TethysDate getDate(final int pYear) {
         TethysDate myDate = new TethysDate(1, 1, pYear);
         return TethysFiscalYear.UK.endOfYear(myDate);
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_DATE.equals(pField)) {
+            return theYear;
+        }
+        if (FIELD_ALLOWANCES.equals(pField)) {
+            return theAllowances;
+        }
+        if (FIELD_STANDARD.equals(pField)) {
+            return theStandardBands;
+        }
+        if (FIELD_INTEREST.equals(pField)) {
+            return theInterestScheme;
+        }
+        if (FIELD_DIVIDEND.equals(pField)) {
+            return theDividendScheme;
+        }
+        if (FIELD_CAPITAL.equals(pField)) {
+            return theCapitalScheme;
+        }
+
+        /* Not recognised */
+        return MetisFieldValue.UNKNOWN;
+    }
+
+    @Override
+    public String formatObject() {
+        return toString();
+    }
+
+    @Override
+    public String toString() {
+        return Integer.toString(getYear().getYear());
     }
 }

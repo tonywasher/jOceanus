@@ -26,13 +26,34 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataList;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * UK TaxBands.
  */
-public class MoneyWiseTaxBands {
+public class MoneyWiseTaxBands
+        implements MetisDataContents {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseTaxBands.class.getSimpleName());
+
+    /**
+     * StandardSet Field Id.
+     */
+    private static final MetisField FIELD_STANDARD = FIELD_DEFS.declareEqualityField("StandardSet");
+
+    /**
+     * Low Savings Band Field Id.
+     */
+    private static final MetisField FIELD_LOSAVINGS = FIELD_DEFS.declareEqualityField("LoSavingsBand");
+
     /**
      * Standard TaxBandSet.
      */
@@ -63,6 +84,18 @@ public class MoneyWiseTaxBands {
     }
 
     /**
+     * Constructor.
+     * @param pSource the source taxBands
+     */
+    protected MoneyWiseTaxBands(final MoneyWiseTaxBands pSource) {
+        theStandard = new MoneyWiseTaxBandSet(pSource.getStandardSet());
+        MoneyWiseTaxBand mySavings = pSource.getLoSavings();
+        theLoSavings = mySavings == null
+                                         ? null
+                                         : new MoneyWiseTaxBand(mySavings);
+    }
+
+    /**
      * Obtain the standard taxBands.
      * @return the taxBands
      */
@@ -78,10 +111,37 @@ public class MoneyWiseTaxBands {
         return theLoSavings;
     }
 
+    @Override
+    public String formatObject() {
+        return FIELD_DEFS.getName();
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_STANDARD.equals(pField)) {
+            return theStandard;
+        }
+        if (FIELD_LOSAVINGS.equals(pField)) {
+            return theLoSavings == null
+                                        ? MetisFieldValue.SKIP
+                                        : theLoSavings;
+        }
+
+        /* Not recognised */
+        return MetisFieldValue.UNKNOWN;
+    }
+
     /**
      * MoneyWiseTaxBand set.
      */
-    public static class MoneyWiseTaxBandSet {
+    public static class MoneyWiseTaxBandSet
+            implements MetisDataList {
         /**
          * List of Tax Bands.
          */
@@ -99,18 +159,50 @@ public class MoneyWiseTaxBands {
         }
 
         /**
+         * Constructor.
+         * @param pSource the source to clone
+         */
+        protected MoneyWiseTaxBandSet(final MoneyWiseTaxBandSet pSource) {
+            theTaxBands = new ArrayList<>();
+            for (MoneyWiseTaxBand myBand : pSource.theTaxBands) {
+                theTaxBands.add(new MoneyWiseTaxBand(myBand));
+            }
+        }
+
+        /**
          * Obtain an iterator.
          * @return the iterator
          */
         public Iterator<MoneyWiseTaxBand> iterator() {
             return theTaxBands.iterator();
         }
+
+        @Override
+        public List<?> getUnderlyingList() {
+            return theTaxBands;
+        }
     }
 
     /**
      * MoneyWiseTaxBand class.
      */
-    public static class MoneyWiseTaxBand {
+    public static class MoneyWiseTaxBand
+            implements MetisDataContents {
+        /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseTaxBand.class.getSimpleName());
+
+        /**
+         * StandardSet Field Id.
+         */
+        private static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityField("Rate");
+
+        /**
+         * Amount Field Id.
+         */
+        private static final MetisField FIELD_AMOUNT = FIELD_DEFS.declareEqualityField("Amount");
+
         /**
          * Amount.
          */
@@ -141,6 +233,18 @@ public class MoneyWiseTaxBands {
         }
 
         /**
+         * Constructor.
+         * @param pSource the source band
+         */
+        protected MoneyWiseTaxBand(final MoneyWiseTaxBand pSource) {
+            TethysMoney myAmount = pSource.getAmount();
+            theAmount = myAmount == null
+                                         ? null
+                                         : new TethysMoney(myAmount);
+            theRate = pSource.getRate();
+        }
+
+        /**
          * Obtain the amount.
          * @return the amount
          */
@@ -154,6 +258,32 @@ public class MoneyWiseTaxBands {
          */
         public TethysRate getRate() {
             return theRate;
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
+
+        @Override
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final MetisField pField) {
+            /* Handle standard fields */
+            if (FIELD_RATE.equals(pField)) {
+                return theRate;
+            }
+            if (FIELD_AMOUNT.equals(pField)) {
+                return theAmount == null
+                                         ? MetisFieldValue.SKIP
+                                         : theAmount;
+            }
+
+            /* Not recognised */
+            return MetisFieldValue.UNKNOWN;
         }
     }
 }

@@ -22,18 +22,33 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * Capital Gains Tax Scheme.
  */
 public abstract class MoneyWiseCapitalScheme
-        extends MoneyWiseIncomeScheme {
+        extends MoneyWiseIncomeScheme
+        implements MetisDataContents {
     /**
      * Flat Rate Scheme.
      */
     public static class MoneyWiseCapitalFlatRateScheme
             extends MoneyWiseCapitalScheme {
+        /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseCapitalFlatRateScheme.class.getSimpleName());
+
+        /**
+         * Rate Field Id.
+         */
+        private static final MetisField FIELD_BASERATE = FIELD_DEFS.declareEqualityField("BaseRate");
+
         /**
          * The Base Rate.
          */
@@ -54,6 +69,35 @@ public abstract class MoneyWiseCapitalScheme
         protected TethysRate getBaseRate() {
             return theBaseRate;
         }
+
+        /**
+         * Obtain the data fields.
+         * @return the data fields
+         */
+        protected static MetisFields getBaseFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final MetisField pField) {
+            /* Handle standard fields */
+            if (FIELD_BASERATE.equals(pField)) {
+                return theBaseRate;
+            }
+
+            /* Not recognised */
+            return MetisFieldValue.UNKNOWN;
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
     }
 
     /**
@@ -61,6 +105,16 @@ public abstract class MoneyWiseCapitalScheme
      */
     public static class MoneyWiseCapitalSplitRateScheme
             extends MoneyWiseCapitalFlatRateScheme {
+        /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseCapitalSplitRateScheme.class.getSimpleName(), MoneyWiseCapitalFlatRateScheme.getBaseFields());
+
+        /**
+         * Rate Field Id.
+         */
+        private static final MetisField FIELD_HIGHRATE = FIELD_DEFS.declareEqualityField("HighRate");
+
         /**
          * The High Rate.
          */
@@ -84,6 +138,27 @@ public abstract class MoneyWiseCapitalScheme
         protected TethysRate getHighRate() {
             return theHighRate;
         }
+
+        @Override
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final MetisField pField) {
+            /* Handle standard fields */
+            if (FIELD_HIGHRATE.equals(pField)) {
+                return theHighRate;
+            }
+
+            /* Pass call on */
+            return super.getFieldValue(pField);
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
     }
 
     /**
@@ -91,6 +166,34 @@ public abstract class MoneyWiseCapitalScheme
      */
     public static class MoneyWiseCapitalAsIncomeScheme
             extends MoneyWiseCapitalScheme {
+        /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseCapitalAsIncomeScheme.class.getSimpleName());
+
+        /**
+         * Obtain the data fields.
+         * @return the data fields
+         */
+        protected static MetisFields getBaseFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final MetisField pField) {
+            /* Not recognised */
+            return MetisFieldValue.UNKNOWN;
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
     }
 
     /**
@@ -98,6 +201,16 @@ public abstract class MoneyWiseCapitalScheme
      */
     public static class MoneyWiseCapitalResidentialScheme
             extends MoneyWiseCapitalSplitRateScheme {
+        /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseCapitalResidentialScheme.class.getSimpleName(), MoneyWiseCapitalSplitRateScheme.getBaseFields());
+
+        /**
+         * Residential Field Id.
+         */
+        private static final MetisField FIELD_RESIDENTIAL = FIELD_DEFS.declareEqualityField("Residential");
+
         /**
          * The Residential Scheme.
          */
@@ -124,6 +237,27 @@ public abstract class MoneyWiseCapitalScheme
          */
         protected MoneyWiseCapitalSplitRateScheme getResidentialScheme() {
             return theResidential;
+        }
+
+        @Override
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final MetisField pField) {
+            /* Handle standard fields */
+            if (FIELD_RESIDENTIAL.equals(pField)) {
+                return theResidential;
+            }
+
+            /* Pass call on */
+            return super.getFieldValue(pField);
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
         }
     }
 }

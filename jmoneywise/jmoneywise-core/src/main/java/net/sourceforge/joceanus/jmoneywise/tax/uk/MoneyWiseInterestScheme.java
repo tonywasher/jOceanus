@@ -22,18 +22,43 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * Interest Tax Scheme.
  */
 public abstract class MoneyWiseInterestScheme
-        extends MoneyWiseIncomeScheme {
+        extends MoneyWiseIncomeScheme
+        implements MetisDataContents {
     /**
      * As Income Scheme.
      */
     public static class MoneyWiseInterestAsIncomeScheme
             extends MoneyWiseInterestScheme {
+        /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseInterestAsIncomeScheme.class.getSimpleName());
+
+        @Override
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final MetisField pField) {
+            /* Not recognised */
+            return MetisFieldValue.UNKNOWN;
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
+        }
     }
 
     /**
@@ -41,6 +66,16 @@ public abstract class MoneyWiseInterestScheme
      */
     public static class MoneyWiseInterestBaseRateScheme
             extends MoneyWiseInterestScheme {
+        /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseInterestBaseRateScheme.class.getSimpleName());
+
+        /**
+         * Rate Field Id.
+         */
+        private static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityField("Rate");
+
         /**
          * The Base Rate.
          */
@@ -60,6 +95,27 @@ public abstract class MoneyWiseInterestScheme
          */
         protected TethysRate getBaseRate() {
             return theBaseRate;
+        }
+
+        @Override
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final MetisField pField) {
+            /* Handle standard fields */
+            if (FIELD_RATE.equals(pField)) {
+                return theBaseRate;
+            }
+
+            /* Not recognised */
+            return MetisFieldValue.UNKNOWN;
+        }
+
+        @Override
+        public String formatObject() {
+            return FIELD_DEFS.getName();
         }
     }
 }
