@@ -68,6 +68,11 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
     private PreparedStatement theStmt;
 
     /**
+     * Do we have batched updated in the prepared statement?
+     */
+    private boolean hasBatchedUpdates;
+
+    /**
      * The result set.
      */
     private ResultSet theResults;
@@ -127,6 +132,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @throws SQLException on error
      */
     protected void closeStmt() throws SQLException {
+        executeBatch();
         theTable.clearValues();
         if (theResults != null) {
             theResults.close();
@@ -161,6 +167,27 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
     private void execute() throws SQLException {
         theStmt.executeUpdate();
         theTable.clearValues();
+    }
+
+    /**
+     * Add to the batched statement.
+     * @throws SQLException on error
+     */
+    private void addToBatch() throws SQLException {
+        theStmt.addBatch();
+        theTable.clearValues();
+        hasBatchedUpdates = true;
+    }
+
+    /**
+     * Execute the batched statement.
+     * @throws SQLException on error
+     */
+    private void executeBatch() throws SQLException {
+        if (hasBatchedUpdates) {
+            theStmt.executeBatch();
+            hasBatchedUpdates = false;
+        }
     }
 
     /**
@@ -328,11 +355,11 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @return the count of items
      */
     private int countStateItems(final MetisDataState pState) {
-        /* Access the iterator */
-        Iterator<T> myIterator = theList.iterator();
+        /* Initialise the count */
         int iCount = 0;
 
         /* Loop through the list */
+        Iterator<T> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
 
@@ -378,10 +405,8 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             String myInsert = theTable.getInsertString();
             prepareStatement(myInsert);
 
-            /* Access the iterator */
-            Iterator<T> myIterator = theList.iterator();
-
             /* Loop through the list */
+            Iterator<T> myIterator = theList.iterator();
             while (myIterator.hasNext()) {
                 /* Ignore non-new items */
                 myCurr = myIterator.next();
@@ -402,12 +427,14 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 theTable.insertValues(theStmt);
                 pBatch.addBatchItem();
 
-                /* Execute the insert */
-                execute();
+                /* Add to the statement batch */
+                addToBatch();
+                myCurr = null;
 
                 /* If we have no further space in the batch */
                 if (pBatch.isFull()) {
-                    /* Commit the database */
+                    /* ExecuteBatch and commit the database */
+                    executeBatch();
                     commit();
 
                     /* Commit the batch */
@@ -446,10 +473,8 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             /* Declare the table and mode */
             pBatch.setCurrentTable(this, MetisDataState.CHANGED);
 
-            /* Access the iterator */
-            Iterator<T> myIterator = theList.iterator();
-
             /* Loop through the list */
+            Iterator<T> myIterator = theList.iterator();
             while (myIterator.hasNext()) {
                 /* Ignore non-changed items */
                 myCurr = myIterator.next();
@@ -498,7 +523,6 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @throws OceanusException on error
      */
     private boolean updateItem(final T pItem) throws OceanusException {
-
         /* Access the object and base */
         MetisValueSet myCurr = pItem.getValueSet();
         MetisValueSet myBase = pItem.getOriginalValues();
@@ -571,14 +595,14 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                     theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
                     theTable.updateValues(theStmt);
 
-                    /* Execute the delete */
-                    execute();
-                    myCurr = null;
+                    /* Add to the statement batch */
+                    addToBatch();
                 }
 
                 /* If we have no further space in the batch */
                 if (pBatch.isFull()) {
-                    /* Commit the database */
+                    /* ExecuteBatch and commit the database */
+                    executeBatch();
                     commit();
 
                     /* Commit the batch */
@@ -591,6 +615,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
 
             /* Close the Statement */
             closeStmt();
+
         } catch (SQLException e) {
             throw new PrometheusDataException(myCurr, "Failed to delete " + getTableName(), e);
         }
@@ -601,12 +626,10 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @throws OceanusException on error
      */
     protected void createTable() throws OceanusException {
-        String myCreate;
-
         /* Protect the create */
         try {
             /* Execute the create index statement */
-            myCreate = theTable.getCreateTableString();
+            String myCreate = theTable.getCreateTableString();
             executeStatement(myCreate);
 
             /* If the table has an index */
@@ -615,6 +638,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 myCreate = theTable.getCreateIndexString();
                 executeStatement(myCreate);
             }
+
         } catch (SQLException e) {
             throw new PrometheusIOException("Failed to create " + getTableName(), e);
         }
@@ -637,6 +661,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             /* Execute the drop table statement */
             myDrop = theTable.getDropTableString();
             executeStatement(myDrop);
+
         } catch (SQLException e) {
             throw new PrometheusIOException("Failed to drop " + getTableName(), e);
         }
@@ -652,6 +677,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             /* Execute the purge statement */
             String myTrunc = theTable.getPurgeString();
             executeStatement(myTrunc);
+
         } catch (SQLException e) {
             throw new PrometheusIOException("Failed to purge " + getTableName(), e);
         }

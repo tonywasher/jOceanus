@@ -51,7 +51,12 @@ public enum CoeusLoanStatus {
     /**
      * Repaid.
      */
-    REPAID;
+    REPAID,
+
+    /**
+     * Rejected.
+     */
+    REJECTED;
 
     /**
      * The String name.

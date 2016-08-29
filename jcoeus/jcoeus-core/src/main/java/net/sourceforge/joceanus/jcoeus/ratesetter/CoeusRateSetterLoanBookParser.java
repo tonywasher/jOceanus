@@ -22,8 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ratesetter;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -138,7 +139,7 @@ public class CoeusRateSetterLoanBookParser {
      * @param pInput the input file
      * @throws OceanusException on error
      */
-    public void parseFile(final File pInput) throws OceanusException {
+    public void parseFile(final Path pInput) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Reset the list */
@@ -148,7 +149,7 @@ public class CoeusRateSetterLoanBookParser {
             theDateParser.setFormat("dd/MM/yyyy");
 
             /* Read the document from the stream and parse it */
-            Document myDocument = Jsoup.parse(pInput, "UTF-8");
+            Document myDocument = Jsoup.parse(pInput.toFile(), StandardCharsets.UTF_8.name());
 
             /* Obtain the table rows */
             Elements myTables = myDocument.getElementsByClass("rsTable");

@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.fundingcircle;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanMarketProvider;
+import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -58,6 +59,11 @@ public class CoeusFundingCircleMarket
     private final CoeusFundingCircleLoanBookParser theBookParser;
 
     /**
+     * The Bids Parser.
+     */
+    private final CoeusFundingCircleBidBookParser theBidsParser;
+
+    /**
      * The BadDebt Parser.
      */
     private final CoeusFundingCircleBadDebtParser theDebtParser;
@@ -82,6 +88,7 @@ public class CoeusFundingCircleMarket
 
         /* Create the parsers */
         theBookParser = new CoeusFundingCircleLoanBookParser(pFormatter);
+        theBidsParser = new CoeusFundingCircleBidBookParser(this);
         theDebtParser = new CoeusFundingCircleBadDebtParser(this);
         theXactionParser = new CoeusFundingCircleTransactionParser(this);
 
@@ -94,7 +101,7 @@ public class CoeusFundingCircleMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseLoanBook(final File pFile) throws OceanusException {
+    public void parseLoanBook(final Path pFile) throws OceanusException {
         /* Parse the file */
         theBookParser.parseFile(pFile);
 
@@ -115,7 +122,7 @@ public class CoeusFundingCircleMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseBadDebtBook(final File pFile) throws OceanusException {
+    public void parseBadDebtBook(final Path pFile) throws OceanusException {
         /* Parse the file */
         theDebtParser.parseFile(pFile);
 
@@ -130,11 +137,35 @@ public class CoeusFundingCircleMarket
     }
 
     /**
+     * Parse the badDebtBook file.
+     * @param pFile the file to parse
+     * @throws OceanusException on error
+     */
+    public void parseBidBook(final Path pFile) throws OceanusException {
+        /* Parse the file */
+        theBidsParser.parseFile(pFile);
+
+        /* Loop through the loan book items */
+        Iterator<CoeusFundingCircleLoanBookItem> myIterator = theBidsParser.bidIterator();
+        while (myIterator.hasNext()) {
+            CoeusFundingCircleLoanBookItem myItem = myIterator.next();
+
+            /* If the loan is not rejected, add to the list */
+            if (myItem.getStatus() != CoeusLoanStatus.REJECTED) {
+                /* Create the loan and record it */
+                CoeusFundingCircleLoan myLoan = new CoeusFundingCircleLoan(this, myItem);
+                recordLoan(myLoan);
+                theAuctionMap.put(myItem.getAuctionId(), myLoan);
+            }
+        }
+    }
+
+    /**
      * Parse the statement file.
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseStatement(final File pFile) throws OceanusException {
+    public void parseStatement(final Path pFile) throws OceanusException {
         /* Parse the file */
         theXactionParser.parseFile(pFile);
 

@@ -83,6 +83,11 @@ public enum CoeusResource
     LOAN_REPAID("loan.repaid"),
 
     /**
+     * Loan Rejected.
+     */
+    LOAN_REJECTED("loan.rejected"),
+
+    /**
      * Transaction Transfer.
      */
     TRANS_TRANSFER("trans.xfer"),
@@ -522,6 +527,7 @@ public enum CoeusResource
         myMap.put(CoeusLoanStatus.POORLY, LOAN_POORLY);
         myMap.put(CoeusLoanStatus.BADDEBT, LOAN_BADDEBT);
         myMap.put(CoeusLoanStatus.REPAID, LOAN_REPAID);
+        myMap.put(CoeusLoanStatus.REJECTED, LOAN_REJECTED);
         return myMap;
     }
 

@@ -23,11 +23,10 @@
 package net.sourceforge.joceanus.jcoeus.data;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -181,7 +180,7 @@ public abstract class CoeusCSVParser {
      * @param pInput the input file
      * @throws OceanusException on error
      */
-    public void parseFile(final File pInput) throws OceanusException {
+    public void parseFile(final Path pInput) throws OceanusException {
         /* Create a StringBuilder for the line */
         StringBuilder myBuilder = new StringBuilder();
 
@@ -189,10 +188,7 @@ public abstract class CoeusCSVParser {
         resetFields();
 
         /* Protect against exceptions */
-        try (FileInputStream myInput = new FileInputStream(pInput);
-             InputStreamReader myInputReader = new InputStreamReader(myInput, StandardCharsets.UTF_8);
-             BufferedReader myReader = new BufferedReader(myInputReader)) {
-
+        try (BufferedReader myReader = Files.newBufferedReader(pInput, StandardCharsets.UTF_8)) {
             /* Loop through the file */
             for (;;) {
                 /* Read next line and exit on EOF */
@@ -342,7 +338,7 @@ public abstract class CoeusCSVParser {
         for (int i = 0; i < theHeaders.length; i++) {
             /* Check name */
             String myHeader = pFields.get(i);
-            if (!theHeaders[i].equals(myHeader)) {
+            if (!theHeaders[i].equals(myHeader.trim())) {
                 throw new CoeusDataException(myHeader, "Invalid header");
             }
         }

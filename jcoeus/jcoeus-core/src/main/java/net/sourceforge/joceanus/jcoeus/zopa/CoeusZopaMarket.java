@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.zopa;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.ListIterator;
 
@@ -110,7 +110,7 @@ public class CoeusZopaMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseLoanBook(final File pFile) throws OceanusException {
+    public void parseLoanBook(final Path pFile) throws OceanusException {
         /* Parse the file */
         theBookParser.parseFile(pFile);
 
@@ -136,7 +136,7 @@ public class CoeusZopaMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseBadDebtBook(final File pFile) throws OceanusException {
+    public void parseBadDebtBook(final Path pFile) throws OceanusException {
         /* Parse the file */
         theDebtParser.parseFile(pFile);
 
@@ -155,7 +155,7 @@ public class CoeusZopaMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseStatement(final File pFile) throws OceanusException {
+    public void parseStatement(final Path pFile) throws OceanusException {
         /* Parse the file */
         theXactionParser.parseFile(pFile);
 

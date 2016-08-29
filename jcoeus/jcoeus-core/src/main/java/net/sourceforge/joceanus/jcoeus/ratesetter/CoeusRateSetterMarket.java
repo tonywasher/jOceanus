@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ratesetter;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.ListIterator;
 
@@ -94,7 +94,7 @@ public class CoeusRateSetterMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseLoanBook(final File pFile) throws OceanusException {
+    public void parseLoanBook(final Path pFile) throws OceanusException {
         /* Parse the file */
         theBookParser.parseFile(pFile);
 
@@ -113,7 +113,7 @@ public class CoeusRateSetterMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseStatement(final File pFile) throws OceanusException {
+    public void parseStatement(final Path pFile) throws OceanusException {
         /* Parse the file */
         theXactionParser.parseFile(pFile);
 

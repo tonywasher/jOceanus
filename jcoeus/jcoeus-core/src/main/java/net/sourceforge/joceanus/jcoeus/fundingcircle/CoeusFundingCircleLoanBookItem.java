@@ -45,6 +45,11 @@ public class CoeusFundingCircleLoanBookItem
     /**
      * Report fields.
      */
+    private static final String BID_SEP = " - ";
+
+    /**
+     * Report fields.
+     */
     private static final MetisFields FIELD_DEFS = new MetisFields(CoeusFundingCircleLoanBookItem.class.getSimpleName());
 
     /**
@@ -146,6 +151,44 @@ public class CoeusFundingCircleLoanBookItem
         theRate = pParser.parseRate(myIterator.next());
 
         /* Not interested in date of next payment */
+        myIterator.next();
+
+        /* Derive the status */
+        theStatus = determineStatus(myIterator.next());
+    }
+
+    /**
+     * Constructor.
+     * @param pParser the parser
+     * @param pFields the fields
+     * @throws OceanusException on error
+     */
+    protected CoeusFundingCircleLoanBookItem(final CoeusFundingCircleBidBookParser pParser,
+                                             final List<String> pFields) throws OceanusException {
+        /* Iterate through the fields */
+        Iterator<String> myIterator = pFields.iterator();
+
+        /* Obtain IDs */
+        theLoanId = null;
+        String myDesc = myIterator.next();
+        int myIndex = myDesc.lastIndexOf(BID_SEP);
+        theDesc = myDesc.substring(0, myIndex);
+        theAuctionId = myDesc.substring(myIndex + BID_SEP.length());
+
+        /* Derive the risk */
+        theRisk = determineRisk(myIterator.next());
+
+        /* Not interested in %Funded */
+        myIterator.next();
+
+        /* Parse the bid amount */
+        theBalance = pParser.parseMoney(myIterator.next());
+
+        /* Parse the rate */
+        theRate = pParser.parseRate(myIterator.next());
+
+        /* Not interested in bidTime/time left */
+        myIterator.next();
         myIterator.next();
 
         /* Derive the status */
@@ -280,6 +323,11 @@ public class CoeusFundingCircleLoanBookItem
         /* Look for Repaid */
         if ("Repaid".equals(pStatus)) {
             return CoeusLoanStatus.REPAID;
+        }
+
+        /* Look for Rejected */
+        if ("Rejected".equals(pStatus)) {
+            return CoeusLoanStatus.REJECTED;
         }
 
         /* Reject the data */

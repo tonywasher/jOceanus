@@ -126,11 +126,12 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
                 theConn = DriverManager.getConnection(myConnString, myProperties);
             }
 
+            /* Switch off autoCommit */
             theConn.setAutoCommit(false);
-        } catch (ClassNotFoundException e) {
-            throw new PrometheusIOException("Failed to locate driver", e);
 
-        } catch (SQLException e) {
+            /* handle exceptions */
+        } catch (ClassNotFoundException
+                | SQLException e) {
             throw new PrometheusIOException("Failed to load driver", e);
         }
 

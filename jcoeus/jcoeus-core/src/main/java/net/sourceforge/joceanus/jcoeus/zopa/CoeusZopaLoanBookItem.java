@@ -440,7 +440,8 @@ public class CoeusZopaLoanBookItem
         }
 
         /* Look for BadDebt */
-        if ("Default".equals(pStatus)) {
+        if ("Default".equals(pStatus)
+            || "Settled".equals(pStatus)) {
             return CoeusLoanStatus.BADDEBT;
         }
 
