@@ -20,12 +20,16 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.tax.uk;
+package net.sourceforge.joceanus.jmoneywise.tax;
 
 /**
- * Rental Tax Scheme.
+ * Tax configuration.
  */
-public class MoneyWiseRentalScheme
-        extends MoneyWiseIncomeScheme {
-
+@FunctionalInterface
+public interface MoneyWiseTaxConfig {
+    /**
+     * Clone a current copy of the tax configuration.
+     * @return the cloned copy
+     */
+    MoneyWiseTaxConfig cloneIt();
 }

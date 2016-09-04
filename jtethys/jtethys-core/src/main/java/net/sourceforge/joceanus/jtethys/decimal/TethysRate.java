@@ -52,6 +52,16 @@ public class TethysRate
     }
 
     /**
+     * Construct a new Rate from a ratio.
+     * @param pRatio the Ratio
+     */
+    public TethysRate(final TethysRatio pRatio) {
+        super(pRatio.unscaledValue(), pRatio.scale());
+        adjustToScale(NUM_DECIMALS);
+        super.subtractValue(RATE_ONEHUNDREDPERCENT);
+    }
+
+    /**
      * Constructor for rate from a decimal string.
      * @param pSource The source decimal string
      * @throws IllegalArgumentException on invalidly formatted argument

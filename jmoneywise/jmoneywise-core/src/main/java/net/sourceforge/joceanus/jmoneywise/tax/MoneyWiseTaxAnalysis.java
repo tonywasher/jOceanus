@@ -20,11 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.tax.uk;
+package net.sourceforge.joceanus.jmoneywise.tax;
 
 /**
- * Income Tax Scheme.
+ * UK Tax Analysis.
  */
-public class MoneyWiseIncomeScheme {
+public interface MoneyWiseTaxAnalysis {
 
 }

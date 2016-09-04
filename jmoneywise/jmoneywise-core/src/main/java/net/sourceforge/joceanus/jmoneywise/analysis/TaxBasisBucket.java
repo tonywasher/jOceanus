@@ -1086,6 +1086,11 @@ public class TaxBasisBucket
                     myBucket = getBucket(TaxBasisClass.SALARY);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
+                case OTHERINCOME:
+                    /* Adjust the Gross salary bucket */
+                    myBucket = getBucket(TaxBasisClass.OTHERINCOME);
+                    myBucket.addIncomeTransaction(pTrans);
+                    break;
                 case INTEREST:
                 case TAXEDINTEREST:
                 case TAXEDLOYALTYBONUS:
@@ -1154,7 +1159,7 @@ public class TaxBasisBucket
                 case LOANINTERESTCHARGED:
                 case CHARITYDONATION:
                 case TAXRELIEF:
-                case OTHERINCOME:
+                case RECOVEREDEXPENSES:
                     /* Adjust the Expense bucket */
                     myBucket = getBucket(TaxBasisClass.EXPENSE);
                     myBucket.addExpenseTransaction(pTrans);

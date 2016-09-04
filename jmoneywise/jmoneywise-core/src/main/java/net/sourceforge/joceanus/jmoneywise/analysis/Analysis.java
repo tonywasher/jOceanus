@@ -52,6 +52,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxAnalysis;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYear;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -136,6 +138,11 @@ public class Analysis
      * TaxCalcBuckets Field Id.
      */
     private static final MetisField FIELD_TAXCALC = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TAXCALC.getValue());
+
+    /**
+     * NewTaxCalc Field Id.
+     */
+    private static final MetisField FIELD_TAXCALCNEW = FIELD_DEFS.declareLocalField("NewTax");
 
     /**
      * Charges Field Id.
@@ -228,6 +235,11 @@ public class Analysis
     private final TaxCalcBucketList theTaxCalculations;
 
     /**
+     * The new tax calculations.
+     */
+    private final MoneyWiseTaxAnalysis theTaxAnalysis;
+
+    /**
      * The charges.
      */
     private final ChargeableEventList theCharges;
@@ -265,6 +277,7 @@ public class Analysis
         theCashCategories = new CashCategoryBucketList(this);
         theLoanCategories = new LoanCategoryBucketList(this);
         theTaxCalculations = null;
+        theTaxAnalysis = null;
 
         /* Create the Dilution/Chargeable Event List */
         theCharges = new ChargeableEventList();
@@ -304,68 +317,72 @@ public class Analysis
         theCashCategories = new CashCategoryBucketList(this);
         theLoanCategories = new LoanCategoryBucketList(this);
         theTaxCalculations = null;
+        theTaxAnalysis = null;
     }
 
     /**
      * Constructor for a dated analysis.
-     * @param pSource the base analysis
+     * @param pManager the analysis manager
      * @param pDate the date for the analysis
      */
-    protected Analysis(final Analysis pSource,
+    protected Analysis(final AnalysisManager pManager,
                        final TethysDate pDate) {
         /* Store the data */
-        theData = pSource.getData();
-        theCurrency = pSource.getCurrency();
-        thePreferences = pSource.getPreferenceMgr();
+        Analysis myBase = pManager.getAnalysis();
+        theData = myBase.getData();
+        theCurrency = myBase.getCurrency();
+        thePreferences = myBase.getPreferenceMgr();
         theDateRange = new TethysDateRange(theData.getDateRange().getStart(), pDate);
 
         /* Access the underlying maps/lists */
-        theCharges = pSource.getCharges();
-        theDilutions = pSource.getDilutions();
+        theCharges = myBase.getCharges();
+        theDilutions = myBase.getDilutions();
 
         /* Create a new set of buckets */
-        theDeposits = new DepositBucketList(this, pSource.getDeposits(), pDate);
-        theCash = new CashBucketList(this, pSource.getCash(), pDate);
-        theLoans = new LoanBucketList(this, pSource.getLoans(), pDate);
-        thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pDate);
-        thePayees = new PayeeBucketList(this, pSource.getPayees(), pDate);
-        theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pDate);
-        theTransCategories = new TransactionCategoryBucketList(this, pSource.getTransCategories(), pDate);
-        theTransTags = new TransactionTagBucketList(this, pSource.getTransactionTags(), pDate);
+        theDeposits = new DepositBucketList(this, myBase.getDeposits(), pDate);
+        theCash = new CashBucketList(this, myBase.getCash(), pDate);
+        theLoans = new LoanBucketList(this, myBase.getLoans(), pDate);
+        thePortfolios = new PortfolioBucketList(this, myBase.getPortfolios(), pDate);
+        thePayees = new PayeeBucketList(this, myBase.getPayees(), pDate);
+        theTaxBasis = new TaxBasisBucketList(this, myBase.getTaxBasis(), pDate);
+        theTransCategories = new TransactionCategoryBucketList(this, myBase.getTransCategories(), pDate);
+        theTransTags = new TransactionTagBucketList(this, myBase.getTransactionTags(), pDate);
 
         /* Create totalling buckets */
         theDepositCategories = new DepositCategoryBucketList(this);
         theCashCategories = new CashCategoryBucketList(this);
         theLoanCategories = new LoanCategoryBucketList(this);
         theTaxCalculations = null;
+        theTaxAnalysis = null;
     }
 
     /**
      * Constructor for a ranged analysis.
-     * @param pSource the base analysis
+     * @param pManager the analysis manager
      * @param pRange the range for the analysis
      */
-    protected Analysis(final Analysis pSource,
+    protected Analysis(final AnalysisManager pManager,
                        final TethysDateRange pRange) {
         /* Store the data */
-        theData = pSource.getData();
-        theCurrency = pSource.getCurrency();
-        thePreferences = pSource.getPreferenceMgr();
+        Analysis myBase = pManager.getAnalysis();
+        theData = myBase.getData();
+        theCurrency = myBase.getCurrency();
+        thePreferences = myBase.getPreferenceMgr();
         theDateRange = pRange;
 
         /* Access the underlying maps/lists */
-        theCharges = new ChargeableEventList(pSource.getCharges(), pRange);
-        theDilutions = pSource.getDilutions();
+        theCharges = new ChargeableEventList(myBase.getCharges(), pRange);
+        theDilutions = myBase.getDilutions();
 
         /* Create a new set of buckets */
-        theDeposits = new DepositBucketList(this, pSource.getDeposits(), pRange);
-        theCash = new CashBucketList(this, pSource.getCash(), pRange);
-        theLoans = new LoanBucketList(this, pSource.getLoans(), pRange);
-        thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pRange);
-        thePayees = new PayeeBucketList(this, pSource.getPayees(), pRange);
-        theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pRange);
-        theTransCategories = new TransactionCategoryBucketList(this, pSource.getTransCategories(), pRange);
-        theTransTags = new TransactionTagBucketList(this, pSource.getTransactionTags(), pRange);
+        theDeposits = new DepositBucketList(this, myBase.getDeposits(), pRange);
+        theCash = new CashBucketList(this, myBase.getCash(), pRange);
+        theLoans = new LoanBucketList(this, myBase.getLoans(), pRange);
+        thePortfolios = new PortfolioBucketList(this, myBase.getPortfolios(), pRange);
+        thePayees = new PayeeBucketList(this, myBase.getPayees(), pRange);
+        theTaxBasis = new TaxBasisBucketList(this, myBase.getTaxBasis(), pRange);
+        theTransCategories = new TransactionCategoryBucketList(this, myBase.getTransCategories(), pRange);
+        theTransTags = new TransactionTagBucketList(this, myBase.getTransactionTags(), pRange);
 
         /* Create totalling buckets */
         theDepositCategories = new DepositCategoryBucketList(this);
@@ -377,9 +394,15 @@ public class Analysis
         TaxYear myTaxYear = myTaxYears.matchRange(theDateRange);
 
         /* Allocate tax calculations if required */
-        theTaxCalculations = (myTaxYear != null)
-                                                 ? new TaxCalcBucketList(this, myTaxYear)
-                                                 : null;
+        if (myTaxYear == null) {
+            theTaxCalculations = null;
+            theTaxAnalysis = null;
+
+        } else {
+            theTaxCalculations = new TaxCalcBucketList(this, myTaxYear);
+            MoneyWiseTaxYear myYear = pManager.getTaxYearForDate(myTaxYear.getTaxYear());
+            theTaxAnalysis = myYear.analyseTaxYear(thePreferences, theTaxBasis);
+        }
     }
 
     @Override
@@ -454,6 +477,11 @@ public class Analysis
             return (theTaxCalculations != null) && (!theTaxCalculations.isEmpty())
                                                                                    ? theTaxCalculations
                                                                                    : MetisFieldValue.SKIP;
+        }
+        if (FIELD_TAXCALCNEW.equals(pField)) {
+            return theTaxAnalysis != null
+                                          ? theTaxAnalysis
+                                          : MetisFieldValue.SKIP;
         }
         if (FIELD_CHARGES.equals(pField)) {
             return theCharges.isEmpty()

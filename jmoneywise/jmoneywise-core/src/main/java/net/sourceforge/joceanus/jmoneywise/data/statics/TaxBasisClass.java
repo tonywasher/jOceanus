@@ -47,74 +47,79 @@ public enum TaxBasisClass implements StaticInterface {
     RENTALINCOME(3, 2),
 
     /**
+     * Other Income.
+     */
+    OTHERINCOME(4, 3),
+
+    /**
      * Taxed Interest Income.
      */
-    TAXEDINTEREST(4, 3),
+    TAXEDINTEREST(5, 4),
 
     /**
      * UnTaxed Interest Income.
      */
-    UNTAXEDINTEREST(5, 4),
+    UNTAXEDINTEREST(6, 5),
 
     /**
      * Dividend Income.
      */
-    DIVIDEND(6, 5),
+    DIVIDEND(7, 6),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UNITTRUSTDIVIDEND(7, 6),
+    UNITTRUSTDIVIDEND(8, 7),
 
     /**
      * Foreign Dividend Income.
      */
-    FOREIGNDIVIDEND(8, 7),
+    FOREIGNDIVIDEND(9, 8),
 
     /**
-     * Taxable gains.
+     * Chargeable gains.
      */
-    TAXABLEGAINS(9, 8),
+    CHARGEABLEGAINS(10, 9),
 
     /**
      * Residential gains.
      */
-    RESIDENTIALGAINS(10, 9),
+    RESIDENTIALGAINS(11, 10),
 
     /**
      * Capital gains.
      */
-    CAPITALGAINS(11, 10),
+    CAPITALGAINS(12, 11),
 
     /**
      * Tax Free Income.
      */
-    TAXFREE(12, 11),
+    TAXFREE(13, 12),
 
     /**
      * BadDebt.
      */
-    BADDEBT(13, 12),
+    BADDEBT(14, 13),
 
     /**
      * Market Growth.
      */
-    MARKET(14, 13),
+    MARKET(15, 14),
 
     /**
      * Total Tax Paid.
      */
-    TAXPAID(15, 14),
+    TAXPAID(16, 15),
 
     /**
      * Gross Expense.
      */
-    EXPENSE(16, 15),
+    EXPENSE(17, 16),
 
     /**
      * Virtual Income.
      */
-    VIRTUAL(17, 16);
+    VIRTUAL(18, 17);
 
     /**
      * The String name.
@@ -189,12 +194,13 @@ public enum TaxBasisClass implements StaticInterface {
             case SALARY:
             case ROOMRENTAL:
             case RENTALINCOME:
+            case OTHERINCOME:
             case TAXEDINTEREST:
             case UNTAXEDINTEREST:
             case DIVIDEND:
             case UNITTRUSTDIVIDEND:
             case FOREIGNDIVIDEND:
-            case TAXABLEGAINS:
+            case CHARGEABLEGAINS:
             case CAPITALGAINS:
             case RESIDENTIALGAINS:
             case TAXFREE:

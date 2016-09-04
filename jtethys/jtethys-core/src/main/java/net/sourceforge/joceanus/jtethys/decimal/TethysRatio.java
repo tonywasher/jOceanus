@@ -38,6 +38,11 @@ public class TethysRatio
     public static final TethysRatio ONE = new TethysRatio("1");
 
     /**
+     * Number of days in a standard year.
+     */
+    private static final int DAYS_IN_YEAR = 365;
+
+    /**
      * Constructor.
      */
     protected TethysRatio() {
@@ -82,11 +87,39 @@ public class TethysRatio
     }
 
     /**
-     * Obtain inverse rate of this rate (i.e. 100%/this rate).
-     * @return the remaining rate
+     * Obtain inverse ratio of this ratio (i.e. 100%/this rate).
+     * @return the inverse ratio
      */
     public TethysRatio getInverseRatio() {
         return new TethysRatio(TethysRate.RATE_ONEHUNDREDPERCENT, this);
+    }
+
+    /**
+     * Multiply by ratio.
+     * @param pRatio the multiplying ratio
+     * @return the new ratio
+     */
+    public TethysRatio multiplyBy(final TethysRatio pRatio) {
+        TethysRatio myRatio = new TethysRatio();
+        myRatio.recordScale(NUM_DECIMALS);
+        myRatio.calculateProduct(this, pRatio);
+        return myRatio;
+    }
+
+    /**
+     * Obtain annualised ratio.
+     * @param pDays the number of days in the period
+     * @return the annualised ratio
+     */
+    public TethysRatio annualise(final int pDays) {
+        /* Should not annualise periods of less thn a year */
+        if (pDays < DAYS_IN_YEAR) {
+            return this;
+        }
+
+        /* Calculate the annualised value and convert to ratio */
+        double myValue = Math.pow(doubleValue(), ((double) DAYS_IN_YEAR) / pDays);
+        return new TethysRatio(Double.toString(myValue));
     }
 
     @Override

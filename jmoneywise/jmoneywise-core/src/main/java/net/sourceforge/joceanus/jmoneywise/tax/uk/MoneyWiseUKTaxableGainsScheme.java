@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.tax.uk;
 /**
  * Taxable Gains Scheme.
  */
-public class MoneyWiseTaxableGainsScheme
-        extends MoneyWiseIncomeScheme {
+public class MoneyWiseUKTaxableGainsScheme
+        extends MoneyWiseUKIncomeScheme {
 
 }

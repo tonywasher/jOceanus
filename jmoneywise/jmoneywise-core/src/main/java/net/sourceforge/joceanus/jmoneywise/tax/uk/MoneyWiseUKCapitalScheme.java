@@ -26,28 +26,74 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * Capital Gains Tax Scheme.
  */
-public abstract class MoneyWiseCapitalScheme
-        extends MoneyWiseIncomeScheme
+public abstract class MoneyWiseUKCapitalScheme
+        extends MoneyWiseUKIncomeScheme
         implements MetisDataContents {
+    @Override
+    protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
+                                           final TaxBasisClass pBasis,
+                                           final TethysMoney pAmount) {
+        /* Adjust against the capital allowance */
+        TethysMoney myRemaining = adjustForAllowance(pConfig.getCapitalAllowance(), pAmount);
+
+        /* If we have any gains left */
+        if (myRemaining.isNonZero()) {
+            /* Adjust the basic allowance */
+            myRemaining = super.adjustAllowances(pConfig, pBasis, myRemaining);
+        }
+
+        /* Return unallocated income */
+        return myRemaining;
+    }
+
+    @Override
+    protected TethysMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
+                                               final TaxBasisClass pBasis,
+                                               final TethysMoney pAmount) {
+        /* Obtain the amount covered by the basic allowance */
+        TethysMoney myAmount = super.getAmountInAllowance(pConfig, pBasis, pAmount);
+
+        /* If we have income left over and this is room rentalt */
+        if ((myAmount.compareTo(pAmount) < 0)
+            && TaxBasisClass.ROOMRENTAL.equals(pBasis)) {
+            /* Calculate remaining amount */
+            TethysMoney myRemaining = new TethysMoney(pAmount);
+            myRemaining.subtractAmount(myAmount);
+
+            /* Calculate the amount covered by rental allowance */
+            TethysMoney myXtra = getAmountInBand(pConfig.getRentalAllowance(), myRemaining);
+
+            /* Determine the total amount covered by the allowance */
+            myAmount = new TethysMoney(myAmount);
+            myAmount.addAmount(myXtra);
+        }
+
+        /* return the amount */
+        return myAmount;
+    }
+
     /**
      * Flat Rate Scheme.
      */
-    public static class MoneyWiseCapitalFlatRateScheme
-            extends MoneyWiseCapitalScheme {
+    public static class MoneyWiseUKCapitalFlatRateScheme
+            extends MoneyWiseUKCapitalScheme {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseCapitalFlatRateScheme.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKCapitalFlatRateScheme.class.getSimpleName());
 
         /**
          * Rate Field Id.
          */
-        private static final MetisField FIELD_BASERATE = FIELD_DEFS.declareEqualityField("BaseRate");
+        private static final MetisField FIELD_BASERATE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.SCHEME_BASE_RATE.getValue());
 
         /**
          * The Base Rate.
@@ -58,7 +104,7 @@ public abstract class MoneyWiseCapitalScheme
          * Constructor.
          * @param pRate the base rate
          */
-        protected MoneyWiseCapitalFlatRateScheme(final TethysRate pRate) {
+        protected MoneyWiseUKCapitalFlatRateScheme(final TethysRate pRate) {
             theBaseRate = pRate;
         }
 
@@ -103,17 +149,17 @@ public abstract class MoneyWiseCapitalScheme
     /**
      * Split Rate Scheme.
      */
-    public static class MoneyWiseCapitalSplitRateScheme
-            extends MoneyWiseCapitalFlatRateScheme {
+    public static class MoneyWiseUKCapitalSplitRateScheme
+            extends MoneyWiseUKCapitalFlatRateScheme {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseCapitalSplitRateScheme.class.getSimpleName(), MoneyWiseCapitalFlatRateScheme.getBaseFields());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKCapitalSplitRateScheme.class.getSimpleName(), MoneyWiseUKCapitalFlatRateScheme.getBaseFields());
 
         /**
          * Rate Field Id.
          */
-        private static final MetisField FIELD_HIGHRATE = FIELD_DEFS.declareEqualityField("HighRate");
+        private static final MetisField FIELD_HIGHRATE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.SCHEME_HIGH_RATE.getValue());
 
         /**
          * The High Rate.
@@ -125,8 +171,8 @@ public abstract class MoneyWiseCapitalScheme
          * @param pRate the base rate
          * @param pHighRate the high rate
          */
-        protected MoneyWiseCapitalSplitRateScheme(final TethysRate pRate,
-                                                  final TethysRate pHighRate) {
+        protected MoneyWiseUKCapitalSplitRateScheme(final TethysRate pRate,
+                                                    final TethysRate pHighRate) {
             super(pRate);
             theHighRate = pHighRate;
         }
@@ -164,12 +210,12 @@ public abstract class MoneyWiseCapitalScheme
     /**
      * As Income Scheme.
      */
-    public static class MoneyWiseCapitalAsIncomeScheme
-            extends MoneyWiseCapitalScheme {
+    public static class MoneyWiseUKCapitalAsIncomeScheme
+            extends MoneyWiseUKCapitalScheme {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseCapitalAsIncomeScheme.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKCapitalAsIncomeScheme.class.getSimpleName());
 
         /**
          * Obtain the data fields.
@@ -199,22 +245,22 @@ public abstract class MoneyWiseCapitalScheme
     /**
      * Residential Scheme.
      */
-    public static class MoneyWiseCapitalResidentialScheme
-            extends MoneyWiseCapitalSplitRateScheme {
+    public static class MoneyWiseUKCapitalResidentialScheme
+            extends MoneyWiseUKCapitalSplitRateScheme {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseCapitalResidentialScheme.class.getSimpleName(), MoneyWiseCapitalSplitRateScheme.getBaseFields());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKCapitalResidentialScheme.class.getSimpleName(), MoneyWiseUKCapitalSplitRateScheme.getBaseFields());
 
         /**
          * Residential Field Id.
          */
-        private static final MetisField FIELD_RESIDENTIAL = FIELD_DEFS.declareEqualityField("Residential");
+        private static final MetisField FIELD_RESIDENTIAL = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.SCHEME_RESIDENTIAL.getValue());
 
         /**
          * The Residential Scheme.
          */
-        private final MoneyWiseCapitalSplitRateScheme theResidential;
+        private final MoneyWiseUKCapitalSplitRateScheme theResidential;
 
         /**
          * Constructor.
@@ -223,19 +269,19 @@ public abstract class MoneyWiseCapitalScheme
          * @param pResRate the base rate
          * @param pHighResRate the high rate
          */
-        protected MoneyWiseCapitalResidentialScheme(final TethysRate pRate,
-                                                    final TethysRate pHighRate,
-                                                    final TethysRate pResRate,
-                                                    final TethysRate pHighResRate) {
+        protected MoneyWiseUKCapitalResidentialScheme(final TethysRate pRate,
+                                                      final TethysRate pHighRate,
+                                                      final TethysRate pResRate,
+                                                      final TethysRate pHighResRate) {
             super(pRate, pHighRate);
-            theResidential = new MoneyWiseCapitalSplitRateScheme(pResRate, pHighResRate);
+            theResidential = new MoneyWiseUKCapitalSplitRateScheme(pResRate, pHighResRate);
         }
 
         /**
          * Obtain the high rate.
          * @return the high rate
          */
-        protected MoneyWiseCapitalSplitRateScheme getResidentialScheme() {
+        protected MoneyWiseUKCapitalSplitRateScheme getResidentialScheme() {
             return theResidential;
         }
 

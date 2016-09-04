@@ -22,11 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
-import java.util.Calendar;
+import java.time.Month;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseMarginalReduction;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -34,37 +36,37 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 /**
  * AgeAdapted UK Tax Allowance.
  */
-public class MoneyWiseAgeAllowance
-        extends MoneyWiseBasicAllowance {
+public class MoneyWiseUKAgeAllowance
+        extends MoneyWiseUKBasicAllowance {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseAgeAllowance.class.getSimpleName(), MoneyWiseBasicAllowance.getBaseFields());
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKAgeAllowance.class.getSimpleName(), MoneyWiseUKBasicAllowance.getBaseFields());
 
     /**
      * LoAgeAllowance Field Id.
      */
-    private static final MetisField FIELD_LOAGEALLOWANCE = FIELD_DEFS.declareEqualityField("LoAgeAllowance");
+    private static final MetisField FIELD_LOAGEALLOWANCE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_LOAGE.getValue());
 
     /**
      * HiAgeAllowance Field Id.
      */
-    private static final MetisField FIELD_HIAGEALLOWANCE = FIELD_DEFS.declareEqualityField("HiAgeAllowance");
+    private static final MetisField FIELD_HIAGEALLOWANCE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_HIAGE.getValue());
 
     /**
      * AgeAllowanceLimit Field Id.
      */
-    private static final MetisField FIELD_AGEALLOWLIMIT = FIELD_DEFS.declareEqualityField("AgeAllowanceLimit");
+    private static final MetisField FIELD_AGEALLOWLIMIT = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.LIMIT_AGEALLOWANCE.getValue());
 
     /**
      * Age Allowance minimum.
      */
-    private static final TethysDate BIRTHDAY_MINIMUM = TethysFiscalYear.UK.endOfYear(new TethysDate(1948, Calendar.JANUARY, 1));
+    private static final TethysDate BIRTHDAY_MINIMUM = TethysFiscalYear.UK.endOfYear(new TethysDate(1948, Month.JANUARY, 1));
 
     /**
      * HiAge Allowance minimum.
      */
-    private static final TethysDate HI_BIRTHDAY_MINIMUM = TethysFiscalYear.UK.endOfYear(new TethysDate(1938, Calendar.JANUARY, 1));
+    private static final TethysDate HI_BIRTHDAY_MINIMUM = TethysFiscalYear.UK.endOfYear(new TethysDate(1938, Month.JANUARY, 1));
 
     /**
      * Low Age Limit.
@@ -111,13 +113,13 @@ public class MoneyWiseAgeAllowance
      * @param pAgeAllowanceLimit the age allowance limit
      * @param pReduction the marginal reduction
      */
-    protected MoneyWiseAgeAllowance(final TethysMoney pAllowance,
-                                    final TethysMoney pRentalAllowance,
-                                    final TethysMoney pCapitalAllowance,
-                                    final TethysMoney pLoAgeAllowance,
-                                    final TethysMoney pHiAgeAllowance,
-                                    final TethysMoney pAgeAllowanceLimit,
-                                    final MoneyWiseMarginalReduction pReduction) {
+    protected MoneyWiseUKAgeAllowance(final TethysMoney pAllowance,
+                                      final TethysMoney pRentalAllowance,
+                                      final TethysMoney pCapitalAllowance,
+                                      final TethysMoney pLoAgeAllowance,
+                                      final TethysMoney pHiAgeAllowance,
+                                      final TethysMoney pAgeAllowanceLimit,
+                                      final MoneyWiseMarginalReduction pReduction) {
         super(pAllowance, pRentalAllowance, pCapitalAllowance, pReduction);
         theLoAgeAllowance = pLoAgeAllowance;
         theHiAgeAllowance = pHiAgeAllowance;
@@ -136,12 +138,12 @@ public class MoneyWiseAgeAllowance
      * @param pHiAgeAllowance the high age allowance
      * @param pAgeAllowanceLimit the age allowance limit
      */
-    protected MoneyWiseAgeAllowance(final TethysMoney pAllowance,
-                                    final TethysMoney pRentalAllowance,
-                                    final TethysMoney pCapitalAllowance,
-                                    final TethysMoney pLoAgeAllowance,
-                                    final TethysMoney pHiAgeAllowance,
-                                    final TethysMoney pAgeAllowanceLimit) {
+    protected MoneyWiseUKAgeAllowance(final TethysMoney pAllowance,
+                                      final TethysMoney pRentalAllowance,
+                                      final TethysMoney pCapitalAllowance,
+                                      final TethysMoney pLoAgeAllowance,
+                                      final TethysMoney pHiAgeAllowance,
+                                      final TethysMoney pAgeAllowanceLimit) {
         this(pAllowance, pRentalAllowance, pCapitalAllowance, pLoAgeAllowance,
                 pHiAgeAllowance, pAgeAllowanceLimit, MoneyWiseMarginalReduction.ONEINTWO);
     }
@@ -154,11 +156,11 @@ public class MoneyWiseAgeAllowance
      * @param pLoAgeAllowance the low age allowance
      * @param pAgeAllowanceLimit the age allowance limit
      */
-    protected MoneyWiseAgeAllowance(final TethysMoney pAllowance,
-                                    final TethysMoney pRentalAllowance,
-                                    final TethysMoney pCapitalAllowance,
-                                    final TethysMoney pLoAgeAllowance,
-                                    final TethysMoney pAgeAllowanceLimit) {
+    protected MoneyWiseUKAgeAllowance(final TethysMoney pAllowance,
+                                      final TethysMoney pRentalAllowance,
+                                      final TethysMoney pCapitalAllowance,
+                                      final TethysMoney pLoAgeAllowance,
+                                      final TethysMoney pAgeAllowanceLimit) {
         this(pAllowance, pRentalAllowance, pCapitalAllowance, pLoAgeAllowance, null, pAgeAllowanceLimit, MoneyWiseMarginalReduction.TWOINTHREE);
     }
 
@@ -187,7 +189,7 @@ public class MoneyWiseAgeAllowance
     }
 
     @Override
-    protected TethysMoney calculateBasicAllowance(final MoneyWiseTaxConfig pConfig) {
+    protected TethysMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
         /* Access the client age */
         TethysDate myBirthday = pConfig.getBirthday();
         Integer myAge = pConfig.getClientAge();

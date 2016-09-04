@@ -22,153 +22,140 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import java.time.Month;
+
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYear;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
- * The Tax Year.
+ * The UK Tax Year.
  */
-public class MoneyWiseTaxYear
-        implements MetisDataContents {
+public class MoneyWiseUKTaxYear
+        extends MoneyWiseTaxYear {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseTaxYear.class.getSimpleName());
-
-    /**
-     * Date Field Id.
-     */
-    private static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityField("EndOfTaxYear");
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKTaxYear.class.getSimpleName(), MoneyWiseTaxYear.getBaseFields());
 
     /**
      * Allowances Field Id.
      */
-    private static final MetisField FIELD_ALLOWANCES = FIELD_DEFS.declareEqualityField("Allowances");
+    private static final MetisField FIELD_ALLOWANCES = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_ALLOWANCES.getValue());
 
     /**
-     * StandardBands Field Id.
+     * Bands Field Id.
      */
-    private static final MetisField FIELD_STANDARD = FIELD_DEFS.declareEqualityField("StandardBands");
+    private static final MetisField FIELD_BANDS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_BANDS.getValue());
 
     /**
      * InterestScheme Field Id.
      */
-    private static final MetisField FIELD_INTEREST = FIELD_DEFS.declareEqualityField("InterestScheme");
+    private static final MetisField FIELD_INTEREST = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_INTEREST.getValue());
 
     /**
      * DividendScheme Field Id.
      */
-    private static final MetisField FIELD_DIVIDEND = FIELD_DEFS.declareEqualityField("DividendScheme");
+    private static final MetisField FIELD_DIVIDEND = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_DIVIDEND.getValue());
 
     /**
      * CapitalScheme Field Id.
      */
-    private static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField("CapitalScheme");
-
-    /**
-     * The Date.
-     */
-    private final TethysDate theYear;
+    private static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_CAPITAL.getValue());
 
     /**
      * The Allowances.
      */
-    private final MoneyWiseBasicAllowance theAllowances;
+    private final MoneyWiseUKBasicAllowance theAllowances;
 
     /**
-     * The StandardTaxBands.
+     * The TaxBands.
      */
-    private final MoneyWiseTaxBands theStandardBands;
+    private final MoneyWiseUKTaxBands theTaxBands;
 
     /**
      * The Income Scheme.
      */
-    private final MoneyWiseIncomeScheme theIncomeScheme;
+    private final MoneyWiseUKIncomeScheme theIncomeScheme;
 
     /**
      * The Rental Scheme.
      */
-    private final MoneyWiseRentalScheme theRentalScheme;
+    private final MoneyWiseUKRoomRentalScheme theRentalScheme;
 
     /**
      * The Interest Scheme.
      */
-    private final MoneyWiseInterestScheme theInterestScheme;
+    private final MoneyWiseUKInterestScheme theInterestScheme;
 
     /**
      * The Dividends Scheme.
      */
-    private final MoneyWiseDividendScheme theDividendScheme;
+    private final MoneyWiseUKDividendScheme theDividendScheme;
 
     /**
      * The TaxableGains Scheme.
      */
-    private final MoneyWiseTaxableGainsScheme theTaxableGainsScheme;
+    private final MoneyWiseUKTaxableGainsScheme theTaxableGainsScheme;
 
     /**
      * The Capital Gains Scheme.
      */
-    private final MoneyWiseCapitalScheme theCapitalScheme;
+    private final MoneyWiseUKCapitalScheme theCapitalScheme;
 
     /**
      * Constructor.
      * @param pDate the tax year end
      * @param pAllowances the allowances
-     * @param pStandard the standard tax bands
+     * @param pTaxBands the standard tax bands
      * @param pInterest the interest scheme
      * @param pDividend the dividend scheme
      * @param pCapital the capital gains scheme
      */
-    protected MoneyWiseTaxYear(final int pDate,
-                               final MoneyWiseBasicAllowance pAllowances,
-                               final MoneyWiseTaxBands pStandard,
-                               final MoneyWiseInterestScheme pInterest,
-                               final MoneyWiseDividendScheme pDividend,
-                               final MoneyWiseCapitalScheme pCapital) {
-        theYear = getDate(pDate);
+    protected MoneyWiseUKTaxYear(final int pDate,
+                                 final MoneyWiseUKBasicAllowance pAllowances,
+                                 final MoneyWiseUKTaxBands pTaxBands,
+                                 final MoneyWiseUKInterestScheme pInterest,
+                                 final MoneyWiseUKDividendScheme pDividend,
+                                 final MoneyWiseUKCapitalScheme pCapital) {
+        super(getDate(pDate));
         theAllowances = pAllowances;
-        theStandardBands = pStandard;
-        theIncomeScheme = new MoneyWiseIncomeScheme();
-        theRentalScheme = new MoneyWiseRentalScheme();
+        theTaxBands = pTaxBands;
+        theIncomeScheme = new MoneyWiseUKIncomeScheme();
+        theRentalScheme = new MoneyWiseUKRoomRentalScheme();
         theInterestScheme = pInterest;
         theDividendScheme = pDividend;
-        theTaxableGainsScheme = new MoneyWiseTaxableGainsScheme();
+        theTaxableGainsScheme = new MoneyWiseUKTaxableGainsScheme();
         theCapitalScheme = pCapital;
-    }
-
-    /**
-     * Obtain the Year.
-     * @return the tax year end
-     */
-    public TethysDate getYear() {
-        return theYear;
     }
 
     /**
      * Obtain the Allowances.
      * @return the allowances
      */
-    public MoneyWiseBasicAllowance getAllowances() {
+    public MoneyWiseUKBasicAllowance getAllowances() {
         return theAllowances;
     }
 
     /**
-     * Obtain the Standard Bands.
-     * @return the standard bands
+     * Obtain the Standard taxBands.
+     * @return the tax bands
      */
-    public MoneyWiseTaxBands getStandardBands() {
-        return theStandardBands;
+    public MoneyWiseUKTaxBands getTaxBands() {
+        return theTaxBands;
     }
 
     /**
      * Obtain the Income Scheme.
      * @return the scheme
      */
-    public MoneyWiseIncomeScheme getIncomeScheme() {
+    public MoneyWiseUKIncomeScheme getIncomeScheme() {
         return theIncomeScheme;
     }
 
@@ -176,7 +163,7 @@ public class MoneyWiseTaxYear
      * Obtain the Rental Scheme.
      * @return the scheme
      */
-    public MoneyWiseRentalScheme getRentalScheme() {
+    public MoneyWiseUKRoomRentalScheme getRentalScheme() {
         return theRentalScheme;
     }
 
@@ -184,7 +171,7 @@ public class MoneyWiseTaxYear
      * Obtain the Interest Scheme.
      * @return the scheme
      */
-    public MoneyWiseInterestScheme getInterestScheme() {
+    public MoneyWiseUKInterestScheme getInterestScheme() {
         return theInterestScheme;
     }
 
@@ -192,7 +179,7 @@ public class MoneyWiseTaxYear
      * Obtain the Dividend Scheme.
      * @return the scheme
      */
-    public MoneyWiseDividendScheme getDividendScheme() {
+    public MoneyWiseUKDividendScheme getDividendScheme() {
         return theDividendScheme;
     }
 
@@ -200,7 +187,7 @@ public class MoneyWiseTaxYear
      * Obtain the TaxableGains Scheme.
      * @return the scheme
      */
-    public MoneyWiseTaxableGainsScheme getTaxableGainsScheme() {
+    public MoneyWiseUKTaxableGainsScheme getTaxableGainsScheme() {
         return theTaxableGainsScheme;
     }
 
@@ -208,7 +195,7 @@ public class MoneyWiseTaxYear
      * Obtain the Capital Scheme.
      * @return the scheme
      */
-    public MoneyWiseCapitalScheme getCapitalScheme() {
+    public MoneyWiseUKCapitalScheme getCapitalScheme() {
         return theCapitalScheme;
     }
 
@@ -218,7 +205,7 @@ public class MoneyWiseTaxYear
      * @return the amount
      */
     private static TethysDate getDate(final int pYear) {
-        TethysDate myDate = new TethysDate(1, 1, pYear);
+        TethysDate myDate = new TethysDate(pYear, Month.JANUARY, 1);
         return TethysFiscalYear.UK.endOfYear(myDate);
     }
 
@@ -230,14 +217,11 @@ public class MoneyWiseTaxYear
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
-        if (FIELD_DATE.equals(pField)) {
-            return theYear;
-        }
         if (FIELD_ALLOWANCES.equals(pField)) {
             return theAllowances;
         }
-        if (FIELD_STANDARD.equals(pField)) {
-            return theStandardBands;
+        if (FIELD_BANDS.equals(pField)) {
+            return theTaxBands;
         }
         if (FIELD_INTEREST.equals(pField)) {
             return theInterestScheme;
@@ -249,17 +233,28 @@ public class MoneyWiseTaxYear
             return theCapitalScheme;
         }
 
-        /* Not recognised */
-        return MetisFieldValue.UNKNOWN;
+        /* Pass call on */
+        return super.getFieldValue(pField);
     }
 
     @Override
-    public String formatObject() {
-        return toString();
+    public boolean isTaxCreditRequired() {
+        return !(theAllowances instanceof MoneyWiseUKSavingsAllowance);
     }
 
     @Override
-    public String toString() {
-        return Integer.toString(getYear().getYear());
+    public TethysRate getTaxCreditRateForInterest() {
+        return theInterestScheme.getTaxCreditRate(this);
+    }
+
+    @Override
+    public TethysRate getTaxCreditRateForDividend() {
+        return theDividendScheme.getTaxCreditRate(this);
+    }
+
+    @Override
+    public MoneyWiseUKTaxAnalysis analyseTaxYear(final MetisPreferenceManager pPreferences,
+                                                 final TaxBasisBucketList pTaxBasis) {
+        return null;
     }
 }

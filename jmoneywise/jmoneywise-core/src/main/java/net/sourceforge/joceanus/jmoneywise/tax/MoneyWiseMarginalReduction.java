@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.tax.uk;
+package net.sourceforge.joceanus.jmoneywise.tax;
 
 import java.util.Currency;
 
@@ -41,6 +41,11 @@ public enum MoneyWiseMarginalReduction {
     TWOINTHREE(2, 3);
 
     /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
      * The multiplier.
      */
     private final int theMultiplier;
@@ -59,6 +64,18 @@ public enum MoneyWiseMarginalReduction {
                                final int pQuotient) {
         theMultiplier = pMultiplier;
         theQuotient = pQuotient;
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = MoneyWiseTaxResource.getKeyForMarginalReduction(this).getValue();
+        }
+
+        /* return the name */
+        return theName;
     }
 
     /**

@@ -231,7 +231,7 @@ public final class TransactionCategory
         if (myParentClass.isTotals()) {
             myNewClass = TransactionCategoryClass.EXPENSETOTALS;
         } else if (myParentClass.isIncome()) {
-            myNewClass = TransactionCategoryClass.OTHERINCOME;
+            myNewClass = TransactionCategoryClass.TAXEDINCOME;
         } else if (myParentClass.isTransfer()) {
             myNewClass = TransactionCategoryClass.STOCKSPLIT;
         } else {

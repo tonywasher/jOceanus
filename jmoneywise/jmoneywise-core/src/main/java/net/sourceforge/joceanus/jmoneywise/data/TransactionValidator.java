@@ -71,6 +71,7 @@ public final class TransactionValidator {
         /* Switch on the CategoryClass */
         switch (myCatClass) {
             case TAXEDINCOME:
+            case RECOVEREDEXPENSES:
             case OTHERINCOME:
                 /* Taxed/Other income must be to deposit/cash/loan */
                 return myType.isValued();

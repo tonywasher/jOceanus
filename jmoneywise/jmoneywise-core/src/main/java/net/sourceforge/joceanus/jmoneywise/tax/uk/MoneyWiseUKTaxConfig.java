@@ -27,97 +27,114 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxConfig;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Tax configuration.
  */
-public class MoneyWiseTaxConfig
-        implements MetisDataContents {
+public class MoneyWiseUKTaxConfig
+        implements MetisDataContents, MoneyWiseTaxConfig {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseTaxConfig.class.getSimpleName());
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKTaxConfig.class.getSimpleName());
 
     /**
      * TaxYear Field Id.
      */
-    private static final MetisField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityField("TaxYear");
+    private static final MetisField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_NAME.getValue());
 
     /**
      * TaxBasis Field Id.
      */
-    private static final MetisField FIELD_TAXBASIS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXBASIS.getListName());
+    private static final MetisField FIELD_TAXSOURCE = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXBASIS.getListName());
 
     /**
      * GrossTaxable Field Id.
      */
-    private static final MetisField FIELD_GROSS = FIELD_DEFS.declareEqualityField("GrossTaxable");
+    private static final MetisField FIELD_GROSS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXCONFIG_GROSS.getValue());
+
+    /**
+     * GrossPreSavings Field Id.
+     */
+    private static final MetisField FIELD_PRESAVINGS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXCONFIG_PRESAVINGS.getValue());
 
     /**
      * Birthday Field Id.
      */
-    private static final MetisField FIELD_BIRTHDAY = FIELD_DEFS.declareEqualityField("Birthday");
+    private static final MetisField FIELD_BIRTHDAY = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXCONFIG_BIRTHDAY.getValue());
 
     /**
      * ClientAge Field Id.
      */
-    private static final MetisField FIELD_AGE = FIELD_DEFS.declareEqualityField("Age");
+    private static final MetisField FIELD_AGE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXCONFIG_AGE.getValue());
 
     /**
      * AgeRelatedAllowances Field Id.
      */
-    private static final MetisField FIELD_AGERELATED = FIELD_DEFS.declareEqualityField("AgeRelatedAllowances");
+    private static final MetisField FIELD_AGERELATED = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXCONFIG_AGEALLOWANCE.getValue());
 
     /**
      * Allowance Field Id.
      */
-    private static final MetisField FIELD_ALLOWANCE = FIELD_DEFS.declareEqualityField("Allowance");
+    private static final MetisField FIELD_ALLOWANCE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_BASIC.getValue());
 
     /**
      * Rental Allowance Field Id.
      */
-    private static final MetisField FIELD_RENTAL = FIELD_DEFS.declareEqualityField("RentalAllowance");
+    private static final MetisField FIELD_RENTAL = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_RENTAL.getValue());
 
     /**
      * Savings Allowance Field Id.
      */
-    private static final MetisField FIELD_SAVINGS = FIELD_DEFS.declareEqualityField("SavingsAllowance");
+    private static final MetisField FIELD_SAVINGS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS.getValue());
 
     /**
      * Dividend Allowance Field Id.
      */
-    private static final MetisField FIELD_DIVIDEND = FIELD_DEFS.declareEqualityField("DividendsAllowance");
+    private static final MetisField FIELD_DIVIDEND = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND.getValue());
 
     /**
      * Capital Allowance Field Id.
      */
-    private static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField("CapitalAllowance");
+    private static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL.getValue());
 
     /**
      * TaxBands Field Id.
      */
-    private static final MetisField FIELD_TAXBANDS = FIELD_DEFS.declareEqualityField("TaxBands");
+    private static final MetisField FIELD_TAXBANDS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_BANDS.getValue());
+
+    /**
+     * Low Savings Band Field Id.
+     */
+    private static final MetisField FIELD_LOSAVINGS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS.getValue());
 
     /**
      * TaxYear.
      */
-    private final MoneyWiseTaxYear theTaxYear;
+    private final MoneyWiseUKTaxYear theTaxYear;
 
     /**
-     * The taxBasis list.
+     * The taxSource.
      */
-    private final TaxBasisBucketList theTaxBases;
+    private final MoneyWiseTaxSource theTaxSource;
 
     /**
      * Gross Taxable Income.
      */
     private final TethysMoney theGrossTaxable;
+
+    /**
+     * Gross PreSavings.
+     */
+    private final TethysMoney theGrossPreSavings;
 
     /**
      * The client birthday.
@@ -162,28 +179,34 @@ public class MoneyWiseTaxConfig
     /**
      * Tax Bands.
      */
-    private final MoneyWiseTaxBands theTaxBands;
+    private final MoneyWiseTaxBandSet theTaxBands;
+
+    /**
+     * LoSavings Band.
+     */
+    private final MoneyWiseTaxBand theLoSavings;
 
     /**
      * Constructor.
      * @param pTaxYear the taxYear
-     * @param pTaxBasis the tax basis list
+     * @param pTaxSource the tax source
      * @param pBirthday the client birthday
      */
-    protected MoneyWiseTaxConfig(final MoneyWiseTaxYear pTaxYear,
-                                 final TaxBasisBucketList pTaxBasis,
-                                 final TethysDate pBirthday) {
+    protected MoneyWiseUKTaxConfig(final MoneyWiseUKTaxYear pTaxYear,
+                                   final MoneyWiseTaxSource pTaxSource,
+                                   final TethysDate pBirthday) {
         /* Store details */
         theTaxYear = pTaxYear;
-        theTaxBases = pTaxBasis;
+        theTaxSource = pTaxSource;
         theBirthday = pBirthday;
         theClientAge = theBirthday.ageOn(pTaxYear.getYear());
 
-        /* calculate the gross taxable income */
+        /* calculate the gross taxable income and preSavings */
+        theGrossPreSavings = determineGrossPreSavings();
         theGrossTaxable = determineGrossTaxableIncome();
 
         /* Access the basic allowances */
-        MoneyWiseBasicAllowance myAllowances = theTaxYear.getAllowances();
+        MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();
 
         /* Calculate the allowances */
         theAllowance = myAllowances.calculateBasicAllowance(this);
@@ -193,18 +216,23 @@ public class MoneyWiseTaxConfig
         theCapitalAllowance = myAllowances.getCapitalAllowance();
 
         /* Access the taxBands */
-        theTaxBands = theTaxYear.getStandardBands();
+        MoneyWiseUKTaxBands myBands = theTaxYear.getTaxBands();
+        theTaxBands = myBands.getStandardSet();
+
+        /* Calculate the loSavings band */
+        theLoSavings = myAllowances.calculateLoSavingsBand(this, myBands.getLoSavings());
     }
 
     /**
      * Constructor.
      * @param pSource the source configuration
      */
-    protected MoneyWiseTaxConfig(final MoneyWiseTaxConfig pSource) {
+    private MoneyWiseUKTaxConfig(final MoneyWiseUKTaxConfig pSource) {
         /* Copy basic details */
         theTaxYear = pSource.getTaxYear();
-        theTaxBases = pSource.getTaxBases();
+        theTaxSource = pSource.getTaxSource();
         theGrossTaxable = pSource.getGrossTaxable();
+        theGrossPreSavings = pSource.getGrossPreSavings();
         theBirthday = pSource.getBirthday();
         theClientAge = pSource.getClientAge();
         hasAgeRelatedAllowance = pSource.hasAgeRelatedAllowance();
@@ -217,14 +245,15 @@ public class MoneyWiseTaxConfig
         theCapitalAllowance = new TethysMoney(pSource.getCapitalAllowance());
 
         /* Copy the taxBands */
-        theTaxBands = new MoneyWiseTaxBands(pSource.getTaxBands());
+        theTaxBands = new MoneyWiseTaxBandSet(pSource.getTaxBands());
+        theLoSavings = new MoneyWiseTaxBand(pSource.getLoSavingsBand());
     }
 
     /**
      * Obtain the tax year.
      * @return the tax year
      */
-    public MoneyWiseTaxYear getTaxYear() {
+    public MoneyWiseUKTaxYear getTaxYear() {
         return theTaxYear;
     }
 
@@ -232,8 +261,16 @@ public class MoneyWiseTaxConfig
      * Obtain the tax bases.
      * @return the bases
      */
-    public TaxBasisBucketList getTaxBases() {
-        return theTaxBases;
+    public MoneyWiseTaxSource getTaxSource() {
+        return theTaxSource;
+    }
+
+    /**
+     * Obtain the gross preSavings income.
+     * @return the gross preSavings
+     */
+    public TethysMoney getGrossPreSavings() {
+        return theGrossPreSavings;
     }
 
     /**
@@ -320,8 +357,16 @@ public class MoneyWiseTaxConfig
      * Obtain the tax bands.
      * @return the tax bands
      */
-    public MoneyWiseTaxBands getTaxBands() {
+    public MoneyWiseTaxBandSet getTaxBands() {
         return theTaxBands;
+    }
+
+    /**
+     * Obtain the low savings band.
+     * @return the low savings band
+     */
+    public MoneyWiseTaxBand getLoSavingsBand() {
+        return theLoSavings;
     }
 
     @Override
@@ -335,11 +380,14 @@ public class MoneyWiseTaxConfig
         if (FIELD_TAXYEAR.equals(pField)) {
             return theTaxYear;
         }
-        if (FIELD_TAXBASIS.equals(pField)) {
-            return theTaxBases;
+        if (FIELD_TAXSOURCE.equals(pField)) {
+            return theTaxSource;
         }
         if (FIELD_GROSS.equals(pField)) {
             return theGrossTaxable;
+        }
+        if (FIELD_PRESAVINGS.equals(pField)) {
+            return theGrossPreSavings;
         }
         if (FIELD_BIRTHDAY.equals(pField)) {
             return theBirthday;
@@ -380,6 +428,11 @@ public class MoneyWiseTaxConfig
         if (FIELD_TAXBANDS.equals(pField)) {
             return theTaxBands;
         }
+        if (FIELD_LOSAVINGS.equals(pField)) {
+            return theLoSavings.getAmount().isNonZero()
+                                                        ? theLoSavings
+                                                        : MetisFieldValue.SKIP;
+        }
 
         /* Not recognised */
         return MetisFieldValue.UNKNOWN;
@@ -390,29 +443,66 @@ public class MoneyWiseTaxConfig
         return FIELD_DEFS.getName();
     }
 
+    @Override
+    public MoneyWiseUKTaxConfig cloneIt() {
+        return new MoneyWiseUKTaxConfig(this);
+    }
+
     /**
      * Determine the gross taxable income.
      * @return the gross taxable income
      */
     private TethysMoney determineGrossTaxableIncome() {
+        /* Initialise income to preSavings */
+        TethysMoney myIncome = new TethysMoney(theGrossPreSavings);
+
+        /* Add taxed interest to income */
+        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(TaxBasisClass.TAXEDINTEREST));
+
+        /* Add unTaxed interest to income */
+        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(TaxBasisClass.UNTAXEDINTEREST));
+
+        /* Add share dividends to income */
+        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(TaxBasisClass.DIVIDEND));
+
+        /* Add unit trust dividends to income */
+        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(TaxBasisClass.UNITTRUSTDIVIDEND));
+
+        /* Add foreign dividends to income */
+        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(TaxBasisClass.FOREIGNDIVIDEND));
+
+        /* Add chargeable gains to income */
+        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(TaxBasisClass.CHARGEABLEGAINS));
+
+        /* Capital Gains does not class as taxable income */
+
+        /* Return the gross taxable amount */
+        return myIncome;
+    }
+
+    /**
+     * Determine the gross preSavings income.
+     * @return the gross preSavings income
+     */
+    private TethysMoney determineGrossPreSavings() {
         /* Access the basic allowances */
-        MoneyWiseBasicAllowance myAllowances = theTaxYear.getAllowances();
+        MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();
 
         /* Initialise income to correct currency */
         TethysMoney myIncome = new TethysMoney(myAllowances.getAllowance());
         myIncome.setZero();
 
-        /* Access the salary bucket and add to income */
-        TaxBasisBucket mySrcBucket = theTaxBases.getBucket(TaxBasisClass.SALARY);
-        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        /* Add the salary to income */
+        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(TaxBasisClass.SALARY));
 
-        /* Access the rental bucket */
-        mySrcBucket = theTaxBases.getBucket(TaxBasisClass.RENTALINCOME);
-        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        /* Add the other income to income */
+        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(TaxBasisClass.OTHERINCOME));
 
-        /* Access the room rental bucket */
-        mySrcBucket = theTaxBases.getBucket(TaxBasisClass.ROOMRENTAL);
-        TethysMoney myChargeable = new TethysMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
+        /* Add the rental to income */
+        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(TaxBasisClass.RENTALINCOME));
+
+        /* Access the room rental income */
+        TethysMoney myChargeable = theTaxSource.getAmountForTaxBasis(TaxBasisClass.ROOMRENTAL);
 
         /* If we have a chargeable element */
         TethysMoney myAllowance = myAllowances.getRentalAllowance();
@@ -422,33 +512,7 @@ public class MoneyWiseTaxConfig
             myIncome.addAmount(myChargeable);
         }
 
-        /* Access the taxed interest bucket and add to income */
-        mySrcBucket = theTaxBases.getBucket(TaxBasisClass.TAXEDINTEREST);
-        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
-
-        /* Access the unTaxed interest bucket and add to income */
-        mySrcBucket = theTaxBases.getBucket(TaxBasisClass.UNTAXEDINTEREST);
-        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
-
-        /* Access the dividends bucket and add to income */
-        mySrcBucket = theTaxBases.getBucket(TaxBasisClass.DIVIDEND);
-        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
-
-        /* Access the unit trust dividends bucket and add to income */
-        mySrcBucket = theTaxBases.getBucket(TaxBasisClass.UNITTRUSTDIVIDEND);
-        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
-
-        /* Access the foreign dividends bucket and add to income */
-        mySrcBucket = theTaxBases.getBucket(TaxBasisClass.FOREIGNDIVIDEND);
-        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
-
-        /* Access the taxable gains bucket and add to income */
-        mySrcBucket = theTaxBases.getBucket(TaxBasisClass.TAXABLEGAINS);
-        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
-
-        /* Capital Gains does not class as taxable income */
-
-        /* Return the gross taxable amount */
+        /* Return the gross preSavings amount */
         return myIncome;
     }
 }

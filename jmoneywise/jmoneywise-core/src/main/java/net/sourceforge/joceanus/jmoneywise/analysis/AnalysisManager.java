@@ -22,11 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
-import net.sourceforge.joceanus.jmetis.list.MetisNestedHashMap;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
@@ -38,6 +44,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBuc
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYear;
+import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -46,27 +54,46 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Analysis manager.
  */
 public class AnalysisManager
-        extends MetisNestedHashMap<TethysDateRange, Analysis>
-        implements MetisDataFormat {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = -8360259174517408222L;
-
+        implements MetisDataContents, MetisDataMap {
     /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisManager.class);
 
     /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisManager.class.getSimpleName());
+
+    /**
+     * TaxYears Field Id.
+     */
+    private static final MetisField FIELD_TAXYEARS = FIELD_DEFS.declareEqualityField("TaxYears");
+
+    /**
+     * BaseAnalysis Field Id.
+     */
+    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+
+    /**
+     * The taxYear cache.
+     */
+    private final MoneyWiseUKTaxYearCache theTaxYearCache;
+
+    /**
+     * The analysis map.
+     */
+    private final Map<TethysDateRange, Analysis> theAnalysisMap;
+
+    /**
      * The base analysis.
      */
-    private final transient Analysis theAnalysis;
+    private final Analysis theAnalysis;
 
     /**
      * The first date.
      */
-    private final transient TethysDate theFirstDate;
+    private final TethysDate theFirstDate;
 
     /**
      * Do we have active securities?
@@ -86,6 +113,10 @@ public class AnalysisManager
         /* Store the parameters */
         theAnalysis = pAnalysis;
 
+        /* Create the taxYear cache and analysis map */
+        theTaxYearCache = new MoneyWiseUKTaxYearCache();
+        theAnalysisMap = new HashMap<>();
+
         /* Store the first date */
         MoneyWiseData myData = theAnalysis.getData();
         TethysDateRange myRange = myData.getDateRange();
@@ -93,8 +124,32 @@ public class AnalysisManager
     }
 
     @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_TAXYEARS.equals(pField)) {
+            return theTaxYearCache;
+        }
+        if (FIELD_ANALYSIS.equals(pField)) {
+            return theAnalysis;
+        }
+
+        /* Not recognised */
+        return MetisFieldValue.UNKNOWN;
+    }
+
+    @Override
     public String formatObject() {
         return getClass().getSimpleName();
+    }
+
+    @Override
+    public Map<?, ?> getUnderlyingMap() {
+        return theAnalysisMap;
     }
 
     /**
@@ -130,6 +185,15 @@ public class AnalysisManager
     }
 
     /**
+     * Obtain the taxYear for the date.
+     * @param pDate the date
+     * @return the amount
+     */
+    public MoneyWiseTaxYear getTaxYearForDate(final TethysDate pDate) {
+        return theTaxYearCache.getTaxYearForDate(pDate);
+    }
+
+    /**
      * Obtain an analysis for a date.
      * @param pDate the date for the analysis.
      * @return the analysis
@@ -139,17 +203,17 @@ public class AnalysisManager
         TethysDateRange myRange = new TethysDateRange(null, pDate);
 
         /* Look for the existing analysis */
-        Analysis myAnalysis = get(myRange);
+        Analysis myAnalysis = theAnalysisMap.get(myRange);
         if (myAnalysis == null) {
             /* Create the new event analysis */
-            myAnalysis = new Analysis(theAnalysis, pDate);
+            myAnalysis = new Analysis(this, pDate);
             produceTotals(myAnalysis);
 
             /* Check the totals */
             checkTotals(myAnalysis);
 
             /* Put it into the map */
-            put(myRange, myAnalysis);
+            theAnalysisMap.put(myRange, myAnalysis);
         }
 
         /* return the analysis */
@@ -163,17 +227,17 @@ public class AnalysisManager
      */
     public Analysis getAnalysis(final TethysDateRange pRange) {
         /* Look for the existing analysis */
-        Analysis myAnalysis = get(pRange);
+        Analysis myAnalysis = theAnalysisMap.get(pRange);
         if (myAnalysis == null) {
             /* Create the new event analysis */
-            myAnalysis = new Analysis(theAnalysis, pRange);
+            myAnalysis = new Analysis(this, pRange);
             produceTotals(myAnalysis);
 
             /* Check the totals */
             checkTotals(myAnalysis);
 
             /* Put it into the map */
-            put(pRange, myAnalysis);
+            theAnalysisMap.put(pRange, myAnalysis);
         }
 
         /* return the analysis */

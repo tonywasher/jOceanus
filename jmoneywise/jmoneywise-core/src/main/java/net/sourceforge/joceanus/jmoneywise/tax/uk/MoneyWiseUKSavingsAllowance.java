@@ -26,33 +26,35 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseTaxBands.MoneyWiseTaxBand;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseMarginalReduction;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Savings UK Tax Allowance.
  */
-public class MoneyWiseSavingsAllowance
-        extends MoneyWiseBasicAllowance {
+public class MoneyWiseUKSavingsAllowance
+        extends MoneyWiseUKBasicAllowance {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseSavingsAllowance.class.getSimpleName(), MoneyWiseBasicAllowance.getBaseFields());
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKSavingsAllowance.class.getSimpleName(), MoneyWiseUKBasicAllowance.getBaseFields());
 
     /**
      * SavingsAllowance Field Id.
      */
-    private static final MetisField FIELD_SAVINGSALLOWANCE = FIELD_DEFS.declareEqualityField("SavingsAllowance");
+    private static final MetisField FIELD_SAVINGSALLOWANCE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS.getValue());
 
     /**
      * DividendsAllowance Field Id.
      */
-    private static final MetisField FIELD_DIVIDENDALLOWANCE = FIELD_DEFS.declareEqualityField("DividendAllowance");
+    private static final MetisField FIELD_DIVIDENDALLOWANCE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND.getValue());
 
     /**
      * AdditionalAllowanceLimit Field Id.
      */
-    private static final MetisField FIELD_ADDALLOWLIMIT = FIELD_DEFS.declareEqualityField("AdditionalAllowanceLimit");
+    private static final MetisField FIELD_ADDALLOWLIMIT = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.LIMIT_ADDALLOWANCE.getValue());
 
     /**
      * SavingsAllowance.
@@ -78,12 +80,12 @@ public class MoneyWiseSavingsAllowance
      * @param pDividendAllowance the dividend allowance
      * @param pAddAllowLimit the additional allowance limit
      */
-    protected MoneyWiseSavingsAllowance(final TethysMoney pAllowance,
-                                        final TethysMoney pRentalAllowance,
-                                        final TethysMoney pCapitalAllowance,
-                                        final TethysMoney pSavingsAllowance,
-                                        final TethysMoney pDividendAllowance,
-                                        final TethysMoney pAddAllowLimit) {
+    protected MoneyWiseUKSavingsAllowance(final TethysMoney pAllowance,
+                                          final TethysMoney pRentalAllowance,
+                                          final TethysMoney pCapitalAllowance,
+                                          final TethysMoney pSavingsAllowance,
+                                          final TethysMoney pDividendAllowance,
+                                          final TethysMoney pAddAllowLimit) {
         super(pAllowance, pRentalAllowance, pCapitalAllowance, MoneyWiseMarginalReduction.ONEINTWO);
         theSavingsAllowance = pSavingsAllowance;
         theDividendAllowance = pDividendAllowance;
@@ -115,7 +117,7 @@ public class MoneyWiseSavingsAllowance
     }
 
     @Override
-    protected TethysMoney calculateBasicAllowance(final MoneyWiseTaxConfig pConfig) {
+    protected TethysMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
         /* Determine Basic allowance */
         TethysMoney myAllowance = getAllowance();
 
@@ -139,13 +141,13 @@ public class MoneyWiseSavingsAllowance
     }
 
     @Override
-    protected TethysMoney calculateSavingsAllowance(final MoneyWiseTaxConfig pConfig) {
+    protected TethysMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfig pConfig) {
         /* Obtain the gross taxable and allowance */
         TethysMoney myGross = pConfig.getGrossTaxable();
         TethysMoney myBoundary = new TethysMoney(pConfig.getAllowance());
 
         /* Obtain the tax bands */
-        MoneyWiseTaxBands myBands = pConfig.getTaxYear().getStandardBands();
+        MoneyWiseUKTaxBands myBands = pConfig.getTaxYear().getTaxBands();
         Iterator<MoneyWiseTaxBand> myIterator = myBands.getStandardSet().iterator();
 
         /* If we have a basic band */

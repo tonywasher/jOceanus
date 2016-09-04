@@ -310,8 +310,8 @@ public class TaxAnalysis {
         mySrcBucket = myBasis.getBucket(TaxBasisClass.UNITTRUSTDIVIDEND);
         myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
-        /* Access the taxable gains bucket and add to income */
-        mySrcBucket = myBasis.getBucket(TaxBasisClass.TAXABLEGAINS);
+        /* Access the chargeable gains bucket and add to income */
+        mySrcBucket = myBasis.getBucket(TaxBasisClass.CHARGEABLEGAINS);
         myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the residential gains bucket */

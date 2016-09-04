@@ -26,37 +26,41 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseMarginalReduction;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * Basic UK Tax Allowance.
  */
-public abstract class MoneyWiseBasicAllowance
+public abstract class MoneyWiseUKBasicAllowance
         implements MetisDataContents {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseBasicAllowance.class.getSimpleName());
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKBasicAllowance.class.getSimpleName());
 
     /**
      * Allowance Field Id.
      */
-    private static final MetisField FIELD_ALLOWANCE = FIELD_DEFS.declareEqualityField("Allowance");
+    private static final MetisField FIELD_ALLOWANCE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_BASIC.getValue());
 
     /**
      * RentalAllowance Field Id.
      */
-    private static final MetisField FIELD_RENTAL = FIELD_DEFS.declareEqualityField("RentalAllowance");
+    private static final MetisField FIELD_RENTAL = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_RENTAL.getValue());
 
     /**
      * CapitalAllowance Field Id.
      */
-    private static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField("CapitalAllowance");
+    private static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL.getValue());
 
     /**
      * MarginalReduction Field Id.
      */
-    private static final MetisField FIELD_MARGINAL = FIELD_DEFS.declareEqualityField("MarginalReduction");
+    private static final MetisField FIELD_MARGINAL = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.MARGINAL_REDUCTION.getValue());
 
     /**
      * Allowance.
@@ -85,10 +89,10 @@ public abstract class MoneyWiseBasicAllowance
      * @param pCapitalAllowance the capital allowance
      * @param pReduction the marginal reduction
      */
-    protected MoneyWiseBasicAllowance(final TethysMoney pAllowance,
-                                      final TethysMoney pRentalAllowance,
-                                      final TethysMoney pCapitalAllowance,
-                                      final MoneyWiseMarginalReduction pReduction) {
+    protected MoneyWiseUKBasicAllowance(final TethysMoney pAllowance,
+                                        final TethysMoney pRentalAllowance,
+                                        final TethysMoney pCapitalAllowance,
+                                        final MoneyWiseMarginalReduction pReduction) {
         theAllowance = pAllowance;
         theRentalAllowance = pRentalAllowance;
         theCapitalAllowance = pCapitalAllowance;
@@ -101,9 +105,9 @@ public abstract class MoneyWiseBasicAllowance
      * @param pRentalAllowance the rental allowance
      * @param pCapitalAllowance the capital allowance
      */
-    protected MoneyWiseBasicAllowance(final TethysMoney pAllowance,
-                                      final TethysMoney pRentalAllowance,
-                                      final TethysMoney pCapitalAllowance) {
+    protected MoneyWiseUKBasicAllowance(final TethysMoney pAllowance,
+                                        final TethysMoney pRentalAllowance,
+                                        final TethysMoney pCapitalAllowance) {
         this(pAllowance, pRentalAllowance, pCapitalAllowance, MoneyWiseMarginalReduction.TWOINTHREE);
     }
 
@@ -144,8 +148,7 @@ public abstract class MoneyWiseBasicAllowance
      * @param pConfig the tax configuration
      * @return the calculated allowance
      */
-    protected TethysMoney calculateBasicAllowance(final MoneyWiseTaxConfig pConfig) {
-        /* Return the basic allowance */
+    protected TethysMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
         return getAllowance();
     }
 
@@ -154,11 +157,8 @@ public abstract class MoneyWiseBasicAllowance
      * @param pConfig the tax configuration
      * @return the savings allowance
      */
-    protected TethysMoney calculateSavingsAllowance(final MoneyWiseTaxConfig pConfig) {
-        /* Return a zero allowance */
-        TethysMoney myAllowance = new TethysMoney(theAllowance);
-        myAllowance.setZero();
-        return myAllowance;
+    protected TethysMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfig pConfig) {
+        return getZeroAmount();
     }
 
     /**
@@ -166,6 +166,51 @@ public abstract class MoneyWiseBasicAllowance
      * @return the dividend allowance
      */
     protected TethysMoney calculateDividendAllowance() {
+        return getZeroAmount();
+    }
+
+    /**
+     * Calculate the loSavings band.
+     * @param pConfig the tax configuration
+     * @param pLoSavings the low savings band
+     * @return the loSavings band
+     */
+    protected MoneyWiseTaxBand calculateLoSavingsBand(final MoneyWiseUKTaxConfig pConfig,
+                                                      final MoneyWiseTaxBand pLoSavings) {
+        /* Obtain the loSavings band */
+        if (pLoSavings == null) {
+            return new MoneyWiseTaxBand(getZeroAmount(), TethysRate.getWholePercentage(0));
+        }
+        MoneyWiseTaxBand myBand = new MoneyWiseTaxBand(pLoSavings);
+        TethysMoney myAmount = myBand.getAmount();
+
+        /* Obtain the preSavings income remaining after the allowance */
+        TethysMoney myPreSavings = new TethysMoney(pConfig.getGrossPreSavings());
+        myPreSavings.subtractAmount(pConfig.getAllowance());
+
+        /* If we have allowance left over, return the full loSavings band */
+        if (!myPreSavings.isPositive()) {
+            return myBand;
+        }
+
+        /* Subtract remaining income from the loSavings band */
+        myAmount = new TethysMoney(myAmount);
+        myAmount.subtractAmount(myPreSavings);
+
+        /* If we are negative, reset to zero */
+        if (!myAmount.isPositive()) {
+            myAmount.setZero();
+        }
+
+        /* return the amount */
+        return myBand;
+    }
+
+    /**
+     * Obtain zero amount.
+     * @return the zero amount
+     */
+    protected TethysMoney getZeroAmount() {
         /* Return a zero allowance */
         TethysMoney myAllowance = new TethysMoney(theAllowance);
         myAllowance.setZero();

@@ -124,33 +124,12 @@ public class TaxBasis
     }
 
     /**
-     * Determine whether we should add tax credits to the total.
-     * @return <code>true</code> if we should add tax credits to the total, <code>false</code> otherwise.
-     */
-    public boolean hasTaxCredits() {
-        switch (getTaxClass()) {
-            case SALARY:
-            case TAXEDINTEREST:
-            case DIVIDEND:
-            case UNITTRUSTDIVIDEND:
-            case TAXABLEGAINS:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
      * Determine whether we this is the tax paid category.
-     * @return <code>true</code> if we should add tax credits to the total, <code>false</code> otherwise.
+     * @return <code>true</code> if we should add tax credits to the total, <code>false</code>
+     * otherwise.
      */
     public boolean isTaxPaid() {
-        switch (getTaxClass()) {
-            case TAXPAID:
-                return true;
-            default:
-                return false;
-        }
+        return TaxBasisClass.TAXPAID.equals(getTaxClass());
     }
 
     /**

@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataMap;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -40,32 +41,31 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @param <E> the enum class
  */
 public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
-        extends LinkedHashMap<Integer, BucketSnapShot<T, E>>
-        implements MetisDataFormat {
+        implements MetisDataFormat, MetisDataMap {
     /**
-     * Serial Id.
+     * The history map.
      */
-    private static final long serialVersionUID = 6976602929502517385L;
+    private final Map<Integer, BucketSnapShot<T, E>> theHistoryMap;
 
     /**
      * values.
      */
-    private final transient T theValues;
+    private final T theValues;
 
     /**
      * Base values.
      */
-    private final transient T theBaseValues;
+    private final T theBaseValues;
 
     /**
      * Last values.
      */
-    private transient T theLastValues;
+    private T theLastValues;
 
     /**
      * Last transaction id.
      */
-    private transient Integer theLastId;
+    private Integer theLastId;
 
     /**
      * Constructor.
@@ -74,6 +74,9 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     protected BucketHistory(final T pValues) {
         /* Store the values */
         theValues = pValues;
+
+        /* Create the history map */
+        theHistoryMap = new LinkedHashMap<>();
 
         /* Create base as a snapshot */
         theBaseValues = theValues.getSnapShot();
@@ -88,6 +91,9 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         theBaseValues = pHistory.getBaseValues().getSnapShot();
         theValues = theBaseValues.getSnapShot();
         theLastValues = theBaseValues;
+
+        /* Create the history map */
+        theHistoryMap = new LinkedHashMap<>();
     }
 
     /**
@@ -101,11 +107,14 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         theBaseValues = pHistory.getBaseValues().getSnapShot();
         theLastValues = theBaseValues;
 
+        /* Create the history map */
+        theHistoryMap = new LinkedHashMap<>();
+
         /* Record latest transaction */
         BucketSnapShot<T, E> myLatest = null;
 
         /* Loop through the map */
-        Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entrySet().iterator();
+        Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entryIterator();
         while (myIterator.hasNext()) {
             Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
             BucketSnapShot<T, E> myTrans = myEntry.getValue();
@@ -118,7 +127,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
             /* Add to the map */
             BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<>(myTrans, theBaseValues, theLastValues);
             theLastValues = myNewTrans.getSnapShot();
-            put(myEntry.getKey(), myNewTrans);
+            theHistoryMap.put(myEntry.getKey(), myNewTrans);
 
             /* Store latest value */
             myLatest = myTrans;
@@ -141,12 +150,15 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      */
     protected BucketHistory(final BucketHistory<T, E> pHistory,
                             final TethysDateRange pRange) {
+        /* Create the history map */
+        theHistoryMap = new LinkedHashMap<>();
+
         /* Record first and last events */
         BucketSnapShot<T, E> myFirst = null;
         BucketSnapShot<T, E> myLatest = null;
 
         /* Loop through the map */
-        Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entrySet().iterator();
+        Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entryIterator();
         while (myIterator.hasNext()) {
             Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
             BucketSnapShot<T, E> myTrans = myEntry.getValue();
@@ -178,7 +190,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         if (myLatest != null) {
             /* Add to the map */
             BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<>(myLatest, theBaseValues, theLastValues);
-            put(myLatest.getId(), myNewTrans);
+            theHistoryMap.put(myLatest.getId(), myNewTrans);
             theLastValues = myNewTrans.getSnapShot();
         }
 
@@ -194,7 +206,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
 
             /* Add to the map */
             BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<>(myTrans, theBaseValues, theLastValues);
-            put(myEntry.getKey(), myNewTrans);
+            theHistoryMap.put(myEntry.getKey(), myNewTrans);
             theLastValues = myNewTrans.getNewSnapShot();
 
             /* Store latest value */
@@ -208,8 +220,21 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     }
 
     @Override
+    public Map<?, ?> getUnderlyingMap() {
+        return theHistoryMap;
+    }
+
+    @Override
     public String formatObject() {
         return getClass().getSimpleName();
+    }
+
+    /**
+     * Obtain the entry set iterator.
+     * @return the iterator
+     */
+    private Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> entryIterator() {
+        return theHistoryMap.entrySet().iterator();
     }
 
     /**
@@ -217,7 +242,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      * @return true/false
      */
     protected boolean isIdle() {
-        return isEmpty();
+        return theHistoryMap.isEmpty();
     }
 
     /**
@@ -249,7 +274,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         if (!myId.equals(theLastId)) {
             /* Allocate the transaction and add to map */
             BucketSnapShot<T, E> myTrans = new BucketSnapShot<>(pTrans, pValues, theLastValues);
-            put(pTrans.getId(), myTrans);
+            theHistoryMap.put(pTrans.getId(), myTrans);
             theLastValues = myTrans.getSnapShot();
             theLastId = myId;
         }
@@ -265,7 +290,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      */
     public T getValuesForTransaction(final Transaction pTrans) {
         /* Locate the transaction in the map */
-        BucketSnapShot<T, E> myTrans = get(pTrans.getId());
+        BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
         return (myTrans == null)
                                  ? null
                                  : myTrans.getSnapShot();
@@ -280,7 +305,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     public TethysDecimal getDeltaValue(final Transaction pTrans,
                                        final E pAttr) {
         /* Locate the transaction in the map */
-        BucketSnapShot<T, E> myTrans = get(pTrans.getId());
+        BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
         return (myTrans == null)
                                  ? null
                                  : myTrans.getDeltaValue(pAttr);
@@ -295,7 +320,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     public TethysMoney getDeltaMoneyValue(final Transaction pTrans,
                                           final E pAttr) {
         /* Locate the transaction in the map */
-        BucketSnapShot<T, E> myTrans = get(pTrans.getId());
+        BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
         return (myTrans == null)
                                  ? null
                                  : myTrans.getDeltaMoneyValue(pAttr);
@@ -310,7 +335,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     public TethysUnits getDeltaUnitsValue(final Transaction pTrans,
                                           final E pAttr) {
         /* Locate the transaction in the map */
-        BucketSnapShot<T, E> myTrans = get(pTrans.getId());
+        BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
         return (myTrans == null)
                                  ? null
                                  : myTrans.getDeltaUnitsValue(pAttr);

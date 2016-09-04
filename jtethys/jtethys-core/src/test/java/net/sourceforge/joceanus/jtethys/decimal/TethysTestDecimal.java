@@ -52,6 +52,15 @@ public final class TethysTestDecimal {
         TethysDecimalParser myParser = new TethysDecimalParser();
         TethysDecimalFormatter myFormatter = new TethysDecimalFormatter();
 
+        /* Create a ratio of 21/20 */
+        TethysRatio myRatio1 = myParser.parseRatioValue("1.05");
+        TethysRate myResult = new TethysRate(myRatio1);
+        TethysRatio myRatio2 = myParser.parseRatioValue("0.90");
+        myResult = new TethysRate(myRatio2);
+        TethysRatio myRatio3 = myRatio2.multiplyBy(myRatio1);
+        myRatio1 = myParser.parseRatioValue("1.21");
+        myRatio2 = myRatio1.annualise(500);
+
         /* Create a USD value */
         TethysMoney myUSD = new TethysMoney(Currency.getInstance("GBP"));
         myUSD.setValue(-1000, myUSD.scale());

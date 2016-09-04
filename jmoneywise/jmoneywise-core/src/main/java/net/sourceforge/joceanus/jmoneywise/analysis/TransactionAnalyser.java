@@ -608,7 +608,7 @@ public class TransactionAnalyser
             case INHERITED:
             case OTHERINCOME:
                 if (pDebit.getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND)) {
-                    processTaxableGain(pDebit, (AssetBase<?>) pCredit);
+                    processChargeableGain(pDebit, (AssetBase<?>) pCredit);
                 } else {
                     processTransferOut(pDebit, (AssetBase<?>) pCredit);
                 }
@@ -1155,14 +1155,14 @@ public class TransactionAnalyser
     }
 
     /**
-     * Process a transaction that is a taxable gain.
+     * Process a transaction that is a chargeable gain.
      * <p>
      * This capital event relates only to the Debit Asset
      * @param pHolding the debit security holding
      * @param pCredit the credit account
      */
-    private void processTaxableGain(final SecurityHolding pHolding,
-                                    final AssetBase<?> pCredit) {
+    private void processChargeableGain(final SecurityHolding pHolding,
+                                       final AssetBase<?> pCredit) {
         /* Taxable Gain is from the debit account and may or may not have units */
         Security myDebit = pHolding.getSecurity();
         TethysMoney myAmount = theHelper.getDebitAmount();
@@ -1247,8 +1247,8 @@ public class TransactionAnalyser
         AccountBucket<?> myBucket = getAccountBucket(pCredit);
         myBucket.adjustForCredit(theHelper);
 
-        /* Adjust the taxableGains category bucket */
-        theCategoryBuckets.adjustTaxableGain(theHelper, myReduction);
+        /* Adjust the chargeableGains category bucket */
+        theCategoryBuckets.adjustChargeableGain(theHelper, myReduction);
 
         /* Adjust the TaxMan account for the tax credit */
         theTaxMan.adjustForTaxPayments(theHelper);

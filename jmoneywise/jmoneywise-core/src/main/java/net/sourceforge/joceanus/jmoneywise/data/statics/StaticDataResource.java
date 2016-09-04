@@ -215,7 +215,12 @@ public enum StaticDataResource implements TethysResourceId {
     TRANSTYPE_LOYALTYBONUS("TransType.LoyaltyBonus"),
 
     /**
-     * TransType TaxedIncome.
+     * TransType RecoveredExpenses.
+     */
+    TRANSTYPE_RECOVEREDEXPENSES("TransType.RecoveredExpenses"),
+
+    /**
+     * TransType OtherIncome.
      */
     TRANSTYPE_OTHERINCOME("TransType.OtherIncome"),
 
@@ -360,9 +365,9 @@ public enum StaticDataResource implements TethysResourceId {
     TRANSTYPE_GROSSLOYALTYBONUS("TransType.GrossLoyaltyBonus"),
 
     /**
-     * TransType TaxableGain.
+     * TransType ChargeableGain.
      */
-    TRANSTYPE_TAXABLEGAIN("TransType.TaxableGain"),
+    TRANSTYPE_CHARGEABLEGAIN("TransType.ChargeableGain"),
 
     /**
      * TransType TaxFreeGain.
@@ -450,6 +455,11 @@ public enum StaticDataResource implements TethysResourceId {
     TAXBASIS_RENTALINCOME("TaxBasis.RentalIncome"),
 
     /**
+     * TaxBasis OtherIncome.
+     */
+    TAXBASIS_OTHERINCOME("TaxBasis.OtherIncome"),
+
+    /**
      * TaxBasis Interest.
      */
     TAXBASIS_TAXEDINTEREST("TaxBasis.TaxedInterest"),
@@ -475,9 +485,9 @@ public enum StaticDataResource implements TethysResourceId {
     TAXBASIS_FOREIGNDIVIDEND("TaxBasis.ForeignDividend"),
 
     /**
-     * TaxBasis TaxableGains.
+     * TaxBasis ChargeableGains.
      */
-    TAXBASIS_TAXABLEGAINS("TaxBasis.TaxableGains"),
+    TAXBASIS_CHARGEABLEGAINS("TaxBasis.ChargeableGains"),
 
     /**
      * TaxBasis ResidentialGains.
@@ -1343,6 +1353,7 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(TransactionCategoryClass.LOANINTERESTEARNED, TRANSTYPE_LOANINTEARNED);
         myMap.put(TransactionCategoryClass.CASHBACK, TRANSTYPE_CASHBACK);
         myMap.put(TransactionCategoryClass.LOYALTYBONUS, TRANSTYPE_LOYALTYBONUS);
+        myMap.put(TransactionCategoryClass.RECOVEREDEXPENSES, TRANSTYPE_RECOVEREDEXPENSES);
         myMap.put(TransactionCategoryClass.OTHERINCOME, TRANSTYPE_OTHERINCOME);
         myMap.put(TransactionCategoryClass.TRANSFER, TRANSTYPE_TRANSFER);
         myMap.put(TransactionCategoryClass.UNITSADJUST, TRANSTYPE_UNITSADJUST);
@@ -1372,7 +1383,7 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(TransactionCategoryClass.TAXEDLOYALTYBONUS, TRANSTYPE_TAXEDLOYALTYBONUS);
         myMap.put(TransactionCategoryClass.GROSSLOYALTYBONUS, TRANSTYPE_GROSSLOYALTYBONUS);
         myMap.put(TransactionCategoryClass.TAXFREELOYALTYBONUS, TRANSTYPE_TAXFREELOYALTYBONUS);
-        myMap.put(TransactionCategoryClass.TAXABLEGAIN, TRANSTYPE_TAXABLEGAIN);
+        myMap.put(TransactionCategoryClass.CHARGEABLEGAIN, TRANSTYPE_CHARGEABLEGAIN);
         myMap.put(TransactionCategoryClass.TAXFREEGAIN, TRANSTYPE_TAXFREEGAIN);
         myMap.put(TransactionCategoryClass.RESIDENTIALGAIN, TRANSTYPE_RESIDENTIALGAIN);
         myMap.put(TransactionCategoryClass.CAPITALGAIN, TRANSTYPE_CAPITALGAIN);
@@ -1409,12 +1420,13 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(TaxBasisClass.SALARY, TAXBASIS_SALARY);
         myMap.put(TaxBasisClass.ROOMRENTAL, TAXBASIS_ROOMRENTAL);
         myMap.put(TaxBasisClass.RENTALINCOME, TAXBASIS_RENTALINCOME);
+        myMap.put(TaxBasisClass.OTHERINCOME, TAXBASIS_OTHERINCOME);
         myMap.put(TaxBasisClass.TAXEDINTEREST, TAXBASIS_TAXEDINTEREST);
         myMap.put(TaxBasisClass.UNTAXEDINTEREST, TAXBASIS_UNTAXEDINTEREST);
         myMap.put(TaxBasisClass.DIVIDEND, TAXBASIS_DIVIDEND);
         myMap.put(TaxBasisClass.UNITTRUSTDIVIDEND, TAXBASIS_UTDIVIDEND);
         myMap.put(TaxBasisClass.FOREIGNDIVIDEND, TAXBASIS_FOREIGNDIVIDEND);
-        myMap.put(TaxBasisClass.TAXABLEGAINS, TAXBASIS_TAXABLEGAINS);
+        myMap.put(TaxBasisClass.CHARGEABLEGAINS, TAXBASIS_CHARGEABLEGAINS);
         myMap.put(TaxBasisClass.RESIDENTIALGAINS, TAXBASIS_RESIDENTIALGAINS);
         myMap.put(TaxBasisClass.CAPITALGAINS, TAXBASIS_CAPITALGAINS);
         myMap.put(TaxBasisClass.BADDEBT, TAXBASIS_BADDEBT);

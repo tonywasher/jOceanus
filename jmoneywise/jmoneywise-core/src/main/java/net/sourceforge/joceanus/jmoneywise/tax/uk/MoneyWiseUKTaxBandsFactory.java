@@ -22,19 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
-import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseTaxBands.MoneyWiseTaxBand;
-import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseTaxBands.MoneyWiseTaxBandSet;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * The taxBands factory.
  */
-public final class MoneyWiseTaxBandsFactory {
+public final class MoneyWiseUKTaxBandsFactory {
     /**
      * The 1981-82 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1981_82 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1981_82 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(11250), getRate(30)),
             new MoneyWiseTaxBand(getAmount(2000), getRate(40)),
             new MoneyWiseTaxBand(getAmount(3500), getRate(45)),
@@ -45,7 +45,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1983 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1983 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1983 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(12800), getRate(30)),
             new MoneyWiseTaxBand(getAmount(2300), getRate(40)),
             new MoneyWiseTaxBand(getAmount(4000), getRate(45)),
@@ -56,7 +56,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1984 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1984 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1984 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(14600), getRate(30)),
             new MoneyWiseTaxBand(getAmount(2600), getRate(40)),
             new MoneyWiseTaxBand(getAmount(4600), getRate(45)),
@@ -67,7 +67,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1985 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1985 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1985 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(15400), getRate(30)),
             new MoneyWiseTaxBand(getAmount(2800), getRate(40)),
             new MoneyWiseTaxBand(getAmount(4900), getRate(45)),
@@ -78,7 +78,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1986 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1986 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1986 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(16200), getRate(30)),
             new MoneyWiseTaxBand(getAmount(3000), getRate(40)),
             new MoneyWiseTaxBand(getAmount(5200), getRate(45)),
@@ -89,7 +89,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1987 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1987 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1987 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(17200), getRate(29)),
             new MoneyWiseTaxBand(getAmount(3000), getRate(40)),
             new MoneyWiseTaxBand(getAmount(5200), getRate(45)),
@@ -100,7 +100,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1988 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1988 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1988 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(17900), getRate(27)),
             new MoneyWiseTaxBand(getAmount(2500), getRate(40)),
             new MoneyWiseTaxBand(getAmount(5000), getRate(45)),
@@ -111,28 +111,28 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1989 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1989 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1989 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(19300), getRate(25)),
             new MoneyWiseTaxBand(getRate(40))));
 
     /**
      * The 1990-91 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1990_91 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1990_91 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(20700), getRate(25)),
             new MoneyWiseTaxBand(getRate(40))));
 
     /**
      * The 1992 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1992 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1992 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(23700), getRate(25)),
             new MoneyWiseTaxBand(getRate(40))));
 
     /**
      * The 1993 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1993 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1993 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(2000), getRate(20)),
             new MoneyWiseTaxBand(getAmount(21700), getRate(25)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -140,7 +140,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1994 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1994 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1994 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(2500), getRate(20)),
             new MoneyWiseTaxBand(getAmount(21200), getRate(25)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -148,7 +148,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1995 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1995 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1995 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(3000), getRate(20)),
             new MoneyWiseTaxBand(getAmount(20700), getRate(25)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -156,7 +156,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1996 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1996 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1996 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(3200), getRate(20)),
             new MoneyWiseTaxBand(getAmount(21100), getRate(25)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -164,7 +164,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1997 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1997 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1997 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(3900), getRate(20)),
             new MoneyWiseTaxBand(getAmount(21600), getRate(24)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -172,7 +172,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1998 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1998 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1998 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(4100), getRate(20)),
             new MoneyWiseTaxBand(getAmount(22000), getRate(23)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -180,7 +180,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 1999 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_1999 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_1999 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(4300), getRate(20)),
             new MoneyWiseTaxBand(getAmount(22800), getRate(23)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -188,7 +188,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2000 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2000 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2000 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(1500), getRate(10)),
             new MoneyWiseTaxBand(getAmount(26500), getRate(23)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -196,7 +196,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2001 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2001 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2001 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(1520), getRate(10)),
             new MoneyWiseTaxBand(getAmount(26880), getRate(22)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -204,7 +204,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2002 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2002 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2002 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(1880), getRate(10)),
             new MoneyWiseTaxBand(getAmount(27520), getRate(22)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -212,7 +212,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2003 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2003 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2003 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(1920), getRate(10)),
             new MoneyWiseTaxBand(getAmount(27980), getRate(22)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -220,7 +220,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2004 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2004 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2004 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(1960), getRate(10)),
             new MoneyWiseTaxBand(getAmount(28540), getRate(22)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -228,7 +228,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2005 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2005 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2005 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(2020), getRate(10)),
             new MoneyWiseTaxBand(getAmount(29380), getRate(22)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -236,7 +236,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2006 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2006 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2006 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(2090), getRate(10)),
             new MoneyWiseTaxBand(getAmount(30310), getRate(22)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -244,7 +244,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2007 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2007 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2007 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(2150), getRate(10)),
             new MoneyWiseTaxBand(getAmount(31150), getRate(22)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -252,7 +252,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2008 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2008 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2008 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(2230), getRate(10)),
             new MoneyWiseTaxBand(getAmount(32370), getRate(22)),
             new MoneyWiseTaxBand(getRate(40))));
@@ -260,7 +260,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2009 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2009 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2009 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(34800), getRate(20)),
             new MoneyWiseTaxBand(getRate(40))),
             new MoneyWiseTaxBand(getAmount(2320), getRate(10)));
@@ -268,7 +268,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2010 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2010 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2010 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(37400), getRate(20)),
             new MoneyWiseTaxBand(getRate(40))),
             new MoneyWiseTaxBand(getAmount(2440), getRate(10)));
@@ -276,7 +276,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2011 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2011 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2011 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(37400), getRate(20)),
             new MoneyWiseTaxBand(getAmount(112600), getRate(40)),
             new MoneyWiseTaxBand(getRate(50))),
@@ -285,7 +285,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2012 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2012 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2012 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(35000), getRate(20)),
             new MoneyWiseTaxBand(getAmount(115000), getRate(40)),
             new MoneyWiseTaxBand(getRate(50))),
@@ -294,7 +294,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2013 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2013 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2013 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(34370), getRate(20)),
             new MoneyWiseTaxBand(getAmount(115630), getRate(40)),
             new MoneyWiseTaxBand(getRate(50))),
@@ -303,7 +303,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2014 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2014 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2014 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(32010), getRate(20)),
             new MoneyWiseTaxBand(getAmount(117990), getRate(40)),
             new MoneyWiseTaxBand(getRate(45))),
@@ -312,7 +312,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2015 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2015 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2015 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(31865), getRate(20)),
             new MoneyWiseTaxBand(getAmount(118135), getRate(40)),
             new MoneyWiseTaxBand(getRate(45))),
@@ -321,7 +321,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2016 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2016 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2016 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(31765), getRate(20)),
             new MoneyWiseTaxBand(getAmount(118235), getRate(40)),
             new MoneyWiseTaxBand(getRate(45))),
@@ -330,7 +330,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * The 2017 TaxBands.
      */
-    protected static final MoneyWiseTaxBands BANDS_2017 = new MoneyWiseTaxBands(new MoneyWiseTaxBandSet(
+    protected static final MoneyWiseUKTaxBands BANDS_2017 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(32000), getRate(20)),
             new MoneyWiseTaxBand(getAmount(118000), getRate(40)),
             new MoneyWiseTaxBand(getRate(45))),
@@ -339,7 +339,7 @@ public final class MoneyWiseTaxBandsFactory {
     /**
      * Private Constructor.
      */
-    private MoneyWiseTaxBandsFactory() {
+    private MoneyWiseUKTaxBandsFactory() {
     }
 
     /**
@@ -348,7 +348,7 @@ public final class MoneyWiseTaxBandsFactory {
      * @return the amount
      */
     private static TethysMoney getAmount(final int pUnits) {
-        return MoneyWiseAllowanceFactory.getAmount(pUnits);
+        return MoneyWiseUKAllowanceFactory.getAmount(pUnits);
     }
 
     /**

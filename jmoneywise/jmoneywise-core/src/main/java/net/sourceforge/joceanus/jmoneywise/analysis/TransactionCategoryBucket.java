@@ -844,9 +844,9 @@ public final class TransactionCategoryBucket
         private final TransactionCategoryBucket theTaxFreeGains;
 
         /**
-         * The TaxableGains.
+         * The ChargeableGains.
          */
-        private final TransactionCategoryBucket theTaxableGains;
+        private final TransactionCategoryBucket theChargeableGains;
 
         /**
          * Construct a top-level List.
@@ -869,7 +869,7 @@ public final class TransactionCategoryBucket
             theDeemedBenefit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT));
             theCharityDonation = getBucket(myList.getEventInfoCategory(TransactionInfoClass.CHARITYDONATION));
             theTaxRelief = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXRELIEF));
-            theTaxableGains = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXABLEGAIN));
+            theChargeableGains = getBucket(myList.getSingularClass(TransactionCategoryClass.CHARGEABLEGAIN));
             theTaxFreeGains = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXFREEGAIN));
             theCapitalGains = getBucket(myList.getSingularClass(TransactionCategoryClass.CAPITALGAIN));
         }
@@ -896,7 +896,7 @@ public final class TransactionCategoryBucket
             theDeemedBenefit = null;
             theCharityDonation = null;
             theTaxRelief = null;
-            theTaxableGains = null;
+            theChargeableGains = null;
             theTaxFreeGains = null;
             theCapitalGains = null;
 
@@ -938,7 +938,7 @@ public final class TransactionCategoryBucket
             theDeemedBenefit = null;
             theCharityDonation = null;
             theTaxRelief = null;
-            theTaxableGains = null;
+            theChargeableGains = null;
             theTaxFreeGains = null;
             theCapitalGains = null;
 
@@ -1132,15 +1132,15 @@ public final class TransactionCategoryBucket
         }
 
         /**
-         * Adjust for Taxable Gains.
+         * Adjust for Chargeable Gains.
          * @param pTrans the transaction helper
          * @param pReduction the income reduction
          */
-        protected void adjustTaxableGain(final TransactionHelper pTrans,
-                                         final TethysMoney pReduction) {
+        protected void adjustChargeableGain(final TransactionHelper pTrans,
+                                            final TethysMoney pReduction) {
             /* Adjust Taxable Gains */
-            theTaxableGains.subtractIncome(pReduction);
-            theTaxableGains.adjustValues(pTrans);
+            theChargeableGains.subtractIncome(pReduction);
+            theChargeableGains.adjustValues(pTrans);
 
             /* Obtain normalised value */
             TethysMoney myGains = new TethysMoney(pTrans.getLocalAmount());
@@ -1157,7 +1157,7 @@ public final class TransactionCategoryBucket
             }
 
             /* Adjust tax basis */
-            theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXABLEGAINS, myGains);
+            theTaxBasis.adjustValue(pTrans, TaxBasisClass.CHARGEABLEGAINS, myGains);
         }
 
         /**
