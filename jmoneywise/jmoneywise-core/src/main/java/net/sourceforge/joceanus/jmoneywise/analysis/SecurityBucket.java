@@ -504,7 +504,7 @@ public final class SecurityBucket
     protected void setValue(final SecurityAttribute pAttr,
                             final Object pValue) {
         /* Set the value into the list */
-        theValues.put(pAttr, pValue);
+        theValues.setValue(pAttr, pValue);
     }
 
     /**
@@ -539,7 +539,7 @@ public final class SecurityBucket
      */
     private Object getAttribute(final SecurityAttribute pAttr) {
         /* Obtain the value */
-        return theValues.get(pAttr);
+        return theValues.getValue(pAttr);
     }
 
     @Override
@@ -851,11 +851,6 @@ public final class SecurityBucket
     public static class SecurityValues
             extends BucketValues<SecurityValues, SecurityAttribute> {
         /**
-         * SerialId.
-         */
-        private static final long serialVersionUID = 661272708599335410L;
-
-        /**
          * Constructor.
          * @param pCurrency the account currency
          */
@@ -864,12 +859,12 @@ public final class SecurityBucket
             super(SecurityAttribute.class);
 
             /* Initialise units etc. to zero */
-            put(SecurityAttribute.UNITS, new TethysUnits());
-            put(SecurityAttribute.COST, new TethysMoney(pCurrency));
-            put(SecurityAttribute.INVESTED, new TethysMoney(pCurrency));
-            put(SecurityAttribute.GAINS, new TethysMoney(pCurrency));
-            put(SecurityAttribute.GROWTHADJUST, new TethysMoney(pCurrency));
-            put(SecurityAttribute.DIVIDEND, new TethysMoney(pCurrency));
+            setValue(SecurityAttribute.UNITS, new TethysUnits());
+            setValue(SecurityAttribute.RESIDUALCOST, new TethysMoney(pCurrency));
+            setValue(SecurityAttribute.INVESTED, new TethysMoney(pCurrency));
+            setValue(SecurityAttribute.REALISEDGAINS, new TethysMoney(pCurrency));
+            setValue(SecurityAttribute.GROWTHADJUST, new TethysMoney(pCurrency));
+            setValue(SecurityAttribute.DIVIDEND, new TethysMoney(pCurrency));
         }
 
         /**
@@ -883,21 +878,28 @@ public final class SecurityBucket
             this(pReportingCurrency);
 
             /* Initialise additional values to zero */
-            put(SecurityAttribute.FOREIGNINVESTED, new TethysMoney(pCurrency));
+            setValue(SecurityAttribute.FOREIGNINVESTED, new TethysMoney(pCurrency));
         }
 
         /**
          * Constructor.
          * @param pSource the source map.
+         * @param pCountersOnly only copy counters
          */
-        private SecurityValues(final SecurityValues pSource) {
+        private SecurityValues(final SecurityValues pSource,
+                               final boolean pCountersOnly) {
             /* Initialise class */
-            super(pSource);
+            super(pSource, pCountersOnly);
         }
 
         @Override
-        protected SecurityValues getSnapShot() {
-            return new SecurityValues(this);
+        protected SecurityValues getCounterSnapShot() {
+            return new SecurityValues(this, true);
+        }
+
+        @Override
+        protected SecurityValues getFullSnapShot() {
+            return new SecurityValues(this, false);
         }
 
         /**
@@ -905,14 +907,14 @@ public final class SecurityBucket
          * @return true/false
          */
         private boolean isForeignSecurity() {
-            return get(SecurityAttribute.FOREIGNINVESTED) != null;
+            return getValue(SecurityAttribute.FOREIGNINVESTED) != null;
         }
 
         @Override
         protected void adjustToBaseValues(final SecurityValues pBase) {
             /* Adjust invested/gains values */
             adjustMoneyToBase(pBase, SecurityAttribute.INVESTED);
-            adjustMoneyToBase(pBase, SecurityAttribute.GAINS);
+            adjustMoneyToBase(pBase, SecurityAttribute.REALISEDGAINS);
             adjustMoneyToBase(pBase, SecurityAttribute.GROWTHADJUST);
             adjustMoneyToBase(pBase, SecurityAttribute.DIVIDEND);
 
@@ -925,15 +927,15 @@ public final class SecurityBucket
         @Override
         protected void resetBaseValues() {
             /* Create a zero value in the correct currency */
-            TethysMoney myValue = getMoneyValue(SecurityAttribute.COST);
+            TethysMoney myValue = getMoneyValue(SecurityAttribute.RESIDUALCOST);
             myValue = new TethysMoney(myValue);
             myValue.setZero();
 
             /* Reset Growth Adjust values */
-            put(SecurityAttribute.GROWTHADJUST, myValue);
-            put(SecurityAttribute.INVESTED, new TethysMoney(myValue));
-            put(SecurityAttribute.GAINS, new TethysMoney(myValue));
-            put(SecurityAttribute.DIVIDEND, new TethysMoney(myValue));
+            setValue(SecurityAttribute.GROWTHADJUST, myValue);
+            setValue(SecurityAttribute.INVESTED, new TethysMoney(myValue));
+            setValue(SecurityAttribute.REALISEDGAINS, new TethysMoney(myValue));
+            setValue(SecurityAttribute.DIVIDEND, new TethysMoney(myValue));
 
             /* If we are a foreign security */
             if (isForeignSecurity()) {
@@ -943,7 +945,7 @@ public final class SecurityBucket
                 myValue.setZero();
 
                 /* Reset Invested values */
-                put(SecurityAttribute.FOREIGNINVESTED, myValue);
+                setValue(SecurityAttribute.FOREIGNINVESTED, myValue);
             }
         }
 

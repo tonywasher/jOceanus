@@ -103,7 +103,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
     /**
      * Stock Units Adjustment.
      */
-    UNITSADJUST(15, 19),
+    UNITSADJUST(15, 18),
 
     /**
      * Stock Split.

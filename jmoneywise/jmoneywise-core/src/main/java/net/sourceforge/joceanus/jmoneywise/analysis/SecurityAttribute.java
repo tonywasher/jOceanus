@@ -59,14 +59,14 @@ public enum SecurityAttribute implements BucketAttribute {
     EXCHANGERATE,
 
     /**
-     * Cost.
+     * Residual Cost.
      */
-    COST,
+    RESIDUALCOST,
 
     /**
-     * Gains.
+     * Realised Gains.
      */
-    GAINS,
+    REALISEDGAINS,
 
     /**
      * GrowthAdjust.
@@ -119,6 +119,41 @@ public enum SecurityAttribute implements BucketAttribute {
     MARKETPROFIT,
 
     /**
+     * Consideration.
+     */
+    CONSIDERATION,
+
+    /**
+     * CashConsideration.
+     */
+    CASHCONSIDERATION,
+
+    /**
+     * StockConsideration.
+     */
+    STOCKCONSIDERATION,
+
+    /**
+     * CostDilution.
+     */
+    COSTDILUTION,
+
+    /**
+     * Capital Gain.
+     */
+    CAPITALGAIN,
+
+    /**
+     * AllowedCost.
+     */
+    ALLOWEDCOST,
+
+    /**
+     * XferredCost.
+     */
+    XFERREDCOST,
+
+    /**
      * Price.
      */
     PRICE;
@@ -144,8 +179,8 @@ public enum SecurityAttribute implements BucketAttribute {
     public boolean isCounter() {
         switch (this) {
             case UNITS:
-            case COST:
-            case GAINS:
+            case RESIDUALCOST:
+            case REALISEDGAINS:
             case GROWTHADJUST:
             case DIVIDEND:
             case INVESTED:
@@ -163,6 +198,13 @@ public enum SecurityAttribute implements BucketAttribute {
             case PRICE:
             case VALUEDELTA:
             case FOREIGNVALUEDELTA:
+            case XFERREDCOST:
+            case COSTDILUTION:
+            case CONSIDERATION:
+            case CASHCONSIDERATION:
+            case STOCKCONSIDERATION:
+            case CAPITALGAIN:
+            case ALLOWEDCOST:
             default:
                 return false;
         }
@@ -176,13 +218,14 @@ public enum SecurityAttribute implements BucketAttribute {
             case PRICE:
                 return MetisDataType.PRICE;
             case EXCHANGERATE:
+            case COSTDILUTION:
                 return MetisDataType.RATIO;
             case VALUATION:
             case FOREIGNVALUE:
             case VALUEDELTA:
             case FOREIGNVALUEDELTA:
-            case COST:
-            case GAINS:
+            case RESIDUALCOST:
+            case REALISEDGAINS:
             case GROWTHADJUST:
             case INVESTED:
             case FOREIGNINVESTED:
@@ -193,6 +236,12 @@ public enum SecurityAttribute implements BucketAttribute {
             case CURRENCYFLUCT:
             case MARKETPROFIT:
             case PROFIT:
+            case CONSIDERATION:
+            case CASHCONSIDERATION:
+            case STOCKCONSIDERATION:
+            case XFERREDCOST:
+            case ALLOWEDCOST:
+            case CAPITALGAIN:
             default:
                 return MetisDataType.MONEY;
         }

@@ -126,7 +126,7 @@ public class MarketAnalysis {
         /* Access market and gains */
         SecurityValues myValues = pBucket.getValues();
         TethysMoney myMarket = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
-        TethysMoney myGains = myValues.getMoneyValue(SecurityAttribute.GAINS);
+        TethysMoney myGains = myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS);
         TethysMoney myFluct = myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT);
 
         /* If there are gains in the period */

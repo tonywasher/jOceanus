@@ -82,7 +82,7 @@ public final class PortfolioBucket
     /**
      * FieldSet map.
      */
-    private static final Map<MetisField, AccountAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
+    private static final Map<MetisField, SecurityAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, SecurityAttribute.class);
 
     /**
      * Totals bucket name.
@@ -268,7 +268,7 @@ public final class PortfolioBucket
         }
 
         /* Handle Attribute fields */
-        AccountAttribute myClass = getClassForField(pField);
+        SecurityAttribute myClass = getClassForField(pField);
         if (myClass != null) {
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
@@ -387,7 +387,7 @@ public final class PortfolioBucket
     protected void setValue(final SecurityAttribute pAttr,
                             final TethysMoney pValue) {
         /* Set the value into the list */
-        theValues.put(pAttr, pValue);
+        theValues.setValue(pAttr, pValue);
     }
 
     /**
@@ -395,7 +395,7 @@ public final class PortfolioBucket
      * @param pAttr the attribute
      * @return the value to set
      */
-    private Object getAttributeValue(final AccountAttribute pAttr) {
+    private Object getAttributeValue(final SecurityAttribute pAttr) {
         /* Access value of object */
         Object myValue = getValue(pAttr);
 
@@ -410,7 +410,7 @@ public final class PortfolioBucket
      * @param pField the field
      * @return the class
      */
-    private static AccountAttribute getClassForField(final MetisField pField) {
+    private static SecurityAttribute getClassForField(final MetisField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -420,9 +420,9 @@ public final class PortfolioBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    private Object getValue(final AccountAttribute pAttr) {
+    private Object getValue(final SecurityAttribute pAttr) {
         /* Obtain the attribute */
-        return theValues.get(pAttr);
+        return theValues.getValue(pAttr);
     }
 
     /**
@@ -588,13 +588,13 @@ public final class PortfolioBucket
         myValue.addAmount(mySrcValue);
 
         /* Add cost values */
-        myValue = pTotals.getMoneyValue(SecurityAttribute.COST);
-        mySrcValue = pSource.getMoneyValue(SecurityAttribute.COST);
+        myValue = pTotals.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.RESIDUALCOST);
         myValue.addAmount(mySrcValue);
 
         /* Add gains values */
-        myValue = pTotals.getMoneyValue(SecurityAttribute.GAINS);
-        mySrcValue = pSource.getMoneyValue(SecurityAttribute.GAINS);
+        myValue = pTotals.getMoneyValue(SecurityAttribute.REALISEDGAINS);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.REALISEDGAINS);
         myValue.addAmount(mySrcValue);
 
         /* Add profit adjustment values */

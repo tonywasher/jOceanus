@@ -522,8 +522,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
                     return getBucket().isForeignCurrency();
                 case INVESTED:
                 case DIVIDEND:
-                case COST:
-                case GAINS:
+                case RESIDUALCOST:
+                case REALISEDGAINS:
                 case UNITS:
                 case GROWTHADJUST:
                     return true;

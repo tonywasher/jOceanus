@@ -179,7 +179,7 @@ public class QIFPortfolioBuilder {
         SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
 
         /* Obtain the cost delta for the transaction */
-        return myBucket.getMoneyDeltaForTransaction(pTrans, SecurityAttribute.COST);
+        return myBucket.getMoneyDeltaForTransaction(pTrans, SecurityAttribute.RESIDUALCOST);
     }
 
     /**

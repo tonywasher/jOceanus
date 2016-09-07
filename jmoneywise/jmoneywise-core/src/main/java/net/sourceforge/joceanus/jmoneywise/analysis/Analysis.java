@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
@@ -51,6 +53,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxAnalysis;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYear;
@@ -155,6 +158,11 @@ public class Analysis
     private static final MetisField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_DILUTIONS.getValue());
 
     /**
+     * SecurityTransactions Field Id.
+     */
+    private static final MetisField FIELD_SECURITIES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getListName());
+
+    /**
      * The DataSet.
      */
     private final MoneyWiseData theData;
@@ -250,6 +258,11 @@ public class Analysis
     private final DilutionEventMap theDilutions;
 
     /**
+     * The security transactions.
+     */
+    private final List<Transaction> theSecurities;
+
+    /**
      * Constructor for a full analysis.
      * @param pData the data to analyse events for
      * @param pPreferenceMgr the preference manager
@@ -282,6 +295,7 @@ public class Analysis
         /* Create the Dilution/Chargeable Event List */
         theCharges = new ChargeableEventList();
         theDilutions = new DilutionEventMap();
+        theSecurities = new ArrayList<>();
     }
 
     /**
@@ -301,6 +315,7 @@ public class Analysis
         theDilutions = myStart == null
                                        ? new DilutionEventMap()
                                        : new DilutionEventMap(pSource.getDilutions(), myStart);
+        theSecurities = pSource.getSecurities();
 
         /* Create a new set of buckets */
         theDeposits = new DepositBucketList(this, pSource.getDeposits());
@@ -337,6 +352,7 @@ public class Analysis
         /* Access the underlying maps/lists */
         theCharges = myBase.getCharges();
         theDilutions = myBase.getDilutions();
+        theSecurities = myBase.getSecurities();
 
         /* Create a new set of buckets */
         theDeposits = new DepositBucketList(this, myBase.getDeposits(), pDate);
@@ -373,6 +389,7 @@ public class Analysis
         /* Access the underlying maps/lists */
         theCharges = new ChargeableEventList(myBase.getCharges(), pRange);
         theDilutions = myBase.getDilutions();
+        theSecurities = myBase.getSecurities();
 
         /* Create a new set of buckets */
         theDeposits = new DepositBucketList(this, myBase.getDeposits(), pRange);
@@ -492,6 +509,11 @@ public class Analysis
             return theDilutions.isEmpty()
                                           ? MetisFieldValue.SKIP
                                           : theDilutions;
+        }
+        if (FIELD_SECURITIES.equals(pField)) {
+            return theSecurities.isEmpty()
+                                           ? MetisFieldValue.SKIP
+                                           : theSecurities;
         }
 
         /* Unknown */
@@ -653,6 +675,14 @@ public class Analysis
      */
     public DilutionEventMap getDilutions() {
         return theDilutions;
+    }
+
+    /**
+     * Obtain the securities.
+     * @return the securities
+     */
+    public List<Transaction> getSecurities() {
+        return theSecurities;
     }
 
     /**

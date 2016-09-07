@@ -281,6 +281,7 @@ public final class TransactionValidator {
                        && ((Payee) pPartner).isPayeeClass(PayeeTypeClass.EMPLOYER);
 
             case OTHERINCOME:
+            case RECOVEREDEXPENSES:
                 /* Other Income must have a Payee partner */
                 return pPartner instanceof Payee;
 

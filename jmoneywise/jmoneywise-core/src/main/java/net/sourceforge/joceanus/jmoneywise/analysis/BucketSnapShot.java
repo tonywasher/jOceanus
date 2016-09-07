@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -112,7 +112,7 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
         theDate = pTrans.getDate();
 
         /* Store the snapshot map */
-        theSnapShot = pValues.getSnapShot();
+        theSnapShot = pValues.getCounterSnapShot();
         thePrevious = pPrevious;
     }
 
@@ -131,7 +131,7 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
         theDate = pSnapShot.getDate();
 
         /* Store the snapshot map */
-        theSnapShot = pSnapShot.getNewSnapShot();
+        theSnapShot = pSnapShot.getFullSnapShot();
         theSnapShot.adjustToBaseValues(pBaseValues);
         thePrevious = pPrevious;
     }
@@ -207,11 +207,19 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
     }
 
     /**
-     * Obtain new snapShot.
+     * Obtain counter snapShot.
      * @return the snapShot
      */
-    protected T getNewSnapShot() {
-        return theSnapShot.getSnapShot();
+    protected T getCounterSnapShot() {
+        return theSnapShot.getCounterSnapShot();
+    }
+
+    /**
+     * Obtain full snapShot.
+     * @return the snapShot
+     */
+    protected T getFullSnapShot() {
+        return theSnapShot.getFullSnapShot();
     }
 
     /**

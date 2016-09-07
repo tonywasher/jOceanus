@@ -23,6 +23,12 @@
 package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
@@ -33,15 +39,11 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Portfolio (Market) report builder.
@@ -61,7 +63,7 @@ public class PortfolioView
     /**
      * The Cost text.
      */
-    private static final String TEXT_COST = AnalysisResource.SECURITYATTR_COST.getValue();
+    private static final String TEXT_COST = AnalysisResource.SECURITYATTR_RESIDUALCOST.getValue();
 
     /**
      * The Adjustment text.
@@ -76,7 +78,7 @@ public class PortfolioView
     /**
      * The Gains text.
      */
-    private static final String TEXT_GAINS = AnalysisResource.SECURITYATTR_GAINS.getValue();
+    private static final String TEXT_GAINS = AnalysisResource.SECURITYATTR_REALISEDGAINS.getValue();
 
     /**
      * The Dividend text.
@@ -94,6 +96,11 @@ public class PortfolioView
     private final MetisDataFormatter theFormatter;
 
     /**
+     * The Formatter.
+     */
+    private List<Transaction> theSecurities;
+
+    /**
      * Constructor.
      * @param pManager the Report Manager
      */
@@ -107,6 +114,7 @@ public class PortfolioView
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
         PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
+        theSecurities = pAnalysis.getSecurities();
 
         /* Access the totals */
         PortfolioBucket myTotals = myPortfolios.getTotals();
@@ -144,8 +152,8 @@ public class PortfolioView
 
             /* Handle values bucket value */
             theBuilder.makeValueCell(myTable, myBucket.getNonCashValue(false));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
@@ -162,8 +170,8 @@ public class PortfolioView
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(false));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
@@ -209,6 +217,13 @@ public class PortfolioView
             String myName = myBucket.getName();
             String myFullName = myBucket.getDecoratedName();
 
+            /* If this is the RexamShares */
+            if ("RexamShares".equals(myName)) {
+                /* Format the gains */
+                GainsAnalysis myGains = new GainsAnalysis(theFormatter, myBucket);
+                myGains.formatGainsHistory(theSecurities.iterator());
+            }
+
             /* Access values */
             SecurityValues myValues = myBucket.getValues();
 
@@ -216,8 +231,8 @@ public class PortfolioView
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myFullName, myName);
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
@@ -238,8 +253,8 @@ public class PortfolioView
     private void checkPortfolioProfit(final PortfolioBucket pBucket) {
         SecurityValues myValues = pBucket.getValues();
         TethysMoney myCalcProfit = pBucket.getNonCashValue(false);
-        myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.COST));
-        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
+        myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
         TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
@@ -255,8 +270,8 @@ public class PortfolioView
     private void checkSecurityProfit(final SecurityBucket pBucket) {
         SecurityValues myValues = pBucket.getValues();
         TethysMoney myCalcProfit = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
-        myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.COST));
-        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GAINS));
+        myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
         TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);

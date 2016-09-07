@@ -202,11 +202,6 @@ public final class LoanBucket
     public static final class CreditCardValues
             extends AccountValues {
         /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -3340482670174694323L;
-
-        /**
          * Constructor.
          * @param pCurrency the account currency
          */
@@ -215,7 +210,7 @@ public final class LoanBucket
             super(pCurrency);
 
             /* Initialise spend to zero */
-            put(AccountAttribute.SPEND, new TethysMoney(pCurrency));
+            setValue(AccountAttribute.SPEND, new TethysMoney(pCurrency));
         }
 
         /**
@@ -229,21 +224,28 @@ public final class LoanBucket
             super(pCurrency, pReportingCurrency);
 
             /* Initialise spend to zero */
-            put(AccountAttribute.SPEND, new TethysMoney(pCurrency));
+            setValue(AccountAttribute.SPEND, new TethysMoney(pCurrency));
         }
 
         /**
          * Constructor.
          * @param pSource the source map.
+         * @param pCountersOnly only copy counters
          */
-        private CreditCardValues(final CreditCardValues pSource) {
+        private CreditCardValues(final CreditCardValues pSource,
+                                 final boolean pCountersOnly) {
             /* Initialise class */
-            super(pSource);
+            super(pSource, pCountersOnly);
         }
 
         @Override
-        protected CreditCardValues getSnapShot() {
-            return new CreditCardValues(this);
+        protected CreditCardValues getCounterSnapShot() {
+            return new CreditCardValues(this, true);
+        }
+
+        @Override
+        protected CreditCardValues getFullSnapShot() {
+            return new CreditCardValues(this, false);
         }
 
         @Override
@@ -259,7 +261,7 @@ public final class LoanBucket
             if (mySpend.isNonZero()) {
                 mySpend = new TethysMoney(mySpend);
                 mySpend.setZero();
-                put(AccountAttribute.SPEND, mySpend);
+                setValue(AccountAttribute.SPEND, mySpend);
             }
         }
     }

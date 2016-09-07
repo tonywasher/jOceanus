@@ -466,7 +466,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     private Object getValue(final AccountAttribute pAttr) {
         /* Obtain the attribute value */
-        return theValues.get(pAttr);
+        return theValues.getValue(pAttr);
     }
 
     @Override
@@ -792,11 +792,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     public static class AccountValues
             extends BucketValues<AccountValues, AccountAttribute> {
         /**
-         * SerialId.
-         */
-        private static final long serialVersionUID = -5253865468417987410L;
-
-        /**
          * Constructor.
          * @param pCurrency the account currency
          */
@@ -805,7 +800,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             super(AccountAttribute.class);
 
             /* Initialise valuation to zero */
-            put(AccountAttribute.VALUATION, new TethysMoney(pCurrency));
+            setValue(AccountAttribute.VALUATION, new TethysMoney(pCurrency));
         }
 
         /**
@@ -819,23 +814,30 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             this(pReportingCurrency);
 
             /* Initialise valuation to zero */
-            put(AccountAttribute.FOREIGNVALUE, new TethysMoney(pCurrency));
-            put(AccountAttribute.LOCALVALUE, new TethysMoney(pReportingCurrency));
-            put(AccountAttribute.CURRENCYFLUCT, new TethysMoney(pReportingCurrency));
+            setValue(AccountAttribute.FOREIGNVALUE, new TethysMoney(pCurrency));
+            setValue(AccountAttribute.LOCALVALUE, new TethysMoney(pReportingCurrency));
+            setValue(AccountAttribute.CURRENCYFLUCT, new TethysMoney(pReportingCurrency));
         }
 
         /**
          * Constructor.
          * @param pSource the source map.
+         * @param pCountersOnly only copy counters
          */
-        protected AccountValues(final AccountValues pSource) {
+        protected AccountValues(final AccountValues pSource,
+                                final boolean pCountersOnly) {
             /* Initialise class */
-            super(pSource);
+            super(pSource, pCountersOnly);
         }
 
         @Override
-        protected AccountValues getSnapShot() {
-            return new AccountValues(this);
+        protected AccountValues getCounterSnapShot() {
+            return new AccountValues(this, true);
+        }
+
+        @Override
+        protected AccountValues getFullSnapShot() {
+            return new AccountValues(this, false);
         }
 
         /**
@@ -866,7 +868,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 myValue.setZero();
 
                 /* Adjust currency fluctuation values */
-                put(AccountAttribute.CURRENCYFLUCT, myValue);
+                setValue(AccountAttribute.CURRENCYFLUCT, myValue);
             }
         }
     }

@@ -358,7 +358,7 @@ public final class TransactionCategoryBucket
     protected void setValue(final TransactionAttribute pAttr,
                             final TethysMoney pValue) {
         /* Set the value */
-        theValues.put(pAttr, pValue);
+        theValues.setValue(pAttr, pValue);
     }
 
     /**
@@ -393,7 +393,7 @@ public final class TransactionCategoryBucket
      */
     private Object getValue(final TransactionAttribute pAttr) {
         /* Obtain the value */
-        return theValues.get(pAttr);
+        return theValues.getValue(pAttr);
     }
 
     @Override
@@ -682,11 +682,6 @@ public final class TransactionCategoryBucket
     public static final class CategoryValues
             extends BucketValues<CategoryValues, TransactionAttribute> {
         /**
-         * SerialId.
-         */
-        private static final long serialVersionUID = 8946533427978809288L;
-
-        /**
          * Constructor.
          * @param pCurrency the reporting currency
          */
@@ -695,22 +690,29 @@ public final class TransactionCategoryBucket
             super(TransactionAttribute.class);
 
             /* Create all possible values */
-            put(TransactionAttribute.INCOME, new TethysMoney(pCurrency));
-            put(TransactionAttribute.EXPENSE, new TethysMoney(pCurrency));
+            setValue(TransactionAttribute.INCOME, new TethysMoney(pCurrency));
+            setValue(TransactionAttribute.EXPENSE, new TethysMoney(pCurrency));
         }
 
         /**
          * Constructor.
          * @param pSource the source map.
+         * @param pCountersOnly only copy counters
          */
-        private CategoryValues(final CategoryValues pSource) {
+        private CategoryValues(final CategoryValues pSource,
+                               final boolean pCountersOnly) {
             /* Initialise class */
-            super(pSource);
+            super(pSource, pCountersOnly);
         }
 
         @Override
-        protected CategoryValues getSnapShot() {
-            return new CategoryValues(this);
+        protected CategoryValues getCounterSnapShot() {
+            return new CategoryValues(this, true);
+        }
+
+        @Override
+        protected CategoryValues getFullSnapShot() {
+            return new CategoryValues(this, false);
         }
 
         @Override
@@ -734,7 +736,7 @@ public final class TransactionCategoryBucket
             myDelta.subtractAmount(myExpense);
 
             /* Set the delta */
-            put(TransactionAttribute.PROFIT, myDelta);
+            setValue(TransactionAttribute.PROFIT, myDelta);
         }
 
         @Override
@@ -745,9 +747,9 @@ public final class TransactionCategoryBucket
             myValue.setZero();
 
             /* Reset Income and expense values */
-            put(TransactionAttribute.INCOME, myValue);
-            put(TransactionAttribute.EXPENSE, new TethysMoney(myValue));
-            put(TransactionAttribute.PROFIT, new TethysMoney(myValue));
+            setValue(TransactionAttribute.INCOME, myValue);
+            setValue(TransactionAttribute.EXPENSE, new TethysMoney(myValue));
+            setValue(TransactionAttribute.PROFIT, new TethysMoney(myValue));
         }
 
         /**

@@ -441,7 +441,7 @@ public class TaxBasisBucket
     protected void setValue(final TaxBasisAttribute pAttr,
                             final TethysMoney pValue) {
         /* Set the value into the list */
-        theValues.put(pAttr, pValue);
+        theValues.setValue(pAttr, pValue);
     }
 
     /**
@@ -476,7 +476,7 @@ public class TaxBasisBucket
      */
     private Object getValue(final TaxBasisAttribute pAttr) {
         /* Obtain the attribute */
-        return theValues.get(pAttr);
+        return theValues.getValue(pAttr);
     }
 
     @Override
@@ -816,11 +816,6 @@ public class TaxBasisBucket
     public static final class TaxBasisValues
             extends BucketValues<TaxBasisValues, TaxBasisAttribute> {
         /**
-         * SerialId.
-         */
-        private static final long serialVersionUID = 4649078250661638369L;
-
-        /**
          * Constructor.
          * @param pCurrency the reporting currency
          */
@@ -829,23 +824,30 @@ public class TaxBasisBucket
             super(TaxBasisAttribute.class);
 
             /* Create all possible values */
-            put(TaxBasisAttribute.GROSS, new TethysMoney(pCurrency));
-            put(TaxBasisAttribute.NETT, new TethysMoney(pCurrency));
-            put(TaxBasisAttribute.TAXCREDIT, new TethysMoney(pCurrency));
+            setValue(TaxBasisAttribute.GROSS, new TethysMoney(pCurrency));
+            setValue(TaxBasisAttribute.NETT, new TethysMoney(pCurrency));
+            setValue(TaxBasisAttribute.TAXCREDIT, new TethysMoney(pCurrency));
         }
 
         /**
          * Constructor.
          * @param pSource the source map.
+         * @param pCountersOnly only copy counters
          */
-        private TaxBasisValues(final TaxBasisValues pSource) {
+        private TaxBasisValues(final TaxBasisValues pSource,
+                               final boolean pCountersOnly) {
             /* Initialise class */
-            super(pSource);
+            super(pSource, pCountersOnly);
         }
 
         @Override
-        protected TaxBasisValues getSnapShot() {
-            return new TaxBasisValues(this);
+        protected TaxBasisValues getCounterSnapShot() {
+            return new TaxBasisValues(this, true);
+        }
+
+        @Override
+        protected TaxBasisValues getFullSnapShot() {
+            return new TaxBasisValues(this, false);
         }
 
         @Override
@@ -864,9 +866,9 @@ public class TaxBasisBucket
             myValue.setZero();
 
             /* Reset Income and expense values */
-            put(TaxBasisAttribute.GROSS, myValue);
-            put(TaxBasisAttribute.NETT, new TethysMoney(myValue));
-            put(TaxBasisAttribute.TAXCREDIT, new TethysMoney(myValue));
+            setValue(TaxBasisAttribute.GROSS, myValue);
+            setValue(TaxBasisAttribute.NETT, new TethysMoney(myValue));
+            setValue(TaxBasisAttribute.TAXCREDIT, new TethysMoney(myValue));
         }
 
         /**

@@ -348,6 +348,14 @@ public class MetisViewerPage {
                                                                    ? ((MetisDataDifference) theObject).getObject()
                                                                    : theObject;
 
+        /* handle embedded objects */
+        if (myObject instanceof MetisDataList) {
+            myObject = ((MetisDataList) myObject).getUnderlyingList();
+        }
+        if (myObject instanceof MetisDataMap) {
+            myObject = ((MetisDataMap) myObject).getUnderlyingMap();
+        }
+
         /* Handle multi-page objects */
         if (myObject instanceof List) {
             return ((List<?>) myObject).size();

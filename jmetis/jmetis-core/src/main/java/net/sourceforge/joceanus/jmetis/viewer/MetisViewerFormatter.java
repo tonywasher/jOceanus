@@ -300,7 +300,7 @@ public class MetisViewerFormatter {
 
             /* Loop up to the limit */
             int myCount = ITEMS_PER_PAGE;
-            int myIndex = pStart;
+            int myIndex = myStart + 1;
             while (myIterator.hasNext()
                    && (myCount-- > 0)) {
                 /* Access the key and value */
@@ -333,6 +333,7 @@ public class MetisViewerFormatter {
         if (!pMap.isEmpty()) {
             /* Calculate start point */
             int myCount = (pStart - 1) * ITEMS_PER_PAGE;
+            int myIndex = myCount + 1;
 
             /* Create iterator and shift to start */
             Iterator<?> myIterator = pMap.entrySet().iterator();
@@ -346,7 +347,6 @@ public class MetisViewerFormatter {
 
             /* Loop up to the limit */
             myCount = ITEMS_PER_PAGE;
-            int myIndex = pStart;
             while (myIterator.hasNext()
                    && (myCount-- > 0)) {
                 /* Access the key and value */

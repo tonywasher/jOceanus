@@ -254,11 +254,6 @@ public final class DepositBucket
     public static final class Peer2PeerValues
             extends AccountValues {
         /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 5567633911931855603L;
-
-        /**
          * Constructor.
          * @param pCurrency the account currency
          */
@@ -267,7 +262,7 @@ public final class DepositBucket
             super(pCurrency);
 
             /* Initialise BadDebt to zero */
-            put(AccountAttribute.BADDEBT, new TethysMoney(pCurrency));
+            setValue(AccountAttribute.BADDEBT, new TethysMoney(pCurrency));
         }
 
         /**
@@ -281,21 +276,28 @@ public final class DepositBucket
             super(pCurrency, pReportingCurrency);
 
             /* Initialise BadDebt to zero */
-            put(AccountAttribute.BADDEBT, new TethysMoney(pCurrency));
+            setValue(AccountAttribute.BADDEBT, new TethysMoney(pCurrency));
         }
 
         /**
          * Constructor.
          * @param pSource the source map.
+         * @param pCountersOnly only copy counters
          */
-        private Peer2PeerValues(final Peer2PeerValues pSource) {
+        private Peer2PeerValues(final Peer2PeerValues pSource,
+                                final boolean pCountersOnly) {
             /* Initialise class */
-            super(pSource);
+            super(pSource, pCountersOnly);
         }
 
         @Override
-        protected Peer2PeerValues getSnapShot() {
-            return new Peer2PeerValues(this);
+        protected Peer2PeerValues getCounterSnapShot() {
+            return new Peer2PeerValues(this, true);
+        }
+
+        @Override
+        protected Peer2PeerValues getFullSnapShot() {
+            return new Peer2PeerValues(this, false);
         }
     }
 

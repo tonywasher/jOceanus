@@ -79,7 +79,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         theHistoryMap = new LinkedHashMap<>();
 
         /* Create base as a snapshot */
-        theBaseValues = theValues.getSnapShot();
+        theBaseValues = theValues.getFullSnapShot();
     }
 
     /**
@@ -88,8 +88,8 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      */
     protected BucketHistory(final BucketHistory<T, E> pHistory) {
         /* Copy the base values */
-        theBaseValues = pHistory.getBaseValues().getSnapShot();
-        theValues = theBaseValues.getSnapShot();
+        theBaseValues = pHistory.getBaseValues().getFullSnapShot();
+        theValues = theBaseValues.getCounterSnapShot();
         theLastValues = theBaseValues;
 
         /* Create the history map */
@@ -104,7 +104,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     protected BucketHistory(final BucketHistory<T, E> pHistory,
                             final TethysDate pDate) {
         /* Copy the base values */
-        theBaseValues = pHistory.getBaseValues().getSnapShot();
+        theBaseValues = pHistory.getBaseValues().getFullSnapShot();
         theLastValues = theBaseValues;
 
         /* Create the history map */
@@ -136,10 +136,10 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         /* If we have no entries */
         if (myLatest == null) {
             /* Values are identical to base values */
-            theValues = theBaseValues.getSnapShot();
+            theValues = theBaseValues.getCounterSnapShot();
         } else {
             /* Take a snapShot of the latest values */
-            theValues = myLatest.getNewSnapShot();
+            theValues = myLatest.getCounterSnapShot();
         }
     }
 
@@ -182,8 +182,8 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
 
         /* Determine the base values */
         theBaseValues = (myFirst == null)
-                                          ? pHistory.getBaseValues().getSnapShot()
-                                          : myFirst.getNewSnapShot();
+                                          ? pHistory.getBaseValues().getFullSnapShot()
+                                          : myFirst.getFullSnapShot();
         theLastValues = theBaseValues;
 
         /* If we broke the loop because we found an event */
@@ -207,7 +207,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
             /* Add to the map */
             BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<>(myTrans, theBaseValues, theLastValues);
             theHistoryMap.put(myEntry.getKey(), myNewTrans);
-            theLastValues = myNewTrans.getNewSnapShot();
+            theLastValues = myNewTrans.getSnapShot();
 
             /* Store latest value */
             myLatest = myTrans;
@@ -215,8 +215,8 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
 
         /* Store the values */
         theValues = (myLatest != null)
-                                       ? myLatest.getNewSnapShot()
-                                       : theBaseValues.getSnapShot();
+                                       ? myLatest.getCounterSnapShot()
+                                       : theBaseValues.getCounterSnapShot();
     }
 
     @Override

@@ -240,7 +240,7 @@ public class MetisViewerControl<N, I>
 
         /* If we are a list */
         if (isList
-            && (mySize > 0)) {
+            && (mySize > 1)) {
             /* Show the Slider */
             theSliderPane.setVisible(true);
             isVisible = true;

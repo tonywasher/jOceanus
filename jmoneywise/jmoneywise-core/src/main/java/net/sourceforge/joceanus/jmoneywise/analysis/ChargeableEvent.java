@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -51,7 +51,7 @@ public final class ChargeableEvent
     /**
      * The Gains field id.
      */
-    private static final MetisField FIELD_GAINS = FIELD_DEFS.declareEqualityField(AnalysisResource.SECURITYATTR_GAINS.getValue());
+    private static final MetisField FIELD_GAINS = FIELD_DEFS.declareEqualityField(AnalysisResource.SECURITYATTR_REALISEDGAINS.getValue());
 
     /**
      * The Slice field id.
@@ -124,8 +124,8 @@ public final class ChargeableEvent
         }
         if (FIELD_TAXATION.equals(pField)) {
             return theTaxation == null
-                                      ? MetisFieldValue.SKIP
-                                      : theTaxation;
+                                       ? MetisFieldValue.SKIP
+                                       : theTaxation;
         }
         if (FIELD_TRANS.equals(pField)) {
             return theTransaction;

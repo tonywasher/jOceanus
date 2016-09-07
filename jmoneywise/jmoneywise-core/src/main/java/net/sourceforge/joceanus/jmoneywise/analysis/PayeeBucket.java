@@ -374,7 +374,7 @@ public final class PayeeBucket
      */
     private Object getValue(final PayeeAttribute pAttr) {
         /* Obtain the value */
-        return theValues.get(pAttr);
+        return theValues.getValue(pAttr);
     }
 
     @Override
@@ -783,11 +783,6 @@ public final class PayeeBucket
     public static final class PayeeValues
             extends BucketValues<PayeeValues, PayeeAttribute> {
         /**
-         * SerialId.
-         */
-        private static final long serialVersionUID = 3967662185816045682L;
-
-        /**
          * Constructor.
          * @param pCurrency the reporting currency
          */
@@ -796,22 +791,29 @@ public final class PayeeBucket
             super(PayeeAttribute.class);
 
             /* Initialise income/expense to zero */
-            put(PayeeAttribute.INCOME, new TethysMoney(pCurrency));
-            put(PayeeAttribute.EXPENSE, new TethysMoney(pCurrency));
+            setValue(PayeeAttribute.INCOME, new TethysMoney(pCurrency));
+            setValue(PayeeAttribute.EXPENSE, new TethysMoney(pCurrency));
         }
 
         /**
          * Constructor.
          * @param pSource the source map.
+         * @param pCountersOnly only copy counters
          */
-        private PayeeValues(final PayeeValues pSource) {
+        private PayeeValues(final PayeeValues pSource,
+                            final boolean pCountersOnly) {
             /* Initialise class */
-            super(pSource);
+            super(pSource, pCountersOnly);
         }
 
         @Override
-        protected PayeeValues getSnapShot() {
-            return new PayeeValues(this);
+        protected PayeeValues getCounterSnapShot() {
+            return new PayeeValues(this, true);
+        }
+
+        @Override
+        protected PayeeValues getFullSnapShot() {
+            return new PayeeValues(this, false);
         }
 
         @Override
@@ -830,9 +832,9 @@ public final class PayeeBucket
             myValue.setZero();
 
             /* Reset Income and expense values */
-            put(PayeeAttribute.INCOME, myValue);
-            put(PayeeAttribute.EXPENSE, new TethysMoney(myValue));
-            put(PayeeAttribute.PROFIT, new TethysMoney(myValue));
+            setValue(PayeeAttribute.INCOME, myValue);
+            setValue(PayeeAttribute.EXPENSE, new TethysMoney(myValue));
+            setValue(PayeeAttribute.PROFIT, new TethysMoney(myValue));
         }
 
         /**
@@ -848,7 +850,7 @@ public final class PayeeBucket
             myDelta.subtractAmount(myExpense);
 
             /* Set the delta */
-            put(PayeeAttribute.PROFIT, myDelta);
+            setValue(PayeeAttribute.PROFIT, myDelta);
         }
 
         /**

@@ -23,8 +23,10 @@
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataMap;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -39,12 +41,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @param <E> the enum class
  */
 public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
-        extends EnumMap<E, Object>
-        implements MetisDataFormat {
+        implements MetisDataFormat, MetisDataMap {
     /**
-     * Serial Id.
+     * Map.
      */
-    private static final long serialVersionUID = 9160258241035845846L;
+    private final Map<E, Object> theMap;
 
     /**
      * Enum class.
@@ -56,25 +57,28 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pClass the Enum class
      */
     protected BucketValues(final Class<E> pClass) {
-        super(pClass);
+        theMap = new EnumMap<>(pClass);
         theClass = pClass;
     }
 
     /**
      * Constructor.
      * @param pSource the source values
+     * @param pCountersOnly only copy counters
      */
-    protected BucketValues(final T pSource) {
+    protected BucketValues(final T pSource,
+                           final boolean pCountersOnly) {
         this(pSource.getEnumClass());
 
         /* Loop through the constants */
         for (E myKey : theClass.getEnumConstants()) {
-            /* If the constant is a counter */
-            if (myKey.isCounter()) {
+            /* If we are copying all or the attribute is a counter */
+            if (!pCountersOnly
+                || myKey.isCounter()) {
                 /* Copy non-null values */
-                Object myValue = pSource.get(myKey);
+                Object myValue = pSource.getValue(myKey);
                 if (myValue != null) {
-                    put(myKey, myValue);
+                    theMap.put(myKey, myValue);
                 }
             }
         }
@@ -94,10 +98,21 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     }
 
     /**
-     * Obtain snapShot.
+     * Obtain counter snapShot.
      * @return the snapShot.
      */
-    protected abstract T getSnapShot();
+    protected abstract T getCounterSnapShot();
+
+    /**
+     * Obtain full snapShot.
+     * @return the snapShot.
+     */
+    protected abstract T getFullSnapShot();
+
+    @Override
+    public Map<?, ?> getUnderlyingMap() {
+        return theMap;
+    }
 
     /**
      * Adjust to base values.
@@ -113,7 +128,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @return the delta
      */
     protected TethysDecimal getDeltaValue(final T pPrevious,
-                                     final E pAttr) {
+                                          final E pAttr) {
         switch (pAttr.getDataType()) {
             case MONEY:
                 return getDeltaMoneyValue(pPrevious, pAttr);
@@ -131,7 +146,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @return the delta
      */
     protected TethysMoney getDeltaMoneyValue(final T pPrevious,
-                                        final E pAttr) {
+                                             final E pAttr) {
         /* Access current and previous values */
         TethysMoney myCurr = getMoneyValue(pAttr);
         TethysMoney myPrev = pPrevious.getMoneyValue(pAttr);
@@ -149,7 +164,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @return the delta
      */
     protected TethysUnits getDeltaUnitsValue(final T pPrevious,
-                                        final E pAttr) {
+                                             final E pAttr) {
         /* Access current and previous values */
         TethysUnits myCurr = getUnitsValue(pAttr);
         TethysUnits myPrev = pPrevious.getUnitsValue(pAttr);
@@ -172,7 +187,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
         myValue = new TethysMoney(myValue);
         TethysMoney myBaseValue = pBase.getMoneyValue(pAttr);
         myValue.subtractAmount(myBaseValue);
-        put(pAttr, myValue);
+        theMap.put(pAttr, myValue);
     }
 
     /**
@@ -189,7 +204,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     protected void setValue(final E pAttr,
                             final Object pValue) {
         /* Set the value into the map */
-        put(pAttr, pValue);
+        theMap.put(pAttr, pValue);
     }
 
     /**
@@ -210,9 +225,9 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    private Object getValue(final E pAttr) {
+    public Object getValue(final E pAttr) {
         /* Obtain the attribute value */
-        return get(pAttr);
+        return theMap.get(pAttr);
     }
 
     /**

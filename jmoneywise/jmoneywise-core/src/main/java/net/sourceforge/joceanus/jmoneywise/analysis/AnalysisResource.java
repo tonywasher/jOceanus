@@ -385,14 +385,14 @@ public enum AnalysisResource implements TethysResourceId {
     SECURITYATTR_UNITS(MoneyWiseDataResource.MONEYWISEDATA_FIELD_UNITS),
 
     /**
-     * SecurityAttr Cost.
+     * SecurityAttr ResidualCost.
      */
-    SECURITYATTR_COST("SecurityAttr.Cost"),
+    SECURITYATTR_RESIDUALCOST("SecurityAttr.ResidualCost"),
 
     /**
-     * SecurityAttr Gains.
+     * SecurityAttr RealisedGains.
      */
-    SECURITYATTR_GAINS("SecurityAttr.Gains"),
+    SECURITYATTR_REALISEDGAINS("SecurityAttr.RealisedGains"),
 
     /**
      * SecurityAttr GrowthAdjustment.
@@ -443,6 +443,41 @@ public enum AnalysisResource implements TethysResourceId {
      * SecurityAttr Profit.
      */
     SECURITYATTR_PROFIT("SecurityAttr.Profit"),
+
+    /**
+     * SecurityAttr Consideration.
+     */
+    SECURITYATTR_CONSIDER("SecurityAttr.Consider"),
+
+    /**
+     * SecurityAttr CashConsideration.
+     */
+    SECURITYATTR_CASHCONSIDER("SecurityAttr.CashConsider"),
+
+    /**
+     * SecurityAttr StockConsideration.
+     */
+    SECURITYATTR_STOCKCONSIDER("SecurityAttr.StockConsider"),
+
+    /**
+     * SecurityAttr XferredCost.
+     */
+    SECURITYATTR_XFERREDCOST("SecurityAttr.XferredCost"),
+
+    /**
+     * SecurityAttr CostDilution.
+     */
+    SECURITYATTR_COSTDILUTION("SecurityAttr.CostDilution"),
+
+    /**
+     * SecurityAttr CapitalGain.
+     */
+    SECURITYATTR_CAPITALGAIN("SecurityAttr.CapitalGain"),
+
+    /**
+     * SecurityAttr AllowedCost.
+     */
+    SECURITYATTR_ALLOWEDCOST("SecurityAttr.AllowedCost"),
 
     /**
      * SecurityAttr Price.
@@ -644,8 +679,8 @@ public enum AnalysisResource implements TethysResourceId {
         myMap.put(SecurityAttribute.FOREIGNVALUEDELTA, SECURITYATTR_FOREIGNVALUEDELTA);
         myMap.put(SecurityAttribute.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);
         myMap.put(SecurityAttribute.UNITS, SECURITYATTR_UNITS);
-        myMap.put(SecurityAttribute.COST, SECURITYATTR_COST);
-        myMap.put(SecurityAttribute.GAINS, SECURITYATTR_GAINS);
+        myMap.put(SecurityAttribute.RESIDUALCOST, SECURITYATTR_RESIDUALCOST);
+        myMap.put(SecurityAttribute.REALISEDGAINS, SECURITYATTR_REALISEDGAINS);
         myMap.put(SecurityAttribute.GROWTHADJUST, SECURITYATTR_GROWTHADJUST);
         myMap.put(SecurityAttribute.INVESTED, SECURITYATTR_INVESTED);
         myMap.put(SecurityAttribute.FOREIGNINVESTED, SECURITYATTR_FOREIGNINVESTED);
@@ -656,6 +691,13 @@ public enum AnalysisResource implements TethysResourceId {
         myMap.put(SecurityAttribute.CURRENCYFLUCT, ACCOUNTATTR_CURRENCYFLUCT);
         myMap.put(SecurityAttribute.MARKETPROFIT, SECURITYATTR_MARKETPROFIT);
         myMap.put(SecurityAttribute.PROFIT, SECURITYATTR_PROFIT);
+        myMap.put(SecurityAttribute.CONSIDERATION, SECURITYATTR_CONSIDER);
+        myMap.put(SecurityAttribute.CASHCONSIDERATION, SECURITYATTR_CASHCONSIDER);
+        myMap.put(SecurityAttribute.STOCKCONSIDERATION, SECURITYATTR_STOCKCONSIDER);
+        myMap.put(SecurityAttribute.XFERREDCOST, SECURITYATTR_XFERREDCOST);
+        myMap.put(SecurityAttribute.COSTDILUTION, SECURITYATTR_COSTDILUTION);
+        myMap.put(SecurityAttribute.CAPITALGAIN, SECURITYATTR_CAPITALGAIN);
+        myMap.put(SecurityAttribute.ALLOWEDCOST, SECURITYATTR_ALLOWEDCOST);
         myMap.put(SecurityAttribute.PRICE, SECURITYATTR_PRICE);
         return myMap;
     }

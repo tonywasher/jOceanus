@@ -159,7 +159,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     protected void setValue(final AccountAttribute pAttr,
                             final TethysMoney pValue) {
         /* Set the value into the list */
-        theValues.put(pAttr, pValue);
+        theValues.setValue(pAttr, pValue);
     }
 
     /**
@@ -194,7 +194,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
      */
     private Object getValue(final AccountAttribute pAttr) {
         /* Obtain the attribute */
-        return theValues.get(pAttr);
+        return theValues.getValue(pAttr);
     }
 
     @Override
