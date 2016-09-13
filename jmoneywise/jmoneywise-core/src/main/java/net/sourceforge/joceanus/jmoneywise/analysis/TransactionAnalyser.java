@@ -604,7 +604,7 @@ public class TransactionAnalyser
         switch (myCat.getCategoryTypeClass()) {
             /* Process a stock right waived */
             case STOCKRIGHTSISSUE:
-                processStockRightWaived(pDebit, (AssetBase<?>) pCredit);
+                processTransferOut(pDebit, (AssetBase<?>) pCredit);
                 break;
             /* Process a dividend */
             case DIVIDEND:
@@ -923,15 +923,16 @@ public class TransactionAnalyser
         /* Transfer is to the credit account and may or may not have a change to the units */
         TethysUnits myDeltaUnits = theHelper.getCreditUnits();
         TethysMoney myAmount = theHelper.getCreditAmount();
+        TethysRatio myExchangeRate = theHelper.getCreditExchangeRate();
+        Security mySecurity = pHolding.getSecurity();
 
         /* Access the Asset Security Bucket */
         SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
+        boolean isForeign = myAsset.isForeignCurrency();
 
         /* If this is a foreign currency asset */
-        if (myAsset.isForeignCurrency()) {
+        if (isForeign) {
             /* Adjust foreign invested amount */
-            SecurityValues myValues = myAsset.getValues();
-            myValues.setValue(SecurityAttribute.EXCHANGERATE, theHelper.getCreditExchangeRate());
             myAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myAmount);
 
             /* Switch to local amount */
@@ -948,8 +949,27 @@ public class TransactionAnalyser
             myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
         }
 
+        /* Get the appropriate price for the account */
+        TethysPrice myPrice = thePriceMap.getPriceForDate(mySecurity, theHelper.getDate());
+
+        /* Determine value of this stock after the transaction */
+        TethysUnits myUnits = myAsset.getValues().getUnitsValue(SecurityAttribute.UNITS);
+        TethysMoney myValue = myUnits.valueAtPrice(myPrice);
+
+        /* If we are foreign */
+        if (isForeign) {
+            /* Determine local value */
+            myValue = myValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myExchangeRate.getInverseRatio());
+        }
+
         /* Register the transaction */
-        myAsset.registerTransaction(theHelper);
+        SecurityValues myValues = myAsset.registerTransaction(theHelper);
+        myValues.setValue(SecurityAttribute.PRICE, myPrice);
+        myValues.setValue(SecurityAttribute.VALUATION, myValue);
+        myValues.setValue(SecurityAttribute.CASHINVESTED, myAmount);
+        if (isForeign) {
+            myValues.setValue(SecurityAttribute.EXCHANGERATE, myExchangeRate);
+        }
     }
 
     /**
@@ -1080,19 +1100,22 @@ public class TransactionAnalyser
      */
     private void processDebitXferOut(final SecurityHolding pHolding) {
         /* Transfer out is from the debit account and may or may not have units */
+        Security myDebit = pHolding.getSecurity();
         TethysMoney myAmount = theHelper.getDebitAmount();
         TethysUnits myDeltaUnits = theHelper.getDebitUnits();
+        boolean isCapitalDistribution = myDeltaUnits == null;
 
         /* Access the Asset Security Bucket */
         SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
         SecurityValues myValues = myAsset.getValues();
+        TethysRatio myXchangeRate = theHelper.getDebitExchangeRate();
+        boolean isForeign = myAsset.isForeignCurrency();
 
         /* If this is a foreign currency asset */
-        if (myAsset.isForeignCurrency()) {
+        if (isForeign) {
             /* Adjust foreign invested amount */
             TethysMoney myDelta = new TethysMoney(myAmount);
             myDelta.negate();
-            myValues.setValue(SecurityAttribute.EXCHANGERATE, theHelper.getDebitExchangeRate());
             myAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myDelta);
 
             /* Switch to local amount */
@@ -1104,15 +1127,19 @@ public class TransactionAnalyser
         myDelta.negate();
         myAsset.adjustCounter(SecurityAttribute.INVESTED, myDelta);
 
+        /* Get the appropriate price for the account */
+        TethysPrice myPrice = thePriceMap.getPriceForDate(myDebit, theHelper.getDate());
+
         /* Assume the the allowed cost is the full value */
+        TethysUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
         TethysMoney myAllowedCost = new TethysMoney(myAmount);
         TethysMoney myCost = myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-        TethysRatio myCostDilution = TethysRatio.ONE;
+        TethysRatio myCostDilution = null;
+        TethysMoney myConsideration = null;
 
-        /* If we are reducing units in the account */
-        if (myDeltaUnits != null) {
+        /* If this is not a capital distribution */
+        if (!isCapitalDistribution) {
             /* The allowed cost is the relevant fraction of the cost */
-            TethysUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
             myAllowedCost = myCost.valueAtWeight(myDeltaUnits, myUnits);
 
             /* Access units as negative value */
@@ -1121,15 +1148,47 @@ public class TransactionAnalyser
 
             /* Record delta to units */
             myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
+            TethysUnits myNewUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
 
             /* Determine the cost dilution */
-            myCostDilution = new TethysRatio(myValues.getRatioValue(SecurityAttribute.UNITS), myUnits);
+            myCostDilution = new TethysRatio(myNewUnits, myUnits);
+            myUnits = myNewUnits;
         }
 
-        /* If the reduction is greater than the total cost */
-        if (myAllowedCost.compareTo(myCost) > 0) {
-            /* Reduction is the total cost */
-            myAllowedCost = new TethysMoney(myCost);
+        /* Determine value of this stock after the transaction */
+        TethysMoney myValue = myUnits.valueAtPrice(myPrice);
+
+        /* If we are foreign */
+        if (isForeign) {
+            /* Determine local value */
+            myValue = myValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myXchangeRate.getInverseRatio());
+        }
+
+        /* If we are performing a capital distribution */
+        if (isCapitalDistribution) {
+            /* Determine condition as to whether this is a large cash transaction */
+            TethysMoney myPortion = myValue.valueAtRate(LIMIT_RATE);
+            boolean isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
+                                  && (myAmount.compareTo(myPortion) > 0);
+
+            /* If there is a capital gain */
+            if (isLargeCash
+                || myAmount.compareTo(myCost) > 0) {
+                /* Determine the total value of rights plus share value */
+                myConsideration = new TethysMoney(myAmount);
+                myConsideration.addAmount(myValue);
+
+                /* Determine the allowedCost as a proportion of the total value */
+                myAllowedCost = myCost.valueAtWeight(myAmount, myConsideration);
+
+                /* Determine the cost dilution */
+                myCostDilution = new TethysRatio(myValue, myConsideration);
+
+                /* else this is viewed as small and is taken out of the cost */
+            } else {
+                /* Set the reduction to be the entire amount */
+                myAllowedCost = new TethysMoney(myAmount);
+            }
         }
 
         /* Determine the delta to the cost */
@@ -1159,12 +1218,23 @@ public class TransactionAnalyser
         myValues = myAsset.registerTransaction(theHelper);
 
         /* record details */
-        myValues.setValue(SecurityAttribute.COSTDILUTION, myCostDilution);
+        myValues.setValue(SecurityAttribute.PRICE, myPrice);
+        myValues.setValue(SecurityAttribute.VALUATION, myValue);
+        myValues.setValue(SecurityAttribute.RETURNEDCASH, myAmount);
+        if (myCostDilution != null) {
+            myValues.setValue(SecurityAttribute.COSTDILUTION, myCostDilution);
+        }
+        if (myConsideration != null) {
+            myValues.setValue(SecurityAttribute.CONSIDERATION, myConsideration);
+        }
         if (myAllowedCost.isNonZero()) {
             myValues.setValue(SecurityAttribute.ALLOWEDCOST, myAllowedCost);
         }
         if (myCapitalGain.isNonZero()) {
             myValues.setValue(SecurityAttribute.CAPITALGAIN, myCapitalGain);
+        }
+        if (isForeign) {
+            myValues.setValue(SecurityAttribute.EXCHANGERATE, myXchangeRate);
         }
     }
 
@@ -1288,130 +1358,6 @@ public class TransactionAnalyser
     }
 
     /**
-     * Process a transaction that is stock right waived.
-     * <p>
-     * This capital event relates only to the Debit Account
-     * @param pHolding the debit holding
-     * @param pCredit the credit account
-     */
-    private void processStockRightWaived(final SecurityHolding pHolding,
-                                         final AssetBase<?> pCredit) {
-        /* Stock Right Waived is from the debit account */
-        Security myDebit = pHolding.getSecurity();
-        TethysMoney myAmount = theHelper.getDebitAmount();
-        TethysMoney myAllowedCost;
-
-        /* Access the Asset Security Bucket */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
-        SecurityValues myValues = myAsset.getValues();
-        boolean isForeign = myAsset.isForeignCurrency();
-
-        /* If this is a foreign currency asset */
-        if (isForeign) {
-            /* Adjust foreign invested amount */
-            TethysMoney myDelta = new TethysMoney(myAmount);
-            myDelta.negate();
-            myValues.setValue(SecurityAttribute.EXCHANGERATE, theHelper.getDebitExchangeRate());
-            myAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myDelta);
-
-            /* Switch to local amount */
-            myAmount = theHelper.getLocalAmount();
-        }
-
-        /* Record the delta investment */
-        TethysMoney myDelta = new TethysMoney(myAmount);
-        myDelta.negate();
-        myAsset.adjustCounter(SecurityAttribute.INVESTED, myDelta);
-
-        /* Access the current cost */
-        TethysMoney myCost = myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-
-        /* Get the appropriate price for the account */
-        TethysPrice myPrice = thePriceMap.getPriceForDate(myDebit, theHelper.getDate());
-
-        /* Determine value of this stock at the current time */
-        TethysUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
-        TethysMoney myValue = myUnits.valueAtPrice(myPrice);
-        TethysMoney myForeignValue = null;
-
-        /* If we are foreign */
-        if (isForeign) {
-            /* Determine foreign and local value */
-            TethysRatio myRate = theHelper.getDebitExchangeRate();
-            myForeignValue = myValue;
-            myValue = myValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
-        }
-
-        /* Determine condition as to whether this is a large cash transaction */
-        TethysRatio myCostDilution = TethysRatio.ONE;
-        TethysMoney myPortion = myValue.valueAtRate(LIMIT_RATE);
-        boolean isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
-                              && (myAmount.compareTo(myPortion) > 0);
-
-        /* If there is a capital gain */
-        if (isLargeCash || myAmount.compareTo(myCost) > 0) {
-            /* Determine the total value of rights plus share value */
-            TethysMoney myTotalValue = new TethysMoney(myAmount);
-            myTotalValue.addAmount(myValue);
-
-            /* Determine the allowedCost as a proportion of the total value */
-            myAllowedCost = myCost.valueAtWeight(myAmount, myTotalValue);
-
-            /* Determine the cost dilution */
-            myCostDilution = new TethysRatio(myValue, myTotalValue);
-
-            /* else this is viewed as small and is taken out of the cost */
-        } else {
-            /* Set the reduction to be the entire amount */
-            myAllowedCost = new TethysMoney(myAmount);
-        }
-
-        /* Calculate the delta cost */
-        TethysMoney myDeltaCost = new TethysMoney(myAllowedCost);
-        myDeltaCost.negate();
-
-        /* Record the current/delta cost */
-        myAsset.adjustCounter(SecurityAttribute.RESIDUALCOST, myDeltaCost);
-
-        /* Determine the capital gain */
-        TethysMoney myCapitalGain = new TethysMoney(myAmount);
-        myCapitalGain.addAmount(myDeltaCost);
-
-        /* If we have some gains */
-        if (myCapitalGain.isNonZero()) {
-            /* Record the delta gains */
-            myAsset.adjustCounter(SecurityAttribute.REALISEDGAINS, myCapitalGain);
-
-            /* Adjust the capitalGains category bucket */
-            theCategoryBuckets.adjustStandardGain(theHelper, pHolding, myCapitalGain);
-        }
-
-        /* Register the event */
-        myValues = myAsset.registerTransaction(theHelper);
-
-        /* Record additional details to the registered event values */
-        myValues.setValue(SecurityAttribute.PRICE, myPrice);
-        myValues.setValue(SecurityAttribute.VALUATION, myValue);
-        myValues.setValue(SecurityAttribute.COSTDILUTION, myCostDilution);
-        if (myCapitalGain.isNonZero()) {
-            myValues.setValue(SecurityAttribute.CAPITALGAIN, myCapitalGain);
-        }
-        if (myAllowedCost.isNonZero()) {
-            myValues.setValue(SecurityAttribute.ALLOWEDCOST, myAllowedCost);
-        }
-        if (isForeign) {
-            myValues.setValue(SecurityAttribute.FOREIGNVALUE, myForeignValue);
-            myValues.setValue(SecurityAttribute.EXCHANGERATE, theHelper.getDebitExchangeRate());
-        }
-
-        /* Adjust the credit account bucket */
-        AccountBucket<?> myBucket = getAccountBucket(pCredit);
-        myBucket.adjustForCredit(theHelper);
-
-        /* StockRightWaived is a transfer, so no need to update the categories */
-    }
-
-    /**
      * Process a transaction that is Stock DeMerger.
      * <p>
      * This capital event relates to both the Credit and Debit accounts
@@ -1420,17 +1366,15 @@ public class TransactionAnalyser
      */
     private void processStockDeMerger(final SecurityHolding pDebit,
                                       final SecurityHolding pCredit) {
-        TethysDilution myDilution = theHelper.getDilution();
-        TethysUnits myDeltaUnits = theHelper.getDebitUnits();
-
         /* Access the Debit Asset Security Bucket */
         SecurityBucket myAsset = thePortfolioBuckets.getBucket(pDebit);
         SecurityValues myValues = myAsset.getValues();
+        TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
 
-        /* Obtain current cost and units */
+        /* Obtain current cost */
         TethysMoney myCost = myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-        TethysUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
-        TethysMoney myNewCost;
+        TethysDilution myDilution = theHelper.getDilution();
+        TethysUnits myDeltaUnits = theHelper.getDebitUnits();
 
         /* If we reduced the units */
         if (myDeltaUnits != null) {
@@ -1438,19 +1382,10 @@ public class TransactionAnalyser
             myDeltaUnits = new TethysUnits(myDeltaUnits);
             myDeltaUnits.negate();
             myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
-
-            /* Calculate the new cost */
-            TethysUnits myNewUnits = new TethysUnits(myUnits);
-            myNewUnits.addUnits(myDeltaUnits);
-            myNewCost = myCost.valueAtWeight(myNewUnits, myUnits);
-
-            /* else we diluted the holding */
-        } else {
-            /* Calculate the diluted cost */
-            myNewCost = myCost.getDilutedMoney(myDilution);
         }
 
         /* Calculate the cost dilution */
+        TethysMoney myNewCost = myCost.getDilutedMoney(myDilution);
         TethysRatio myCostDilution = new TethysRatio(myNewCost, myCost);
 
         /* Calculate the delta to the cost */
@@ -1460,9 +1395,9 @@ public class TransactionAnalyser
         /* Record the delta cost/investment */
         myAsset.adjustCounter(SecurityAttribute.RESIDUALCOST, myDeltaCost);
         myAsset.adjustCounter(SecurityAttribute.INVESTED, myDeltaCost);
-        if (myAsset.isForeignCurrency()) {
-            TethysRatio myRate = theHelper.getDebitExchangeRate();
-            TethysMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myRate);
+        boolean isForeignDebit = myAsset.isForeignCurrency();
+        if (isForeignDebit) {
+            TethysMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myDebitRate);
             myAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myInvested);
         }
 
@@ -1479,22 +1414,45 @@ public class TransactionAnalyser
         /* Record details */
         myValues.setValue(SecurityAttribute.XFERREDCOST, myDeltaCost);
         myValues.setValue(SecurityAttribute.COSTDILUTION, myCostDilution);
+        if (isForeignDebit) {
+            myValues.setValue(SecurityAttribute.EXCHANGERATE, myDebitRate);
+        }
 
         /* Record the delta cost/investment */
         myAsset.adjustCounter(SecurityAttribute.RESIDUALCOST, myDeltaCost);
         myAsset.adjustCounter(SecurityAttribute.INVESTED, myDeltaCost);
-        if (myAsset.isForeignCurrency()) {
-            TethysRatio myRate = theHelper.getCreditExchangeRate();
-            TethysMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myRate);
+        boolean isForeignCredit = myAsset.isForeignCurrency();
+        TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
+        if (isForeignCredit) {
+            TethysMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myCreditRate);
             myAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myInvested);
         }
 
+        /* Get the appropriate prices/rates for the stock */
+        TethysDate myDate = theHelper.getDate();
+        TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myAsset.getSecurity(), myDate);
+        Currency myCurrency = theAnalysis.getCurrency().getCurrency();
+
+        /* Determine value of the stock being deMerged */
+        TethysUnits myCreditUnits = theHelper.getCreditUnits();
+        TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        if (isForeignCredit) {
+            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate.getInverseRatio());
+        }
+
         /* Record the current/delta units */
-        myDeltaUnits = theHelper.getCreditUnits();
-        myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
+        myAsset.adjustCounter(SecurityAttribute.UNITS, myCreditUnits);
 
         /* Register the transaction */
-        myAsset.registerTransaction(theHelper);
+        myValues = myAsset.registerTransaction(theHelper);
+
+        /* Record values */
+        myValues.setValue(SecurityAttribute.XFERREDCOST, myDeltaCost);
+        myValues.setValue(SecurityAttribute.PRICE, myCreditPrice);
+        myValues.setValue(SecurityAttribute.XFERREDVALUE, myCreditXferValue);
+        if (isForeignCredit) {
+            myValues.setValue(SecurityAttribute.EXCHANGERATE, myCreditRate);
+        }
 
         /* StockDeMerger is a transfer, so no need to update the categories */
     }
@@ -1551,25 +1509,21 @@ public class TransactionAnalyser
 
         /* Determine value of the stock in both parts of the takeOver */
         TethysUnits myCreditUnits = theHelper.getCreditUnits();
-        TethysMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
         TethysUnits myDebitUnits = myDebitValues.getUnitsValue(SecurityAttribute.UNITS);
         TethysMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
         TethysMoney myInvested = myDebitValues.getMoneyValue(SecurityAttribute.INVESTED);
 
         /* Handle foreign debit */
         boolean isForeignDebit = myDebitAsset.isForeignCurrency();
-        TethysMoney myForeignDebit = null;
         if (isForeignDebit) {
-            myForeignDebit = myDebitValue;
-            myDebitValue = myForeignDebit.convertCurrency(myCurrency, myDebitRate);
+            myDebitValue = myDebitValue.convertCurrency(myCurrency, myDebitRate.getInverseRatio());
         }
 
         /* Handle foreign credit */
         boolean isForeignCredit = myCreditAsset.isForeignCurrency();
-        TethysMoney myForeignCredit = null;
         if (isForeignCredit) {
-            myForeignCredit = myCreditValue;
-            myCreditValue = myForeignCredit.convertCurrency(myCurrency, myCreditRate);
+            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate.getInverseRatio());
         }
 
         /* Determine the residual cost of the old stock */
@@ -1592,13 +1546,21 @@ public class TransactionAnalyser
             myCreditAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myForeign);
         }
 
+        /* Determine final value of the credit stock after the takeOver */
+        myCreditUnits = myCreditAsset.getValues().getUnitsValue(SecurityAttribute.UNITS);
+        TethysMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        if (isForeignCredit) {
+            myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate.getInverseRatio());
+        }
+
         /* Register the transaction */
         SecurityValues myCreditValues = myCreditAsset.registerTransaction(theHelper);
         myCreditValues.setValue(SecurityAttribute.PRICE, myCreditPrice);
+        myCreditValues.setValue(SecurityAttribute.XFERREDVALUE, myCreditXferValue);
+        myCreditValues.setValue(SecurityAttribute.XFERREDCOST, myDebitCost);
         myCreditValues.setValue(SecurityAttribute.VALUATION, myCreditValue);
         if (isForeignCredit) {
             myCreditValues.setValue(SecurityAttribute.EXCHANGERATE, myCreditRate);
-            myCreditValues.setValue(SecurityAttribute.FOREIGNVALUE, myForeignCredit);
         }
 
         /* Drive debit cost down to zero */
@@ -1625,10 +1587,10 @@ public class TransactionAnalyser
         myDebitValues = myDebitAsset.registerTransaction(theHelper);
         myDebitValues.setValue(SecurityAttribute.PRICE, myDebitPrice);
         myDebitValues.setValue(SecurityAttribute.VALUATION, myDebitValue);
+        myDebitValues.setValue(SecurityAttribute.XFERREDVALUE, myCreditXferValue);
         myDebitValues.setValue(SecurityAttribute.XFERREDCOST, myDeltaCost);
         if (isForeignDebit) {
             myDebitValues.setValue(SecurityAttribute.EXCHANGERATE, myDebitRate);
-            myDebitValues.setValue(SecurityAttribute.FOREIGNVALUE, myForeignDebit);
         }
     }
 
@@ -1667,31 +1629,27 @@ public class TransactionAnalyser
 
         /* Determine value of the stock part of the takeOver */
         TethysUnits myCreditUnits = theHelper.getCreditUnits();
-        TethysMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
 
         /* Handle foreign debit */
         boolean isForeignDebit = myDebitAsset.isForeignCurrency();
-        TethysMoney myForeignDebit = null;
         if (isForeignDebit) {
-            myForeignDebit = myDebitValue;
-            myDebitValue = myForeignDebit.convertCurrency(myCurrency, myDebitRate.getInverseRatio());
+            myDebitValue = myDebitValue.convertCurrency(myCurrency, myDebitRate.getInverseRatio());
         }
 
         /* Handle foreign credit */
         boolean isForeignCredit = myCreditAsset.isForeignCurrency();
-        TethysMoney myForeignCredit = null;
         if (isForeignCredit) {
-            myForeignCredit = myCreditValue;
-            myCreditValue = myForeignCredit.convertCurrency(myCurrency, myCreditRate.getInverseRatio());
+            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate.getInverseRatio());
         }
 
         /* Calculate the total consideration */
         TethysMoney myConsideration = new TethysMoney(myAmount);
-        myConsideration.addAmount(myCreditValue);
+        myConsideration.addAmount(myCreditXferValue);
 
         /* Access the current debit cost */
         TethysMoney myCost = myDebitValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-        TethysRatio myCostDilution = TethysRatio.ONE;
+        TethysRatio myCostDilution = null;
         TethysMoney myCostXfer;
         TethysMoney myAllowedCost;
 
@@ -1701,9 +1659,10 @@ public class TransactionAnalyser
                               && (myAmount.compareTo(myPortion) > 0);
 
         /* If there is a capital gain */
-        if (isLargeCash || myAmount.compareTo(myCost) > 0) {
+        if (isLargeCash
+            || myAmount.compareTo(myCost) > 0) {
             /* Determine the transferable cost */
-            myCostXfer = myCost.valueAtWeight(myCreditValue, myConsideration);
+            myCostXfer = myCost.valueAtWeight(myCreditXferValue, myConsideration);
 
             /* Determine the cost dilution */
             myCostDilution = new TethysRatio(myAmount, myConsideration);
@@ -1734,7 +1693,7 @@ public class TransactionAnalyser
         }
 
         /* Allocate current profit between the two stocks */
-        TethysMoney myProfit = new TethysMoney(myCreditValue);
+        TethysMoney myProfit = new TethysMoney(myCreditXferValue);
         myProfit.subtractAmount(myCostXfer);
         myDebitAsset.adjustCounter(SecurityAttribute.GROWTHADJUST, myProfit);
         myProfit = new TethysMoney(myProfit);
@@ -1750,13 +1709,21 @@ public class TransactionAnalyser
             myCreditAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myForeign);
         }
 
+        /* Determine final value of the credit stock after the takeOver */
+        myCreditUnits = myCreditAsset.getValues().getUnitsValue(SecurityAttribute.UNITS);
+        TethysMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        if (isForeignCredit) {
+            myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate.getInverseRatio());
+        }
+
         /* Register the transaction */
         SecurityValues myCreditValues = myCreditAsset.registerTransaction(theHelper);
         myCreditValues.setValue(SecurityAttribute.PRICE, myCreditPrice);
+        myCreditValues.setValue(SecurityAttribute.XFERREDVALUE, myCreditXferValue);
+        myCreditValues.setValue(SecurityAttribute.XFERREDCOST, myCostXfer);
         myCreditValues.setValue(SecurityAttribute.VALUATION, myCreditValue);
         if (isForeignCredit) {
             myCreditValues.setValue(SecurityAttribute.EXCHANGERATE, myCreditRate);
-            myCreditValues.setValue(SecurityAttribute.FOREIGNVALUE, myForeignCredit);
         }
 
         /* Drive debit cost down to zero */
@@ -1787,10 +1754,12 @@ public class TransactionAnalyser
         myDebitValues.setValue(SecurityAttribute.PRICE, myDebitPrice);
         myDebitValues.setValue(SecurityAttribute.VALUATION, myDebitValue);
         myDebitValues.setValue(SecurityAttribute.CONSIDERATION, myConsideration);
-        myDebitValues.setValue(SecurityAttribute.CASHCONSIDERATION, myAmount);
-        myDebitValues.setValue(SecurityAttribute.STOCKCONSIDERATION, myCreditValue);
+        myDebitValues.setValue(SecurityAttribute.RETURNEDCASH, myAmount);
+        myDebitValues.setValue(SecurityAttribute.XFERREDVALUE, myCreditXferValue);
         myDebitValues.setValue(SecurityAttribute.XFERREDCOST, myCostXfer);
-        myDebitValues.setValue(SecurityAttribute.COSTDILUTION, myCostDilution);
+        if (myCostDilution != null) {
+            myDebitValues.setValue(SecurityAttribute.COSTDILUTION, myCostDilution);
+        }
         if (myCapitalGain.isNonZero()) {
             myDebitValues.setValue(SecurityAttribute.CAPITALGAIN, myCapitalGain);
         }
@@ -1799,7 +1768,6 @@ public class TransactionAnalyser
         }
         if (isForeignDebit) {
             myDebitValues.setValue(SecurityAttribute.EXCHANGERATE, myDebitRate);
-            myDebitValues.setValue(SecurityAttribute.FOREIGNVALUE, myForeignDebit);
         }
 
         /* Adjust the ThirdParty account bucket */

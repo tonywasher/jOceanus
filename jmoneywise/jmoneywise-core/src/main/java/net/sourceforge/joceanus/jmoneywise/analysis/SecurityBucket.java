@@ -448,8 +448,16 @@ public final class SecurityBucket
      * @return the values (or null)
      */
     public SecurityValues getValuesForTransaction(final Transaction pTrans) {
-        /* Obtain values for transaction */
         return theHistory.getValuesForTransaction(pTrans);
+    }
+
+    /**
+     * Obtain previous values for transaction.
+     * @param pTrans the transaction
+     * @return the values (or null)
+     */
+    public SecurityValues getPreviousValuesForTransaction(final Transaction pTrans) {
+        return theHistory.getPreviousValuesForTransaction(pTrans);
     }
 
     /**

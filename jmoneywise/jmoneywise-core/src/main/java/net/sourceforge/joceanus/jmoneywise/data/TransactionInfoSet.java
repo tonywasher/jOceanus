@@ -396,12 +396,11 @@ public class TransactionInfoSet
      * @return the status
      */
     protected static MetisFieldRequired isDilutionClassRequired(final TransactionCategoryClass pClass) {
-        /* Dilution is only required for stock split/rights/deMerger */
+        /* Dilution is only required for stock split/deMerger */
         switch (pClass) {
             case STOCKSPLIT:
-                return MetisFieldRequired.MUSTEXIST;
             case STOCKDEMERGER:
-                return MetisFieldRequired.CANEXIST;
+                return MetisFieldRequired.MUSTEXIST;
             default:
                 return MetisFieldRequired.NOTALLOWED;
         }

@@ -387,8 +387,16 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @return the values (or null)
      */
     public AccountValues getValuesForTransaction(final Transaction pTrans) {
-        /* Obtain values for transaction */
         return theHistory.getValuesForTransaction(pTrans);
+    }
+
+    /**
+     * Obtain previous values for transaction.
+     * @param pTrans the transaction
+     * @return the values (or null)
+     */
+    public AccountValues getPreviousValuesForTransaction(final Transaction pTrans) {
+        return theHistory.getPreviousValuesForTransaction(pTrans);
     }
 
     /**

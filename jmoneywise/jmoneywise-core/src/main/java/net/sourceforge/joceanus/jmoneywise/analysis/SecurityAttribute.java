@@ -119,19 +119,24 @@ public enum SecurityAttribute implements BucketAttribute {
     MARKETPROFIT,
 
     /**
+     * CashInvested.
+     */
+    CASHINVESTED,
+
+    /**
      * Consideration.
      */
     CONSIDERATION,
 
     /**
-     * CashConsideration.
+     * CashConsideration (returned cash).
      */
-    CASHCONSIDERATION,
+    RETURNEDCASH,
 
     /**
-     * StockConsideration.
+     * StockConsideration (transferred value).
      */
-    STOCKCONSIDERATION,
+    XFERREDVALUE,
 
     /**
      * CostDilution.
@@ -201,8 +206,9 @@ public enum SecurityAttribute implements BucketAttribute {
             case XFERREDCOST:
             case COSTDILUTION:
             case CONSIDERATION:
-            case CASHCONSIDERATION:
-            case STOCKCONSIDERATION:
+            case RETURNEDCASH:
+            case XFERREDVALUE:
+            case CASHINVESTED:
             case CAPITALGAIN:
             case ALLOWEDCOST:
             default:
@@ -237,10 +243,11 @@ public enum SecurityAttribute implements BucketAttribute {
             case MARKETPROFIT:
             case PROFIT:
             case CONSIDERATION:
-            case CASHCONSIDERATION:
-            case STOCKCONSIDERATION:
+            case RETURNEDCASH:
+            case XFERREDVALUE:
             case XFERREDCOST:
             case ALLOWEDCOST:
+            case CASHINVESTED:
             case CAPITALGAIN:
             default:
                 return MetisDataType.MONEY;

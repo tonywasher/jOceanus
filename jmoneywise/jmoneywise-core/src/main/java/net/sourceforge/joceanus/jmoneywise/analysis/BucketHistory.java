@@ -297,6 +297,19 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     }
 
     /**
+     * Obtain previous values for transaction.
+     * @param pTrans the transaction
+     * @return the values (or null)
+     */
+    public T getPreviousValuesForTransaction(final Transaction pTrans) {
+        /* Locate the transaction in the map */
+        BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
+        return (myTrans == null)
+                                 ? null
+                                 : myTrans.getPrevious();
+    }
+
+    /**
      * Obtain delta for transaction.
      * @param pTrans the transaction
      * @param pAttr the attribute

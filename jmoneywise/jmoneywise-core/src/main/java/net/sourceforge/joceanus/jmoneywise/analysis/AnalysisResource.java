@@ -450,14 +450,14 @@ public enum AnalysisResource implements TethysResourceId {
     SECURITYATTR_CONSIDER("SecurityAttr.Consider"),
 
     /**
-     * SecurityAttr CashConsideration.
+     * SecurityAttr CashConsideration/ReturnedCash.
      */
-    SECURITYATTR_CASHCONSIDER("SecurityAttr.CashConsider"),
+    SECURITYATTR_RETURNEDCASH("SecurityAttr.ReturnedCash"),
 
     /**
-     * SecurityAttr StockConsideration.
+     * SecurityAttr StockConsideration/XferredValue.
      */
-    SECURITYATTR_STOCKCONSIDER("SecurityAttr.StockConsider"),
+    SECURITYATTR_XFERREDVALUE("SecurityAttr.XferredValue"),
 
     /**
      * SecurityAttr XferredCost.
@@ -468,6 +468,11 @@ public enum AnalysisResource implements TethysResourceId {
      * SecurityAttr CostDilution.
      */
     SECURITYATTR_COSTDILUTION("SecurityAttr.CostDilution"),
+
+    /**
+     * SecurityAttr CashInvested.
+     */
+    SECURITYATTR_CASHINVESTED("SecurityAttr.CashInvested"),
 
     /**
      * SecurityAttr CapitalGain.
@@ -692,10 +697,11 @@ public enum AnalysisResource implements TethysResourceId {
         myMap.put(SecurityAttribute.MARKETPROFIT, SECURITYATTR_MARKETPROFIT);
         myMap.put(SecurityAttribute.PROFIT, SECURITYATTR_PROFIT);
         myMap.put(SecurityAttribute.CONSIDERATION, SECURITYATTR_CONSIDER);
-        myMap.put(SecurityAttribute.CASHCONSIDERATION, SECURITYATTR_CASHCONSIDER);
-        myMap.put(SecurityAttribute.STOCKCONSIDERATION, SECURITYATTR_STOCKCONSIDER);
+        myMap.put(SecurityAttribute.RETURNEDCASH, SECURITYATTR_RETURNEDCASH);
+        myMap.put(SecurityAttribute.XFERREDVALUE, SECURITYATTR_XFERREDVALUE);
         myMap.put(SecurityAttribute.XFERREDCOST, SECURITYATTR_XFERREDCOST);
         myMap.put(SecurityAttribute.COSTDILUTION, SECURITYATTR_COSTDILUTION);
+        myMap.put(SecurityAttribute.CASHINVESTED, SECURITYATTR_CASHINVESTED);
         myMap.put(SecurityAttribute.CAPITALGAIN, SECURITYATTR_CAPITALGAIN);
         myMap.put(SecurityAttribute.ALLOWEDCOST, SECURITYATTR_ALLOWEDCOST);
         myMap.put(SecurityAttribute.PRICE, SECURITYATTR_PRICE);

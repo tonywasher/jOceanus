@@ -315,6 +315,15 @@ public final class TransactionCategoryBucket
     }
 
     /**
+     * Obtain previous values for transaction.
+     * @param pTrans the transaction
+     * @return the values (or null)
+     */
+    public CategoryValues getPreviousValuesForTransaction(final Transaction pTrans) {
+        return theHistory.getPreviousValuesForTransaction(pTrans);
+    }
+
+    /**
      * Obtain delta for transaction.
      * @param pTrans the transaction
      * @param pAttr the attribute
