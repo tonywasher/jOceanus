@@ -168,7 +168,8 @@ public class QIFSecurity
 
         /* Add the entries */
         myMap.put(SecurityTypeClass.SHARES, "Share");
-        myMap.put(SecurityTypeClass.UNITTRUST, "Unit/Inv. Trust");
+        myMap.put(SecurityTypeClass.GROWTHUNITTRUST, "Unit/Inv. Trust");
+        myMap.put(SecurityTypeClass.INCOMEUNITTRUST, "Unit/Inv. Trust");
         myMap.put(SecurityTypeClass.LIFEBOND, "Bond");
         myMap.put(SecurityTypeClass.ASSET, "Asset");
         myMap.put(SecurityTypeClass.ENDOWMENT, "Trust");

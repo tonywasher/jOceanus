@@ -174,7 +174,8 @@ public class SheetPortfolio
         /* Access Parent account */
         String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
-        /* Skip alias, portfolio, maturity, openingBalance and symbol columns */
+        /* Skip alias, portfolio, maturity, openingBalance, symbol and region columns */
+        iAdjust++;
         iAdjust++;
         iAdjust++;
         iAdjust++;

@@ -57,6 +57,7 @@ public class TableSecurity
         /* Declare the columns */
         PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Security.FIELD_SECTYPE, TableSecurityType.TABLE_NAME);
         myTableDef.addReferenceColumn(Security.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
+        myTableDef.addNullReferenceColumn(Security.FIELD_REGION, TableRegion.TABLE_NAME);
         myTableDef.addReferenceColumn(Security.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addEncryptedColumn(Security.FIELD_NAME, Security.NAMELEN);
         myTableDef.addNullEncryptedColumn(Security.FIELD_DESC, Security.DESCLEN);
@@ -84,6 +85,7 @@ public class TableSecurity
         myValues.addValue(Security.FIELD_DESC, myTableDef.getBinaryValue(Security.FIELD_DESC));
         myValues.addValue(Security.FIELD_SECTYPE, myTableDef.getIntegerValue(Security.FIELD_SECTYPE));
         myValues.addValue(Security.FIELD_PARENT, myTableDef.getIntegerValue(Security.FIELD_PARENT));
+        myValues.addValue(Security.FIELD_REGION, myTableDef.getIntegerValue(Security.FIELD_REGION));
         myValues.addValue(Security.FIELD_CURRENCY, myTableDef.getIntegerValue(Security.FIELD_CURRENCY));
         myValues.addValue(Security.FIELD_SYMBOL, myTableDef.getBinaryValue(Security.FIELD_SYMBOL));
         myValues.addValue(Security.FIELD_CLOSED, myTableDef.getBooleanValue(Security.FIELD_CLOSED));
@@ -101,6 +103,8 @@ public class TableSecurity
             myTableDef.setIntegerValue(iField, pItem.getSecurityTypeId());
         } else if (Security.FIELD_PARENT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getParentId());
+        } else if (Security.FIELD_REGION.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getRegionId());
         } else if (Security.FIELD_CURRENCY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getAssetCurrencyId());
         } else if (Security.FIELD_NAME.equals(iField)) {

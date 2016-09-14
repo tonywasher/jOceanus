@@ -114,6 +114,11 @@ public enum MoneyWiseDataType implements MetisFieldEnum {
     TRANSTAG,
 
     /**
+     * Region.
+     */
+    REGION,
+
+    /**
      * DepositCategory.
      */
     DEPOSITCATEGORY,

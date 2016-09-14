@@ -62,6 +62,7 @@ public class MoneyWiseWriter
         addSheet(new SheetAccountInfoType(this));
         addSheet(new SheetTransInfoType(this));
         addSheet(new SheetTransTag(this));
+        addSheet(new SheetRegion(this));
         addSheet(new SheetDepositCategory(this));
         addSheet(new SheetCashCategory(this));
         addSheet(new SheetLoanCategory(this));

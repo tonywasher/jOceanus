@@ -417,6 +417,16 @@ public class MaintenanceTab
                 gotoNamedTab(TITLE_CATEGORY);
                 break;
 
+            /* View the requested region */
+            case MainTab.ACTION_VIEWREGION:
+                /* Select the requested tag */
+                Object myRegion = pEvent.getDetails();
+                theCategoryTab.selectRegion(myRegion);
+
+                /* Goto the Category tab */
+                gotoNamedTab(TITLE_CATEGORY);
+                break;
+
             /* View the requested taxYear */
             case MainTab.ACTION_VIEWTAXYEAR:
                 /* Select the requested tag */
@@ -542,6 +552,7 @@ public class MaintenanceTab
             case MainTab.ACTION_VIEWTAXYEAR:
             case MainTab.ACTION_VIEWCATEGORY:
             case MainTab.ACTION_VIEWTAG:
+            case MainTab.ACTION_VIEWREGION:
             case MainTab.ACTION_VIEWSTATIC:
                 selectMaintenance(myEvent);
                 break;

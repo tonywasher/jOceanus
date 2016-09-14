@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -90,9 +89,14 @@ public enum StaticDataResource implements TethysResourceId {
     SECURITYTYPE_SHARES("SecurityType.Shares"),
 
     /**
-     * SecurityType UnitTrust.
+     * SecurityType Income UnitTrust.
      */
-    SECURITYTYPE_UNIT("SecurityType.UnitTrust"),
+    SECURITYTYPE_INCOMEUNIT("SecurityType.UnitTrust.Income"),
+
+    /**
+     * SecurityType Growth UnitTrust.
+     */
+    SECURITYTYPE_GROWTHUNIT("SecurityType.UnitTrust.Growth"),
 
     /**
      * SecurityType LifeBond.
@@ -1052,7 +1056,7 @@ public enum StaticDataResource implements TethysResourceId {
     /**
      * TransInfo Dilution.
      */
-    TRANSINFO_DILUTION("MoneyWiseData.Field.Dilution"),
+    TRANSINFO_DILUTION("TransInfoType.Dilution"),
 
     /**
      * TransInfo QualifyYears.
@@ -1077,7 +1081,7 @@ public enum StaticDataResource implements TethysResourceId {
     /**
      * TransInfo Price.
      */
-    TRANSINFO_PRICE("MoneyWiseData.Field.Price"),
+    TRANSINFO_PRICE("TransInfoType.Price"),
 
     /**
      * TransInfo Commission.
@@ -1162,7 +1166,7 @@ public enum StaticDataResource implements TethysResourceId {
     /**
      * The Resource Builder.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(StaticDataResource.class.getCanonicalName());
 
     /**
      * The Id.
@@ -1198,7 +1202,7 @@ public enum StaticDataResource implements TethysResourceId {
 
     @Override
     public String getNameSpace() {
-        return "jMoneyWise.data";
+        return "jMoneyWise.static";
     }
 
     @Override
@@ -1290,7 +1294,8 @@ public enum StaticDataResource implements TethysResourceId {
         /* Create the map and return it */
         Map<SecurityTypeClass, TethysResourceId> myMap = new EnumMap<>(SecurityTypeClass.class);
         myMap.put(SecurityTypeClass.SHARES, SECURITYTYPE_SHARES);
-        myMap.put(SecurityTypeClass.UNITTRUST, SECURITYTYPE_UNIT);
+        myMap.put(SecurityTypeClass.INCOMEUNITTRUST, SECURITYTYPE_INCOMEUNIT);
+        myMap.put(SecurityTypeClass.GROWTHUNITTRUST, SECURITYTYPE_GROWTHUNIT);
         myMap.put(SecurityTypeClass.LIFEBOND, SECURITYTYPE_LIFEBOND);
         myMap.put(SecurityTypeClass.ENDOWMENT, SECURITYTYPE_ENDOWMENT);
         myMap.put(SecurityTypeClass.PROPERTY, SECURITYTYPE_PROPERTY);

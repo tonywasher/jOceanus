@@ -48,6 +48,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.Region.RegionList;
 import net.sourceforge.joceanus.jmoneywise.data.Schedule.ScheduleList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
@@ -315,6 +316,14 @@ public class MoneyWiseData
      */
     public TransactionTagList getTransactionTags() {
         return getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
+    }
+
+    /**
+     * Obtain Regions.
+     * @return the regions
+     */
+    public RegionList getRegions() {
+        return getDataList(MoneyWiseDataType.REGION, RegionList.class);
     }
 
     /**
@@ -644,6 +653,8 @@ public class MoneyWiseData
                 return new TransactionInfoTypeList(this);
             case TRANSTAG:
                 return new TransactionTagList(this);
+            case REGION:
+                return new RegionList(this);
             case DEPOSITCATEGORY:
                 return new DepositCategoryList(this);
             case CASHCATEGORY:

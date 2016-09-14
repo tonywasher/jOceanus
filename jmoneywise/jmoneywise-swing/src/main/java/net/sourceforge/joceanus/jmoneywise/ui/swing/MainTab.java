@@ -76,9 +76,14 @@ public class MainTab
     public static final int ACTION_VIEWTAG = ACTION_VIEWCATEGORY + 1;
 
     /**
+     * View Region.
+     */
+    public static final int ACTION_VIEWREGION = ACTION_VIEWTAG + 1;
+
+    /**
      * View TaxYear.
      */
-    public static final int ACTION_VIEWTAXYEAR = ACTION_VIEWTAG + 1;
+    public static final int ACTION_VIEWTAXYEAR = ACTION_VIEWREGION + 1;
 
     /**
      * View Static.
@@ -465,6 +470,7 @@ public class MainTab
             case ACTION_VIEWACCOUNT:
             case ACTION_VIEWTAXYEAR:
             case ACTION_VIEWCATEGORY:
+            case ACTION_VIEWREGION:
             case ACTION_VIEWTAG:
             case ACTION_VIEWSTATIC:
                 selectMaintenance(myEvent);

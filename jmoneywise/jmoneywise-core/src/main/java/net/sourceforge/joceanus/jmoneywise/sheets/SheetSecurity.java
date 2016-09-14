@@ -73,9 +73,14 @@ public class SheetSecurity
     private static final int COL_DESC = COL_SYMBOL + 1;
 
     /**
+     * Region column.
+     */
+    private static final int COL_REGION = COL_DESC + 1;
+
+    /**
      * Currency column.
      */
-    private static final int COL_CURRENCY = COL_DESC + 1;
+    private static final int COL_CURRENCY = COL_REGION + 1;
 
     /**
      * Closed column.
@@ -114,6 +119,7 @@ public class SheetSecurity
         DataValues<MoneyWiseDataType> myValues = getRowValues(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_SECTYPE, loadInteger(COL_TYPE));
         myValues.addValue(Security.FIELD_PARENT, loadInteger(COL_PARENT));
+        myValues.addValue(Security.FIELD_REGION, loadInteger(COL_REGION));
         myValues.addValue(Security.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Security.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Security.FIELD_DESC, loadBytes(COL_DESC));
@@ -130,6 +136,7 @@ public class SheetSecurity
         super.insertSecureItem(pItem);
         writeInteger(COL_TYPE, pItem.getSecurityTypeId());
         writeInteger(COL_PARENT, pItem.getParentId());
+        writeInteger(COL_REGION, pItem.getRegionId());
         writeInteger(COL_CURRENCY, pItem.getAssetCurrencyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
@@ -213,6 +220,13 @@ public class SheetSecurity
         /* Access Symbol */
         String mySymbol = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
+        /* Handle region which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myRegion = null;
+        if (myCell != null) {
+            myRegion = myCell.getStringValue();
+        }
+
         /* Handle currency which may be missing */
         myCell = pView.getRowCellByIndex(pRow, iAdjust++);
         AssetCurrency myCurrency = pData.getDefaultCurrency();
@@ -225,6 +239,7 @@ public class SheetSecurity
         DataValues<MoneyWiseDataType> myValues = new DataValues<>(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_NAME, myName);
         myValues.addValue(Security.FIELD_SECTYPE, mySecType);
+        myValues.addValue(Security.FIELD_REGION, myRegion);
         myValues.addValue(Security.FIELD_CURRENCY, myCurrency);
         myValues.addValue(Security.FIELD_PARENT, myParent);
         myValues.addValue(Security.FIELD_SYMBOL, mySymbol);

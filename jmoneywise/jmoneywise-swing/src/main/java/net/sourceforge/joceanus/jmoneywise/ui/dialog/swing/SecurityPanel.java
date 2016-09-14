@@ -43,6 +43,8 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.Region;
+import net.sourceforge.joceanus.jmoneywise.data.Region.RegionList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfoSet;
@@ -92,6 +94,11 @@ public class SecurityPanel
     private final JScrollButton<Payee> theParentButton;
 
     /**
+     * Region Button Field.
+     */
+    private final JScrollButton<Region> theRegionButton;
+
+    /**
      * Currency Button Field.
      */
     private final JScrollButton<AssetCurrency> theCurrencyButton;
@@ -117,6 +124,11 @@ public class SecurityPanel
     private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
 
     /**
+     * The Region Menu Builder.
+     */
+    private final JScrollMenuBuilder<Region> theRegionMenuBuilder;
+
+    /**
      * The Currency Menu Builder.
      */
     private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
@@ -140,6 +152,7 @@ public class SecurityPanel
         /* Create the buttons */
         theTypeButton = new JScrollButton<>();
         theParentButton = new JScrollButton<>();
+        theRegionButton = new JScrollButton<>();
         theCurrencyButton = new JScrollButton<>();
 
         /* Set closed button */
@@ -176,6 +189,8 @@ public class SecurityPanel
         theSecTypeMenuBuilder.getEventRegistrar().addEventListener(e -> buildSecTypeMenu(theSecTypeMenuBuilder, getItem()));
         theParentMenuBuilder = theParentButton.getMenuBuilder();
         theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
+        theRegionMenuBuilder = theRegionButton.getMenuBuilder();
+        theRegionMenuBuilder.getEventRegistrar().addEventListener(e -> buildRegionMenu(theRegionMenuBuilder, getItem()));
         theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
         theCurrencyMenuBuilder.getEventRegistrar().addEventListener(e -> buildCurrencyMenu(theCurrencyMenuBuilder, getItem()));
         thePrices.getEventRegistrar().addEventListener(e -> {
@@ -203,6 +218,7 @@ public class SecurityPanel
         restrictField(myDesc, Security.NAMELEN);
         restrictField(mySymbol, Security.NAMELEN);
         restrictField(theTypeButton, Security.NAMELEN);
+        restrictField(theRegionButton, Security.NAMELEN);
         restrictField(theCurrencyButton, Security.NAMELEN);
         restrictField(theParentButton, Security.NAMELEN);
         restrictField(myClosedButton, Security.NAMELEN);
@@ -213,6 +229,7 @@ public class SecurityPanel
         theFieldSet.addFieldElement(Security.FIELD_SYMBOL, MetisDataType.STRING, mySymbol);
         theFieldSet.addFieldElement(Security.FIELD_SECTYPE, SecurityType.class, theTypeButton);
         theFieldSet.addFieldElement(Security.FIELD_PARENT, Payee.class, theParentButton);
+        theFieldSet.addFieldElement(Security.FIELD_REGION, Region.class, theRegionButton);
         theFieldSet.addFieldElement(Security.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
         theFieldSet.addFieldElement(Security.FIELD_CLOSED, Boolean.class, myClosedButton);
 
@@ -227,6 +244,7 @@ public class SecurityPanel
         theFieldSet.addFieldToPanel(Security.FIELD_SYMBOL, myPanel);
         theFieldSet.addFieldToPanel(Security.FIELD_SECTYPE, myPanel);
         theFieldSet.addFieldToPanel(Security.FIELD_PARENT, myPanel);
+        theFieldSet.addFieldToPanel(Security.FIELD_REGION, myPanel);
         theFieldSet.addFieldToPanel(Security.FIELD_CURRENCY, myPanel);
         theFieldSet.addFieldToPanel(Security.FIELD_CLOSED, myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
@@ -303,6 +321,10 @@ public class SecurityPanel
         boolean bShowNotes = isEditable || mySecurity.getNotes() != null;
         theFieldSet.setVisibility(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
+        /* Determine whether the region should be visible */
+        boolean bShowRegion = mySecurity.getSecurityTypeClass().hasRegion();
+        theFieldSet.setVisibility(Security.FIELD_REGION, bShowRegion);
+
         /* Security type and currency cannot be changed if the item is active */
         theFieldSet.setEditable(Security.FIELD_SECTYPE, isEditable && !bIsActive);
         theFieldSet.setEditable(Security.FIELD_CURRENCY, isEditable && !bIsActive);
@@ -334,6 +356,9 @@ public class SecurityPanel
         } else if (myField.equals(Security.FIELD_PARENT)) {
             /* Update the Parent */
             mySecurity.setParent(pUpdate.getValue(Payee.class));
+        } else if (myField.equals(Security.FIELD_REGION)) {
+            /* Update the Region */
+            mySecurity.setRegion(pUpdate.getValue(Region.class));
         } else if (myField.equals(Security.FIELD_CURRENCY)) {
             /* Update the Currency */
             mySecurity.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
@@ -359,7 +384,9 @@ public class SecurityPanel
         if (!pUpdates) {
             SecurityType myType = myItem.getSecurityType();
             AssetCurrency myCurrency = myItem.getAssetCurrency();
+            Region myRegion = myItem.getRegion();
             declareGoToItem(myType);
+            declareGoToItem(myRegion);
             declareGoToItem(myCurrency);
         }
         declareGoToItem(myParent);
@@ -488,6 +515,48 @@ public class SecurityPanel
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the region list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pSecurity the security to build for
+     */
+    public void buildRegionMenu(final JScrollMenuBuilder<Region> pMenuBuilder,
+                                final Security pSecurity) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        Region myCurr = pSecurity.getRegion();
+        JMenuItem myActive = null;
+
+        /* Access regions */
+        RegionList myRegions = getDataList(MoneyWiseDataType.REGION, RegionList.class);
+
+        /* Loop through the Regions */
+        Iterator<Region> myIterator = myRegions.iterator();
+        while (myIterator.hasNext()) {
+            Region myRegion = myIterator.next();
+
+            /* Ignore deleted */
+            boolean bIgnore = myRegion.isDeleted();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the region */
+            JMenuItem myItem = pMenuBuilder.addItem(myRegion);
+
+            /* If this is the active region */
+            if (myRegion.equals(myCurr)) {
                 /* Record it */
                 myActive = myItem;
             }

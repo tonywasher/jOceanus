@@ -174,7 +174,8 @@ public class SheetCash
             myBalance = myCell.getStringValue();
         }
 
-        /* Skip symbol column */
+        /* Skip symbol and region columns */
+        iAdjust++;
         iAdjust++;
 
         /* Handle currency which may be missing */
@@ -244,7 +245,11 @@ public class SheetCash
             isClosed = myCell.getBooleanValue();
         }
 
-        /* Skip parent, alias, portfolio, maturity, openingBalance, symbol and currency columns */
+        /*
+         * Skip parent, alias, portfolio, maturity, openingBalance, symbol, region and currency
+         * columns
+         */
+        iAdjust++;
         iAdjust++;
         iAdjust++;
         iAdjust++;
@@ -259,7 +264,7 @@ public class SheetCash
             String myAutoPayee = myName + "Expense";
 
             /* Build values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
+            DataValues<MoneyWiseDataType> myValues = new DataValues<>(Payee.OBJECT_NAME);
             myValues.addValue(Payee.FIELD_NAME, myAutoPayee);
             myValues.addValue(Payee.FIELD_PAYEETYPE, PayeeTypeClass.PAYEE.toString());
             myValues.addValue(Payee.FIELD_CLOSED, isClosed);

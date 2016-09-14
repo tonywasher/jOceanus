@@ -53,6 +53,7 @@ import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.Region;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
@@ -94,9 +95,9 @@ import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 public class ArchiveLoader {
     /**
      * Number of base archive load areas.
-     * 14xStatic,TransactionTags,2*Category,Schedule,Rate,Price,Account,TaxYear,Range+Transaction.
+     * 14xStatic,TransactionTags,Regions,2*Category,Schedule,Rate,Price,Account,TaxYear,Range+Transaction.
      */
-    private static final int NUM_ARCHIVE_AREAS = 24;
+    private static final int NUM_ARCHIVE_AREAS = 25;
 
     /**
      * Year boundary.
@@ -346,6 +347,10 @@ public class ArchiveLoader {
             /* Load Tags */
             myStage.startTask(TransactionTag.LIST_NAME);
             SheetTransTag.loadArchive(pReport, myWorkbook, pData);
+
+            /* Load Regions */
+            myStage.startTask(Region.LIST_NAME);
+            SheetRegion.loadArchive(pReport, myWorkbook, pData);
 
             /* Load Categories */
             myStage.startTask("AccountCategories");

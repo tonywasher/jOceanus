@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.data.Region;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
@@ -149,6 +150,11 @@ public class CategoryPanel
     private final TransactionTagTable theTagTable;
 
     /**
+     * Regions Table.
+     */
+    private final RegionTable theRegionTable;
+
+    /**
      * The UpdateSet.
      */
     private final UpdateSet<MoneyWiseDataType> theUpdateSet;
@@ -216,6 +222,7 @@ public class CategoryPanel
         theLoanTable = new LoanCategoryTable(pView, theUpdateSet, theError);
         theEventTable = new TransactionCategoryTable(pView, theUpdateSet, theError);
         theTagTable = new TransactionTagTable(pView, theUpdateSet, theError);
+        theRegionTable = new RegionTable(pView, theUpdateSet, theError);
 
         /* Create selection button and label */
         TethysSwingLabel myLabel = myFactory.newLabel(NLS_DATA);
@@ -231,6 +238,7 @@ public class CategoryPanel
         theCardPanel.addCard(PanelName.LOANS.toString(), theLoanTable);
         theCardPanel.addCard(PanelName.EVENTS.toString(), theEventTable);
         theCardPanel.addCard(PanelName.EVENTTAGS.toString(), theTagTable);
+        theCardPanel.addCard(PanelName.REGIONS.toString(), theRegionTable);
         theActive = PanelName.DEPOSITS;
         theSelectButton.setValue(theActive);
 
@@ -243,6 +251,7 @@ public class CategoryPanel
         theFilterCardPanel.addCard(PanelName.LOANS.toString(), theLoanTable.getFilterPanel());
         theFilterCardPanel.addCard(PanelName.EVENTS.toString(), theEventTable.getFilterPanel());
         theFilterCardPanel.addCard(PanelName.EVENTTAGS.toString(), theTagTable.getFilterPanel());
+        theFilterCardPanel.addCard(PanelName.REGIONS.toString(), theRegionTable.getFilterPanel());
 
         /* Create the selection panel */
         theSelectPanel = myFactory.newHBoxPane();
@@ -276,6 +285,7 @@ public class CategoryPanel
         setChildListeners(theLoanTable.getEventRegistrar());
         setChildListeners(theEventTable.getEventRegistrar());
         setChildListeners(theTagTable.getEventRegistrar());
+        setChildListeners(theRegionTable.getEventRegistrar());
     }
 
     @Override
@@ -350,6 +360,7 @@ public class CategoryPanel
         theLoanTable.refreshData();
         theEventTable.refreshData();
         theTagTable.refreshData();
+        theRegionTable.refreshData();
 
         /* Clear refreshing flag */
         isRefreshing = false;
@@ -383,6 +394,9 @@ public class CategoryPanel
             case EVENTTAGS:
                 theTagTable.determineFocus(theViewerEntry);
                 break;
+            case REGIONS:
+                theRegionTable.determineFocus(theViewerEntry);
+                break;
             default:
                 break;
         }
@@ -406,6 +420,9 @@ public class CategoryPanel
         }
         if (!hasUpdates) {
             hasUpdates = theTagTable.hasUpdates();
+        }
+        if (!hasUpdates) {
+            hasUpdates = theRegionTable.hasUpdates();
         }
 
         /* Return to caller */
@@ -431,6 +448,9 @@ public class CategoryPanel
         if (!hasSession) {
             hasSession = theTagTable.hasSession();
         }
+        if (!hasSession) {
+            hasSession = theRegionTable.hasSession();
+        }
 
         /* Return to caller */
         return hasSession;
@@ -455,6 +475,9 @@ public class CategoryPanel
         if (!hasErrors) {
             hasErrors = theTagTable.hasErrors();
         }
+        if (!hasErrors) {
+            hasErrors = theRegionTable.hasErrors();
+        }
 
         /* Return to caller */
         return hasErrors;
@@ -478,6 +501,9 @@ public class CategoryPanel
         }
         if (!isEditing) {
             isEditing = theTagTable.isItemEditing();
+        }
+        if (!isEditing) {
+            isEditing = theRegionTable.isItemEditing();
         }
 
         /* Return to caller */
@@ -514,6 +540,18 @@ public class CategoryPanel
         if (pTag instanceof TransactionTag) {
             theTagTable.selectTag((TransactionTag) pTag);
             showPanel(PanelName.EVENTTAGS);
+        }
+    }
+
+    /**
+     * Select region.
+     * @param pRegion the region to select
+     */
+    protected void selectRegion(final Object pRegion) {
+        /* Determine which panel to show */
+        if (pRegion instanceof Region) {
+            theRegionTable.selectRegion((Region) pRegion);
+            showPanel(PanelName.REGIONS);
         }
     }
 
@@ -567,6 +605,7 @@ public class CategoryPanel
         theLoanTable.cancelEditing();
         theEventTable.cancelEditing();
         theTagTable.cancelEditing();
+        theRegionTable.cancelEditing();
     }
 
     /**
@@ -634,6 +673,9 @@ public class CategoryPanel
             case MainTab.ACTION_VIEWTAG:
                 selectTag(pEvent.getDetails());
                 break;
+            case MainTab.ACTION_VIEWREGION:
+                selectRegion(pEvent.getDetails());
+                break;
             default:
                 break;
         }
@@ -666,7 +708,12 @@ public class CategoryPanel
         /**
          * Tags.
          */
-        EVENTTAGS(MoneyWiseDataType.TRANSTAG);
+        EVENTTAGS(MoneyWiseDataType.TRANSTAG),
+
+        /**
+         * Regions.
+         */
+        REGIONS(MoneyWiseDataType.REGION);
 
         /**
          * The String name.

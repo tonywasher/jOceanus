@@ -102,6 +102,11 @@ public class Security
     public static final MetisField FIELD_SYMBOL = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.SECURITY_SYMBOL.getValue());
 
     /**
+     * Region Field Id.
+     */
+    public static final MetisField FIELD_REGION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.REGION.getItemName());
+
+    /**
      * Currency Field Id.
      */
     public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
@@ -200,6 +205,16 @@ public class Security
                 setValueSymbol((byte[]) myValue);
             }
 
+            /* Store the Region */
+            myValue = pValues.getValue(FIELD_REGION);
+            if (myValue instanceof Integer) {
+                setValueRegion((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueRegion((String) myValue);
+            } else if (myValue instanceof Region) {
+                setValueRegion((Region) myValue);
+            }
+
             /* Store the Currency */
             myValue = pValues.getValue(FIELD_CURRENCY);
             if (myValue instanceof Integer) {
@@ -248,6 +263,9 @@ public class Security
         }
         if (FIELD_SYMBOL.equals(pField)) {
             return true;
+        }
+        if (FIELD_REGION.equals(pField)) {
+            return getRegion() != null;
         }
         if (FIELD_CURRENCY.equals(pField)) {
             return true;
@@ -386,6 +404,36 @@ public class Security
         return getSymbolField(getValueSet());
     }
 
+    /**
+     * Obtain Region.
+     * @return the region
+     */
+    public Region getRegion() {
+        return getRegion(getValueSet());
+    }
+
+    /**
+     * Obtain RegionId.
+     * @return the regionId
+     */
+    public Integer getRegionId() {
+        Region myRegion = getRegion();
+        return (myRegion == null)
+                                  ? null
+                                  : myRegion.getId();
+    }
+
+    /**
+     * Obtain RegionName.
+     * @return the regionName
+     */
+    public String getRegionName() {
+        Region myRegion = getRegion();
+        return (myRegion == null)
+                                  ? null
+                                  : myRegion.getName();
+    }
+
     @Override
     public AssetCurrency getAssetCurrency() {
         return getAssetCurrency(getValueSet());
@@ -434,6 +482,15 @@ public class Security
      */
     private static MetisEncryptedString getSymbolField(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_SYMBOL, MetisEncryptedString.class);
+    }
+
+    /**
+     * Obtain Region.
+     * @param pValueSet the valueSet
+     * @return the region
+     */
+    public static Region getRegion(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_REGION, Region.class);
     }
 
     /**
@@ -517,6 +574,30 @@ public class Security
      */
     private void setValueSymbol(final MetisEncryptedString pValue) {
         getValueSet().setValue(FIELD_SYMBOL, pValue);
+    }
+
+    /**
+     * Set region value.
+     * @param pValue the value
+     */
+    private void setValueRegion(final Region pValue) {
+        getValueSet().setValue(FIELD_REGION, pValue);
+    }
+
+    /**
+     * Set region id.
+     * @param pValue the value
+     */
+    private void setValueRegion(final Integer pValue) {
+        getValueSet().setValue(FIELD_REGION, pValue);
+    }
+
+    /**
+     * Set region name.
+     * @param pValue the value
+     */
+    private void setValueRegion(final String pValue) {
+        getValueSet().setValue(FIELD_REGION, pValue);
     }
 
     /**
@@ -680,7 +761,8 @@ public class Security
     @Override
     public boolean isCapital() {
         switch (getSecurityTypeClass()) {
-            case UNITTRUST:
+            case INCOMEUNITTRUST:
+            case GROWTHUNITTRUST:
             case LIFEBOND:
             case SHARES:
                 return true;
@@ -813,6 +895,7 @@ public class Security
         /* Resolve data links */
         MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_SECTYPE, myData.getSecurityTypes());
+        resolveDataLink(FIELD_REGION, myData.getRegions());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
         resolveDataLink(FIELD_PARENT, myData.getPayees());
     }
@@ -839,6 +922,14 @@ public class Security
      */
     public void setSymbol(final String pSymbol) throws OceanusException {
         setValueSymbol(pSymbol);
+    }
+
+    /**
+     * Set a new region.
+     * @param pRegion the new region
+     */
+    public void setRegion(final Region pRegion) {
+        setValueRegion(pRegion);
     }
 
     /**
@@ -887,15 +978,13 @@ public class Security
     @Override
     public TransactionCategory getDetailedCategory(final TransactionCategory pCategory) {
         /* Switch on category type */
-        switch (pCategory.getCategoryTypeClass()) {
-            case DIVIDEND:
-                TransactionCategoryList myCategories = getDataSet().getTransCategories();
-                return myCategories.getSingularClass(isSecurityClass(SecurityTypeClass.UNITTRUST)
-                                                                                                  ? TransactionCategoryClass.UNITTRUSTDIVIDEND
-                                                                                                  : TransactionCategoryClass.SHAREDIVIDEND);
-            default:
-                return pCategory;
+        if (TransactionCategoryClass.DIVIDEND.equals(pCategory.getCategoryTypeClass())) {
+            TransactionCategoryList myCategories = getDataSet().getTransCategories();
+            return myCategories.getSingularClass(getSecurityTypeClass().isUnitTrust()
+                                                                                      ? TransactionCategoryClass.UNITTRUSTDIVIDEND
+                                                                                      : TransactionCategoryClass.SHAREDIVIDEND);
         }
+        return pCategory;
     }
 
     @Override
@@ -904,6 +993,12 @@ public class Security
         getSecurityType().touchItem(this);
         getAssetCurrency().touchItem(this);
         getParent().touchItem(this);
+
+        /* Update region */
+        Region myRegion = getRegion();
+        if (myRegion != null) {
+            myRegion.touchItem(this);
+        }
 
         /* touch infoSet items */
         theInfoSet.touchUnderlyingItems();
@@ -924,6 +1019,7 @@ public class Security
         Payee myParent = getParent();
         SecurityType mySecType = getSecurityType();
         AssetCurrency myCurrency = getAssetCurrency();
+        Region myRegion = getRegion();
         String mySymbol = getSymbol();
 
         /* Validate base components */
@@ -985,6 +1081,18 @@ public class Security
             }
         }
 
+        /* Region must be present only if required */
+        if ((mySecType != null)
+            && mySecType.getSecurityClass().hasRegion()) {
+            if (myRegion == null) {
+                addError(ERROR_MISSING, FIELD_REGION);
+            }
+
+            /* Must not exist */
+        } else if (myRegion != null) {
+            addError(ERROR_EXIST, FIELD_REGION);
+        }
+
         /* If we have an infoSet */
         if (theInfoSet != null) {
             /* Validate the InfoSet */
@@ -992,7 +1100,9 @@ public class Security
         }
 
         /* Set validation flag */
-        if (!hasErrors()) {
+        if (!
+
+        hasErrors()) {
             setValidEdit();
         }
     }
@@ -1046,6 +1156,11 @@ public class Security
         /* Update the symbol if required */
         if (!MetisDifference.isEqual(getSymbol(), mySecurity.getSymbol())) {
             setValueSymbol(mySecurity.getSymbolField());
+        }
+
+        /* Update the region if required */
+        if (!MetisDifference.isEqual(getRegion(), mySecurity.getRegion())) {
+            setValueRegion(mySecurity.getRegion());
         }
 
         /* Update the security currency if required */

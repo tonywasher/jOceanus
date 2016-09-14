@@ -685,6 +685,7 @@ public class AccountPanel
             /* Pass through the event */
             case MainTab.ACTION_VIEWSTATEMENT:
             case MainTab.ACTION_VIEWCATEGORY:
+            case MainTab.ACTION_VIEWREGION:
             case MainTab.ACTION_VIEWTAG:
             case MainTab.ACTION_VIEWTAXYEAR:
             case MainTab.ACTION_VIEWSTATIC:

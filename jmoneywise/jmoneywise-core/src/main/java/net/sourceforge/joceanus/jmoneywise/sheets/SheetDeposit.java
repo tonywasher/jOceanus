@@ -213,7 +213,8 @@ public class SheetDeposit
             myBalance = myCell.getStringValue();
         }
 
-        /* Skip symbol column */
+        /* Skip symbol and region columns */
+        iAdjust++;
         iAdjust++;
 
         /* Handle currency which may be missing */

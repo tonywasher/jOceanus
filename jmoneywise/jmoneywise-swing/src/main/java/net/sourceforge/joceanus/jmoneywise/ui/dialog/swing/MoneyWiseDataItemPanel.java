@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.CategoryBase;
+import net.sourceforge.joceanus.jmoneywise.data.Region;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
@@ -193,6 +194,10 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
                 TaxYear myYear = (TaxYear) myItem;
                 myId = MainTab.ACTION_VIEWTAXYEAR;
                 myName = myYear.getTaxYear().toString();
+            } else if (myItem instanceof Region) {
+                Region myRegion = (Region) myItem;
+                myId = MainTab.ACTION_VIEWREGION;
+                myName = myRegion.getName();
             } else if (myItem instanceof TransactionTag) {
                 TransactionTag myTag = (TransactionTag) myItem;
                 myId = MainTab.ACTION_VIEWTAG;

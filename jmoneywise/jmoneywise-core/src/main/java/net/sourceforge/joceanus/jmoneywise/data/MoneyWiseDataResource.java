@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
@@ -59,7 +58,7 @@ public enum MoneyWiseDataResource implements TethysResourceId {
     /**
      * MoneyWiseData Price.
      */
-    MONEYWISEDATA_FIELD_PRICE("MoneyWiseData.Field.Price"),
+    MONEYWISEDATA_FIELD_PRICE(StaticDataResource.TRANSINFO_PRICE),
 
     /**
      * MoneyWiseData Units.
@@ -74,7 +73,7 @@ public enum MoneyWiseDataResource implements TethysResourceId {
     /**
      * MoneyWiseData Dilution.
      */
-    MONEYWISEDATA_FIELD_DILUTION("MoneyWiseData.Field.Dilution"),
+    MONEYWISEDATA_FIELD_DILUTION(StaticDataResource.TRANSINFO_DILUTION),
 
     /**
      * MoneyWiseData InvalidCurrency Error.
@@ -170,6 +169,11 @@ public enum MoneyWiseDataResource implements TethysResourceId {
      * TransactionTag New Tag.
      */
     TRANSTAG_NEWTAG("TransTag.NewTag"),
+
+    /**
+     * Region New region.
+     */
+    REGION_NEWREGION("Region.NewRegion"),
 
     /**
      * TaxYear InfoSet.
@@ -629,7 +633,7 @@ public enum MoneyWiseDataResource implements TethysResourceId {
     /**
      * The Resource Builder.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseDataResource.class.getCanonicalName());
 
     /**
      * The Id.
