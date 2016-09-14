@@ -118,6 +118,9 @@ public class ReportBuilder {
                 case TAXCALC:
                     myReport = new TaxCalculation(theManager);
                     break;
+                case CAPITALGAINS:
+                    myReport = new CapitalGains(theManager);
+                    break;
                 default:
                     return null;
             }

@@ -25,12 +25,15 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -42,16 +45,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  */
 public class GainsAnalysis {
     /**
-     * The open bracket.
-     */
-    private static final String BRACKET_START = " (";
-
-    /**
-     * The close bracket.
-     */
-    private static final char BRACKET_CLOSE = ')';
-
-    /**
      * The formatter.
      */
     private final MetisDataFormatter theFormatter;
@@ -62,30 +55,65 @@ public class GainsAnalysis {
     private final SecurityBucket theBucket;
 
     /**
+     * The HTML builder.
+     */
+    private final HTMLBuilder theHTMLBuilder;
+
+    /**
      * The string builder.
      */
-    private final StringBuilder theBuilder;
+    private final StringBuilder theStringBuilder;
+
+    /**
+     * The table.
+     */
+    private final HTMLTable theTable;
+
+    /**
+     * The attribute table.
+     */
+    private HTMLTable theAttrTable;
 
     /**
      * Constructor.
-     * @param pFormatter the formatter
+     * @param pReport the parent report
+     * @param pParent the parent table
      * @param pSecurity the security bucket
      */
-    public GainsAnalysis(final MetisDataFormatter pFormatter,
+    public GainsAnalysis(final CapitalGains pReport,
+                         final HTMLTable pParent,
                          final SecurityBucket pSecurity) {
-        theFormatter = pFormatter;
+        /* Store parameters */
+        theFormatter = pReport.getFormatter();
+        theHTMLBuilder = pReport.getBuilder();
         theBucket = pSecurity;
-        theBuilder = new StringBuilder();
+        theStringBuilder = new StringBuilder();
+
+        /* Create a new table */
+        theTable = theHTMLBuilder.createEmbeddedTable(pParent);
+
+        /* Build the headers */
+        theHTMLBuilder.startRow(theTable);
+        theHTMLBuilder.makeTitleCell(theTable, MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+        theHTMLBuilder.makeTitleCell(theTable, MoneyWiseDataType.TRANSACTION.getItemName());
+
+        /* Format the history */
+        formatHistory(pReport.transactionIterator());
+    }
+
+    /**
+     * Obtain the table.
+     * @return the table
+     */
+    protected HTMLTable getTable() {
+        return theTable;
     }
 
     /**
      * format the cost history.
      * @param pIterator the transaction iterator
      */
-    public void formatGainsHistory(final Iterator<Transaction> pIterator) {
-        /* Reset the builder */
-        theBuilder.setLength(0);
-
+    private void formatHistory(final Iterator<Transaction> pIterator) {
         /* Loop through the transactions */
         while (pIterator.hasNext()) {
             Transaction myTrans = pIterator.next();
@@ -95,11 +123,15 @@ public class GainsAnalysis {
             if (myValues != null) {
                 /* Format the transaction */
                 formatTransaction(myTrans, myValues);
+
+                /* If we have an attribute table */
+                if (theAttrTable != null) {
+                    /* Embed the table correctly and reset the indicator */
+                    theHTMLBuilder.embedTable(theAttrTable);
+                    theAttrTable = null;
+                }
             }
         }
-
-        /* Output the details */
-        System.out.println(theBuilder.toString());
     }
 
     /**
@@ -131,7 +163,6 @@ public class GainsAnalysis {
                 formatDividend(pTrans, pValues);
                 break;
             default:
-                formatStandardTransaction(pTrans, pValues);
                 break;
         }
     }
@@ -141,64 +172,10 @@ public class GainsAnalysis {
      * @param pTrans the transaction
      */
     private void formatBasicTransaction(final Transaction pTrans) {
-        /* Format the transaction */
-        theBuilder.append("\n--------\n");
-        theBuilder.append(theFormatter.formatObject(pTrans.getDate()));
-        theBuilder.append(": ");
-        theBuilder.append(pTrans);
-        formatNewLine();
-    }
-
-    /**
-     * Format a Stock DeMerger.
-     * @param pTrans the transaction
-     * @param pValues the values for the transaction
-     */
-    private void formatStandardTransaction(final Transaction pTrans,
-                                           final SecurityValues pValues) {
-        /* Format the basic transaction */
-        formatBasicTransaction(pTrans);
-
-        /* For each of the security attributes */
-        for (SecurityAttribute myAttr : SecurityAttribute.values()) {
-            /* If we are interested in this value */
-            Object myValue = pValues.getValue(myAttr);
-            if (showAttr(myAttr, myValue)) {
-                /* Format the entry */
-                theBuilder.append(myAttr);
-                theBuilder.append('=');
-                theBuilder.append(theFormatter.formatObject(myValue));
-                formatNewLine();
-            }
-        }
-    }
-
-    /**
-     * Are we interested in this attribute?
-     * @param pAttribute the attribute
-     * @param pValue the value
-     * @return true/false
-     */
-    private boolean showAttr(final SecurityAttribute pAttr,
-                             final Object pValue) {
-        if (pValue == null) {
-            return false;
-        }
-        if ((pValue instanceof TethysDecimal) &&
-            ((TethysDecimal) pValue).isZero()) {
-            return false;
-        }
-        switch (pAttr) {
-            case REALISEDGAINS:
-            case UNITS:
-            case INVESTED:
-            case RESIDUALCOST:
-            case VALUATION:
-            case PRICE:
-                return true;
-            default:
-                return false;
-        }
+        /* Create the transaction row */
+        theHTMLBuilder.startRow(theTable);
+        theHTMLBuilder.makeValueCell(theTable, pTrans.getDate());
+        theHTMLBuilder.makeValueCell(theTable, pTrans);
     }
 
     /**
@@ -226,30 +203,87 @@ public class GainsAnalysis {
     }
 
     /**
+     * Ensure the attribute table.
+     * @param pAttr the attribute
+     * @param pValue the value
+     */
+    private void ensureAttrTable() {
+        /* If we do not have a current attribute table */
+        if (theAttrTable == null) {
+            /* Create a new table */
+            theAttrTable = theHTMLBuilder.createEmbeddedTable(theTable);
+        }
+    }
+
+    /**
      * Format a value.
      * @param pAttr the attribute
      * @param pValue the value
-     * @param pNewLine as newline (true/false)
      */
     private void formatValue(final SecurityAttribute pAttr,
-                             final Object pValue,
-                             final boolean pNewLine) {
-        theBuilder.append(pAttr);
-        theBuilder.append('=');
-        theBuilder.append(theFormatter.formatObject(pValue));
-        if (pNewLine) {
-            formatNewLine();
-        }
+                             final Object pValue) {
+        /* Ensure that we have an attribute table */
+        ensureAttrTable();
+
+        /* Format the attribute */
+        theHTMLBuilder.startRow(theAttrTable);
+        theHTMLBuilder.makeValueCell(theAttrTable, pAttr);
+        theHTMLBuilder.makeStretchedValueCell(theAttrTable, pValue);
+    }
+
+    /**
+     * Format a division.
+     * @param pAttr the attribute
+     * @param pValue the value
+     * @param pNumerator the numerator
+     * @param pValue the divisor
+     */
+    private void formatDivision(final SecurityAttribute pAttr,
+                                final Object pValue,
+                                final TethysDecimal pNumerator,
+                                final TethysDecimal pDivisor) {
+        /* Ensure that we have an attribute table */
+        ensureAttrTable();
+
+        /* Format the attribute */
+        theHTMLBuilder.startRow(theAttrTable);
+        theHTMLBuilder.makeValueCell(theAttrTable, pAttr);
+        theHTMLBuilder.makeValueCell(theAttrTable, formatDivision(pNumerator, pDivisor));
+        theHTMLBuilder.makeValueCell(theAttrTable, pValue);
     }
 
     /**
      * Format a division.
      * @param pNumerator the numerator
      * @param pValue the divisor
+     * @return the formatted division
      */
-    private void formatDivision(final TethysDecimal pNumerator,
-                                final TethysDecimal pDivisor) {
-        formatCombination(pNumerator, pDivisor, '/');
+    private String formatDivision(final TethysDecimal pNumerator,
+                                  final TethysDecimal pDivisor) {
+        return formatCombination(pNumerator, pDivisor, '/');
+    }
+
+    /**
+     * Format a valuation.
+     * @param pAttr the attribute
+     * @param pValue the value
+     * @param pUnits the units
+     * @param pPrice the price
+     * @param pXchangeRate the exchange rate
+     */
+    private void formatValuation(final SecurityAttribute pAttr,
+                                 final Object pValue,
+                                 final TethysUnits pUnits,
+                                 final TethysPrice pPrice,
+                                 final TethysRatio pXchangeRate) {
+        /* Ensure that we have an attribute table */
+        ensureAttrTable();
+
+        /* Format the attribute */
+        theHTMLBuilder.startRow(theAttrTable);
+        theHTMLBuilder.makeValueCell(theAttrTable, pAttr);
+        theHTMLBuilder.makeValueCell(theAttrTable, formatValuation(pUnits, pPrice, pXchangeRate));
+        theHTMLBuilder.makeValueCell(theAttrTable, pValue);
     }
 
     /**
@@ -257,50 +291,116 @@ public class GainsAnalysis {
      * @param pUnits the units
      * @param pPrice the price
      * @param pXchangeRate the exchange rate
+     * @return the formatted valuation
      */
-    private void formatValuation(final TethysUnits pUnits,
-                                 final TethysPrice pPrice,
-                                 final TethysRatio pXchangeRate) {
-        theBuilder.append(BRACKET_START);
-        theBuilder.append(theFormatter.formatObject(pUnits));
-        theBuilder.append('@');
-        theBuilder.append(theFormatter.formatObject(pPrice));
+    private String formatValuation(final TethysUnits pUnits,
+                                   final TethysPrice pPrice,
+                                   final TethysRatio pXchangeRate) {
+        theStringBuilder.setLength(0);
+        theStringBuilder.append(theFormatter.formatObject(pUnits));
+        theStringBuilder.append('@');
+        theStringBuilder.append(theFormatter.formatObject(pPrice));
         if (pXchangeRate != null) {
-            theBuilder.append('/');
-            theBuilder.append(theFormatter.formatObject(pXchangeRate));
+            theStringBuilder.append('/');
+            theStringBuilder.append(theFormatter.formatObject(pXchangeRate));
         }
-        theBuilder.append(BRACKET_CLOSE);
-        formatNewLine();
+        return theStringBuilder.toString();
+    }
+
+    /**
+     * Format a multiplication.
+     * @param pAttr the attribute
+     * @param pValue the value
+     * @param pFirst the first item
+     * @param pSecond the second item
+     */
+    private void formatMultiplication(final SecurityAttribute pAttr,
+                                      final Object pValue,
+                                      final TethysDecimal pFirst,
+                                      final TethysDecimal pSecond) {
+        /* Ensure that we have an attribute table */
+        ensureAttrTable();
+
+        /* Format the attribute */
+        theHTMLBuilder.startRow(theAttrTable);
+        theHTMLBuilder.makeValueCell(theAttrTable, pAttr);
+        theHTMLBuilder.makeValueCell(theAttrTable, formatMultiplication(pFirst, pSecond));
+        theHTMLBuilder.makeValueCell(theAttrTable, pValue);
     }
 
     /**
      * Format a multiplication.
      * @param pFirst the first item
      * @param pSecond the second item
+     * @return the formatted multiplication
      */
-    private void formatMultiplication(final TethysDecimal pFirst,
-                                      final TethysDecimal pSecond) {
-        formatCombination(pFirst, pSecond, '*');
+    private String formatMultiplication(final TethysDecimal pFirst,
+                                        final TethysDecimal pSecond) {
+        return formatCombination(pFirst, pSecond, '*');
+    }
+
+    /**
+     * Format an addition.
+     * @param pAttr the attribute
+     * @param pValue the value
+     * @param pFirst the first item
+     * @param pSecond the second item
+     */
+    private void formatAddition(final SecurityAttribute pAttr,
+                                final Object pValue,
+                                final TethysDecimal pFirst,
+                                final TethysDecimal pSecond) {
+        /* Ensure that we have an attribute table */
+        ensureAttrTable();
+
+        /* Format the attribute */
+        theHTMLBuilder.startRow(theAttrTable);
+        theHTMLBuilder.makeValueCell(theAttrTable, pAttr);
+        theHTMLBuilder.makeValueCell(theAttrTable, formatAddition(pFirst, pSecond));
+        theHTMLBuilder.makeValueCell(theAttrTable, pValue);
     }
 
     /**
      * Format an addition.
      * @param pFirst the first item
      * @param pSecond the second item
+     * @return the formatted addition
      */
-    private void formatAddition(final TethysDecimal pFirst,
-                                final TethysDecimal pSecond) {
-        formatCombination(pFirst, pSecond, '+');
+    private String formatAddition(final TethysDecimal pFirst,
+                                  final TethysDecimal pSecond) {
+        return formatCombination(pFirst, pSecond, '+');
+    }
+
+    /**
+     * Format a subtraction.
+     * @param pAttr the attribute
+     * @param pValue the value
+     * @param pFirst the first item
+     * @param pSecond the second item
+     */
+    private void formatSubtraction(final SecurityAttribute pAttr,
+                                   final Object pValue,
+                                   final TethysDecimal pFirst,
+                                   final TethysDecimal pSecond) {
+        /* Ensure that we have an attribute table */
+        ensureAttrTable();
+
+        /* Format the attribute */
+        theHTMLBuilder.startRow(theAttrTable);
+        theHTMLBuilder.makeValueCell(theAttrTable, pAttr);
+        theHTMLBuilder.makeValueCell(theAttrTable, formatSubtraction(pFirst, pSecond));
+        theHTMLBuilder.makeValueCell(theAttrTable, pValue);
     }
 
     /**
      * Format a subtraction.
      * @param pFirst the first item
      * @param pSecond the second item
+     * @return the formatted subtraction
      */
-    private void formatSubtraction(final TethysDecimal pFirst,
-                                   final TethysDecimal pSecond) {
-        formatCombination(pFirst, pSecond, '-');
+    private String formatSubtraction(final TethysDecimal pFirst,
+                                     final TethysDecimal pSecond) {
+        return formatCombination(pFirst, pSecond, '-');
     }
 
     /**
@@ -308,23 +408,16 @@ public class GainsAnalysis {
      * @param pFirst the first item
      * @param pSecond the second item
      * @param pSymbol the symbol
+     * @return the formatted combination
      */
-    private void formatCombination(final TethysDecimal pFirst,
-                                   final TethysDecimal pSecond,
-                                   final char pSymbol) {
-        theBuilder.append(BRACKET_START);
-        theBuilder.append(theFormatter.formatObject(pFirst));
-        theBuilder.append(pSymbol);
-        theBuilder.append(theFormatter.formatObject(pSecond));
-        theBuilder.append(BRACKET_CLOSE);
-        formatNewLine();
-    }
-
-    /**
-     * Format a newLine.
-     */
-    private void formatNewLine() {
-        theBuilder.append('\n');
+    private String formatCombination(final TethysDecimal pFirst,
+                                     final TethysDecimal pSecond,
+                                     final char pSymbol) {
+        theStringBuilder.setLength(0);
+        theStringBuilder.append(theFormatter.formatObject(pFirst));
+        theStringBuilder.append(pSymbol);
+        theStringBuilder.append(theFormatter.formatObject(pSecond));
+        return theStringBuilder.toString();
     }
 
     /**
@@ -384,19 +477,16 @@ public class GainsAnalysis {
 
         /* If this is an inheritance */
         if (pTrans.isCategoryClass(TransactionCategoryClass.INHERITED)) {
-            formatValue(SecurityAttribute.INVESTED, myAmount, false);
-            formatValuation(myDeltaUnits, myPrice, myXchangeRate);
+            formatValuation(SecurityAttribute.INVESTED, myAmount, myDeltaUnits, myPrice, myXchangeRate);
         } else {
-            formatValue(SecurityAttribute.INVESTED, myAmount, true);
+            formatValue(SecurityAttribute.INVESTED, myAmount);
         }
 
         /* Record the details */
         if (myDeltaUnits != null) {
-            formatValue(SecurityAttribute.UNITS, myUnits, false);
-            formatAddition(myOriginalUnits, myDeltaUnits);
+            formatAddition(SecurityAttribute.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
         }
-        formatValue(SecurityAttribute.RESIDUALCOST, myCost, false);
-        formatAddition(myOriginalCost, myAmount);
+        formatAddition(SecurityAttribute.RESIDUALCOST, myCost, myOriginalCost, myAmount);
     }
 
     /**
@@ -426,6 +516,9 @@ public class GainsAnalysis {
         TethysMoney myAmount = new TethysMoney(myCash);
         myAmount.negate();
 
+        /* Report the returned cash */
+        formatValue(SecurityAttribute.RETURNEDCASH, myCash);
+
         /* If we have changed the number of units */
         if (myDeltaUnits.isNonZero()) {
             /* Obtain the various values */
@@ -433,12 +526,10 @@ public class GainsAnalysis {
             myDeltaUnits.negate();
 
             /* Format the units */
-            formatValue(SecurityAttribute.UNITS, myUnits, false);
-            formatSubtraction(myOriginalUnits, myDeltaUnits);
+            formatSubtraction(SecurityAttribute.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
 
             /* Format the dilution */
-            formatValue(SecurityAttribute.COSTDILUTION, myCostDilution, false);
-            formatDivision(myUnits, myOriginalUnits);
+            formatDivision(SecurityAttribute.COSTDILUTION, myCostDilution, myUnits, myOriginalUnits);
 
             /* Else we need to format the cost dilution */
         } else if (myConsideration != null) {
@@ -446,37 +537,29 @@ public class GainsAnalysis {
             TethysMoney myValuation = pValues.getMoneyValue(SecurityAttribute.VALUATION);
             TethysPrice myPrice = pValues.getPriceValue(SecurityAttribute.PRICE);
             TethysRatio myXchangeRate = pValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
-            formatValue(SecurityAttribute.VALUATION, myValuation, false);
-            formatValuation(myUnits, myPrice, myXchangeRate);
-            formatValue(SecurityAttribute.CONSIDERATION, myConsideration, false);
-            formatAddition(myCash, myValuation);
+            formatValuation(SecurityAttribute.VALUATION, myValuation, myUnits, myPrice, myXchangeRate);
+            formatAddition(SecurityAttribute.CONSIDERATION, myConsideration, myCash, myValuation);
 
             /* Format the dilution */
-            formatValue(SecurityAttribute.COSTDILUTION, myCostDilution, false);
-            formatDivision(myValuation, myConsideration);
+            formatDivision(SecurityAttribute.COSTDILUTION, myCostDilution, myValuation, myConsideration);
         }
 
         /* Record the details */
         if (myCostDilution != null) {
-            formatValue(SecurityAttribute.RESIDUALCOST, myCost, false);
-            formatMultiplication(myOriginalCost, myCostDilution);
-            formatValue(SecurityAttribute.ALLOWEDCOST, myAllowedCost, false);
-            formatSubtraction(myOriginalCost, myCost);
+            formatMultiplication(SecurityAttribute.RESIDUALCOST, myCost, myOriginalCost, myCostDilution);
+            formatSubtraction(SecurityAttribute.ALLOWEDCOST, myAllowedCost, myOriginalCost, myCost);
         } else {
-            formatValue(SecurityAttribute.ALLOWEDCOST, myAllowedCost, true);
-            formatValue(SecurityAttribute.RESIDUALCOST, myCost, false);
-            formatSubtraction(myOriginalCost, myAllowedCost);
+            formatValue(SecurityAttribute.ALLOWEDCOST, myAllowedCost);
+            formatSubtraction(SecurityAttribute.RESIDUALCOST, myCost, myOriginalCost, myAllowedCost);
         }
         if (myDeltaUnits.isNonZero()) {
-            formatValue(SecurityAttribute.UNITS, myUnits, false);
-            formatSubtraction(myOriginalUnits, myDeltaUnits);
+            formatSubtraction(SecurityAttribute.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
         }
 
         /* Record the gains allocation */
         if (myGain != null) {
-            formatValue(SecurityAttribute.CAPITALGAIN, myGain, false);
-            formatSubtraction(myCash, myAllowedCost);
-            formatValue(SecurityAttribute.REALISEDGAINS, myTotalGains, true);
+            formatSubtraction(SecurityAttribute.CAPITALGAIN, myGain, myCash, myAllowedCost);
+            formatValue(SecurityAttribute.REALISEDGAINS, myTotalGains);
         }
     }
 
@@ -514,8 +597,7 @@ public class GainsAnalysis {
         TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
 
         /* Record the details */
-        formatValue(SecurityAttribute.UNITS, myUnits, false);
-        formatSubtraction(myOriginalUnits, myDeltaUnits);
+        formatSubtraction(SecurityAttribute.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
     }
 
     /**
@@ -534,8 +616,7 @@ public class GainsAnalysis {
         TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
 
         /* Record the details */
-        formatValue(SecurityAttribute.UNITS, myUnits, false);
-        formatAddition(myOriginalUnits, myDeltaUnits);
+        formatAddition(SecurityAttribute.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
     }
 
     /**
@@ -574,11 +655,9 @@ public class GainsAnalysis {
         TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
 
         /* Record the details */
-        formatValue(SecurityAttribute.COSTDILUTION, myCostDilution, true);
-        formatValue(SecurityAttribute.RESIDUALCOST, myResidualCost, false);
-        formatMultiplication(myOriginalCost, myCostDilution);
-        formatValue(SecurityAttribute.XFERREDCOST, myXferredCost, false);
-        formatSubtraction(myOriginalCost, myResidualCost);
+        formatValue(SecurityAttribute.COSTDILUTION, myCostDilution);
+        formatMultiplication(SecurityAttribute.RESIDUALCOST, myResidualCost, myOriginalCost, myCostDilution);
+        formatSubtraction(SecurityAttribute.XFERREDCOST, myXferredCost, myOriginalCost, myResidualCost);
 
         /* If we have changed the number of units */
         if (myDeltaUnits.isNonZero()) {
@@ -589,8 +668,7 @@ public class GainsAnalysis {
             myDeltaUnits.negate();
 
             /* Format the units */
-            formatValue(SecurityAttribute.UNITS, myUnits, false);
-            formatSubtraction(myOriginalUnits, myDeltaUnits);
+            formatSubtraction(SecurityAttribute.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
         }
     }
 
@@ -610,10 +688,9 @@ public class GainsAnalysis {
         TethysRatio myXchangeRate = pValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
 
         /* Record the details */
-        formatValue(SecurityAttribute.XFERREDVALUE, myValueXfer, false);
-        formatValuation(myUnits, myPrice, myXchangeRate);
-        formatValue(SecurityAttribute.XFERREDCOST, myXferredCost, true);
-        formatValue(SecurityAttribute.RESIDUALCOST, myResidualCost, true);
+        formatValuation(SecurityAttribute.XFERREDVALUE, myValueXfer, myUnits, myPrice, myXchangeRate);
+        formatValue(SecurityAttribute.XFERREDCOST, myXferredCost);
+        formatValue(SecurityAttribute.RESIDUALCOST, myResidualCost);
     }
 
     /**
@@ -637,7 +714,7 @@ public class GainsAnalysis {
         if (isDebit(pTrans)) {
             /* Record the transfer of cost for simple replacement takeOver */
             TethysMoney myCostXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
-            formatValue(SecurityAttribute.XFERREDCOST, myCostXfer, true);
+            formatValue(SecurityAttribute.XFERREDCOST, myCostXfer);
         } else {
             formatCreditStockTakeOver(pTrans, pValues);
         }
@@ -679,10 +756,9 @@ public class GainsAnalysis {
         TethysMoney myTotalGains = pValues.getMoneyValue(SecurityAttribute.REALISEDGAINS);
 
         /* Record the calculation of total consideration */
-        formatValue(SecurityAttribute.RETURNEDCASH, pCash, true);
-        formatValue(SecurityAttribute.XFERREDVALUE, myStock, true);
-        formatValue(SecurityAttribute.CONSIDERATION, myConsideration, false);
-        formatAddition(pCash, myStock);
+        formatValue(SecurityAttribute.RETURNEDCASH, pCash);
+        formatValue(SecurityAttribute.XFERREDVALUE, myStock);
+        formatAddition(SecurityAttribute.CONSIDERATION, myConsideration, pCash, myStock);
 
         /* Obtain the original cost */
         SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
@@ -690,19 +766,17 @@ public class GainsAnalysis {
 
         /* Format the cost dilution */
         if (myCostDilution != null) {
-            formatValue(SecurityAttribute.COSTDILUTION, myCostDilution, false);
-            formatDivision(myStock, myConsideration);
+            formatDivision(SecurityAttribute.COSTDILUTION, myCostDilution, pCash, myConsideration);
+            formatMultiplication(SecurityAttribute.ALLOWEDCOST, myAllowedCost, myOriginalCost, myCostDilution);
+        } else {
+            formatValue(SecurityAttribute.ALLOWEDCOST, myAllowedCost);
         }
-        formatValue(SecurityAttribute.ALLOWEDCOST, myAllowedCost, false);
-        formatMultiplication(myOriginalCost, myCostDilution);
-        formatValue(SecurityAttribute.XFERREDCOST, myCostXfer, false);
-        formatSubtraction(myOriginalCost, myAllowedCost);
+        formatSubtraction(SecurityAttribute.XFERREDCOST, myCostXfer, myOriginalCost, myAllowedCost);
 
         /* Record the gains allocation */
         if (myGain != null) {
-            formatValue(SecurityAttribute.CAPITALGAIN, myGain, false);
-            formatSubtraction(pCash, myAllowedCost);
-            formatValue(SecurityAttribute.REALISEDGAINS, myTotalGains, true);
+            formatSubtraction(SecurityAttribute.CAPITALGAIN, myGain, pCash, myAllowedCost);
+            formatValue(SecurityAttribute.REALISEDGAINS, myTotalGains);
         }
     }
 
@@ -722,9 +796,8 @@ public class GainsAnalysis {
         TethysRatio myXchangeRate = pValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
 
         /* Record the transfer of value and cost */
-        formatValue(SecurityAttribute.XFERREDVALUE, myValueXfer, false);
-        formatValuation(myUnits, myPrice, myXchangeRate);
-        formatValue(SecurityAttribute.XFERREDCOST, myCostXfer, true);
-        formatValue(SecurityAttribute.RESIDUALCOST, myResidualCost, true);
+        formatValuation(SecurityAttribute.XFERREDVALUE, myValueXfer, myUnits, myPrice, myXchangeRate);
+        formatValue(SecurityAttribute.XFERREDCOST, myCostXfer);
+        formatValue(SecurityAttribute.RESIDUALCOST, myResidualCost);
     }
 }

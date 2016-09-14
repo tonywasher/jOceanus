@@ -646,6 +646,26 @@ public class HTMLBuilder {
     }
 
     /**
+     * Embed a table into the document.
+     * @param pTable the table to embed
+     */
+    protected void embedTable(final HTMLTable pTable) {
+        /* Access body element */
+        HTMLTable myParent = pTable.getParent();
+        Element myBody = myParent.getTableBody();
+
+        /* Create the row */
+        Element myRow = theDocument.createElement(ELEMENT_ROW);
+        Element myCell = theDocument.createElement(ELEMENT_CELL);
+        myRow.appendChild(myCell);
+        myCell.setAttribute(ATTR_COLSPAN, Integer.toString(myParent.getNumCols()));
+        myCell.appendChild(pTable.getTable());
+
+        /* Insert into the correct place in the document */
+        myBody.appendChild(myRow);
+    }
+
+    /**
      * Obtain the row that a link is in.
      * @param pTitle the title of the link
      * @return the row that contains the link

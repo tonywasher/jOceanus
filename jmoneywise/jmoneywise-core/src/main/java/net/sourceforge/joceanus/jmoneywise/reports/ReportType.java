@@ -62,9 +62,14 @@ public enum ReportType {
     MARKETGROWTH,
 
     /**
-     * Market Report.
+     * Portfolio Report.
      */
-    PORTFOLIO;
+    PORTFOLIO,
+
+    /**
+     * Capital Gains.
+     */
+    CAPITALGAINS;
 
     /**
      * Report Name.
@@ -91,6 +96,7 @@ public enum ReportType {
         switch (this) {
             case NETWORTH:
             case PORTFOLIO:
+            case CAPITALGAINS:
                 return true;
             default:
                 return false;

@@ -1171,9 +1171,8 @@ public class TransactionAnalyser
             boolean isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
                                   && (myAmount.compareTo(myPortion) > 0);
 
-            /* If there is a capital gain */
-            if (isLargeCash
-                || myAmount.compareTo(myCost) > 0) {
+            /* If this is large cash */
+            if (isLargeCash) {
                 /* Determine the total value of rights plus share value */
                 myConsideration = new TethysMoney(myAmount);
                 myConsideration.addAmount(myValue);
@@ -1186,8 +1185,10 @@ public class TransactionAnalyser
 
                 /* else this is viewed as small and is taken out of the cost */
             } else {
-                /* Set the reduction to be the entire amount */
-                myAllowedCost = new TethysMoney(myAmount);
+                /* Set the allowed cost to be the least of the cost or the returned cash */
+                myAllowedCost = myAmount.compareTo(myCost) > 0
+                                                               ? new TethysMoney(myCost)
+                                                               : new TethysMoney(myAmount);
             }
         }
 
@@ -1221,14 +1222,12 @@ public class TransactionAnalyser
         myValues.setValue(SecurityAttribute.PRICE, myPrice);
         myValues.setValue(SecurityAttribute.VALUATION, myValue);
         myValues.setValue(SecurityAttribute.RETURNEDCASH, myAmount);
+        myValues.setValue(SecurityAttribute.ALLOWEDCOST, myAllowedCost);
         if (myCostDilution != null) {
             myValues.setValue(SecurityAttribute.COSTDILUTION, myCostDilution);
         }
         if (myConsideration != null) {
             myValues.setValue(SecurityAttribute.CONSIDERATION, myConsideration);
-        }
-        if (myAllowedCost.isNonZero()) {
-            myValues.setValue(SecurityAttribute.ALLOWEDCOST, myAllowedCost);
         }
         if (myCapitalGain.isNonZero()) {
             myValues.setValue(SecurityAttribute.CAPITALGAIN, myCapitalGain);
@@ -1658,9 +1657,8 @@ public class TransactionAnalyser
         boolean isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
                               && (myAmount.compareTo(myPortion) > 0);
 
-        /* If there is a capital gain */
-        if (isLargeCash
-            || myAmount.compareTo(myCost) > 0) {
+        /* If this is a large cash takeOver */
+        if (isLargeCash) {
             /* Determine the transferable cost */
             myCostXfer = myCost.valueAtWeight(myCreditXferValue, myConsideration);
 
@@ -1673,10 +1671,12 @@ public class TransactionAnalyser
 
             /* else this is viewed as small and is taken out of the cost */
         } else {
-            /* Allowed Cost is the amount */
-            myAllowedCost = myAmount;
+            /* Set the allowed cost to be the least of the cost or the returned cash */
+            myAllowedCost = myAmount.compareTo(myCost) > 0
+                                                           ? new TethysMoney(myCost)
+                                                           : new TethysMoney(myAmount);
 
-            /* Transferred cost is cost minus the cash amount */
+            /* Transferred cost is cost minus the allowed cost */
             myCostXfer = new TethysMoney(myCost);
             myCostXfer.subtractAmount(myAllowedCost);
         }
@@ -1757,14 +1757,12 @@ public class TransactionAnalyser
         myDebitValues.setValue(SecurityAttribute.RETURNEDCASH, myAmount);
         myDebitValues.setValue(SecurityAttribute.XFERREDVALUE, myCreditXferValue);
         myDebitValues.setValue(SecurityAttribute.XFERREDCOST, myCostXfer);
+        myDebitValues.setValue(SecurityAttribute.ALLOWEDCOST, myAllowedCost);
         if (myCostDilution != null) {
             myDebitValues.setValue(SecurityAttribute.COSTDILUTION, myCostDilution);
         }
         if (myCapitalGain.isNonZero()) {
             myDebitValues.setValue(SecurityAttribute.CAPITALGAIN, myCapitalGain);
-        }
-        if (myAllowedCost.isNonZero()) {
-            myDebitValues.setValue(SecurityAttribute.ALLOWEDCOST, myAllowedCost);
         }
         if (isForeignDebit) {
             myDebitValues.setValue(SecurityAttribute.EXCHANGERATE, myDebitRate);

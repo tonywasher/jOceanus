@@ -74,6 +74,11 @@ public enum ReportResource implements TethysResourceId {
     TYPE_TAXCALC("Type.TaxCalc"),
 
     /**
+     * CapitalGains ReportType.
+     */
+    TYPE_CAPITALGAINS("Type.CapitalGains"),
+
+    /**
      * NetWorth Title.
      */
     NETWORTH_TITLE("NetWorth.Title"),
@@ -112,6 +117,11 @@ public enum ReportResource implements TethysResourceId {
      * MarketGrowth BaseValue.
      */
     MARKETGROWTH_BASE("MarketGrowth.Base"),
+
+    /**
+     * CapitalGains Title.
+     */
+    CAPITALGAINS_TITLE("CapitalGains.Title"),
 
     /**
      * TaxBasis Title.
@@ -188,6 +198,7 @@ public enum ReportResource implements TethysResourceId {
         myMap.put(ReportType.MARKETGROWTH, TYPE_MARKET);
         myMap.put(ReportType.TAXBASIS, TYPE_TAXBASIS);
         myMap.put(ReportType.TAXCALC, TYPE_TAXCALC);
+        myMap.put(ReportType.CAPITALGAINS, TYPE_CAPITALGAINS);
         return myMap;
     }
 

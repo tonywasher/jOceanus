@@ -72,11 +72,6 @@ public class ReportTab
     private static final String NLS_DATAENTRY = MoneyWiseUIResource.REPORT_DATAENTRY.getValue();
 
     /**
-     * Logger.
-     */
-    // private static final Logger LOGGER = LoggerFactory.getLogger(ReportTab.class);
-
-    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
@@ -283,6 +278,7 @@ public class ReportTab
         switch (myReportType) {
             case NETWORTH:
             case PORTFOLIO:
+            case CAPITALGAINS:
                 myAnalysis = myManager.getAnalysis(myRange.getEnd());
                 myDoc = theBuilder.createReport(myAnalysis, myReportType);
                 break;
