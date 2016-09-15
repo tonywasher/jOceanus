@@ -145,41 +145,41 @@ public class SheetCash
                                       final MetisDataView pView,
                                       final MetisDataRow pRow) throws OceanusException {
         /* Access name and type */
-        int iAdjust = 0;
-        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
-        String myType = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        int iAdjust = -1;
+        String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Skip class, taxFree and gross */
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
 
         /* Handle closed which may be missing */
-        MetisDataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
             isClosed = myCell.getBooleanValue();
         }
 
         /* Skip parent, alias, portfolio, and maturity columns */
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
 
         /* Handle opening balance which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myBalance = null;
         if (myCell != null) {
             myBalance = myCell.getStringValue();
         }
 
         /* Skip symbol and region columns */
-        iAdjust++;
-        iAdjust++;
+        ++iAdjust;
+        ++iAdjust;
 
         /* Handle currency which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         AssetCurrency myCurrency = pData.getDefaultCurrency();
         if (myCell != null) {
             String myCurrName = myCell.getStringValue();
@@ -187,7 +187,7 @@ public class SheetCash
         }
 
         /* Handle autoExpense which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myAutoExpense = null;
         String myAutoPayee = null;
         if (myCell != null) {
@@ -229,17 +229,17 @@ public class SheetCash
                                            final MetisDataView pView,
                                            final MetisDataRow pRow) throws OceanusException {
         /* Access name */
-        int iAdjust = 0;
-        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        int iAdjust = -1;
+        String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Skip type, class, taxFree and gross */
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
 
         /* Handle closed which may be missing */
-        MetisDataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
             isClosed = myCell.getBooleanValue();
@@ -249,17 +249,17 @@ public class SheetCash
          * Skip parent, alias, portfolio, maturity, openingBalance, symbol, region and currency
          * columns
          */
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
 
         /* Handle autoExpense which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         if (myCell != null) {
             String myAutoPayee = myName + "Expense";
 

@@ -112,11 +112,6 @@ public class MainTab
     private SpotRatesTable theSpotRates;
 
     /**
-     * The report panel.
-     */
-    private ReportTab theReports;
-
-    /**
      * The maintenance panel.
      */
     private MaintenanceTab theMaint;
@@ -168,8 +163,8 @@ public class MainTab
 
         /* Create the Report Tab */
         myTask.startTask("Report");
-        theReports = new ReportTab(theView);
-        theTabs.addTabItem(TITLE_REPORT, theReports);
+        ReportTab myReports = new ReportTab(theView);
+        theTabs.addTabItem(TITLE_REPORT, myReports);
 
         /* Create the Register Tab */
         myTask.startTask("Register");
@@ -194,7 +189,7 @@ public class MainTab
         /* Create listeners */
         theTabs.getEventRegistrar().addEventListener(e -> determineFocus());
         theView.getEventRegistrar().addEventListener(e -> setVisibility());
-        theReports.getEventRegistrar().addEventListener(this::handleGoToEvent);
+        myReports.getEventRegistrar().addEventListener(this::handleGoToEvent);
         theSpotPrices.getEventRegistrar().addEventListener(e -> setVisibility());
         theSpotRates.getEventRegistrar().addEventListener(e -> setVisibility());
         setChildListeners(theRegister.getEventRegistrar());

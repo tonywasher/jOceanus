@@ -163,7 +163,7 @@ public class MoneyWiseTaxSource
         }
 
         @Override
-        public Object getFieldValue(MetisField pField) {
+        public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
             if (FIELD_BASIS.equals(pField)) {
                 return theBasis;

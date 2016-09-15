@@ -140,10 +140,10 @@ public class SheetTransTag
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
                 MetisDataRow myRow = myView.getRowByIndex(i);
-                int iAdjust = 0;
+                int iAdjust = -1;
 
                 /* Access name */
-                MetisDataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                MetisDataCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
                 String myName = myCell.getStringValue();
 
                 /* Build data values */

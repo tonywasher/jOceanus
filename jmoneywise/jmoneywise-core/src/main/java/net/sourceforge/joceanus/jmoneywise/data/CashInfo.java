@@ -173,8 +173,8 @@ public class CashInfo
      */
     public static Payee getPayee(final MetisValueSet pValueSet) {
         return pValueSet.isDeletion()
-                                     ? null
-                                     : pValueSet.getValue(FIELD_LINK, Payee.class);
+                                      ? null
+                                      : pValueSet.getValue(FIELD_LINK, Payee.class);
     }
 
     /**
@@ -184,8 +184,8 @@ public class CashInfo
      */
     public static TransactionCategory getEventCategory(final MetisValueSet pValueSet) {
         return pValueSet.isDeletion()
-                                     ? null
-                                     : pValueSet.getValue(FIELD_LINK, TransactionCategory.class);
+                                      ? null
+                                      : pValueSet.getValue(FIELD_LINK, TransactionCategory.class);
     }
 
     @Override
@@ -476,7 +476,7 @@ public class CashInfo
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(DepositInfo.OBJECT_NAME);
+            DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pCash);

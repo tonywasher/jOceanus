@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPrefere
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelPair;
+import net.sourceforge.joceanus.jmetis.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;

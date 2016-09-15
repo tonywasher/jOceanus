@@ -673,7 +673,6 @@ public class Transaction
         TransactionAsset myAccount = getAccount();
         TransactionAsset myPartner = getPartner();
         TransactionCategory myCategory = getCategory();
-        TethysDilution myDilution = getDilution();
         TethysUnits myDebitUnits = getDebitUnits();
         TethysUnits myCreditUnits = getCreditUnits();
 

@@ -789,7 +789,7 @@ public final class MetisSwingFieldCellEditor {
          */
         protected ScrollListButtonCellEditor() {
             /* Create button and menu builder */
-            theButton = new JScrollListButton<T>();
+            theButton = new JScrollListButton<>();
             theMenuBuilder = theButton.getMenuBuilder();
 
             /* Add popupListener */

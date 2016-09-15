@@ -156,19 +156,19 @@ public class SheetTransCategory
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
                 MetisDataRow myRow = myView.getRowByIndex(i);
-                int iAdjust = 0;
+                int iAdjust = -1;
 
                 /* Access name */
-                MetisDataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                MetisDataCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
                 String myName = myCell.getStringValue();
 
                 /* Access Type */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
                 String myType = myCell.getStringValue();
 
                 /* Access Parent */
                 String myParent = null;
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
                 if (myCell != null) {
                     myParent = myCell.getStringValue();
                 }

@@ -138,12 +138,12 @@ public final class SheetAccount {
                                      final MetisDataView pView,
                                      final MetisDataRow pRow) throws OceanusException {
         /* Skip name and type column */
-        int iAdjust = 0;
-        iAdjust++;
-        iAdjust++;
+        int iAdjust = -1;
+        ++iAdjust;
+        ++iAdjust;
 
         /* Access account class */
-        String myClass = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* If this is a Payee */
         if (myClass.equals(MoneyWiseDataType.PAYEE.toString())) {
@@ -170,12 +170,12 @@ public final class SheetAccount {
                                        final MetisDataView pView,
                                        final MetisDataRow pRow) throws OceanusException {
         /* Skip name and type column */
-        int iAdjust = 0;
-        iAdjust++;
-        iAdjust++;
+        int iAdjust = -1;
+        ++iAdjust;
+        ++iAdjust;
 
         /* Access account class */
-        String myClass = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* If this is a deposit */
         if (myClass.equals(MoneyWiseDataType.DEPOSIT.toString())) {

@@ -164,61 +164,61 @@ public class SheetDeposit
                                          final MetisDataView pView,
                                          final MetisDataRow pRow) throws OceanusException {
         /* Access name and type */
-        int iAdjust = 0;
-        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
-        String myType = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        int iAdjust = -1;
+        String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Skip class */
-        iAdjust++;
+        ++iAdjust;
 
         /* Handle taxFree which may be missing */
-        MetisDataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isTaxFree = Boolean.FALSE;
         if (myCell != null) {
             isTaxFree = myCell.getBooleanValue();
         }
 
         /* Handle gross which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isGross = Boolean.FALSE;
         if (myCell != null) {
             isGross = myCell.getBooleanValue();
         }
 
         /* Handle closed which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
             isClosed = myCell.getBooleanValue();
         }
 
         /* Access Parent account */
-        String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Skip alias and portfolio columns */
-        iAdjust++;
-        iAdjust++;
+        ++iAdjust;
+        ++iAdjust;
 
         /* Handle maturity which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         TethysDate myMaturity = null;
         if (myCell != null) {
             myMaturity = myCell.getDateValue();
         }
 
         /* Handle opening balance which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myBalance = null;
         if (myCell != null) {
             myBalance = myCell.getStringValue();
         }
 
         /* Skip symbol and region columns */
-        iAdjust++;
-        iAdjust++;
+        ++iAdjust;
+        ++iAdjust;
 
         /* Handle currency which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         AssetCurrency myCurrency = pData.getDefaultCurrency();
         if (myCell != null) {
             String myCurrName = myCell.getStringValue();

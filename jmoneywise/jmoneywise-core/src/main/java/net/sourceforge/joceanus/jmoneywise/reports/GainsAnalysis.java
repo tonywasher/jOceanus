@@ -213,8 +213,6 @@ public class GainsAnalysis {
 
     /**
      * Ensure the attribute table.
-     * @param pAttr the attribute
-     * @param pValue the value
      */
     private void ensureAttrTable() {
         /* If we do not have a current attribute table */
@@ -245,7 +243,7 @@ public class GainsAnalysis {
      * @param pAttr the attribute
      * @param pValue the value
      * @param pNumerator the numerator
-     * @param pValue the divisor
+     * @param pDivisor the divisor
      */
     private void formatDivision(final SecurityAttribute pAttr,
                                 final Object pValue,
@@ -264,7 +262,7 @@ public class GainsAnalysis {
     /**
      * Format a division.
      * @param pNumerator the numerator
-     * @param pValue the divisor
+     * @param pDivisor the divisor
      * @return the formatted division
      */
     private String formatDivision(final TethysDecimal pNumerator,

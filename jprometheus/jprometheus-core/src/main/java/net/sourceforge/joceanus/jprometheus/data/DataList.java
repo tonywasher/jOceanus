@@ -50,6 +50,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * DataList interface.
      * @param <E> the data type enum class
      */
+    @FunctionalInterface
     public interface DataListSet<E extends Enum<E>> {
         /**
          * Obtain the list for a class.

@@ -137,7 +137,7 @@ public final class PrometheusBackup {
         }
 
         @Override
-        protected void autoCorrectPreferences() {
+        public void autoCorrectPreferences() {
             /* Make sure that the prefix is specified */
             MetisStringPreference<PrometheusBackupPreferenceKey> myPref = getStringPreference(PrometheusBackupPreferenceKey.BACKUPPFIX);
             if (!myPref.isAvailable()) {

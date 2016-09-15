@@ -1176,7 +1176,7 @@ public final class TransactionCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets */
-            MetisOrderedIdList<Integer, TransactionCategoryBucket> myTotals = new MetisOrderedIdList<Integer, TransactionCategoryBucket>(TransactionCategoryBucket.class);
+            MetisOrderedIdList<Integer, TransactionCategoryBucket> myTotals = new MetisOrderedIdList<>(TransactionCategoryBucket.class);
 
             /* Loop through the buckets */
             Iterator<TransactionCategoryBucket> myIterator = listIterator();

@@ -238,7 +238,7 @@ public class MetisPreferenceSecurity {
         }
 
         @Override
-        protected void autoCorrectPreferences() {
+        public void autoCorrectPreferences() {
             /* No-OP */
         }
     }
@@ -305,7 +305,7 @@ public class MetisPreferenceSecurity {
         }
 
         @Override
-        protected void autoCorrectPreferences() {
+        public void autoCorrectPreferences() {
             /* Make sure that the factory is specified */
             MetisEnumPreference<MetisSecurityPreferenceKey, GordianFactoryType> myFactPref = getEnumPreference(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
             if (!myFactPref.isAvailable()) {

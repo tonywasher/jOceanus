@@ -151,121 +151,121 @@ public class SheetTaxYear
             /* Loop through the required years */
             while (myIterator.hasNext()) {
                 /* Row Adjust value */
-                int iAdjust = 1;
+                int iAdjust = 0;
 
                 /* Access Year */
                 ArchiveYear myYear = myIterator.next();
                 TethysDate myDate = myYear.getDate();
 
                 /* Access the values */
-                String myTaxRegime = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
-                String myAllowance = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
-                String myLoTaxBand = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
-                String myBasicTaxBand = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
-                String myRentalAllow = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
-                String myLoTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
-                String myBasicTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
-                String myIntTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
-                String myDivTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
-                String myHiTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
-                String myHiDivTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myTaxRegime = myView.getCellByPosition(++iAdjust, iRow).getStringValue();
+                String myAllowance = myView.getCellByPosition(++iAdjust, iRow).getStringValue();
+                String myLoTaxBand = myView.getCellByPosition(++iAdjust, iRow).getStringValue();
+                String myBasicTaxBand = myView.getCellByPosition(++iAdjust, iRow).getStringValue();
+                String myRentalAllow = myView.getCellByPosition(++iAdjust, iRow).getStringValue();
+                String myLoTaxRate = myView.getCellByPosition(++iAdjust, iRow).getStringValue();
+                String myBasicTaxRate = myView.getCellByPosition(++iAdjust, iRow).getStringValue();
+                String myIntTaxRate = myView.getCellByPosition(++iAdjust, iRow).getStringValue();
+                String myDivTaxRate = myView.getCellByPosition(++iAdjust, iRow).getStringValue();
+                String myHiTaxRate = myView.getCellByPosition(++iAdjust, iRow).getStringValue();
+                String myHiDivTaxRate = myView.getCellByPosition(++iAdjust, iRow).getStringValue();
 
                 /* Handle AddTaxRate which may be missing */
-                MetisDataCell myCell = myView.getCellByPosition(iAdjust++, iRow);
+                MetisDataCell myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myAddTaxRate = null;
                 if (myCell != null) {
                     myAddTaxRate = myCell.getStringValue();
                 }
 
                 /* Handle AddDivTaxRate which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myAddDivTaxRate = null;
                 if (myCell != null) {
                     myAddDivTaxRate = myCell.getStringValue();
                 }
 
                 /* Handle LoAgeAllowance which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myLoAgeAllow = null;
                 if (myCell != null) {
                     myLoAgeAllow = myCell.getStringValue();
                 }
 
                 /* Handle HiAgeAllowance which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myHiAgeAllow = null;
                 if (myCell != null) {
                     myHiAgeAllow = myCell.getStringValue();
                 }
 
                 /* Handle AgeAllowanceLimit which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myAgeAllowLimit = null;
                 if (myCell != null) {
                     myAgeAllowLimit = myCell.getStringValue();
                 }
 
                 /* Handle AddAllowLimit which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myAddAllowLimit = null;
                 if (myCell != null) {
                     myAddAllowLimit = myCell.getStringValue();
                 }
 
                 /* Handle AddIncomeBoundary which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myAddIncBound = null;
                 if (myCell != null) {
                     myAddIncBound = myCell.getStringValue();
                 }
 
                 /* Access the values */
-                String myCapitalAllow = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myCapitalAllow = myView.getCellByPosition(++iAdjust, iRow).getStringValue();
 
                 /* Handle SavingsAllowance which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String mySavingAllow = null;
                 if (myCell != null) {
                     mySavingAllow = myCell.getStringValue();
                 }
 
                 /* Handle HiSavingsAllowance which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myHiSavingAllow = null;
                 if (myCell != null) {
                     myHiSavingAllow = myCell.getStringValue();
                 }
 
                 /* Handle DividendAllowance which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myDividendAllow = null;
                 if (myCell != null) {
                     myDividendAllow = myCell.getStringValue();
                 }
 
                 /* Handle CapTaxRate which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myCapTaxRate = null;
                 if (myCell != null) {
                     myCapTaxRate = myCell.getStringValue();
                 }
 
                 /* Handle HiCapTaxRate which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myHiCapTaxRate = null;
                 if (myCell != null) {
                     myHiCapTaxRate = myCell.getStringValue();
                 }
 
                 /* Handle ResidentialTaxRate which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myResTaxRate = null;
                 if (myCell != null) {
                     myResTaxRate = myCell.getStringValue();
                 }
 
                 /* Handle HiResTaxRate which may be missing */
-                myCell = myView.getCellByPosition(iAdjust++, iRow);
+                myCell = myView.getCellByPosition(++iAdjust, iRow);
                 String myHiResTaxRate = null;
                 if (myCell != null) {
                     myHiResTaxRate = myCell.getStringValue();

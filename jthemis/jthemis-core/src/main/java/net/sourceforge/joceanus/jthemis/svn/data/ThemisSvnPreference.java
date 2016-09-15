@@ -148,7 +148,7 @@ public abstract class ThemisSvnPreference {
         }
 
         @Override
-        protected void autoCorrectPreferences() {
+        public void autoCorrectPreferences() {
             /* Make sure that the server is specified */
             MetisStringPreference<ThemisSvnPreferenceKey> myPref = getStringPreference(ThemisSvnPreferenceKey.BASE);
             if (!myPref.isAvailable()) {

@@ -179,25 +179,25 @@ public class SheetDepositRate
         for (int i = 0; i < myTotal; i++) {
             /* Access the cell by reference */
             MetisDataRow myRow = pView.getRowByIndex(i);
-            int iAdjust = 0;
+            int iAdjust = -1;
 
             /* Access deposit */
-            MetisDataCell myCell = pView.getRowCellByIndex(myRow, iAdjust++);
+            MetisDataCell myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
             String myDeposit = myCell.getStringValue();
 
             /* Handle Rate */
-            myCell = pView.getRowCellByIndex(myRow, iAdjust++);
+            myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
             String myRate = myCell.getStringValue();
 
             /* Handle bonus which may be missing */
-            myCell = pView.getRowCellByIndex(myRow, iAdjust++);
+            myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
             String myBonus = null;
             if (myCell != null) {
                 myBonus = myCell.getStringValue();
             }
 
             /* Handle expiration which may be missing */
-            myCell = pView.getRowCellByIndex(myRow, iAdjust++);
+            myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
             TethysDate myExpiry = null;
             if (myCell != null) {
                 myExpiry = myCell.getDateValue();

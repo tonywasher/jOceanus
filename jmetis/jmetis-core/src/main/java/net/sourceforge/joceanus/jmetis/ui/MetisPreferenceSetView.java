@@ -20,13 +20,17 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.preference;
+package net.sourceforge.joceanus.jmetis.ui;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceResource;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisBooleanPreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisByteArrayPreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisCharArrayPreference;

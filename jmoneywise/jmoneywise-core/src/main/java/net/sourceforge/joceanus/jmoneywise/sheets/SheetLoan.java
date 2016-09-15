@@ -147,35 +147,35 @@ public class SheetLoan
                                       final MetisDataView pView,
                                       final MetisDataRow pRow) throws OceanusException {
         /* Access name and type */
-        int iAdjust = 0;
-        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
-        String myType = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        int iAdjust = -1;
+        String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Skip class, taxFree and gross */
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
 
         /* Handle closed which may be missing */
-        MetisDataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
             isClosed = myCell.getBooleanValue();
         }
 
         /* Access Parent account */
-        String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Skip alias, portfolio, maturity, openingBalance, symbol and region columns */
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
-        iAdjust++;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
+        ++iAdjust;
 
         /* Handle currency which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         AssetCurrency myCurrency = pData.getDefaultCurrency();
         if (myCell != null) {
             String myCurrName = myCell.getStringValue();

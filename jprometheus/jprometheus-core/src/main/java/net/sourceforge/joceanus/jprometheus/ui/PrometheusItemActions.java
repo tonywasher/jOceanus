@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jprometheus.ui;
 
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -35,10 +36,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Item Action buttons.
+ * @param <G> the goto id type
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class PrometheusItemActions<N, I>
+public class PrometheusItemActions<G extends Enum<G>, N, I>
         implements TethysEventProvider<PrometheusUIEvent>, TethysNode<N> {
     /**
      * The Event Manager.
@@ -58,7 +60,7 @@ public class PrometheusItemActions<N, I>
     /**
      * The GoTo button.
      */
-    private final TethysScrollButtonManager<PrometheusGoToEvent, N, I> theGoToButton;
+    private final TethysScrollButtonManager<PrometheusGoToEvent<G>, N, I> theGoToButton;
 
     /**
      * The Edit button.

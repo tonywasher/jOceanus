@@ -250,7 +250,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * This is used both to initialise preferencesSet defaults and to adjust the set when a value
      * changes.
      */
-    protected abstract void autoCorrectPreferences();
+    public abstract void autoCorrectPreferences();
 
     /**
      * Obtain the name of the set.
@@ -264,7 +264,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * Is this a hidden preferenceSet?
      * @return true/false
      */
-    protected boolean isHidden() {
+    public boolean isHidden() {
         return isHidden;
     }
 
@@ -291,14 +291,14 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     /**
      * Set the focus.
      */
-    protected void setFocus() {
+    public void setFocus() {
         theViewerEntry.setFocus();
     }
 
     /**
      * Update the viewer entry.
      */
-    protected void updateViewerEntry() {
+    public void updateViewerEntry() {
         theViewerEntry.setObject(this);
     }
 
@@ -990,7 +990,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * Obtain the display name of the preference.
          * @return the display name of the preference
          */
-        protected String getDisplay() {
+        public String getDisplay() {
             return theDisplay;
         }
 
@@ -998,7 +998,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * Obtain the type of the preference.
          * @return the type of the preference
          */
-        protected MetisPreferenceType getType() {
+        public MetisPreferenceType getType() {
             return theType;
         }
 
@@ -1033,7 +1033,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * Is the preference changed?
          * @return true/false
          */
-        protected boolean isChanged() {
+        public boolean isChanged() {
             return isChanged;
         }
 

@@ -193,7 +193,7 @@ public final class MetisFieldColours {
         }
 
         @Override
-        protected void autoCorrectPreferences() {
+        public void autoCorrectPreferences() {
             defaultColour(MetisColorPreferenceKey.STANDARD, TethysValueSet.DEFAULT_COLOR_STANDARD);
             defaultColour(MetisColorPreferenceKey.BACKGROUND, TethysValueSet.DEFAULT_COLOR_BACKGROUND);
             defaultColour(MetisColorPreferenceKey.ERROR, TethysValueSet.DEFAULT_COLOR_ERROR);

@@ -165,7 +165,7 @@ public class TaxAnalysis {
         }
 
         @Override
-        protected void autoCorrectPreferences() {
+        public void autoCorrectPreferences() {
             /* Make sure that the birthDate is specified */
             MetisDatePreference<MoneyWiseTaxPreferenceKey> myPref = getDatePreference(MoneyWiseTaxPreferenceKey.BIRTHDATE);
             if (!myPref.isAvailable()) {

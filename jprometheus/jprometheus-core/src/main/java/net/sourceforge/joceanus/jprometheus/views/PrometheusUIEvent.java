@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui;
+package net.sourceforge.joceanus.jprometheus.views;
 
 /**
  * Prometheus UI events.

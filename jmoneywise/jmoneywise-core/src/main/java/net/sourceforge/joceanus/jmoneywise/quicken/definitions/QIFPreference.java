@@ -111,7 +111,7 @@ public final class QIFPreference {
         }
 
         @Override
-        protected void autoCorrectPreferences() {
+        public void autoCorrectPreferences() {
             /* Make sure that the directory is specified */
             MetisStringPreference<MoneyWiseQIFPreferenceKey> myDirPref = getStringPreference(MoneyWiseQIFPreferenceKey.QIFDIR);
             if (!myDirPref.isAvailable()) {

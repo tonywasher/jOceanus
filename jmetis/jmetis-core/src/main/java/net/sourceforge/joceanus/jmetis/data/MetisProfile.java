@@ -91,11 +91,6 @@ public class MetisProfile
     private final long theStart;
 
     /**
-     * End time.
-     */
-    private long theEnd;
-
-    /**
      * Elapsed (in milliseconds).
      */
     private TethysDecimal theElapsed;
@@ -245,8 +240,8 @@ public class MetisProfile
             endSubTask();
 
             /* Stop the task and calculate the elapsed time */
-            theEnd = System.nanoTime();
-            theElapsed = new TethysDecimal(theEnd - theStart, NUM_DECIMALS);
+            long myEnd = System.nanoTime();
+            theElapsed = new TethysDecimal(myEnd - theStart, NUM_DECIMALS);
             theHidden = theSubTasks == null
                                             ? null
                                             : calculateHidden();

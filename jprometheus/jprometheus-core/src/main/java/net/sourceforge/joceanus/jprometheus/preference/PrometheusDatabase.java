@@ -139,7 +139,7 @@ public final class PrometheusDatabase {
         }
 
         @Override
-        protected void autoCorrectPreferences() {
+        public void autoCorrectPreferences() {
             /* Make sure that the enum is specified */
             MetisEnumPreference<PrometheusDatabasePreferenceKey, PrometheusJDBCDriver> myTypePref = getEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);
             if (!myTypePref.isAvailable()) {

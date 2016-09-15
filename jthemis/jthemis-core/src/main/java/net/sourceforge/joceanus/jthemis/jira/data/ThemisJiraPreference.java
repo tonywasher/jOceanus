@@ -117,7 +117,7 @@ public abstract class ThemisJiraPreference {
         }
 
         @Override
-        protected void autoCorrectPreferences() {
+        public void autoCorrectPreferences() {
             /* Make sure that the server is specified */
             MetisStringPreference<ThemisJiraPreferenceKey> myPref = getStringPreference(ThemisJiraPreferenceKey.SERVER);
             if (!myPref.isAvailable()) {

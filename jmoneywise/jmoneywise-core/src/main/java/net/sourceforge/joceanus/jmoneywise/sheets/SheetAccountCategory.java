@@ -115,25 +115,25 @@ public final class SheetAccountCategory {
                                         final MetisDataView pView,
                                         final MetisDataRow pRow) throws OceanusException {
         /* Access name */
-        int iAdjust = 0;
-        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
-        iAdjust++;
+        int iAdjust = -1;
+        String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        ++iAdjust;
 
         /* Access parent */
-        MetisDataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myParent = (myCell == null)
                                            ? null
                                            : myCell.getStringValue();
 
         /* Access category class and ignore if doesn't exist */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         if (myCell == null) {
             return;
         }
 
         /* Access class and category */
         String myClass = myCell.getStringValue();
-        String myCat = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        String myCat = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* If the category is parent then null the parent reference */
         if (myName.indexOf(':') == -1) {

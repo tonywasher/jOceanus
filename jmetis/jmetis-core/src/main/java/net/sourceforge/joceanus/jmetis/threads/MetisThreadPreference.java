@@ -107,7 +107,7 @@ public class MetisThreadPreference {
         }
 
         @Override
-        protected void autoCorrectPreferences() {
+        public void autoCorrectPreferences() {
             /* Make sure that the value is specified */
             MetisIntegerPreference<MetisThreadPreferenceKey> myPref = getIntegerPreference(MetisThreadPreferenceKey.REPSTEPS);
             if (!myPref.isAvailable()) {

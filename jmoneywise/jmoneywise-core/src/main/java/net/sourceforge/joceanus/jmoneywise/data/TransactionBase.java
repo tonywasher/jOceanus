@@ -967,7 +967,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         /* Partner must be non-null */
         if (myPartner == null) {
             addError(ERROR_MISSING, FIELD_PARTNER);
-            doCheckCombo = false;
 
         } else {
             /* Holding currency combo must be valid */
@@ -979,7 +978,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             /* Partner must be valid for Account */
             if (doCheckCombo && !TransactionValidator.isValidPartner(myAccount, myCategory, myPartner)) {
                 addError(ERROR_COMBO, FIELD_PARTNER);
-                doCheckCombo = false;
             }
         }
 

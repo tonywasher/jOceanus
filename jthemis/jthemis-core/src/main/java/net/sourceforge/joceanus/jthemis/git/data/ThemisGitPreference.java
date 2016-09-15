@@ -118,7 +118,7 @@ public abstract class ThemisGitPreference {
         }
 
         @Override
-        protected void autoCorrectPreferences() {
+        public void autoCorrectPreferences() {
             /* Make sure that the repository is specified */
             MetisStringPreference<ThemisGitPreferenceKey> myPref = getStringPreference(ThemisGitPreferenceKey.BASE);
             if (!myPref.isAvailable()) {

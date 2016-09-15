@@ -200,20 +200,20 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
 
         /* If we have a JTextField */
         if (pComponent instanceof JTextField) {
-            JModelString<X> myModel = new JModelString<X>(mySet, myField, pClass);
-            return new MetisFieldText<X>((JTextField) pComponent, myModel);
+            JModelString<X> myModel = new JModelString<>(mySet, myField, pClass);
+            return new MetisFieldText<>((JTextField) pComponent, myModel);
         }
         if (pComponent instanceof JTextArea) {
-            JModelString<X> myModel = new JModelString<X>(mySet, myField, pClass);
-            return new MetisFieldArea<X>((JTextArea) pComponent, myModel);
+            JModelString<X> myModel = new JModelString<>(mySet, myField, pClass);
+            return new MetisFieldArea<>((JTextArea) pComponent, myModel);
         }
         if (pComponent instanceof TethysSwingDateButton) {
-            JModelDateDay<X> myModel = new JModelDateDay<X>(mySet, myField, pClass);
-            return new MetisFieldDate<X>((TethysSwingDateButton) pComponent, myModel);
+            JModelDateDay<X> myModel = new JModelDateDay<>(mySet, myField, pClass);
+            return new MetisFieldDate<>((TethysSwingDateButton) pComponent, myModel);
         }
         if (pComponent instanceof JCheckBox) {
-            JModelBoolean<X> myModel = new JModelBoolean<X>(mySet, myField, pClass);
-            return new MetisFieldCheck<X>((JCheckBox) pComponent, myModel);
+            JModelBoolean<X> myModel = new JModelBoolean<>(mySet, myField, pClass);
+            return new MetisFieldCheck<>((JCheckBox) pComponent, myModel);
         }
 
         /* Handle invalid component */
@@ -238,8 +238,8 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         MetisField myField = pElement.getField();
 
         /* Allocate component */
-        JModelObject<I, X> myModel = new JModelObject<I, X>(mySet, myField, pClass);
-        return new MetisFieldCombo<I, X>(pComboBox, myModel);
+        JModelObject<I, X> myModel = new JModelObject<>(mySet, myField, pClass);
+        return new MetisFieldCombo<>(pComboBox, myModel);
     }
 
     /**
@@ -259,8 +259,8 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         MetisField myField = pElement.getField();
 
         /* Allocate component */
-        JModelObject<I, X> myModel = new JModelObject<I, X>(mySet, myField, pClass);
-        return new MetisFieldScrollButton<I, X>(pButton, myModel);
+        JModelObject<I, X> myModel = new JModelObject<>(mySet, myField, pClass);
+        return new MetisFieldScrollButton<>(pButton, myModel);
     }
 
     /**
@@ -278,8 +278,8 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         MetisField myField = pElement.getField();
 
         /* Allocate component */
-        JModelObjectList<I, X> myModel = new JModelObjectList<I, X>(mySet, myField);
-        return new MetisFieldScrollListButton<I, X>(pButton, myModel);
+        JModelObjectList<I, X> myModel = new JModelObjectList<>(mySet, myField);
+        return new MetisFieldScrollListButton<>(pButton, myModel);
     }
 
     /**
@@ -299,8 +299,8 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         MetisField myField = pElement.getField();
 
         /* Allocate component */
-        JModelObject<I, X> myModel = new JModelObject<I, X>(mySet, myField, pClass);
-        return new MetisFieldIconButton<I, X>(pButton, myModel);
+        JModelObject<I, X> myModel = new JModelObject<>(mySet, myField, pClass);
+        return new MetisFieldIconButton<>(pButton, myModel);
     }
 
     /**

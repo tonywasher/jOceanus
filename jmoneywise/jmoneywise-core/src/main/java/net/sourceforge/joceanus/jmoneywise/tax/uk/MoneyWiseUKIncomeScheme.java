@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  */
 public class MoneyWiseUKIncomeScheme {
     /**
-     * Adjust For TaxBasis
+     * Adjust For TaxBasis.
      * @param pConfig the taxConfig
      * @param pBasis the taxBasis
      * @param pAmount the amount that is to be adjusted
@@ -86,7 +86,8 @@ public class MoneyWiseUKIncomeScheme {
         TethysMoney myRemaining = pAmount;
         for (MoneyWiseTaxBand myBand : pConfig.getTaxBands()) {
             /* If we have nothing left to adjust, we have finished */
-            if (myRemaining.isZero() || myBand.getAmount() == null) {
+            if (myRemaining.isZero()
+                || myBand.getAmount() == null) {
                 break;
             }
 

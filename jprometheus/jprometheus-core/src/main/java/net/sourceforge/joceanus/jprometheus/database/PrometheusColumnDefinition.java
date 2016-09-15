@@ -826,7 +826,6 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            java.sql.Date myDate = null;
             TethysDate myValue = getValue();
 
             /* Build the date as a SQL date */
@@ -834,7 +833,7 @@ public abstract class PrometheusColumnDefinition {
                 pStatement.setNull(pIndex, Types.DATE);
             } else {
                 Date myDateValue = myValue.toDate();
-                myDate = new java.sql.Date(myDateValue.getTime());
+                java.sql.Date myDate = new java.sql.Date(myDateValue.getTime());
                 pStatement.setDate(pIndex, myDate);
             }
         }

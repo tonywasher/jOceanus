@@ -852,7 +852,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
         @Override
         protected CategoryDataMap<T, S, C> allocateDataMap() {
-            return new CategoryDataMap<T, S, C>();
+            return new CategoryDataMap<>();
         }
     }
 

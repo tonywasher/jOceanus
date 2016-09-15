@@ -67,7 +67,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
         theRenderMgr = pRenderMgr;
 
         /* Create the map */
-        theMap = new HashMap<MetisField, MetisFieldElement<T>>();
+        theMap = new HashMap<>();
     }
 
     /**
@@ -80,7 +80,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
                                 final MetisDataType pClass,
                                 final JComponent pComponent) {
         /* Create the field */
-        MetisFieldElement<T> myElement = new MetisFieldElement<T>(this, pField, pClass, pComponent);
+        MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pComponent);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -97,7 +97,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
                                     final Class<I> pClass,
                                     final JComboBox<I> pComboBox) {
         /* Create the field */
-        MetisFieldElement<T> myElement = new MetisFieldElement<T>(this, pField, pClass, pComboBox);
+        MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pComboBox);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -114,7 +114,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
                                     final Class<I> pClass,
                                     final JScrollButton<I> pButton) {
         /* Create the field */
-        MetisFieldElement<T> myElement = new MetisFieldElement<T>(this, pField, pClass, pButton);
+        MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -129,7 +129,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     public <I> void addFieldElement(final MetisField pField,
                                     final JScrollListButton<I> pButton) {
         /* Create the field */
-        MetisFieldElement<T> myElement = new MetisFieldElement<T>(this, pField, pButton);
+        MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -146,7 +146,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
                                     final Class<I> pClass,
                                     final JIconButton<I> pButton) {
         /* Create the field */
-        MetisFieldElement<T> myElement = new MetisFieldElement<T>(this, pField, pClass, pButton);
+        MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);
