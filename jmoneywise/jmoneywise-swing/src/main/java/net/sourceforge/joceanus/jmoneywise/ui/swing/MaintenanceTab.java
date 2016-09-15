@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -384,11 +385,11 @@ public class MaintenanceTab
      * Select maintenance.
      * @param pEvent the action request
      */
-    protected void selectMaintenance(final PrometheusGoToEvent pEvent) {
+    protected void selectMaintenance(final PrometheusGoToEvent<MoneyWiseGoToId> pEvent) {
         /* Switch on the subId */
         switch (pEvent.getId()) {
             /* View the requested account */
-            case MainTab.ACTION_VIEWACCOUNT:
+            case ACCOUNT:
                 /* Select the requested account */
                 AssetBase<?> myAccount = pEvent.getDetails(AssetBase.class);
                 theAccountTab.selectAccount(myAccount);
@@ -398,7 +399,7 @@ public class MaintenanceTab
                 break;
 
             /* View the requested category */
-            case MainTab.ACTION_VIEWCATEGORY:
+            case CATEGORY:
                 /* Select the requested category */
                 Object myCategory = pEvent.getDetails();
                 theCategoryTab.selectCategory(myCategory);
@@ -408,7 +409,7 @@ public class MaintenanceTab
                 break;
 
             /* View the requested tag */
-            case MainTab.ACTION_VIEWTAG:
+            case TAG:
                 /* Select the requested tag */
                 Object myTag = pEvent.getDetails();
                 theCategoryTab.selectTag(myTag);
@@ -418,7 +419,7 @@ public class MaintenanceTab
                 break;
 
             /* View the requested region */
-            case MainTab.ACTION_VIEWREGION:
+            case REGION:
                 /* Select the requested tag */
                 Object myRegion = pEvent.getDetails();
                 theCategoryTab.selectRegion(myRegion);
@@ -428,7 +429,7 @@ public class MaintenanceTab
                 break;
 
             /* View the requested taxYear */
-            case MainTab.ACTION_VIEWTAXYEAR:
+            case TAXYEAR:
                 /* Select the requested tag */
                 TaxYear myYear = pEvent.getDetails(TaxYear.class);
                 theTaxYearTab.selectTaxYear(myYear);
@@ -438,7 +439,7 @@ public class MaintenanceTab
                 break;
 
             /* View the requested static */
-            case MainTab.ACTION_VIEWSTATIC:
+            case STATIC:
                 /* Select the requested tag */
                 @SuppressWarnings("unchecked")
                 StaticData<?, ?, MoneyWiseDataType> myData = (StaticData<?, ?, MoneyWiseDataType>) pEvent.getDetails(StaticData.class);
@@ -538,22 +539,23 @@ public class MaintenanceTab
      */
     private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
-        PrometheusGoToEvent myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
+        @SuppressWarnings("unchecked")
+        PrometheusGoToEvent<MoneyWiseGoToId> myEvent = (PrometheusGoToEvent<MoneyWiseGoToId>) pEvent.getDetails(PrometheusGoToEvent.class);
 
         /* Access event and obtain details */
         switch (myEvent.getId()) {
             /* Pass through the event */
-            case MainTab.ACTION_VIEWSTATEMENT:
+            case STATEMENT:
                 theEventManager.cascadeEvent(pEvent);
                 break;
 
             /* Access maintenance */
-            case MainTab.ACTION_VIEWACCOUNT:
-            case MainTab.ACTION_VIEWTAXYEAR:
-            case MainTab.ACTION_VIEWCATEGORY:
-            case MainTab.ACTION_VIEWTAG:
-            case MainTab.ACTION_VIEWREGION:
-            case MainTab.ACTION_VIEWSTATIC:
+            case ACCOUNT:
+            case TAXYEAR:
+            case CATEGORY:
+            case TAG:
+            case REGION:
+            case STATIC:
                 selectMaintenance(myEvent);
                 break;
             default:

@@ -59,7 +59,7 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * The Item Panel.
      */
-    private final DataItemPanel<T, E> theItemPanel;
+    private final DataItemPanel<T, ?, E> theItemPanel;
 
     /**
      * Constructor.
@@ -67,7 +67,7 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
      * @param pPanel the item panel
      */
     public JDataTableSelection(final JDataTable<T, E> pTable,
-                               final DataItemPanel<T, E> pPanel) {
+                               final DataItemPanel<T, ?, E> pPanel) {
         /* Store parameters */
         theDataTable = pTable;
         theTable = pTable.getTable();

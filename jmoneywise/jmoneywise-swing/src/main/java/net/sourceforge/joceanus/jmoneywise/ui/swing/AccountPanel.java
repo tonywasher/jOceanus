@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
@@ -678,22 +679,23 @@ public class AccountPanel
      */
     private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
-        PrometheusGoToEvent myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
+        @SuppressWarnings("unchecked")
+        PrometheusGoToEvent<MoneyWiseGoToId> myEvent = (PrometheusGoToEvent<MoneyWiseGoToId>) pEvent.getDetails(PrometheusGoToEvent.class);
 
         /* Access event and obtain details */
         switch (myEvent.getId()) {
             /* Pass through the event */
-            case MainTab.ACTION_VIEWSTATEMENT:
-            case MainTab.ACTION_VIEWCATEGORY:
-            case MainTab.ACTION_VIEWREGION:
-            case MainTab.ACTION_VIEWTAG:
-            case MainTab.ACTION_VIEWTAXYEAR:
-            case MainTab.ACTION_VIEWSTATIC:
+            case STATEMENT:
+            case CATEGORY:
+            case REGION:
+            case TAG:
+            case TAXYEAR:
+            case STATIC:
                 theEventManager.cascadeEvent(pEvent);
                 break;
 
             /* Access subPanels */
-            case MainTab.ACTION_VIEWACCOUNT:
+            case ACCOUNT:
                 selectAccount(myEvent.getDetails(AssetBase.class));
                 break;
             default:

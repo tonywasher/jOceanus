@@ -57,9 +57,10 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 /**
  * Class to enable display/editing of and individual dataItem.
  * @param <T> the item type
+ * @param <I> the goto id type
  * @param <E> the data type enum class
  */
-public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
+public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T>, I extends Enum<I>, E extends Enum<E>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent>, PrometheusItemEditParent {
     /**
      * Details Tab Title.
@@ -207,7 +208,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* Listen to the Actions */
         myRegistrar = theItemActions.getEventRegistrar();
         myRegistrar.addEventListener(PrometheusUIEvent.BUILDGOTO,
-                e -> buildGoToMenu((TethysScrollMenu<PrometheusGoToEvent, ?>) e.getDetails(TethysScrollMenu.class)));
+                e -> buildGoToMenu((TethysScrollMenu<PrometheusGoToEvent<I>, ?>) e.getDetails(TethysScrollMenu.class)));
         myRegistrar.addEventListener(PrometheusUIEvent.GOTO, e -> processGoToRequest(e.getDetails(PrometheusGoToEvent.class)));
         myRegistrar.addEventListener(PrometheusUIEvent.EDIT, e -> requestEdit());
         myRegistrar.addEventListener(PrometheusUIEvent.DELETE, e -> requestDelete());
@@ -610,7 +611,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Process goTo request.
      * @param pEvent the goTo request event
      */
-    private void processGoToRequest(final PrometheusGoToEvent pEvent) {
+    private void processGoToRequest(final PrometheusGoToEvent<?> pEvent) {
         theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, pEvent);
     }
 
@@ -618,7 +619,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Build goTo menu.
      * @param pMenu the menu to build
      */
-    protected abstract void buildGoToMenu(final TethysScrollMenu<PrometheusGoToEvent, ?> pMenu);
+    protected abstract void buildGoToMenu(final TethysScrollMenu<PrometheusGoToEvent<I>, ?> pMenu);
 
     /**
      * Create a GoTo event.
@@ -626,9 +627,9 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * @param pDetails the details of the event
      * @return the action event
      */
-    protected PrometheusGoToEvent createGoToEvent(final int pGoToId,
-                                                  final Object pDetails) {
-        return new PrometheusGoToEvent(pGoToId, pDetails);
+    protected PrometheusGoToEvent<I> createGoToEvent(final I pGoToId,
+                                                     final Object pDetails) {
+        return new PrometheusGoToEvent<>(pGoToId, pDetails);
     }
 
     /**

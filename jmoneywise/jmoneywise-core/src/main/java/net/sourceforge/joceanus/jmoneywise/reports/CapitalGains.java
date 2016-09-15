@@ -82,6 +82,11 @@ public class CapitalGains
     private List<Transaction> theSecurities;
 
     /**
+     * The EndDate.
+     */
+    private TethysDate theEndDate;
+
+    /**
      * Constructor.
      * @param pManager the Report Manager
      */
@@ -115,11 +120,20 @@ public class CapitalGains
         return theSecurities.iterator();
     }
 
+    /**
+     * Obtain the endDate.
+     * @return the endDate
+     */
+    protected TethysDate getEndDate() {
+        return theEndDate;
+    }
+
     @Override
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
         PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
         theSecurities = pAnalysis.getSecurities();
+        theEndDate = pAnalysis.getDateRange().getEnd();
 
         /* Access the totals */
         PortfolioBucket myTotals = myPortfolios.getTotals();

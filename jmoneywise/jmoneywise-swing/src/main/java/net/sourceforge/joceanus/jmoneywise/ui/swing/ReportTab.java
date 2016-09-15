@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.reports.ReportManager;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseReportSelect;
@@ -334,7 +335,7 @@ public class ReportTab
         StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(mySelect, myFilter);
 
         /* Request the action */
-        theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, new PrometheusGoToEvent(MainTab.ACTION_VIEWSTATEMENT, myStatement));
+        theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, new PrometheusGoToEvent<>(MoneyWiseGoToId.STATEMENT, myStatement));
     }
 
     /**

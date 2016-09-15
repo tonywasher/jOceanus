@@ -158,11 +158,6 @@ public class Analysis
     private static final MetisField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_DILUTIONS.getValue());
 
     /**
-     * SecurityTransactions Field Id.
-     */
-    private static final MetisField FIELD_SECURITIES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getListName());
-
-    /**
      * The DataSet.
      */
     private final MoneyWiseData theData;
@@ -509,11 +504,6 @@ public class Analysis
             return theDilutions.isEmpty()
                                           ? MetisFieldValue.SKIP
                                           : theDilutions;
-        }
-        if (FIELD_SECURITIES.equals(pField)) {
-            return theSecurities.isEmpty()
-                                           ? MetisFieldValue.SKIP
-                                           : theSecurities;
         }
 
         /* Unknown */

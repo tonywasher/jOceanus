@@ -48,11 +48,6 @@ public abstract class TethysHelpModule {
     protected static final String ATTR_INITIAL = "initial";
 
     /**
-     * The stream close error.
-     */
-    public static final String ERROR_STREAM = "Failed to close stream";
-
-    /**
      * The Help Entries.
      */
     private final List<TethysHelpEntry> theEntries;

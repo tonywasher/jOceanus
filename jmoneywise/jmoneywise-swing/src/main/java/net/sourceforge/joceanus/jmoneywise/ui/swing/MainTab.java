@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadLoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadWriteQIF;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
@@ -55,41 +56,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.Tethy
  */
 public class MainTab
         extends MainWindow<MoneyWiseData, MoneyWiseDataType> {
-    /**
-     * View Statement.
-     */
-    public static final int ACTION_VIEWSTATEMENT = 1;
-
-    /**
-     * View Account.
-     */
-    public static final int ACTION_VIEWACCOUNT = ACTION_VIEWSTATEMENT + 1;
-
-    /**
-     * View Category.
-     */
-    public static final int ACTION_VIEWCATEGORY = ACTION_VIEWACCOUNT + 1;
-
-    /**
-     * View Tag.
-     */
-    public static final int ACTION_VIEWTAG = ACTION_VIEWCATEGORY + 1;
-
-    /**
-     * View Region.
-     */
-    public static final int ACTION_VIEWREGION = ACTION_VIEWTAG + 1;
-
-    /**
-     * View TaxYear.
-     */
-    public static final int ACTION_VIEWTAXYEAR = ACTION_VIEWREGION + 1;
-
-    /**
-     * View Static.
-     */
-    public static final int ACTION_VIEWSTATIC = ACTION_VIEWTAXYEAR + 1;
-
     /**
      * Report tab title.
      */
@@ -455,24 +421,25 @@ public class MainTab
      */
     private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
-        PrometheusGoToEvent myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
+        @SuppressWarnings("unchecked")
+        PrometheusGoToEvent<MoneyWiseGoToId> myEvent = (PrometheusGoToEvent<MoneyWiseGoToId>) pEvent.getDetails(PrometheusGoToEvent.class);
 
         /* Access event and obtain details */
         switch (myEvent.getId()) {
             /* View the requested statement */
-            case ACTION_VIEWSTATEMENT:
+            case STATEMENT:
                 @SuppressWarnings("unchecked")
                 StatementSelect<JComponent, Icon> mySelect = myEvent.getDetails(StatementSelect.class);
                 selectStatement(mySelect);
                 break;
 
             /* Access maintenance */
-            case ACTION_VIEWACCOUNT:
-            case ACTION_VIEWTAXYEAR:
-            case ACTION_VIEWCATEGORY:
-            case ACTION_VIEWREGION:
-            case ACTION_VIEWTAG:
-            case ACTION_VIEWSTATIC:
+            case ACCOUNT:
+            case TAXYEAR:
+            case CATEGORY:
+            case REGION:
+            case TAG:
+            case STATIC:
                 selectMaintenance(myEvent);
                 break;
             default:

@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
 
 /**
  * Core representation of a tag.
@@ -213,7 +212,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
 
     @Override
     public int hashCode() {
-        return (theBranch.hashCode() * ThemisSvnRepository.HASH_PRIME) + theTag;
+        return (theBranch.hashCode() * ThemisScmRepository.HASH_PRIME) + theTag;
     }
 
     /**

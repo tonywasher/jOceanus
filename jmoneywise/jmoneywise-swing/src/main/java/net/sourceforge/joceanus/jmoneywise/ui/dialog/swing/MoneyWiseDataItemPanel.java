@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Region;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.ui.swing.MainTab;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * @param <T> the item type
  */
 public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
-        extends DataItemPanel<T, MoneyWiseDataType> {
+        extends DataItemPanel<T, MoneyWiseGoToId, MoneyWiseDataType> {
     /**
      * Filter text.
      */
@@ -89,7 +89,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
     }
 
     @Override
-    protected void buildGoToMenu(final TethysScrollMenu<PrometheusGoToEvent, ?> pMenu) {
+    protected void buildGoToMenu(final TethysScrollMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?> pMenu) {
         /* Clear the goTo lists */
         theGoToFilterList.clear();
         theGoToItemList.clear();
@@ -150,12 +150,12 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
      * Process goTo items.
      * @param pMenu the menu
      */
-    private void processGoToItems(final TethysScrollMenu<PrometheusGoToEvent, ?> pMenu) {
+    private void processGoToItems(final TethysScrollMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?> pMenu) {
         /* Process goTo filters */
         processGoToFilters(pMenu);
 
         /* Create a simple map for top-level categories */
-        Map<MoneyWiseDataType, TethysScrollSubMenu<PrometheusGoToEvent, ?>> myMap = new EnumMap<>(MoneyWiseDataType.class);
+        Map<MoneyWiseDataType, TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?>> myMap = new EnumMap<>(MoneyWiseDataType.class);
 
         /* Loop through the items */
         Iterator<DataItem<MoneyWiseDataType>> myIterator = theGoToItemList.iterator();
@@ -164,7 +164,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
 
             /* Determine DataType and obtain parent menu */
             MoneyWiseDataType myType = myItem.getItemType();
-            TethysScrollSubMenu<PrometheusGoToEvent, ?> myMenu = myMap.get(myType);
+            TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?> myMenu = myMap.get(myType);
 
             /* If this is a new menu */
             if (myMenu == null) {
@@ -174,38 +174,38 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
             }
 
             /* set default values */
-            int myId = -1;
+            MoneyWiseGoToId myId = null;
             String myName = null;
 
             /* Handle differing items */
             if (myItem instanceof StaticData) {
                 StaticData<?, ?, ?> myStatic = (StaticData<?, ?, ?>) myItem;
-                myId = MainTab.ACTION_VIEWSTATIC;
+                myId = MoneyWiseGoToId.STATIC;
                 myName = myStatic.getName();
             } else if (myItem instanceof AssetBase) {
                 AssetBase<?> myAccount = (AssetBase<?>) myItem;
-                myId = MainTab.ACTION_VIEWACCOUNT;
+                myId = MoneyWiseGoToId.ACCOUNT;
                 myName = myAccount.getName();
             } else if (myItem instanceof CategoryBase) {
                 CategoryBase<?, ?, ?> myCategory = (CategoryBase<?, ?, ?>) myItem;
-                myId = MainTab.ACTION_VIEWCATEGORY;
+                myId = MoneyWiseGoToId.CATEGORY;
                 myName = myCategory.getName();
             } else if (myItem instanceof TaxYear) {
                 TaxYear myYear = (TaxYear) myItem;
-                myId = MainTab.ACTION_VIEWTAXYEAR;
+                myId = MoneyWiseGoToId.TAXYEAR;
                 myName = myYear.getTaxYear().toString();
             } else if (myItem instanceof Region) {
                 Region myRegion = (Region) myItem;
-                myId = MainTab.ACTION_VIEWREGION;
+                myId = MoneyWiseGoToId.REGION;
                 myName = myRegion.getName();
             } else if (myItem instanceof TransactionTag) {
                 TransactionTag myTag = (TransactionTag) myItem;
-                myId = MainTab.ACTION_VIEWTAG;
+                myId = MoneyWiseGoToId.TAG;
                 myName = myTag.getName();
             }
 
             /* Build the item */
-            PrometheusGoToEvent myEvent = createGoToEvent(myId, myItem);
+            PrometheusGoToEvent<MoneyWiseGoToId> myEvent = createGoToEvent(myId, myItem);
             myMenu.getSubMenu().addItem(myEvent, myName);
         }
     }
@@ -214,9 +214,9 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
      * Process goTo filters.
      * @param pMenu the menu
      */
-    private void processGoToFilters(final TethysScrollMenu<PrometheusGoToEvent, ?> pMenu) {
+    private void processGoToFilters(final TethysScrollMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?> pMenu) {
         /* Create a simple map for top-level categories */
-        TethysScrollSubMenu<PrometheusGoToEvent, ?> myMenu = null;
+        TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?> myMenu = null;
 
         /* Loop through the items */
         Iterator<AnalysisFilter<?, ?>> myIterator = theGoToFilterList.iterator();
@@ -231,10 +231,10 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
 
             /* Determine action */
             StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(null, myFilter);
-            int myId = MainTab.ACTION_VIEWSTATEMENT;
+            MoneyWiseGoToId myId = MoneyWiseGoToId.STATEMENT;
 
             /* Build the item */
-            PrometheusGoToEvent myEvent = createGoToEvent(myId, myStatement);
+            PrometheusGoToEvent<MoneyWiseGoToId> myEvent = createGoToEvent(myId, myStatement);
             myMenu.getSubMenu().addItem(myEvent, myFilter.getName());
         }
     }

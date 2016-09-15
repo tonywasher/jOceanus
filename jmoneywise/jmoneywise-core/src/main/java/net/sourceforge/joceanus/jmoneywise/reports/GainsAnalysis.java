@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -98,7 +99,7 @@ public class GainsAnalysis {
         theHTMLBuilder.makeTitleCell(theTable, MoneyWiseDataType.TRANSACTION.getItemName());
 
         /* Format the history */
-        formatHistory(pReport.transactionIterator());
+        formatHistory(pReport.transactionIterator(), pReport.getEndDate());
     }
 
     /**
@@ -112,11 +113,19 @@ public class GainsAnalysis {
     /**
      * format the cost history.
      * @param pIterator the transaction iterator
+     * @param pEndDate the endDate
      */
-    private void formatHistory(final Iterator<Transaction> pIterator) {
+    private void formatHistory(final Iterator<Transaction> pIterator,
+                               final TethysDate pEndDate) {
         /* Loop through the transactions */
         while (pIterator.hasNext()) {
             Transaction myTrans = pIterator.next();
+
+            /* Check for End of report */
+            if ((pEndDate != null)
+                && (pEndDate.compareTo(myTrans.getDate()) < 0)) {
+                break;
+            }
 
             /* If the transaction relates to the security */
             SecurityValues myValues = theBucket.getValuesForTransaction(myTrans);

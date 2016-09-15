@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag.ScmTagList;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
 
 /**
  * Represents a branch of a component in the repository.
@@ -391,7 +390,7 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
 
     @Override
     public int hashCode() {
-        return (theComponent.hashCode() * ThemisSvnRepository.HASH_PRIME) + getVersionHash();
+        return (theComponent.hashCode() * ThemisScmRepository.HASH_PRIME) + getVersionHash();
     }
 
     /**

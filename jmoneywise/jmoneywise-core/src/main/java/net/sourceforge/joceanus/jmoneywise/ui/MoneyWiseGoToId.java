@@ -20,57 +20,44 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui;
+package net.sourceforge.joceanus.jmoneywise.ui;
 
 /**
- * Prometheus GoTo Event.
- * @param <I> the id enum
+ * GoTo Ids.
  */
-public class PrometheusGoToEvent<I extends Enum<I>> {
+public enum MoneyWiseGoToId {
     /**
-     * Object id.
+     * Statement.
      */
-    private final I theId;
+    STATEMENT,
 
     /**
-     * Object details.
+     * Account.
      */
-    private final Object theDetails;
+    ACCOUNT,
 
     /**
-     * Constructor.
-     * @param pId the id
-     * @param pDetails the details
+     * Category.
      */
-    public PrometheusGoToEvent(final I pId,
-                               final Object pDetails) {
-        theId = pId;
-        theDetails = pDetails;
-    }
+    CATEGORY,
 
     /**
-     * Obtain id.
-     * @return the id
+     * Tag.
      */
-    public I getId() {
-        return theId;
-    }
+    TAG,
 
     /**
-     * Obtain details.
-     * @return the details
+     * Region.
      */
-    public Object getDetails() {
-        return theDetails;
-    }
+    REGION,
 
     /**
-     * Obtain details.
-     * @param <T> the details type
-     * @param pClass the class of the details
-     * @return the details
+     * TaxYear.
      */
-    public <T> T getDetails(final Class<T> pClass) {
-        return pClass.cast(theDetails);
-    }
+    TAXYEAR,
+
+    /**
+     * Static.
+     */
+    STATIC;
 }

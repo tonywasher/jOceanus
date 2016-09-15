@@ -40,7 +40,6 @@ import javax.swing.text.html.StyleSheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 
 /**
@@ -52,6 +51,11 @@ public class TethysSwingHTMLManager
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(TethysSwingHTMLManager.class);
+
+    /**
+     * The stream close error.
+     */
+    private static final String ERROR_STREAM = "Failed to close stream";
 
     /**
      * EditorPane.
@@ -194,7 +198,7 @@ public class TethysSwingHTMLManager
                         theEditor.setPage(e.getURL());
                     }
                 } catch (IOException t) {
-                    LOGGER.error(TethysHelpModule.ERROR_STREAM, t);
+                    LOGGER.error(ERROR_STREAM, t);
                 }
             }
         }
