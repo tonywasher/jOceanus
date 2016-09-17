@@ -1262,7 +1262,7 @@ public class TransactionAnalyser
      */
     private void processChargeableGain(final SecurityHolding pHolding,
                                        final AssetBase<?> pCredit) {
-        /* Taxable Gain is from the debit account and may or may not have units */
+        /* Chargeable Gain is from the debit account and may or may not have units */
         Security myDebit = pHolding.getSecurity();
         TethysMoney myAmount = theHelper.getDebitAmount();
         TethysUnits myDeltaUnits = theHelper.getDebitUnits();

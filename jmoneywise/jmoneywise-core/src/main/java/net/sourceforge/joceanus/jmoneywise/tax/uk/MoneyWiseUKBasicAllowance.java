@@ -194,7 +194,6 @@ public abstract class MoneyWiseUKBasicAllowance
         }
 
         /* Subtract remaining income from the loSavings band */
-        myAmount = new TethysMoney(myAmount);
         myAmount.subtractAmount(myPreSavings);
 
         /* If we are negative, reset to zero */

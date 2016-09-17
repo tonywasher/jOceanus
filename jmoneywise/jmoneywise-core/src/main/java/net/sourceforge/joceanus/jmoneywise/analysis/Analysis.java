@@ -408,13 +408,16 @@ public class Analysis
         /* Allocate tax calculations if required */
         if (myTaxYear == null) {
             theTaxCalculations = null;
-            theTaxAnalysis = null;
 
         } else {
             theTaxCalculations = new TaxCalcBucketList(this, myTaxYear);
-            MoneyWiseTaxYear myYear = pManager.getTaxYearForDate(myTaxYear.getTaxYear());
-            theTaxAnalysis = myYear.analyseTaxYear(thePreferences, theTaxBasis);
         }
+
+        /* Handle new tax calculations */
+        MoneyWiseTaxYear myYear = pManager.getTaxYearForRange(theDateRange);
+        theTaxAnalysis = myYear != null
+                                        ? myYear.analyseTaxYear(thePreferences, theTaxBasis)
+                                        : null;
     }
 
     @Override

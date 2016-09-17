@@ -27,13 +27,16 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataMap;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYearCache;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 
 /**
- * Tax Year cache.
+ * UK Tax Year cache.
  */
 public class MoneyWiseUKTaxYearCache
+        extends MoneyWiseTaxYearCache
         implements MetisDataMap, MetisDataFormat {
     /**
      * The cache.
@@ -44,6 +47,9 @@ public class MoneyWiseUKTaxYearCache
      * Constructor.
      */
     public MoneyWiseUKTaxYearCache() {
+        /* Initialise underlying class */
+        super(TethysFiscalYear.UK);
+
         /* Create the map */
         theCache = new LinkedHashMap<>();
 
@@ -95,13 +101,16 @@ public class MoneyWiseUKTaxYearCache
         theCache.put(pTaxYear.getYear(), pTaxYear);
     }
 
-    /**
-     * Obtain the taxYear for the date.
-     * @param pDate the date
-     * @return the amount
-     */
+    @Override
+    public MoneyWiseUKTaxYear getTaxYearForRange(final TethysDateRange pRange) {
+        return checkTaxYearRange(pRange)
+                                         ? getTaxYearForDate(pRange.getEnd())
+                                         : null;
+    }
+
+    @Override
     public MoneyWiseUKTaxYear getTaxYearForDate(final TethysDate pDate) {
-        TethysDate myDate = TethysFiscalYear.UK.endOfYear(pDate);
+        TethysDate myDate = getTaxYearDate(pDate);
         return theCache.get(myDate);
     }
 

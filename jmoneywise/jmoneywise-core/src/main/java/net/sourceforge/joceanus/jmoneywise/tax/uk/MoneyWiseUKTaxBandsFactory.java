@@ -135,7 +135,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_1993 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(2000), getRate(20)),
             new MoneyWiseTaxBand(getAmount(21700), getRate(25)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 1994 TaxBands.
@@ -143,7 +143,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_1994 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(2500), getRate(20)),
             new MoneyWiseTaxBand(getAmount(21200), getRate(25)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 1995 TaxBands.
@@ -151,7 +151,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_1995 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(3000), getRate(20)),
             new MoneyWiseTaxBand(getAmount(20700), getRate(25)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 1996 TaxBands.
@@ -159,7 +159,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_1996 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(3200), getRate(20)),
             new MoneyWiseTaxBand(getAmount(21100), getRate(25)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 1997 TaxBands.
@@ -167,7 +167,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_1997 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(3900), getRate(20)),
             new MoneyWiseTaxBand(getAmount(21600), getRate(24)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 1998 TaxBands.
@@ -175,7 +175,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_1998 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(4100), getRate(20)),
             new MoneyWiseTaxBand(getAmount(22000), getRate(23)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 1999 TaxBands.
@@ -183,7 +183,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_1999 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(4300), getRate(20)),
             new MoneyWiseTaxBand(getAmount(22800), getRate(23)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 2000 TaxBands.
@@ -191,7 +191,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_2000 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(1500), getRate(10)),
             new MoneyWiseTaxBand(getAmount(26500), getRate(23)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 2001 TaxBands.
@@ -199,7 +199,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_2001 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(1520), getRate(10)),
             new MoneyWiseTaxBand(getAmount(26880), getRate(22)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 2002 TaxBands.
@@ -207,7 +207,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_2002 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(1880), getRate(10)),
             new MoneyWiseTaxBand(getAmount(27520), getRate(22)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 2003 TaxBands.
@@ -215,7 +215,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_2003 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(1920), getRate(10)),
             new MoneyWiseTaxBand(getAmount(27980), getRate(22)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 2004 TaxBands.
@@ -223,7 +223,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_2004 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(1960), getRate(10)),
             new MoneyWiseTaxBand(getAmount(28540), getRate(22)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 2005 TaxBands.
@@ -231,7 +231,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_2005 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(2020), getRate(10)),
             new MoneyWiseTaxBand(getAmount(29380), getRate(22)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 2006 TaxBands.
@@ -239,7 +239,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_2006 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(2090), getRate(10)),
             new MoneyWiseTaxBand(getAmount(30310), getRate(22)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 2007 TaxBands.
@@ -247,7 +247,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_2007 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(2150), getRate(10)),
             new MoneyWiseTaxBand(getAmount(31150), getRate(22)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 2008 TaxBands.
@@ -255,7 +255,7 @@ public final class MoneyWiseUKTaxBandsFactory {
     protected static final MoneyWiseUKTaxBands BANDS_2008 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(2230), getRate(10)),
             new MoneyWiseTaxBand(getAmount(32370), getRate(22)),
-            new MoneyWiseTaxBand(getRate(40))));
+            new MoneyWiseTaxBand(getRate(40))), Boolean.TRUE);
 
     /**
      * The 2009 TaxBands.

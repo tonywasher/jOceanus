@@ -29,10 +29,10 @@ import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldSetItem;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldEvent;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.BooleanCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.CalendarCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.ComboBoxCellEditor;

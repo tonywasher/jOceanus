@@ -20,53 +20,64 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.field;
-
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+package net.sourceforge.joceanus.jmetis.data;
 
 /**
- * Basic Field interface.
+ * Enumeration of FieldSet states.
  * @author Tony Washer
  */
-public interface MetisFieldSetItem
-        extends MetisDataContents {
+public enum MetisFieldState {
     /**
-     * Is the item editable?
+     * Normal state.
+     */
+    NORMAL,
+
+    /**
+     * Changed state.
+     */
+    CHANGED,
+
+    /**
+     * New state.
+     */
+    NEW,
+
+    /**
+     * Deleted state.
+     */
+    DELETED,
+
+    /**
+     * Restored state.
+     */
+    RESTORED,
+
+    /**
+     * Error state.
+     */
+    ERROR;
+
+    /**
+     * Is the state in error?
      * @return true/false
      */
-    boolean isEditable();
+    public boolean isError() {
+        return this == ERROR;
+    }
 
     /**
-     * Is the item disabled?
+     * Is the state changed?
      * @return true/false
      */
-    boolean isDisabled();
-
-    /**
-     * Get the state for the item.
-     * @return the render state
-     */
-    MetisFieldState getItemState();
-
-    /**
-     * Get the state for the field.
-     * @param pField the field
-     * @return the render state
-     */
-    MetisFieldState getFieldState(final MetisField pField);
-
-    /**
-     * Get the Errors for the field.
-     * @param pField the field
-     * @return the error text
-     */
-    String getFieldErrors(final MetisField pField);
-
-    /**
-     * Get the Errors for the fields.
-     * @param pFields the fields
-     * @return the error text
-     */
-    String getFieldErrors(final MetisField[] pFields);
+    public boolean isChanged() {
+        switch (this) {
+            case CHANGED:
+            case NEW:
+            case RESTORED:
+            case ERROR:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

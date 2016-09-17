@@ -248,6 +248,16 @@ public class TethysMoney
     }
 
     /**
+     * calculate the value of this money at a given ratio.
+     * @param pRatio the ratio to multiply by
+     * @return the calculated value
+     */
+    public TethysMoney valueAtRatio(final TethysRatio pRatio) {
+        /* Calculate the money at this rate */
+        return new TethysMoney(this, pRatio);
+    }
+
+    /**
      * calculate the gross value of this money at a given rate used to convert from net to gross
      * values form interest and dividends.
      * @param pRate the rate to calculate at

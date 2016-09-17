@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
@@ -88,11 +87,11 @@ public abstract class MoneyWiseTaxYear
     /**
      * Obtain the taxAnalysis for the year.
      * @param pPreferences the preference manager
-     * @param pTaxBasis the tax basis
+     * @param pTaxSource the tax source
      * @return the tax analysis
      */
     public abstract MoneyWiseTaxAnalysis analyseTaxYear(final MetisPreferenceManager pPreferences,
-                                                        final TaxBasisBucketList pTaxBasis);
+                                                        final MoneyWiseTaxSource pTaxSource);
 
     /**
      * Obtain the data fields.

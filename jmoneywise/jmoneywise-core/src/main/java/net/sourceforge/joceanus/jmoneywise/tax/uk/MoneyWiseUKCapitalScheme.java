@@ -22,11 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -39,7 +44,6 @@ public abstract class MoneyWiseUKCapitalScheme
         implements MetisDataContents {
     @Override
     protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
-                                           final TaxBasisClass pBasis,
                                            final TethysMoney pAmount) {
         /* Adjust against the capital allowance */
         TethysMoney myRemaining = adjustForAllowance(pConfig.getCapitalAllowance(), pAmount);
@@ -47,7 +51,7 @@ public abstract class MoneyWiseUKCapitalScheme
         /* If we have any gains left */
         if (myRemaining.isNonZero()) {
             /* Adjust the basic allowance */
-            myRemaining = super.adjustAllowances(pConfig, pBasis, myRemaining);
+            myRemaining = super.adjustAllowances(pConfig, myRemaining);
         }
 
         /* Return unallocated income */
@@ -56,20 +60,18 @@ public abstract class MoneyWiseUKCapitalScheme
 
     @Override
     protected TethysMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
-                                               final TaxBasisClass pBasis,
                                                final TethysMoney pAmount) {
-        /* Obtain the amount covered by the basic allowance */
-        TethysMoney myAmount = super.getAmountInAllowance(pConfig, pBasis, pAmount);
+        /* Obtain the amount covered by the capital allowance */
+        TethysMoney myAmount = getAmountInBand(pConfig.getCapitalAllowance(), pAmount);
 
-        /* If we have income left over and this is room rentalt */
-        if ((myAmount.compareTo(pAmount) < 0)
-            && TaxBasisClass.ROOMRENTAL.equals(pBasis)) {
+        /* If we have income left over */
+        if (myAmount.compareTo(pAmount) < 0) {
             /* Calculate remaining amount */
             TethysMoney myRemaining = new TethysMoney(pAmount);
             myRemaining.subtractAmount(myAmount);
 
-            /* Calculate the amount covered by rental allowance */
-            TethysMoney myXtra = getAmountInBand(pConfig.getRentalAllowance(), myRemaining);
+            /* Calculate the amount covered by basic allowance */
+            TethysMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);
 
             /* Determine the total amount covered by the allowance */
             myAmount = new TethysMoney(myAmount);
@@ -112,7 +114,7 @@ public abstract class MoneyWiseUKCapitalScheme
          * Obtain the base rate.
          * @return the base rate
          */
-        protected TethysRate getBaseRate() {
+        protected TethysRate getBasicRate() {
             return theBaseRate;
         }
 
@@ -143,6 +145,19 @@ public abstract class MoneyWiseUKCapitalScheme
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
+        }
+
+        @Override
+        protected Iterator<MoneyWiseTaxBand> taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
+                                                             final TaxBasisClass pBasis) {
+            /* Create a new List */
+            List<MoneyWiseTaxBand> myList = new ArrayList<>();
+
+            /* Add the single band */
+            myList.add(new MoneyWiseTaxBand(getBasicRate()));
+
+            /* Return the iterator */
+            return myList.iterator();
         }
     }
 
@@ -204,6 +219,24 @@ public abstract class MoneyWiseUKCapitalScheme
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
+        }
+
+        @Override
+        protected Iterator<MoneyWiseTaxBand> taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
+                                                             final TaxBasisClass pBasis) {
+            /* Create a new List */
+            List<MoneyWiseTaxBand> myList = new ArrayList<>();
+
+            /* Access underlying iterator and obtain first band */
+            Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
+            MoneyWiseTaxBand myFirstBand = myIterator.next();
+
+            /* Add the two bands */
+            myList.add(new MoneyWiseTaxBand(myFirstBand.getAmount(), getBasicRate()));
+            myList.add(new MoneyWiseTaxBand(getHighRate()));
+
+            /* Return the iterator */
+            return myList.iterator();
         }
     }
 
@@ -304,6 +337,15 @@ public abstract class MoneyWiseUKCapitalScheme
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
+        }
+
+        @Override
+        protected Iterator<MoneyWiseTaxBand> taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
+                                                             final TaxBasisClass pBasis) {
+            /* Switch on taxBasis */
+            return TaxBasisClass.RESIDENTIALGAINS.equals(pBasis)
+                                                                 ? theResidential.taxBandIterator(pConfig, pBasis)
+                                                                 : super.taxBandIterator(pConfig, pBasis);
         }
     }
 }

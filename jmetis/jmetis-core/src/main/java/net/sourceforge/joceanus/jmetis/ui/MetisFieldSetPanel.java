@@ -29,8 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetCharArrayItem;
 import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetDateItem;
 import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelItem.MetisFieldSetDilutionItem;

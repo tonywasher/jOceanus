@@ -27,6 +27,7 @@ import java.util.Currency;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;

@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmetis.field.swing;
 
 import java.awt.Color;
 
+import net.sourceforge.joceanus.jmetis.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferenceKey;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldState;
 
 /**
  * Render configuration.

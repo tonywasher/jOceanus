@@ -1160,11 +1160,14 @@ public final class TransactionCategoryBucket
             /* Adjust for Tax Credit */
             TethysMoney myTaxCredit = pTrans.getTaxCredit();
             if (myTaxCredit != null) {
+                /* Adjust the taxCredit category */
                 theTaxCredit.addExpense(pTrans, myTaxCredit);
-                myGains.addAmount(myTaxCredit);
 
                 /* Adjust tax basis */
                 theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXPAID, myTaxCredit);
+                myTaxCredit = new TethysMoney(myTaxCredit);
+                myTaxCredit.negate();
+                theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myTaxCredit);
             }
 
             /* Adjust tax basis */

@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxAnalysis;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxDueBucket;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxSource;
@@ -51,7 +52,7 @@ public class MoneyWiseUKTaxAnalysis
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseTaxDueBucket.class.getSimpleName());
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKTaxAnalysis.class.getSimpleName());
 
     /**
      * TaxYear Field Id.
@@ -89,6 +90,11 @@ public class MoneyWiseUKTaxAnalysis
     private final MoneyWiseUKTaxYear theTaxYear;
 
     /**
+     * The TaxSource.
+     */
+    private final MoneyWiseTaxSource theTaxSource;
+
+    /**
      * The TaxConfig.
      */
     private final MoneyWiseUKTaxConfig theTaxConfig;
@@ -116,7 +122,7 @@ public class MoneyWiseUKTaxAnalysis
     /**
      * TaxPreferenceKeys.
      */
-    public enum MoneyWiseTaxPreferenceKey implements MetisPreferenceKey {
+    public enum MoneyWiseUKTaxPreferenceKey implements MetisPreferenceKey {
         /**
          * Birth Date.
          */
@@ -137,8 +143,8 @@ public class MoneyWiseUKTaxAnalysis
          * @param pName the name
          * @param pDisplay the display string;
          */
-        MoneyWiseTaxPreferenceKey(final String pName,
-                                  final MoneyWiseTaxResource pDisplay) {
+        MoneyWiseUKTaxPreferenceKey(final String pName,
+                                    final MoneyWiseTaxResource pDisplay) {
             theName = pName;
             theDisplay = pDisplay.getValue();
         }
@@ -157,8 +163,8 @@ public class MoneyWiseUKTaxAnalysis
     /**
      * Taxation Preferences.
      */
-    public static class MoneyWiseTaxPreferences
-            extends MetisPreferenceSet<MoneyWiseTaxPreferenceKey> {
+    public static class MoneyWiseUKTaxPreferences
+            extends MetisPreferenceSet<MoneyWiseUKTaxPreferenceKey> {
         /**
          * Default year.
          */
@@ -169,19 +175,19 @@ public class MoneyWiseUKTaxAnalysis
          * @param pManager the preference manager
          * @throws OceanusException on error
          */
-        public MoneyWiseTaxPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MoneyWiseTaxPreferenceKey.class, MoneyWiseTaxResource.TAXPREF_NAME);
+        public MoneyWiseUKTaxPreferences(final MetisPreferenceManager pManager) throws OceanusException {
+            super(pManager, MoneyWiseUKTaxPreferenceKey.class, MoneyWiseTaxResource.TAXPREF_NAME);
         }
 
         @Override
         protected void definePreferences() {
-            defineDatePreference(MoneyWiseTaxPreferenceKey.BIRTHDATE);
+            defineDatePreference(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);
         }
 
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the birthDate is specified */
-            MetisDatePreference<MoneyWiseTaxPreferenceKey> myPref = getDatePreference(MoneyWiseTaxPreferenceKey.BIRTHDATE);
+            MetisDatePreference<MoneyWiseUKTaxPreferenceKey> myPref = getDatePreference(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);
             if (!myPref.isAvailable()) {
                 myPref.setValue(new TethysDate(YEAR, Month.JANUARY, 1));
             }
@@ -199,14 +205,15 @@ public class MoneyWiseUKTaxAnalysis
                                      final MoneyWiseUKTaxYear pTaxYear) {
         /* Store the parameters */
         theTaxYear = pTaxYear;
+        theTaxSource = pTaxSource;
 
         /* Create the TaxDue Buckets */
         theTaxBuckets = new ArrayList<>();
 
         /* Determine the client birthday */
-        MoneyWiseTaxPreferences myPreferences = pPrefMgr.getPreferenceSet(MoneyWiseTaxPreferences.class);
-        TethysDate myBirthday = myPreferences.getDateValue(MoneyWiseTaxPreferenceKey.BIRTHDATE);
-        theTaxConfig = new MoneyWiseUKTaxConfig(theTaxYear, pTaxSource, myBirthday);
+        MoneyWiseUKTaxPreferences myPreferences = pPrefMgr.getPreferenceSet(MoneyWiseUKTaxPreferences.class);
+        TethysDate myBirthday = myPreferences.getDateValue(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);
+        theTaxConfig = new MoneyWiseUKTaxConfig(theTaxYear, theTaxSource, myBirthday);
 
         /* Create the totals */
         theTaxPaid = pTaxSource.getAmountForTaxBasis(TaxBasisClass.TAXPAID);
@@ -287,8 +294,34 @@ public class MoneyWiseUKTaxAnalysis
     protected void calculateTaxProfit() {
         /* Calculate the profit */
         theTaxProfit.setZero();
+        theTaxProfit.addAmount(theTaxDue);
         theTaxProfit.addAmount(theTaxPaid);
-        theTaxProfit.subtractAmount(theTaxPaid);
+    }
+
+    /**
+     * Process the item.
+     * @param pBasis the tax basis
+     * @param pScheme the income scheme
+     */
+    protected void processItem(final TaxBasisClass pBasis,
+                               final MoneyWiseUKIncomeScheme pScheme) {
+        /* Obtain the amount */
+        TethysMoney myAmount = theTaxSource.getAmountForTaxBasis(pBasis);
+
+        /* Ignore zero or negative amounts */
+        if (myAmount.isZero() || !myAmount.isPositive()) {
+            return;
+        }
+
+        /* Take a clone of the taxConfig */
+        MoneyWiseUKTaxConfig myConfig = theTaxConfig.cloneIt();
+
+        /* Allocate the amount to the various taxBands */
+        MoneyWiseTaxBandSet myBands = pScheme.allocateToTaxBands(theTaxConfig, pBasis, myAmount);
+
+        /* Create the TaxDueBucket and add it to the list */
+        MoneyWiseTaxDueBucket myBucket = new MoneyWiseTaxDueBucket(pBasis, myBands, myConfig);
+        theTaxBuckets.add(myBucket);
     }
 
     @Override

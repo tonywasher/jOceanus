@@ -22,11 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -42,16 +47,13 @@ public abstract class MoneyWiseUKInterestScheme
      * @param pTaxYear the taxYear
      * @return the taxCredit rate
      */
-    protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
-        return null;
-    }
+    protected abstract TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear);
 
     @Override
     protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
-                                           final TaxBasisClass pBasis,
                                            final TethysMoney pAmount) {
         /* Adjust against the basic allowance */
-        TethysMoney myRemaining = super.adjustAllowances(pConfig, pBasis, pAmount);
+        TethysMoney myRemaining = super.adjustAllowances(pConfig, pAmount);
 
         /* If we have any interest left */
         if (myRemaining.isNonZero()) {
@@ -59,7 +61,7 @@ public abstract class MoneyWiseUKInterestScheme
             TethysMoney myInterest = adjustForAllowance(pConfig.getSavingsAllowance(), myRemaining);
 
             /* Adjust any loSavings band noting that it still counts against the taxBand */
-            adjustForAllowance(pConfig.getSavingsAllowance(), myInterest);
+            adjustForAllowance(pConfig.getLoSavingsBand().getAmount(), myInterest);
         }
 
         /* Return unallocated income */
@@ -68,10 +70,9 @@ public abstract class MoneyWiseUKInterestScheme
 
     @Override
     protected TethysMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
-                                               final TaxBasisClass pBasis,
                                                final TethysMoney pAmount) {
         /* Obtain the amount covered by the basic allowance */
-        TethysMoney myAmount = super.getAmountInAllowance(pConfig, pBasis, pAmount);
+        TethysMoney myAmount = super.getAmountInAllowance(pConfig, pAmount);
 
         /* If we have income left over */
         if (myAmount.compareTo(pAmount) < 0) {
@@ -92,6 +93,52 @@ public abstract class MoneyWiseUKInterestScheme
     }
 
     /**
+     * Obtain the base rate.
+     * @return the base rate
+     */
+    protected TethysRate getBaseRate() {
+        return null;
+    }
+
+    @Override
+    protected Iterator<MoneyWiseTaxBand> taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
+                                                         final TaxBasisClass pBasis) {
+        /* Obtain the loSavingsBand and the basicRate */
+        MoneyWiseTaxBand myLoBand = pConfig.getLoSavingsBand();
+        TethysMoney myLoAmount = myLoBand.getAmount();
+        TethysRate myRate = getBaseRate();
+
+        /* Access underlying iterator and obtain first band */
+        Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
+        MoneyWiseTaxBand myFirstBand = myIterator.next();
+        TethysMoney myAmount = new TethysMoney(myFirstBand.getAmount());
+        if (myRate == null) {
+            myRate = myFirstBand.getRate();
+        }
+
+        /* Create a new List */
+        List<MoneyWiseTaxBand> myList = new ArrayList<>();
+
+        /* Add low band if required */
+        if (myLoAmount.isNonZero()) {
+            myList.add(myLoBand);
+            myAmount.subtract(myLoAmount);
+        }
+
+        /* Add the initial band */
+        myList.add(new MoneyWiseTaxBand(myAmount, myRate));
+
+        /* Loop through remaining tax bands */
+        while (myIterator.hasNext()) {
+            MoneyWiseTaxBand myBand = myIterator.next();
+            myList.add(myBand);
+        }
+
+        /* Return the iterator */
+        return myList.iterator();
+    }
+
+    /**
      * As Income Scheme.
      */
     public static class MoneyWiseUKInterestAsIncomeScheme
@@ -103,7 +150,7 @@ public abstract class MoneyWiseUKInterestScheme
 
         @Override
         protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
-            return pTaxYear.getTaxBands().getTaxCreditRate();
+            return pTaxYear.getTaxBands().getBasicTaxRate();
         }
 
         @Override
@@ -151,10 +198,7 @@ public abstract class MoneyWiseUKInterestScheme
             theBaseRate = pRate;
         }
 
-        /**
-         * Obtain the base rate.
-         * @return the base rate
-         */
+        @Override
         protected TethysRate getBaseRate() {
             return theBaseRate;
         }

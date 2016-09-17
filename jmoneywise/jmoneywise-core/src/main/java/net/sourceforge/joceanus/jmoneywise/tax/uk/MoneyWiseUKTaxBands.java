@@ -49,6 +49,11 @@ public class MoneyWiseUKTaxBands
     private static final MetisField FIELD_STANDARD = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_STANDARD.getValue());
 
     /**
+     * Has Low Tax Band Field Id.
+     */
+    private static final MetisField FIELD_LOTAXBAND = FIELD_DEFS.declareEqualityField("hasLoTaxBand");
+
+    /**
      * Low Savings Band Field Id.
      */
     private static final MetisField FIELD_LOSAVINGS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS.getValue());
@@ -57,6 +62,11 @@ public class MoneyWiseUKTaxBands
      * Standard TaxBandSet.
      */
     private final MoneyWiseTaxBandSet theStandard;
+
+    /**
+     * Low TaxBand present.
+     */
+    private final Boolean hasLoTaxBand;
 
     /**
      * Low Savings TaxBands.
@@ -68,7 +78,17 @@ public class MoneyWiseUKTaxBands
      * @param pStandard the standard taxBands
      */
     protected MoneyWiseUKTaxBands(final MoneyWiseTaxBandSet pStandard) {
-        this(pStandard, null);
+        this(pStandard, Boolean.FALSE);
+    }
+
+    /**
+     * Constructor.
+     * @param pStandard the standard taxBands
+     * @param pHasLoTaxBand do we have a low tax band?
+     */
+    protected MoneyWiseUKTaxBands(final MoneyWiseTaxBandSet pStandard,
+                                  final Boolean pHasLoTaxBand) {
+        this(pStandard, pHasLoTaxBand, null);
     }
 
     /**
@@ -78,7 +98,20 @@ public class MoneyWiseUKTaxBands
      */
     protected MoneyWiseUKTaxBands(final MoneyWiseTaxBandSet pStandard,
                                   final MoneyWiseTaxBand pLoSavings) {
+        this(pStandard, Boolean.FALSE, pLoSavings);
+    }
+
+    /**
+     * Constructor.
+     * @param pStandard the standard taxBands
+     * @param pHasLoTaxBand do we have a low tax band?
+     * @param pLoSavings the loSavings taxBand
+     */
+    private MoneyWiseUKTaxBands(final MoneyWiseTaxBandSet pStandard,
+                                final Boolean pHasLoTaxBand,
+                                final MoneyWiseTaxBand pLoSavings) {
         theStandard = pStandard;
+        hasLoTaxBand = pHasLoTaxBand;
         theLoSavings = pLoSavings;
     }
 
@@ -88,6 +121,7 @@ public class MoneyWiseUKTaxBands
      */
     protected MoneyWiseUKTaxBands(final MoneyWiseUKTaxBands pSource) {
         theStandard = new MoneyWiseTaxBandSet(pSource.getStandardSet());
+        hasLoTaxBand = pSource.hasLoTaxBand;
         MoneyWiseTaxBand mySavings = pSource.getLoSavings();
         theLoSavings = mySavings == null
                                          ? null
@@ -103,6 +137,14 @@ public class MoneyWiseUKTaxBands
     }
 
     /**
+     * Do we have a Low taxBand?
+     * @return true/false
+     */
+    public Boolean hasLoTaxBand() {
+        return hasLoTaxBand;
+    }
+
+    /**
      * Obtain the low savings taxBand.
      * @return the taxBands
      */
@@ -111,11 +153,14 @@ public class MoneyWiseUKTaxBands
     }
 
     /**
-     * Obtain the base rate of income tax.
+     * Obtain the basic rate of income tax.
      * @return the rate
      */
-    protected TethysRate getTaxCreditRate() {
+    protected TethysRate getBasicTaxRate() {
         Iterator<MoneyWiseTaxBand> myIterator = theStandard.iterator();
+        if (hasLoTaxBand && myIterator.hasNext()) {
+            myIterator.next();
+        }
         return myIterator.hasNext()
                                     ? myIterator.next().getRate()
                                     : null;
@@ -137,6 +182,11 @@ public class MoneyWiseUKTaxBands
         if (FIELD_STANDARD.equals(pField)) {
             return theStandard;
         }
+        if (FIELD_LOTAXBAND.equals(pField)) {
+            return hasLoTaxBand
+                                ? hasLoTaxBand
+                                : MetisFieldValue.SKIP;
+        }
         if (FIELD_LOSAVINGS.equals(pField)) {
             return theLoSavings == null
                                         ? MetisFieldValue.SKIP
@@ -146,5 +196,4 @@ public class MoneyWiseUKTaxBands
         /* Not recognised */
         return MetisFieldValue.UNKNOWN;
     }
-
 }

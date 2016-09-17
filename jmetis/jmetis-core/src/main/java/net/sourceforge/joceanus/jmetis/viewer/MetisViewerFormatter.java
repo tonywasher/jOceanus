@@ -32,11 +32,11 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 

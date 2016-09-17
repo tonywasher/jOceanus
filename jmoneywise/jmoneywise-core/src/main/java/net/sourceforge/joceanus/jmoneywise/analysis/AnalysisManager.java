@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucke
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYear;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -78,7 +79,7 @@ public class AnalysisManager
     /**
      * The taxYear cache.
      */
-    private final MoneyWiseUKTaxYearCache theTaxYearCache;
+    private final MoneyWiseTaxYearCache theTaxYearCache;
 
     /**
      * The analysis map.
@@ -187,10 +188,19 @@ public class AnalysisManager
     /**
      * Obtain the taxYear for the date.
      * @param pDate the date
-     * @return the amount
+     * @return the taxYear
      */
     public MoneyWiseTaxYear getTaxYearForDate(final TethysDate pDate) {
         return theTaxYearCache.getTaxYearForDate(pDate);
+    }
+
+    /**
+     * Obtain the taxYear for the date range.
+     * @param pRange the date range
+     * @return the taxYear (or null)
+     */
+    public MoneyWiseTaxYear getTaxYearForRange(final TethysDateRange pRange) {
+        return theTaxYearCache.getTaxYearForRange(pRange);
     }
 
     /**

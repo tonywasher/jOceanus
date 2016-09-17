@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
@@ -32,17 +31,14 @@ public class MoneyWiseUKRoomRentalScheme
         extends MoneyWiseUKIncomeScheme {
     @Override
     protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
-                                           final TaxBasisClass pBasis,
                                            final TethysMoney pAmount) {
         /* Adjust against the rental allowance for room rental */
-        TethysMoney myRemaining = TaxBasisClass.ROOMRENTAL.equals(pBasis)
-                                                                          ? adjustForAllowance(pConfig.getRentalAllowance(), pAmount)
-                                                                          : pAmount;
+        TethysMoney myRemaining = adjustForAllowance(pConfig.getRentalAllowance(), pAmount);
 
         /* If we have any income left */
         if (myRemaining.isNonZero()) {
             /* Adjust the basic allowance */
-            myRemaining = super.adjustAllowances(pConfig, pBasis, myRemaining);
+            myRemaining = super.adjustAllowances(pConfig, myRemaining);
         }
 
         /* Return unallocated income */
@@ -51,10 +47,9 @@ public class MoneyWiseUKRoomRentalScheme
 
     @Override
     protected TethysMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
-                                               final TaxBasisClass pBasis,
                                                final TethysMoney pAmount) {
-        /* Obtain the amount covered by the basic allowance */
-        TethysMoney myAmount = super.getAmountInAllowance(pConfig, pBasis, pAmount);
+        /* Obtain the amount covered by the room rental allowance */
+        TethysMoney myAmount = getAmountInBand(pConfig.getCapitalAllowance(), pAmount);
 
         /* If we have income left over */
         if (myAmount.compareTo(pAmount) < 0) {
@@ -62,8 +57,8 @@ public class MoneyWiseUKRoomRentalScheme
             TethysMoney myRemaining = new TethysMoney(pAmount);
             myRemaining.subtractAmount(myAmount);
 
-            /* Calculate the amount covered by capital allowance */
-            TethysMoney myXtra = getAmountInBand(pConfig.getCapitalAllowance(), myRemaining);
+            /* Calculate the amount covered by basic allowance */
+            TethysMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);
 
             /* Determine the total amount covered by the allowance */
             myAmount = new TethysMoney(myAmount);

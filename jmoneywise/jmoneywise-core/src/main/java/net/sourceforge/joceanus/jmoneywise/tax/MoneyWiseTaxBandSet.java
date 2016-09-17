@@ -99,6 +99,17 @@ public class MoneyWiseTaxBandSet
     }
 
     /**
+     * Obtain a zero amount.
+     * @return the zero amount
+     */
+    public TethysMoney getZeroAmount() {
+        TethysMoney myAmount = theTaxBands.get(0).getAmount();
+        myAmount = new TethysMoney(myAmount);
+        myAmount.setZero();
+        return myAmount;
+    }
+
+    /**
      * MoneyWiseTaxBand class.
      */
     public static class MoneyWiseTaxBand
@@ -135,7 +146,9 @@ public class MoneyWiseTaxBandSet
          */
         public MoneyWiseTaxBand(final TethysMoney pAmount,
                                 final TethysRate pRate) {
-            theAmount = pAmount;
+            theAmount = pAmount == null
+                                        ? null
+                                        : new TethysMoney(pAmount);
             theRate = pRate;
         }
 

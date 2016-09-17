@@ -48,6 +48,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldSetItem;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldModel;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldModel.JModelBoolean;
@@ -55,8 +57,6 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldModel.JModelDateDay;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldModel.JModelObject;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldModel.JModelObjectList;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldModel.JModelString;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldState;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.swing.TethysSwingDateButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;

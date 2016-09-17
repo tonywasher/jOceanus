@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -897,7 +898,7 @@ public class TaxBasisBucket
      */
     public static class TaxBasisBucketList
             extends MetisOrderedIdList<Integer, TaxBasisBucket>
-            implements MetisDataContents {
+            implements MetisDataContents, MoneyWiseTaxSource {
         /**
          * Local Report fields.
          */
@@ -1270,6 +1271,14 @@ public class TaxBasisBucket
                     myIterator.remove();
                 }
             }
+        }
+
+        @Override
+        public TethysMoney getAmountForTaxBasis(final TaxBasisClass pBasis) {
+            TaxBasisBucket myItem = findItemById(pBasis.getClassId());
+            return myItem == null
+                                  ? new TethysMoney(theAnalysis.getCurrency().getCurrency())
+                                  : myItem.getMoneyValue(TaxBasisAttribute.GROSS);
         }
     }
 }

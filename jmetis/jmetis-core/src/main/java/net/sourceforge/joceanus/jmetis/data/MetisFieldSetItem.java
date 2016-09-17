@@ -20,64 +20,53 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.field;
+package net.sourceforge.joceanus.jmetis.data;
+
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
- * Enumeration of JFieldSet states.
+ * Basic Field interface.
  * @author Tony Washer
  */
-public enum MetisFieldState {
+public interface MetisFieldSetItem
+        extends MetisDataContents {
     /**
-     * Normal state.
-     */
-    NORMAL,
-
-    /**
-     * Changed state.
-     */
-    CHANGED,
-
-    /**
-     * New state.
-     */
-    NEW,
-
-    /**
-     * Deleted state.
-     */
-    DELETED,
-
-    /**
-     * Restored state.
-     */
-    RESTORED,
-
-    /**
-     * Error state.
-     */
-    ERROR;
-
-    /**
-     * Is the state in error?
+     * Is the item editable?
      * @return true/false
      */
-    public boolean isError() {
-        return this == ERROR;
-    }
+    boolean isEditable();
 
     /**
-     * Is the state changed?
+     * Is the item disabled?
      * @return true/false
      */
-    public boolean isChanged() {
-        switch (this) {
-            case CHANGED:
-            case NEW:
-            case RESTORED:
-            case ERROR:
-                return true;
-            default:
-                return false;
-        }
-    }
+    boolean isDisabled();
+
+    /**
+     * Get the state for the item.
+     * @return the render state
+     */
+    MetisFieldState getItemState();
+
+    /**
+     * Get the state for the field.
+     * @param pField the field
+     * @return the render state
+     */
+    MetisFieldState getFieldState(final MetisField pField);
+
+    /**
+     * Get the Errors for the field.
+     * @param pField the field
+     * @return the error text
+     */
+    String getFieldErrors(final MetisField pField);
+
+    /**
+     * Get the Errors for the fields.
+     * @param pFields the fields
+     * @return the error text
+     */
+    String getFieldErrors(final MetisField[] pFields);
 }

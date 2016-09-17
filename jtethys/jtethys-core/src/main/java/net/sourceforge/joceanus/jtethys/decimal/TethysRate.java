@@ -91,8 +91,8 @@ public class TethysRate
      */
     public static TethysRate getWholePermille(final long pValue) {
         TethysRate myRate = new TethysRate();
-        myRate.setValue(adjustDecimals(pValue, NUM_DECIMALS - 1
-                                               - TethysDecimalParser.ADJUST_PERCENT), NUM_DECIMALS);
+        myRate.setValue(adjustDecimals(pValue, NUM_DECIMALS
+                                               - TethysDecimalParser.ADJUST_PERMILLE), NUM_DECIMALS);
         return myRate;
     }
 

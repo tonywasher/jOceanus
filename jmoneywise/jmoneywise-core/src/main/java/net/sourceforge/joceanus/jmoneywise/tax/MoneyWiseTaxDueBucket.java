@@ -31,8 +31,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
@@ -69,7 +69,7 @@ public class MoneyWiseTaxDueBucket
     /**
      * Tax Basis.
      */
-    private final TaxBasisBucket theTaxBasis;
+    private final TaxBasisClass theTaxBasis;
 
     /**
      * Tax Configuration.
@@ -88,28 +88,37 @@ public class MoneyWiseTaxDueBucket
 
     /**
      * Constructor.
-     * @param pConfig the tax configuration
      * @param pBasis the tax basis
+     * @param pBands the tax bands
+     * @param pConfig the tax configuration
      */
-    public MoneyWiseTaxDueBucket(final TaxBasisBucket pBasis,
+    public MoneyWiseTaxDueBucket(final TaxBasisClass pBasis,
+                                 final MoneyWiseTaxBandSet pBands,
                                  final MoneyWiseTaxConfig pConfig) {
         /* Store parameters */
         theTaxBasis = pBasis;
-        theTaxConfig = pConfig.cloneIt();
+        theTaxConfig = pConfig;
 
         /* Allocate the tax band list */
         theTaxBands = new ArrayList<>();
 
+        /* Loop through the taxBands */
+        for (MoneyWiseTaxBand myBand : pBands) {
+            /* Create the tax band bucket */
+            MoneyWiseTaxBandBucket myBucket = new MoneyWiseTaxBandBucket(myBand);
+            theTaxBands.add(myBucket);
+        }
+
         /* Create the taxDue value */
-        theTaxDue = new TethysMoney(pBasis.getMoneyValue(TaxBasisAttribute.GROSS));
-        theTaxDue.setZero();
+        theTaxDue = pBands.getZeroAmount();
+        calculateTaxDue();
     }
 
     /**
      * Obtain the taxBasis.
      * @return the basis
      */
-    public TaxBasisBucket getTaxBasis() {
+    public TaxBasisClass getTaxBasis() {
         return theTaxBasis;
     }
 
@@ -140,22 +149,27 @@ public class MoneyWiseTaxDueBucket
     /**
      * Calculate the taxDue.
      */
-    protected void calculateTaxDue() {
-        /* Reset the tax Due */
-        theTaxDue.setZero();
-
+    private void calculateTaxDue() {
         /* Loop through the tax bands */
         Iterator<MoneyWiseTaxBandBucket> myIterator = taxBandIterator();
         while (myIterator.hasNext()) {
             MoneyWiseTaxBandBucket myBand = myIterator.next();
 
             /* Add the tax */
-            theTaxDue.addAmount(myBand.getAmount());
+            theTaxDue.addAmount(myBand.getTaxDue());
         }
     }
 
     @Override
     public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Obtain the data fields.
+     * @return the data fields
+     */
+    protected static MetisFields getBaseFields() {
         return FIELD_DEFS;
     }
 
@@ -181,7 +195,16 @@ public class MoneyWiseTaxDueBucket
 
     @Override
     public String formatObject() {
-        return FIELD_DEFS.getName();
+        return toString();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(theTaxBasis);
+        myBuilder.append("==>");
+        myBuilder.append(theTaxDue);
+        return myBuilder.toString();
     }
 
     /**
@@ -226,14 +249,12 @@ public class MoneyWiseTaxDueBucket
 
         /**
          * Constructor.
-         * @param pAmount the amount
-         * @param pRate the rate
+         * @param pBand the tax band
          */
-        protected MoneyWiseTaxBandBucket(final TethysMoney pAmount,
-                                         final TethysRate pRate) {
+        protected MoneyWiseTaxBandBucket(final MoneyWiseTaxBand pBand) {
             /* Store parameters */
-            theAmount = pAmount;
-            theRate = pRate;
+            theAmount = pBand.getAmount();
+            theRate = pBand.getRate();
 
             /* Calculate the tax due */
             theTaxDue = theAmount.valueAtRate(theRate);
@@ -287,7 +308,18 @@ public class MoneyWiseTaxDueBucket
 
         @Override
         public String formatObject() {
-            return FIELD_DEFS.getName();
+            return toString();
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder myBuilder = new StringBuilder();
+            myBuilder.append(theAmount);
+            myBuilder.append('@');
+            myBuilder.append(theRate);
+            myBuilder.append("==>");
+            myBuilder.append(theTaxDue);
+            return myBuilder.toString();
         }
     }
 }

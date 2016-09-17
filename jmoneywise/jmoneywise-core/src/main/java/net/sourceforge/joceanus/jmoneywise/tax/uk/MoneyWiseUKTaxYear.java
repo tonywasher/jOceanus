@@ -27,8 +27,9 @@ import java.time.Month;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYear;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
@@ -100,9 +101,9 @@ public class MoneyWiseUKTaxYear
     private final MoneyWiseUKDividendScheme theDividendScheme;
 
     /**
-     * The TaxableGains Scheme.
+     * The ChargeableGains Scheme.
      */
-    private final MoneyWiseUKTaxableGainsScheme theTaxableGainsScheme;
+    private final MoneyWiseUKChargeableGainsScheme theChargeableGainsScheme;
 
     /**
      * The Capital Gains Scheme.
@@ -131,7 +132,7 @@ public class MoneyWiseUKTaxYear
         theRentalScheme = new MoneyWiseUKRoomRentalScheme();
         theInterestScheme = pInterest;
         theDividendScheme = pDividend;
-        theTaxableGainsScheme = new MoneyWiseUKTaxableGainsScheme();
+        theChargeableGainsScheme = new MoneyWiseUKChargeableGainsScheme();
         theCapitalScheme = pCapital;
     }
 
@@ -149,54 +150,6 @@ public class MoneyWiseUKTaxYear
      */
     public MoneyWiseUKTaxBands getTaxBands() {
         return theTaxBands;
-    }
-
-    /**
-     * Obtain the Income Scheme.
-     * @return the scheme
-     */
-    public MoneyWiseUKIncomeScheme getIncomeScheme() {
-        return theIncomeScheme;
-    }
-
-    /**
-     * Obtain the Rental Scheme.
-     * @return the scheme
-     */
-    public MoneyWiseUKRoomRentalScheme getRentalScheme() {
-        return theRentalScheme;
-    }
-
-    /**
-     * Obtain the Interest Scheme.
-     * @return the scheme
-     */
-    public MoneyWiseUKInterestScheme getInterestScheme() {
-        return theInterestScheme;
-    }
-
-    /**
-     * Obtain the Dividend Scheme.
-     * @return the scheme
-     */
-    public MoneyWiseUKDividendScheme getDividendScheme() {
-        return theDividendScheme;
-    }
-
-    /**
-     * Obtain the TaxableGains Scheme.
-     * @return the scheme
-     */
-    public MoneyWiseUKTaxableGainsScheme getTaxableGainsScheme() {
-        return theTaxableGainsScheme;
-    }
-
-    /**
-     * Obtain the Capital Scheme.
-     * @return the scheme
-     */
-    public MoneyWiseUKCapitalScheme getCapitalScheme() {
-        return theCapitalScheme;
     }
 
     /**
@@ -254,7 +207,37 @@ public class MoneyWiseUKTaxYear
 
     @Override
     public MoneyWiseUKTaxAnalysis analyseTaxYear(final MetisPreferenceManager pPreferences,
-                                                 final TaxBasisBucketList pTaxBasis) {
-        return null;
+                                                 final MoneyWiseTaxSource pTaxSource) {
+        /* Create a new analysis */
+        MoneyWiseUKTaxAnalysis myAnalysis = new MoneyWiseUKTaxAnalysis(pTaxSource, pPreferences, this);
+
+        /* Process the standard amounts */
+        myAnalysis.processItem(TaxBasisClass.SALARY, theIncomeScheme);
+        myAnalysis.processItem(TaxBasisClass.RENTALINCOME, theIncomeScheme);
+        myAnalysis.processItem(TaxBasisClass.ROOMRENTAL, theRentalScheme);
+        myAnalysis.processItem(TaxBasisClass.OTHERINCOME, theIncomeScheme);
+
+        /* Process the interest */
+        myAnalysis.processItem(TaxBasisClass.TAXEDINTEREST, theInterestScheme);
+        myAnalysis.processItem(TaxBasisClass.UNTAXEDINTEREST, theInterestScheme);
+
+        /* Process the dividends */
+        myAnalysis.processItem(TaxBasisClass.DIVIDEND, theDividendScheme);
+        myAnalysis.processItem(TaxBasisClass.UNITTRUSTDIVIDEND, theDividendScheme);
+        myAnalysis.processItem(TaxBasisClass.FOREIGNDIVIDEND, theDividendScheme);
+
+        /* Process the chargeable Gains */
+        myAnalysis.processItem(TaxBasisClass.CHARGEABLEGAINS, theChargeableGainsScheme);
+
+        /* Process the capital Gains */
+        myAnalysis.processItem(TaxBasisClass.RESIDENTIALGAINS, theCapitalScheme);
+        myAnalysis.processItem(TaxBasisClass.CAPITALGAINS, theCapitalScheme);
+
+        /* Calculate the totals */
+        myAnalysis.calculateTaxDue();
+        myAnalysis.calculateTaxProfit();
+
+        /* Return the analysis */
+        return myAnalysis;
     }
 }

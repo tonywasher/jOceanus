@@ -22,40 +22,101 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * Income Tax Scheme.
  */
 public class MoneyWiseUKIncomeScheme {
     /**
-     * Adjust For TaxBasis.
+     * Allocate the amount to the appropriate tax bands.
      * @param pConfig the taxConfig
      * @param pBasis the taxBasis
-     * @param pAmount the amount that is to be adjusted
+     * @param pAmount the amount to be allocated
+     * @return the tax bands
+     */
+    protected MoneyWiseTaxBandSet allocateToTaxBands(final MoneyWiseUKTaxConfig pConfig,
+                                                     final TaxBasisClass pBasis,
+                                                     final TethysMoney pAmount) {
+        /* Handle negative amounts */
+        TethysMoney myAmount = new TethysMoney(pAmount);
+        if (!myAmount.isPositive()) {
+            myAmount.setZero();
+        }
+
+        /* Determine the taxBand set */
+        MoneyWiseTaxBandSet myTaxBands = determineTaxBands(pConfig, pBasis, myAmount);
+
+        /* Adjust allowances and taxBands */
+        TethysMoney myRemaining = adjustAllowances(pConfig, myAmount);
+        adjustTaxBands(pConfig, myRemaining);
+
+        /* return the taxBands */
+        return myTaxBands;
+    }
+
+    /**
+     * Determine the taxBand set.
+     * @param pConfig the taxConfig
+     * @param pBasis the taxBasis
+     * @param pAmount the amount to be allocated
      * @return the amount remaining
      */
-    protected MoneyWiseTaxBandSet adjustForBasis(final MoneyWiseUKTaxConfig pConfig,
-                                                 final TaxBasisClass pBasis,
-                                                 final TethysMoney pAmount) {
-        /* Adjust allowances and taxBands */
-        TethysMoney myRemaining = adjustAllowances(pConfig, pBasis, pAmount);
-        adjustTaxBands(pConfig, pAmount);
-        return null;
+    private MoneyWiseTaxBandSet determineTaxBands(final MoneyWiseUKTaxConfig pConfig,
+                                                  final TaxBasisClass pBasis,
+                                                  final TethysMoney pAmount) {
+        /* Create a new taxBand set */
+        MoneyWiseTaxBandSet myTaxBands = new MoneyWiseTaxBandSet();
+        TethysMoney myRemaining = new TethysMoney(pAmount);
+
+        /* Determine allowance */
+        TethysMoney myAllowance = getAmountInAllowance(pConfig, myRemaining);
+        if (myAllowance.isNonZero()) {
+            myTaxBands.addTaxBand(new MoneyWiseTaxBand(myAllowance, TethysRate.getWholePercentage(0)));
+            myRemaining.subtractAmount(myAllowance);
+        }
+
+        /* Loop through the taxBands */
+        Iterator<MoneyWiseTaxBand> myIterator = taxBandIterator(pConfig, pBasis);
+        while (myRemaining.isNonZero()
+               && myIterator.hasNext()) {
+            /* Determine amount in band */
+            MoneyWiseTaxBand myBand = myIterator.next();
+            TethysMoney myAmount = getAmountInBand(myBand.getAmount(), myRemaining);
+
+            /* allocate band and adjust */
+            myTaxBands.addTaxBand(new MoneyWiseTaxBand(myAmount, myBand.getRate()));
+            myRemaining.subtractAmount(myAmount);
+        }
+
+        /* Return the taxBands */
+        return myTaxBands;
+    }
+
+    /**
+     * Obtain the taxBand iterator.
+     * @param pConfig the taxConfig
+     * @param pBasis the taxBasis
+     * @return the iterator
+     */
+    protected Iterator<MoneyWiseTaxBand> taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
+                                                         final TaxBasisClass pBasis) {
+        return pConfig.getTaxBands().iterator();
     }
 
     /**
      * Obtain the taxFree amount.
      * @param pConfig the taxConfig
-     * @param pBasis the taxBasis
      * @param pAmount the amount that is to be adjusted
      * @return the amount remaining
      */
     protected TethysMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
-                                               final TaxBasisClass pBasis,
                                                final TethysMoney pAmount) {
         /* Obtain the amount covered by the allowance */
         return getAmountInBand(pConfig.getAllowance(), pAmount);
@@ -64,12 +125,10 @@ public class MoneyWiseUKIncomeScheme {
     /**
      * Adjust Allowances.
      * @param pConfig the taxConfig
-     * @param pBasis the taxBasis
      * @param pAmount the amount that is to be adjusted
      * @return the amount remaining
      */
     protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
-                                           final TaxBasisClass pBasis,
                                            final TethysMoney pAmount) {
         /* Adjust the basic allowance */
         return adjustForAllowance(pConfig.getAllowance(), pAmount);
@@ -133,8 +192,8 @@ public class MoneyWiseUKIncomeScheme {
     protected TethysMoney getAmountInBand(final TethysMoney pBand,
                                           final TethysMoney pAmount) {
         /* Return the lesser of the two */
-        return pAmount.compareTo(pBand) > 0
-                                            ? pBand
-                                            : pAmount;
+        return pBand != null && pAmount.compareTo(pBand) > 0
+                                                             ? pBand
+                                                             : pAmount;
     }
 }

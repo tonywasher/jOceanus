@@ -56,7 +56,7 @@ public final class MoneyWiseUKSchemeFactory {
     /**
      * The Dividends Low TaxCredit Scheme.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_LOTAXCREDIT = new MoneyWiseUKDividendHigherRateScheme(getRate(10), getRate(325));
+    protected static final MoneyWiseUKDividendScheme DIVIDEND_LOTAXCREDIT = new MoneyWiseUKDividendHigherRateScheme(getRate(10), getFractionalRate(325));
 
     /**
      * The Dividends Additional Rate Scheme.

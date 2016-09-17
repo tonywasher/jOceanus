@@ -209,11 +209,11 @@ public class MoneyWiseUKTaxConfig
         MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();
 
         /* Calculate the allowances */
-        theAllowance = myAllowances.calculateBasicAllowance(this);
-        theRentalAllowance = myAllowances.getRentalAllowance();
-        theSavingsAllowance = myAllowances.calculateSavingsAllowance(this);
-        theDividendAllowance = myAllowances.calculateDividendAllowance();
-        theCapitalAllowance = myAllowances.getCapitalAllowance();
+        theAllowance = new TethysMoney(myAllowances.calculateBasicAllowance(this));
+        theRentalAllowance = new TethysMoney(myAllowances.getRentalAllowance());
+        theSavingsAllowance = new TethysMoney(myAllowances.calculateSavingsAllowance(this));
+        theDividendAllowance = new TethysMoney(myAllowances.calculateDividendAllowance());
+        theCapitalAllowance = new TethysMoney(myAllowances.getCapitalAllowance());
 
         /* Access the taxBands */
         MoneyWiseUKTaxBands myBands = theTaxYear.getTaxBands();

@@ -22,11 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -46,20 +51,17 @@ public abstract class MoneyWiseUKDividendScheme
     }
 
     /**
-     * Obtain theTaxCredit rate for interest.
+     * Obtain theTaxCredit rate for dividend.
      * @param pTaxYear the taxYear
      * @return the taxCredit rate
      */
-    protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
-        return null;
-    }
+    protected abstract TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear);
 
     @Override
     protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
-                                           final TaxBasisClass pBasis,
                                            final TethysMoney pAmount) {
         /* Adjust against the basic allowance */
-        TethysMoney myRemaining = super.adjustAllowances(pConfig, pBasis, pAmount);
+        TethysMoney myRemaining = super.adjustAllowances(pConfig, pAmount);
 
         /* If we have any dividends left */
         if (myRemaining.isNonZero()) {
@@ -73,10 +75,9 @@ public abstract class MoneyWiseUKDividendScheme
 
     @Override
     protected TethysMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
-                                               final TaxBasisClass pBasis,
                                                final TethysMoney pAmount) {
         /* Obtain the amount covered by the basic allowance */
-        TethysMoney myAmount = super.getAmountInAllowance(pConfig, pBasis, pAmount);
+        TethysMoney myAmount = super.getAmountInAllowance(pConfig, pAmount);
 
         /* If we have income left over */
         if (myAmount.compareTo(pAmount) < 0) {
@@ -97,6 +98,78 @@ public abstract class MoneyWiseUKDividendScheme
     }
 
     /**
+     * Obtain the base rate.
+     * @return the base rate
+     */
+    protected TethysRate getBaseRate() {
+        return null;
+    }
+
+    /**
+     * Obtain the higher rate.
+     * @return the higher rate
+     */
+    protected TethysRate getHigherRate() {
+        return null;
+    }
+
+    /**
+     * Obtain the additional rate.
+     * @return the additional rate
+     */
+    protected TethysRate getAdditionalRate() {
+        return null;
+    }
+
+    @Override
+    protected Iterator<MoneyWiseTaxBand> taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
+                                                         final TaxBasisClass pBasis) {
+        /* Access underlying iterator and obtain first band */
+        Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
+
+        /* Create a new List */
+        List<MoneyWiseTaxBand> myList = new ArrayList<>();
+
+        /* Add the initial band */
+        MoneyWiseTaxBand myBand = myIterator.next();
+        TethysRate myRate = getBaseRate();
+        if (myRate == null) {
+            myRate = myBand.getRate();
+        }
+        myList.add(new MoneyWiseTaxBand(myBand.getAmount(), myRate));
+
+        /* If we have a "higher" band */
+        if (myIterator.hasNext()) {
+            /* Add the higher band */
+            myBand = myIterator.next();
+            myRate = getHigherRate();
+            if (myRate == null) {
+                myRate = myBand.getRate();
+            }
+            myList.add(new MoneyWiseTaxBand(myBand.getAmount(), myRate));
+        }
+        /* If we have an "additional" band */
+        if (myIterator.hasNext()) {
+            /* Add the higher band */
+            myBand = myIterator.next();
+            myRate = getAdditionalRate();
+            if (myRate == null) {
+                myRate = myBand.getRate();
+            }
+            myList.add(new MoneyWiseTaxBand(myBand.getAmount(), myRate));
+        }
+
+        /* Loop through remaining tax bands */
+        while (myIterator.hasNext()) {
+            myBand = myIterator.next();
+            myList.add(myBand);
+        }
+
+        /* Return the iterator */
+        return myList.iterator();
+    }
+
+    /**
      * As Income Scheme.
      */
     public static class MoneyWiseUKDividendAsIncomeScheme
@@ -108,7 +181,7 @@ public abstract class MoneyWiseUKDividendScheme
 
         @Override
         protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
-            return pTaxYear.getTaxBands().getTaxCreditRate();
+            return pTaxYear.getTaxBands().getBasicTaxRate();
         }
 
         @Override
@@ -177,10 +250,7 @@ public abstract class MoneyWiseUKDividendScheme
             this(pRate, Boolean.TRUE);
         }
 
-        /**
-         * Obtain the base rate.
-         * @return the base rate
-         */
+        @Override
         protected TethysRate getBaseRate() {
             return theBaseRate;
         }
@@ -259,11 +329,8 @@ public abstract class MoneyWiseUKDividendScheme
             theHighRate = pHighRate;
         }
 
-        /**
-         * Obtain the high rate.
-         * @return the high rate
-         */
-        protected TethysRate getHighRate() {
+        @Override
+        protected TethysRate getHigherRate() {
             return theHighRate;
         }
 
@@ -335,10 +402,7 @@ public abstract class MoneyWiseUKDividendScheme
             theAdditionalRate = pAddRate;
         }
 
-        /**
-         * Obtain the additional rate.
-         * @return the additional rate
-         */
+        @Override
         protected TethysRate getAdditionalRate() {
             return theAdditionalRate;
         }
