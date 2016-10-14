@@ -22,24 +22,34 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax;
 
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
-import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-
 /**
- * Tax Source.
+ * CashType for Capital Gains transactions.
  */
-public interface MoneyWiseTaxSource {
+public enum MoneyWiseCashType {
     /**
-     * Obtain the amount for the taxBasis.
-     * @param pBasis the taxBasis
-     * @return the amount
+     * LargeCash.
      */
-    TethysMoney getAmountForTaxBasis(final TaxBasisClass pBasis);
+    LARGECASH,
 
     /**
-     * Obtain the charges.
-     * @return the charges
+     * SmallCash.
      */
-    MoneyWiseChargeableGainSliceList getGainSlices();
+    SMALLCASH;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = MoneyWiseTaxResource.getKeyForCashType(this).getValue();
+        }
+
+        /* return the name */
+        return theName;
+    }
 }

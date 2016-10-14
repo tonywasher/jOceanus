@@ -55,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Analysis manager.
  */
 public class AnalysisManager
-        implements MetisDataContents, MetisDataMap {
+        implements MetisDataContents, MetisDataMap<TethysDateRange, Analysis> {
     /**
      * Logger.
      */
@@ -149,7 +149,7 @@ public class AnalysisManager
     }
 
     @Override
-    public Map<?, ?> getUnderlyingMap() {
+    public Map<TethysDateRange, Analysis> getUnderlyingMap() {
         return theAnalysisMap;
     }
 

@@ -123,6 +123,11 @@ public enum MoneyWiseTaxResource implements TethysResourceId {
     TAXBANDS_RATE("TaxBands.Rate"),
 
     /**
+     * TaxBands TaxableIncome.
+     */
+    TAXBANDS_INCOME("TaxBands.Income"),
+
+    /**
      * TaxBands TaxDue.
      */
     TAXBANDS_TAXDUE("TaxBands.TaxDue"),
@@ -161,6 +166,11 @@ public enum MoneyWiseTaxResource implements TethysResourceId {
      * TaxYear Capital.
      */
     TAXYEAR_CAPITAL("TaxYear.Capital"),
+
+    /**
+     * TaxYear Profit.
+     */
+    TAXYEAR_PROFIT("TaxYear.Profit"),
 
     /**
      * TaxConfig Name.
@@ -225,12 +235,27 @@ public enum MoneyWiseTaxResource implements TethysResourceId {
     /**
      * Marginal TwoInThree.
      */
-    MARGINAL_TWOINTHREE("Marginal.TwoInThree");
+    MARGINAL_TWOINTHREE("Marginal.TwoInThree"),
+
+    /**
+     * CashType Large.
+     */
+    CASHTYPE_LARGE("CashType.Large"),
+
+    /**
+     * CashType Small.
+     */
+    CASHTYPE_SMALL("CashType.Small");
 
     /**
      * The Marginal Map.
      */
     private static final Map<MoneyWiseMarginalReduction, TethysResourceId> MARGINAL_MAP = buildMarginalMap();
+
+    /**
+     * The CashType Map.
+     */
+    private static final Map<MoneyWiseCashType, TethysResourceId> CASHTYPE_MAP = buildCashTypeMap();
 
     /**
      * The Resource Builder.
@@ -296,5 +321,26 @@ public enum MoneyWiseTaxResource implements TethysResourceId {
      */
     protected static TethysResourceId getKeyForMarginalReduction(final MoneyWiseMarginalReduction pValue) {
         return TethysResourceBuilder.getKeyForEnum(MARGINAL_MAP, pValue);
+    }
+
+    /**
+     * Build cashType map.
+     * @return the map
+     */
+    private static Map<MoneyWiseCashType, TethysResourceId> buildCashTypeMap() {
+        /* Create the map and return it */
+        Map<MoneyWiseCashType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseCashType.class);
+        myMap.put(MoneyWiseCashType.LARGECASH, CASHTYPE_LARGE);
+        myMap.put(MoneyWiseCashType.SMALLCASH, CASHTYPE_SMALL);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for cash type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    protected static TethysResourceId getKeyForCashType(final MoneyWiseCashType pValue) {
+        return TethysResourceBuilder.getKeyForEnum(CASHTYPE_MAP, pValue);
     }
 }

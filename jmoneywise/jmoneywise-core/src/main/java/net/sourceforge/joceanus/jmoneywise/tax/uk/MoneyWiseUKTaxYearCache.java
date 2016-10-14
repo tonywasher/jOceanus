@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
  */
 public class MoneyWiseUKTaxYearCache
         extends MoneyWiseTaxYearCache
-        implements MetisDataMap, MetisDataFormat {
+        implements MetisDataMap<TethysDate, MoneyWiseUKTaxYear>, MetisDataFormat {
     /**
      * The cache.
      */
@@ -115,7 +115,7 @@ public class MoneyWiseUKTaxYearCache
     }
 
     @Override
-    public Map<?, ?> getUnderlyingMap() {
+    public Map<TethysDate, MoneyWiseUKTaxYear> getUnderlyingMap() {
         return theCache;
     }
 

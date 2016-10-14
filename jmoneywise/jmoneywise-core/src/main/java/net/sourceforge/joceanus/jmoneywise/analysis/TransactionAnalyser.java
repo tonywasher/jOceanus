@@ -68,6 +68,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseCashType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -422,6 +423,7 @@ public class TransactionAnalyser
         /* Access key details */
         TransactionAsset myDebitAsset = theHelper.getDebitAsset();
         TransactionAsset myCreditAsset = theHelper.getCreditAsset();
+        TaxYear myYear = pTrans.getTaxYear();
 
         /* Look for tags */
         Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
@@ -463,7 +465,7 @@ public class TransactionAnalyser
                 case INTEREST:
                 case LOYALTYBONUS:
                     /* Obtain detailed category */
-                    myCat = myDebit.getDetailedCategory(myCat);
+                    myCat = myDebit.getDetailedCategory(myCat, myYear);
 
                     /* True debit account is the parent */
                     myChild = myDebit.equals(myCredit)
@@ -988,10 +990,11 @@ public class TransactionAnalyser
         TethysMoney myAmount = theHelper.getDebitAmount();
         TethysMoney myTaxCredit = theHelper.getTaxCredit();
         TethysUnits myDeltaUnits = theHelper.getCreditUnits();
+        TaxYear myYear = theHelper.getTransaction().getTaxYear();
 
         /* Obtain detailed category */
-        TransactionCategory myCat = myPortfolio.getDetailedCategory(theHelper.getCategory());
-        myCat = mySecurity.getDetailedCategory(myCat);
+        TransactionCategory myCat = myPortfolio.getDetailedCategory(theHelper.getCategory(), myYear);
+        myCat = mySecurity.getDetailedCategory(myCat, myYear);
 
         /* True debit account is the parent */
         AssetBase<?> myDebit = mySecurity.getParent();
@@ -1104,6 +1107,7 @@ public class TransactionAnalyser
         TethysMoney myAmount = theHelper.getDebitAmount();
         TethysUnits myDeltaUnits = theHelper.getDebitUnits();
         boolean isCapitalDistribution = myDeltaUnits == null;
+        boolean isLargeCash = false;
 
         /* Access the Asset Security Bucket */
         SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
@@ -1168,8 +1172,8 @@ public class TransactionAnalyser
         if (isCapitalDistribution) {
             /* Determine condition as to whether this is a large cash transaction */
             TethysMoney myPortion = myValue.valueAtRate(LIMIT_RATE);
-            boolean isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
-                                  && (myAmount.compareTo(myPortion) > 0);
+            isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
+                          && (myAmount.compareTo(myPortion) > 0);
 
             /* If this is large cash */
             if (isLargeCash) {
@@ -1234,6 +1238,11 @@ public class TransactionAnalyser
         }
         if (isForeign) {
             myValues.setValue(SecurityAttribute.EXCHANGERATE, myXchangeRate);
+        }
+        if (isCapitalDistribution) {
+            myValues.setValue(SecurityAttribute.CASHTYPE, isLargeCash
+                                                                      ? MoneyWiseCashType.LARGECASH
+                                                                      : MoneyWiseCashType.SMALLCASH);
         }
     }
 
@@ -1354,6 +1363,7 @@ public class TransactionAnalyser
 
         /* Add the chargeable event */
         theAnalysis.getCharges().addTransaction(theHelper.getTransaction(), myDeltaGains);
+        theTaxBasisBuckets.recordChargeableGain(theHelper.getTransaction(), myDeltaGains);
     }
 
     /**
@@ -1767,6 +1777,9 @@ public class TransactionAnalyser
         if (isForeignDebit) {
             myDebitValues.setValue(SecurityAttribute.EXCHANGERATE, myDebitRate);
         }
+        myDebitValues.setValue(SecurityAttribute.CASHTYPE, isLargeCash
+                                                                       ? MoneyWiseCashType.LARGECASH
+                                                                       : MoneyWiseCashType.SMALLCASH);
 
         /* Adjust the ThirdParty account bucket */
         AccountBucket<?> myBucket = getAccountBucket(myThirdParty);

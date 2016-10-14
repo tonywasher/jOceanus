@@ -28,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
@@ -37,11 +38,16 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucke
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxAnalysis;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxDueBucket;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxDueBucket.MoneyWiseTaxBandBucket;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
 
 /**
  * TaxCalculation report builder.
@@ -52,6 +58,26 @@ public class TaxCalculation
      * The Title text.
      */
     private static final String TEXT_TITLE = ReportResource.TAXCALC_TITLE.getValue();
+
+    /**
+     * The Income text.
+     */
+    private static final String TEXT_INCOME = MoneyWiseTaxResource.TAXBANDS_INCOME.getValue();
+
+    /**
+     * The Rate text.
+     */
+    private static final String TEXT_RATE = MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE.getValue();
+
+    /**
+     * The TaxDue text.
+     */
+    private static final String TEXT_TAXDUE = MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue();
+
+    /**
+     * The Profit text.
+     */
+    private static final String TEXT_PROFIT = MoneyWiseTaxResource.TAXYEAR_PROFIT.getValue();
 
     /**
      * HTML builder.
@@ -89,6 +115,7 @@ public class TaxCalculation
         theAnalysis = pAnalysis;
 
         /* Access the bucket lists */
+        MoneyWiseTaxAnalysis myTaxAnalysis = theAnalysis.getTaxAnalysis();
         TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
         TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
         TaxYear myYear = myList.getTaxYear();
@@ -157,6 +184,41 @@ public class TaxCalculation
 
         /* Format the tax parameters */
         makeTaxParameters(myBody, myYear);
+
+        /* Format the header */
+        theBuilder.makeSubTitle(myBody, "New Taxation");
+        myTable = theBuilder.startTable(myBody);
+        theBuilder.startHdrRow(myTable);
+        theBuilder.makeTitleCell(myTable, MoneyWiseDataTypeResource.TAXBASIS_NAME.getValue());
+        theBuilder.makeTitleCell(myTable, TEXT_INCOME);
+        theBuilder.makeTitleCell(myTable, TEXT_TAXDUE);
+
+        /* Loop through the Tax Calculation Buckets */
+        Iterator<MoneyWiseTaxDueBucket> myTaxIterator = myTaxAnalysis.taxDueIterator();
+        while (myTaxIterator.hasNext()) {
+            MoneyWiseTaxDueBucket myBucket = myTaxIterator.next();
+
+            /* Format the line */
+            theBuilder.startRow(myTable);
+            theBuilder.makeTableLinkCell(myTable, myBucket.getTaxBasis().toString());
+            theBuilder.makeValueCell(myTable, myBucket.getTaxableIncome());
+            theBuilder.makeValueCell(myTable, myBucket.getTaxDue());
+
+            /* Format the detail */
+            makeTaxReport(myTable, myBucket);
+        }
+
+        /* Access the Totals */
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable, myTaxAnalysis.getTaxableIncome());
+        theBuilder.makeTotalCell(myTable, myTaxAnalysis.getTaxDue());
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTotalCell(myTable, TaxBasisClass.TAXPAID.toString());
+        theBuilder.makeStretchedTotalCell(myTable, myTaxAnalysis.getTaxPaid());
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTotalCell(myTable, TEXT_PROFIT);
+        theBuilder.makeStretchedTotalCell(myTable, myTaxAnalysis.getTaxProfit());
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -387,6 +449,36 @@ public class TaxCalculation
 
         /* Embed the table correctly */
         theBuilder.embedTable(myTable, pSummary.getName());
+    }
+
+    /**
+     * Build a standard tax report element.
+     * @param pParent the parent table
+     * @param pSummary the tax summary
+     */
+    public void makeTaxReport(final HTMLTable pParent,
+                              final MoneyWiseTaxDueBucket pSummary) {
+        /* Format the detail */
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, TEXT_INCOME);
+        theBuilder.makeTitleCell(myTable, TEXT_RATE);
+        theBuilder.makeTitleCell(myTable, TEXT_TAXDUE);
+
+        /* Loop through the Transaction Detail Buckets */
+        Iterator<MoneyWiseTaxBandBucket> myIterator = pSummary.taxBandIterator();
+        while (myIterator.hasNext()) {
+            MoneyWiseTaxBandBucket myBucket = myIterator.next();
+
+            /* Format the detail */
+            theBuilder.startRow(myTable);
+            theBuilder.makeValueCell(myTable, myBucket.getAmount());
+            theBuilder.makeValueCell(myTable, myBucket.getRate());
+            theBuilder.makeValueCell(myTable, myBucket.getTaxDue());
+        }
+
+        /* Embed the table correctly */
+        theBuilder.embedTable(myTable, pSummary.getTaxBasis().toString());
     }
 
     /**

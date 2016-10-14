@@ -217,7 +217,7 @@ public class MoneyWiseUKTaxConfig
 
         /* Access the taxBands */
         MoneyWiseUKTaxBands myBands = theTaxYear.getTaxBands();
-        theTaxBands = myBands.getStandardSet();
+        theTaxBands = new MoneyWiseTaxBandSet(myBands.getStandardSet());
 
         /* Calculate the loSavings band */
         theLoSavings = myAllowances.calculateLoSavingsBand(this, myBands.getLoSavings());

@@ -350,10 +350,10 @@ public class MetisViewerPage {
 
         /* handle embedded objects */
         if (myObject instanceof MetisDataList) {
-            myObject = ((MetisDataList) myObject).getUnderlyingList();
+            myObject = ((MetisDataList<?>) myObject).getUnderlyingList();
         }
         if (myObject instanceof MetisDataMap) {
-            myObject = ((MetisDataMap) myObject).getUnderlyingMap();
+            myObject = ((MetisDataMap<?, ?>) myObject).getUnderlyingMap();
         }
 
         /* Handle multi-page objects */
@@ -434,7 +434,7 @@ public class MetisViewerPage {
 
         /* handle embedded objects */
         if (myObject instanceof MetisDataList) {
-            myObject = ((MetisDataList) myObject).getUnderlyingList();
+            myObject = ((MetisDataList<?>) myObject).getUnderlyingList();
         }
 
         /* Handle non-empty lists */

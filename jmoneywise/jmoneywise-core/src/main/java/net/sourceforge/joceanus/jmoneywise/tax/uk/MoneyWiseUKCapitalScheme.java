@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
@@ -40,8 +38,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * Capital Gains Tax Scheme.
  */
 public abstract class MoneyWiseUKCapitalScheme
-        extends MoneyWiseUKIncomeScheme
-        implements MetisDataContents {
+        extends MoneyWiseUKIncomeScheme {
     @Override
     protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
                                            final TethysMoney pAmount) {
@@ -90,7 +87,7 @@ public abstract class MoneyWiseUKCapitalScheme
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKCapitalFlatRateScheme.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKCapitalFlatRateScheme.class.getSimpleName(), MoneyWiseUKIncomeScheme.getBaseFields());
 
         /**
          * Rate Field Id.
@@ -138,13 +135,8 @@ public abstract class MoneyWiseUKCapitalScheme
                 return theBaseRate;
             }
 
-            /* Not recognised */
-            return MetisFieldValue.UNKNOWN;
-        }
-
-        @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
+            /* Pass on */
+            return super.getFieldValue(pField);
         }
 
         @Override
@@ -217,11 +209,6 @@ public abstract class MoneyWiseUKCapitalScheme
         }
 
         @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
-        }
-
-        @Override
         protected Iterator<MoneyWiseTaxBand> taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
                                                              final TaxBasisClass pBasis) {
             /* Create a new List */
@@ -248,7 +235,7 @@ public abstract class MoneyWiseUKCapitalScheme
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKCapitalAsIncomeScheme.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKCapitalAsIncomeScheme.class.getSimpleName(), MoneyWiseUKIncomeScheme.getBaseFields());
 
         /**
          * Obtain the data fields.
@@ -261,17 +248,6 @@ public abstract class MoneyWiseUKCapitalScheme
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Not recognised */
-            return MetisFieldValue.UNKNOWN;
-        }
-
-        @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
         }
     }
 
@@ -332,11 +308,6 @@ public abstract class MoneyWiseUKCapitalScheme
 
             /* Pass call on */
             return super.getFieldValue(pField);
-        }
-
-        @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
         }
 
         @Override

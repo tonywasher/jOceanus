@@ -490,6 +490,11 @@ public enum AnalysisResource implements TethysResourceId {
     SECURITYATTR_PRICE(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE),
 
     /**
+     * SecurityAttr CashType.
+     */
+    SECURITYATTR_CASHTYPE("SecurityAttr.CashType"),
+
+    /**
      * TaxAttr Gross.
      */
     TAXATTR_GROSS("TaxAttr.Gross"),
@@ -705,6 +710,7 @@ public enum AnalysisResource implements TethysResourceId {
         myMap.put(SecurityAttribute.CAPITALGAIN, SECURITYATTR_CAPITALGAIN);
         myMap.put(SecurityAttribute.ALLOWEDCOST, SECURITYATTR_ALLOWEDCOST);
         myMap.put(SecurityAttribute.PRICE, SECURITYATTR_PRICE);
+        myMap.put(SecurityAttribute.CASHTYPE, SECURITYATTR_CASHTYPE);
         return myMap;
     }
 

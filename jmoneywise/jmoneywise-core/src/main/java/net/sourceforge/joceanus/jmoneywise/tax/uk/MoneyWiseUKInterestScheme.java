@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
@@ -40,8 +38,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * Interest Tax Scheme.
  */
 public abstract class MoneyWiseUKInterestScheme
-        extends MoneyWiseUKIncomeScheme
-        implements MetisDataContents {
+        extends MoneyWiseUKIncomeScheme {
     /**
      * Obtain theTaxCredit rate for interest.
      * @param pTaxYear the taxYear
@@ -108,24 +105,34 @@ public abstract class MoneyWiseUKInterestScheme
         TethysMoney myLoAmount = myLoBand.getAmount();
         TethysRate myRate = getBaseRate();
 
-        /* Access underlying iterator and obtain first band */
-        Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
-        MoneyWiseTaxBand myFirstBand = myIterator.next();
-        TethysMoney myAmount = new TethysMoney(myFirstBand.getAmount());
-        if (myRate == null) {
-            myRate = myFirstBand.getRate();
-        }
-
         /* Create a new List */
         List<MoneyWiseTaxBand> myList = new ArrayList<>();
 
-        /* Add low band if required */
-        if (myLoAmount.isNonZero()) {
+        /* Access underlying iterator and obtain first band */
+        Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
+        MoneyWiseTaxBand myBasicBand = myIterator.next();
+        TethysMoney myAmount = myBasicBand.getAmount();
+
+        /* If we are a LoBase instance */
+        if (this instanceof MoneyWiseUKInterestLoBaseRateScheme) {
+            /* Add the first band as is */
+            myList.add(myBasicBand);
+
+            /* Access the true basic band */
+            myBasicBand = myIterator.next();
+            myAmount = myBasicBand.getAmount();
+
+            /* Add low band if required */
+        } else if (myLoAmount.isNonZero()) {
             myList.add(myLoBand);
+            myAmount = new TethysMoney(myAmount);
             myAmount.subtract(myLoAmount);
         }
 
-        /* Add the initial band */
+        /* Add the basic band */
+        if (myRate == null) {
+            myRate = myBasicBand.getRate();
+        }
         myList.add(new MoneyWiseTaxBand(myAmount, myRate));
 
         /* Loop through remaining tax bands */
@@ -146,7 +153,7 @@ public abstract class MoneyWiseUKInterestScheme
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKInterestAsIncomeScheme.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKInterestAsIncomeScheme.class.getSimpleName(), MoneyWiseUKIncomeScheme.getBaseFields());
 
         @Override
         protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
@@ -156,17 +163,6 @@ public abstract class MoneyWiseUKInterestScheme
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Not recognised */
-            return MetisFieldValue.UNKNOWN;
-        }
-
-        @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
         }
     }
 
@@ -178,12 +174,12 @@ public abstract class MoneyWiseUKInterestScheme
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKInterestBaseRateScheme.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKInterestBaseRateScheme.class.getSimpleName(), MoneyWiseUKIncomeScheme.getBaseFields());
 
         /**
-         * Rate Field Id.
+         * Base Rate Field Id.
          */
-        private static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.SCHEME_BASE_RATE.getValue());
+        private static final MetisField FIELD_BASERATE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.SCHEME_BASE_RATE.getValue());
 
         /**
          * The Base Rate.
@@ -208,6 +204,14 @@ public abstract class MoneyWiseUKInterestScheme
             return theBaseRate;
         }
 
+        /**
+         * Obtain the data fields.
+         * @return the data fields
+         */
+        protected static MetisFields getBaseFields() {
+            return FIELD_DEFS;
+        }
+
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
@@ -216,17 +220,36 @@ public abstract class MoneyWiseUKInterestScheme
         @Override
         public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
-            if (FIELD_RATE.equals(pField)) {
+            if (FIELD_BASERATE.equals(pField)) {
                 return theBaseRate;
             }
 
-            /* Not recognised */
-            return MetisFieldValue.UNKNOWN;
+            /* Pass on */
+            return super.getFieldValue(pField);
+        }
+    }
+
+    /**
+     * LoBase Rate Scheme.
+     */
+    public static class MoneyWiseUKInterestLoBaseRateScheme
+            extends MoneyWiseUKInterestBaseRateScheme {
+        /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKInterestLoBaseRateScheme.class.getSimpleName(), MoneyWiseUKInterestBaseRateScheme.getBaseFields());
+
+        /**
+         * Constructor.
+         * @param pRate the base rate
+         */
+        protected MoneyWiseUKInterestLoBaseRateScheme(final TethysRate pRate) {
+            super(pRate);
         }
 
         @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
         }
     }
 }

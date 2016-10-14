@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @param <E> the enum class
  */
 public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
-        implements MetisDataFormat, MetisDataMap {
+        implements MetisDataFormat, MetisDataMap<E, Object> {
     /**
      * Map.
      */
@@ -110,7 +110,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     protected abstract T getFullSnapShot();
 
     @Override
-    public Map<?, ?> getUnderlyingMap() {
+    public Map<E, Object> getUnderlyingMap() {
         return theMap;
     }
 
@@ -308,5 +308,18 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     public Integer getIntegerValue(final E pAttr) {
         /* Obtain the attribute */
         return getValue(pAttr, Integer.class);
+    }
+
+    /**
+     * Obtain an enum attribute value.
+     * @param <V> the enum type
+     * @param pAttr the attribute
+     * @param pClass the Class of the enum
+     * @return the value of the attribute or null
+     */
+    public <V extends Enum<V>> V getEnumValue(final E pAttr,
+                                              final Class<V> pClass) {
+        /* Obtain the attribute */
+        return getValue(pAttr, pClass);
     }
 }

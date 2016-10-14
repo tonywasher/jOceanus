@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseCashType;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -512,6 +513,7 @@ public class GainsAnalysis {
         TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
         TethysMoney myCash = pValues.getMoneyValue(SecurityAttribute.RETURNEDCASH);
         TethysMoney myConsideration = pValues.getMoneyValue(SecurityAttribute.CONSIDERATION);
+        MoneyWiseCashType myCashType = pValues.getEnumValue(SecurityAttribute.CASHTYPE, MoneyWiseCashType.class);
 
         /* Obtain the original values */
         SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
@@ -525,6 +527,9 @@ public class GainsAnalysis {
 
         /* Report the returned cash */
         formatValue(SecurityAttribute.RETURNEDCASH, myCash);
+        if (myCashType != null) {
+            formatValue(SecurityAttribute.CASHTYPE, myCashType);
+        }
 
         /* If we have changed the number of units */
         if (myDeltaUnits.isNonZero()) {
@@ -761,9 +766,11 @@ public class GainsAnalysis {
         TethysMoney myAllowedCost = pValues.getMoneyValue(SecurityAttribute.ALLOWEDCOST);
         TethysMoney myGain = pValues.getMoneyValue(SecurityAttribute.CAPITALGAIN);
         TethysMoney myTotalGains = pValues.getMoneyValue(SecurityAttribute.REALISEDGAINS);
+        MoneyWiseCashType myCashType = pValues.getEnumValue(SecurityAttribute.CASHTYPE, MoneyWiseCashType.class);
 
         /* Record the calculation of total consideration */
         formatValue(SecurityAttribute.RETURNEDCASH, pCash);
+        formatValue(SecurityAttribute.CASHTYPE, myCashType);
         formatValue(SecurityAttribute.XFERREDVALUE, myStock);
         formatAddition(SecurityAttribute.CONSIDERATION, myConsideration, pCash, myStock);
 

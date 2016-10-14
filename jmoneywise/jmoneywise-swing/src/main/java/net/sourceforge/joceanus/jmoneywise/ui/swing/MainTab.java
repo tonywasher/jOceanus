@@ -300,7 +300,7 @@ public class MainTab
      * Select maintenance.
      * @param pEvent the action request
      */
-    private void selectMaintenance(final PrometheusGoToEvent pEvent) {
+    private void selectMaintenance(final PrometheusGoToEvent<MoneyWiseGoToId> pEvent) {
         /* Pass through to the Maintenance view */
         theMaint.selectMaintenance(pEvent);
 

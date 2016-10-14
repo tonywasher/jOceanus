@@ -338,6 +338,18 @@ public class HTMLBuilder {
     }
 
     /**
+     * Create and append a standard total cell with value spanning 2 columns.
+     * @param pControl the table control
+     * @param pValue the value
+     */
+    protected void makeStretchedTotalCell(final HTMLTable pControl,
+                                          final Object pValue) {
+        Element myCell = pControl.createNewCell(true);
+        setCellValue(myCell, pValue);
+        myCell.setAttribute(ATTR_COLSPAN, Integer.toString(2));
+    }
+
+    /**
      * Create and append a title cell.
      * @param pControl the table control
      * @param pTitle the title

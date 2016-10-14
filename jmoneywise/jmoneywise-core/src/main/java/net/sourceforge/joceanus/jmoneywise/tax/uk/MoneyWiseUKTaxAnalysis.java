@@ -70,6 +70,11 @@ public class MoneyWiseUKTaxAnalysis
     private static final MetisField FIELD_TAXBUCKETS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXANALYSIS_TAXBUCKETS.getValue());
 
     /**
+     * TaxableIncome Field Id.
+     */
+    private static final MetisField FIELD_INCOME = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_INCOME.getValue());
+
+    /**
      * TaxDue Field Id.
      */
     private static final MetisField FIELD_TAXDUE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue());
@@ -103,6 +108,11 @@ public class MoneyWiseUKTaxAnalysis
      * The TaxDueBuckets.
      */
     private final List<MoneyWiseTaxDueBucket> theTaxBuckets;
+
+    /**
+     * The Total TaxableIncome.
+     */
+    private final TethysMoney theTaxableIncome;
 
     /**
      * The Total TaxDue.
@@ -217,16 +227,15 @@ public class MoneyWiseUKTaxAnalysis
 
         /* Create the totals */
         theTaxPaid = pTaxSource.getAmountForTaxBasis(TaxBasisClass.TAXPAID);
+        theTaxableIncome = new TethysMoney(theTaxPaid);
+        theTaxableIncome.setZero();
         theTaxDue = new TethysMoney(theTaxPaid);
         theTaxDue.setZero();
         theTaxProfit = new TethysMoney(theTaxPaid);
         theTaxProfit.setZero();
     }
 
-    /**
-     * Obtain the taxYear.
-     * @return the taxYear
-     */
+    @Override
     public MoneyWiseUKTaxYear getTaxYear() {
         return theTaxYear;
     }
@@ -239,34 +248,27 @@ public class MoneyWiseUKTaxAnalysis
         return theTaxConfig;
     }
 
-    /**
-     * Obtain the taxBands iterator.
-     * @return the iterator
-     */
+    @Override
     public Iterator<MoneyWiseTaxDueBucket> taxDueIterator() {
         return theTaxBuckets.iterator();
     }
 
-    /**
-     * Obtain the taxDue.
-     * @return the taxDue
-     */
+    @Override
+    public TethysMoney getTaxableIncome() {
+        return theTaxableIncome;
+    }
+
+    @Override
     public TethysMoney getTaxDue() {
         return theTaxDue;
     }
 
-    /**
-     * Obtain the taxPaid.
-     * @return the taxPaid
-     */
+    @Override
     public TethysMoney getTaxPaid() {
         return theTaxPaid;
     }
 
-    /**
-     * Obtain the taxProfit.
-     * @return the taxProfit
-     */
+    @Override
     public TethysMoney getTaxProfit() {
         return theTaxProfit;
     }
@@ -276,6 +278,7 @@ public class MoneyWiseUKTaxAnalysis
      */
     protected void calculateTaxDue() {
         /* Reset the tax Due */
+        theTaxableIncome.setZero();
         theTaxDue.setZero();
 
         /* Loop through the tax bands */
@@ -283,7 +286,8 @@ public class MoneyWiseUKTaxAnalysis
         while (myIterator.hasNext()) {
             MoneyWiseTaxDueBucket myBucket = myIterator.next();
 
-            /* Add the tax */
+            /* Add the values */
+            theTaxableIncome.addAmount(myBucket.getTaxableIncome());
             theTaxDue.addAmount(myBucket.getTaxDue());
         }
     }
@@ -309,7 +313,8 @@ public class MoneyWiseUKTaxAnalysis
         TethysMoney myAmount = theTaxSource.getAmountForTaxBasis(pBasis);
 
         /* Ignore zero or negative amounts */
-        if (myAmount.isZero() || !myAmount.isPositive()) {
+        if (myAmount.isZero()
+            || !myAmount.isPositive()) {
             return;
         }
 
@@ -340,6 +345,9 @@ public class MoneyWiseUKTaxAnalysis
         }
         if (FIELD_TAXBUCKETS.equals(pField)) {
             return theTaxBuckets;
+        }
+        if (FIELD_INCOME.equals(pField)) {
+            return theTaxableIncome;
         }
         if (FIELD_TAXDUE.equals(pField)) {
             return theTaxDue;

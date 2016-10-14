@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
@@ -40,14 +38,20 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * Dividend Tax Scheme.
  */
 public abstract class MoneyWiseUKDividendScheme
-        extends MoneyWiseUKIncomeScheme
-        implements MetisDataContents {
+        extends MoneyWiseUKIncomeScheme {
     /**
-     * Is tax relief available?
-     * @return true/false
+     * Constructor.
      */
-    public Boolean taxReliefAvailable() {
-        return Boolean.TRUE;
+    protected MoneyWiseUKDividendScheme() {
+        this(Boolean.TRUE);
+    }
+
+    /**
+     * Constructor.
+     * @param pReliefAvailable Is tax relief available?
+     */
+    protected MoneyWiseUKDividendScheme(final Boolean pReliefAvailable) {
+        super(pReliefAvailable);
     }
 
     /**
@@ -124,19 +128,29 @@ public abstract class MoneyWiseUKDividendScheme
     @Override
     protected Iterator<MoneyWiseTaxBand> taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
                                                          final TaxBasisClass pBasis) {
-        /* Access underlying iterator and obtain first band */
-        Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
 
         /* Create a new List */
         List<MoneyWiseTaxBand> myList = new ArrayList<>();
 
-        /* Add the initial band */
+        /* Access underlying iterator */
+        Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
         MoneyWiseTaxBand myBand = myIterator.next();
+        TethysMoney myAmount = myBand.getAmount();
         TethysRate myRate = getBaseRate();
+
+        /* If we are a LoHigher instance */
+        if (this instanceof MoneyWiseUKDividendLoHigherRateScheme) {
+            /* Access the true basic band and merge in the lower rate */
+            myBand = myIterator.next();
+            myAmount = new TethysMoney(myAmount);
+            myAmount.addAmount(myBand.getAmount());
+        }
+
+        /* Add the basic band */
         if (myRate == null) {
             myRate = myBand.getRate();
         }
-        myList.add(new MoneyWiseTaxBand(myBand.getAmount(), myRate));
+        myList.add(new MoneyWiseTaxBand(myAmount, myRate));
 
         /* If we have a "higher" band */
         if (myIterator.hasNext()) {
@@ -148,6 +162,7 @@ public abstract class MoneyWiseUKDividendScheme
             }
             myList.add(new MoneyWiseTaxBand(myBand.getAmount(), myRate));
         }
+
         /* If we have an "additional" band */
         if (myIterator.hasNext()) {
             /* Add the higher band */
@@ -177,7 +192,7 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKDividendAsIncomeScheme.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKDividendAsIncomeScheme.class.getSimpleName(), MoneyWiseUKIncomeScheme.getBaseFields());
 
         @Override
         protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
@@ -188,28 +203,17 @@ public abstract class MoneyWiseUKDividendScheme
         public MetisFields getDataFields() {
             return FIELD_DEFS;
         }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Not recognised */
-            return MetisFieldValue.UNKNOWN;
-        }
-
-        @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
-        }
     }
 
     /**
      * Base Rate Scheme.
      */
-    public static class MoneyWiseDividendUKBaseRateScheme
+    public static class MoneyWiseUKDividendBaseRateScheme
             extends MoneyWiseUKDividendScheme {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDividendUKBaseRateScheme.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKDividendBaseRateScheme.class.getSimpleName(), MoneyWiseUKIncomeScheme.getBaseFields());
 
         /**
          * Base Rate Field Id.
@@ -217,36 +221,26 @@ public abstract class MoneyWiseUKDividendScheme
         private static final MetisField FIELD_BASERATE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.SCHEME_BASE_RATE.getValue());
 
         /**
-         * Relief Available Field Id.
-         */
-        private static final MetisField FIELD_RELIEF = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.SCHEME_RELIEF_AVAILABLE.getValue());
-
-        /**
          * The Base Rate.
          */
         private final TethysRate theBaseRate;
-
-        /**
-         * Tax Relief available.
-         */
-        private final Boolean reliefAvailable;
 
         /**
          * Constructor.
          * @param pRate the base rate
          * @param pReliefAvailable Is tax relief available?
          */
-        protected MoneyWiseDividendUKBaseRateScheme(final TethysRate pRate,
+        protected MoneyWiseUKDividendBaseRateScheme(final TethysRate pRate,
                                                     final Boolean pReliefAvailable) {
+            super(pReliefAvailable);
             theBaseRate = pRate;
-            reliefAvailable = pReliefAvailable;
         }
 
         /**
          * Constructor.
          * @param pRate the base rate
          */
-        protected MoneyWiseDividendUKBaseRateScheme(final TethysRate pRate) {
+        protected MoneyWiseUKDividendBaseRateScheme(final TethysRate pRate) {
             this(pRate, Boolean.TRUE);
         }
 
@@ -258,11 +252,6 @@ public abstract class MoneyWiseUKDividendScheme
         @Override
         protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
             return theBaseRate;
-        }
-
-        @Override
-        public Boolean taxReliefAvailable() {
-            return reliefAvailable;
         }
 
         /**
@@ -284,17 +273,9 @@ public abstract class MoneyWiseUKDividendScheme
             if (FIELD_BASERATE.equals(pField)) {
                 return theBaseRate;
             }
-            if (FIELD_RELIEF.equals(pField)) {
-                return reliefAvailable;
-            }
 
-            /* Not recognised */
-            return MetisFieldValue.UNKNOWN;
-        }
-
-        @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
+            /* Pass call on */
+            return super.getFieldValue(pField);
         }
     }
 
@@ -302,11 +283,11 @@ public abstract class MoneyWiseUKDividendScheme
      * Higher Rate Scheme.
      */
     public static class MoneyWiseUKDividendHigherRateScheme
-            extends MoneyWiseDividendUKBaseRateScheme {
+            extends MoneyWiseUKDividendBaseRateScheme {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKDividendHigherRateScheme.class.getSimpleName(), MoneyWiseDividendUKBaseRateScheme.getBaseFields());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKDividendHigherRateScheme.class.getSimpleName(), MoneyWiseUKDividendBaseRateScheme.getBaseFields());
 
         /**
          * Rate Field Id.
@@ -325,18 +306,25 @@ public abstract class MoneyWiseUKDividendScheme
          */
         protected MoneyWiseUKDividendHigherRateScheme(final TethysRate pRate,
                                                       final TethysRate pHighRate) {
-            super(pRate, Boolean.FALSE);
+            this(pRate, pHighRate, Boolean.FALSE);
+        }
+
+        /**
+         * Constructor.
+         * @param pRate the base rate
+         * @param pHighRate the higher rate
+         * @param pReliefAvailable Is tax relief available?
+         */
+        protected MoneyWiseUKDividendHigherRateScheme(final TethysRate pRate,
+                                                      final TethysRate pHighRate,
+                                                      final Boolean pReliefAvailable) {
+            super(pRate, pReliefAvailable);
             theHighRate = pHighRate;
         }
 
         @Override
         protected TethysRate getHigherRate() {
             return theHighRate;
-        }
-
-        @Override
-        public Boolean taxReliefAvailable() {
-            return Boolean.FALSE;
         }
 
         /**
@@ -362,10 +350,31 @@ public abstract class MoneyWiseUKDividendScheme
             /* Pass on */
             return super.getFieldValue(pField);
         }
+    }
+
+    /**
+     * LoHigher Rate Scheme.
+     */
+    public static class MoneyWiseUKDividendLoHigherRateScheme
+            extends MoneyWiseUKDividendHigherRateScheme {
+        /**
+         * Report fields.
+         */
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKDividendLoHigherRateScheme.class.getSimpleName(), MoneyWiseUKDividendHigherRateScheme.getBaseFields());
+
+        /**
+         * Constructor.
+         * @param pRate the base rate
+         * @param pHighRate the higher rate
+         */
+        protected MoneyWiseUKDividendLoHigherRateScheme(final TethysRate pRate,
+                                                        final TethysRate pHigherRate) {
+            super(pRate, pHigherRate);
+        }
 
         @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
+        public MetisFields getDataFields() {
+            return FIELD_DEFS;
         }
     }
 
@@ -398,7 +407,21 @@ public abstract class MoneyWiseUKDividendScheme
         protected MoneyWiseUKDividendAdditionalRateScheme(final TethysRate pRate,
                                                           final TethysRate pHighRate,
                                                           final TethysRate pAddRate) {
-            super(pRate, pHighRate);
+            this(pRate, pHighRate, pAddRate, Boolean.FALSE);
+        }
+
+        /**
+         * Constructor.
+         * @param pRate the base rate
+         * @param pHighRate the higher rate
+         * @param pAddRate the additional rate
+         * @param pReliefAvailable Is tax relief available?
+         */
+        protected MoneyWiseUKDividendAdditionalRateScheme(final TethysRate pRate,
+                                                          final TethysRate pHighRate,
+                                                          final TethysRate pAddRate,
+                                                          final Boolean pReliefAvailable) {
+            super(pRate, pHighRate, pReliefAvailable);
             theAdditionalRate = pAddRate;
         }
 
@@ -421,11 +444,6 @@ public abstract class MoneyWiseUKDividendScheme
 
             /* Pass on */
             return super.getFieldValue(pField);
-        }
-
-        @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
         }
     }
 }

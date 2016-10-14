@@ -96,26 +96,61 @@ public final class MetisDataObject {
 
     /**
      * List interface.
+     * @param <T> the list element type
      */
     @FunctionalInterface
-    public interface MetisDataList {
+    public interface MetisDataList<T> {
         /**
          * Obtain underlying list.
          * @return the list
          */
-        List<?> getUnderlyingList();
+        List<T> getUnderlyingList();
+
+        /**
+         * Is the map empty?.
+         * @return true/false
+         */
+        default boolean isEmpty() {
+            return getUnderlyingList().isEmpty();
+        }
+
+        /**
+         * Obtain the size of the map.
+         * @return the size
+         */
+        default int size() {
+            return getUnderlyingList().size();
+        }
     }
 
     /**
      * Map interface.
+     * @param <K> the map key type
+     * @param <V> the map value type
      */
     @FunctionalInterface
-    public interface MetisDataMap {
+    public interface MetisDataMap<K, V> {
         /**
          * Obtain underlying map.
          * @return the map
          */
-        Map<?, ?> getUnderlyingMap();
+        Map<K, V> getUnderlyingMap();
+
+        /**
+         * Is the map empty?.
+         * @return true/false
+         */
+        default boolean isEmpty() {
+            return getUnderlyingMap().isEmpty();
+        }
+
+        /**
+         * Obtain the size of the map.
+         * @return the size
+         */
+        default int size() {
+            return getUnderlyingMap().size();
+        }
     }
 
     /**

@@ -52,7 +52,6 @@ import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.Mon
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusDatabase.PrometheusDatabasePreferences;
@@ -290,7 +289,7 @@ public class MaintenanceTab
      * Obtain the view.
      * @return the view
      */
-    protected View getView() {
+    protected SwingView getView() {
         return theView;
     }
 

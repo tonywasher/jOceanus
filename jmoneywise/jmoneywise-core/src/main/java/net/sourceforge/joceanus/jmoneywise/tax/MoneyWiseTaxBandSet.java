@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * Set of taxBands.
  */
 public class MoneyWiseTaxBandSet
-        implements MetisDataList, MetisDataFormat, Iterable<MoneyWiseTaxBand> {
+        implements MetisDataList<MoneyWiseTaxBand>, MetisDataFormat, Iterable<MoneyWiseTaxBand> {
     /**
      * List of Tax Bands.
      */
@@ -81,7 +81,7 @@ public class MoneyWiseTaxBandSet
     }
 
     @Override
-    public List<?> getUnderlyingList() {
+    public List<MoneyWiseTaxBand> getUnderlyingList() {
         return theTaxBands;
     }
 

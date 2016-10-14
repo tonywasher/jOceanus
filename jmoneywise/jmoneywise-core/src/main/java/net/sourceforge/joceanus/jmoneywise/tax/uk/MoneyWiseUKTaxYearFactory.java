@@ -164,77 +164,77 @@ public final class MoneyWiseUKTaxYearFactory {
      */
     protected static final MoneyWiseUKTaxYear YEAR_2000 = new MoneyWiseUKTaxYear(2000,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2000, MoneyWiseUKTaxBandsFactory.BANDS_2000,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
+            MoneyWiseUKSchemeFactory.INTEREST_LOBASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
 
     /**
      * The 2001 TaxYear.
      */
     protected static final MoneyWiseUKTaxYear YEAR_2001 = new MoneyWiseUKTaxYear(2001,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2001, MoneyWiseUKTaxBandsFactory.BANDS_2001,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
+            MoneyWiseUKSchemeFactory.INTEREST_LOBASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
 
     /**
      * The 2002 TaxYear.
      */
     protected static final MoneyWiseUKTaxYear YEAR_2002 = new MoneyWiseUKTaxYear(2002,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2002, MoneyWiseUKTaxBandsFactory.BANDS_2002,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
+            MoneyWiseUKSchemeFactory.INTEREST_LOBASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
 
     /**
      * The 2003 TaxYear.
      */
     protected static final MoneyWiseUKTaxYear YEAR_2003 = new MoneyWiseUKTaxYear(2003,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2003, MoneyWiseUKTaxBandsFactory.BANDS_2003,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
+            MoneyWiseUKSchemeFactory.INTEREST_LOBASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
 
     /**
      * The 2004 TaxYear.
      */
     protected static final MoneyWiseUKTaxYear YEAR_2004 = new MoneyWiseUKTaxYear(2004,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2004, MoneyWiseUKTaxBandsFactory.BANDS_2004,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
+            MoneyWiseUKSchemeFactory.INTEREST_LOBASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
 
     /**
      * The 2005 TaxYear.
      */
     protected static final MoneyWiseUKTaxYear YEAR_2005 = new MoneyWiseUKTaxYear(2005,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2005, MoneyWiseUKTaxBandsFactory.BANDS_2005,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
+            MoneyWiseUKSchemeFactory.INTEREST_LOBASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
 
     /**
      * The 2006 TaxYear.
      */
     protected static final MoneyWiseUKTaxYear YEAR_2006 = new MoneyWiseUKTaxYear(2006,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2006, MoneyWiseUKTaxBandsFactory.BANDS_2006,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
+            MoneyWiseUKSchemeFactory.INTEREST_LOBASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
 
     /**
      * The 2007 TaxYear.
      */
     protected static final MoneyWiseUKTaxYear YEAR_2007 = new MoneyWiseUKTaxYear(2007,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2007, MoneyWiseUKTaxBandsFactory.BANDS_2007,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
+            MoneyWiseUKSchemeFactory.INTEREST_LOBASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
 
     /**
      * The 2008 TaxYear.
      */
     protected static final MoneyWiseUKTaxYear YEAR_2008 = new MoneyWiseUKTaxYear(2008,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2008, MoneyWiseUKTaxBandsFactory.BANDS_2008,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
+            MoneyWiseUKSchemeFactory.INTEREST_LOBASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_ASINCOME);
 
     /**
      * The 2009 TaxYear.
      */
     protected static final MoneyWiseUKTaxYear YEAR_2009 = new MoneyWiseUKTaxYear(2009,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2009, MoneyWiseUKTaxBandsFactory.BANDS_2009,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_NEW);
+            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT2, MoneyWiseUKSchemeFactory.CAPITAL_NEW);
 
     /**
      * The 2010 TaxYear.
      */
     protected static final MoneyWiseUKTaxYear YEAR_2010 = new MoneyWiseUKTaxYear(2010,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2010, MoneyWiseUKTaxBandsFactory.BANDS_2010,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_NEW);
+            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_LOTAXCREDIT2, MoneyWiseUKSchemeFactory.CAPITAL_NEW);
 
     /**
      * The 2011 TaxYear.

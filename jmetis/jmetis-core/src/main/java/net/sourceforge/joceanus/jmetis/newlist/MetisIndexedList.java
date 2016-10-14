@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataList;
  * @param <T> the item type
  */
 public class MetisIndexedList<T extends MetisVersionedItem>
-        implements MetisDataList {
+        implements MetisDataList<T> {
     /**
      * The underlying list.
      */

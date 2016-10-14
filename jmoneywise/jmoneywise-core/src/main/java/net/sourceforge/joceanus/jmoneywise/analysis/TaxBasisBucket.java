@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -81,7 +82,7 @@ public class TaxBasisBucket
     private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
 
     /**
-     * History Field Id.
+     * AccountList Field Id.
      */
     private static final MetisField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField(AnalysisResource.TAXBASIS_ACCOUNTLIST.getValue());
 
@@ -915,6 +916,11 @@ public class TaxBasisBucket
         private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
+         * ChargeableGains Field Id.
+         */
+        private static final MetisField FIELD_CHARGES = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_CHARGES.getValue());
+
+        /**
          * Totals field Id.
          */
         private static final MetisField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
@@ -930,6 +936,11 @@ public class TaxBasisBucket
         private final MoneyWiseData theData;
 
         /**
+         * The chargeableGains.
+         */
+        private final MoneyWiseChargeableGainSliceList theCharges;
+
+        /**
          * The tax basis.
          */
         private final TaxBasisBucket theTotals;
@@ -942,6 +953,7 @@ public class TaxBasisBucket
             super(TaxBasisBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
+            theCharges = new MoneyWiseChargeableGainSliceList();
             theTotals = allocateTotalsBucket();
         }
 
@@ -958,6 +970,7 @@ public class TaxBasisBucket
             super(TaxBasisBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
+            theCharges = new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange());
             theTotals = allocateTotalsBucket();
 
             /* Loop through the buckets */
@@ -989,6 +1002,7 @@ public class TaxBasisBucket
             super(TaxBasisBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
+            theCharges = new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange());
             theTotals = allocateTotalsBucket();
 
             /* Loop through the buckets */
@@ -1026,10 +1040,23 @@ public class TaxBasisBucket
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
+            if (FIELD_CHARGES.equals(pField)) {
+                return theCharges.isEmpty()
+                                            ? MetisFieldValue.SKIP
+                                            : theCharges;
+            }
             if (FIELD_TOTALS.equals(pField)) {
                 return theTotals;
             }
             return MetisFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain the charges.
+         * @return the charges
+         */
+        public MoneyWiseChargeableGainSliceList getGainSlices() {
+            return theCharges;
         }
 
         /**
@@ -1241,6 +1268,17 @@ public class TaxBasisBucket
             /* Access the bucket and adjust it */
             TaxBasisBucket myBucket = getBucket(TaxBasisClass.MARKET);
             myBucket.adjustValue(myDelta);
+        }
+
+        /**
+         * record ChargeableGain.
+         * @param pTrans the transaction
+         * @param pGain the gain
+         */
+        protected void recordChargeableGain(final Transaction pTrans,
+                                            final TethysMoney pGain) {
+            /* record the chargeable gain */
+            theCharges.addTransaction(pTrans, pGain);
         }
 
         /**

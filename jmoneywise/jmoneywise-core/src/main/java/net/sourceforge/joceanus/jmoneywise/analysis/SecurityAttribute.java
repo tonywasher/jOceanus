@@ -161,7 +161,12 @@ public enum SecurityAttribute implements BucketAttribute {
     /**
      * Price.
      */
-    PRICE;
+    PRICE,
+
+    /**
+     * CashType.
+     */
+    CASHTYPE;
 
     /**
      * The String name.
@@ -211,6 +216,7 @@ public enum SecurityAttribute implements BucketAttribute {
             case CASHINVESTED:
             case CAPITALGAIN:
             case ALLOWEDCOST:
+            case CASHTYPE:
             default:
                 return false;
         }
@@ -226,6 +232,8 @@ public enum SecurityAttribute implements BucketAttribute {
             case EXCHANGERATE:
             case COSTDILUTION:
                 return MetisDataType.RATIO;
+            case CASHTYPE:
+                return MetisDataType.ENUM;
             case VALUATION:
             case FOREIGNVALUE:
             case VALUEDELTA:

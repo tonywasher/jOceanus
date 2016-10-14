@@ -185,8 +185,8 @@ public abstract class PrometheusIcons {
      * Obtain goTo icon ScrollButton.
      * @return the scroll button
      */
-    public static JScrollButton<PrometheusGoToEvent> getGotoButton() {
-        JScrollButton<PrometheusGoToEvent> myButton = new JScrollButton<>(ICON_GOTO);
+    public static JScrollButton<PrometheusGoToEvent<?>> getGotoButton() {
+        JScrollButton<PrometheusGoToEvent<?>> myButton = new JScrollButton<>(ICON_GOTO);
         myButton.setToolTipText(TIP_GOTO);
         return myButton;
     }

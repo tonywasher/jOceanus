@@ -62,6 +62,11 @@ public class MoneyWiseTaxDueBucket
     private static final MetisField FIELD_TAXBANDS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_BANDS.getValue());
 
     /**
+     * Taxable Income Field Id.
+     */
+    private static final MetisField FIELD_INCOME = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_INCOME.getValue());
+
+    /**
      * TaxDue Field Id.
      */
     private static final MetisField FIELD_TAXDUE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue());
@@ -80,6 +85,11 @@ public class MoneyWiseTaxDueBucket
      * Tax Bands.
      */
     private final List<MoneyWiseTaxBandBucket> theTaxBands;
+
+    /**
+     * Taxable income.
+     */
+    private final TethysMoney theTaxableIncome;
 
     /**
      * Tax Due.
@@ -104,12 +114,16 @@ public class MoneyWiseTaxDueBucket
 
         /* Loop through the taxBands */
         for (MoneyWiseTaxBand myBand : pBands) {
-            /* Create the tax band bucket */
-            MoneyWiseTaxBandBucket myBucket = new MoneyWiseTaxBandBucket(myBand);
-            theTaxBands.add(myBucket);
+            /* Ignore the band if there is zero amount */
+            if (myBand.getAmount().isNonZero()) {
+                /* Create the tax band bucket */
+                MoneyWiseTaxBandBucket myBucket = new MoneyWiseTaxBandBucket(myBand);
+                theTaxBands.add(myBucket);
+            }
         }
 
-        /* Create the taxDue value */
+        /* Create the values */
+        theTaxableIncome = pBands.getZeroAmount();
         theTaxDue = pBands.getZeroAmount();
         calculateTaxDue();
     }
@@ -139,6 +153,14 @@ public class MoneyWiseTaxDueBucket
     }
 
     /**
+     * Obtain the taxableIncome.
+     * @return the taxableIncome
+     */
+    public TethysMoney getTaxableIncome() {
+        return theTaxableIncome;
+    }
+
+    /**
      * Obtain the taxDue.
      * @return the taxDue
      */
@@ -155,7 +177,8 @@ public class MoneyWiseTaxDueBucket
         while (myIterator.hasNext()) {
             MoneyWiseTaxBandBucket myBand = myIterator.next();
 
-            /* Add the tax */
+            /* Add the values */
+            theTaxableIncome.addAmount(myBand.getAmount());
             theTaxDue.addAmount(myBand.getTaxDue());
         }
     }
@@ -184,6 +207,9 @@ public class MoneyWiseTaxDueBucket
         }
         if (FIELD_TAXBANDS.equals(pField)) {
             return theTaxBands;
+        }
+        if (FIELD_INCOME.equals(pField)) {
+            return theTaxableIncome;
         }
         if (FIELD_TAXDUE.equals(pField)) {
             return theTaxDue;

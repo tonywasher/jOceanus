@@ -454,12 +454,6 @@ public class TaxAnalysis {
             }
         }
 
-        /* If we have savings allowances */
-        if (theYear.hasSavingsAllowance()) {
-            myBands.theSavingsAllowance = new TethysMoney(theYear.getSavingsAllow());
-            myBands.theDividendAllowance = new TethysMoney(theYear.getDividendAllow());
-        }
-
         /* Return to caller */
         return myBands;
     }
@@ -1401,15 +1395,5 @@ public class TaxAnalysis {
          * The High Tax Band.
          */
         private TethysMoney theHiBand;
-
-        /**
-         * The Savings Allowance.
-         */
-        private TethysMoney theSavingsAllowance;
-
-        /**
-         * The Dividend Allowance.
-         */
-        private TethysMoney theDividendAllowance;
     }
 }

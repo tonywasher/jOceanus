@@ -976,7 +976,8 @@ public class Security
     }
 
     @Override
-    public TransactionCategory getDetailedCategory(final TransactionCategory pCategory) {
+    public TransactionCategory getDetailedCategory(final TransactionCategory pCategory,
+                                                   final TaxYear pYear) {
         /* Switch on category type */
         if (TransactionCategoryClass.DIVIDEND.equals(pCategory.getCategoryTypeClass())) {
             TransactionCategoryList myCategories = getDataSet().getTransCategories();

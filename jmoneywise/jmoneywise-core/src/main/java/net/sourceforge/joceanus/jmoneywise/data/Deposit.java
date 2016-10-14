@@ -996,13 +996,9 @@ public class Deposit
         }
     }
 
-    /**
-     * Obtain detailed category.
-     * @param pCategory current category
-     * @return detailed category
-     */
     @Override
-    public TransactionCategory getDetailedCategory(final TransactionCategory pCategory) {
+    public TransactionCategory getDetailedCategory(final TransactionCategory pCategory,
+                                                   final TaxYear pYear) {
         /* Switch on category type */
         TransactionCategoryList myCategories = getDataSet().getTransCategories();
         switch (pCategory.getCategoryTypeClass()) {
@@ -1010,16 +1006,16 @@ public class Deposit
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREEINTEREST);
                 }
-                return myCategories.getSingularClass(isGross()
-                                                               ? TransactionCategoryClass.GROSSINTEREST
-                                                               : TransactionCategoryClass.TAXEDINTEREST);
+                return myCategories.getSingularClass(isGross() || pYear.hasSavingsAllowance()
+                                                                                              ? TransactionCategoryClass.GROSSINTEREST
+                                                                                              : TransactionCategoryClass.TAXEDINTEREST);
             case LOYALTYBONUS:
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREELOYALTYBONUS);
                 }
-                return myCategories.getSingularClass(isGross()
-                                                               ? TransactionCategoryClass.GROSSLOYALTYBONUS
-                                                               : TransactionCategoryClass.TAXEDLOYALTYBONUS);
+                return myCategories.getSingularClass(isGross() || pYear.hasSavingsAllowance()
+                                                                                              ? TransactionCategoryClass.GROSSLOYALTYBONUS
+                                                                                              : TransactionCategoryClass.TAXEDLOYALTYBONUS);
             default:
                 return pCategory;
         }

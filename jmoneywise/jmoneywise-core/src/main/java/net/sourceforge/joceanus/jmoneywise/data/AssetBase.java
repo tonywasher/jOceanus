@@ -597,9 +597,11 @@ public abstract class AssetBase<T extends AssetBase<T>>
     /**
      * Obtain detailed category.
      * @param pCategory current category
+     * @param pYear the taxYear
      * @return detailed category
      */
-    public TransactionCategory getDetailedCategory(final TransactionCategory pCategory) {
+    public TransactionCategory getDetailedCategory(final TransactionCategory pCategory,
+                                                   final TaxYear pYear) {
         /* return the unchanged category */
         return pCategory;
     }

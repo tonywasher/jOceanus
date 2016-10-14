@@ -22,9 +22,47 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax;
 
+import java.util.Iterator;
+
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+
 /**
  * UK Tax Analysis.
  */
 public interface MoneyWiseTaxAnalysis {
+    /**
+     * Obtain the taxYear.
+     * @return the taxYear
+     */
+    MoneyWiseTaxYear getTaxYear();
 
+    /**
+     * Obtain the taxableIncome.
+     * @return the taxableIncome
+     */
+    TethysMoney getTaxableIncome();
+
+    /**
+     * Obtain the taxDue.
+     * @return the taxDue
+     */
+    TethysMoney getTaxDue();
+
+    /**
+     * Obtain the taxPaid.
+     * @return the taxPaid
+     */
+    TethysMoney getTaxPaid();
+
+    /**
+     * Obtain the taxProfit.
+     * @return the taxProfit
+     */
+    TethysMoney getTaxProfit();
+
+    /**
+     * Obtain the taxBands iterator.
+     * @return the iterator
+     */
+    Iterator<MoneyWiseTaxDueBucket> taxDueIterator();
 }

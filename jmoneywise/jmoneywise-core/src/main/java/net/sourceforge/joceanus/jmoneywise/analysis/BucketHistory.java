@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @param <E> the enum class
  */
 public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
-        implements MetisDataFormat, MetisDataMap {
+        implements MetisDataFormat, MetisDataMap<Integer, BucketSnapShot<T, E>> {
     /**
      * The history map.
      */
@@ -61,11 +61,6 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      * Last values.
      */
     private T theLastValues;
-
-    /**
-     * Last transaction id.
-     */
-    private Integer theLastId;
 
     /**
      * Constructor.
@@ -220,7 +215,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     }
 
     @Override
-    public Map<?, ?> getUnderlyingMap() {
+    public Map<Integer, BucketSnapShot<T, E>> getUnderlyingMap() {
         return theHistoryMap;
     }
 
@@ -269,15 +264,10 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      */
     protected T registerTransaction(final Transaction pTrans,
                                     final T pValues) {
-        /* Check whether this is re-registering the transaction */
-        Integer myId = pTrans.getId();
-        if (!myId.equals(theLastId)) {
-            /* Allocate the transaction and add to map */
-            BucketSnapShot<T, E> myTrans = new BucketSnapShot<>(pTrans, pValues, theLastValues);
-            theHistoryMap.put(pTrans.getId(), myTrans);
-            theLastValues = myTrans.getSnapShot();
-            theLastId = myId;
-        }
+        /* Allocate the transaction and add to map */
+        BucketSnapShot<T, E> myTrans = new BucketSnapShot<>(pTrans, pValues, theLastValues);
+        theHistoryMap.put(pTrans.getId(), myTrans);
+        theLastValues = myTrans.getSnapShot();
 
         /* Return the values */
         return theLastValues;

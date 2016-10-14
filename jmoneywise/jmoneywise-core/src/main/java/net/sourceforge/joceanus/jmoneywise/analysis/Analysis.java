@@ -148,7 +148,7 @@ public class Analysis
     private static final MetisField FIELD_TAXCALCNEW = FIELD_DEFS.declareLocalField("NewTax");
 
     /**
-     * Charges Field Id.
+     * ChargeableGains Field Id.
      */
     private static final MetisField FIELD_CHARGES = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_CHARGES.getValue());
 
@@ -652,6 +652,14 @@ public class Analysis
      */
     public TaxCalcBucketList getTaxCalculations() {
         return theTaxCalculations;
+    }
+
+    /**
+     * Obtain the tax analysis
+     * @return the analysis
+     */
+    public MoneyWiseTaxAnalysis getTaxAnalysis() {
+        return theTaxAnalysis;
     }
 
     /**

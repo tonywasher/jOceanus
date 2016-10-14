@@ -24,16 +24,60 @@ package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * Income Tax Scheme.
  */
-public class MoneyWiseUKIncomeScheme {
+public class MoneyWiseUKIncomeScheme
+        implements MetisDataContents {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKIncomeScheme.class.getSimpleName());
+
+    /**
+     * Relief Available Field Id.
+     */
+    private static final MetisField FIELD_RELIEF = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.SCHEME_RELIEF_AVAILABLE.getValue());
+
+    /**
+     * Tax Relief available.
+     */
+    private final Boolean reliefAvailable;
+
+    /**
+     * Constructor.
+     */
+    protected MoneyWiseUKIncomeScheme() {
+        this(Boolean.TRUE);
+    }
+
+    /**
+     * Constructor.
+     * @param pReliefAvailable Is tax relief available?
+     */
+    protected MoneyWiseUKIncomeScheme(final Boolean pReliefAvailable) {
+        reliefAvailable = pReliefAvailable;
+    }
+
+    /**
+     * Is tax relief available?
+     * @return true/false
+     */
+    public Boolean taxReliefAvailable() {
+        return reliefAvailable;
+    }
+
     /**
      * Allocate the amount to the appropriate tax bands.
      * @param pConfig the taxConfig
@@ -76,8 +120,8 @@ public class MoneyWiseUKIncomeScheme {
         TethysMoney myRemaining = new TethysMoney(pAmount);
 
         /* Determine allowance */
-        TethysMoney myAllowance = getAmountInAllowance(pConfig, myRemaining);
-        if (myAllowance.isNonZero()) {
+        TethysMoney myAllowance = new TethysMoney(getAmountInAllowance(pConfig, myRemaining));
+        if (myAllowance.isNonZero() && reliefAvailable) {
             myTaxBands.addTaxBand(new MoneyWiseTaxBand(myAllowance, TethysRate.getWholePercentage(0)));
             myRemaining.subtractAmount(myAllowance);
         }
@@ -89,6 +133,13 @@ public class MoneyWiseUKIncomeScheme {
             /* Determine amount in band */
             MoneyWiseTaxBand myBand = myIterator.next();
             TethysMoney myAmount = getAmountInBand(myBand.getAmount(), myRemaining);
+
+            /* Add any held-over allowance */
+            if (!reliefAvailable && myAllowance.isNonZero()) {
+                myAmount = new TethysMoney(myAmount);
+                myAmount.addAmount(myAllowance);
+                myAllowance.setZero();
+            }
 
             /* allocate band and adjust */
             myTaxBands.addTaxBand(new MoneyWiseTaxBand(myAmount, myBand.getRate()));
@@ -195,5 +246,34 @@ public class MoneyWiseUKIncomeScheme {
         return pBand != null && pAmount.compareTo(pBand) > 0
                                                              ? pBand
                                                              : pAmount;
+    }
+
+    /**
+     * Obtain the data fields.
+     * @return the data fields
+     */
+    protected static MetisFields getBaseFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_RELIEF.equals(pField)) {
+            return reliefAvailable;
+        }
+
+        /* Not recognised */
+        return MetisFieldValue.UNKNOWN;
+    }
+
+    @Override
+    public String formatObject() {
+        return getDataFields().getName();
     }
 }

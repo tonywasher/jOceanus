@@ -167,9 +167,9 @@ public class MetisViewerFormatter {
 
         /* handle embedded objects */
         if (myObject instanceof MetisDataList) {
-            myObject = ((MetisDataList) myObject).getUnderlyingList();
+            myObject = ((MetisDataList<?>) myObject).getUnderlyingList();
         } else if (myObject instanceof MetisDataMap) {
-            myObject = ((MetisDataMap) myObject).getUnderlyingMap();
+            myObject = ((MetisDataMap<?, ?>) myObject).getUnderlyingMap();
         }
 
         /* If we are List */
@@ -196,7 +196,7 @@ public class MetisViewerFormatter {
 
         /* handle embedded objects */
         if (myObject instanceof MetisDataList) {
-            myObject = ((MetisDataList) myObject).getUnderlyingList();
+            myObject = ((MetisDataList<?>) myObject).getUnderlyingList();
         }
 
         /* If we are List */

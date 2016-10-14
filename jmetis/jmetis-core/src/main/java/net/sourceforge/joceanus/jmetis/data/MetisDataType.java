@@ -63,6 +63,11 @@ public enum MetisDataType {
     DOUBLE,
 
     /**
+     * Enum.
+     */
+    ENUM,
+
+    /**
      * Date.
      */
     DATE,
@@ -139,6 +144,7 @@ public enum MetisDataType {
             case LINKSET:
             case DATE:
             case DATEDAY:
+            case ENUM:
                 return false;
             default:
                 return true;

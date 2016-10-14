@@ -26,12 +26,14 @@ import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKCapitalScheme.Money
 import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalFlatRateScheme;
 import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalResidentialScheme;
 import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalSplitRateScheme;
-import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKDividendScheme.MoneyWiseDividendUKBaseRateScheme;
 import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKDividendScheme.MoneyWiseUKDividendAdditionalRateScheme;
 import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKDividendScheme.MoneyWiseUKDividendAsIncomeScheme;
+import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKDividendScheme.MoneyWiseUKDividendBaseRateScheme;
 import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKDividendScheme.MoneyWiseUKDividendHigherRateScheme;
+import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKDividendScheme.MoneyWiseUKDividendLoHigherRateScheme;
 import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestAsIncomeScheme;
 import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestBaseRateScheme;
+import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestLoBaseRateScheme;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
@@ -46,17 +48,22 @@ public final class MoneyWiseUKSchemeFactory {
     /**
      * The Dividends TaxCredit Scheme.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_TAXCREDIT = new MoneyWiseDividendUKBaseRateScheme(getRate(20));
+    protected static final MoneyWiseUKDividendScheme DIVIDEND_TAXCREDIT = new MoneyWiseUKDividendBaseRateScheme(getRate(20));
 
     /**
      * The Dividends Non-refund-able TaxCredit Scheme.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_FIXEDTAXCREDIT = new MoneyWiseDividendUKBaseRateScheme(getRate(20), false);
+    protected static final MoneyWiseUKDividendScheme DIVIDEND_FIXEDTAXCREDIT = new MoneyWiseUKDividendBaseRateScheme(getRate(20), false);
 
     /**
      * The Dividends Low TaxCredit Scheme.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_LOTAXCREDIT = new MoneyWiseUKDividendHigherRateScheme(getRate(10), getFractionalRate(325));
+    protected static final MoneyWiseUKDividendScheme DIVIDEND_LOTAXCREDIT = new MoneyWiseUKDividendLoHigherRateScheme(getRate(10), getFractionalRate(325));
+
+    /**
+     * The Dividends Low TaxCredit Scheme Mark 2.
+     */
+    protected static final MoneyWiseUKDividendScheme DIVIDEND_LOTAXCREDIT2 = new MoneyWiseUKDividendHigherRateScheme(getRate(10), getFractionalRate(325));
 
     /**
      * The Dividends Additional Rate Scheme.
@@ -64,14 +71,15 @@ public final class MoneyWiseUKSchemeFactory {
     protected static final MoneyWiseUKDividendScheme DIVIDEND_ADDTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getRate(10), getFractionalRate(325), getFractionalRate(425));
 
     /**
-     * The Dividends Additional Rate Scheme.
+     * The Dividends Additional Rate Scheme Mark 2.
      */
     protected static final MoneyWiseUKDividendScheme DIVIDEND_ADDTAXCREDIT2 = new MoneyWiseUKDividendAdditionalRateScheme(getRate(10), getFractionalRate(325), getFractionalRate(375));
 
     /**
-     * The Dividends Additional Rate Scheme.
+     * The Dividends Additional Rate Scheme with no TaxCredit.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getFractionalRate(75), getFractionalRate(325), getFractionalRate(381));
+    protected static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getFractionalRate(75), getFractionalRate(325), getFractionalRate(381),
+            Boolean.TRUE);
 
     /**
      * The Interest asIncome Scheme.
@@ -82,6 +90,11 @@ public final class MoneyWiseUKSchemeFactory {
      * The Interest base Scheme.
      */
     protected static final MoneyWiseUKInterestScheme INTEREST_BASE = new MoneyWiseUKInterestBaseRateScheme(getRate(20));
+
+    /**
+     * The LowInterest base Scheme.
+     */
+    protected static final MoneyWiseUKInterestScheme INTEREST_LOBASE = new MoneyWiseUKInterestLoBaseRateScheme(getRate(20));
 
     /**
      * The Old Capital Gains Scheme.
