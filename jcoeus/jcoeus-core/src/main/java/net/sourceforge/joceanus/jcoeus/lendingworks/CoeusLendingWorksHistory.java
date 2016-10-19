@@ -20,28 +20,28 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jcoeus.ratesetter;
+package net.sourceforge.joceanus.jcoeus.lendingworks;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
- * RateSetter Transaction Totals History.
+ * LendingWorks Transaction Totals History.
  */
-public class CoeusRateSetterHistory
-        extends CoeusHistory<CoeusRateSetterLoan, CoeusRateSetterTransaction, CoeusRateSetterTotals, CoeusRateSetterHistory> {
+public class CoeusLendingWorksHistory
+        extends CoeusHistory<CoeusLendingWorksLoan, CoeusLendingWorksTransaction, CoeusLendingWorksTotals, CoeusLendingWorksHistory> {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusRateSetterHistory.class.getSimpleName(), CoeusHistory.getBaseFields());
+    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusLendingWorksHistory.class.getSimpleName(), CoeusHistory.getBaseFields());
 
     /**
      * Constructor for zeroed market totals.
      * @param pMarket the market
      */
-    protected CoeusRateSetterHistory(final CoeusRateSetterMarket pMarket) {
-        super(new CoeusRateSetterTotals(pMarket));
+    protected CoeusLendingWorksHistory(final CoeusLendingWorksMarket pMarket) {
+        super(new CoeusLendingWorksTotals(pMarket));
     }
 
     /**
@@ -49,28 +49,28 @@ public class CoeusRateSetterHistory
      * @param pMarket the market
      * @param pDate the end date for the totals
      */
-    protected CoeusRateSetterHistory(final CoeusRateSetterMarket pMarket,
-                                     final TethysDate pDate) {
-        super(new CoeusRateSetterTotals(pMarket, pDate));
+    protected CoeusLendingWorksHistory(final CoeusLendingWorksMarket pMarket,
+                                       final TethysDate pDate) {
+        super(new CoeusLendingWorksTotals(pMarket, pDate));
     }
 
     /**
      * Constructor for zeroed loan totals.
      * @param pLoan the loan
      */
-    protected CoeusRateSetterHistory(final CoeusRateSetterLoan pLoan) {
-        super(new CoeusRateSetterTotals(pLoan));
+    protected CoeusLendingWorksHistory(final CoeusLendingWorksLoan pLoan) {
+        super(new CoeusLendingWorksTotals(pLoan));
     }
 
     @Override
-    public CoeusRateSetterMarket getMarket() {
-        return (CoeusRateSetterMarket) super.getMarket();
+    public CoeusLendingWorksMarket getMarket() {
+        return (CoeusLendingWorksMarket) super.getMarket();
     }
 
     @Override
-    protected CoeusRateSetterTotals newTotals(final CoeusRateSetterTotals pTotals,
-                                              final CoeusRateSetterTransaction pTrans) {
-        return new CoeusRateSetterTotals(pTotals, pTrans);
+    protected CoeusLendingWorksTotals newTotals(final CoeusLendingWorksTotals pTotals,
+                                                final CoeusLendingWorksTransaction pTrans) {
+        return new CoeusLendingWorksTotals(pTotals, pTrans);
     }
 
     @Override

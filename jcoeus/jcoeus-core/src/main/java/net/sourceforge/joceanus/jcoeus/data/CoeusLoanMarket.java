@@ -250,7 +250,7 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
      * @return the loan
      * @throws OceanusException on error
      */
-    protected L getLoanById(final String pId) throws OceanusException {
+    public L getLoanById(final String pId) throws OceanusException {
         return theLoanMap.get(pId);
     }
 
@@ -259,7 +259,7 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
      * @param pLoan the loan
      * @throws OceanusException on error
      */
-    protected void recordLoan(final L pLoan) throws OceanusException {
+    public void recordLoan(final L pLoan) throws OceanusException {
         /* Ensure that the id is unique */
         String myId = pLoan.getLoanId();
         if (theLoanMap.get(myId) != null) {

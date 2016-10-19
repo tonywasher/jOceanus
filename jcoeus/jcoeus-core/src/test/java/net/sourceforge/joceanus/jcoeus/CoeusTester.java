@@ -22,12 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus;
 
-import net.sourceforge.joceanus.jcoeus.fundingcircle.CoeusFundingCircleLoader;
-import net.sourceforge.joceanus.jcoeus.fundingcircle.CoeusFundingCircleMarket;
-import net.sourceforge.joceanus.jcoeus.ratesetter.CoeusRateSetterLoader;
-import net.sourceforge.joceanus.jcoeus.ratesetter.CoeusRateSetterMarket;
-import net.sourceforge.joceanus.jcoeus.zopa.CoeusZopaLoader;
-import net.sourceforge.joceanus.jcoeus.zopa.CoeusZopaMarket;
+import net.sourceforge.joceanus.jcoeus.lendingworks.CoeusLendingWorksLoader;
+import net.sourceforge.joceanus.jcoeus.lendingworks.CoeusLendingWorksMarket;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -51,14 +47,18 @@ public class CoeusTester {
             MetisDataFormatter myFormatter = new MetisDataFormatter();
 
             /* Create the loaders */
-            CoeusFundingCircleLoader myFundingCircleLoader = new CoeusFundingCircleLoader(myFormatter, BASE_PATH + "FundingCircle");
-            CoeusRateSetterLoader myRateSetterLoader = new CoeusRateSetterLoader(myFormatter, BASE_PATH + "RateSetter");
-            CoeusZopaLoader myZopaLoader = new CoeusZopaLoader(myFormatter, BASE_PATH + "Zopa");
+            // CoeusFundingCircleLoader myFundingCircleLoader = new
+            // CoeusFundingCircleLoader(myFormatter, BASE_PATH + "FundingCircle");
+            // CoeusRateSetterLoader myRateSetterLoader = new CoeusRateSetterLoader(myFormatter,
+            // BASE_PATH + "RateSetter");
+            // CoeusZopaLoader myZopaLoader = new CoeusZopaLoader(myFormatter, BASE_PATH + "Zopa");
+            CoeusLendingWorksLoader myLendingWorksLoader = new CoeusLendingWorksLoader(myFormatter, BASE_PATH + "LendingWorks");
 
             /* Load the markets */
-            CoeusFundingCircleMarket myFundingCircleMarket = myFundingCircleLoader.loadMarket();
-            CoeusRateSetterMarket myRateSetterMarket = myRateSetterLoader.loadMarket();
-            CoeusZopaMarket myZopaMarket = myZopaLoader.loadMarket();
+            // CoeusFundingCircleMarket myFundingCircleMarket = myFundingCircleLoader.loadMarket();
+            // CoeusRateSetterMarket myRateSetterMarket = myRateSetterLoader.loadMarket();
+            // CoeusZopaMarket myZopaMarket = myZopaLoader.loadMarket();
+            CoeusLendingWorksMarket myLendingWorksMarket = myLendingWorksLoader.loadMarket();
 
             /* Place holder */
             myFormatter = null;
