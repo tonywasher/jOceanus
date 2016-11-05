@@ -183,5 +183,15 @@ public class MetisListChange<T extends MetisVersionedItem> {
          * Commit.
          */
         COMMIT,
+
+        /**
+         * ReBase.
+         */
+        REBASE,
+
+        /**
+         * Refresh.
+         */
+        REFRESH,
     }
 }

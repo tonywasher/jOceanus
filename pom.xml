@@ -77,13 +77,13 @@
     <HttpClientVersion>4.5.2</HttpClientVersion>
     <JSONVersion>20160810</JSONVersion>
     <ApacheMavenVersion>3.3.9</ApacheMavenVersion>
-    <MySQLVersion>6.0.3</MySQLVersion>
-    <PostGreSQLVersion>9.4.1211.jre7</PostGreSQLVersion>
+    <MySQLVersion>6.0.5</MySQLVersion>
+    <PostGreSQLVersion>9.4.1212.jre7</PostGreSQLVersion>
     <ApachePOIVersion>3.15</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.21</SLF4JVersion>
     <LOG4JVersion>2.7</LOG4JVersion>
-    <JSoupVersion>1.9.2</JSoupVersion>
+    <JSoupVersion>1.10.1</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
   </properties>
   <build>
@@ -97,7 +97,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.6.0</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>

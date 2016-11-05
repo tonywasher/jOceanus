@@ -55,16 +55,16 @@ public enum SecurityTypeClass implements StaticInterface {
     /**
      * Life Bond.
      * <p>
-     * This is a LifeBond account, which is a specialised form of an {@link #UNITTRUST} security. It
-     * simply differs in tax treatment.
+     * This is a LifeBond account, which is a specialised form of an {@link #GROWTHUNITTRUST}
+     * security. It simply differs in tax treatment.
      */
     LIFEBOND(4, 3),
 
     /**
      * Endowment.
      * <p>
-     * This is a Endowment account, which is a specialised form of an {@link #UNITTRUST} security.
-     * It simply differs in tax treatment.
+     * This is a Endowment account, which is a specialised form of an {@link #GROWTHUNITTRUST}
+     * security. It simply differs in tax treatment.
      */
     ENDOWMENT(5, 4),
 

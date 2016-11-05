@@ -20,35 +20,26 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis;
+package net.sourceforge.joceanus.jmetis.newlist;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
 
 /**
- * Metis Logic Exception.
+ * Set of DifferenceLists.
+ * @param <E> the list type identifier
  */
-public class MetisLogicException
-        extends OceanusException {
+public class MetisDifferenceListSet<E extends Enum<E>>
+        extends MetisVersionedListSet<E, MetisDifferenceList<?>> {
     /**
-     * SerialId.
+     * Report fields.
      */
-    private static final long serialVersionUID = 864554925186516604L;
+    private static final MetisFields FIELD_DEFS = new MetisFields(MetisDifferenceListSet.class.getSimpleName(), MetisVersionedListSet.getBaseFields());
 
     /**
-     * Create a new Metis Exception object based on a string.
-     * @param s the description of the exception
+     * Constructor.
+     * @param pClass the enum class
      */
-    public MetisLogicException(final String s) {
-        super(s);
-    }
-
-    /**
-     * Create a new Metis Exception object based on a string and an underlying exception.
-     * @param s the description of the exception
-     * @param e the underlying exception
-     */
-    public MetisLogicException(final String s,
-                               final Throwable e) {
-        super(s, e);
+    protected MetisDifferenceListSet(final Class<E> pClass) {
+        super(MetisListType.DIFFERENCE, pClass, FIELD_DEFS);
     }
 }

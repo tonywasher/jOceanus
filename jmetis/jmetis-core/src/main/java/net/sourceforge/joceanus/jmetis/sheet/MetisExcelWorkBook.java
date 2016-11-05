@@ -36,13 +36,13 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
@@ -164,7 +164,7 @@ public class MetisExcelWorkBook {
         theNumberFont.setFontHeightInPoints((short) MetisDataWorkBook.FONT_HEIGHT);
         theHeaderFont = theBook.createFont();
         theHeaderFont.setFontName(MetisDataWorkBook.FONT_VALUE);
-        theHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        theHeaderFont.setBold(true);
         theHeaderFont.setFontHeightInPoints((short) MetisDataWorkBook.FONT_HEIGHT);
     }
 
@@ -371,16 +371,16 @@ public class MetisExcelWorkBook {
      * @param pType the cell type
      * @return the alignment
      */
-    private short getStyleAlignment(final MetisCellStyleType pType) {
+    private HorizontalAlignment getStyleAlignment(final MetisCellStyleType pType) {
         switch (pType) {
             case HEADER:
             case BOOLEAN:
-                return CellStyle.ALIGN_CENTER;
+                return HorizontalAlignment.CENTER;
             case DATE:
             case STRING:
-                return CellStyle.ALIGN_LEFT;
+                return HorizontalAlignment.LEFT;
             default:
-                return CellStyle.ALIGN_RIGHT;
+                return HorizontalAlignment.RIGHT;
         }
     }
 

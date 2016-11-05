@@ -64,10 +64,9 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysS
 /**
  * Metis swing table manager.
  * @param <R> the item type
- * @param <B> the base type
  */
-public class MetisSwingTableManager<R extends B, B extends MetisVersionedItem>
-        extends MetisTableManager<R, B, JComponent, Icon> {
+public class MetisSwingTableManager<R extends MetisVersionedItem>
+        extends MetisTableManager<R, JComponent, Icon> {
     /**
      * Constructor.
      * @param pFactory the GUI factory
@@ -83,12 +82,12 @@ public class MetisSwingTableManager<R extends B, B extends MetisVersionedItem>
     }
 
     @Override
-    public void setItems(final MetisVersionedList<B> pItems) {
+    public void setItems(final MetisVersionedList<R> pItems) {
         /* Do nothing */
     }
 
     @Override
-    public MetisEditList<R, B> getItems() {
+    public MetisEditList<R> getItems() {
         return null;
     }
 

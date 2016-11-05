@@ -43,11 +43,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 /**
  * Table Manager.
  * @param <R> the item type
- * @param <B> the base type
  * @param <N> the node type
  * @param <I> the icon type
  */
-public abstract class MetisTableManager<R extends B, B extends MetisVersionedItem, N, I>
+public abstract class MetisTableManager<R extends MetisVersionedItem, N, I>
         implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The event manager.
@@ -107,13 +106,13 @@ public abstract class MetisTableManager<R extends B, B extends MetisVersionedIte
      * Set the table items.
      * @param pItems the items
      */
-    public abstract void setItems(final MetisVersionedList<B> pItems);
+    public abstract void setItems(final MetisVersionedList<R> pItems);
 
     /**
      * Obtain the table items.
      * @return the items
      */
-    public abstract MetisEditList<R, B> getItems();
+    public abstract MetisEditList<R> getItems();
 
     /**
      * Set the header predicate.

@@ -655,7 +655,7 @@ public class Analysis
     }
 
     /**
-     * Obtain the tax analysis
+     * Obtain the tax analysis.
      * @return the analysis
      */
     public MoneyWiseTaxAnalysis getTaxAnalysis() {

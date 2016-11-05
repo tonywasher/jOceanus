@@ -20,35 +20,29 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis;
-
-import net.sourceforge.joceanus.jtethys.OceanusException;
+package net.sourceforge.joceanus.jmetis.newlist;
 
 /**
- * Metis Logic Exception.
+ * ListType.
  */
-public class MetisLogicException
-        extends OceanusException {
+public enum MetisListType {
     /**
-     * SerialId.
+     * Base list.
      */
-    private static final long serialVersionUID = 864554925186516604L;
+    BASE,
 
     /**
-     * Create a new Metis Exception object based on a string.
-     * @param s the description of the exception
+     * Edit List.
      */
-    public MetisLogicException(final String s) {
-        super(s);
-    }
+    EDIT,
 
     /**
-     * Create a new Metis Exception object based on a string and an underlying exception.
-     * @param s the description of the exception
-     * @param e the underlying exception
+     * Update List.
      */
-    public MetisLogicException(final String s,
-                               final Throwable e) {
-        super(s, e);
-    }
+    UPDATE,
+
+    /**
+     * Difference List.
+     */
+    DIFFERENCE;
 }

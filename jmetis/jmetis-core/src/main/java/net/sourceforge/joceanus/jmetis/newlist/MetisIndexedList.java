@@ -29,14 +29,33 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataList;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
  * Java Indexed List.
  * @param <T> the item type
  */
 public class MetisIndexedList<T extends MetisVersionedItem>
-        implements MetisDataList<T> {
+        implements MetisDataList<T>, MetisDataContents {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(MetisIndexedList.class.getSimpleName());
+
+    /**
+     * Size Field Id.
+     */
+    private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_SIZE.getValue());
+
+    /**
+     * The First Id.
+     */
+    private static final Integer ID_FIRST = Integer.valueOf(1);
+
     /**
      * The underlying list.
      */
@@ -48,6 +67,16 @@ public class MetisIndexedList<T extends MetisVersionedItem>
     private final Map<Integer, T> theIdMap;
 
     /**
+     * The nextId.
+     */
+    private Integer theNextId = ID_FIRST;
+
+    /**
+     * The comparator.
+     */
+    private Comparator<T> theComparator;
+
+    /**
      * Constructor.
      * @param pList the list
      */
@@ -57,6 +86,37 @@ public class MetisIndexedList<T extends MetisVersionedItem>
 
         /* Create the map */
         theIdMap = new HashMap<>();
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        if (FIELD_SIZE.equals(pField)) {
+            return size();
+        }
+        return MetisFieldValue.UNKNOWN;
+    }
+
+    @Override
+    public String formatObject() {
+        return getDataFields().getName() + "(" + size() + ")";
+    }
+
+    @Override
+    public String toString() {
+        return formatObject();
+    }
+
+    /**
+     * Obtain the data fields.
+     * @return the data fields
+     */
+    protected static MetisFields getBaseFields() {
+        return FIELD_DEFS;
     }
 
     /**
@@ -73,6 +133,22 @@ public class MetisIndexedList<T extends MetisVersionedItem>
     }
 
     /**
+     * Set the comparator.
+     * @param pComparator the comparator
+     */
+    public void setComparator(final Comparator<T> pComparator) {
+        theComparator = pComparator;
+    }
+
+    /**
+     * Obtain the next Id.
+     * @return the next Id
+     */
+    public Integer getNextId() {
+        return theNextId;
+    }
+
+    /**
      * Add item to the list.
      * @param pItem the item to add
      */
@@ -84,6 +160,9 @@ public class MetisIndexedList<T extends MetisVersionedItem>
         if (theIdMap.get(myId) != null) {
             throw new IllegalArgumentException("Already present");
         }
+
+        /* Check and adjust for id */
+        checkId(myId);
 
         /* Add to the list */
         theIdMap.put(myId, pItem);
@@ -100,7 +179,7 @@ public class MetisIndexedList<T extends MetisVersionedItem>
 
         /* Check that the id is present */
         if (theIdMap.get(myId) != null) {
-            /* Add to the list */
+            /* Remove from the list */
             theIdMap.remove(myId);
             theList.remove(pItem);
         }
@@ -125,14 +204,6 @@ public class MetisIndexedList<T extends MetisVersionedItem>
     }
 
     /**
-     * Obtain the size of the list.
-     * @return the size of the list
-     */
-    public int getSize() {
-        return theList.size();
-    }
-
-    /**
      * Is the list empty?
      * @return true/false
      */
@@ -146,6 +217,7 @@ public class MetisIndexedList<T extends MetisVersionedItem>
     public void clear() {
         theList.clear();
         theIdMap.clear();
+        theNextId = ID_FIRST;
     }
 
     /**
@@ -224,10 +296,28 @@ public class MetisIndexedList<T extends MetisVersionedItem>
 
     /**
      * Sort the list.
-     * @param pComparator the comparator
      */
-    public void sortList(final Comparator<T> pComparator) {
-        theList.sort(pComparator);
+    public void sortList() {
+        if (theComparator != null) {
+            theList.sort(theComparator);
+        }
+    }
+
+    /**
+     * Check the Id.
+     * @param pId the id
+     */
+    private void checkId(final Integer pId) {
+        /* Check that the id is nonon-zero and positive */
+        if (pId <= 0) {
+            throw new IllegalArgumentException("Invalid Id");
+        }
+
+        /* If this id is the largest so far */
+        if (pId >= theNextId) {
+            /* Adjust the nextId */
+            theNextId = pId + 1;
+        }
     }
 
     @Override
@@ -255,10 +345,5 @@ public class MetisIndexedList<T extends MetisVersionedItem>
     @Override
     public int hashCode() {
         return theList.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return theList.toString();
     }
 }

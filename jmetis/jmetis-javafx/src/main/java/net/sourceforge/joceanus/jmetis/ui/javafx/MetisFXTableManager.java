@@ -54,10 +54,9 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXT
 /**
  * Metis javaFX table manager.
  * @param <R> the item type
- * @param <B> the base type
  */
-public class MetisFXTableManager<R extends B, B extends MetisVersionedItem>
-        extends MetisTableManager<R, B, Node, Node> {
+public class MetisFXTableManager<R extends MetisVersionedItem>
+        extends MetisTableManager<R, Node, Node> {
     /**
      * Table Fields.
      */
@@ -87,12 +86,12 @@ public class MetisFXTableManager<R extends B, B extends MetisVersionedItem>
     }
 
     @Override
-    public void setItems(final MetisVersionedList<B> pItems) {
+    public void setItems(final MetisVersionedList<R> pItems) {
         /* Do nothing */
     }
 
     @Override
-    public MetisEditList<R, B> getItems() {
+    public MetisEditList<R> getItems() {
         return null;
     }
 

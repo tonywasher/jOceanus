@@ -365,7 +365,7 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * Constructor.
          * @param pRate the base rate
-         * @param pHighRate the higher rate
+         * @param pHigherRate the higher rate
          */
         protected MoneyWiseUKDividendLoHigherRateScheme(final TethysRate pRate,
                                                         final TethysRate pHigherRate) {

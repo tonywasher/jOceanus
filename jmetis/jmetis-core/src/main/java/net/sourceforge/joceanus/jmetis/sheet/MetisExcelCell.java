@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmetis.sheet;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
@@ -96,14 +97,14 @@ public class MetisExcelCell
 
     @Override
     public Boolean getBooleanValue() {
-        switch (theExcelCell.getCellType()) {
-            case HSSFCell.CELL_TYPE_BOOLEAN:
+        switch (theExcelCell.getCellTypeEnum()) {
+            case BOOLEAN:
                 return theExcelCell.getBooleanCellValue();
-            case HSSFCell.CELL_TYPE_FORMULA:
+            case FORMULA:
                 CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
-                return HSSFCell.CELL_TYPE_BOOLEAN == myValue.getCellType()
-                                                                           ? myValue.getBooleanValue()
-                                                                           : null;
+                return CellType.BOOLEAN == myValue.getCellTypeEnum()
+                                                                     ? myValue.getBooleanValue()
+                                                                     : null;
             default:
                 return null;
         }
@@ -111,22 +112,22 @@ public class MetisExcelCell
 
     @Override
     public TethysDate getDateValue() {
-        return HSSFCell.CELL_TYPE_NUMERIC == theExcelCell.getCellType()
-                                                                        ? new TethysDate(theExcelCell.getDateCellValue())
-                                                                        : null;
+        return CellType.NUMERIC == theExcelCell.getCellTypeEnum()
+                                                                  ? new TethysDate(theExcelCell.getDateCellValue())
+                                                                  : null;
     }
 
     @Override
     public Integer getIntegerValue() {
-        switch (theExcelCell.getCellType()) {
-            case HSSFCell.CELL_TYPE_NUMERIC:
+        switch (theExcelCell.getCellTypeEnum()) {
+            case NUMERIC:
                 Double myValue = theExcelCell.getNumericCellValue();
                 return myValue.intValue();
-            case HSSFCell.CELL_TYPE_FORMULA:
+            case FORMULA:
                 CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
-                return HSSFCell.CELL_TYPE_NUMERIC == myCellValue.getCellType()
-                                                                               ? ((Double) myCellValue.getNumberValue()).intValue()
-                                                                               : null;
+                return CellType.NUMERIC == myCellValue.getCellTypeEnum()
+                                                                         ? ((Double) myCellValue.getNumberValue()).intValue()
+                                                                         : null;
             default:
                 return null;
         }
@@ -134,26 +135,34 @@ public class MetisExcelCell
 
     @Override
     public String getStringValue() {
-        switch (theExcelCell.getCellType()) {
-            case HSSFCell.CELL_TYPE_NUMERIC:
-            case HSSFCell.CELL_TYPE_BOOLEAN:
+        switch (theExcelCell.getCellTypeEnum()) {
+            case NUMERIC:
+            case BOOLEAN:
                 /* Pick up the formatted value */
                 return theExcelRow.formatCellValue(theExcelCell);
 
-            case HSSFCell.CELL_TYPE_FORMULA:
-                /* Pick up the formatted value */
-                CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
-                switch (myValue.getCellType()) {
-                    case HSSFCell.CELL_TYPE_STRING:
-                    case HSSFCell.CELL_TYPE_NUMERIC:
-                    case HSSFCell.CELL_TYPE_BOOLEAN:
-                        return myValue.formatAsString();
-                    default:
-                        return null;
-                }
-            case HSSFCell.CELL_TYPE_STRING:
+            case FORMULA:
+                return getStringFormulaValue();
+
+            case STRING:
             default:
                 return theExcelCell.getStringCellValue();
+        }
+    }
+
+    /**
+     * Resolve the formula value as string.
+     * @return the resolved value
+     */
+    private String getStringFormulaValue() {
+        CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
+        switch (myValue.getCellTypeEnum()) {
+            case STRING:
+            case NUMERIC:
+            case BOOLEAN:
+                return myValue.formatAsString();
+            default:
+                return null;
         }
     }
 

@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newlist;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,13 +31,14 @@ import java.util.Map;
  * @param <T> the item type
  */
 public class MetisDifferenceList<T extends MetisVersionedItem>
-        extends MetisIndexedList<T> {
+        extends MetisVersionedList<T> {
     /**
      * Constructor.
+     * @param pClass the item type
      */
-    protected MetisDifferenceList() {
+    protected MetisDifferenceList(final Class<T> pClass) {
         /* Initialise underlying class */
-        super(new ArrayList<>());
+        super(MetisListType.DIFFERENCE, pClass);
     }
 
     /**
@@ -46,11 +46,8 @@ public class MetisDifferenceList<T extends MetisVersionedItem>
      * @param pNew the new list
      * @param pOld the old list
      */
-    public void deriveDifferences(final MetisVersionedList<T> pNew,
-                                  final MetisVersionedList<T> pOld) {
-        /* Clear the list */
-        clear();
-
+    protected void deriveTheDifferences(final MetisBaseList<T> pNew,
+                                        final MetisBaseList<T> pOld) {
         /* Access a copy of the idMap of the old list */
         Map<Integer, T> myOld = new HashMap<>(pOld.getIdMap());
 
@@ -65,7 +62,7 @@ public class MetisDifferenceList<T extends MetisVersionedItem>
             /* If the item does not exist in the old list */
             if (myItem == null) {
                 /* Insert a new item */
-                myItem = pNew.newAddedItem(myCurr);
+                myItem = pNew.newDiffAddedItem(myCurr);
                 addToList(myItem);
 
                 /* else the item exists in the old list */
@@ -73,7 +70,7 @@ public class MetisDifferenceList<T extends MetisVersionedItem>
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* Copy the item */
-                    myItem = pNew.newChangedItem(myCurr, myItem);
+                    myItem = pNew.newDiffChangedItem(myCurr, myItem);
                     addToList(myItem);
                 }
 
@@ -87,7 +84,7 @@ public class MetisDifferenceList<T extends MetisVersionedItem>
         while (myIterator.hasNext()) {
             /* Insert a new item */
             T myCurr = myIterator.next();
-            T myItem = pNew.newDeletedItem(myCurr);
+            T myItem = pNew.newDiffDeletedItem(myCurr);
             addToList(myItem);
         }
     }

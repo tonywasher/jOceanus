@@ -24,6 +24,9 @@ package net.sourceforge.joceanus.jmetis.newlist;
 
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
@@ -37,40 +40,79 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 /**
  * Edit List.
  * @param <T> the item type
- * @param <B> the base item type
  */
-public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
+public abstract class MetisEditList<T extends MetisVersionedItem>
         extends MetisVersionedList<T> {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetisEditList.class);
+
+    /**
+     * Bad update error.
+     */
+    private static final String ERROR_BADUPDATE = "Versioned List being updated";
+
     /**
      * Report fields.
      */
     private static final MetisFields FIELD_DEFS = new MetisFields(MetisEditList.class.getSimpleName(), MetisVersionedList.getBaseFields());
 
     /**
-     * Size Field Id.
+     * Base Field Id.
      */
-    private static final MetisField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
+    private static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE.getValue());
 
     /**
-     * The source list.
+     * EditVersion Field Id.
      */
-    private final MetisVersionedList<B> theSource;
+    private static final MetisField FIELD_EDITVERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_EDITVERSION.getValue());
+
+    /**
+     * The base list.
+     */
+    private final MetisBaseList<T> theBase;
+
+    /**
+     * The change report.
+     */
+    private MetisListChange<T> theChange;
+
+    /**
+     * The base change report.
+     */
+    private MetisListChange<T> theBaseChange;
+
+    /**
+     * The edit version of the list.
+     */
+    private int theEditVersion;
+
+    /**
+     * The new version of the base list.
+     */
+    private int theNewVersion;
 
     /**
      * Constructor.
      * @param pClass the item class
-     * @param pSource the source list
+     * @param pBase the base list
      */
     protected MetisEditList(final Class<T> pClass,
-                            final MetisVersionedList<B> pSource) {
+                            final MetisBaseList<T> pBase) {
         /* Initialise underlying class */
-        super(pClass);
-        theSource = pSource;
+        super(MetisListType.EDIT, pClass);
+
+        /* Store base and initialise the edit list */
+        theBase = pBase;
+        deriveEdit();
 
         /* Register listeners on underlying class */
-        TethysEventRegistrar<MetisListEvent> myRegistrar = theSource.getEventRegistrar();
-        myRegistrar.addEventListener(MetisListEvent.REWIND, this::handleReWind);
-        myRegistrar.addEventListener(MetisListEvent.UPDATE, this::handleUpdate);
+        TethysEventRegistrar<MetisListEvent> myRegistrar = theBase.getEventRegistrar();
+        myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> deriveEdit());
+        myRegistrar.addEventListener(MetisListEvent.REBASE, e -> deriveEdit());
+        myRegistrar.addEventListener(MetisListEvent.REWIND, this::handleReWindOfBase);
+        myRegistrar.addEventListener(MetisListEvent.UPDATE, this::handleUpdateOfBase);
     }
 
     @Override
@@ -80,10 +122,15 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
 
     @Override
     public Object getFieldValue(final MetisField pField) {
-        if (FIELD_SOURCE.equals(pField)) {
-            return theSource.isEmpty()
-                                       ? MetisFieldValue.SKIP
-                                       : theSource;
+        if (FIELD_BASE.equals(pField)) {
+            return theBase.isEmpty()
+                                     ? MetisFieldValue.SKIP
+                                     : theBase;
+        }
+        if (FIELD_EDITVERSION.equals(pField)) {
+            return theEditVersion != 0
+                                       ? theEditVersion
+                                       : MetisFieldValue.SKIP;
         }
         return super.getFieldValue(pField);
     }
@@ -97,33 +144,185 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
     }
 
     /**
-     * Refresh the list.
+     * Reset the list.
      */
-    public void refresh() {
+    public void reset() {
+        /* Commit any pending editVersion */
+        commitEditVersion();
+
+        /* If we have changes */
+        if (getVersion() != 0) {
+            /* ReWind to initial version */
+            doReWindToVersion(0);
+        }
+    }
+
+    /**
+     * ReWind the list to a particular version.
+     * @param pVersion the version to reWind to
+     */
+    public void reWindToVersion(final int pVersion) {
+        /* Check that the rewind version is valid */
+        checkReWindVersion(pVersion);
+
+        /* Commit any pending editVersion */
+        commitEditVersion();
+
+        /* ReWind it */
+        doReWindToVersion(pVersion);
+    }
+
+    /**
+     * Is the list Editing?
+     * @return true/false
+     */
+    public boolean isEditing() {
+        return theEditVersion != 0;
+    }
+
+    /**
+     * Start Edit Version.
+     */
+    public void startEditVersion() {
+        /* If we are not currently editing */
+        if (!isEditing()) {
+            /* Set next edit version */
+            startEditVersion(getVersion() + 1);
+        }
+    }
+
+    /**
+     * Do Start Edit Version.
+     * @param pVersion the edit version
+     */
+    protected void startEditVersion(final int pVersion) {
+        /* Set next edit version */
+        theEditVersion = pVersion;
+    }
+
+    /**
+     * Cancel Edit Version.
+     */
+    public void cancelEditVersion() {
+        /* If we are currently editing */
+        if (isEditing()) {
+            /* Perform the cancel */
+            doCancelEditVersion();
+        }
+    }
+
+    /**
+     * Cancel Edit Version.
+     */
+    protected void doCancelEditVersion() {
+        /* Loop through the list */
+        Iterator<T> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+
+            /* If the item is being edited */
+            MetisValueSetHistory myHistory = myCurr.getValueSetHistory();
+            if (myHistory.getValueSet().getVersion() == theEditVersion) {
+                /* Pop the history */
+                myHistory.popTheHistory();
+            }
+        }
+
+        /* Clear editing version */
+        theEditVersion = 0;
+    }
+
+    /**
+     * Commit Edit Version.
+     */
+    public void commitEditVersion() {
+        /* If we are currently editing */
+        if (isEditing()) {
+            /* Perform the commit */
+            doCommitEditVersion();
+        }
+    }
+
+    /**
+     * Commit Edit Version.
+     */
+    protected void doCommitEditVersion() {
+        /* Commit the edit version */
+        setVersion(theEditVersion);
+        theEditVersion = 0;
+    }
+
+    /**
+     * Commit Edit Session.
+     */
+    public void commitEditSession() {
+        /* Commit any pending version */
+        commitEditVersion();
+
+        /* If we have changes */
+        if (getVersion() > 0) {
+            /* Perform the commit */
+            doCommitEditSession(theBase.getVersion() + 1);
+        }
+    }
+
+    /**
+     * Prepare item for edit.
+     * @param pItem the item
+     */
+    public void prepareItemForEdit(final T pItem) {
+        /* Start editing */
+        startEditVersion();
+
+        /* Start editing */
+        MetisValueSetHistory myHistory = pItem.getValueSetHistory();
+        myHistory.pushHistory(theEditVersion);
+    }
+
+    /**
+     * Prepare item for edit.
+     * @param pItem the item
+     */
+    protected void prepareItemForEdit(final Object pItem) {
+        prepareItemForEdit(getTheClass().cast(pItem));
+    }
+
+    /**
+     * Derive the edit list.
+     */
+    private void deriveEdit() {
         /* Clear the list */
         clear();
 
         /* Loop through the list */
-        Iterator<B> myIterator = theSource.iterator();
+        Iterator<T> myIterator = theBase.iterator();
         while (myIterator.hasNext()) {
-            B myCurr = myIterator.next();
+            T myCurr = myIterator.next();
 
             /* Create the new item */
-            T myItem = newEditItem(myCurr);
+            T myItem = newItemFromBase(myCurr);
             addToList(myItem);
         }
 
         /* Reset the version */
         setVersion(0);
+
+        /* Report the refresh */
+        MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REFRESH);
+        fireEvent(myChange);
     }
 
     /**
-     * Commit the list.
+     * Commit Edit Version.
+     * @param pNewVersion the new base version
      */
-    public void commitItems() {
+    protected void doCommitEditSession(final int pNewVersion) {
+        /* Record the new version */
+        theNewVersion = pNewVersion;
+
         /* Create a new Change Detail */
-        MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.COMMIT);
-        MetisListChange<B> myBaseChange = new MetisListChange<>(MetisListEvent.COMMIT);
+        theChange = new MetisListChange<>(MetisListEvent.COMMIT);
+        theBaseChange = new MetisListChange<>(MetisListEvent.COMMIT);
 
         /* Loop through the list */
         Iterator<T> myIterator = iterator();
@@ -134,91 +333,95 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
             /* Switch on state */
             switch (MetisDataState.determineState(myHistory)) {
                 case NEW:
-                    handleNewCommit(myCurr, myChange, myBaseChange);
+                    handleCommitOfNewItem(myCurr);
                     break;
                 case DELNEW:
-                    handleDelNewCommit(myCurr, myChange);
+                    handleCommitOfDelNewItem(myCurr);
                     break;
                 case CHANGED:
                 case DELETED:
                 case RECOVERED:
-                    handleCommit(myCurr, myChange, myBaseChange);
+                    handleCommitOfChangedItem(myCurr);
                     break;
                 default:
                     break;
             }
-
-            T myItem = newEditItem(myCurr);
-            addToList(myItem);
         }
 
         /* If there are changes to the base list */
-        if (myBaseChange.haveChanged()) {
+        if (!theBaseChange.isEmpty()) {
             /* Update the version */
-            theSource.setVersion(theSource.getVersion() + 1);
+            theBase.setVersion(theNewVersion);
         }
 
+        /* Reset the version */
+        setVersion(0);
+        theEditVersion = 0;
+
         /* Fire the events */
-        fireEvent(myChange);
-        theSource.fireEvent(myBaseChange);
+        fireEvent(theChange);
+        theBase.fireEvent(theBaseChange);
+
+        /* Reset values */
+        theChange = null;
+        theBaseChange = null;
     }
 
     /**
      * handle delNew commit.
      * @param pItem the item
-     * @param pChange the change details
-     * @param pBaseChange the change details
      */
-    private void handleNewCommit(final T pItem,
-                                 final MetisListChange<T> pChange,
-                                 final MetisListChange<B> pBaseChange) {
+    private void handleCommitOfNewItem(final T pItem) {
         /* Commit the item */
-        B myItem = theSource.newCommittedItem(pItem);
-        theSource.addToList(myItem);
+        T myItem = newItemFromBase(pItem);
+        myItem.getValueSet().setVersion(theNewVersion);
+        theBase.addToList(myItem);
         pItem.getValueSetHistory().clearHistory();
 
-        /* Add to the change */
-        pChange.registerChanged(pItem);
-        pBaseChange.registerAdded(myItem);
+        /* Add to the changes */
+        theChange.registerChanged(pItem);
+        theBaseChange.registerAdded(myItem);
     }
 
     /**
      * handle delNew commit.
      * @param pItem the item
-     * @param pChange the change details
      */
-    private void handleDelNewCommit(final T pItem,
-                                    final MetisListChange<T> pChange) {
+    private void handleCommitOfDelNewItem(final T pItem) {
+        /* Remove from the list and add to changes */
         removeFromList(pItem);
-        pChange.registerDeleted(pItem);
+        theChange.registerDeleted(pItem);
     }
 
     /**
      * handle commit.
      * @param pItem the item
-     * @param pChange the change details
-     * @param pBaseChange the change details
      */
-    private void handleCommit(final T pItem,
-                              final MetisListChange<T> pChange,
-                              final MetisListChange<B> pBaseChange) {
+    private void handleCommitOfChangedItem(final T pItem) {
         /* Commit the item */
-        B myItem = theSource.newItemValues(pItem);
+        T myNew = newItemFromBase(pItem);
+        T myItem = theBase.getItemById(pItem.getIndexedId());
         pItem.getValueSetHistory().clearHistory();
 
-        /* Add to the change */
-        pChange.registerChanged(pItem);
-        pBaseChange.registerChanged(myItem);
+        /* Reset values in the item */
+        MetisValueSet mySet = myItem.getValueSet();
+        MetisValueSet myBase = myNew.getValueSet();
+        mySet.copyFrom(myBase);
+        mySet.setVersion(theNewVersion);
+
+        /* Add to the changes */
+        theChange.registerChanged(pItem);
+        theBaseChange.registerChanged(myItem);
     }
 
     /**
-     * Create a New "edit" item.
+     * Create a New item with same values as the base.
      * @param pBase the base item
      * @return the new item
      */
-    protected T newEditItem(final B pBase) {
+    private T newItemFromBase(final T pBase) {
         /* Obtain a new item */
-        T myItem = newItem();
+        T myItem = newListItem(pBase.getIndexedId());
 
         /* Access the valueSet */
         MetisValueSet mySet = myItem.getValueSet();
@@ -232,75 +435,102 @@ public abstract class MetisEditList<T extends B, B extends MetisVersionedItem>
     }
 
     /**
-     * Handle Update.
+     * Handle reWind of Base.
+     * <p>
+     * This method is called when the underlying list has been reWound, and hence items may be
+     * deleted or changed.
      * @param pChange the change
      */
-    private void handleReWind(final TethysEvent<MetisListEvent> pChange) {
-        /* Access the change detail */
-        @SuppressWarnings("unchecked")
-        MetisListChange<B> myBaseChange = (MetisListChange<B>) pChange.getDetails(MetisListChange.class);
-        MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REWIND);
-
-        /* Loop through the deleted items */
-        Iterator<Integer> myIdIterator = myBaseChange.deletedIterator();
-        while (myIdIterator.hasNext()) {
-            Integer myId = myIdIterator.next();
-
-            /* Obtain the item to be deleted */
-            T myItem = getItemById(myId);
-            removeFromList(myItem);
-
-            /* Record deletion */
-            myChange.registerDeleted(myItem);
+    private void handleReWindOfBase(final TethysEvent<MetisListEvent> pChange) {
+        /* List version must be 0 */
+        if (getVersion() != 0) {
+            LOGGER.error(ERROR_BADUPDATE);
         }
 
+        /* Access the change detail */
+        @SuppressWarnings("unchecked")
+        MetisListChange<T> myBaseChange = (MetisListChange<T>) pChange.getDetails(MetisListChange.class);
+
+        /* Create a new change list */
+        theChange = new MetisListChange<>(MetisListEvent.REWIND);
+
+        /* Handle underlying deleted items */
+        handleBaseDeletedItems(myBaseChange.deletedIterator());
+
+        /* Handle base changed items */
+        handleBaseChangedItems(myBaseChange.changedIterator());
+
+        /* Fire the events and release the changes */
+        fireEvent(theChange);
+        theChange = null;
+    }
+
+    /**
+     * Handle Update of Base.
+     * <p>
+     * This method is called when the underlying list has been committed to the dataBase, and hence
+     * deleted items are permanently deleted.
+     * @param pChange the change
+     */
+    private void handleUpdateOfBase(final TethysEvent<MetisListEvent> pChange) {
+        /* List version must be 0 */
+        if (getVersion() != 0) {
+            LOGGER.error(ERROR_BADUPDATE);
+        }
+
+        /* Access the change detail */
+        @SuppressWarnings("unchecked")
+        MetisListChange<T> myBaseChange = (MetisListChange<T>) pChange.getDetails(MetisListChange.class);
+
+        /* Create a new change list */
+        theChange = new MetisListChange<>(MetisListEvent.UPDATE);
+
+        /* Handle underlying deleted items */
+        handleBaseDeletedItems(myBaseChange.deletedIterator());
+
+        /* Fire the events and release the changes */
+        fireEvent(theChange);
+        theChange = null;
+    }
+
+    /**
+     * Handle changed items in the base.
+     * @param pIterator the iterator
+     */
+    private void handleBaseChangedItems(final Iterator<T> pIterator) {
         /* Loop through the changed items */
-        Iterator<B> myIterator = myBaseChange.changedIterator();
-        while (myIterator.hasNext()) {
-            B myCurr = myIterator.next();
+        while (pIterator.hasNext()) {
+            T myCurr = pIterator.next();
             Integer myId = myCurr.getIndexedId();
 
             /* Obtain the item to be changed */
             T myItem = getItemById(myId);
-            myItem.getValueSetHistory().resetHistory();
-            MetisValueSet mySet = myItem.getValueSet();
 
-            /* Obtain a clone of the value set as the base value */
+            /* Reset values in the item */
+            MetisValueSet mySet = myItem.getValueSet();
             MetisValueSet myBase = myCurr.getValueSet();
             mySet.copyFrom(myBase);
 
             /* Record change */
-            myChange.registerChanged(myItem);
+            theChange.registerChanged(myItem);
         }
-
-        /* Fire the events */
-        fireEvent(myChange);
     }
 
     /**
-     * Handle Update.
-     * @param pChange the change
+     * Handle Underlying deleted changes.
+     * @param pIterator the iterator
      */
-    private void handleUpdate(final TethysEvent<MetisListEvent> pChange) {
-        /* Access the change detail */
-        @SuppressWarnings("unchecked")
-        MetisListChange<B> myBaseChange = (MetisListChange<B>) pChange.getDetails(MetisListChange.class);
-        MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REWIND);
-
+    private void handleBaseDeletedItems(final Iterator<Integer> pIterator) {
         /* Loop through the deleted items */
-        Iterator<Integer> myIterator = myBaseChange.deletedIterator();
-        while (myIterator.hasNext()) {
-            Integer myId = myIterator.next();
+        while (pIterator.hasNext()) {
+            Integer myId = pIterator.next();
 
             /* Obtain the item to be deleted */
             T myItem = getItemById(myId);
             removeFromList(myItem);
 
             /* Record deletion */
-            myChange.registerDeleted(myItem);
+            theChange.registerDeleted(myItem);
         }
-
-        /* Fire the events */
-        fireEvent(myChange);
     }
 }
