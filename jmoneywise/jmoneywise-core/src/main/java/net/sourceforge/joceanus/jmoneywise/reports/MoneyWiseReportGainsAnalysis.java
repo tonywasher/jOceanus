@@ -25,6 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
@@ -33,7 +35,6 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseCashType;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -45,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 /**
  * Gains Analysis Report.
  */
-public class GainsAnalysis {
+public class MoneyWiseReportGainsAnalysis {
     /**
      * The formatter.
      */
@@ -59,7 +60,7 @@ public class GainsAnalysis {
     /**
      * The HTML builder.
      */
-    private final HTMLBuilder theHTMLBuilder;
+    private final MetisReportHTMLBuilder theHTMLBuilder;
 
     /**
      * The string builder.
@@ -82,9 +83,9 @@ public class GainsAnalysis {
      * @param pParent the parent table
      * @param pSecurity the security bucket
      */
-    public GainsAnalysis(final CapitalGains pReport,
-                         final HTMLTable pParent,
-                         final SecurityBucket pSecurity) {
+    public MoneyWiseReportGainsAnalysis(final MoneyWiseReportCapitalGains pReport,
+                                        final HTMLTable pParent,
+                                        final SecurityBucket pSecurity) {
         /* Store parameters */
         theFormatter = pReport.getFormatter();
         theHTMLBuilder = pReport.getBuilder();

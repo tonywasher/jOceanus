@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.reports;
+package net.sourceforge.joceanus.jmetis.report;
 
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -39,9 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jmetis.MetisIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -52,23 +50,19 @@ import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
  * Provides functionality to hide and restore sections of an HTML document. This is useful for
  * displaying HTML documents in a jEditorPane, allowing a click to open/close sections of the
  * document.
+ * @param <F> the filter type
  */
-public class ReportManager
-        implements TethysEventProvider<PrometheusDataEvent> {
+public class MetisReportManager<F>
+        implements TethysEventProvider<MetisReportEvent> {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReportManager.class);
-
-    /**
-     * The id attribute.
-     */
-    private static final String ATTR_ID = HTMLBuilder.ATTR_ID;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetisReportManager.class);
 
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<MetisReportEvent> theEventManager;
 
     /**
      * The Transformer.
@@ -78,7 +72,7 @@ public class ReportManager
     /**
      * Report formatter.
      */
-    private final HTMLBuilder theBuilder;
+    private final MetisReportHTMLBuilder theBuilder;
 
     /**
      * The Current document.
@@ -86,9 +80,9 @@ public class ReportManager
     private Document theDocument;
 
     /**
-     * The Current report.
+     * The Reference Manager.
      */
-    private BasicReport theReport;
+    private MetisReportReferenceManager<F> theReferenceMgr;
 
     /**
      * The Current text.
@@ -105,8 +99,8 @@ public class ReportManager
      * @param pBuilder the HTML builder
      * @throws OceanusException on error
      */
-    public ReportManager(final HTMLBuilder pBuilder) throws OceanusException {
-        /* Create the builder */
+    public MetisReportManager(final MetisReportHTMLBuilder pBuilder) throws OceanusException {
+        /* Record parameters */
         theBuilder = pBuilder;
 
         /* Create event manager */
@@ -123,12 +117,12 @@ public class ReportManager
             theXformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 
         } catch (Exception e) {
-            throw new MoneyWiseIOException("Failed to create", e);
+            throw new MetisIOException("Failed to create", e);
         }
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public TethysEventRegistrar<MetisReportEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -136,20 +130,21 @@ public class ReportManager
      * Obtain the builder.
      * @return the HTML builder
      */
-    public HTMLBuilder getBuilder() {
+    public MetisReportHTMLBuilder getBuilder() {
         return theBuilder;
     }
 
     /**
      * Set Report.
-     * @param pReport the document
+     * @param pReport the report
      */
-    public void setReport(final BasicReport pReport) {
+    public void setReport(final MetisReportBase<?, F> pReport) {
         /* Clear the maps */
         theHiddenMap.clear();
 
-        /* Store the report */
-        theReport = pReport;
+        /* Store the reference manager */
+        theReferenceMgr = pReport.getReferenceMgr();
+        theReferenceMgr.clearMaps();
     }
 
     /**
@@ -165,8 +160,8 @@ public class ReportManager
      * fire action event.
      * @param pFilter the filter
      */
-    protected void fireActionEvent(final AnalysisFilter<?, ?> pFilter) {
-        theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, pFilter);
+    protected void fireActionEvent(final F pFilter) {
+        theEventManager.fireEvent(MetisReportEvent.FILTER, pFilter);
     }
 
     /**
@@ -252,7 +247,7 @@ public class ReportManager
     private static Element checkElementForId(final Element pElement,
                                              final String pId) {
         /* Check the element for the id */
-        if (pElement.getAttribute(ATTR_ID).equals(pId)) {
+        if (pElement.getAttribute(MetisReportHTMLBuilder.ATTR_ID).equals(pId)) {
             return pElement;
         }
 
@@ -324,7 +319,7 @@ public class ReportManager
             /* Return the new text */
             return theText;
         } catch (TransformerException e) {
-            throw new MoneyWiseIOException("Failed to format", e);
+            throw new MetisIOException("Failed to format", e);
         }
     }
 
@@ -342,8 +337,8 @@ public class ReportManager
         if (myText != null) {
             /* Set it into the window and adjust the scroll */
             pHTMLPane.setHTMLContent(myText, "");
-            String myId = HTMLBuilder.REF_ID
-                          + pId.substring(HTMLBuilder.REF_TAB.length());
+            String myId = MetisReportHTMLBuilder.REF_ID
+                          + pId.substring(MetisReportHTMLBuilder.REF_TAB.length());
             pHTMLPane.scrollToReference(myId);
         }
     }
@@ -360,7 +355,7 @@ public class ReportManager
         /* Protected against exceptions */
         try {
             /* If this is a table reference */
-            if (pId.startsWith(HTMLBuilder.REF_TAB)) {
+            if (pId.startsWith(MetisReportHTMLBuilder.REF_TAB)) {
                 /* If the section is hidden */
                 if (isHiddenId(pId)) {
                     /* Restore the section and access text */
@@ -372,17 +367,17 @@ public class ReportManager
                 }
 
                 /* else if this is a delayed table reference */
-            } else if (pId.startsWith(HTMLBuilder.REF_DELAY)) {
+            } else if (pId.startsWith(MetisReportHTMLBuilder.REF_DELAY)) {
                 /* Process the delayed reference and format text */
-                if (theReport.processDelayedReference(getBuilder(), pId)) {
+                if (theReferenceMgr.processDelayedReference(getBuilder(), pId)) {
                     /* Format the text */
                     myText = formatXML();
                 }
 
                 /* else if this is a filter reference */
-            } else if (pId.startsWith(HTMLBuilder.REF_FILTER)) {
+            } else if (pId.startsWith(MetisReportHTMLBuilder.REF_FILTER)) {
                 /* Process the filter reference */
-                AnalysisFilter<?, ?> myFilter = theReport.processFilterReference(pId);
+                F myFilter = theReferenceMgr.processFilterReference(pId);
 
                 /* Fire Action event if necessary */
                 if (myFilter != null) {

@@ -27,15 +27,18 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 
+import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Report Classes.
  * @author Tony Washer
  */
-public class ReportBuilder {
+public class MoneyWiseReportBuilder {
     /**
      * The Total text.
      */
@@ -59,24 +62,24 @@ public class ReportBuilder {
     /**
      * The Report Manager.
      */
-    private final ReportManager theManager;
+    private final MetisReportManager<AnalysisFilter<?, ?>> theManager;
 
     /**
      * Map of allocated reports.
      */
-    private final Map<ReportType, BasicReport> theReportMap;
+    private final Map<MoneyWiseReportType, MetisReportBase<Analysis, AnalysisFilter<?, ?>>> theReportMap;
 
     /**
      * Constructor.
      * @param pManager the report manager
      * @throws OceanusException on error
      */
-    public ReportBuilder(final ReportManager pManager) throws OceanusException {
+    public MoneyWiseReportBuilder(final MetisReportManager<AnalysisFilter<?, ?>> pManager) throws OceanusException {
         /* Record the details */
         theManager = pManager;
 
         /* Allocate map */
-        theReportMap = new EnumMap<>(ReportType.class);
+        theReportMap = new EnumMap<>(MoneyWiseReportType.class);
     }
 
     /**
@@ -86,40 +89,40 @@ public class ReportBuilder {
      * @return the Web document
      */
     public Document createReport(final Analysis pAnalysis,
-                                 final ReportType pType) {
+                                 final MoneyWiseReportType pType) {
         /* Access existing report */
-        BasicReport myReport = theReportMap.get(pType);
+        MetisReportBase<Analysis, AnalysisFilter<?, ?>> myReport = theReportMap.get(pType);
 
         /* If we have not previously allocated this report */
         if (myReport == null) {
             /* Switch on the report type */
             switch (pType) {
                 case NETWORTH:
-                    myReport = new NetWorth(theManager);
+                    myReport = new MoneyWiseReportNetWorth(theManager);
                     break;
                 case BALANCESHEET:
-                    myReport = new BalanceSheet(theManager);
+                    myReport = new MoneyWiseReportBalanceSheet(theManager);
                     break;
                 case CASHFLOW:
-                    myReport = new CashFlow(theManager);
+                    myReport = new MoneyWiseReportCashFlow(theManager);
                     break;
                 case INCOMEEXPENSE:
-                    myReport = new IncomeExpense(theManager);
+                    myReport = new MoneyWiseReportIncomeExpense(theManager);
                     break;
                 case PORTFOLIO:
-                    myReport = new PortfolioView(theManager);
+                    myReport = new MoneyWiseReportPortfolioView(theManager);
                     break;
                 case MARKETGROWTH:
-                    myReport = new MarketGrowth(theManager);
+                    myReport = new MoneyWiseReportMarketGrowth(theManager);
                     break;
                 case TAXBASIS:
-                    myReport = new TaxationBasis(theManager);
+                    myReport = new MoneyWiseReportTaxationBasis(theManager);
                     break;
                 case TAXCALC:
-                    myReport = new TaxCalculation(theManager);
+                    myReport = new MoneyWiseReportTaxCalculation(theManager);
                     break;
                 case CAPITALGAINS:
-                    myReport = new CapitalGains(theManager);
+                    myReport = new MoneyWiseReportCapitalGains(theManager);
                     break;
                 default:
                     return null;
@@ -130,7 +133,6 @@ public class ReportBuilder {
         }
 
         /* Set up the report */
-        myReport.clearMaps();
         theManager.setReport(myReport);
 
         /* Create the report */

@@ -23,12 +23,18 @@
 package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
-import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
@@ -37,24 +43,35 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
-import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
- * CapitalGains report builder.
+ * Portfolio (Market) report builder.
  */
-public class CapitalGains
-        extends BasicReport {
+public class MoneyWiseReportPortfolioView
+        extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MoneyWiseReportPortfolioView.class);
+
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ReportResource.CAPITALGAINS_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseReportResource.PORTFOLIO_TITLE.getValue();
 
     /**
      * The Cost text.
      */
     private static final String TEXT_COST = AnalysisResource.SECURITYATTR_RESIDUALCOST.getValue();
+
+    /**
+     * The Adjustment text.
+     */
+    private static final String TEXT_ADJUST = AnalysisResource.SECURITYATTR_GROWTHADJUST.getValue();
 
     /**
      * The Value text.
@@ -67,9 +84,14 @@ public class CapitalGains
     private static final String TEXT_GAINS = AnalysisResource.SECURITYATTR_REALISEDGAINS.getValue();
 
     /**
+     * The Dividend text.
+     */
+    private static final String TEXT_DIVIDEND = AnalysisResource.SECURITYATTR_DIVIDEND.getValue();
+
+    /**
      * HTML builder.
      */
-    private final HTMLBuilder theBuilder;
+    private final MetisReportHTMLBuilder theBuilder;
 
     /**
      * The Formatter.
@@ -77,63 +99,19 @@ public class CapitalGains
     private final MetisDataFormatter theFormatter;
 
     /**
-     * The Formatter.
-     */
-    private List<Transaction> theSecurities;
-
-    /**
-     * The EndDate.
-     */
-    private TethysDate theEndDate;
-
-    /**
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected CapitalGains(final ReportManager pManager) {
+    protected MoneyWiseReportPortfolioView(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
-    }
-
-    /**
-     * Obtain the formatter.
-     * @return the formatter
-     */
-    protected MetisDataFormatter getFormatter() {
-        return theFormatter;
-    }
-
-    /**
-     * Obtain the builder.
-     * @return the builder
-     */
-    protected HTMLBuilder getBuilder() {
-        return theBuilder;
-    }
-
-    /**
-     * Obtain the security iterator.
-     * @return the iterator
-     */
-    protected Iterator<Transaction> transactionIterator() {
-        return theSecurities.iterator();
-    }
-
-    /**
-     * Obtain the endDate.
-     * @return the endDate
-     */
-    protected TethysDate getEndDate() {
-        return theEndDate;
     }
 
     @Override
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
         PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
-        theSecurities = pAnalysis.getSecurities();
-        theEndDate = pAnalysis.getDateRange().getEnd();
 
         /* Access the totals */
         PortfolioBucket myTotals = myPortfolios.getTotals();
@@ -150,6 +128,9 @@ public class CapitalGains
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
         theBuilder.makeTitleCell(myTable, TEXT_COST);
         theBuilder.makeTitleCell(myTable, TEXT_GAINS);
+        theBuilder.makeTitleCell(myTable, TEXT_DIVIDEND);
+        theBuilder.makeTitleCell(myTable, TEXT_ADJUST);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
 
         /* Loop through the Portfolio Buckets */
         Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
@@ -170,6 +151,10 @@ public class CapitalGains
             theBuilder.makeValueCell(myTable, myBucket.getNonCashValue(false));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
+            checkPortfolioProfit(myBucket);
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -180,26 +165,26 @@ public class CapitalGains
 
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(false));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
+        checkPortfolioProfit(myTotals);
 
         /* Return the document */
         return theBuilder.getDocument();
     }
 
     @Override
-    protected HTMLTable createDelayedTable(final DelayedTable pTable) {
+    public HTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         Object mySource = pTable.getSource();
         if (mySource instanceof PortfolioBucket) {
             PortfolioBucket mySourceBucket = (PortfolioBucket) mySource;
             return createDelayedPortfolio(pTable.getParent(), mySourceBucket);
-        }
-        if (mySource instanceof SecurityBucket) {
-            SecurityBucket mySourceBucket = (SecurityBucket) mySource;
-            return createDelayedGains(pTable.getParent(), mySourceBucket);
         }
 
         /* Return the null table */
@@ -228,20 +213,23 @@ public class CapitalGains
             /* Access bucket name */
             String myName = myBucket.getName();
             String myFullName = myBucket.getDecoratedName();
-            myFullName = myFullName.replace(':', '-');
 
             /* Access values */
             SecurityValues myValues = myBucket.getValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
-            theBuilder.makeDelayLinkCell(myTable, myFullName, myName);
+            theBuilder.makeFilterLinkCell(myTable, myFullName, myName);
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
+            checkSecurityProfit(myBucket);
 
-            /* Record the delayed table */
-            setDelayedTable(myFullName, myTable, myBucket);
+            /* Record the filter */
+            setFilterForId(myFullName, myBucket);
         }
 
         /* Return the table */
@@ -249,17 +237,46 @@ public class CapitalGains
     }
 
     /**
-     * Create a delayed gains table.
-     * @param pParent the parent table
-     * @param pSource the source bucket
-     * @return the new document fragment
+     * Check portfolio profit calculation.
+     * @param pBucket the portfolio bucket
      */
-    private HTMLTable createDelayedGains(final HTMLTable pParent,
-                                         final SecurityBucket pSource) {
-        /* Create a gains analysis */
-        GainsAnalysis myGains = new GainsAnalysis(this, pParent, pSource);
+    private void checkPortfolioProfit(final PortfolioBucket pBucket) {
+        SecurityValues myValues = pBucket.getValues();
+        TethysMoney myCalcProfit = pBucket.getNonCashValue(false);
+        myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
+        TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
+        if (!myProfit.equals(myCalcProfit)) {
+            LOGGER.error("Incorrect profit calculation for portfolio {}", pBucket.getName());
+        }
+    }
 
-        /* Return the formatted table */
-        return myGains.getTable();
+    /**
+     * Check security portfolio profit calculation.
+     * @param pBucket the security bucket
+     */
+    private void checkSecurityProfit(final SecurityBucket pBucket) {
+        SecurityValues myValues = pBucket.getValues();
+        TethysMoney myCalcProfit = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+        myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
+        TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
+        if (!myProfit.equals(myCalcProfit)) {
+            LOGGER.error("Incorrect profit calculation for security {}", pBucket.getDecoratedName());
+        }
+    }
+
+    @Override
+    public SecurityFilter processFilter(final Object pSource) {
+        /* If this is a SecurityBucket */
+        if (pSource instanceof SecurityBucket) {
+            /* Create the new filter */
+            return new SecurityFilter((SecurityBucket) pSource);
+        }
+        return null;
     }
 }

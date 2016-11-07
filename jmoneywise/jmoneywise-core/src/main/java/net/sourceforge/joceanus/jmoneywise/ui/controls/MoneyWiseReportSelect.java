@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
-import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
+import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
@@ -72,7 +72,7 @@ public class MoneyWiseReportSelect<N, I>
     /**
      * Reports scroll button.
      */
-    private final TethysScrollButtonManager<ReportType, N, I> theReportButton;
+    private final TethysScrollButtonManager<MoneyWiseReportType, N, I> theReportButton;
 
     /**
      * Range select.
@@ -138,7 +138,7 @@ public class MoneyWiseReportSelect<N, I>
         thePanel.addNode(thePrintButton);
 
         /* Apply the current state */
-        theState.setType(ReportType.NETWORTH);
+        theState.setType(MoneyWiseReportType.NETWORTH);
 
         /* Add the listeners */
         thePrintButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.PRINT));
@@ -165,7 +165,7 @@ public class MoneyWiseReportSelect<N, I>
      * Obtain the report type.
      * @return the report type
      */
-    public ReportType getReportType() {
+    public MoneyWiseReportType getReportType() {
         return theState.getType();
     }
 
@@ -190,10 +190,10 @@ public class MoneyWiseReportSelect<N, I>
      */
     private void buildReportMenu() {
         /* Create builder */
-        TethysScrollMenu<ReportType, ?> myBuilder = theReportButton.getMenu();
+        TethysScrollMenu<MoneyWiseReportType, ?> myBuilder = theReportButton.getMenu();
 
         /* Loop through the reports */
-        for (ReportType myType : ReportType.values()) {
+        for (MoneyWiseReportType myType : MoneyWiseReportType.values()) {
             /* Create a new JMenuItem for the report type */
             myBuilder.addItem(myType);
         }
@@ -280,7 +280,7 @@ public class MoneyWiseReportSelect<N, I>
         /**
          * The selected report type.
          */
-        private ReportType theType;
+        private MoneyWiseReportType theType;
 
         /**
          * Constructor.
@@ -309,7 +309,7 @@ public class MoneyWiseReportSelect<N, I>
          * Obtain the selected report type.
          * @return the report type
          */
-        private ReportType getType() {
+        private MoneyWiseReportType getType() {
             return theType;
         }
 
@@ -333,7 +333,7 @@ public class MoneyWiseReportSelect<N, I>
          * @param pType the new type
          * @return true/false did a change occur
          */
-        private boolean setType(final ReportType pType) {
+        private boolean setType(final MoneyWiseReportType pType) {
             if (!pType.equals(theType)) {
                 /* Are we currently point in time */
                 boolean isPointInTime = (theType != null)
@@ -351,7 +351,7 @@ public class MoneyWiseReportSelect<N, I>
                     theRangeSelect.lockPeriod(!isPointInTime);
 
                     /* else if we are switching to tax calculation */
-                } else if (theType == ReportType.TAXCALC) {
+                } else if (theType == MoneyWiseReportType.TAXCALC) {
                     /* Switch explicitly to Fiscal Year */
                     theRangeSelect.setPeriod(TethysDatePeriod.FISCALYEAR);
                 }

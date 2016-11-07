@@ -24,8 +24,16 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket;
@@ -33,27 +41,24 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.Ca
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TransactionCategoryFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Income/Expense report builder.
  */
-public class IncomeExpense
-        extends BasicReport {
+public class MoneyWiseReportIncomeExpense
+        extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ReportResource.INCEXP_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseReportResource.INCEXP_TITLE.getValue();
 
     /**
      * HTML builder.
      */
-    private final HTMLBuilder theBuilder;
+    private final MetisReportHTMLBuilder theBuilder;
 
     /**
      * The Formatter.
@@ -69,7 +74,7 @@ public class IncomeExpense
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected IncomeExpense(final ReportManager pManager) {
+    protected MoneyWiseReportIncomeExpense(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -93,9 +98,9 @@ public class IncomeExpense
         HTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_INCOME);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_EXPENSE);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_EXPENSE);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
 
         /* Loop through the SubTotal Buckets */
         Iterator<TransactionCategoryBucket> myIterator = myCategories.iterator();
@@ -130,7 +135,7 @@ public class IncomeExpense
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.INCOME));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.EXPENSE));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.PROFIT));
@@ -140,7 +145,7 @@ public class IncomeExpense
     }
 
     @Override
-    protected HTMLTable createDelayedTable(final DelayedTable pTable) {
+    public HTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         Object mySource = pTable.getSource();
         if (mySource instanceof TransactionCategoryBucket) {
@@ -200,7 +205,7 @@ public class IncomeExpense
     }
 
     @Override
-    protected TransactionCategoryFilter processFilter(final Object pSource) {
+    public TransactionCategoryFilter processFilter(final Object pSource) {
         /* If this is an EventCategoryBucket */
         if (pSource instanceof TransactionCategoryBucket) {
             /* Create the new filter */

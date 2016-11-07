@@ -28,15 +28,17 @@ import javax.swing.JComponent;
 import org.w3c.dom.Document;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.report.MetisReportEvent;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
-import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
-import net.sourceforge.joceanus.jmoneywise.reports.ReportBuilder;
-import net.sourceforge.joceanus.jmoneywise.reports.ReportManager;
-import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
+import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportBuilder;
+import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportResource;
+import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportType;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
@@ -110,12 +112,12 @@ public class ReportTab
     /**
      * The Report Manager.
      */
-    private final ReportManager theManager;
+    private final MetisReportManager<AnalysisFilter<?, ?>> theManager;
 
     /**
      * The ReportBuilder.
      */
-    private final ReportBuilder theBuilder;
+    private final MoneyWiseReportBuilder theBuilder;
 
     /**
      * Constructor for Report Window.
@@ -146,10 +148,10 @@ public class ReportTab
         theHTMLPane = myFactory.newHTMLManager();
 
         /* Create Report Manager */
-        theManager = new ReportManager(new HTMLBuilder(pView.getDataFormatter()));
+        theManager = new MetisReportManager<>(new MetisReportHTMLBuilder(pView.getDataFormatter()));
 
         /* Create the report builder */
-        theBuilder = new ReportBuilder(theManager);
+        theBuilder = new MoneyWiseReportBuilder(theManager);
 
         /* Create the Report Selection panel */
         theSelect = new MoneyWiseReportSelect<>(myFactory);
@@ -220,7 +222,7 @@ public class ReportTab
      * @throws OceanusException on error
      */
     private void loadCSS(final String pName) throws OceanusException {
-        String myCSS = TethysResourceBuilder.loadResourceToString(ReportManager.class, pName);
+        String myCSS = TethysResourceBuilder.loadResourceToString(MoneyWiseReportResource.class, pName);
         theHTMLPane.setCSSContent(myCSS);
     }
 
@@ -261,7 +263,7 @@ public class ReportTab
      */
     private void buildReport() throws OceanusException {
         /* Access the values from the selection */
-        ReportType myReportType = theSelect.getReportType();
+        MoneyWiseReportType myReportType = theSelect.getReportType();
         TethysDateRange myRange = theSelect.getDateRange();
         AnalysisManager myManager = theView.getAnalysisManager();
         Document myDoc;
@@ -328,7 +330,7 @@ public class ReportTab
      * handleGoToRequest.
      * @param pEvent the event
      */
-    private void handleGoToRequest(final TethysEvent<PrometheusDataEvent> pEvent) {
+    private void handleGoToRequest(final TethysEvent<MetisReportEvent> pEvent) {
         /* Create the details of the report */
         TethysDateRangeSelector<JComponent, Icon> mySelect = theSelect.getDateRangeSelector();
         AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);

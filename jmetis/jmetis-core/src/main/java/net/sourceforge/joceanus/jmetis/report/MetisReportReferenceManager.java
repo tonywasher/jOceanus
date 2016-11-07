@@ -1,40 +1,20 @@
-/*******************************************************************************
- * jMoneyWise: Finance Application
- * Copyright 2012,2016 Tony Washer
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
- ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.reports;
+package net.sourceforge.joceanus.jmetis.report;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-
-import net.sourceforge.joceanus.jmetis.list.MetisNestedHashMap;
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
 
 /**
- * Interface provided by report builders.
+ * Reference Manager for report builders.
+ * @param <F> the filter type
  */
-public abstract class BasicReport {
+public class MetisReportReferenceManager<F> {
+    /**
+     * The report.
+     */
+    private final MetisReportBase<?, F> theReport;
+
     /**
      * The delayed map.
      */
@@ -47,27 +27,15 @@ public abstract class BasicReport {
 
     /**
      * Constructor.
+     * @param pReport the report
      */
-    protected BasicReport() {
+    protected MetisReportReferenceManager(final MetisReportBase<?, F> pReport) {
+        /* Store parameters */
+        theReport = pReport;
+
         /* Allocate the hashMaps */
-        theDelayedMap = new MetisNestedHashMap<>();
-        theFilterMap = new MetisNestedHashMap<>();
-    }
-
-    /**
-     * Create the web document.
-     * @param pAnalysis the analysis
-     * @return Web document
-     */
-    protected abstract Document createReport(final Analysis pAnalysis);
-
-    /**
-     * Process a filter.
-     * @param pSource the filter source
-     * @return the AnalysisFilter or null
-     */
-    protected AnalysisFilter<?, ?> processFilter(final Object pSource) {
-        return null;
+        theDelayedMap = new HashMap<>();
+        theFilterMap = new HashMap<>();
     }
 
     /**
@@ -75,11 +43,11 @@ public abstract class BasicReport {
      * @param pReference the reference
      * @return the filter (or null)
      */
-    public AnalysisFilter<?, ?> processFilterReference(final String pReference) {
+    protected F processFilterReference(final String pReference) {
         /* Lookup the filter */
         Object mySource = theFilterMap.get(pReference);
         return (mySource != null)
-                                  ? processFilter(mySource)
+                                  ? theReport.processFilter(mySource)
                                   : null;
     }
 
@@ -89,8 +57,8 @@ public abstract class BasicReport {
      * @param pReference the reference
      * @return has the document changed true/false
      */
-    public boolean processDelayedReference(final HTMLBuilder pBuilder,
-                                           final String pReference) {
+    protected boolean processDelayedReference(final MetisReportHTMLBuilder pBuilder,
+                                              final String pReference) {
         /* Lookup the delayed table and ignore if not found */
         DelayedTable myDelay = theDelayedMap.get(pReference);
         if (myDelay == null) {
@@ -101,7 +69,7 @@ public abstract class BasicReport {
         theDelayedMap.remove(pReference);
 
         /* Create the delayed table */
-        HTMLTable myTable = createDelayedTable(myDelay);
+        HTMLTable myTable = theReport.createDelayedTable(myDelay);
 
         /* Embed the table correctly */
         pBuilder.embedTable(myTable, myDelay.getId());
@@ -111,18 +79,9 @@ public abstract class BasicReport {
     }
 
     /**
-     * Create the delayed table.
-     * @param pTable the delayed table definition
-     * @return the newly created table
-     */
-    protected HTMLTable createDelayedTable(final DelayedTable pTable) {
-        return null;
-    }
-
-    /**
      * Clear maps.
      */
-    public void clearMaps() {
+    protected void clearMaps() {
         /* Clear the maps */
         theFilterMap.clear();
         theDelayedMap.clear();
@@ -136,7 +95,7 @@ public abstract class BasicReport {
     protected void setFilterForId(final String pId,
                                   final Object pSelect) {
         /* Record into filter map */
-        theFilterMap.put(HTMLBuilder.REF_FILTER
+        theFilterMap.put(MetisReportHTMLBuilder.REF_FILTER
                          + pId, pSelect);
     }
 
@@ -153,14 +112,14 @@ public abstract class BasicReport {
         DelayedTable myTable = new DelayedTable(pId, pParent, pSource);
 
         /* Record into selection map */
-        theDelayedMap.put(HTMLBuilder.REF_DELAY
+        theDelayedMap.put(MetisReportHTMLBuilder.REF_DELAY
                           + pId, myTable);
     }
 
     /**
      * Simple element class for delayed tables.
      */
-    protected static final class DelayedTable {
+    public static final class DelayedTable {
         /**
          * The table id.
          */

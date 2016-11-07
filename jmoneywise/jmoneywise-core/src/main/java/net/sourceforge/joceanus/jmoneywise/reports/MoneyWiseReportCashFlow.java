@@ -24,33 +24,37 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
-import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * CashFlow report builder.
  */
-public class CashFlow
-        extends BasicReport {
+public class MoneyWiseReportCashFlow
+        extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ReportResource.CASHFLOW_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseReportResource.CASHFLOW_TITLE.getValue();
 
     /**
      * HTML builder.
      */
-    private final HTMLBuilder theBuilder;
+    private final MetisReportHTMLBuilder theBuilder;
 
     /**
      * The Formatter.
@@ -61,7 +65,7 @@ public class CashFlow
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected CashFlow(final ReportManager pManager) {
+    protected MoneyWiseReportCashFlow(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -84,9 +88,9 @@ public class CashFlow
         HTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTotalCell(myTable);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_INCOME);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_EXPENSE);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_EXPENSE);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
 
         /* Loop through the Payee Buckets */
         Iterator<PayeeBucket> myIterator = myPayees.iterator();
@@ -115,7 +119,7 @@ public class CashFlow
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.INCOME));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.EXPENSE));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.PROFIT));
@@ -125,7 +129,7 @@ public class CashFlow
     }
 
     @Override
-    protected PayeeFilter processFilter(final Object pSource) {
+    public PayeeFilter processFilter(final Object pSource) {
         /* If this is an PayeeBucket */
         if (pSource instanceof PayeeBucket) {
             /* Create the new filter */

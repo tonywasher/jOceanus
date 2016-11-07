@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+ * jMetis: Java Data Framework
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.reports;
+package net.sourceforge.joceanus.jmetis.report;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,19 +29,19 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import net.sourceforge.joceanus.jmetis.MetisIOException;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Build a report document.
  */
-public class HTMLBuilder {
+public class MetisReportHTMLBuilder {
     /**
      * The class attribute.
      */
-    protected static final String ATTR_CLASS = "class";
+    private static final String ATTR_CLASS = "class";
 
     /**
      * The id attribute.
@@ -51,182 +51,182 @@ public class HTMLBuilder {
     /**
      * The name attribute.
      */
-    protected static final String ATTR_NAME = "name";
+    private static final String ATTR_NAME = "name";
 
     /**
      * The href attribute.
      */
-    protected static final String ATTR_HREF = "href";
+    private static final String ATTR_HREF = "href";
 
     /**
      * The colspan attribute.
      */
-    protected static final String ATTR_COLSPAN = "colspan";
+    private static final String ATTR_COLSPAN = "colspan";
 
     /**
      * The align attribute.
      */
-    protected static final String ATTR_ALIGN = "align";
+    private static final String ATTR_ALIGN = "align";
 
     /**
      * The width attribute.
      */
-    protected static final String ATTR_WIDTH = "width";
+    private static final String ATTR_WIDTH = "width";
 
     /**
      * The align centre value.
      */
-    protected static final String ALIGN_CENTER = "center";
+    private static final String ALIGN_CENTER = "center";
 
     /**
      * The align right value.
      */
-    protected static final String ALIGN_RIGHT = "right";
+    private static final String ALIGN_RIGHT = "right";
 
     /**
      * The main table width value.
      */
-    protected static final String WIDTH_MAIN = "90%";
+    private static final String WIDTH_MAIN = "90%";
 
     /**
      * The embedded table width value.
      */
-    protected static final String WIDTH_EMBED = "99%";
+    private static final String WIDTH_EMBED = "99%";
 
     /**
      * Name of total table row class.
      */
-    protected static final String CLASS_TOTROW = "totalRow";
+    private static final String CLASS_TOTROW = "totalRow";
 
     /**
      * Name of summary table row class.
      */
-    protected static final String CLASS_SUMMROW = "summRow";
+    private static final String CLASS_SUMMROW = "summRow";
 
     /**
      * Name of alternate summary table row class.
      */
-    protected static final String CLASS_ALTSUMMROW = "altSummRow";
+    private static final String CLASS_ALTSUMMROW = "altSummRow";
 
     /**
      * Name of detailed summary row class.
      */
-    protected static final String CLASS_DTLSUMMROW = "dtlSummRow";
+    private static final String CLASS_DTLSUMMROW = "dtlSummRow";
 
     /**
      * Name of alternate detailed summary row class.
      */
-    protected static final String CLASS_ALTDTLSUMMROW = "altDtlSummRow";
+    private static final String CLASS_ALTDTLSUMMROW = "altDtlSummRow";
 
     /**
      * Name of detail row class.
      */
-    protected static final String CLASS_DTLROW = "detailRow";
+    private static final String CLASS_DTLROW = "detailRow";
 
     /**
      * Name of alternate detail row class.
      */
-    protected static final String CLASS_ALTDTLROW = "altDetailRow";
+    private static final String CLASS_ALTDTLROW = "altDetailRow";
 
     /**
      * Name of titleValue class.
      */
-    protected static final String CLASS_TITLEVALUE = "titleValue";
+    private static final String CLASS_TITLEVALUE = "titleValue";
 
     /**
      * Name of linkValue class.
      */
-    protected static final String CLASS_LINKVALUE = "linkValue";
+    private static final String CLASS_LINKVALUE = "linkValue";
 
     /**
      * Name of dataValue class.
      */
-    protected static final String CLASS_DATAVALUE = "dataValue";
+    private static final String CLASS_DATAVALUE = "dataValue";
 
     /**
      * Name of negativeValue class.
      */
-    protected static final String CLASS_NEGVALUE = "negValue";
+    private static final String CLASS_NEGVALUE = "negValue";
 
     /**
      * The HTML element.
      */
-    protected static final String ELEMENT_HTML = "html";
+    private static final String ELEMENT_HTML = "html";
 
     /**
      * The body element.
      */
-    protected static final String ELEMENT_BODY = "body";
+    private static final String ELEMENT_BODY = "body";
 
     /**
      * The title element.
      */
-    protected static final String ELEMENT_TITLE = "h1";
+    private static final String ELEMENT_TITLE = "h1";
 
     /**
      * The subtitle element.
      */
-    protected static final String ELEMENT_SUBTITLE = "h2";
+    private static final String ELEMENT_SUBTITLE = "h2";
 
     /**
      * The break element.
      */
-    protected static final String ELEMENT_BREAK = "br";
+    private static final String ELEMENT_BREAK = "br";
 
     /**
      * The table element.
      */
-    protected static final String ELEMENT_TABLE = "table";
+    private static final String ELEMENT_TABLE = "table";
 
     /**
      * The table header element.
      */
-    protected static final String ELEMENT_THDR = "thead";
+    private static final String ELEMENT_THDR = "thead";
 
     /**
      * The table body element.
      */
-    protected static final String ELEMENT_TBODY = "tbody";
+    private static final String ELEMENT_TBODY = "tbody";
 
     /**
      * The row element.
      */
-    protected static final String ELEMENT_ROW = "tr";
+    private static final String ELEMENT_ROW = "tr";
 
     /**
      * The cell element.
      */
-    protected static final String ELEMENT_CELL = "td";
+    private static final String ELEMENT_CELL = "td";
 
     /**
      * The total cell element.
      */
-    protected static final String ELEMENT_TOTAL = "th";
+    private static final String ELEMENT_TOTAL = "th";
 
     /**
      * The link element.
      */
-    protected static final String ELEMENT_LINK = "a";
+    private static final String ELEMENT_LINK = "a";
 
     /**
      * The table reference header.
      */
-    public static final String REF_TAB = ELEMENT_TABLE;
+    protected static final String REF_TAB = ELEMENT_TABLE;
 
     /**
      * The id reference header.
      */
-    public static final String REF_ID = ATTR_ID;
+    protected static final String REF_ID = ATTR_ID;
 
     /**
      * The filter reference header.
      */
-    public static final String REF_FILTER = "filter";
+    protected static final String REF_FILTER = "filter";
 
     /**
      * The delayed reference header.
      */
-    public static final String REF_DELAY = "delay";
+    protected static final String REF_DELAY = "delay";
 
     /**
      * The document builder.
@@ -248,7 +248,7 @@ public class HTMLBuilder {
      * @param pFormatter the formatter
      * @throws OceanusException on error
      */
-    public HTMLBuilder(final MetisDataFormatter pFormatter) throws OceanusException {
+    public MetisReportHTMLBuilder(final MetisDataFormatter pFormatter) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Store the formatter */
@@ -259,7 +259,7 @@ public class HTMLBuilder {
             theBuilder = myDocFactory.newDocumentBuilder();
 
         } catch (Exception e) {
-            throw new MoneyWiseIOException("Failed to create", e);
+            throw new MetisIOException("Failed to create", e);
         }
     }
 
@@ -283,7 +283,7 @@ public class HTMLBuilder {
      * Create and append a standard empty cell.
      * @param pControl the table control
      */
-    protected void makeValueCell(final HTMLTable pControl) {
+    public void makeValueCell(final HTMLTable pControl) {
         pControl.createNewCell(false);
     }
 
@@ -291,7 +291,7 @@ public class HTMLBuilder {
      * Create and append a standard empty total cell.
      * @param pControl the table control
      */
-    protected void makeTotalCell(final HTMLTable pControl) {
+    public void makeTotalCell(final HTMLTable pControl) {
         pControl.createNewCell(true);
     }
 
@@ -299,7 +299,7 @@ public class HTMLBuilder {
      * Create and append a standard empty title cell.
      * @param pControl the table control
      */
-    protected void makeTitleCell(final HTMLTable pControl) {
+    public void makeTitleCell(final HTMLTable pControl) {
         pControl.createNewCell(true);
     }
 
@@ -308,8 +308,8 @@ public class HTMLBuilder {
      * @param pControl the table control
      * @param pValue the value
      */
-    protected void makeValueCell(final HTMLTable pControl,
-                                 final Object pValue) {
+    public void makeValueCell(final HTMLTable pControl,
+                              final Object pValue) {
         Element myCell = pControl.createNewCell(false);
         setCellValue(myCell, pValue);
     }
@@ -319,8 +319,8 @@ public class HTMLBuilder {
      * @param pControl the table control
      * @param pValue the value
      */
-    protected void makeStretchedValueCell(final HTMLTable pControl,
-                                          final Object pValue) {
+    public void makeStretchedValueCell(final HTMLTable pControl,
+                                       final Object pValue) {
         Element myCell = pControl.createNewCell(false);
         setCellValue(myCell, pValue);
         myCell.setAttribute(ATTR_COLSPAN, Integer.toString(2));
@@ -331,8 +331,8 @@ public class HTMLBuilder {
      * @param pControl the table control
      * @param pValue the value
      */
-    protected void makeTotalCell(final HTMLTable pControl,
-                                 final Object pValue) {
+    public void makeTotalCell(final HTMLTable pControl,
+                              final Object pValue) {
         Element myCell = pControl.createNewCell(true);
         setCellValue(myCell, pValue);
     }
@@ -342,8 +342,8 @@ public class HTMLBuilder {
      * @param pControl the table control
      * @param pValue the value
      */
-    protected void makeStretchedTotalCell(final HTMLTable pControl,
-                                          final Object pValue) {
+    public void makeStretchedTotalCell(final HTMLTable pControl,
+                                       final Object pValue) {
         Element myCell = pControl.createNewCell(true);
         setCellValue(myCell, pValue);
         myCell.setAttribute(ATTR_COLSPAN, Integer.toString(2));
@@ -354,8 +354,8 @@ public class HTMLBuilder {
      * @param pControl the table control
      * @param pTitle the title
      */
-    protected void makeTitleCell(final HTMLTable pControl,
-                                 final String pTitle) {
+    public void makeTitleCell(final HTMLTable pControl,
+                              final String pTitle) {
         Element myCell = pControl.createNewCell(true);
         setCellTitle(myCell, pTitle);
     }
@@ -365,8 +365,8 @@ public class HTMLBuilder {
      * @param pControl the table control
      * @param pLink the link table name
      */
-    protected void makeTableLinkCell(final HTMLTable pControl,
-                                     final String pLink) {
+    public void makeTableLinkCell(final HTMLTable pControl,
+                                  final String pLink) {
         makeTableLinkCell(pControl, pLink, pLink);
     }
 
@@ -376,9 +376,9 @@ public class HTMLBuilder {
      * @param pLink the link table name
      * @param pName the link table display name
      */
-    protected void makeTableLinkCell(final HTMLTable pControl,
-                                     final String pLink,
-                                     final String pName) {
+    public void makeTableLinkCell(final HTMLTable pControl,
+                                  final String pLink,
+                                  final String pName) {
         /* Determine the id of the link */
         String myId = REF_ID
                       + pLink;
@@ -401,8 +401,8 @@ public class HTMLBuilder {
      * @param pControl the table control
      * @param pLink the link table name
      */
-    protected void makeDelayLinkCell(final HTMLTable pControl,
-                                     final String pLink) {
+    public void makeDelayLinkCell(final HTMLTable pControl,
+                                  final String pLink) {
         makeDelayLinkCell(pControl, pLink, pLink);
     }
 
@@ -412,9 +412,9 @@ public class HTMLBuilder {
      * @param pLink the link table name
      * @param pName the link table display name
      */
-    protected void makeDelayLinkCell(final HTMLTable pControl,
-                                     final String pLink,
-                                     final String pName) {
+    public void makeDelayLinkCell(final HTMLTable pControl,
+                                  final String pLink,
+                                  final String pName) {
         /* Determine the id of the link */
         String myId = REF_ID
                       + pLink;
@@ -437,8 +437,8 @@ public class HTMLBuilder {
      * @param pControl the table control
      * @param pLink the link table name
      */
-    protected void makeFilterLinkCell(final HTMLTable pControl,
-                                      final String pLink) {
+    public void makeFilterLinkCell(final HTMLTable pControl,
+                                   final String pLink) {
         makeFilterLinkCell(pControl, pLink, pLink);
     }
 
@@ -448,9 +448,9 @@ public class HTMLBuilder {
      * @param pLink the link table name
      * @param pName the link table display name
      */
-    protected void makeFilterLinkCell(final HTMLTable pControl,
-                                      final String pLink,
-                                      final String pName) {
+    public void makeFilterLinkCell(final HTMLTable pControl,
+                                   final String pLink,
+                                   final String pName) {
         Element myCell = pControl.createNewCell(false);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
         myCell.setAttribute(ATTR_CLASS, CLASS_LINKVALUE);
@@ -510,7 +510,7 @@ public class HTMLBuilder {
      * Start a table header row.
      * @param pControl the table control
      */
-    protected void startHdrRow(final HTMLTable pControl) {
+    public void startHdrRow(final HTMLTable pControl) {
         /* Create the row */
         pControl.createNewRow(true);
     }
@@ -519,7 +519,7 @@ public class HTMLBuilder {
      * Start a table data row.
      * @param pControl the table control
      */
-    protected void startRow(final HTMLTable pControl) {
+    public void startRow(final HTMLTable pControl) {
         /* Create the row */
         pControl.createNewRow(false);
     }
@@ -528,7 +528,7 @@ public class HTMLBuilder {
      * Start a table total row.
      * @param pControl the table control
      */
-    protected void startTotalRow(final HTMLTable pControl) {
+    public void startTotalRow(final HTMLTable pControl) {
         /* Create the row */
         pControl.createTotalRow();
     }
@@ -537,7 +537,7 @@ public class HTMLBuilder {
      * Start Report.
      * @return the body
      */
-    protected Element startReport() {
+    public Element startReport() {
         /* Create the new document */
         theDocument = theBuilder.newDocument();
 
@@ -554,8 +554,8 @@ public class HTMLBuilder {
      * @param pBody the document body
      * @param pTitle the title
      */
-    protected void makeTitle(final Element pBody,
-                             final String pTitle) {
+    public void makeTitle(final Element pBody,
+                          final String pTitle) {
         /* Create the title */
         Element myTitle = theDocument.createElement(ELEMENT_TITLE);
         pBody.appendChild(myTitle);
@@ -568,9 +568,9 @@ public class HTMLBuilder {
      * @param pTitle1 the first title
      * @param pTitle2 the second title
      */
-    protected void makeTitle(final Element pBody,
-                             final String pTitle1,
-                             final String pTitle2) {
+    public void makeTitle(final Element pBody,
+                          final String pTitle1,
+                          final String pTitle2) {
         /* Create the title */
         Element myTitle = theDocument.createElement(ELEMENT_TITLE);
         pBody.appendChild(myTitle);
@@ -587,8 +587,8 @@ public class HTMLBuilder {
      * @param pBody the document body
      * @param pTitle the title
      */
-    protected void makeSubTitle(final Element pBody,
-                                final String pTitle) {
+    public void makeSubTitle(final Element pBody,
+                             final String pTitle) {
         /* Create the title */
         Element myTitle = theDocument.createElement(ELEMENT_SUBTITLE);
         pBody.appendChild(myTitle);
@@ -600,7 +600,7 @@ public class HTMLBuilder {
      * @param pBody the document body
      * @return the table control
      */
-    protected HTMLTable startTable(final Element pBody) {
+    public HTMLTable startTable(final Element pBody) {
         /* Create the standard structure */
         Element myTable = theDocument.createElement(ELEMENT_TABLE);
         pBody.appendChild(myTable);
@@ -616,7 +616,7 @@ public class HTMLBuilder {
      * @param pParent the parent element
      * @return the new table
      */
-    protected HTMLTable createEmbeddedTable(final HTMLTable pParent) {
+    public HTMLTable createEmbeddedTable(final HTMLTable pParent) {
         /* Create the table */
         Element myTable = theDocument.createElement(ELEMENT_TABLE);
         myTable.setAttribute(ATTR_ALIGN, ALIGN_RIGHT);
@@ -631,8 +631,8 @@ public class HTMLBuilder {
      * @param pTable the table to embed
      * @param pTitle the title of the table
      */
-    protected void embedTable(final HTMLTable pTable,
-                              final String pTitle) {
+    public void embedTable(final HTMLTable pTable,
+                           final String pTitle) {
         /* Access body element */
         HTMLTable myParent = pTable.getParent();
         Element myLink = getLinkRow(pTitle);
@@ -661,7 +661,7 @@ public class HTMLBuilder {
      * Embed a table into the document.
      * @param pTable the table to embed
      */
-    protected void embedTable(final HTMLTable pTable) {
+    public void embedTable(final HTMLTable pTable) {
         /* Access body element */
         HTMLTable myParent = pTable.getParent();
         Element myBody = myParent.getTableBody();

@@ -29,6 +29,11 @@ import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
@@ -60,7 +65,6 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
@@ -73,17 +77,17 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 /**
  * NetWorth report builder.
  */
-public class NetWorth
-        extends BasicReport {
+public class MoneyWiseReportNetWorth
+        extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ReportResource.NETWORTH_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseReportResource.NETWORTH_TITLE.getValue();
 
     /**
      * The Asset text.
      */
-    private static final String TEXT_ASSET = ReportResource.NETWORTH_ASSET.getValue();
+    private static final String TEXT_ASSET = MoneyWiseReportResource.NETWORTH_ASSET.getValue();
 
     /**
      * The Units text.
@@ -123,7 +127,7 @@ public class NetWorth
     /**
      * HTML builder.
      */
-    private final HTMLBuilder theBuilder;
+    private final MetisReportHTMLBuilder theBuilder;
 
     /**
      * The Formatter.
@@ -139,7 +143,7 @@ public class NetWorth
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected NetWorth(final ReportManager pManager) {
+    protected MoneyWiseReportNetWorth(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -285,7 +289,7 @@ public class NetWorth
 
         /* Build the total row */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTotal);
 
         /* Return the document */
@@ -468,7 +472,7 @@ public class NetWorth
     }
 
     @Override
-    protected HTMLTable createDelayedTable(final DelayedTable pTable) {
+    public HTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         Object mySource = pTable.getSource();
         if (mySource instanceof DepositCategoryBucket) {
@@ -724,7 +728,7 @@ public class NetWorth
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
-            theBuilder.makeFilterLinkCell(myTable, myName, BalanceSheet.TEXT_CASH);
+            theBuilder.makeFilterLinkCell(myTable, myName, MoneyWiseReportBalanceSheet.TEXT_CASH);
             theBuilder.makeValueCell(myTable);
             theBuilder.makeValueCell(myTable);
 
@@ -787,7 +791,7 @@ public class NetWorth
     }
 
     @Override
-    protected AnalysisFilter<?, ?> processFilter(final Object pSource) {
+    public AnalysisFilter<?, ?> processFilter(final Object pSource) {
         /* If this is a DepositBucket */
         if (pSource instanceof DepositBucket) {
             /* Create the new filter */

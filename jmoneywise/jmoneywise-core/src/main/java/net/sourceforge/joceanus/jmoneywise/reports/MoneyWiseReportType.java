@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 /**
  * Report Types.
  */
-public enum ReportType {
+public enum MoneyWiseReportType {
     /**
      * Net Worth Report.
      */
@@ -81,7 +81,7 @@ public enum ReportType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = ReportResource.getKeyForReportType(this).getValue();
+            theName = MoneyWiseReportResource.getKeyForReportType(this).getValue();
         }
 
         /* return the name */

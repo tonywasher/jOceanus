@@ -30,6 +30,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
@@ -38,7 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
-import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -46,17 +51,17 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 /**
  * MarketGrowth report builder.
  */
-public class MarketGrowth
-        extends BasicReport {
+public class MoneyWiseReportMarketGrowth
+        extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MarketGrowth.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MoneyWiseReportMarketGrowth.class);
 
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ReportResource.MARKETGROWTH_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseReportResource.MARKETGROWTH_TITLE.getValue();
 
     /**
      * The Value text.
@@ -81,7 +86,7 @@ public class MarketGrowth
     /**
      * The Base text.
      */
-    private static final String TEXT_BASE = ReportResource.MARKETGROWTH_BASE.getValue();
+    private static final String TEXT_BASE = MoneyWiseReportResource.MARKETGROWTH_BASE.getValue();
 
     /**
      * The Growth text.
@@ -96,7 +101,7 @@ public class MarketGrowth
     /**
      * HTML builder.
      */
-    private final HTMLBuilder theBuilder;
+    private final MetisReportHTMLBuilder theBuilder;
 
     /**
      * The Formatter.
@@ -107,7 +112,7 @@ public class MarketGrowth
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected MarketGrowth(final ReportManager pManager) {
+    protected MoneyWiseReportMarketGrowth(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -173,7 +178,7 @@ public class MarketGrowth
 
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(false));
         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(true));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
@@ -188,7 +193,7 @@ public class MarketGrowth
     }
 
     @Override
-    protected HTMLTable createDelayedTable(final DelayedTable pTable) {
+    public HTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         Object mySource = pTable.getSource();
         if (mySource instanceof PortfolioBucket) {
@@ -300,7 +305,7 @@ public class MarketGrowth
     }
 
     @Override
-    protected SecurityFilter processFilter(final Object pSource) {
+    public SecurityFilter processFilter(final Object pSource) {
         /* If this is a SecurityBucket */
         if (pSource instanceof SecurityBucket) {
             /* Create the new filter */

@@ -28,6 +28,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent;
@@ -43,21 +47,21 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
-import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxAnalysis;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxDueBucket;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxDueBucket.MoneyWiseTaxBandBucket;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 
 /**
  * TaxCalculation report builder.
  */
-public class TaxCalculation
-        extends BasicReport {
+public class MoneyWiseReportTaxCalculation
+        extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ReportResource.TAXCALC_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseReportResource.TAXCALC_TITLE.getValue();
 
     /**
      * The Income text.
@@ -82,7 +86,7 @@ public class TaxCalculation
     /**
      * HTML builder.
      */
-    private final HTMLBuilder theBuilder;
+    private final MetisReportHTMLBuilder theBuilder;
 
     /**
      * The Formatter.
@@ -98,7 +102,7 @@ public class TaxCalculation
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected TaxCalculation(final ReportManager pManager) {
+    protected MoneyWiseReportTaxCalculation(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -210,7 +214,7 @@ public class TaxCalculation
 
         /* Access the Totals */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTaxAnalysis.getTaxableIncome());
         theBuilder.makeTotalCell(myTable, myTaxAnalysis.getTaxDue());
         theBuilder.startTotalRow(myTable);
@@ -521,7 +525,7 @@ public class TaxCalculation
 
         /* Format the totals */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable);
         theBuilder.makeTotalCell(myTable);
         theBuilder.makeTotalCell(myTable, myCharges.getGainsTotal());

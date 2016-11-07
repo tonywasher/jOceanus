@@ -29,6 +29,11 @@ import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
@@ -59,7 +64,6 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
@@ -72,12 +76,12 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 /**
  * BalanceSheet report builder.
  */
-public class BalanceSheet
-        extends BasicReport {
+public class MoneyWiseReportBalanceSheet
+        extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ReportResource.BALANCESHEET_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseReportResource.BALANCESHEET_TITLE.getValue();
 
     /**
      * The Portfolio cash account name.
@@ -87,7 +91,7 @@ public class BalanceSheet
     /**
      * HTML builder.
      */
-    private final HTMLBuilder theBuilder;
+    private final MetisReportHTMLBuilder theBuilder;
 
     /**
      * The Formatter.
@@ -103,7 +107,7 @@ public class BalanceSheet
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected BalanceSheet(final ReportManager pManager) {
+    protected MoneyWiseReportBalanceSheet(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -134,7 +138,7 @@ public class BalanceSheet
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getEnd()));
         theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getStart()));
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
 
         /* If we have deposits */
         if (!myDeposits.isEmpty()) {
@@ -280,7 +284,7 @@ public class BalanceSheet
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTotal);
         theBuilder.makeTotalCell(myTable, myBase);
         theBuilder.makeTotalCell(myTable, myDelta);
@@ -469,7 +473,7 @@ public class BalanceSheet
     }
 
     @Override
-    protected HTMLTable createDelayedTable(final DelayedTable pTable) {
+    public HTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         Object mySource = pTable.getSource();
         if (mySource instanceof DepositCategoryBucket) {
@@ -768,7 +772,7 @@ public class BalanceSheet
     }
 
     @Override
-    protected AnalysisFilter<?, ?> processFilter(final Object pSource) {
+    public AnalysisFilter<?, ?> processFilter(final Object pSource) {
         /* If this is a DepositBucket */
         if (pSource instanceof DepositBucket) {
             /* Create the new filter */

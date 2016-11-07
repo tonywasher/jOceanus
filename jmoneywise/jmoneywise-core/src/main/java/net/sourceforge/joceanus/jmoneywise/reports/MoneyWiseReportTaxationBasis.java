@@ -24,7 +24,15 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAccountBucket;
@@ -32,24 +40,20 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisValues;
-import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 /**
  * Taxation Basis report builder.
  */
-public class TaxationBasis
-        extends BasicReport {
+public class MoneyWiseReportTaxationBasis
+        extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = ReportResource.TAXBASIS_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseReportResource.TAXBASIS_TITLE.getValue();
 
     /**
      * The Net text.
@@ -64,7 +68,7 @@ public class TaxationBasis
     /**
      * HTML builder.
      */
-    private final HTMLBuilder theBuilder;
+    private final MetisReportHTMLBuilder theBuilder;
 
     /**
      * The Formatter.
@@ -75,7 +79,7 @@ public class TaxationBasis
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected TaxationBasis(final ReportManager pManager) {
+    protected MoneyWiseReportTaxationBasis(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -143,7 +147,7 @@ public class TaxationBasis
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TaxBasisAttribute.NETT));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TaxBasisAttribute.GROSS));
 
@@ -152,7 +156,7 @@ public class TaxationBasis
     }
 
     @Override
-    protected HTMLTable createDelayedTable(final DelayedTable pTable) {
+    public HTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         Object mySource = pTable.getSource();
         if (mySource instanceof TaxBasisBucket) {
@@ -202,7 +206,7 @@ public class TaxationBasis
     }
 
     @Override
-    protected AnalysisFilter<?, TaxBasisAttribute> processFilter(final Object pSource) {
+    public AnalysisFilter<?, TaxBasisAttribute> processFilter(final Object pSource) {
         if (pSource instanceof TaxBasisBucket) {
             /* Create the new filter */
             return new TaxBasisFilter((TaxBasisBucket) pSource);
