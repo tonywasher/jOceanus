@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jcoeus</artifactId>
-    <version>v1.5.1-SNAPSHOT</version>   
+    <version>v1.5.1-b2</version>   
   </parent>
   <artifactId>jcoeus-swing</artifactId>
   <name>jCoeus Swing Peer2Peer Analysis</name>

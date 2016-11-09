@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>v1.5.1-SNAPSHOT</version>
+  <version>v1.5.1-b2</version>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
   <inceptionYear>2012</inceptionYear>
