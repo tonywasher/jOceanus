@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.newlist;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -78,13 +79,10 @@ public class MetisIndexedList<T extends MetisVersionedItem>
 
     /**
      * Constructor.
-     * @param pList the list
      */
-    protected MetisIndexedList(final List<T> pList) {
-        /* Store parameters */
-        theList = pList;
-
-        /* Create the map */
+    protected MetisIndexedList() {
+        /* Create the list and map map */
+        theList = new ArrayList<>();
         theIdMap = new HashMap<>();
     }
 

@@ -192,6 +192,6 @@ public class MetisListChange<T extends MetisVersionedItem> {
         /**
          * Refresh.
          */
-        REFRESH,
+        REFRESH;
     }
 }

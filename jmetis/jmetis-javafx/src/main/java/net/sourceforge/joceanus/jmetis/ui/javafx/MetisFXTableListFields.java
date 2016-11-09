@@ -23,11 +23,13 @@
 package net.sourceforge.joceanus.jmetis.ui.javafx;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
 import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedItem;
 
 /**
@@ -38,7 +40,7 @@ public class MetisFXTableListFields<R extends MetisVersionedItem> {
     /**
      * The field list.
      */
-    private final List<MetisField> theFields;
+    private final MetisFields theFields;
 
     /**
      * The fieldSet Map.
@@ -47,10 +49,10 @@ public class MetisFXTableListFields<R extends MetisVersionedItem> {
 
     /**
      * Constructor.
-     * @param pFields the fields
+     * @param pList the editList
      */
-    MetisFXTableListFields(final List<MetisField> pFields) {
-        theFields = pFields;
+    public MetisFXTableListFields(final MetisEditList<R> pList) {
+        theFields = pList.getItemFields();
         theIdMap = new HashMap<>();
     }
 
@@ -74,7 +76,7 @@ public class MetisFXTableListFields<R extends MetisVersionedItem> {
      * @param pItem the item
      * @return the array
      */
-    protected ObjectProperty<Object>[] getComparisons(final R pItem) {
+    protected Observable[] getComparisons(final R pItem) {
         MetisFXTableFieldSet<R> myFieldSet = getFieldSet(pItem);
         return myFieldSet.getComparisons();
     }
@@ -94,19 +96,44 @@ public class MetisFXTableListFields<R extends MetisVersionedItem> {
     }
 
     /**
-     * Populate properties for an item.
+     * Update properties for an item.
      * @param pItem the item
      */
-    protected void populateProperties(final R pItem) {
+    protected void updateProperties(final R pItem) {
         MetisFXTableFieldSet<R> myFieldSet = getFieldSet(pItem);
-        myFieldSet.populateValues();
+        myFieldSet.updateValues();
     }
 
     /**
-     * Remove item.
-     * @param pItem the item
+     * Clear the map.
      */
-    protected void removeItem(final R pItem) {
-        theIdMap.remove(pItem.getIndexedId());
+    protected void clear() {
+        theIdMap.clear();
+    }
+
+    /**
+     * Remove item by id.
+     * @param pId the iD
+     * @return the item that was removed
+     */
+    protected R removeItem(final Integer pId) {
+        /* Obtain the field set */
+        MetisFXTableFieldSet<R> myFieldSet = theIdMap.get(pId);
+        if (myFieldSet != null) {
+            /* Remove from the map and return the item */
+            theIdMap.remove(pId);
+            return myFieldSet.getItem();
+        }
+
+        /* No item found */
+        return null;
+    }
+
+    /**
+     * Do we have comparisons?
+     * @return true/false
+     */
+    protected boolean hasComparisons() {
+        return theFields.hasComparisons();
     }
 }

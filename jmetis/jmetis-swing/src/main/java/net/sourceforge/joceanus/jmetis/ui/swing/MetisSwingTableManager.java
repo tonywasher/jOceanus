@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
 import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedItem;
-import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedList;
 import net.sourceforge.joceanus.jmetis.ui.MetisTableManager;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
@@ -68,27 +67,28 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysS
 public class MetisSwingTableManager<R extends MetisVersionedItem>
         extends MetisTableManager<R, JComponent, Icon> {
     /**
+     * Table List.
+     */
+    private final MetisSwingTableListManager<R> theList;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pList the edit list
      */
-    protected MetisSwingTableManager(final TethysSwingGuiFactory pFactory) {
+    protected MetisSwingTableManager(final TethysSwingGuiFactory pFactory,
+                                     final MetisEditList<R> pList) {
         /* Initialise underlying class */
         super(pFactory);
+
+        /* Create the table list */
+        theList = new MetisSwingTableListManager<>(this, pList);
+        getTable().setItems(theList.getTableList());
     }
 
     @Override
     protected TethysSwingTableManager<MetisField, R> getTable() {
         return (TethysSwingTableManager<MetisField, R>) super.getTable();
-    }
-
-    @Override
-    public void setItems(final MetisVersionedList<R> pItems) {
-        /* Do nothing */
-    }
-
-    @Override
-    public MetisEditList<R> getItems() {
-        return null;
     }
 
     /**
@@ -110,6 +110,37 @@ public class MetisSwingTableManager<R extends MetisVersionedItem>
             myValue = ((MetisEncryptedField<?>) myValue).getValue();
         }
         return pClass.cast(myValue);
+    }
+
+    /**
+     * Fire TableData changed.
+     */
+    protected void fireTableDataChanged() {
+        getTable().fireTableDataChanged();
+    }
+
+    /**
+     * Fire TableRow deleted.
+     * @param pRowIndex the row index
+     */
+    protected void fireTableRowDeleted(final int pRowIndex) {
+        getTable().fireTableRowDeleted(pRowIndex);
+    }
+
+    /**
+     * Fire TableRow changed.
+     * @param pRowIndex the row index
+     */
+    protected void fireTableRowChanged(final int pRowIndex) {
+        getTable().fireTableRowChanged(pRowIndex);
+    }
+
+    /**
+     * Fire TableRow added.
+     * @param pRowIndex the row index
+     */
+    protected void fireTableRowAdded(final int pRowIndex) {
+        getTable().fireTableRowAdded(pRowIndex);
     }
 
     @Override

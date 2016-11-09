@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
  * Edit List.
  * @param <T> the item type
  */
-public abstract class MetisEditList<T extends MetisVersionedItem>
+public class MetisEditList<T extends MetisVersionedItem>
         extends MetisVersionedList<T> {
     /**
      * Logger.
@@ -74,6 +74,11 @@ public abstract class MetisEditList<T extends MetisVersionedItem>
     private final MetisBaseList<T> theBase;
 
     /**
+     * The fields.
+     */
+    private final MetisFields theItemFields;
+
+    /**
      * The change report.
      */
     private MetisListChange<T> theChange;
@@ -95,13 +100,11 @@ public abstract class MetisEditList<T extends MetisVersionedItem>
 
     /**
      * Constructor.
-     * @param pClass the item class
      * @param pBase the base list
      */
-    protected MetisEditList(final Class<T> pClass,
-                            final MetisBaseList<T> pBase) {
+    protected MetisEditList(final MetisBaseList<T> pBase) {
         /* Initialise underlying class */
-        super(MetisListType.EDIT, pClass);
+        super(MetisListType.EDIT, pBase.getTheClass());
 
         /* Store base and initialise the edit list */
         theBase = pBase;
@@ -113,6 +116,10 @@ public abstract class MetisEditList<T extends MetisVersionedItem>
         myRegistrar.addEventListener(MetisListEvent.REBASE, e -> deriveEdit());
         myRegistrar.addEventListener(MetisListEvent.REWIND, this::handleReWindOfBase);
         myRegistrar.addEventListener(MetisListEvent.UPDATE, this::handleUpdateOfBase);
+
+        /* Obtain an instance of the element */
+        T myItem = newListItem(0);
+        theItemFields = myItem.getDataFields();
     }
 
     @Override
@@ -141,6 +148,22 @@ public abstract class MetisEditList<T extends MetisVersionedItem>
      */
     protected static MetisFields getBaseFields() {
         return FIELD_DEFS;
+    }
+
+    /**
+     * Obtain the base list.
+     * @return the base list
+     */
+    protected MetisBaseList<T> getBaseList() {
+        return theBase;
+    }
+
+    /**
+     * Obtain the dataFields for an item.
+     * @return the dataFields
+     */
+    public MetisFields getItemFields() {
+        return theItemFields;
     }
 
     /**
@@ -223,8 +246,15 @@ public abstract class MetisEditList<T extends MetisVersionedItem>
             /* If the item is being edited */
             MetisValueSetHistory myHistory = myCurr.getValueSetHistory();
             if (myHistory.getValueSet().getVersion() == theEditVersion) {
-                /* Pop the history */
-                myHistory.popTheHistory();
+                /* If the item is newly created */
+                if (myHistory.getOriginalValues().getVersion() == theEditVersion) {
+                    /* Remove from list */
+                    myIterator.remove();
+
+                    /* else just pop the history */
+                } else {
+                    myHistory.popTheHistory();
+                }
             }
         }
 
@@ -247,6 +277,33 @@ public abstract class MetisEditList<T extends MetisVersionedItem>
      * Commit Edit Version.
      */
     protected void doCommitEditVersion() {
+        /* Create a new Change Detail */
+        theChange = new MetisListChange<>(MetisListEvent.UPDATE);
+
+        /* Loop through the list */
+        Iterator<T> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+
+            /* If the item is being edited */
+            MetisValueSetHistory myHistory = myCurr.getValueSetHistory();
+            if (myHistory.getValueSet().getVersion() == theEditVersion) {
+                /* If the item is newly created */
+                if (myHistory.getOriginalValues().getVersion() == theEditVersion) {
+                    /* Register as a new item */
+                    theChange.registerAdded(myCurr);
+
+                    /* else just register as changed item */
+                } else {
+                    theChange.registerChanged(myCurr);
+                }
+            }
+        }
+
+        /* Fire the event */
+        fireEvent(theChange);
+        theChange = null;
+
         /* Commit the edit version */
         setVersion(theEditVersion);
         theEditVersion = 0;
@@ -276,7 +333,9 @@ public abstract class MetisEditList<T extends MetisVersionedItem>
 
         /* Start editing */
         MetisValueSetHistory myHistory = pItem.getValueSetHistory();
-        myHistory.pushHistory(theEditVersion);
+        if (myHistory.getValueSet().getVersion() != theEditVersion) {
+            myHistory.pushHistory(theEditVersion);
+        }
     }
 
     /**
@@ -285,6 +344,25 @@ public abstract class MetisEditList<T extends MetisVersionedItem>
      */
     protected void prepareItemForEdit(final Object pItem) {
         prepareItemForEdit(getTheClass().cast(pItem));
+    }
+
+    /**
+     * Prepare item for edit.
+     * @return the new item
+     */
+    public T createNewItem() {
+        /* Start editing */
+        startEditVersion();
+
+        /* Create the new item */
+        T myItem = newListItem(getNextId());
+
+        /* Start editing */
+        MetisValueSet myValues = myItem.getValueSet();
+        myValues.setVersion(theEditVersion);
+
+        /* Return the item */
+        return myItem;
     }
 
     /**
@@ -321,7 +399,7 @@ public abstract class MetisEditList<T extends MetisVersionedItem>
         theNewVersion = pNewVersion;
 
         /* Create a new Change Detail */
-        theChange = new MetisListChange<>(MetisListEvent.COMMIT);
+        theChange = new MetisListChange<>(MetisListEvent.UPDATE);
         theBaseChange = new MetisListChange<>(MetisListEvent.COMMIT);
 
         /* Loop through the list */
@@ -452,7 +530,7 @@ public abstract class MetisEditList<T extends MetisVersionedItem>
         MetisListChange<T> myBaseChange = (MetisListChange<T>) pChange.getDetails(MetisListChange.class);
 
         /* Create a new change list */
-        theChange = new MetisListChange<>(MetisListEvent.REWIND);
+        theChange = new MetisListChange<>(MetisListEvent.UPDATE);
 
         /* Handle underlying deleted items */
         handleBaseDeletedItems(myBaseChange.deletedIterator());

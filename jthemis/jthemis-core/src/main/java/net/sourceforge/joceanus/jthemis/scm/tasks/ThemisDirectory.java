@@ -86,7 +86,7 @@ public final class ThemisDirectory {
             Files.createDirectory(pDir);
         } catch (IOException e) {
             throw new ThemisIOException("Failed to create directory: "
-                                         + pDir.toAbsolutePath(), e);
+                                        + pDir.toAbsolutePath(), e);
         }
     }
 
@@ -110,7 +110,7 @@ public final class ThemisDirectory {
     public static void removeDirectory(final Path pDir) throws OceanusException {
         /* If the directory does not exist just return */
         if ((pDir == null)
-            || (!Files.exists(pDir))) {
+            || !pDir.toFile().exists()) {
             return;
         }
 
@@ -123,7 +123,7 @@ public final class ThemisDirectory {
             removeFile(pDir);
         } catch (IOException e) {
             throw new ThemisIOException("Failed to delete directory: "
-                                         + pDir.toAbsolutePath(), e);
+                                        + pDir.toAbsolutePath(), e);
         }
     }
 
@@ -173,7 +173,7 @@ public final class ThemisDirectory {
                                       final String pKeep) throws OceanusException {
         /* If the directory does not exist just return */
         if ((pDir == null)
-            || (!Files.exists(pDir))) {
+            || !pDir.toFile().exists()) {
             return;
         }
 
@@ -183,7 +183,7 @@ public final class ThemisDirectory {
             Files.walkFileTree(pDir, new DirVisitor(pDir, pKeep));
         } catch (IOException e) {
             throw new ThemisIOException("Failed to clear directory: "
-                                         + pDir.toAbsolutePath(), e);
+                                        + pDir.toAbsolutePath(), e);
         }
     }
 

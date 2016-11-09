@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmetis.newlist.MetisUpdateList.MetisUpdatePhase;
  * @param <E> the list type identifier
  */
 public class MetisUpdateListSet<E extends Enum<E>>
-        extends MetisVersionedListSet<E, MetisUpdateList<?>> {
+        extends MetisVersionedListSet<E, MetisUpdateList<MetisVersionedItem>> {
     /**
      * Report fields.
      */
@@ -58,9 +58,9 @@ public class MetisUpdateListSet<E extends Enum<E>>
         int myNumItems = pNumItems;
 
         /* Loop through the lists */
-        Iterator<MetisUpdateList<?>> myIterator = listIterator();
+        Iterator<MetisUpdateList<MetisVersionedItem>> myIterator = listIterator();
         while (myIterator.hasNext()) {
-            MetisUpdateList<?> myList = myIterator.next();
+            MetisUpdateList<MetisVersionedItem> myList = myIterator.next();
 
             /* If the list is non-empty */
             if (!myList.isEmpty()) {

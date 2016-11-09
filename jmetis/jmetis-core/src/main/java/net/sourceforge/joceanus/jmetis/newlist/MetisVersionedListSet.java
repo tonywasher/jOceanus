@@ -31,13 +31,14 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 
 /**
  * Set of VersionedLists.
  * @param <E> the list type identifier
  * @param <L> the list type class
  */
-public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVersionedList<?>>
+public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVersionedList<MetisVersionedItem>>
         implements MetisDataContents {
     /**
      * Report fields.
@@ -274,5 +275,85 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
 
         /* Set the version correctly */
         theVersion = pVersion;
+    }
+
+    /**
+     * reLink Items.
+     * @param pIterator the iterator
+     */
+    protected void reLinkItems(final Iterator<MetisVersionedItem> pIterator) {
+        /* Iterate through the items, reLinking */
+        while (pIterator.hasNext()) {
+            MetisVersionedItem myItem = pIterator.next();
+            reLinkItem(myItem);
+        }
+    }
+
+    /**
+     * reLink values.
+     * @param pItem the item
+     */
+    private void reLinkItem(final MetisVersionedItem pItem) {
+        /* Access details */
+        MetisValueSet myValues = pItem.getValueSet();
+        MetisFields myFields = pItem.getDataFields();
+
+        /* Loop through the fields */
+        Iterator<MetisField> myIterator = myFields.fieldIterator();
+        while (myIterator.hasNext()) {
+            /* Access Field and value */
+            MetisField myField = myIterator.next();
+            Object myValue = myField.getStorage().isValueSet()
+                                                               ? myValues.getValue(myField)
+                                                               : null;
+
+            /* If the value is a VersionedItem */
+            if (myValue instanceof MetisVersionedItem) {
+                /* Obtain the reLinked value and store the new value */
+                myValue = reLinkValue((MetisVersionedItem) myValue);
+                myValues.setValue(myField, myValue);
+            }
+        }
+    }
+
+    /**
+     * reLink value.
+     * @param pValue the value
+     * @return the reLinked value
+     */
+    private MetisVersionedItem reLinkValue(final MetisVersionedItem pValue) {
+        /* Determine the list for the item */
+        L myList = determineListForItem(pValue);
+
+        /* If we found the list */
+        MetisVersionedItem myNew = myList != null
+                                                  ? myList.getItemById(pValue.getIndexedId())
+                                                  : null;
+
+        /* Return the item */
+        return myNew != null
+                             ? myNew
+                             : pValue;
+    }
+
+    /**
+     * determine list for Item.
+     * @param pItem the item
+     * @return the corresponding list (or null)
+     */
+    private L determineListForItem(final MetisVersionedItem pItem) {
+        /* Loop through the lists */
+        Iterator<L> myIterator = listIterator();
+        while (myIterator.hasNext()) {
+            L myList = myIterator.next();
+
+            /* If this is the correct class */
+            if (myList.getTheClass().isInstance(pItem)) {
+                return myList;
+            }
+        }
+
+        /* No Match */
+        return null;
     }
 }

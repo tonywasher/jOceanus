@@ -77,6 +77,11 @@ public final class MetisFields {
     private boolean isEncrypted;
 
     /**
+     * has comparisons?
+     */
+    private boolean hasComparisons;
+
+    /**
      * Constructor.
      * @param pName the name of the item
      */
@@ -147,6 +152,14 @@ public final class MetisFields {
      */
     public boolean isEncrypted() {
         return isEncrypted;
+    }
+
+    /**
+     * Does the item have comparisons?
+     * @return true/false
+     */
+    public boolean hasComparisons() {
+        return hasComparisons;
     }
 
     /**
@@ -266,7 +279,10 @@ public final class MetisFields {
         /* Add it to the list */
         theFields.add(myField);
 
-        /* Adjust encrypted indication */
+        /* Adjust indications */
+        if (pEquality.isComparison()) {
+            hasComparisons = true;
+        }
         if (pStorage.isEncrypted()) {
             isEncrypted = true;
         }

@@ -190,6 +190,14 @@ public class MetisBaseList<T extends MetisVersionedItem>
     }
 
     /**
+     * Obtain edit list from this list.
+     * @return the edit list
+     */
+    public MetisEditList<T> deriveEditList() {
+        return new MetisEditList<>(this);
+    }
+
+    /**
      * Reset the list.
      */
     public void reset() {

@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
  * @param <E> the list type identifier
  */
 public class MetisDifferenceListSet<E extends Enum<E>>
-        extends MetisVersionedListSet<E, MetisDifferenceList<?>> {
+        extends MetisVersionedListSet<E, MetisDifferenceList<MetisVersionedItem>> {
     /**
      * Report fields.
      */

@@ -72,7 +72,7 @@
     <appLibDir/>
     <JDateButtonVersion>v2.1.0-SNAPSHOT</JDateButtonVersion>
     <BouncyCastleVersion>1.55</BouncyCastleVersion>
-    <SvnKitVersion>1.8.13</SvnKitVersion>
+    <SvnKitVersion>1.8.12</SvnKitVersion>
     <JGitVersion>4.5.0.201609210915-r</JGitVersion>
     <HttpClientVersion>4.5.2</HttpClientVersion>
     <JSONVersion>20160810</JSONVersion>

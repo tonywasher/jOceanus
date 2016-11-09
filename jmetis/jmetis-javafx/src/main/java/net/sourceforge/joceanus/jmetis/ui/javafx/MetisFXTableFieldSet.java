@@ -25,13 +25,14 @@ package net.sourceforge.joceanus.jmetis.ui.javafx;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedItem;
 
@@ -53,7 +54,7 @@ public class MetisFXTableFieldSet<R extends MetisVersionedItem> {
     /**
      * The Array of Comparison properties.
      */
-    private final ObjectProperty<Object>[] theComparisons;
+    private final Observable[] theComparisons;
 
     /**
      * Constructor.
@@ -61,21 +62,28 @@ public class MetisFXTableFieldSet<R extends MetisVersionedItem> {
      * @param pFields the fields
      */
     protected MetisFXTableFieldSet(final R pItem,
-                                   final List<MetisField> pFields) {
+                                   final MetisFields pFields) {
         /* Store the parameters */
         theItem = pItem;
 
         /* Create the map and populate it */
         thePropertyMap = new HashMap<>();
-        theComparisons = populateMap(pFields);
-        populateValues();
+        theComparisons = initialiseMap(pFields);
+    }
+
+    /**
+     * Return the item.
+     * @return the item
+     */
+    protected R getItem() {
+        return theItem;
     }
 
     /**
      * Return the comparisons array.
      * @return the array
      */
-    protected ObjectProperty<Object>[] getComparisons() {
+    protected Observable[] getComparisons() {
         return theComparisons;
     }
 
@@ -89,25 +97,27 @@ public class MetisFXTableFieldSet<R extends MetisVersionedItem> {
     }
 
     /**
-     * Populate the map.
+     * Initialise the map.
      * @param pFields the fields
      * @return the comparisons array
      */
-    @SuppressWarnings("unchecked")
-    private ObjectProperty<Object>[] populateMap(final List<MetisField> pFields) {
+    private Observable[] initialiseMap(final MetisFields pFields) {
         /* Create the comparisons array */
         int myMax = theItem.getDataFields().getNumValues();
-        ObjectProperty<Object>[] myComparisons = (ObjectProperty<Object>[]) new ObjectProperty<?>[myMax];
+        Observable[] myComparisons = new Observable[myMax];
         int myNumCompares = 0;
 
-        /* Iterate through the keys */
-        Iterator<MetisField> myIterator = pFields.iterator();
+        /* Iterate through the fields */
+        Iterator<MetisField> myIterator = pFields.fieldIterator();
         while (myIterator.hasNext()) {
             MetisField myField = myIterator.next();
 
             /* Create the property */
             ObjectProperty<Object> myProperty = new SimpleObjectProperty<>();
             thePropertyMap.put(myField, myProperty);
+
+            /* Initialise the value */
+            setValue(myField, myProperty);
 
             /* If the field is a comparison field */
             if (myField.getEquality().isComparison()) {
@@ -130,25 +140,38 @@ public class MetisFXTableFieldSet<R extends MetisVersionedItem> {
     /**
      * Populate the values.
      */
-    protected void populateValues() {
+    protected void updateValues() {
         /* Iterate through the entries */
         Iterator<Map.Entry<MetisField, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
         while (myIterator.hasNext()) {
             Map.Entry<MetisField, ObjectProperty<Object>> myEntry = myIterator.next();
             MetisField myField = myEntry.getKey();
-            ObjectProperty<Object> myProperty = myEntry.getValue();
 
-            /* Obtain the value */
-            Object myValue = theItem.getFieldValue(myField);
-            if (myValue == MetisFieldValue.SKIP) {
-                myValue = null;
+            /* If the field is changeable */
+            if (myField.getStorage().isValueSet()) {
+                /* Obtain the value */
+                setValue(myField, myEntry.getValue());
             }
-            if (myValue instanceof MetisEncryptedField) {
-                myValue = ((MetisEncryptedField<?>) myValue).getValue();
-            }
-
-            /* Store into the property */
-            myProperty.setValue(myValue);
         }
+    }
+
+    /**
+     * Set a property.
+     * @param pField the field
+     * @param pProperty the property
+     */
+    private void setValue(final MetisField pField,
+                          final ObjectProperty<Object> pProperty) {
+        /* Obtain the value */
+        Object myValue = theItem.getFieldValue(pField);
+        if (myValue == MetisFieldValue.SKIP) {
+            myValue = null;
+        }
+        if (myValue instanceof MetisEncryptedField) {
+            myValue = ((MetisEncryptedField<?>) myValue).getValue();
+        }
+
+        /* Store into the property */
+        pProperty.setValue(myValue);
     }
 }

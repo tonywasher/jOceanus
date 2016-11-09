@@ -27,9 +27,8 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
+import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
 import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedItem;
-import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedList;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -75,6 +74,9 @@ public abstract class MetisTableManager<R extends MetisVersionedItem, N, I>
         myRegistrar.addEventListener(TethysUIEvent.CELLPREEDIT, theEventManager::cascadeEvent);
         myRegistrar.addEventListener(TethysUIEvent.CELLPRECOMMIT, theEventManager::cascadeEvent);
         myRegistrar.addEventListener(TethysUIEvent.CELLFORMAT, this::formatCell);
+
+        /* Set the changed indicator */
+        theTable.setChanged(this::isFieldChanged);
     }
 
     @Override
@@ -101,18 +103,6 @@ public abstract class MetisTableManager<R extends MetisVersionedItem, N, I>
     public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
-
-    /**
-     * Set the table items.
-     * @param pItems the items
-     */
-    public abstract void setItems(final MetisVersionedList<R> pItems);
-
-    /**
-     * Obtain the table items.
-     * @return the items
-     */
-    public abstract MetisEditList<R> getItems();
 
     /**
      * Set the header predicate.
@@ -350,5 +340,17 @@ public abstract class MetisTableManager<R extends MetisVersionedItem, N, I>
      */
     private void formatCell(final TethysEvent<TethysUIEvent> pEvent) {
         /* TODO */
+    }
+
+    /**
+     * is field changed?
+     * @param pField the field
+     * @param pItem the item
+     * @return true/false
+     */
+    private boolean isFieldChanged(final MetisField pField,
+                                   final MetisVersionedItem pItem) {
+        MetisValueSetHistory myHistory = pItem.getValueSetHistory();
+        return myHistory.fieldChanged(pField).isDifferent();
     }
 }

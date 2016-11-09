@@ -25,9 +25,7 @@ package net.sourceforge.joceanus.jmetis.newlist;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,20 +104,7 @@ public abstract class MetisVersionedList<T extends MetisVersionedItem>
      */
     protected MetisVersionedList(final MetisListType pListType,
                                  final Class<T> pClass) {
-        this(pListType, new ArrayList<>(), pClass);
-    }
-
-    /**
-     * Constructor.
-     * @param pListType the list type
-     * @param pClass the class of the item
-     * @param pList the list
-     */
-    protected MetisVersionedList(final MetisListType pListType,
-                                 final List<T> pList,
-                                 final Class<T> pClass) {
-        /* Initialise underlying class */
-        super(pList);
+        /* Store parameters */
         theListType = pListType;
         theClass = pClass;
         theConstructor = getConstructor();

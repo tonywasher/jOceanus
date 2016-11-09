@@ -324,6 +324,37 @@ public class TethysSwingTableManager<C, R>
     }
 
     /**
+     * Fire TableData changed.
+     */
+    public void fireTableDataChanged() {
+        theModel.fireTableDataChanged();
+    }
+
+    /**
+     * Fire TableRow added.
+     * @param pRowIndex the index of the row that has been added
+     */
+    public void fireTableRowAdded(final int pRowIndex) {
+        theModel.fireTableRowsInserted(pRowIndex, pRowIndex);
+    }
+
+    /**
+     * Fire TableRow changed.
+     * @param pRowIndex the index of the row that has changed
+     */
+    public void fireTableRowChanged(final int pRowIndex) {
+        theModel.fireTableRowUpdated(pRowIndex);
+    }
+
+    /**
+     * Fire TableRow deleted.
+     * @param pRowIndex the index of the row that has been deleted
+     */
+    public void fireTableRowDeleted(final int pRowIndex) {
+        theModel.fireTableRowsDeleted(pRowIndex, pRowIndex);
+    }
+
+    /**
      * Table Model.
      */
     protected class TethysSwingTableModel
