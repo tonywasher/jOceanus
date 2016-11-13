@@ -24,8 +24,10 @@ package net.sourceforge.joceanus.jmetis.ui.javafx;
 
 import javafx.scene.Node;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.newlist.MetisBaseList;
 import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
-import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedItem;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedList;
 import net.sourceforge.joceanus.jmetis.ui.MetisTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager;
@@ -51,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXT
  * Metis javaFX table manager.
  * @param <R> the item type
  */
-public class MetisFXTableManager<R extends MetisVersionedItem>
+public class MetisFXTableManager<R extends MetisIndexedItem>
         extends MetisTableManager<R, Node, Node> {
     /**
      * Table List.
@@ -64,16 +66,44 @@ public class MetisFXTableManager<R extends MetisVersionedItem>
     private final MetisFXTableListFields<R> theItemFields;
 
     /**
+     * is the table readOnly.
+     */
+    private final boolean isReadOnly;
+
+    /**
      * Constructor.
      * @param pFactory the GUI Factory
      * @param pList the edit list
      */
     protected MetisFXTableManager(final TethysFXGuiFactory pFactory,
                                   final MetisEditList<R> pList) {
+        this(pFactory, pList, false);
+    }
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI Factory
+     * @param pList the base list
+     */
+    protected MetisFXTableManager(final TethysFXGuiFactory pFactory,
+                                  final MetisBaseList<R> pList) {
+        this(pFactory, pList, true);
+    }
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI Factory
+     * @param pList the versioned list
+     * @param pReadOnly is the table readOnly?
+     */
+    private MetisFXTableManager(final TethysFXGuiFactory pFactory,
+                                final MetisVersionedList<R> pList,
+                                final boolean pReadOnly) {
         /* Initialise underlying class */
         super(pFactory);
 
         /* Create the table list */
+        isReadOnly = pReadOnly;
         theList = new MetisFXTableList<>(pList);
         theItemFields = theList.getListFields();
         getTable().setItems(theList.getUnderlyingList());
@@ -82,6 +112,11 @@ public class MetisFXTableManager<R extends MetisVersionedItem>
     @Override
     protected TethysFXTableManager<MetisField, R> getTable() {
         return (TethysFXTableManager<MetisField, R>) super.getTable();
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return isReadOnly;
     }
 
     @Override

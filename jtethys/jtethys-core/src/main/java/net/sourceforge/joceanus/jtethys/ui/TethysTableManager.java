@@ -69,6 +69,11 @@ public abstract class TethysTableManager<C, R, N, I>
     private Predicate<R> theHeader;
 
     /**
+     * The Error Predicate.
+     */
+    private BiPredicate<C, R> theError;
+
+    /**
      * The Changed Predicate.
      */
     private BiPredicate<C, R> theChanged;
@@ -130,6 +135,27 @@ public abstract class TethysTableManager<C, R, N, I>
         return theHeader == null
                                  ? false
                                  : theHeader.test(pRow);
+    }
+
+    /**
+     * Set the error predicate.
+     * @param pError the error predicate
+     */
+    public void setError(final BiPredicate<C, R> pError) {
+        theError = pError;
+    }
+
+    /**
+     * Is the cell in error?
+     * @param pId the column id
+     * @param pRow the row
+     * @return true/false
+     */
+    public boolean isError(final C pId,
+                           final R pRow) {
+        return theError == null
+                                ? false
+                                : theError.test(pId, pRow);
     }
 
     /**

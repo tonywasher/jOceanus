@@ -23,13 +23,14 @@
 package net.sourceforge.joceanus.jmetis.newlist;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 
 /**
  * Set of DifferenceLists.
  * @param <E> the list type identifier
  */
 public class MetisDifferenceListSet<E extends Enum<E>>
-        extends MetisVersionedListSet<E, MetisDifferenceList<MetisVersionedItem>> {
+        extends MetisVersionedListSet<E, MetisDifferenceList<MetisIndexedItem>> {
     /**
      * Report fields.
      */

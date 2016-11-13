@@ -24,11 +24,13 @@ package net.sourceforge.joceanus.jmetis.newlist;
 
 import java.util.ListIterator;
 
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
+
 /**
  * Indexed List Iterator.
  * @param <T> the item type
  */
-public class MetisIndexedListIterator<T extends MetisVersionedItem>
+public class MetisIndexedListIterator<T extends MetisIndexedItem>
         implements ListIterator<T> {
     /**
      * The underlying list.

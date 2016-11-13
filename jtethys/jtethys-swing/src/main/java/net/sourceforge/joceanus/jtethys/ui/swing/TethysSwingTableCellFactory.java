@@ -612,6 +612,7 @@ public class TethysSwingTableCellFactory<C, R>
                 /* Set changed and disabled attributes */
                 theRenderControl.setTheAttributeState(TethysFieldAttribute.CHANGED, myTable.isChanged(myId, myRow));
                 theRenderControl.setTheAttributeState(TethysFieldAttribute.DISABLED, myTable.isDisabled(myRow));
+                theRenderControl.setTheAttributeState(TethysFieldAttribute.ERROR, myTable.isError(myId, myRow));
                 theRenderControl.setTheAttributeState(TethysFieldAttribute.SELECTED, pSelected);
                 theRenderControl.setTheAttributeState(TethysFieldAttribute.ALTERNATE, (myRowIndex & 1) == 0);
 

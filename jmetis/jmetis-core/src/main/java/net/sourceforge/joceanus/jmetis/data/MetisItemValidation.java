@@ -30,15 +30,15 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
- * Provides the implementation of a error buffer for an object that implements JDataContents. Each
- * element represents an error that relates to a field.
+ * Provides the implementation of a error buffer for an object that implements MetisDataContents.
+ * Each element represents an error that relates to a field.
  */
 public class MetisItemValidation
         implements MetisDataContents {
     /**
      * The local fields.
      */
-    private MetisFields theLocalFields = null;
+    private MetisFields theLocalFields;
 
     /**
      * The first error in the list.

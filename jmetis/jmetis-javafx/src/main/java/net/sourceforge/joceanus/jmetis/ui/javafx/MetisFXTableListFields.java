@@ -29,14 +29,14 @@ import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
-import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedItem;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedList;
 
 /**
  * Table List fields.
  * @param <R> the item type
  */
-public class MetisFXTableListFields<R extends MetisVersionedItem> {
+public class MetisFXTableListFields<R extends MetisIndexedItem> {
     /**
      * The field list.
      */
@@ -51,7 +51,7 @@ public class MetisFXTableListFields<R extends MetisVersionedItem> {
      * Constructor.
      * @param pList the editList
      */
-    public MetisFXTableListFields(final MetisEditList<R> pList) {
+    public MetisFXTableListFields(final MetisVersionedList<R> pList) {
         theFields = pList.getItemFields();
         theIdMap = new HashMap<>();
     }

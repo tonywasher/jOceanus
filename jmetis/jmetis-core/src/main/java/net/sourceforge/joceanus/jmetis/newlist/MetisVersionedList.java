@@ -30,12 +30,14 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
 import net.sourceforge.joceanus.jmetis.newlist.MetisListChange.MetisListEvent;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -44,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Versioned List implementation.
  * @param <T> the item type
  */
-public abstract class MetisVersionedList<T extends MetisVersionedItem>
+public abstract class MetisVersionedList<T extends MetisIndexedItem>
         extends MetisIndexedList<T>
         implements TethysEventProvider<MetisListEvent> {
     /**
@@ -93,6 +95,16 @@ public abstract class MetisVersionedList<T extends MetisVersionedItem>
     private final Constructor<T> theConstructor;
 
     /**
+     * The fields.
+     */
+    private final MetisFields theItemFields;
+
+    /**
+     * Is this a readOnly list.
+     */
+    private final boolean isReadOnly;
+
+    /**
      * The version of the list.
      */
     private int theVersion;
@@ -109,6 +121,13 @@ public abstract class MetisVersionedList<T extends MetisVersionedItem>
         theClass = pClass;
         theConstructor = getConstructor();
         theEventManager = new TethysEventManager<>();
+
+        /* Determine whether this is a readOnly list */
+        isReadOnly = !MetisDataValues.class.isAssignableFrom(theClass);
+
+        /* Obtain an instance of the element */
+        T myItem = newListItem(0);
+        theItemFields = myItem.getDataFields();
     }
 
     @Override
@@ -125,9 +144,9 @@ public abstract class MetisVersionedList<T extends MetisVersionedItem>
             return theClass;
         }
         if (FIELD_VERSION.equals(pField)) {
-            return theVersion != 0
-                                   ? theVersion
-                                   : MetisFieldValue.SKIP;
+            return !isReadOnly && theVersion != 0
+                                                  ? theVersion
+                                                  : MetisFieldValue.SKIP;
         }
         return super.getFieldValue(pField);
     }
@@ -143,6 +162,14 @@ public abstract class MetisVersionedList<T extends MetisVersionedItem>
     @Override
     public TethysEventRegistrar<MetisListEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Obtain the dataFields for an item.
+     * @return the dataFields
+     */
+    public MetisFields getItemFields() {
+        return theItemFields;
     }
 
     /**
@@ -167,6 +194,14 @@ public abstract class MetisVersionedList<T extends MetisVersionedItem>
      */
     public Class<T> getTheClass() {
         return theClass;
+    }
+
+    /**
+     * Is the list readOnly?
+     * @return true/false
+     */
+    public boolean isReadOnly() {
+        return isReadOnly;
     }
 
     /**
@@ -213,6 +248,11 @@ public abstract class MetisVersionedList<T extends MetisVersionedItem>
      * @param pVersion the version to reWind to
      */
     protected void checkReWindVersion(final int pVersion) {
+        /* Not supported for readOnly lists */
+        if (isReadOnly()) {
+            throw new UnsupportedOperationException();
+        }
+
         /* Version must be less than current version and positive */
         if ((theVersion < pVersion)
             || (pVersion < 0)) {
@@ -235,7 +275,8 @@ public abstract class MetisVersionedList<T extends MetisVersionedItem>
         Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
-            MetisValueSetHistory myHistory = myCurr.getValueSetHistory();
+            MetisDataValues myVersioned = (MetisDataValues) myCurr;
+            MetisValueSetHistory myHistory = myVersioned.getValueSetHistory();
 
             /* If the version is later than the required version */
             int myVersion = myHistory.getValueSet().getVersion();
@@ -288,24 +329,28 @@ public abstract class MetisVersionedList<T extends MetisVersionedItem>
      */
     protected T newDiffDeletedItem(final T pBase) {
         /* Obtain a new item */
-        T myItem = newListItem(pBase.getIndexedId());
+        T myNew = newListItem(pBase.getIndexedId());
+
+        /* Access versioned controls */
+        MetisDataValues myBase = (MetisDataValues) pBase;
+        MetisDataValues myItem = (MetisDataValues) myNew;
 
         /* Obtain a deleted values set as the current value */
-        MetisValueSet myBase = pBase.getValueSet();
-        MetisValueSet mySet = myBase.cloneIt();
+        MetisValueSet myBaseSet = myBase.getValueSet();
+        MetisValueSet mySet = myBaseSet.cloneIt();
         mySet.setDeletion(true);
 
         /* Obtain an undeleted set as the base value */
-        myBase = mySet.cloneIt();
-        myBase.setDeletion(false);
+        myBaseSet = mySet.cloneIt();
+        myBaseSet.setDeletion(false);
 
         /* Record as the history of the item */
         MetisValueSetHistory myHistory = myItem.getValueSetHistory();
         myHistory.setValues(mySet);
-        myHistory.setHistory(myBase);
+        myHistory.setHistory(myBaseSet);
 
         /* Return the new item */
-        return myItem;
+        return myNew;
     }
 
     /**
@@ -317,23 +362,28 @@ public abstract class MetisVersionedList<T extends MetisVersionedItem>
     protected T newDiffChangedItem(final T pCurr,
                                    final T pBase) {
         /* Obtain a new item */
-        T myItem = newListItem(pCurr.getIndexedId());
+        T myNew = newListItem(pCurr.getIndexedId());
+
+        /* Access versioned controls */
+        MetisDataValues myCurr = (MetisDataValues) pCurr;
+        MetisDataValues myBase = (MetisDataValues) pBase;
+        MetisDataValues myItem = (MetisDataValues) myNew;
 
         /* Obtain a clone of the value set as the current value */
-        MetisValueSet mySet = pCurr.getValueSet();
+        MetisValueSet mySet = myCurr.getValueSet();
         mySet = mySet.cloneIt();
 
         /* Obtain a clone of the value set as the base value */
-        MetisValueSet myBase = pBase.getValueSet();
-        myBase = myBase.cloneIt();
+        MetisValueSet myBaseSet = myBase.getValueSet();
+        myBaseSet = myBaseSet.cloneIt();
 
         /* Record as the history of the item */
         MetisValueSetHistory myHistory = myItem.getValueSetHistory();
         myHistory.setValues(mySet);
-        myHistory.setHistory(myBase);
+        myHistory.setHistory(myBaseSet);
 
         /* Return the new item */
-        return myItem;
+        return myNew;
     }
 
     /**
@@ -343,10 +393,14 @@ public abstract class MetisVersionedList<T extends MetisVersionedItem>
      */
     protected T newDiffAddedItem(final T pCurr) {
         /* Obtain a new item */
-        T myItem = newListItem(pCurr.getIndexedId());
+        T myNew = newListItem(pCurr.getIndexedId());
+
+        /* Access versioned controls */
+        MetisDataValues myCurr = (MetisDataValues) pCurr;
+        MetisDataValues myItem = (MetisDataValues) myNew;
 
         /* Obtain a clone of the value set as the current value */
-        MetisValueSet mySet = pCurr.getValueSet();
+        MetisValueSet mySet = myCurr.getValueSet();
         mySet = mySet.cloneIt();
         mySet.setVersion(1);
 
@@ -355,7 +409,7 @@ public abstract class MetisVersionedList<T extends MetisVersionedItem>
         myHistory.setValues(mySet);
 
         /* Return the new item */
-        return myItem;
+        return myNew;
     }
 
     /**

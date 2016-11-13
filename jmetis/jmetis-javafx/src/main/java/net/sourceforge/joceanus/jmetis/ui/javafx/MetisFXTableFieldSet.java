@@ -34,13 +34,13 @@ import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedFie
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedItem;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 
 /**
  * Table FieldSet.
  * @param <R> the item type
  */
-public class MetisFXTableFieldSet<R extends MetisVersionedItem> {
+public class MetisFXTableFieldSet<R extends MetisIndexedItem> {
     /**
      * The Item.
      */

@@ -26,16 +26,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
 import net.sourceforge.joceanus.jmetis.newlist.MetisListChange.MetisListEvent;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 
 /**
  * Base List implementation.
  * @param <T> the item type
  */
-public class MetisBaseList<T extends MetisVersionedItem>
+public class MetisBaseList<T extends MetisIndexedItem>
         extends MetisVersionedList<T> {
     /**
      * Report fields.
@@ -93,6 +95,11 @@ public class MetisBaseList<T extends MetisVersionedItem>
      * @param pBase the base list
      */
     public void reBaseList(final MetisBaseList<T> pBase) {
+        /* Not supported for readOnly lists */
+        if (isReadOnly()) {
+            throw new UnsupportedOperationException();
+        }
+
         /* Access a copy of the idMap of the base list */
         Map<Integer, T> myOld = new HashMap<>(pBase.getIdMap());
         boolean hasChanges = false;
@@ -113,7 +120,10 @@ public class MetisBaseList<T extends MetisVersionedItem>
             T myCurr = myIterator.next();
             Integer myId = myCurr.getIndexedId();
             T myItem = myOld.get(myId);
-            MetisValueSetHistory myHistory = myCurr.getValueSetHistory();
+
+            /* Access history */
+            MetisDataValues myVersioned = (MetisDataValues) myCurr;
+            MetisValueSetHistory myHistory = myVersioned.getValueSetHistory();
 
             /* If the item does not exist in the old list */
             if (myItem == null) {
@@ -126,7 +136,8 @@ public class MetisBaseList<T extends MetisVersionedItem>
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* ReBase the history */
-                    MetisValueSet myBase = myItem.getValueSet().cloneIt();
+                    myVersioned = (MetisDataValues) myItem;
+                    MetisValueSet myBase = myVersioned.getValueSet().cloneIt();
                     myHistory.setHistory(myBase);
                     hasChanges = true;
                 }
@@ -167,6 +178,12 @@ public class MetisBaseList<T extends MetisVersionedItem>
      * @return the difference list
      */
     public MetisDifferenceList<T> deriveDifferences(final MetisBaseList<T> pCompare) {
+        /* Not supported for readOnly lists */
+        if (isReadOnly()) {
+            throw new UnsupportedOperationException();
+        }
+
+        /* Create the difference list */
         MetisDifferenceList<T> myDifferences = new MetisDifferenceList<>(getTheClass());
         myDifferences.deriveTheDifferences(this, pCompare);
         return myDifferences;
@@ -186,6 +203,12 @@ public class MetisBaseList<T extends MetisVersionedItem>
      * @return the update list
      */
     public MetisUpdateList<T> deriveUpdates() {
+        /* Not supported for readOnly lists */
+        if (isReadOnly()) {
+            throw new UnsupportedOperationException();
+        }
+
+        /* Create the update list */
         return new MetisUpdateList<>(this);
     }
 
@@ -194,6 +217,12 @@ public class MetisBaseList<T extends MetisVersionedItem>
      * @return the edit list
      */
     public MetisEditList<T> deriveEditList() {
+        /* Not supported for readOnly lists */
+        if (isReadOnly()) {
+            throw new UnsupportedOperationException();
+        }
+
+        /* Create the edit list */
         return new MetisEditList<>(this);
     }
 

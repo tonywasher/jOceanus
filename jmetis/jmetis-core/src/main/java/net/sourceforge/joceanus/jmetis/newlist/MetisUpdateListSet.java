@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.newlist;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.newlist.MetisUpdateList.MetisUpdatePhase;
 
 /**
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.newlist.MetisUpdateList.MetisUpdatePhase;
  * @param <E> the list type identifier
  */
 public class MetisUpdateListSet<E extends Enum<E>>
-        extends MetisVersionedListSet<E, MetisUpdateList<MetisVersionedItem>> {
+        extends MetisVersionedListSet<E, MetisUpdateList<MetisIndexedItem>> {
     /**
      * Report fields.
      */
@@ -58,9 +59,9 @@ public class MetisUpdateListSet<E extends Enum<E>>
         int myNumItems = pNumItems;
 
         /* Loop through the lists */
-        Iterator<MetisUpdateList<MetisVersionedItem>> myIterator = listIterator();
+        Iterator<MetisUpdateList<MetisIndexedItem>> myIterator = listIterator();
         while (myIterator.hasNext()) {
-            MetisUpdateList<MetisVersionedItem> myList = myIterator.next();
+            MetisUpdateList<MetisIndexedItem> myList = myIterator.next();
 
             /* If the list is non-empty */
             if (!myList.isEmpty()) {

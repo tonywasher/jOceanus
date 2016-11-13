@@ -26,9 +26,12 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
-import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedItem;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisDisableItem;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisValidateItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -45,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <N> the node type
  * @param <I> the icon type
  */
-public abstract class MetisTableManager<R extends MetisVersionedItem, N, I>
+public abstract class MetisTableManager<R extends MetisIndexedItem, N, I>
         implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The event manager.
@@ -71,12 +74,14 @@ public abstract class MetisTableManager<R extends MetisVersionedItem, N, I>
         /* Handle events */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theEventManager.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.CELLCREATE, theEventManager::cascadeEvent);
-        myRegistrar.addEventListener(TethysUIEvent.CELLPREEDIT, theEventManager::cascadeEvent);
+        myRegistrar.addEventListener(TethysUIEvent.CELLPREEDIT, this::handlePreEditEvent);
         myRegistrar.addEventListener(TethysUIEvent.CELLPRECOMMIT, theEventManager::cascadeEvent);
-        myRegistrar.addEventListener(TethysUIEvent.CELLFORMAT, this::formatCell);
+        myRegistrar.addEventListener(TethysUIEvent.CELLFORMAT, theEventManager::cascadeEvent);
 
-        /* Set the changed indicator */
+        /* Set the changed, disabled and error tests */
         theTable.setChanged(this::isFieldChanged);
+        theTable.setDisabled(this::isItemDisabled);
+        theTable.setError(this::isFieldInError);
     }
 
     @Override
@@ -335,11 +340,24 @@ public abstract class MetisTableManager<R extends MetisVersionedItem, N, I>
                                                                                       final Class<T> pClass);
 
     /**
-     * Format the cell.
-     * @param pEvent the event
+     * Is the table readOnly?
+     * @return true/false
      */
-    private void formatCell(final TethysEvent<TethysUIEvent> pEvent) {
-        /* TODO */
+    public abstract boolean isReadOnly();
+
+    /**
+     * is field in error?
+     * @param pField the field
+     * @param pItem the item
+     * @return true/false
+     */
+    private boolean isFieldInError(final MetisField pField,
+                                   final MetisIndexedItem pItem) {
+        if (pItem instanceof MetisValidateItem) {
+            MetisValidateItem myItem = (MetisValidateItem) pItem;
+            return myItem.getValidation().getFieldErrors(pField) != null;
+        }
+        return false;
     }
 
     /**
@@ -349,8 +367,38 @@ public abstract class MetisTableManager<R extends MetisVersionedItem, N, I>
      * @return true/false
      */
     private boolean isFieldChanged(final MetisField pField,
-                                   final MetisVersionedItem pItem) {
-        MetisValueSetHistory myHistory = pItem.getValueSetHistory();
-        return myHistory.fieldChanged(pField).isDifferent();
+                                   final MetisIndexedItem pItem) {
+        if (pItem instanceof MetisDataValues) {
+            MetisDataValues myItem = (MetisDataValues) pItem;
+            MetisValueSetHistory myHistory = myItem.getValueSetHistory();
+            return myHistory.fieldChanged(pField).isDifferent();
+        }
+        return false;
+    }
+
+    /**
+     * is item disabled?
+     * @param pItem the item
+     * @return true/false
+     */
+    private boolean isItemDisabled(final MetisIndexedItem pItem) {
+        if (pItem instanceof MetisDisableItem) {
+            MetisDisableItem myItem = (MetisDisableItem) pItem;
+            return myItem.isDisabled();
+        }
+        return false;
+    }
+
+    /**
+     * handle preEdit events?
+     * @param pEvent the event
+     */
+    private void handlePreEditEvent(final TethysEvent<TethysUIEvent> pEvent) {
+        /* Consume readOnly events else cascade them */
+        if (isReadOnly()) {
+            pEvent.consume();
+        } else {
+            theEventManager.cascadeEvent(pEvent);
+        }
     }
 }

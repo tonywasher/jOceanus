@@ -82,6 +82,11 @@ public final class MetisFields {
     private boolean hasComparisons;
 
     /**
+     * has versions?
+     */
+    private boolean hasVersions;
+
+    /**
      * Constructor.
      * @param pName the name of the item
      */
@@ -111,6 +116,8 @@ public final class MetisFields {
         if (theParent != null) {
             theNextValue = theParent.getNumValues();
             isEncrypted = theParent.isEncrypted();
+            hasComparisons = theParent.hasComparisons();
+            hasVersions = theParent.hasVersions();
         } else {
             theNextValue = Integer.valueOf(0);
         }
@@ -160,6 +167,14 @@ public final class MetisFields {
      */
     public boolean hasComparisons() {
         return hasComparisons;
+    }
+
+    /**
+     * Does the item have versioned values?
+     * @return true/false
+     */
+    public boolean hasVersions() {
+        return hasVersions;
     }
 
     /**
@@ -285,6 +300,9 @@ public final class MetisFields {
         }
         if (pStorage.isEncrypted()) {
             isEncrypted = true;
+        }
+        if (pStorage.isValueSet()) {
+            hasVersions = true;
         }
 
         /* Return the index */

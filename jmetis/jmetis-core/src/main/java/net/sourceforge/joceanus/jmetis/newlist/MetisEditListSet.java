@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.newlist.MetisListChange.MetisListEvent;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 
@@ -36,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
  * @param <E> the list type identifier
  */
 public class MetisEditListSet<E extends Enum<E>>
-        extends MetisVersionedListSet<E, MetisEditList<MetisVersionedItem>> {
+        extends MetisVersionedListSet<E, MetisEditList<MetisIndexedItem>> {
     /**
      * Report fields.
      */
@@ -134,9 +135,9 @@ public class MetisEditListSet<E extends Enum<E>>
         /* If we are currently editing */
         if (isEditing()) {
             /* Loop through the lists */
-            Iterator<MetisEditList<MetisVersionedItem>> myIterator = listIterator();
+            Iterator<MetisEditList<MetisIndexedItem>> myIterator = listIterator();
             while (myIterator.hasNext()) {
-                MetisEditList<MetisVersionedItem> myList = myIterator.next();
+                MetisEditList<MetisIndexedItem> myList = myIterator.next();
 
                 /* If the list is editing */
                 if (myList.isEditing()) {
@@ -157,9 +158,9 @@ public class MetisEditListSet<E extends Enum<E>>
         /* Commit the edit version */
         if (isEditing()) {
             /* Loop through the lists */
-            Iterator<MetisEditList<MetisVersionedItem>> myIterator = listIterator();
+            Iterator<MetisEditList<MetisIndexedItem>> myIterator = listIterator();
             while (myIterator.hasNext()) {
-                MetisEditList<MetisVersionedItem> myList = myIterator.next();
+                MetisEditList<MetisIndexedItem> myList = myIterator.next();
 
                 /* If the list is editing */
                 if (myList.isEditing()) {
@@ -181,9 +182,9 @@ public class MetisEditListSet<E extends Enum<E>>
         /* If we have editing updates */
         if (getVersion() > 0) {
             /* Loop through the lists */
-            Iterator<MetisEditList<MetisVersionedItem>> myIterator = listIterator();
+            Iterator<MetisEditList<MetisIndexedItem>> myIterator = listIterator();
             while (myIterator.hasNext()) {
-                MetisEditList<MetisVersionedItem> myList = myIterator.next();
+                MetisEditList<MetisIndexedItem> myList = myIterator.next();
 
                 /* Commit any pending version */
                 myList.commitEditVersion();
@@ -218,7 +219,7 @@ public class MetisEditListSet<E extends Enum<E>>
 
     @Override
     protected void declareList(final E pId,
-                               final MetisEditList<MetisVersionedItem> pList) {
+                               final MetisEditList<MetisIndexedItem> pList) {
         /* Pass call through */
         super.declareList(pId, pList);
 
@@ -237,7 +238,7 @@ public class MetisEditListSet<E extends Enum<E>>
      * Handle list Refresh.
      * @param pList the list
      */
-    private void handleListRefresh(final MetisEditList<MetisVersionedItem> pList) {
+    private void handleListRefresh(final MetisEditList<MetisIndexedItem> pList) {
         reLinkItems(pList.iterator());
     }
 
@@ -248,7 +249,7 @@ public class MetisEditListSet<E extends Enum<E>>
     private void handleListReWind(final TethysEvent<MetisListEvent> pChange) {
         /* Access the change detail */
         @SuppressWarnings("unchecked")
-        MetisListChange<MetisVersionedItem> myBaseChange = (MetisListChange<MetisVersionedItem>) pChange.getDetails(MetisListChange.class);
+        MetisListChange<MetisIndexedItem> myBaseChange = (MetisListChange<MetisIndexedItem>) pChange.getDetails(MetisListChange.class);
 
         /* ReLink Changed items */
         reLinkItems(myBaseChange.changedIterator());
@@ -261,7 +262,7 @@ public class MetisEditListSet<E extends Enum<E>>
     private void handleListCommit(final TethysEvent<MetisListEvent> pChange) {
         /* Access the change detail */
         @SuppressWarnings("unchecked")
-        MetisListChange<MetisVersionedItem> myBaseChange = (MetisListChange<MetisVersionedItem>) pChange.getDetails(MetisListChange.class);
+        MetisListChange<MetisIndexedItem> myBaseChange = (MetisListChange<MetisIndexedItem>) pChange.getDetails(MetisListChange.class);
 
         /* ReLink Added and Changed items */
         theBaseSet.reLinkItems(myBaseChange.addedIterator());

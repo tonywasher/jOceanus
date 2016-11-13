@@ -35,12 +35,13 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 
 /**
  * Java Indexed List.
  * @param <T> the item type
  */
-public class MetisIndexedList<T extends MetisVersionedItem>
+public class MetisIndexedList<T extends MetisIndexedItem>
         implements MetisDataList<T>, MetisDataContents {
     /**
      * Report fields.

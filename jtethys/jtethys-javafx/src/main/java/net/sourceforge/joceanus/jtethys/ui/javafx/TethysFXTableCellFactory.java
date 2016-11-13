@@ -445,9 +445,7 @@ public class TethysFXTableCellFactory<C, R>
                 /* Set changed and disabled attributes */
                 theControl.setTheAttributeState(TethysFieldAttribute.CHANGED, myTable.isChanged(myId, myRow));
                 theControl.setTheAttributeState(TethysFieldAttribute.DISABLED, myTable.isDisabled(myRow));
-
-                /* Allow further changes */
-                theEventManager.fireEvent(TethysUIEvent.CELLFORMAT, this);
+                theControl.setTheAttributeState(TethysFieldAttribute.ERROR, myTable.isError(myId, myRow));
             }
 
             /* Set details and stop editing */

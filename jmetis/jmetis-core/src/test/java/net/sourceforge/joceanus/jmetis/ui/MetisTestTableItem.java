@@ -24,12 +24,13 @@ package net.sourceforge.joceanus.jmetis.ui;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
-import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedItem;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -47,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
  * Metis Table item.
  */
 public class MetisTestTableItem
-        implements MetisVersionedItem {
+        implements MetisIndexedItem, MetisDataValues {
     /**
      * The Next itemId.
      */

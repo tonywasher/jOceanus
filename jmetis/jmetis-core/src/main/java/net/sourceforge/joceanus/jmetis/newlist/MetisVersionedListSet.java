@@ -28,17 +28,19 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 
 /**
  * Set of VersionedLists.
  * @param <E> the list type identifier
  * @param <L> the list type class
  */
-public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVersionedList<MetisVersionedItem>>
+public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVersionedList<MetisIndexedItem>>
         implements MetisDataContents {
     /**
      * Report fields.
@@ -74,6 +76,11 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      * The enum class of the list.
      */
     private final Class<E> theClass;
+
+    /**
+     * Is this a readOnly list.
+     */
+    private boolean isReadOnly;
 
     /**
      * The version of the listSet.
@@ -115,9 +122,9 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
             return theListType;
         }
         if (FIELD_VERSION.equals(pField)) {
-            return theVersion != 0
-                                   ? theVersion
-                                   : MetisFieldValue.SKIP;
+            return !isReadOnly && theVersion != 0
+                                                  ? theVersion
+                                                  : MetisFieldValue.SKIP;
         }
 
         /* Look for an enum of this type */
@@ -161,6 +168,14 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      */
     protected Class<E> getEnumClass() {
         return theClass;
+    }
+
+    /**
+     * Is the listSet readOnly?
+     * @return true/false
+     */
+    public boolean isReadOnly() {
+        return isReadOnly;
     }
 
     /**
@@ -237,6 +252,9 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      */
     protected void declareList(final E pId,
                                final L pList) {
+        /* Mark ReadOnly if necessary */
+        isReadOnly |= pList.isReadOnly();
+
         /* Add to the list map */
         theListMap.put(pId, pList);
 
@@ -249,6 +267,11 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      * @param pVersion the version to reWind to
      */
     protected void checkReWindVersion(final int pVersion) {
+        /* Not supported for readOnly listSets */
+        if (isReadOnly()) {
+            throw new UnsupportedOperationException();
+        }
+
         /* Version must be less than current version and positive */
         if ((theVersion < pVersion)
             || (pVersion < 0)) {
@@ -281,10 +304,10 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      * reLink Items.
      * @param pIterator the iterator
      */
-    protected void reLinkItems(final Iterator<MetisVersionedItem> pIterator) {
+    protected void reLinkItems(final Iterator<MetisIndexedItem> pIterator) {
         /* Iterate through the items, reLinking */
         while (pIterator.hasNext()) {
-            MetisVersionedItem myItem = pIterator.next();
+            MetisIndexedItem myItem = pIterator.next();
             reLinkItem(myItem);
         }
     }
@@ -293,9 +316,10 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      * reLink values.
      * @param pItem the item
      */
-    private void reLinkItem(final MetisVersionedItem pItem) {
+    private void reLinkItem(final MetisIndexedItem pItem) {
         /* Access details */
-        MetisValueSet myValues = pItem.getValueSet();
+        MetisDataValues myItem = (MetisDataValues) pItem;
+        MetisValueSet myValues = myItem.getValueSet();
         MetisFields myFields = pItem.getDataFields();
 
         /* Loop through the fields */
@@ -308,9 +332,9 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
                                                                : null;
 
             /* If the value is a VersionedItem */
-            if (myValue instanceof MetisVersionedItem) {
+            if (myValue instanceof MetisIndexedItem) {
                 /* Obtain the reLinked value and store the new value */
-                myValue = reLinkValue((MetisVersionedItem) myValue);
+                myValue = reLinkValue((MetisIndexedItem) myValue);
                 myValues.setValue(myField, myValue);
             }
         }
@@ -321,14 +345,14 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      * @param pValue the value
      * @return the reLinked value
      */
-    private MetisVersionedItem reLinkValue(final MetisVersionedItem pValue) {
+    private MetisIndexedItem reLinkValue(final MetisIndexedItem pValue) {
         /* Determine the list for the item */
         L myList = determineListForItem(pValue);
 
         /* If we found the list */
-        MetisVersionedItem myNew = myList != null
-                                                  ? myList.getItemById(pValue.getIndexedId())
-                                                  : null;
+        MetisIndexedItem myNew = myList != null
+                                                ? myList.getItemById(pValue.getIndexedId())
+                                                : null;
 
         /* Return the item */
         return myNew != null
@@ -341,7 +365,7 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      * @param pItem the item
      * @return the corresponding list (or null)
      */
-    private L determineListForItem(final MetisVersionedItem pItem) {
+    private L determineListForItem(final MetisIndexedItem pItem) {
         /* Loop through the lists */
         Iterator<L> myIterator = listIterator();
         while (myIterator.hasNext()) {

@@ -27,11 +27,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
+
 /**
  * Metis VersionedList Event.
  * @param <T> the item type
  */
-public class MetisListChange<T extends MetisVersionedItem> {
+public class MetisListChange<T extends MetisIndexedItem> {
     /**
      * The event type.
      */

@@ -26,11 +26,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
+
 /**
  * Difference List.
  * @param <T> the item type
  */
-public class MetisDifferenceList<T extends MetisVersionedItem>
+public class MetisDifferenceList<T extends MetisIndexedItem>
         extends MetisVersionedList<T> {
     /**
      * Constructor.
