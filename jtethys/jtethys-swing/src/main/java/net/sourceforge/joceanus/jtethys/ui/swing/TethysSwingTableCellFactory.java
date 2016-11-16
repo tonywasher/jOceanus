@@ -35,6 +35,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -49,6 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyFie
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRawDecimalField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
@@ -71,6 +73,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingRateTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingRatioTextField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingRawDecimalTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingShortTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingUnitsTextField;
@@ -151,6 +154,15 @@ public class TethysSwingTableCellFactory<C, R>
      */
     protected TethysSwingTableCell<C, R, Long> longCell(final TethysSwingTableColumn<C, R, Long> pColumn) {
         return listenToCell(new TethysSwingTableLongCell<>(pColumn, theGuiFactory));
+    }
+
+    /**
+     * Obtain Money Cell.
+     * @param pColumn the column
+     * @return the money cell
+     */
+    protected TethysSwingTableCell<C, R, TethysDecimal> rawDecimalCell(final TethysSwingTableColumn<C, R, TethysDecimal> pColumn) {
+        return listenToCell(new TethysSwingTableRawDecimalCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -770,6 +782,35 @@ public class TethysSwingTableCellFactory<C, R>
         @Override
         public void setDeemedCurrency(final Currency pCurrency) {
             getControl().setDeemedCurrency(pCurrency);
+        }
+    }
+
+    /**
+     * RawDecimal Cell.
+     * @param <C> the column identity
+     * @param <R> the table item class
+     */
+    public static class TethysSwingTableRawDecimalCell<C, R>
+            extends TethysSwingTableCell<C, R, TethysDecimal>
+            implements TethysRawDecimalField {
+        /**
+         * Constructor.
+         * @param pColumn the column
+         * @param pFactory the GUI Factory
+         */
+        protected TethysSwingTableRawDecimalCell(final TethysSwingTableColumn<C, R, TethysDecimal> pColumn,
+                                                 final TethysSwingGuiFactory pFactory) {
+            super(pColumn, pFactory.newRawDecimalField(), TethysDecimal.class);
+        }
+
+        @Override
+        public TethysSwingRawDecimalTextField getControl() {
+            return (TethysSwingRawDecimalTextField) super.getControl();
+        }
+
+        @Override
+        public void setNumDecimals(final int pNumDecimals) {
+            getControl().setNumDecimals(pNumDecimals);
         }
     }
 

@@ -45,6 +45,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -702,6 +703,44 @@ public abstract class TethysSwingDataTextField<T>
             TethysDataEditConverter<Long> myConverter = getConverter();
             if (myConverter instanceof TethysRangedField) {
                 ((TethysRangedField<Long>) myConverter).setValueRange(pMinimum, pMaximum);
+            }
+        }
+    }
+
+    /**
+     * SwingRawDecimalTextField class.
+     */
+    public static class TethysSwingRawDecimalTextField
+            extends TethysSwingTextEditField<TethysDecimal>
+            implements TethysRawDecimalField {
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         */
+        protected TethysSwingRawDecimalTextField(final TethysSwingGuiFactory pFactory) {
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingRawDecimalTextField(final TethysSwingGuiFactory pFactory,
+                                               final JLabel pLabel) {
+            super(pFactory, new TethysRawDecimalEditConverter(pFactory.getDataFormatter()), pLabel);
+        }
+
+        @Override
+        protected TethysSwingRawDecimalTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingRawDecimalTextField(getGuiFactory(), pLabel);
+        }
+
+        @Override
+        public void setNumDecimals(final int pNumDecimals) {
+            TethysDataEditConverter<TethysDecimal> myConverter = getConverter();
+            if (myConverter instanceof TethysRawDecimalField) {
+                ((TethysRawDecimalField) myConverter).setNumDecimals(pNumDecimals);
             }
         }
     }

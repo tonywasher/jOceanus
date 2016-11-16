@@ -208,6 +208,11 @@ public enum CoeusResource
     DATA_INITIALLOANS("data.initialloans"),
 
     /**
+     * Data ID.
+     */
+    DATA_ID("data.id"),
+
+    /**
      * Data Market.
      */
     DATA_MARKET("data.market"),

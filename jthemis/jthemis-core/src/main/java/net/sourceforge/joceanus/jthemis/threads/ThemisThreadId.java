@@ -27,36 +27,6 @@ package net.sourceforge.joceanus.jthemis.threads;
  */
 public enum ThemisThreadId {
     /**
-     * Create WorkingCopy.
-     */
-    CREATEWORKINGCOPY("CreateWorkingCopy"),
-
-    /**
-     * Extract Tag.
-     */
-    EXTRACTTAG("ExtractTag"),
-
-    /**
-     * Update WorkingCopy.
-     */
-    UPDATEWORKINGCOPY("UpdateWorkingCopy"),
-
-    /**
-     * Revert WorkingCopy.
-     */
-    REVERTWORKINGCOPY("RevertWorkingCopy"),
-
-    /**
-     * Create Tag.
-     */
-    CREATETAG("CreateTag"),
-
-    /**
-     * Create Branch.
-     */
-    CREATEBRANCH("CreateNewBranch"),
-
-    /**
      * Create GitRepo.
      */
     CREATEGITREPO("CreateGitRepo"),

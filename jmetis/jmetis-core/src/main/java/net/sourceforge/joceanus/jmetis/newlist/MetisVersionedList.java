@@ -117,17 +117,39 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
     protected MetisVersionedList(final MetisListType pListType,
                                  final Class<T> pClass) {
         /* Store parameters */
+        this(pListType, pClass, null);
+    }
+
+    /**
+     * Constructor.
+     * @param pListType the list type
+     * @param pClass the class of the item
+     * @param pFields the item fields
+     */
+    protected MetisVersionedList(final MetisListType pListType,
+                                 final Class<T> pClass,
+                                 final MetisFields pFields) {
+        /* Store parameters */
         theListType = pListType;
         theClass = pClass;
-        theConstructor = getConstructor();
-        theEventManager = new TethysEventManager<>();
 
         /* Determine whether this is a readOnly list */
         isReadOnly = !MetisDataValues.class.isAssignableFrom(theClass);
 
-        /* Obtain an instance of the element */
-        T myItem = newListItem(0);
-        theItemFields = myItem.getDataFields();
+        /* Obtain the constructor and event manager */
+        theConstructor = getConstructor();
+        theEventManager = new TethysEventManager<>();
+
+        /* If we need to derive the fields */
+        if (pFields == null) {
+            /* Create a new instance and obtain fields */
+            T myItem = newListItem(0);
+            theItemFields = myItem.getDataFields();
+
+            /* else record the passed fields */
+        } else {
+            theItemFields = pFields;
+        }
     }
 
     @Override
@@ -211,7 +233,9 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
     private Constructor<T> getConstructor() {
         /* Protect against exceptions */
         try {
-            return theClass.getConstructor(Integer.class);
+            return isReadOnly
+                              ? null
+                              : theClass.getConstructor(Integer.class);
         } catch (NoSuchMethodException
                 | SecurityException e) {
             LOGGER.error("Unable to instantiate constructor", e);

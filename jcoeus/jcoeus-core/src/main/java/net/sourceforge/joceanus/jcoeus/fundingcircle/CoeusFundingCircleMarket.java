@@ -84,7 +84,7 @@ public class CoeusFundingCircleMarket
      */
     public CoeusFundingCircleMarket(final MetisDataFormatter pFormatter) {
         /* Initialise underlying class */
-        super(pFormatter, CoeusLoanMarketProvider.FUNDINGCIRCLE);
+        super(pFormatter, CoeusLoanMarketProvider.FUNDINGCIRCLE, CoeusFundingCircleTransaction.class);
 
         /* Create the parsers */
         theBookParser = new CoeusFundingCircleLoanBookParser(pFormatter);

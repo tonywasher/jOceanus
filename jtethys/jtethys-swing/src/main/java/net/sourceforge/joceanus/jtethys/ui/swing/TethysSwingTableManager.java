@@ -40,6 +40,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -257,6 +258,11 @@ public class TethysSwingTableManager<C, R>
     @Override
     public TethysSwingTableLongColumn<C, R> declareLongColumn(final C pId) {
         return new TethysSwingTableLongColumn<>(this, pId);
+    }
+
+    @Override
+    public TethysSwingTableRawDecimalColumn<C, R> declareRawDecimalColumn(final C pId) {
+        return new TethysSwingTableRawDecimalColumn<>(this, pId);
     }
 
     @Override
@@ -678,6 +684,25 @@ public class TethysSwingTableManager<C, R>
                                              final C pId) {
             super(pTable, pId, TethysFieldType.LONG);
             declareCell(getTable().theCellFactory.longCell(this));
+        }
+    }
+
+    /**
+     * RawDecimal Column.
+     * @param <C> the column identity
+     * @param <R> the table item class
+     */
+    public static class TethysSwingTableRawDecimalColumn<C, R>
+            extends TethysSwingTableColumn<C, R, TethysDecimal> {
+        /**
+         * Constructor.
+         * @param pTable the table
+         * @param pId the id
+         */
+        protected TethysSwingTableRawDecimalColumn(final TethysSwingTableManager<C, R> pTable,
+                                                   final C pId) {
+            super(pTable, pId, TethysFieldType.DECIMAL);
+            declareCell(getTable().theCellFactory.rawDecimalCell(this));
         }
     }
 

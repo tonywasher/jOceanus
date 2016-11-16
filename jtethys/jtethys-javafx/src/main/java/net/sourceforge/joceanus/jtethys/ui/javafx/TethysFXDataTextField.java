@@ -37,6 +37,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import net.sourceforge.jdatebutton.javafx.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -255,7 +256,7 @@ public abstract class TethysFXDataTextField<T>
      * Start cell editing.
      * @param pCell the cell
      */
-    public abstract void startCellEditing(final Node pCell);
+    public abstract void startCellEditing(Node pCell);
 
     @Override
     public void setTheAttribute(final TethysFieldAttribute pAttr) {
@@ -612,6 +613,30 @@ public abstract class TethysFXDataTextField<T>
             TethysDataEditConverter<Long> myConverter = getConverter();
             if (myConverter instanceof TethysRangedField) {
                 ((TethysRangedField<Long>) myConverter).setValueRange(pMinimum, pMaximum);
+            }
+        }
+    }
+
+    /**
+     * FXRawDecimalTextField class.
+     */
+    public static class TethysFXRawDecimalTextField
+            extends TethysFXTextEditField<TethysDecimal>
+            implements TethysRawDecimalField {
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         */
+        protected TethysFXRawDecimalTextField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysRawDecimalEditConverter(pFactory.getDataFormatter()));
+            setTheAttribute(TethysFieldAttribute.NUMERIC);
+        }
+
+        @Override
+        public void setNumDecimals(final int pNumDecimals) {
+            TethysDataEditConverter<TethysDecimal> myConverter = getConverter();
+            if (myConverter instanceof TethysRawDecimalField) {
+                ((TethysRawDecimalField) myConverter).setNumDecimals(pNumDecimals);
             }
         }
     }

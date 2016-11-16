@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -378,6 +379,12 @@ public abstract class TethysGuiFactory<N, I> {
      * @return the new field
      */
     public abstract TethysDataEditField<Long, N, I> newLongField();
+
+    /**
+     * Obtain a new raw decimal data field.
+     * @return the new field
+     */
+    public abstract TethysDataEditField<TethysDecimal, N, I> newRawDecimalField();
 
     /**
      * Obtain a new money data field.

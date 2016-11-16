@@ -63,7 +63,7 @@ public class MetisUpdateList<T extends MetisIndexedItem>
      */
     protected MetisUpdateList(final MetisBaseList<T> pBase) {
         /* Initialise underlying class */
-        super(MetisListType.UPDATE, pBase.getTheClass());
+        super(MetisListType.UPDATE, pBase.getTheClass(), pBase.getItemFields());
 
         /* Store source and initialise the update list */
         theBase = pBase;

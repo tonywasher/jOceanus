@@ -337,6 +337,13 @@ public abstract class TethysTableManager<C, R, N, I>
     public abstract TethysTableColumn<C, R, N, I> declareLongColumn(final C pId);
 
     /**
+     * Declare rawDecimal column.
+     * @param pId the column id
+     * @return the column
+     */
+    public abstract TethysTableColumn<C, R, N, I> declareRawDecimalColumn(final C pId);
+
+    /**
      * Declare money column.
      * @param pId the column id
      * @return the column

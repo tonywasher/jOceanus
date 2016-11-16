@@ -33,6 +33,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.util.Callback;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -48,6 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyFie
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRawDecimalField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
@@ -70,6 +72,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXRateTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXRatioTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXRawDecimalTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXShortTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXUnitsTextField;
@@ -155,6 +158,15 @@ public class TethysFXTableCellFactory<C, R>
      */
     protected Callback<TableColumn<R, Long>, TableCell<R, Long>> longCellFactory(final TethysFXTableColumn<C, R, Long> pColumn) {
         return e -> listenToCell(new TethysFXTableLongCell<>(pColumn, theGuiFactory));
+    }
+
+    /**
+     * Obtain RawDecimal Cell Factory.
+     * @param pColumn the column
+     * @return the rawDecimal cell factory
+     */
+    protected Callback<TableColumn<R, TethysDecimal>, TableCell<R, TethysDecimal>> rawDecimalCellFactory(final TethysFXTableColumn<C, R, TethysDecimal> pColumn) {
+        return e -> listenToCell(new TethysFXTableRawDecimalCell<>(pColumn, theGuiFactory));
     }
 
     /**
@@ -635,6 +647,35 @@ public class TethysFXTableCellFactory<C, R>
         @Override
         public TethysFXLongTextField getControl() {
             return (TethysFXLongTextField) super.getControl();
+        }
+    }
+
+    /**
+     * RawDecimal Cell.
+     * @param <C> the column identity
+     * @param <R> the table item class
+     */
+    public static class TethysFXTableRawDecimalCell<C, R>
+            extends TethysFXTableCell<C, R, TethysDecimal>
+            implements TethysRawDecimalField {
+        /**
+         * Constructor.
+         * @param pColumn the column
+         * @param pFactory the GUI Factory
+         */
+        protected TethysFXTableRawDecimalCell(final TethysFXTableColumn<C, R, TethysDecimal> pColumn,
+                                              final TethysFXGuiFactory pFactory) {
+            super(pColumn, pFactory.newRawDecimalField(), TethysDecimal.class);
+        }
+
+        @Override
+        public TethysFXRawDecimalTextField getControl() {
+            return (TethysFXRawDecimalTextField) super.getControl();
+        }
+
+        @Override
+        public void setNumDecimals(final int pNumDecimals) {
+            getControl().setNumDecimals(pNumDecimals);
         }
     }
 

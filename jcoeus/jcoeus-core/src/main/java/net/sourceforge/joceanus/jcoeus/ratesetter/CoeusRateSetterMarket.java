@@ -66,7 +66,7 @@ public class CoeusRateSetterMarket
      */
     public CoeusRateSetterMarket(final MetisDataFormatter pFormatter) throws OceanusException {
         /* Initialise underlying class */
-        super(pFormatter, CoeusLoanMarketProvider.RATESETTER);
+        super(pFormatter, CoeusLoanMarketProvider.RATESETTER, CoeusRateSetterTransaction.class);
 
         /* Create the parsers */
         theBookParser = new CoeusRateSetterLoanBookParser(pFormatter);
@@ -86,7 +86,7 @@ public class CoeusRateSetterMarket
      * @param pTrans the transaction
      */
     protected void removeTransaction(final CoeusRateSetterTransaction pTrans) {
-        getTransactions().remove(pTrans);
+        getTransactions().removeFromList(pTrans);
     }
 
     /**

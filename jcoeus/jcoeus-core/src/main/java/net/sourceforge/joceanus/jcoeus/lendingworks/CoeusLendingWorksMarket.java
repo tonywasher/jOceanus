@@ -59,7 +59,7 @@ public class CoeusLendingWorksMarket
      */
     public CoeusLendingWorksMarket(final MetisDataFormatter pFormatter) throws OceanusException {
         /* Initialise underlying class */
-        super(pFormatter, CoeusLoanMarketProvider.LENDINGWORKS);
+        super(pFormatter, CoeusLoanMarketProvider.LENDINGWORKS, CoeusLendingWorksTransaction.class);
 
         /* Create the parsers */
         theXactionParser = new CoeusLendingWorksTransactionParser(this);
@@ -68,14 +68,6 @@ public class CoeusLendingWorksMarket
     @Override
     protected void addTransaction(final CoeusLendingWorksTransaction pTrans) {
         super.addTransaction(pTrans);
-    }
-
-    /**
-     * Add transaction to list.
-     * @param pTrans the transaction
-     */
-    protected void removeTransaction(final CoeusLendingWorksTransaction pTrans) {
-        getTransactions().remove(pTrans);
     }
 
     /**

@@ -48,6 +48,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXRateTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXRatioTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXRawDecimalTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXShortTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXUnitsTextField;
@@ -374,6 +375,11 @@ public class TethysFXGuiFactory
     }
 
     @Override
+    public TethysFXRawDecimalTextField newRawDecimalField() {
+        return new TethysFXRawDecimalTextField(this);
+    }
+
+    @Override
     public TethysFXMoneyTextField newMoneyField() {
         return new TethysFXMoneyTextField(this);
     }
@@ -442,5 +448,4 @@ public class TethysFXGuiFactory
     public <C, R> TethysFXTableManager<C, R> newTable() {
         return new TethysFXTableManager<>(this);
     }
-
 }

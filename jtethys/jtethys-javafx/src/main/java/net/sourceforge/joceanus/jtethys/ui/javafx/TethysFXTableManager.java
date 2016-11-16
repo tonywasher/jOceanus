@@ -42,6 +42,7 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -233,6 +234,11 @@ public class TethysFXTableManager<C, R>
     @Override
     public TethysFXTableLongColumn<C, R> declareLongColumn(final C pId) {
         return new TethysFXTableLongColumn<>(this, pId);
+    }
+
+    @Override
+    public TethysFXTableRawDecimalColumn<C, R> declareRawDecimalColumn(final C pId) {
+        return new TethysFXTableRawDecimalColumn<>(this, pId);
     }
 
     @Override
@@ -469,6 +475,25 @@ public class TethysFXTableManager<C, R>
                                           final C pId) {
             super(pTable, pId, TethysFieldType.LONG);
             declareCellFactory(getTable().theCellFactory.longCellFactory(this));
+        }
+    }
+
+    /**
+     * RawDecimal Column.
+     * @param <C> the column identity
+     * @param <R> the table item class
+     */
+    public static class TethysFXTableRawDecimalColumn<C, R>
+            extends TethysFXTableColumn<C, R, TethysDecimal> {
+        /**
+         * Constructor.
+         * @param pTable the table
+         * @param pId the id
+         */
+        protected TethysFXTableRawDecimalColumn(final TethysFXTableManager<C, R> pTable,
+                                                final C pId) {
+            super(pTable, pId, TethysFieldType.DECIMAL);
+            declareCellFactory(getTable().theCellFactory.rawDecimalCellFactory(this));
         }
     }
 

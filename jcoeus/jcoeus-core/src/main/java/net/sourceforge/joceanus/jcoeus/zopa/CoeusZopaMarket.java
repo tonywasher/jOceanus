@@ -93,7 +93,7 @@ public class CoeusZopaMarket
      */
     public CoeusZopaMarket(final MetisDataFormatter pFormatter) {
         /* Initialise underlying class */
-        super(pFormatter, CoeusLoanMarketProvider.ZOPA);
+        super(pFormatter, CoeusLoanMarketProvider.ZOPA, CoeusZopaTransaction.class);
 
         /* Create the parsers */
         theBookParser = new CoeusZopaLoanBookParser(this);

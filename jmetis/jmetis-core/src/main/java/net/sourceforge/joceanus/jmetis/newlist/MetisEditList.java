@@ -101,7 +101,7 @@ public class MetisEditList<T extends MetisIndexedItem>
      */
     protected MetisEditList(final MetisBaseList<T> pBase) {
         /* Initialise underlying class */
-        super(MetisListType.EDIT, pBase.getTheClass());
+        super(MetisListType.EDIT, pBase.getTheClass(), pBase.getItemFields());
 
         /* Store base and initialise the edit list */
         theBase = pBase;

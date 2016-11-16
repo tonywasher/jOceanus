@@ -52,6 +52,16 @@ public class MetisBaseList<T extends MetisIndexedItem>
         super(MetisListType.BASE, pClass);
     }
 
+    /**
+     * Constructor for readOnly items.
+     * @param pClass the class of the item
+     * @param pFields the fields
+     */
+    public MetisBaseList(final Class<T> pClass,
+                         final MetisFields pFields) {
+        super(MetisListType.BASE, pClass, pFields);
+    }
+
     @Override
     public MetisFields getDataFields() {
         return FIELD_DEFS;
@@ -184,7 +194,7 @@ public class MetisBaseList<T extends MetisIndexedItem>
         }
 
         /* Create the difference list */
-        MetisDifferenceList<T> myDifferences = new MetisDifferenceList<>(getTheClass());
+        MetisDifferenceList<T> myDifferences = new MetisDifferenceList<>(getTheClass(), getItemFields());
         myDifferences.deriveTheDifferences(this, pCompare);
         return myDifferences;
     }

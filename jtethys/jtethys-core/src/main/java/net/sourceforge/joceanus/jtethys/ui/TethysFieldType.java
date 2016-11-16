@@ -52,6 +52,11 @@ public enum TethysFieldType {
     LONG,
 
     /**
+     * Decimal.
+     */
+    DECIMAL,
+
+    /**
      * Money.
      */
     MONEY,
@@ -161,6 +166,7 @@ public enum TethysFieldType {
             case UNITS:
             case DILUTION:
             case RATIO:
+            case DECIMAL:
                 return WIDTH_DECIMAL;
             case INTEGER:
             case SHORT:

@@ -28,6 +28,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
@@ -688,6 +689,43 @@ public abstract class TethysDataEditField<T, N, I>
     }
 
     /**
+     * DecimalEditConverter class.
+     */
+    public static class TethysRawDecimalEditConverter
+            extends TethysNumberEditConverter<TethysDecimal>
+            implements TethysRawDecimalField {
+        /**
+         * The number of decimals.
+         */
+        private int theNumDecimals = 6;
+
+        /**
+         * Constructor.
+         * @param pFormatter the formatter
+         */
+        public TethysRawDecimalEditConverter(final TethysDataFormatter pFormatter) {
+            super(pFormatter);
+        }
+
+        @Override
+        public String formatDisplayValue(final TethysDecimal pValue) {
+            return getFormatter().formatDecimal(pValue);
+        }
+
+        @Override
+        public TethysDecimal parseEditedValue(final String pValue) {
+            TethysDecimal myValue = getParser().parseDecimalValue(pValue, theNumDecimals);
+            checkValue(myValue);
+            return myValue;
+        }
+
+        @Override
+        public void setNumDecimals(final int pNumDecimals) {
+            theNumDecimals = pNumDecimals;
+        }
+    }
+
+    /**
      * RateEditConverter class.
      */
     public static class TethysRateEditConverter
@@ -789,6 +827,18 @@ public abstract class TethysDataEditField<T, N, I>
             checkValue(myValue);
             return myValue;
         }
+    }
+
+    /**
+     * RawDecimalItem.
+     */
+    @FunctionalInterface
+    public interface TethysRawDecimalField {
+        /**
+         * Set the number of decimals.
+         * @param pNumDecimals the numDecimals
+         */
+        void setNumDecimals(final int pNumDecimals);
     }
 
     /**

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -35,6 +37,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.newlist.MetisBaseList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
@@ -111,7 +114,7 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
     /**
      * The List of Transactions.
      */
-    private final List<T> theTransactions;
+    private final MetisBaseList<T> theTransactions;
 
     /**
      * The TotalsHistory.
@@ -139,12 +142,19 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
     private boolean makeFiscalTotals;
 
     /**
+     * The next transactionId.
+     */
+    private Integer theNextId = Integer.valueOf(1);
+
+    /**
      * Constructor.
      * @param pFormatter the data formatter
      * @param pProvider the loanMarket provider
+     * @param pClass the class of the transactions
      */
     protected CoeusLoanMarket(final MetisDataFormatter pFormatter,
-                              final CoeusLoanMarketProvider pProvider) {
+                              final CoeusLoanMarketProvider pProvider,
+                              final Class<T> pClass) {
         /* Store parameters */
         theFormatter = pFormatter;
         theProvider = pProvider;
@@ -156,7 +166,7 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
         theLoanMap = new LinkedHashMap<>();
 
         /* Create lists */
-        theTransactions = new ArrayList<>();
+        theTransactions = new MetisBaseList<>(pClass, getTransactionFields(pClass));
         theMonthlyTotals = new ArrayList<>();
 
         /* Create the histories */
@@ -204,7 +214,7 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
      * Obtain the transactions.
      * @return the transactions
      */
-    protected List<T> getTransactions() {
+    protected MetisBaseList<T> getTransactions() {
         return theTransactions;
     }
 
@@ -213,6 +223,24 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
      */
     public void makeMonthlyTotals() {
         makeFiscalTotals = false;
+    }
+
+    /**
+     * Determine the fields for a class.
+     * @param pClass the class
+     * @return the fields
+     */
+    private MetisFields getTransactionFields(final Class<T> pClass) {
+        try {
+            Method myMethod = pClass.getMethod("getStaticDataFields");
+            return (MetisFields) myMethod.invoke(null);
+        } catch (NoSuchMethodException
+                | SecurityException
+                | IllegalArgumentException
+                | IllegalAccessException
+                | InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**
@@ -271,11 +299,21 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
     }
 
     /**
+     * Obtain next transaction id.
+     * @return the next transactionId
+     */
+    public Integer getNextTransactionId() {
+        Integer myNext = theNextId;
+        theNextId = theNextId + 1;
+        return myNext;
+    }
+
+    /**
      * Add transaction to list.
      * @param pTrans the transaction
      */
     protected void addTransaction(final T pTrans) {
-        theTransactions.add(pTrans);
+        theTransactions.addToList(pTrans);
     }
 
     /**
@@ -302,7 +340,8 @@ public abstract class CoeusLoanMarket<L extends CoeusLoan<L, T, S, H>, T extends
         resetLoans();
 
         /* Sort the transactions */
-        theTransactions.sort((l, r) -> l.getDate().compareTo(r.getDate()));
+        theTransactions.setComparator((l, r) -> l.getDate().compareTo(r.getDate()));
+        theTransactions.sortList();
 
         /* Loop through the transactions */
         Iterator<T> myIterator = transactionIterator();

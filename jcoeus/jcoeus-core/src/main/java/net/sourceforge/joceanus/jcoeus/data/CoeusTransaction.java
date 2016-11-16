@@ -23,10 +23,10 @@
 package net.sourceforge.joceanus.jcoeus.data;
 
 import net.sourceforge.joceanus.jcoeus.CoeusResource;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
@@ -38,11 +38,16 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
  * @param <H> the history type
  */
 public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extends CoeusTransaction<L, T, S, H>, S extends CoeusTotals<L, T, S, H>, H extends CoeusHistory<L, T, S, H>>
-        implements MetisDataContents {
+        implements MetisIndexedItem {
     /**
      * Report fields.
      */
     private static final MetisFields FIELD_DEFS = new MetisFields(CoeusTransaction.class.getSimpleName());
+
+    /**
+     * ID Field Id.
+     */
+    private static final MetisField FIELD_ID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ID.getValue());
 
     /**
      * Market Field Id.
@@ -185,6 +190,11 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     protected static final String ID_RECOVERED = "R";
 
     /**
+     * The id.
+     */
+    private final Integer theId;
+
+    /**
      * The market.
      */
     private final CoeusLoanMarket<L, T, S, H> theMarket;
@@ -196,6 +206,12 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     protected CoeusTransaction(final CoeusLoanMarket<L, T, S, H> pMarket) {
         /* Store parameters */
         theMarket = pMarket;
+        theId = pMarket.getNextTransactionId();
+    }
+
+    @Override
+    public Integer getIndexedId() {
+        return theId;
     }
 
     /**
@@ -366,6 +382,9 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
+        if (FIELD_ID.equals(pField)) {
+            return theId;
+        }
         if (FIELD_MARKET.equals(pField)) {
             return theMarket;
         }

@@ -779,4 +779,12 @@ public class CoeusFundingCircleTransaction
     public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
+
+    /**
+     * Obtain field definitions statically
+     * @return the field definitions
+     */
+    public static MetisFields getStaticDataFields() {
+        return FIELD_DEFS;
+    }
 }

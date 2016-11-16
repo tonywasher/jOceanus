@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingRateTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingRatioTextField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingRawDecimalTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingShortTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingUnitsTextField;
@@ -292,6 +293,11 @@ public class TethysSwingGuiFactory
     @Override
     public TethysSwingLongTextField newLongField() {
         return new TethysSwingLongTextField(this);
+    }
+
+    @Override
+    public TethysSwingRawDecimalTextField newRawDecimalField() {
+        return new TethysSwingRawDecimalTextField(this);
     }
 
     @Override

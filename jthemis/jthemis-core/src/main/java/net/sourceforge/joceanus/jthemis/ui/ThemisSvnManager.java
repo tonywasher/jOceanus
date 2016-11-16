@@ -22,10 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.ui;
 
-import java.io.File;
 import java.util.Iterator;
-
-import org.tmatesoft.svn.core.wc.SVNRevision;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
@@ -48,25 +45,15 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPreferences;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraPreference.ThemisJiraPreferences;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch.ScmBranchOpType;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferenceKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.SvnWorkingCopySet;
-import net.sourceforge.joceanus.jthemis.threads.ThemisCreateBranchTags;
 import net.sourceforge.joceanus.jthemis.threads.ThemisCreateGitRepo;
-import net.sourceforge.joceanus.jthemis.threads.ThemisCreateNewBranch;
-import net.sourceforge.joceanus.jthemis.threads.ThemisCreateTagExtract;
-import net.sourceforge.joceanus.jthemis.threads.ThemisCreateWorkingCopy;
 import net.sourceforge.joceanus.jthemis.threads.ThemisDiscoverData;
-import net.sourceforge.joceanus.jthemis.threads.ThemisRevertWorkingCopy;
 import net.sourceforge.joceanus.jthemis.threads.ThemisSubversionBackup;
 import net.sourceforge.joceanus.jthemis.threads.ThemisSubversionRestore;
 import net.sourceforge.joceanus.jthemis.threads.ThemisThreadId;
-import net.sourceforge.joceanus.jthemis.threads.ThemisUpdateWorkingCopy;
 
 /**
  * Top level SvnManager window.
@@ -74,16 +61,6 @@ import net.sourceforge.joceanus.jthemis.threads.ThemisUpdateWorkingCopy;
  * @param <I> the icon type
  */
 public abstract class ThemisSvnManager<N, I> {
-    /**
-     * The Base component.
-     */
-    private static final String BASE_COMP = "jOceanus";
-
-    /**
-     * The Base version.
-     */
-    private static final String BASE_BRANCH = "v1.2.1";
-
     /**
      * The GUI Factory.
      */
@@ -108,11 +85,6 @@ public abstract class ThemisSvnManager<N, I> {
      * The Thread Manager.
      */
     private final MetisThreadManager<N, I> theThreadMgr;
-
-    /**
-     * Preferences.
-     */
-    private final ThemisSvnPreferences thePreferences;
 
     /**
      * The Date entry.
@@ -163,7 +135,6 @@ public abstract class ThemisSvnManager<N, I> {
         /* Access GuiFactory/Preference Manager */
         theGuiFactory = pToolkit.getGuiFactory();
         thePrefMgr = pToolkit.getPreferenceManager();
-        thePreferences = thePrefMgr.getPreferenceSet(ThemisSvnPreferences.class);
 
         /* Access the Security/Viewer Manager */
         theSecureMgr = pToolkit.getSecurityManager();
@@ -208,12 +179,6 @@ public abstract class ThemisSvnManager<N, I> {
         myHelp.newMenuItem(ThemisSvnMenuItem.DATAVIEWER, e -> handleDataViewer());
 
         /* Create the menuItems */
-        myTasks.newMenuItem(ThemisThreadId.CREATEWORKINGCOPY, e -> runCheckOutWC());
-        myTasks.newMenuItem(ThemisThreadId.EXTRACTTAG, e -> runCreateTagExtract());
-        myTasks.newMenuItem(ThemisThreadId.UPDATEWORKINGCOPY, e -> runUpdateWC());
-        myTasks.newMenuItem(ThemisThreadId.REVERTWORKINGCOPY, e -> runRevertWC());
-        myTasks.newMenuItem(ThemisThreadId.CREATETAG, e -> runCreateBranchTags());
-        myTasks.newMenuItem(ThemisThreadId.CREATEBRANCH, e -> runCreateNewBranch());
         myTasks.newSubMenu(ThemisThreadId.CREATEGITREPO);
         myTasks.newMenuItem(ThemisThreadId.BACKUPSVN, e -> backupSubversion());
         myTasks.newMenuItem(ThemisThreadId.RESTORESVN, e -> restoreSubversion());
@@ -340,84 +305,6 @@ public abstract class ThemisSvnManager<N, I> {
 
         /* Enable other tasks */
         theMenuBar.setEnabled(ThemisSvnMenuItem.TASKS, true);
-    }
-
-    /**
-     * Create and run the CheckOutWC thread.
-     */
-    private void runCheckOutWC() {
-        /* Access work directory */
-        String myPath = thePreferences.getStringValue(ThemisSvnPreferenceKey.BUILD) + File.separator;
-
-        /* Create and run createWorkingCopy thread */
-        ThemisSvnBranch myBranch = theRepository.locateBranch(BASE_COMP, "v1.2.0");
-        ThemisSvnBranch[] myList = new ThemisSvnBranch[]
-        { myBranch };
-        ThemisCreateWorkingCopy<N, I> myThread = new ThemisCreateWorkingCopy<>(myList, SVNRevision.HEAD, new File(myPath + "TestWC"));
-        runThread(myThread);
-    }
-
-    /**
-     * Create and run the TagExtract thread.
-     */
-    private void runCreateTagExtract() {
-        /* Access work directory */
-        String myPath = thePreferences.getStringValue(ThemisSvnPreferenceKey.BUILD) + File.separator;
-
-        /* Create and run createTagExtract thread */
-        ThemisSvnTag myTag = theRepository.locateTag(BASE_COMP, BASE_BRANCH, 1);
-        ThemisSvnTag[] myList = new ThemisSvnTag[]
-        { myTag };
-        ThemisCreateTagExtract<N, I> myThread = new ThemisCreateTagExtract<>(myList, new File(myPath + "TestXT"));
-        runThread(myThread);
-    }
-
-    /**
-     * Create and run the UpdateWC thread.
-     */
-    private void runUpdateWC() {
-        /* Create and run updateWorkingCopy thread */
-        ThemisUpdateWorkingCopy<N, I> myThread = new ThemisUpdateWorkingCopy<>(theWorkingSet);
-        runThread(myThread);
-    }
-
-    /**
-     * Create and run the RevertWC thread.
-     */
-    private void runRevertWC() {
-        /* Create and run revertWorkingCopy thread */
-        ThemisRevertWorkingCopy<N, I> myThread = new ThemisRevertWorkingCopy<>(theWorkingSet);
-        runThread(myThread);
-    }
-
-    /**
-     * Create and run the CreateBranchTags thread.
-     */
-    private void runCreateBranchTags() {
-        /* Access work directory */
-        String myPath = thePreferences.getStringValue(ThemisSvnPreferenceKey.BUILD) + File.separator;
-
-        /* Create and run createBranchTags thread */
-        ThemisSvnBranch myBranch = theRepository.locateBranch(BASE_COMP, BASE_BRANCH);
-        ThemisSvnBranch[] myList = new ThemisSvnBranch[]
-        { myBranch };
-        ThemisCreateBranchTags<N, I> myThread = new ThemisCreateBranchTags<>(myList, new File(myPath + "TestBT"));
-        runThread(myThread);
-    }
-
-    /**
-     * Create and run the CreateNewBranch thread.
-     */
-    private void runCreateNewBranch() {
-        /* Access work directory */
-        String myPath = thePreferences.getStringValue(ThemisSvnPreferenceKey.BUILD) + File.separator;
-
-        /* Create and run createBranchTags thread */
-        ThemisSvnTag myTag = theRepository.locateTag(BASE_COMP, "v1.0.0", 1);
-        ThemisSvnTag[] myList = new ThemisSvnTag[]
-        { myTag };
-        ThemisCreateNewBranch<N, I> myThread = new ThemisCreateNewBranch<>(myList, ScmBranchOpType.MAJOR, new File(myPath + "TestNB"));
-        runThread(myThread);
     }
 
     /**
