@@ -113,19 +113,19 @@ public abstract class TethysPasswordField<N, I>
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    public abstract void setPreferredWidth(final Integer pWidth);
+    public abstract void setPreferredWidth(Integer pWidth);
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    public abstract void setPreferredHeight(final Integer pHeight);
+    public abstract void setPreferredHeight(Integer pHeight);
 
     /**
      * set password.
      * @param pPassword the password.
      */
-    public abstract void setPassword(final char[] pPassword);
+    public abstract void setPassword(char[] pPassword);
 
     /**
      * Obtain the password.

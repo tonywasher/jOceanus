@@ -93,33 +93,33 @@ public abstract class TethysTextArea<N, I>
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    public abstract void setPreferredWidth(final Integer pWidth);
+    public abstract void setPreferredWidth(Integer pWidth);
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    public abstract void setPreferredHeight(final Integer pHeight);
+    public abstract void setPreferredHeight(Integer pHeight);
 
     /**
      * Set the text.
      * @param pText the text
      */
-    public abstract void setText(final String pText);
+    public abstract void setText(String pText);
 
     /**
      * Append the text.
      * @param pText the text
      */
-    public abstract void appendText(final String pText);
+    public abstract void appendText(String pText);
 
     /**
      * Insert the text at position.
      * @param pText the text
      * @param pPos the position
      */
-    public abstract void insertText(final String pText,
-                                    final int pPos);
+    public abstract void insertText(String pText,
+                                    int pPos);
 
     /**
      * replace the text at position.
@@ -127,13 +127,13 @@ public abstract class TethysTextArea<N, I>
      * @param pStart the start position
      * @param pEnd the end position
      */
-    public abstract void replaceText(final String pText,
-                                     final int pStart,
-                                     final int pEnd);
+    public abstract void replaceText(String pText,
+                                     int pStart,
+                                     int pEnd);
 
     /**
      * SetCaretPosition.
      * @param pPos the position
      */
-    public abstract void setCaretPosition(final int pPos);
+    public abstract void setCaretPosition(int pPos);
 }

@@ -32,19 +32,19 @@ public interface GordianConsumer {
      * @param pOffset the offset of the data within the byte array
      * @param pLength the length of the data to use
      */
-    void update(final byte[] pBytes,
-                final int pOffset,
-                final int pLength);
+    void update(byte[] pBytes,
+                int pOffset,
+                int pLength);
 
     /**
      * Update the consumer with a single byte.
      * @param pByte the byte to update with.
      */
-    void update(final byte pByte);
+    void update(byte pByte);
 
     /**
      * Update the consumer with a byte array.
      * @param pBytes the bytes to update with.
      */
-    void update(final byte[] pBytes);
+    void update(byte[] pBytes);
 }

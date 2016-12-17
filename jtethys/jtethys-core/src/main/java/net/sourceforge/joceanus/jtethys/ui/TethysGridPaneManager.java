@@ -164,13 +164,13 @@ public abstract class TethysGridPaneManager<N, I>
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    public abstract void setPreferredWidth(final Integer pWidth);
+    public abstract void setPreferredWidth(Integer pWidth);
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    public abstract void setPreferredHeight(final Integer pHeight);
+    public abstract void setPreferredHeight(Integer pHeight);
 
     @Override
     public void setEnabled(final boolean pEnabled) {
@@ -230,37 +230,37 @@ public abstract class TethysGridPaneManager<N, I>
      * @param pRow the row to add the cell at
      * @param pColumn the column to add the cell at
      */
-    public abstract void addCellAtPosition(final TethysNode<N> pNode,
-                                           final int pRow,
-                                           final int pColumn);
+    public abstract void addCellAtPosition(TethysNode<N> pNode,
+                                           int pRow,
+                                           int pColumn);
 
     /**
      * Set cell column span.
      * @param pNode the node to set column span on
      * @param pNumCols the number of columns to span
      */
-    public abstract void setCellColumnSpan(final TethysNode<N> pNode,
-                                           final int pNumCols);
+    public abstract void setCellColumnSpan(TethysNode<N> pNode,
+                                           int pNumCols);
 
     /**
      * Set final cell.
      * @param pNode the node to set as final cell in row
      */
-    public abstract void setFinalCell(final TethysNode<N> pNode);
+    public abstract void setFinalCell(TethysNode<N> pNode);
 
     /**
      * Allow Cell as growth.
      * @param pNode the node to allow growth on
      */
-    public abstract void allowCellGrowth(final TethysNode<N> pNode);
+    public abstract void allowCellGrowth(TethysNode<N> pNode);
 
     /**
      * Set cell alignment.
      * @param pNode the node to align
      * @param pAlign the cell alignment
      */
-    public abstract void setCellAlignment(final TethysNode<N> pNode,
-                                          final TethysAlignment pAlign);
+    public abstract void setCellAlignment(TethysNode<N> pNode,
+                                          TethysAlignment pAlign);
 
     /**
      * Add simple Node.

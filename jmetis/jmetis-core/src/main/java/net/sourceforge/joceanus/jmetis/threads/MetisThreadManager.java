@@ -229,7 +229,7 @@ public abstract class MetisThreadManager<N, I>
      * @param pThread the thread to wrap
      * @return the runnable thread
      */
-    protected abstract <T> Runnable wrapThread(final MetisThread<T, N, I> pThread);
+    protected abstract <T> Runnable wrapThread(MetisThread<T, N, I> pThread);
 
     /**
      * Register thread completion.
@@ -364,7 +364,7 @@ public abstract class MetisThreadManager<N, I>
      * @param pStatus the status to publish
      * @throws OceanusException on cancellation
      */
-    protected abstract void publishStatus(final MetisThreadStatus pStatus) throws OceanusException;
+    protected abstract void publishStatus(MetisThreadStatus pStatus) throws OceanusException;
 
     /**
      * Create new profile.

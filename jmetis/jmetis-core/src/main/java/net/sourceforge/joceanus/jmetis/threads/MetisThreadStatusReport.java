@@ -34,35 +34,35 @@ public interface MetisThreadStatusReport {
      * @param pTask the task
      * @throws OceanusException on cancellation
      */
-    void initTask(final String pTask) throws OceanusException;
+    void initTask(String pTask) throws OceanusException;
 
     /**
      * Set number of stages.
      * @param pNumStages the number of stages
      * @throws OceanusException on cancellation
      */
-    void setNumStages(final int pNumStages) throws OceanusException;
+    void setNumStages(int pNumStages) throws OceanusException;
 
     /**
      * Set new stage.
      * @param pStage the new stage
      * @throws OceanusException on cancellation
      */
-    void setNewStage(final String pStage) throws OceanusException;
+    void setNewStage(String pStage) throws OceanusException;
 
     /**
      * Set number of steps.
      * @param pNumSteps the number of steps
      * @throws OceanusException on cancellation
      */
-    void setNumSteps(final int pNumSteps) throws OceanusException;
+    void setNumSteps(int pNumSteps) throws OceanusException;
 
     /**
      * Set steps done.
      * @param pSteps the number of steps done
      * @throws OceanusException on cancellation
      */
-    void setStepsDone(final int pSteps) throws OceanusException;
+    void setStepsDone(int pSteps) throws OceanusException;
 
     /**
      * Set next step.
@@ -75,7 +75,7 @@ public interface MetisThreadStatusReport {
      * @param pStep the step to set
      * @throws OceanusException on cancellation
      */
-    void setNextStep(final String pStep) throws OceanusException;
+    void setNextStep(String pStep) throws OceanusException;
 
     /**
      * Set Completion.

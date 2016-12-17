@@ -166,13 +166,13 @@ public abstract class TethysBorderPaneManager<N, I>
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    public abstract void setPreferredWidth(final Integer pWidth);
+    public abstract void setPreferredWidth(Integer pWidth);
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    public abstract void setPreferredHeight(final Integer pHeight);
+    public abstract void setPreferredHeight(Integer pHeight);
 
     /**
      * Set the Centre Node.
@@ -236,8 +236,8 @@ public abstract class TethysBorderPaneManager<N, I>
      * @param pLocation the location
      * @param pVisible true/false
      */
-    protected abstract void setLocationVisibility(final TethysBorderLocation pLocation,
-                                                  final boolean pVisible);
+    protected abstract void setLocationVisibility(TethysBorderLocation pLocation,
+                                                  boolean pVisible);
 
     /**
      * Set node at location.

@@ -73,16 +73,6 @@ public enum MoneyWiseUIResource implements TethysResourceId {
     ICON_DIRFROM("icons.Tip.DirectionFrom"),
 
     /**
-     * Download ToolTip.
-     */
-    ICON_DOWNLOAD("icons.Tip.Download"),
-
-    /**
-     * Print ToolTip.
-     */
-    ICON_PRINT("icons.Tip.Print"),
-
-    /**
      * Report Prompt.
      */
     REPORT_PROMPT("report.Prompt.Select"),

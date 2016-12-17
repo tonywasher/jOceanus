@@ -80,13 +80,13 @@ public abstract class TethysScrollMenuContent {
          * @param pMaxDisplayItems the maximum number of items to display
          * @throws IllegalArgumentException if pMaxDisplayItems is 0 or negative
          */
-        void setMaxDisplayItems(final int pMaxDisplayItems);
+        void setMaxDisplayItems(int pMaxDisplayItems);
 
         /**
          * Set whether menu should auto-close on selection of a toggle item.
          * @param pCloseOnToggle true/false
          */
-        void setCloseOnToggle(final boolean pCloseOnToggle);
+        void setCloseOnToggle(boolean pCloseOnToggle);
 
         /**
          * Remove all contents.
@@ -98,7 +98,7 @@ public abstract class TethysScrollMenuContent {
          * @param pValue the value
          * @return the item added
          */
-        TethysScrollMenuItem<T> addItem(final T pValue);
+        TethysScrollMenuItem<T> addItem(T pValue);
 
         /**
          * Add Element.
@@ -106,8 +106,8 @@ public abstract class TethysScrollMenuContent {
          * @param pName the display name
          * @return the item added
          */
-        TethysScrollMenuItem<T> addItem(final T pValue,
-                                        final String pName);
+        TethysScrollMenuItem<T> addItem(T pValue,
+                                        String pName);
 
         /**
          * Add Element.
@@ -115,15 +115,15 @@ public abstract class TethysScrollMenuContent {
          * @param pGraphic the icon for the item
          * @return the item added
          */
-        TethysScrollMenuItem<T> addItem(final T pValue,
-                                        final I pGraphic);
+        TethysScrollMenuItem<T> addItem(T pValue,
+                                        I pGraphic);
 
         /**
          * Add Null Element.
          * @param pName the display name
          * @return the item added
          */
-        TethysScrollMenuItem<T> addNullItem(final String pName);
+        TethysScrollMenuItem<T> addNullItem(String pName);
 
         /**
          * Add Null Element.
@@ -131,8 +131,8 @@ public abstract class TethysScrollMenuContent {
          * @param pGraphic the icon for the item
          * @return the item added
          */
-        TethysScrollMenuItem<T> addNullItem(final String pName,
-                                            final I pGraphic);
+        TethysScrollMenuItem<T> addNullItem(String pName,
+                                            I pGraphic);
 
         /**
          * Add Element.
@@ -141,16 +141,16 @@ public abstract class TethysScrollMenuContent {
          * @param pGraphic the icon for the item
          * @return the item added
          */
-        TethysScrollMenuItem<T> addItem(final T pValue,
-                                        final String pName,
-                                        final I pGraphic);
+        TethysScrollMenuItem<T> addItem(T pValue,
+                                        String pName,
+                                        I pGraphic);
 
         /**
          * Add subMenu.
          * @param pName the display name
          * @return the menu added
          */
-        TethysScrollSubMenu<T, I> addSubMenu(final String pName);
+        TethysScrollSubMenu<T, I> addSubMenu(String pName);
 
         /**
          * Add subMenu.
@@ -158,15 +158,15 @@ public abstract class TethysScrollMenuContent {
          * @param pGraphic the icon for the menu
          * @return the menu added
          */
-        TethysScrollSubMenu<T, I> addSubMenu(final String pName,
-                                             final I pGraphic);
+        TethysScrollSubMenu<T, I> addSubMenu(String pName,
+                                             I pGraphic);
 
         /**
          * Add New toggle item.
          * @param pItem the available item
          * @return the added item
          */
-        TethysScrollMenuToggleItem<T> addToggleItem(final T pItem);
+        TethysScrollMenuToggleItem<T> addToggleItem(T pItem);
 
         /**
          * Add New toggle item.
@@ -174,8 +174,8 @@ public abstract class TethysScrollMenuContent {
          * @param pName the display name
          * @return the added item
          */
-        TethysScrollMenuToggleItem<T> addToggleItem(final T pItem,
-                                                    final String pName);
+        TethysScrollMenuToggleItem<T> addToggleItem(T pItem,
+                                                    String pName);
     }
 
     /**
@@ -217,7 +217,7 @@ public abstract class TethysScrollMenuContent {
          * Set selection status.
          * @param pSelected true/false
          */
-        void setSelected(final boolean pSelected);
+        void setSelected(boolean pSelected);
 
         /**
          * Toggle selected status.

@@ -54,19 +54,19 @@ public interface MetisFieldSetItem
      * @param pField the field
      * @return the render state
      */
-    MetisFieldState getFieldState(final MetisField pField);
+    MetisFieldState getFieldState(MetisField pField);
 
     /**
      * Get the Errors for the field.
      * @param pField the field
      * @return the error text
      */
-    String getFieldErrors(final MetisField pField);
+    String getFieldErrors(MetisField pField);
 
     /**
      * Get the Errors for the fields.
      * @param pFields the fields
      * @return the error text
      */
-    String getFieldErrors(final MetisField[] pFields);
+    String getFieldErrors(MetisField[] pFields);
 }

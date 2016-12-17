@@ -570,6 +570,18 @@ public class TethysDate
     }
 
     /**
+     * Adjust the date to the end of the year.
+     */
+    public void endCalendarYear() {
+        /* Move to the first of the current year */
+        theDate = theDate.plusYears(1);
+        theDate = theDate.withDayOfMonth(1);
+        theDate = theDate.withMonth(Month.JANUARY.getValue());
+        theDate = theDate.minusDays(1);
+        obtainValues();
+    }
+
+    /**
      * Adjust the date to the start of the fiscal year.
      */
     public void startFiscalYear() {

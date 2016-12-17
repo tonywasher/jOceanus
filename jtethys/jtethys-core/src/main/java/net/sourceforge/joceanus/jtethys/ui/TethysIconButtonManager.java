@@ -172,13 +172,13 @@ public abstract class TethysIconButtonManager<T, N, I>
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    public abstract void setPreferredWidth(final Integer pWidth);
+    public abstract void setPreferredWidth(Integer pWidth);
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    public abstract void setPreferredHeight(final Integer pHeight);
+    public abstract void setPreferredHeight(Integer pHeight);
 
     /**
      * Set the width.
@@ -272,21 +272,21 @@ public abstract class TethysIconButtonManager<T, N, I>
      * @param pValue the value
      * @return the icon
      */
-    protected abstract I getIconForValue(final Object pValue);
+    protected abstract I getIconForValue(Object pValue);
 
     /**
      * Obtain toolTip for value.
      * @param pValue the value
      * @return the toolTip
      */
-    protected abstract String getToolTipForValue(final Object pValue);
+    protected abstract String getToolTipForValue(Object pValue);
 
     /**
      * Obtain new value on click.
      * @param pValue the current value
      * @return the new value
      */
-    protected abstract T getNewValueForValue(final Object pValue);
+    protected abstract T getNewValueForValue(Object pValue);
 
     /**
      * Simple IconButton Manager.
@@ -426,10 +426,10 @@ public abstract class TethysIconButtonManager<T, N, I>
          * @param pId the mapped IconId
          * @param pToolTip the toolTip for value
          */
-        public abstract <K extends Enum<K> & TethysIconId> void setDetailsForValue(final T pValue,
-                                                                                   final T pNext,
-                                                                                   final K pId,
-                                                                                   final String pToolTip);
+        public abstract <K extends Enum<K> & TethysIconId> void setDetailsForValue(T pValue,
+                                                                                   T pNext,
+                                                                                   K pId,
+                                                                                   String pToolTip);
 
         /**
          * Map ToolTip.

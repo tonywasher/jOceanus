@@ -603,7 +603,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * Set a new category type.
      * @param pType the new type
      */
-    public abstract void setCategoryType(final S pType);
+    public abstract void setCategoryType(S pType);
 
     /**
      * Set a new description.

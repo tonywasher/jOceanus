@@ -47,5 +47,5 @@ public interface MoneyWiseAnalysisFilterSelection<N>
      * Set analysis filter.
      * @param pFilter the filter
      */
-    void setFilter(final AnalysisFilter<?, ?> pFilter);
+    void setFilter(AnalysisFilter<?, ?> pFilter);
 }

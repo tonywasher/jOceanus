@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
+import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
 
@@ -105,17 +105,7 @@ public enum MoneyWiseIcon implements TethysIconId {
     /**
      * The frozen set check box.
      */
-    FROZENBOXCHECK("icons/BlueJellyCheckBox.png"),
-
-    /**
-     * The print icon.
-     */
-    PRINT("icons/BlueJellyPrint.png"),
-
-    /**
-     * The download arrow.
-     */
-    DOWNLOAD("icons/GreenJellyDownload.png");
+    FROZENBOXCHECK("icons/BlueJellyCheckBox.png");
 
     /**
      * Reconcile Button ToolTip.
@@ -158,16 +148,6 @@ public enum MoneyWiseIcon implements TethysIconId {
     private static final String TIP_DIRFROM = MoneyWiseUIResource.ICON_DIRFROM.getValue();
 
     /**
-     * Print Button ToolTip.
-     */
-    private static final String TIP_PRINT = MoneyWiseUIResource.ICON_PRINT.getValue();
-
-    /**
-     * Download Button ToolTip.
-     */
-    private static final String TIP_NEW = MoneyWiseUIResource.ICON_DOWNLOAD.getValue();
-
-    /**
      * Source name.
      */
     private final String theSource;
@@ -183,26 +163,6 @@ public enum MoneyWiseIcon implements TethysIconId {
     @Override
     public String getSourceName() {
         return theSource;
-    }
-
-    /**
-     * Configure print icon button.
-     * @param pButton the button manager
-     */
-    public static void configurePrintIconButton(final TethysButton<?, ?> pButton) {
-        PrometheusIcon.configureButton(pButton);
-        pButton.setIcon(PRINT);
-        pButton.setToolTip(TIP_PRINT);
-    }
-
-    /**
-     * Configure download icon button.
-     * @param pButton the button manager
-     */
-    public static void configureDownloadIconButton(final TethysButton<?, ?> pButton) {
-        PrometheusIcon.configureButton(pButton);
-        pButton.setIcon(DOWNLOAD);
-        pButton.setToolTip(TIP_NEW);
     }
 
     /**
@@ -223,7 +183,7 @@ public enum MoneyWiseIcon implements TethysIconId {
      * @param pButton the button manager
      */
     public static void configureReconciledIconButton(final TethysStateIconButtonManager<Boolean, Boolean, ?, ?> pButton) {
-        pButton.setWidth(PrometheusIcon.ICON_SIZE);
+        pButton.setWidth(MetisIcon.ICON_SIZE);
         pButton.setMachineState(Boolean.TRUE);
         pButton.setDetailsForValue(Boolean.TRUE, Boolean.FALSE, PrometheusIcon.COMMIT, TIP_RELEASE);
         pButton.setDetailsForValue(Boolean.FALSE, Boolean.TRUE, TIP_RECONCILE);

@@ -1092,7 +1092,7 @@ public final class MetisEncryptedData {
          * @return the value
          * @throws OceanusException on error
          */
-        protected abstract X parseValue(final String pValue) throws OceanusException;
+        protected abstract X parseValue(String pValue) throws OceanusException;
 
         @Override
         protected byte[] getBytesForEncryption() {

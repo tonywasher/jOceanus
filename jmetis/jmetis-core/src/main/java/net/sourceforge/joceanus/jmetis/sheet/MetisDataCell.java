@@ -223,14 +223,14 @@ public abstract class MetisDataCell {
      * @param pValue the integer value
      * @throws OceanusException on error
      */
-    protected abstract void setBoolean(final Boolean pValue) throws OceanusException;
+    protected abstract void setBoolean(Boolean pValue) throws OceanusException;
 
     /**
      * Set non-null date value of the cell.
      * @param pValue the integer value
      * @throws OceanusException on error
      */
-    protected abstract void setDate(final TethysDate pValue) throws OceanusException;
+    protected abstract void setDate(TethysDate pValue) throws OceanusException;
 
     /**
      * Set date value of the cell.
@@ -267,7 +267,7 @@ public abstract class MetisDataCell {
      * @param pValue the integer value
      * @throws OceanusException on error
      */
-    protected abstract void setInteger(final Integer pValue) throws OceanusException;
+    protected abstract void setInteger(Integer pValue) throws OceanusException;
 
     /**
      * Set string value of the cell.
@@ -289,7 +289,7 @@ public abstract class MetisDataCell {
      * @param pValue the string value
      * @throws OceanusException on error
      */
-    protected abstract void setString(final String pValue) throws OceanusException;
+    protected abstract void setString(String pValue) throws OceanusException;
 
     /**
      * Set decimal value of the cell.
@@ -311,7 +311,7 @@ public abstract class MetisDataCell {
      * @param pValue the decimal value
      * @throws OceanusException on error
      */
-    protected abstract void setDecimal(final TethysDecimal pValue) throws OceanusException;
+    protected abstract void setDecimal(TethysDecimal pValue) throws OceanusException;
 
     /**
      * Set monetary value of the cell.
@@ -333,7 +333,7 @@ public abstract class MetisDataCell {
      * @param pValue the monetary value
      * @throws OceanusException on error
      */
-    protected abstract void setMonetary(final TethysMoney pValue) throws OceanusException;
+    protected abstract void setMonetary(TethysMoney pValue) throws OceanusException;
 
     /**
      * Set header value of the cell.
@@ -355,7 +355,7 @@ public abstract class MetisDataCell {
      * @param pValue the header value
      * @throws OceanusException on error
      */
-    protected abstract void setHeader(final String pValue) throws OceanusException;
+    protected abstract void setHeader(String pValue) throws OceanusException;
 
     /**
      * Set byte array value of the cell.

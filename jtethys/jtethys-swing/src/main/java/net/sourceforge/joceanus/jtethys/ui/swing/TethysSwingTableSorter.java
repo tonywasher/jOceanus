@@ -68,7 +68,7 @@ public class TethysSwingTableSorter<T>
          * @param pRowIndex the index
          * @return the item
          */
-        T getItemAtIndex(final int pRowIndex);
+        T getItemAtIndex(int pRowIndex);
     }
 
     /**

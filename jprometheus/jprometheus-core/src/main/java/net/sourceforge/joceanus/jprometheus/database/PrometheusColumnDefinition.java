@@ -245,7 +245,7 @@ public abstract class PrometheusColumnDefinition {
      * Build the column type for this column.
      * @param pBuilder the String builder
      */
-    protected abstract void buildColumnType(final StringBuilder pBuilder);
+    protected abstract void buildColumnType(StringBuilder pBuilder);
 
     /**
      * Load the value for this column.
@@ -254,7 +254,7 @@ public abstract class PrometheusColumnDefinition {
      * @throws SQLException on error
      */
     protected abstract void loadValue(ResultSet pResults,
-                                      final int pIndex) throws SQLException;
+                                      int pIndex) throws SQLException;
 
     /**
      * Store the value for this column.
@@ -263,7 +263,7 @@ public abstract class PrometheusColumnDefinition {
      * @throws SQLException on error
      */
     protected abstract void storeValue(PreparedStatement pStatement,
-                                       final int pIndex) throws SQLException;
+                                       int pIndex) throws SQLException;
 
     /**
      * Define the key reference.

@@ -197,14 +197,14 @@ public abstract class MetisToolkit<N, I> {
      * @param pSlider use slider status
      * @return the thread manager
      */
-    protected abstract MetisThreadManager<N, I> newThreadManager(final boolean pSlider);
+    protected abstract MetisThreadManager<N, I> newThreadManager(boolean pSlider);
 
     /**
      * Create a Thread Slider Status.
      * @param pManager the thread manager
      * @return the thread status manager
      */
-    protected abstract MetisThreadProgressStatus<N, I> newThreadSliderStatus(final MetisThreadManager<N, I> pManager);
+    protected abstract MetisThreadProgressStatus<N, I> newThreadSliderStatus(MetisThreadManager<N, I> pManager);
 
     /**
      * Create a Thread TextArea Status.
@@ -221,7 +221,7 @@ public abstract class MetisToolkit<N, I> {
      * @return the manager
      * @throws OceanusException on error
      */
-    protected abstract GordianHashManager newSecurityManager(final GordianParameters pParameters) throws OceanusException;
+    protected abstract GordianHashManager newSecurityManager(GordianParameters pParameters) throws OceanusException;
 
     /**
      * Create a Help Window.

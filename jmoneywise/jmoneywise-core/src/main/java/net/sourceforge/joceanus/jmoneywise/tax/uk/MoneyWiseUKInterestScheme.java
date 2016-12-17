@@ -44,7 +44,7 @@ public abstract class MoneyWiseUKInterestScheme
      * @param pTaxYear the taxYear
      * @return the taxCredit rate
      */
-    protected abstract TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear);
+    protected abstract TethysRate getTaxCreditRate(MoneyWiseUKTaxYear pTaxYear);
 
     @Override
     protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,

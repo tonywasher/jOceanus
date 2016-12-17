@@ -505,8 +505,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the difference set
      * @throws OceanusException on error
      */
-    public abstract T getDifferenceSet(final MetisThreadStatusReport pReport,
-                                       final T pOld) throws OceanusException;
+    public abstract T getDifferenceSet(MetisThreadStatusReport pReport,
+                                       T pOld) throws OceanusException;
 
     /**
      * Construct a difference extract between two DataSets. The difference extract will only contain

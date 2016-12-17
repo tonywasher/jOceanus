@@ -22,7 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
-import net.sourceforge.joceanus.jcoeus.CoeusResource;
+import java.time.Month;
+
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 
 /**
  * Loan Status.
@@ -59,6 +62,11 @@ public enum CoeusLoanStatus {
     REJECTED;
 
     /**
+     * The Date from which BadDebts are charged against interest.
+     */
+    private static final TethysDate BADDEBT_BOUNDARY = TethysFiscalYear.UK.endOfYear(new TethysDate(2015, Month.JANUARY, 1));
+
+    /**
      * The String name.
      */
     private String theName;
@@ -73,5 +81,22 @@ public enum CoeusLoanStatus {
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Is the status a badDebt?
+     * @return true/false
+     */
+    public boolean isBadDebt() {
+        return this == CoeusLoanStatus.BADDEBT;
+    }
+
+    /**
+     * Is this an interest badDebt?
+     * @param pDate the date
+     * @return true/false
+     */
+    public static boolean isCapitalBadDebt(final TethysDate pDate) {
+        return BADDEBT_BOUNDARY.compareTo(pDate) < 0;
     }
 }

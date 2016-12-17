@@ -974,7 +974,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
         }
 
         @Override
-        protected abstract DataInfoList<T, O, I, S, E> getEmptyList(final ListStyle pStyle);
+        protected abstract DataInfoList<T, O, I, S, E> getEmptyList(ListStyle pStyle);
 
         /**
          * Add new item to the list.
@@ -982,8 +982,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
          * @param pInfoType the information
          * @return the new info item
          */
-        protected abstract T addNewItem(final O pOwner,
-                                        final I pInfoType);
+        protected abstract T addNewItem(O pOwner,
+                                        I pInfoType);
 
         /**
          * Add an info Item to the list.
@@ -993,10 +993,10 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
          * @param pValue the value
          * @throws OceanusException on error
          */
-        public abstract void addInfoItem(final Integer pId,
-                                         final O pOwner,
-                                         final S pInfoClass,
-                                         final Object pValue) throws OceanusException;
+        public abstract void addInfoItem(Integer pId,
+                                         O pOwner,
+                                         S pInfoClass,
+                                         Object pValue) throws OceanusException;
 
         @Override
         public void prepareForAnalysis() {

@@ -222,8 +222,8 @@ public abstract class SchedulePattern
             /* Obtain flag value */
             int myFlag = getFlag(pDay);
             return isFlagSet(myFlag)
-                                    ? this
-                                    : new WeeklyPattern(getPatternValue() | myFlag);
+                                     ? this
+                                     : new WeeklyPattern(getPatternValue() | myFlag);
         }
 
         /**
@@ -235,8 +235,8 @@ public abstract class SchedulePattern
             /* Obtain flag value */
             int myFlag = getFlag(pDay);
             return isFlagSet(myFlag)
-                                    ? new WeeklyPattern(getPatternValue() & ~myFlag)
-                                    : this;
+                                     ? new WeeklyPattern(getPatternValue() & ~myFlag)
+                                     : this;
         }
 
         /**
@@ -296,11 +296,11 @@ public abstract class SchedulePattern
                     if (!myFirst) {
                         /* Add separator */
                         myBuilder.append(ITEM_SEP);
-                        myFirst = false;
                     }
 
                     /* Add the day */
                     myBuilder.append(myDay.getDisplayName(TextStyle.SHORT, myLocale));
+                    myFirst = false;
                 }
             }
 
@@ -347,8 +347,8 @@ public abstract class SchedulePattern
             /* Obtain flag value */
             int myFlag = getFlag(pDay);
             return isFlagSet(myFlag)
-                                    ? this
-                                    : new MonthlyPattern(getPatternValue() | myFlag);
+                                     ? this
+                                     : new MonthlyPattern(getPatternValue() | myFlag);
         }
 
         /**
@@ -360,8 +360,8 @@ public abstract class SchedulePattern
             /* Obtain flag value */
             int myFlag = getFlag(pDay);
             return isFlagSet(myFlag)
-                                    ? new MonthlyPattern(getPatternValue() & ~myFlag)
-                                    : this;
+                                     ? new MonthlyPattern(getPatternValue() & ~myFlag)
+                                     : this;
         }
 
         /**
@@ -382,8 +382,8 @@ public abstract class SchedulePattern
          */
         private static int getFlag(final int pDay) {
             return pDay == LAST_DAY
-                                   ? 1
-                                   : 1 << pDay;
+                                    ? 1
+                                    : 1 << pDay;
         }
 
         /**
@@ -424,11 +424,11 @@ public abstract class SchedulePattern
                     if (!myFirst) {
                         /* Add separator */
                         myBuilder.append(ITEM_SEP);
-                        myFirst = false;
                     }
 
                     /* Add the day */
                     myBuilder.append(myDay);
+                    myFirst = false;
                 }
             }
 
@@ -438,11 +438,11 @@ public abstract class SchedulePattern
                 if (!myFirst) {
                     /* Add separator */
                     myBuilder.append(ITEM_SEP);
-                    myFirst = false;
                 }
 
                 /* Add indicator */
                 myBuilder.append(ITEM_LAST);
+                myFirst = false;
             }
 
             /* If we had no selected days */

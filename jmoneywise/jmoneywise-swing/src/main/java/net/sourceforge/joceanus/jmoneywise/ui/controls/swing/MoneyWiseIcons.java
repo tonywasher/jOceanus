@@ -28,7 +28,6 @@ import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
@@ -119,11 +118,6 @@ public final class MoneyWiseIcons
     private static final Icon ICON_FROZEN_BOXCHECK = resizeImage(new ImageIcon(MoneyWiseUIResource.class.getResource("icons/BlueJellyCheckBox.png")));
 
     /**
-     * The download arrow.
-     */
-    private static final Icon ICON_DOWNLOAD = resizeImage(new ImageIcon(MoneyWiseUIResource.class.getResource("icons/GreenJellyDownload.png")));
-
-    /**
      * Reconcile Button ToolTip.
      */
     private static final String TIP_RECONCILE = MoneyWiseUIResource.ICON_RECONCILE.getValue();
@@ -162,11 +156,6 @@ public final class MoneyWiseIcons
      * DirectionFrom Button ToolTip.
      */
     private static final String TIP_DIRFROM = MoneyWiseUIResource.ICON_DIRFROM.getValue();
-
-    /**
-     * Download Button ToolTip.
-     */
-    private static final String TIP_NEW = MoneyWiseUIResource.ICON_DOWNLOAD.getValue();
 
     /**
      * Private constructor to prevent instantiation.
@@ -260,15 +249,5 @@ public final class MoneyWiseIcons
         pState.setIconForValue(Boolean.FALSE, ICON_FROZEN_BOXCLEAR);
         pState.setNewValueForValue(Boolean.TRUE, Boolean.TRUE);
         pState.setNewValueForValue(Boolean.FALSE, Boolean.FALSE);
-    }
-
-    /**
-     * Obtain download icon ScrollButton.
-     * @return the button
-     */
-    public static JButton getDownloadButton() {
-        JButton myButton = new JButton(ICON_DOWNLOAD);
-        myButton.setToolTipText(TIP_NEW);
-        return myButton;
     }
 }

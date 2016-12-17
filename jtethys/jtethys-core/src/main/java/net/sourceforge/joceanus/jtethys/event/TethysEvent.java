@@ -40,7 +40,7 @@ public class TethysEvent<E extends Enum<E>> {
          * Handle a TethysEvent.
          * @param pEvent the event to handle
          */
-        void handleEvent(final TethysEvent<E> pEvent);
+        void handleEvent(TethysEvent<E> pEvent);
     }
 
     /**

@@ -34,7 +34,7 @@ public interface MetisThreadStatusManager<N>
      * set Progress.
      * @param pStatus the status to apply
      */
-    void setProgress(final MetisThreadStatus pStatus);
+    void setProgress(MetisThreadStatus pStatus);
 
     /**
      * set Completion.
@@ -45,7 +45,7 @@ public interface MetisThreadStatusManager<N>
      * set Failure.
      * @param pException the exception
      */
-    void setFailure(final Throwable pException);
+    void setFailure(Throwable pException);
 
     /**
      * set Cancelled.

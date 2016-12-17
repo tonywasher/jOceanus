@@ -138,9 +138,9 @@ public abstract class GordianOutputStream
      * @param pLength the length of the data to use
      * @throws IOException on error
      */
-    protected abstract void processData(final byte[] pBytes,
-                                        final int pOffset,
-                                        final int pLength) throws IOException;
+    protected abstract void processData(byte[] pBytes,
+                                        int pOffset,
+                                        int pLength) throws IOException;
 
     /**
      * Complete processing of the data.

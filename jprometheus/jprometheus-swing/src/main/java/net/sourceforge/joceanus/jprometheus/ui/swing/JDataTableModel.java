@@ -161,8 +161,8 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
      * @param pColIndex the column
      * @return true/false
      */
-    public abstract boolean isCellEditable(final T pItem,
-                                           final int pColIndex);
+    public abstract boolean isCellEditable(T pItem,
+                                           int pColIndex);
 
     /**
      * Get the field associated with the cell.
@@ -170,8 +170,8 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
      * @param pColIndex the column
      * @return the field
      */
-    public abstract MetisField getFieldForCell(final T pItem,
-                                               final int pColIndex);
+    public abstract MetisField getFieldForCell(T pItem,
+                                               int pColIndex);
 
     @Override
     public Object getValueAt(final int pRowIndex,
@@ -197,8 +197,8 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
      * @param pColIndex the column
      * @return the value
      */
-    public abstract Object getItemValue(final T pItem,
-                                        final int pColIndex);
+    public abstract Object getItemValue(T pItem,
+                                        int pColIndex);
 
     /**
      * Set the value at (row, column).

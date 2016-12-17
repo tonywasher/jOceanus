@@ -232,7 +232,7 @@ public abstract class CoeusCSVParser {
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    protected abstract void processFields(final List<String> pFields) throws OceanusException;
+    protected abstract void processFields(List<String> pFields) throws OceanusException;
 
     /**
      * Parse the line.

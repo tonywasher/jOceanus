@@ -59,8 +59,8 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
          * @param pClass the list class
          * @return the list
          */
-        <L extends DataList<?, E>> L getDataList(final E pDataType,
-                                                 final Class<L> pClass);
+        <L extends DataList<?, E>> L getDataList(E pDataType,
+                                                 Class<L> pClass);
     }
 
     /**
@@ -464,7 +464,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @param pStyle the style of the empty list
      * @return the list
      */
-    protected abstract DataList<T, E> getEmptyList(final ListStyle pStyle);
+    protected abstract DataList<T, E> getEmptyList(ListStyle pStyle);
 
     /**
      * Derive an cloned extract of the source list.
@@ -929,7 +929,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @param pElement - element to base new item on
      * @return the newly allocated item
      */
-    public abstract T addCopyItem(final DataItem<?> pElement);
+    public abstract T addCopyItem(DataItem<?> pElement);
 
     /**
      * Create a new empty element in the edit list (to be over-written).
@@ -943,7 +943,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @return the newly allocated item
      * @throws OceanusException on error
      */
-    public abstract T addValuesItem(final DataValues<E> pValues) throws OceanusException;
+    public abstract T addValuesItem(DataValues<E> pValues) throws OceanusException;
 
     /**
      * Locate an item by name (if possible).

@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
-import net.sourceforge.joceanus.jcoeus.CoeusResource;
-
 /**
  * Transaction Type.
  */

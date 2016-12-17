@@ -185,7 +185,7 @@ public abstract class TethysHTMLManager<N, I>
      * Load HTML Contents.
      * @param pHTMLString the HTML content.
      */
-    protected abstract void loadHTMLContent(final String pHTMLString);
+    protected abstract void loadHTMLContent(String pHTMLString);
 
     /**
      * Load CSS Contents.
@@ -223,7 +223,7 @@ public abstract class TethysHTMLManager<N, I>
      * Scroll to reference.
      * @param pReference the reference
      */
-    public abstract void scrollToReference(final String pReference);
+    public abstract void scrollToReference(String pReference);
 
     /**
      * Print the contents.

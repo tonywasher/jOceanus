@@ -174,8 +174,8 @@ public abstract class GordianMac
      * @param pIV the initialisation vector (or null)
      * @throws OceanusException on error
      */
-    public abstract void initMac(final GordianKey<GordianMacSpec> pKey,
-                                 final byte[] pIV) throws OceanusException;
+    public abstract void initMac(GordianKey<GordianMacSpec> pKey,
+                                 byte[] pIV) throws OceanusException;
 
     /**
      * Reset the MAC.
@@ -195,8 +195,8 @@ public abstract class GordianMac
      * @return the number of bytes placed into buffer
      * @throws OceanusException on error
      */
-    public abstract int finish(final byte[] pBuffer,
-                               final int pOffset) throws OceanusException;
+    public abstract int finish(byte[] pBuffer,
+                               int pOffset) throws OceanusException;
 
     /**
      * Update the MAC, calculate and reset it.

@@ -254,7 +254,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * Declare DataSet.
      * @param pData the Data set
      */
-    protected abstract void declareData(final DataSet<?, ?> pData);
+    protected abstract void declareData(DataSet<?, ?> pData);
 
     /**
      * Set the list of items.

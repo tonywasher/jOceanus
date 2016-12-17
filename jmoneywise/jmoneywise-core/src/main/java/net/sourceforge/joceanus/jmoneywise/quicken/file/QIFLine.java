@@ -82,8 +82,8 @@ public abstract class QIFLine<T extends QLineType> {
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    protected abstract void formatData(final MetisDataFormatter pFormatter,
-                                       final StringBuilder pBuilder);
+    protected abstract void formatData(MetisDataFormatter pFormatter,
+                                       StringBuilder pBuilder);
 
     /**
      * Format lines.

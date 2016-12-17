@@ -283,7 +283,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Set the error details.
      * @param pError the error
      */
-    protected abstract void setError(final OceanusException pError);
+    protected abstract void setError(OceanusException pError);
 
     /**
      * Increment version.

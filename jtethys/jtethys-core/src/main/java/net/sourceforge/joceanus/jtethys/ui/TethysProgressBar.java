@@ -62,14 +62,14 @@ public abstract class TethysProgressBar<N, I>
      * @param pValue the progress value
      * @param pMaximum the maximum value
      */
-    public abstract void setProgress(final int pValue,
-                                     final int pMaximum);
+    public abstract void setProgress(int pValue,
+                                     int pMaximum);
 
     /**
      * Set progress.
      * @param pValue the progress value in (0,1) range
      */
-    public abstract void setProgress(final double pValue);
+    public abstract void setProgress(double pValue);
 
     @Override
     public Integer getId() {
@@ -112,12 +112,12 @@ public abstract class TethysProgressBar<N, I>
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    public abstract void setPreferredWidth(final Integer pWidth);
+    public abstract void setPreferredWidth(Integer pWidth);
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    public abstract void setPreferredHeight(final Integer pHeight);
+    public abstract void setPreferredHeight(Integer pHeight);
 
 }

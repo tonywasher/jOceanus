@@ -854,21 +854,21 @@ public abstract class AssetBase<T extends AssetBase<T>>
         }
 
         @Override
-        public abstract T findItemByName(final String pName);
+        public abstract T findItemByName(String pName);
 
         /**
          * Check whether a name is available for use.
          * @param pName Name of item
          * @return true/false
          */
-        protected abstract boolean checkAvailableName(final String pName);
+        protected abstract boolean checkAvailableName(String pName);
 
         /**
          * Check whether a name is validly used.
          * @param pName Name of item
          * @return true/false
          */
-        protected abstract boolean validNameCount(final String pName);
+        protected abstract boolean validNameCount(String pName);
 
         /**
          * Obtain unique name for new account.

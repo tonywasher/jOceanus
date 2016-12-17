@@ -164,7 +164,7 @@ public class MoneyWiseReportBalanceSheet
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
                 /* Add the category report */
-                makeCategoryReport(myTable, myBucket);
+                makeDepositCategoryReport(myTable, myBucket);
             }
 
             /* Access totals */
@@ -202,7 +202,7 @@ public class MoneyWiseReportBalanceSheet
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
                 /* Add the category report */
-                makeCategoryReport(myTable, myBucket);
+                makeCashCategoryReport(myTable, myBucket);
             }
 
             /* Access totals */
@@ -268,7 +268,7 @@ public class MoneyWiseReportBalanceSheet
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUEDELTA));
 
                 /* Add the category report */
-                makeCategoryReport(myTable, myBucket);
+                makeLoanCategoryReport(myTable, myBucket);
             }
 
             /* Access totals */
@@ -298,8 +298,8 @@ public class MoneyWiseReportBalanceSheet
      * @param pParent the table parent
      * @param pCategory the category bucket
      */
-    private void makeCategoryReport(final HTMLTable pParent,
-                                    final DepositCategoryBucket pCategory) {
+    private void makeDepositCategoryReport(final HTMLTable pParent,
+                                           final DepositCategoryBucket pCategory) {
         /* Access the category */
         DepositCategoryBucketList myCategories = theAnalysis.getDepositCategories();
         DepositCategory myCategory = pCategory.getAccountCategory();
@@ -345,8 +345,8 @@ public class MoneyWiseReportBalanceSheet
      * @param pParent the table parent
      * @param pCategory the category bucket
      */
-    private void makeCategoryReport(final HTMLTable pParent,
-                                    final CashCategoryBucket pCategory) {
+    private void makeCashCategoryReport(final HTMLTable pParent,
+                                        final CashCategoryBucket pCategory) {
         /* Access the category */
         CashCategoryBucketList myCategories = theAnalysis.getCashCategories();
         CashCategory myCategory = pCategory.getAccountCategory();
@@ -392,8 +392,8 @@ public class MoneyWiseReportBalanceSheet
      * @param pParent the table parent
      * @param pCategory the category bucket
      */
-    private void makeCategoryReport(final HTMLTable pParent,
-                                    final LoanCategoryBucket pCategory) {
+    private void makeLoanCategoryReport(final HTMLTable pParent,
+                                        final LoanCategoryBucket pCategory) {
         /* Access the category */
         LoanCategoryBucketList myCategories = theAnalysis.getLoanCategories();
         LoanCategory myCategory = pCategory.getAccountCategory();

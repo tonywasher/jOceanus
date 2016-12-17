@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
@@ -35,12 +34,8 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Transaction Totals History.
- * @param <L> the loan type
- * @param <T> the transaction type
- * @param <S> the totals type
- * @param <H> the history type
  */
-public abstract class CoeusHistory<L extends CoeusLoan<L, T, S, H>, T extends CoeusTransaction<L, T, S, H>, S extends CoeusTotals<L, T, S, H>, H extends CoeusHistory<L, T, S, H>>
+public abstract class CoeusHistory
         implements MetisDataContents {
     /**
      * Report fields.
@@ -75,12 +70,12 @@ public abstract class CoeusHistory<L extends CoeusLoan<L, T, S, H>, T extends Co
     /**
      * The market.
      */
-    private final CoeusLoanMarket<L, T, S, H> theMarket;
+    private final CoeusMarket theMarket;
 
     /**
      * The loan.
      */
-    private final L theLoan;
+    private final CoeusLoan theLoan;
 
     /**
      * The date for the totals.
@@ -90,18 +85,18 @@ public abstract class CoeusHistory<L extends CoeusLoan<L, T, S, H>, T extends Co
     /**
      * The individual totals.
      */
-    private final List<S> theHistory;
+    private final List<CoeusTotals> theHistory;
 
     /**
      * The summary totals.
      */
-    private final S theTotals;
+    private final CoeusTotals theTotals;
 
     /**
      * Constructor.
      * @param pTotals the totals
      */
-    protected CoeusHistory(final S pTotals) {
+    protected CoeusHistory(final CoeusTotals pTotals) {
         /* Record parameters */
         theTotals = pTotals;
 
@@ -118,7 +113,7 @@ public abstract class CoeusHistory<L extends CoeusLoan<L, T, S, H>, T extends Co
      * Obtain the market.
      * @return the market
      */
-    public CoeusLoanMarket<L, T, S, H> getMarket() {
+    public CoeusMarket getMarket() {
         return theMarket;
     }
 
@@ -126,7 +121,7 @@ public abstract class CoeusHistory<L extends CoeusLoan<L, T, S, H>, T extends Co
      * Obtain the loan.
      * @return the loan
      */
-    public L getLoan() {
+    public CoeusLoan getLoan() {
         return theLoan;
     }
 
@@ -142,7 +137,7 @@ public abstract class CoeusHistory<L extends CoeusLoan<L, T, S, H>, T extends Co
      * Obtain the totals.
      * @return the totals
      */
-    public S getTotals() {
+    public CoeusTotals getTotals() {
         return theTotals;
     }
 
@@ -150,7 +145,7 @@ public abstract class CoeusHistory<L extends CoeusLoan<L, T, S, H>, T extends Co
      * Obtain the history iterator.
      * @return the iterator
      */
-    public Iterator<S> historyIterator() {
+    public Iterator<CoeusTotals> historyIterator() {
         return theHistory.iterator();
     }
 
@@ -158,12 +153,12 @@ public abstract class CoeusHistory<L extends CoeusLoan<L, T, S, H>, T extends Co
      * Add transaction to history.
      * @param pTrans the transaction to add
      */
-    public void addTransactionToHistory(final T pTrans) {
+    public void addTransactionToHistory(final CoeusTransaction pTrans) {
         /* Add to the totals */
         theTotals.addTransactionToTotals(pTrans);
 
         /* Create the new entry and add to the list */
-        S myTotals = newTotals(theTotals, pTrans);
+        CoeusTotals myTotals = newTotals(theTotals, pTrans);
         theHistory.add(myTotals);
     }
 
@@ -173,8 +168,8 @@ public abstract class CoeusHistory<L extends CoeusLoan<L, T, S, H>, T extends Co
      * @param pTrans the transaction
      * @return the new totals
      */
-    protected abstract S newTotals(final S pTotals,
-                                   final T pTrans);
+    protected abstract CoeusTotals newTotals(CoeusTotals pTotals,
+                                             CoeusTransaction pTrans);
 
     /**
      * Clear the history.
@@ -209,7 +204,7 @@ public abstract class CoeusHistory<L extends CoeusLoan<L, T, S, H>, T extends Co
             return theMarket;
         }
         if (FIELD_LOAN.equals(pField)) {
-            L myLoan = getLoan();
+            CoeusLoan myLoan = getLoan();
             return myLoan == null
                                   ? MetisFieldValue.SKIP
                                   : myLoan;

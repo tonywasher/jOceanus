@@ -337,7 +337,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * @param bPreserve preserve any error
      * @return success true/false
      */
-    protected abstract boolean analyseData(final boolean bPreserve);
+    protected abstract boolean analyseData(boolean bPreserve);
 
     /**
      * refresh the data view.

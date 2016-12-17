@@ -441,14 +441,14 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Adjust Editable Fields.
      * @param isEditable is the item editable?
      */
-    protected abstract void adjustFields(final boolean isEditable);
+    protected abstract void adjustFields(boolean isEditable);
 
     /**
      * Update the field.
      * @param pUpdate the update
      * @throws OceanusException on error
      */
-    protected abstract void updateField(final MetisFieldUpdate pUpdate) throws OceanusException;
+    protected abstract void updateField(MetisFieldUpdate pUpdate) throws OceanusException;
 
     /**
      * Obtain the list for a class in base updateSet.
@@ -619,7 +619,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Build goTo menu.
      * @param pMenu the menu to build
      */
-    protected abstract void buildGoToMenu(final TethysScrollMenu<PrometheusGoToEvent<G>, ?> pMenu);
+    protected abstract void buildGoToMenu(TethysScrollMenu<PrometheusGoToEvent<G>, ?> pMenu);
 
     /**
      * Create a GoTo event.

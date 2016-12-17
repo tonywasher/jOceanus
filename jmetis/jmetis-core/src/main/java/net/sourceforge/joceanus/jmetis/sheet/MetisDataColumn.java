@@ -81,7 +81,7 @@ public abstract class MetisDataColumn {
      * Set hidden status.
      * @param isHidden is the column hidden?
      */
-    public abstract void setHidden(final boolean isHidden);
+    public abstract void setHidden(boolean isHidden);
 
     /**
      * Is the column hidden?
@@ -93,5 +93,5 @@ public abstract class MetisDataColumn {
      * Set the default cell style.
      * @param pStyle the cell style
      */
-    public abstract void setDefaultCellStyle(final MetisCellStyleType pStyle);
+    public abstract void setDefaultCellStyle(MetisCellStyleType pStyle);
 }

@@ -37,13 +37,13 @@ public interface TethysNode<N> {
      * Set Enabled status.
      * @param pEnabled true/false
      */
-    void setEnabled(final boolean pEnabled);
+    void setEnabled(boolean pEnabled);
 
     /**
      * Set Visible.
      * @param pVisible true/false
      */
-    void setVisible(final boolean pVisible);
+    void setVisible(boolean pVisible);
 
     /**
      * Obtain the Id.

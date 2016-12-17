@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * GordianKnot interface for Key Generators.
@@ -112,7 +112,7 @@ public abstract class GordianKeyGenerator<T> {
      * @return the new Key
      * @throws OceanusException on error
      */
-    protected abstract GordianKey<T> translateKey(final GordianKey<?> pSource) throws OceanusException;
+    protected abstract GordianKey<T> translateKey(GordianKey<?> pSource) throws OceanusException;
 
     /**
      * Generate a new Key.
@@ -120,7 +120,7 @@ public abstract class GordianKeyGenerator<T> {
      * @return the new Key
      * @throws OceanusException on error
      */
-    protected abstract GordianKey<T> buildKeyFromBytes(final byte[] pBytes);
+    protected abstract GordianKey<T> buildKeyFromBytes(byte[] pBytes);
 
     /**
      * Generate a Key from a Secret.

@@ -47,15 +47,15 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
      * @param pSecureMgr the security manager
      * @return the sheet reader
      */
-    protected abstract PrometheusSheetReader<T> getSheetReader(final MetisThreadStatusReport pReport,
-                                                               final GordianHashManager pSecureMgr);
+    protected abstract PrometheusSheetReader<T> getSheetReader(MetisThreadStatusReport pReport,
+                                                               GordianHashManager pSecureMgr);
 
     /**
      * Obtain a sheet writer.
      * @param pReport the report
      * @return the sheet writer
      */
-    protected abstract PrometheusSheetWriter<T> getSheetWriter(final MetisThreadStatusReport pReport);
+    protected abstract PrometheusSheetWriter<T> getSheetWriter(MetisThreadStatusReport pReport);
 
     /**
      * Load a Backup Workbook.

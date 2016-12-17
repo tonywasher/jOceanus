@@ -188,8 +188,8 @@ public abstract class GordianHashManager {
      * @param pTitle the title
      * @param pNeedConfirm true/false
      */
-    protected abstract void createTheDialog(final String pTitle,
-                                            final boolean pNeedConfirm);
+    protected abstract void createTheDialog(String pTitle,
+                                            boolean pNeedConfirm);
 
     /**
      * Show the dialog under an invokeAndWait clause.
@@ -212,7 +212,7 @@ public abstract class GordianHashManager {
      * set the error for the dialog.
      * @param pError the error to display
      */
-    protected abstract void setError(final String pError);
+    protected abstract void setError(String pError);
 
     /**
      * obtain similar (same password) hash.

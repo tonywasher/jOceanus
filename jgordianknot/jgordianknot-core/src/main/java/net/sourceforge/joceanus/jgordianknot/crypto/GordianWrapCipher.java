@@ -96,8 +96,8 @@ public abstract class GordianWrapCipher {
      * @return the wrapped bytes
      * @throws OceanusException on error
      */
-    public abstract byte[] wrapKey(final GordianKey<GordianSymKeyType> pKey,
-                                   final GordianKey<?> pKeyToWrap) throws OceanusException;
+    public abstract byte[] wrapKey(GordianKey<GordianSymKeyType> pKey,
+                                   GordianKey<?> pKeyToWrap) throws OceanusException;
 
     /**
      * unWrap key.
@@ -108,9 +108,9 @@ public abstract class GordianWrapCipher {
      * @return the unwrapped key
      * @throws OceanusException on error
      */
-    public abstract <T> GordianKey<T> unwrapKey(final GordianKey<GordianSymKeyType> pKey,
-                                                final byte[] pBytes,
-                                                final T pKeyType) throws OceanusException;
+    public abstract <T> GordianKey<T> unwrapKey(GordianKey<GordianSymKeyType> pKey,
+                                                byte[] pBytes,
+                                                T pKeyType) throws OceanusException;
 
     /**
      * Wrap private key.

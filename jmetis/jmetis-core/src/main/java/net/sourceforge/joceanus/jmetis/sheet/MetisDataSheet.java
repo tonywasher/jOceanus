@@ -66,7 +66,7 @@ public abstract class MetisDataSheet {
      * Set sheet hidden status.
      * @param isHidden true/false
      */
-    public abstract void setHidden(final boolean isHidden);
+    public abstract void setHidden(boolean isHidden);
 
     /**
      * Get row count.
@@ -79,28 +79,28 @@ public abstract class MetisDataSheet {
      * @param pRowIndex the requested row index
      * @return the requested row.
      */
-    public abstract MetisDataRow getReadOnlyRowByIndex(final int pRowIndex);
+    public abstract MetisDataRow getReadOnlyRowByIndex(int pRowIndex);
 
     /**
      * Obtain the row at required index within the sheet, create it if it does not exist.
      * @param pRowIndex the requested row index
      * @return the requested row.
      */
-    public abstract MetisDataRow getMutableRowByIndex(final int pRowIndex);
+    public abstract MetisDataRow getMutableRowByIndex(int pRowIndex);
 
     /**
      * Obtain the column by index.
      * @param pColIndex the column index
      * @return the column
      */
-    public abstract MetisDataColumn getReadOnlyColumnByIndex(final int pColIndex);
+    public abstract MetisDataColumn getReadOnlyColumnByIndex(int pColIndex);
 
     /**
      * Obtain the column by index, creating column if it does not exist.
      * @param pColIndex the column index
      * @return the column
      */
-    public abstract MetisDataColumn getMutableColumnByIndex(final int pColIndex);
+    public abstract MetisDataColumn getMutableColumnByIndex(int pColIndex);
 
     /**
      * Name a range.
@@ -109,9 +109,9 @@ public abstract class MetisDataSheet {
      * @param pLastCell the last cell in the range
      * @throws OceanusException on error
      */
-    public abstract void declareRange(final String pName,
-                                      final MetisCellPosition pFirstCell,
-                                      final MetisCellPosition pLastCell) throws OceanusException;
+    public abstract void declareRange(String pName,
+                                      MetisCellPosition pFirstCell,
+                                      MetisCellPosition pLastCell) throws OceanusException;
 
     /**
      * Name a single cell as a range.
@@ -132,9 +132,9 @@ public abstract class MetisDataSheet {
      * @param pName the name of the validation range list
      * @throws OceanusException on error
      */
-    public abstract void applyDataValidation(final MetisCellPosition pFirstCell,
-                                             final MetisCellPosition pLastCell,
-                                             final String pName) throws OceanusException;
+    public abstract void applyDataValidation(MetisCellPosition pFirstCell,
+                                             MetisCellPosition pLastCell,
+                                             String pName) throws OceanusException;
 
     /**
      * Apply data validation to a range of cells.
@@ -142,12 +142,12 @@ public abstract class MetisDataSheet {
      * @param pNumRows the number of rows in the filter
      * @throws OceanusException on error
      */
-    public abstract void applyDataFilter(final MetisCellPosition pBaseCell,
-                                         final int pNumRows) throws OceanusException;
+    public abstract void applyDataFilter(MetisCellPosition pBaseCell,
+                                         int pNumRows) throws OceanusException;
 
     /**
      * Create freeze panes.
      * @param pFreezeCell the cell to freeze at
      */
-    public abstract void createFreezePane(final MetisCellPosition pFreezeCell);
+    public abstract void createFreezePane(MetisCellPosition pFreezeCell);
 }

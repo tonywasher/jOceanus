@@ -90,8 +90,8 @@ public abstract class MoneyWiseTaxYear
      * @param pTaxSource the tax source
      * @return the tax analysis
      */
-    public abstract MoneyWiseTaxAnalysis analyseTaxYear(final MetisPreferenceManager pPreferences,
-                                                        final MoneyWiseTaxSource pTaxSource);
+    public abstract MoneyWiseTaxAnalysis analyseTaxYear(MetisPreferenceManager pPreferences,
+                                                        MoneyWiseTaxSource pTaxSource);
 
     /**
      * Obtain the data fields.

@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto.stream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Input stream base implementation.
@@ -374,7 +374,7 @@ public abstract class GordianInputStream
          * @return the number of bytes now available in the buffer
          * @throws OceanusException on error
          */
-        protected abstract int processBytes(final byte[] pBuffer,
-                                            final int pLength) throws OceanusException;
+        protected abstract int processBytes(byte[] pBuffer,
+                                            int pLength) throws OceanusException;
     }
 }

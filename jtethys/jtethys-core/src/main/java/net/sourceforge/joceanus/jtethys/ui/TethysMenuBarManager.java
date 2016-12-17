@@ -49,7 +49,7 @@ public abstract class TethysMenuBarManager {
      * @param pId the id of the subMenu
      * @return the new subMenu
      */
-    public abstract <I> TethysMenuSubMenu<I> newSubMenu(final I pId);
+    public abstract <I> TethysMenuSubMenu<I> newSubMenu(I pId);
 
     /**
      * Set visible state for element.
@@ -180,13 +180,13 @@ public abstract class TethysMenuBarManager {
          * Enable/disable the item.
          * @param pEnabled true/false
          */
-        protected abstract void enableItem(final boolean pEnabled);
+        protected abstract void enableItem(boolean pEnabled);
 
         /**
          * Set item visibility.
          * @param pVisible true/false
          */
-        protected abstract void setVisible(final boolean pVisible);
+        protected abstract void setVisible(boolean pVisible);
     }
 
     /**
@@ -221,7 +221,7 @@ public abstract class TethysMenuBarManager {
          * @param pId the id of the subMenu
          * @return the new subMenu
          */
-        public abstract <I> TethysMenuSubMenu<I> newSubMenu(final I pId);
+        public abstract <I> TethysMenuSubMenu<I> newSubMenu(I pId);
 
         /**
          * Add MenuItem.
@@ -230,8 +230,8 @@ public abstract class TethysMenuBarManager {
          * @param pAction the action
          * @return the new item
          */
-        public abstract <I> TethysMenuItem<I> newMenuItem(final I pId,
-                                                          final Consumer<I> pAction);
+        public abstract <I> TethysMenuItem<I> newMenuItem(I pId,
+                                                          Consumer<I> pAction);
 
         /**
          * Clear items.

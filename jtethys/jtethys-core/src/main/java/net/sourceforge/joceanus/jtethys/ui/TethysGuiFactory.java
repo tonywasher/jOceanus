@@ -76,8 +76,8 @@ public abstract class TethysGuiFactory<N, I> {
          * @param pChild the child
          * @param pVisible the visibility
          */
-        void setChildVisible(final TethysNode<N> pChild,
-                             final boolean pVisible);
+        void setChildVisible(TethysNode<N> pChild,
+                             boolean pVisible);
     }
 
     /**
@@ -157,7 +157,7 @@ public abstract class TethysGuiFactory<N, I> {
      * @param pText the label text
      * @return the new label
      */
-    public abstract TethysLabel<N, I> newLabel(final String pText);
+    public abstract TethysLabel<N, I> newLabel(String pText);
 
     /**
      * Obtain a check box.
@@ -170,7 +170,7 @@ public abstract class TethysGuiFactory<N, I> {
      * @param pText the checkBox text
      * @return the new check box
      */
-    public abstract TethysCheckBox<N, I> newCheckBox(final String pText);
+    public abstract TethysCheckBox<N, I> newCheckBox(String pText);
 
     /**
      * Obtain a new button.
@@ -237,7 +237,7 @@ public abstract class TethysGuiFactory<N, I> {
      * @param pBaseIsStart is the baseDate the start of the period? (true/false)
      * @return the new selector
      */
-    public abstract TethysDateRangeSelector<N, I> newDateRangeSelector(final boolean pBaseIsStart);
+    public abstract TethysDateRangeSelector<N, I> newDateRangeSelector(boolean pBaseIsStart);
 
     /**
      * Obtain a new passwordField.

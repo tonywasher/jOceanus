@@ -48,42 +48,42 @@ public final class ThemisScmReporter {
          * @param pTask the task
          * @return continue? true/false
          */
-        boolean initTask(final String pTask);
+        boolean initTask(String pTask);
 
         /**
          * Set number of stages.
          * @param pNumStages the number of stages
          * @return continue? true/false
          */
-        boolean setNumStages(final int pNumStages);
+        boolean setNumStages(int pNumStages);
 
         /**
          * Set new stage.
          * @param pStage the new stage
          * @return continue? true/false
          */
-        boolean setNewStage(final String pStage);
+        boolean setNewStage(String pStage);
 
         /**
          * Set number of steps.
          * @param pNumSteps the number of steps
          * @return continue? true/false
          */
-        boolean setNumSteps(final int pNumSteps);
+        boolean setNumSteps(int pNumSteps);
 
         /**
          * Set new step.
          * @param pStep the new step
          * @return continue? true/false
          */
-        boolean setNewStep(final String pStep);
+        boolean setNewStep(String pStep);
 
         /**
          * Set number of steps done .
          * @param pNumSteps the number of steps
          * @return continue? true/false
          */
-        boolean setStepsDone(final int pNumSteps);
+        boolean setStepsDone(int pNumSteps);
 
         /**
          * Is the task cancelled?
@@ -118,12 +118,12 @@ public final class ThemisScmReporter {
          * Set new status for thread.
          * @param pStatus the new status.
          */
-        void setNewStatus(final ThemisScmStatus pStatus);
+        void setNewStatus(ThemisScmStatus pStatus);
 
         /**
          * Complete Task.
          * @param pTask the task that has completed.
          */
-        void completeTask(final Object pTask);
+        void completeTask(Object pTask);
     }
 }

@@ -48,14 +48,14 @@ public abstract class MoneyWiseTaxYearCache {
      * @param pRange the range
      * @return the taxYear or null if not a taxYear period
      */
-    public abstract MoneyWiseTaxYear getTaxYearForRange(final TethysDateRange pRange);
+    public abstract MoneyWiseTaxYear getTaxYearForRange(TethysDateRange pRange);
 
     /**
      * Obtain the taxYear for the date.
      * @param pDate the date
      * @return the taxYear
      */
-    public abstract MoneyWiseTaxYear getTaxYearForDate(final TethysDate pDate);
+    public abstract MoneyWiseTaxYear getTaxYearForDate(TethysDate pDate);
 
     /**
      * Obtain the taxYear date.

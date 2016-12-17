@@ -1110,7 +1110,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * @param pNewValue the new value to store
          * @throws OceanusException on error
          */
-        protected abstract void storeThePreference(final Object pNewValue) throws OceanusException;
+        protected abstract void storeThePreference(Object pNewValue) throws OceanusException;
     }
 
     /**

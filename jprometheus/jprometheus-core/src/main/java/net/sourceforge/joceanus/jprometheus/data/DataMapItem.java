@@ -33,7 +33,7 @@ public interface DataMapItem<T extends DataItem<E>, E extends Enum<E>> {
      * adjust maps for item.
      * @param pItem the item to map
      */
-    void adjustForItem(final T pItem);
+    void adjustForItem(T pItem);
 
     /**
      * Reset the map.

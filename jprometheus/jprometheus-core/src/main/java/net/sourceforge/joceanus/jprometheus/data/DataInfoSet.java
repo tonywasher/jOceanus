@@ -853,7 +853,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pClass the infoSet class
      * @return the status
      */
-    public abstract MetisFieldRequired isClassRequired(final S pClass);
+    public abstract MetisFieldRequired isClassRequired(S pClass);
 
     /**
      * set default value after update.

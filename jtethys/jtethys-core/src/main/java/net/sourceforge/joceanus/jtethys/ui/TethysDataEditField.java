@@ -70,14 +70,14 @@ public abstract class TethysDataEditField<T, N, I>
          * @param pValue the value
          * @return the display string.
          */
-        String formatDisplayValue(final T pValue);
+        String formatDisplayValue(T pValue);
 
         /**
          * Format the edit value.
          * @param pValue the value
          * @return the edit string.
          */
-        String formatEditValue(final T pValue);
+        String formatEditValue(T pValue);
 
         /**
          * Parse the edited value.
@@ -85,7 +85,7 @@ public abstract class TethysDataEditField<T, N, I>
          * @return the parsed value.
          * @throws IllegalArgumentException on parsing error
          */
-        T parseEditedValue(final String pValue);
+        T parseEditedValue(String pValue);
     }
 
     /**
@@ -283,7 +283,7 @@ public abstract class TethysDataEditField<T, N, I>
      * Show the command button.
      * @param pShow true/false
      */
-    public abstract void showCmdButton(final boolean pShow);
+    public abstract void showCmdButton(boolean pShow);
 
     /**
      * Show the command menu.
@@ -303,13 +303,13 @@ public abstract class TethysDataEditField<T, N, I>
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    public abstract void setPreferredWidth(final Integer pWidth);
+    public abstract void setPreferredWidth(Integer pWidth);
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    public abstract void setPreferredHeight(final Integer pHeight);
+    public abstract void setPreferredHeight(Integer pHeight);
 
     /**
      * DataEditTextField base class.
@@ -695,9 +695,14 @@ public abstract class TethysDataEditField<T, N, I>
             extends TethysNumberEditConverter<TethysDecimal>
             implements TethysRawDecimalField {
         /**
+         * The default number of decimals.
+         */
+        private static final int DEFAULT_DECIMALS = 6;
+
+        /**
          * The number of decimals.
          */
-        private int theNumDecimals = 6;
+        private int theNumDecimals = DEFAULT_DECIMALS;
 
         /**
          * Constructor.
@@ -838,7 +843,7 @@ public abstract class TethysDataEditField<T, N, I>
          * Set the number of decimals.
          * @param pNumDecimals the numDecimals
          */
-        void setNumDecimals(final int pNumDecimals);
+        void setNumDecimals(int pNumDecimals);
     }
 
     /**
@@ -850,7 +855,7 @@ public abstract class TethysDataEditField<T, N, I>
          * Set the assumed currency.
          * @param pCurrency the currency
          */
-        void setDeemedCurrency(final Currency pCurrency);
+        void setDeemedCurrency(Currency pCurrency);
     }
 
     /**
@@ -864,8 +869,8 @@ public abstract class TethysDataEditField<T, N, I>
          * @param pMinimum the minimum value
          * @param pMaximum the maximum value
          */
-        void setValueRange(final T pMinimum,
-                           final T pMaximum);
+        void setValueRange(T pMinimum,
+                           T pMaximum);
     }
 
     /**

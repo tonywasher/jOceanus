@@ -721,10 +721,10 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
          * @param pDelta the delta version
          * @return the new branch
          */
-        protected abstract B createNewBranch(final C pComponent,
-                                             final int pMajor,
-                                             final int pMinor,
-                                             final int pDelta);
+        protected abstract B createNewBranch(C pComponent,
+                                             int pMajor,
+                                             int pMinor,
+                                             int pDelta);
     }
 
     /**

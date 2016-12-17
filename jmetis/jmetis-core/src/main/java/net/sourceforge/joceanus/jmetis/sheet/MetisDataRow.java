@@ -114,12 +114,12 @@ public abstract class MetisDataRow {
      * @param pIndex the column index.
      * @return the cell
      */
-    public abstract MetisDataCell getReadOnlyCellByIndex(final int pIndex);
+    public abstract MetisDataCell getReadOnlyCellByIndex(int pIndex);
 
     /**
      * Get the cell at the required index.
      * @param pIndex the column index.
      * @return the cell
      */
-    public abstract MetisDataCell getMutableCellByIndex(final int pIndex);
+    public abstract MetisDataCell getMutableCellByIndex(int pIndex);
 }

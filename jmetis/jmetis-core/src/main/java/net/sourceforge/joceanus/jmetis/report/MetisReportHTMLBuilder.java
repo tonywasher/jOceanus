@@ -134,6 +134,11 @@ public class MetisReportHTMLBuilder {
     private static final String CLASS_TITLEVALUE = "titleValue";
 
     /**
+     * Name of accordianValue class.
+     */
+    private static final String CLASS_ACCORDIANVALUE = "accordianValue";
+
+    /**
      * Name of linkValue class.
      */
     private static final String CLASS_LINKVALUE = "linkValue";
@@ -361,6 +366,18 @@ public class MetisReportHTMLBuilder {
     }
 
     /**
+     * Create and append a standard title cell with title spanning 2 columns.
+     * @param pControl the table control
+     * @param pTitle the title
+     */
+    public void makeStretchedTitleCell(final HTMLTable pControl,
+                                       final String pTitle) {
+        Element myCell = pControl.createNewCell(true);
+        setCellTitle(myCell, pTitle);
+        myCell.setAttribute(ATTR_COLSPAN, Integer.toString(2));
+    }
+
+    /**
      * Make Table link cell.
      * @param pControl the table control
      * @param pLink the link table name
@@ -386,14 +403,14 @@ public class MetisReportHTMLBuilder {
         /* Create the cell */
         Element myCell = pControl.createNewCell(false);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
-        myCell.setAttribute(ATTR_CLASS, CLASS_LINKVALUE);
-        myCell.appendChild(myLink);
+        myLink.setAttribute(ATTR_CLASS, CLASS_ACCORDIANVALUE);
         myLink.setAttribute(ATTR_ID, myId);
         myLink.setIdAttribute(ATTR_ID, true);
         myLink.setAttribute(ATTR_NAME, myId);
         myLink.setAttribute(ATTR_HREF, REF_TAB
                                        + pLink);
         myLink.setTextContent(pName);
+        myCell.appendChild(myLink);
     }
 
     /**
@@ -422,14 +439,14 @@ public class MetisReportHTMLBuilder {
         /* Create the cell */
         Element myCell = pControl.createNewCell(false);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
-        myCell.setAttribute(ATTR_CLASS, CLASS_LINKVALUE);
-        myCell.appendChild(myLink);
+        myLink.setAttribute(ATTR_CLASS, CLASS_ACCORDIANVALUE);
         myLink.setAttribute(ATTR_ID, myId);
         myLink.setIdAttribute(ATTR_ID, true);
         myLink.setAttribute(ATTR_NAME, myId);
         myLink.setAttribute(ATTR_HREF, REF_DELAY
                                        + pLink);
         myLink.setTextContent(pName);
+        myCell.appendChild(myLink);
     }
 
     /**
@@ -453,11 +470,29 @@ public class MetisReportHTMLBuilder {
                                    final String pName) {
         Element myCell = pControl.createNewCell(false);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
-        myCell.setAttribute(ATTR_CLASS, CLASS_LINKVALUE);
-        myCell.appendChild(myLink);
+        myLink.setAttribute(ATTR_CLASS, CLASS_LINKVALUE);
         myLink.setAttribute(ATTR_HREF, REF_FILTER
                                        + pLink);
         myLink.setTextContent(pName);
+        myCell.appendChild(myLink);
+    }
+
+    /**
+     * Make Table link cell.
+     * @param pControl the table control
+     * @param pLink the link table name
+     * @param pValue the link table display value
+     */
+    public void makeFilterLinkCell(final HTMLTable pControl,
+                                   final String pLink,
+                                   final Object pValue) {
+        Element myCell = pControl.createNewCell(false);
+        Element myLink = theDocument.createElement(ELEMENT_LINK);
+        myLink.setAttribute(ATTR_CLASS, CLASS_LINKVALUE);
+        myLink.setAttribute(ATTR_HREF, REF_FILTER
+                                       + pLink);
+        setCellValue(myLink, pValue);
+        myCell.appendChild(myLink);
     }
 
     /**

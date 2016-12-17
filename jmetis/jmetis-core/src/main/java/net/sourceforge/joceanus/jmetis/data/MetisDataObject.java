@@ -60,7 +60,7 @@ public final class MetisDataObject {
          * @param pField the field
          * @return the value of the field
          */
-        Object getFieldValue(final MetisField pField);
+        Object getFieldValue(MetisField pField);
     }
 
     /**
@@ -85,13 +85,13 @@ public final class MetisDataObject {
          * @param pField the field
          * @return true/false
          */
-        boolean skipField(final MetisField pField);
+        boolean skipField(MetisField pField);
 
         /**
          * Declare the valueSet as active.
          * @param pValues the active values
          */
-        void declareValues(final MetisValueSet pValues);
+        void declareValues(MetisValueSet pValues);
     }
 
     /**
@@ -163,7 +163,7 @@ public final class MetisDataObject {
          * @param pThat the other object
          * @return the difference
          */
-        MetisDifference differs(final Object pThat);
+        MetisDifference differs(Object pThat);
     }
 
     /**

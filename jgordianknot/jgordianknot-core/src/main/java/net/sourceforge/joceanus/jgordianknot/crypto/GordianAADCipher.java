@@ -62,7 +62,7 @@ public abstract class GordianAADCipher
      * @param pLength length of data to update with
      * @throws OceanusException on error
      */
-    public abstract void updateAAD(final byte[] pBytes,
-                                   final int pOffset,
-                                   final int pLength) throws OceanusException;
+    public abstract void updateAAD(byte[] pBytes,
+                                   int pOffset,
+                                   int pLength) throws OceanusException;
 }

@@ -25,13 +25,13 @@ package net.sourceforge.joceanus.jmoneywise.ui.controls;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
@@ -191,7 +191,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
 
         /* Create the Download Button */
         theDownloadButton = pFactory.newButton();
-        MoneyWiseIcon.configureDownloadIconButton(theDownloadButton);
+        MetisIcon.configureDownloadIconButton(theDownloadButton);
 
         /* Create the Buttons */
         theNext = pFactory.newButton();

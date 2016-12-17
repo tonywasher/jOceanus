@@ -174,7 +174,7 @@ public abstract class TethysTreeManager<T, N, I>
      * @param pName the name of the item
      * @return was an item selected? true/false
      */
-    public abstract boolean lookUpAndSelectItem(final String pName);
+    public abstract boolean lookUpAndSelectItem(String pName);
 
     /**
      * LookUp item by name.
@@ -225,8 +225,8 @@ public abstract class TethysTreeManager<T, N, I>
      * @param pItem the item
      * @return the new tree item
      */
-    public abstract TethysTreeItem<T, N, I> addRootItem(final String pName,
-                                                        final T pItem);
+    public abstract TethysTreeItem<T, N, I> addRootItem(String pName,
+                                                        T pItem);
 
     /**
      * Add item to parent.
@@ -235,9 +235,9 @@ public abstract class TethysTreeManager<T, N, I>
      * @param pItem the item
      * @return the new tree item
      */
-    public abstract TethysTreeItem<T, N, I> addChildItem(final TethysTreeItem<T, N, I> pParent,
-                                                         final String pName,
-                                                         final T pItem);
+    public abstract TethysTreeItem<T, N, I> addChildItem(TethysTreeItem<T, N, I> pParent,
+                                                         String pName,
+                                                         T pItem);
 
     /**
      * TreeItem class.
@@ -437,7 +437,7 @@ public abstract class TethysTreeManager<T, N, I>
          * Attach as particular child.
          * @param pChildNo the child #
          */
-        protected abstract void attachAsChildNo(final int pChildNo);
+        protected abstract void attachAsChildNo(int pChildNo);
 
         /**
          * Do we have children?

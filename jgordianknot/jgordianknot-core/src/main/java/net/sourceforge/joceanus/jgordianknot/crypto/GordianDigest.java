@@ -59,8 +59,8 @@ public interface GordianDigest
      * @return the number of bytes placed into buffer
      * @throws OceanusException on error
      */
-    int finish(final byte[] pBuffer,
-               final int pOffset) throws OceanusException;
+    int finish(byte[] pBuffer,
+               int pOffset) throws OceanusException;
 
     /**
      * Update the digest, calculate and reset it.

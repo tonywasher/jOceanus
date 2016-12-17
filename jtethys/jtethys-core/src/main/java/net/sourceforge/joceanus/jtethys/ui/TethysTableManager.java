@@ -306,98 +306,98 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareStringColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareStringColumn(C pId);
 
     /**
      * Declare charArray column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareCharArrayColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareCharArrayColumn(C pId);
 
     /**
      * Declare short column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareShortColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareShortColumn(C pId);
 
     /**
      * Declare integer column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareIntegerColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareIntegerColumn(C pId);
 
     /**
      * Declare long column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareLongColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareLongColumn(C pId);
 
     /**
      * Declare rawDecimal column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareRawDecimalColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareRawDecimalColumn(C pId);
 
     /**
      * Declare money column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareMoneyColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareMoneyColumn(C pId);
 
     /**
      * Declare price column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declarePriceColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declarePriceColumn(C pId);
 
     /**
      * Declare rate column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareRateColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareRateColumn(C pId);
 
     /**
      * Declare units column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareUnitsColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareUnitsColumn(C pId);
 
     /**
      * Declare dilution column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareDilutionColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareDilutionColumn(C pId);
 
     /**
      * Declare ratio column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareRatioColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareRatioColumn(C pId);
 
     /**
      * Declare dilutedPrice column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareDilutedPriceColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareDilutedPriceColumn(C pId);
 
     /**
      * Declare date column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareDateColumn(final C pId);
+    public abstract TethysTableColumn<C, R, N, I> declareDateColumn(C pId);
 
     /**
      * Declare scroll column.
@@ -406,8 +406,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<C, R, N, I> declareScrollColumn(final C pId,
-                                                                          final Class<T> pClass);
+    public abstract <T> TethysTableColumn<C, R, N, I> declareScrollColumn(C pId,
+                                                                          Class<T> pClass);
 
     /**
      * Declare list column.
@@ -416,8 +416,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<C, R, N, I> declareListColumn(final C pId,
-                                                                        final Class<T> pClass);
+    public abstract <T> TethysTableColumn<C, R, N, I> declareListColumn(C pId,
+                                                                        Class<T> pClass);
 
     /**
      * Declare icon column.
@@ -426,8 +426,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<C, R, N, I> declareIconColumn(final C pId,
-                                                                        final Class<T> pClass);
+    public abstract <T> TethysTableColumn<C, R, N, I> declareIconColumn(C pId,
+                                                                        Class<T> pClass);
 
     /**
      * Declare stateIcon column.
@@ -436,8 +436,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<C, R, N, I> declareStateIconColumn(final C pId,
-                                                                             final Class<T> pClass);
+    public abstract <T> TethysTableColumn<C, R, N, I> declareStateIconColumn(C pId,
+                                                                             Class<T> pClass);
 
     /**
      * Column Definition.
@@ -622,7 +622,7 @@ public abstract class TethysTableManager<C, R, N, I>
          * Set the column width.
          * @param pWidth the width
          */
-        public abstract void setColumnWidth(final int pWidth);
+        public abstract void setColumnWidth(int pWidth);
     }
 
     /**
@@ -680,7 +680,7 @@ public abstract class TethysTableManager<C, R, N, I>
          * Cell changed during edit.
          * @param pId the column id
          */
-        void repaintColumnCell(final C pId);
+        void repaintColumnCell(C pId);
 
         /**
          * Row changed during edit.

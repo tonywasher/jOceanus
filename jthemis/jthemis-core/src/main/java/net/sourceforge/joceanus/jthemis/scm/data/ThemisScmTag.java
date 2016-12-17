@@ -391,7 +391,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
          * @param pTag the tag number
          * @return the new tag
          */
-        protected abstract T createNewTag(final B pBranch,
-                                          final int pTag);
+        protected abstract T createNewTag(B pBranch,
+                                          int pTag);
     }
 }

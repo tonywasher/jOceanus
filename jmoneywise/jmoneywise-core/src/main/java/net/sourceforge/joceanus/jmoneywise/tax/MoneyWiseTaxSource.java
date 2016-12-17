@@ -35,7 +35,7 @@ public interface MoneyWiseTaxSource {
      * @param pBasis the taxBasis
      * @return the amount
      */
-    TethysMoney getAmountForTaxBasis(final TaxBasisClass pBasis);
+    TethysMoney getAmountForTaxBasis(TaxBasisClass pBasis);
 
     /**
      * Obtain the charges.

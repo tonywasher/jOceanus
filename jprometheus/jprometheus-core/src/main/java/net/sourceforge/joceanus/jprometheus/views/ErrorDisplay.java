@@ -34,5 +34,5 @@ public interface ErrorDisplay {
      * Set error list for window.
      * @param pExceptions the exceptions
      */
-    void setErrors(final DataErrorList<MetisExceptionWrapper> pExceptions);
+    void setErrors(DataErrorList<MetisExceptionWrapper> pExceptions);
 }

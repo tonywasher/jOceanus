@@ -193,13 +193,13 @@ public abstract class TethysScrollButtonManager<T, N, I>
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    public abstract void setPreferredWidth(final Integer pWidth);
+    public abstract void setPreferredWidth(Integer pWidth);
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    public abstract void setPreferredHeight(final Integer pHeight);
+    public abstract void setPreferredHeight(Integer pHeight);
 
     /**
      * Register listeners.
@@ -269,8 +269,8 @@ public abstract class TethysScrollButtonManager<T, N, I>
      * @param pId the IconId
      * @param pWidth the icon width
      */
-    protected abstract <K extends Enum<K> & TethysIconId> void setIcon(final K pId,
-                                                                       final int pWidth);
+    protected abstract <K extends Enum<K> & TethysIconId> void setIcon(K pId,
+                                                                       int pWidth);
 
     @Override
     public void setEnabled(final boolean pEnabled) {

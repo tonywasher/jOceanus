@@ -98,5 +98,5 @@ public abstract class MetisReportBase<D, F> {
      * @param pData the source data
      * @return Web document
      */
-    public abstract Document createReport(final D pData);
+    public abstract Document createReport(D pData);
 }

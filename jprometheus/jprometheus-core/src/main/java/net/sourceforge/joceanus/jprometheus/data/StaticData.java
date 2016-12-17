@@ -91,7 +91,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * The Enum Class for this Static Data.
      */
-    private Class<S> theEnumClass = null;
+    private Class<S> theEnumClass;
 
     /**
      * Copy Constructor.
@@ -864,7 +864,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          * @return the created class
          * @throws OceanusException on error
          */
-        protected abstract T newItem(final S pClass) throws OceanusException;
+        protected abstract T newItem(S pClass) throws OceanusException;
 
         /**
          * Populate default values.

@@ -135,8 +135,8 @@ public abstract class TethysSlider<N, I>
      * @param pMajor the major interval
      * @param pMinor the minor interval
      */
-    protected abstract void setTickIntervals(final int pMajor,
-                                             final int pMinor);
+    protected abstract void setTickIntervals(int pMajor,
+                                             int pMinor);
 
     /**
      * Set the Border Padding.
@@ -158,25 +158,25 @@ public abstract class TethysSlider<N, I>
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    public abstract void setPreferredWidth(final Integer pWidth);
+    public abstract void setPreferredWidth(Integer pWidth);
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    public abstract void setPreferredHeight(final Integer pHeight);
+    public abstract void setPreferredHeight(Integer pHeight);
 
     /**
      * Set the Maximum Value.
      * @param pMax the maximum
      */
-    public abstract void setMaximum(final Integer pMax);
+    public abstract void setMaximum(Integer pMax);
 
     /**
      * Set the Value.
      * @param pValue the value
      */
-    public abstract void setValue(final Integer pValue);
+    public abstract void setValue(Integer pValue);
 
     /**
      * Get Value.

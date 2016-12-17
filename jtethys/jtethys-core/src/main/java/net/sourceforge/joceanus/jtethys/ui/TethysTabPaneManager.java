@@ -130,13 +130,13 @@ public abstract class TethysTabPaneManager<N, I>
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    public abstract void setPreferredWidth(final Integer pWidth);
+    public abstract void setPreferredWidth(Integer pWidth);
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    public abstract void setPreferredHeight(final Integer pHeight);
+    public abstract void setPreferredHeight(Integer pHeight);
 
     /**
      * Obtain selected tab.
@@ -221,8 +221,8 @@ public abstract class TethysTabPaneManager<N, I>
      * @param pItem the item
      * @return the new tab item
      */
-    public abstract TethysTabItem<N, I> addTabItem(final String pName,
-                                                   final TethysNode<N> pItem);
+    public abstract TethysTabItem<N, I> addTabItem(String pName,
+                                                   TethysNode<N> pItem);
 
     @Override
     public void setEnabled(final boolean pEnabled) {
@@ -255,7 +255,7 @@ public abstract class TethysTabPaneManager<N, I>
      * Enable/disable the pane.
      * @param pEnabled true/false
      */
-    protected abstract void enablePane(final boolean pEnabled);
+    protected abstract void enablePane(boolean pEnabled);
 
     /**
      * TabItem class.
@@ -410,7 +410,7 @@ public abstract class TethysTabPaneManager<N, I>
          * Enable/disable the tab.
          * @param pEnabled true/false
          */
-        protected abstract void enableTab(final boolean pEnabled);
+        protected abstract void enableTab(boolean pEnabled);
 
         /**
          * Attach to pane.

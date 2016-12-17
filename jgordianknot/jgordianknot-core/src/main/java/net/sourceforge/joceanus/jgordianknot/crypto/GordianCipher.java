@@ -160,7 +160,7 @@ public abstract class GordianCipher<T> {
      * @param pKey the key
      * @throws OceanusException on error
      */
-    public abstract void initCipher(final GordianKey<T> pKey) throws OceanusException;
+    public abstract void initCipher(GordianKey<T> pKey) throws OceanusException;
 
     /**
      * Initialise the cipher.
@@ -169,9 +169,9 @@ public abstract class GordianCipher<T> {
      * @param pEncrypt true/false
      * @throws OceanusException on error
      */
-    public abstract void initCipher(final GordianKey<T> pKey,
-                                    final byte[] pIV,
-                                    final boolean pEncrypt) throws OceanusException;
+    public abstract void initCipher(GordianKey<T> pKey,
+                                    byte[] pIV,
+                                    boolean pEncrypt) throws OceanusException;
 
     /**
      * Determine the maximum number of output bytes that will be produced for the given number of
@@ -179,7 +179,7 @@ public abstract class GordianCipher<T> {
      * @param pLength the number of input bytes
      * @return # of output bytes
      */
-    public abstract int getOutputLength(final int pLength);
+    public abstract int getOutputLength(int pLength);
 
     /**
      * Process the passed data and return intermediate results.
@@ -241,11 +241,11 @@ public abstract class GordianCipher<T> {
      * @return the number of bytes transferred to the output buffer
      * @throws OceanusException on error
      */
-    public abstract int update(final byte[] pBytes,
-                               final int pOffset,
-                               final int pLength,
-                               final byte[] pOutput,
-                               final int pOutOffset) throws OceanusException;
+    public abstract int update(byte[] pBytes,
+                               int pOffset,
+                               int pLength,
+                               byte[] pOutput,
+                               int pOutOffset) throws OceanusException;
 
     /**
      * Complete the Cipher operation and return final results.
@@ -345,6 +345,6 @@ public abstract class GordianCipher<T> {
      * @return the number of bytes transferred to the output buffer
      * @throws OceanusException on error
      */
-    public abstract int finish(final byte[] pOutput,
-                               final int pOutOffset) throws OceanusException;
+    public abstract int finish(byte[] pOutput,
+                               int pOutOffset) throws OceanusException;
 }

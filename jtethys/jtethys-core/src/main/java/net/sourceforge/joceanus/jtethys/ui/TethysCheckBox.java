@@ -81,7 +81,7 @@ public abstract class TethysCheckBox<N, I>
      * handle selected.
      * @param pText the text.
      */
-    public abstract void setText(final String pText);
+    public abstract void setText(String pText);
 
     /**
      * Obtain the Border Padding.
@@ -119,19 +119,19 @@ public abstract class TethysCheckBox<N, I>
      * Set the changed status.
      * @param pChanged is the checkBox changed?
      */
-    public abstract void setChanged(final boolean pChanged);
+    public abstract void setChanged(boolean pChanged);
 
     /**
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    public abstract void setPreferredWidth(final Integer pWidth);
+    public abstract void setPreferredWidth(Integer pWidth);
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    public abstract void setPreferredHeight(final Integer pHeight);
+    public abstract void setPreferredHeight(Integer pHeight);
 
     /**
      * set selected.

@@ -260,7 +260,7 @@ public abstract class TethysSwingDataTextField<T>
      * Start cell editing.
      * @param pCell the cell rectangle
      */
-    public abstract void startCellEditing(final Rectangle pCell);
+    public abstract void startCellEditing(Rectangle pCell);
 
     @Override
     public void adjustField() {
@@ -272,7 +272,7 @@ public abstract class TethysSwingDataTextField<T>
      * @param pLabel the label
      * @return the cloned data field
      */
-    protected abstract TethysSwingDataTextField<T> cloneField(final JLabel pLabel);
+    protected abstract TethysSwingDataTextField<T> cloneField(JLabel pLabel);
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {

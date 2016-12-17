@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
-import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -32,12 +31,8 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Coeus Transaction.
- * @param <L> the loan type
- * @param <T> the transaction type
- * @param <S> the totals type
- * @param <H> the history type
  */
-public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extends CoeusTransaction<L, T, S, H>, S extends CoeusTotals<L, T, S, H>, H extends CoeusHistory<L, T, S, H>>
+public abstract class CoeusTransaction
         implements MetisIndexedItem {
     /**
      * Report fields.
@@ -75,11 +70,6 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     private static final MetisField FIELD_TYPE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TRANSTYPE.getValue());
 
     /**
-     * Value Field Id.
-     */
-    protected static final MetisField FIELD_VALUE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_VALUE.getValue());
-
-    /**
      * Invested Field Id.
      */
     protected static final MetisField FIELD_INVESTED = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INVESTED.getValue());
@@ -90,19 +80,24 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     protected static final MetisField FIELD_HOLDING = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_HOLDING.getValue());
 
     /**
-     * Capital Field Id.
+     * LoanBook Field Id.
      */
-    protected static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_CAPITAL.getValue());
-
-    /**
-     * NettInterest Field Id.
-     */
-    protected static final MetisField FIELD_NETINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_NETINTEREST.getValue());
+    protected static final MetisField FIELD_LOANBOOK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANBOOK.getValue());
 
     /**
      * Interest Field Id.
      */
     protected static final MetisField FIELD_INTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INTEREST.getValue());
+
+    /**
+     * BadDebtInterest Field Id.
+     */
+    protected static final MetisField FIELD_BADDEBTINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBTINTEREST.getValue());
+
+    /**
+     * BadDebtCapital Field Id.
+     */
+    protected static final MetisField FIELD_BADDEBTCAPITAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBTCAPITAL.getValue());
 
     /**
      * Fees Field Id.
@@ -140,9 +135,14 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     protected static final char CHAR_CLOSE = ')';
 
     /**
-     * Id For value.
+     * Id For source value.
      */
-    protected static final String ID_VALUE = "V";
+    protected static final String ID_SOURCEVALUE = "SV";
+
+    /**
+     * Id For asset value.
+     */
+    protected static final String ID_ASSETVALUE = "AV";
 
     /**
      * Id For holding.
@@ -150,19 +150,34 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     protected static final String ID_HOLDING = "H";
 
     /**
-     * Id For capital.
+     * Id For loanBook.
      */
-    protected static final String ID_CAPITAL = "C";
+    protected static final String ID_LOANBOOK = "LB";
 
     /**
-     * Id For nettInterest.
+     * Id For earnings.
      */
-    protected static final String ID_NETINTEREST = "NI";
+    protected static final String ID_EARNINGS = "E";
+
+    /**
+     * Id For taxInterest.
+     */
+    protected static final String ID_TAXEARNINGS = "TE";
 
     /**
      * Id For interest.
      */
     protected static final String ID_INTEREST = "I";
+
+    /**
+     * Id For badDebtInterest.
+     */
+    protected static final String ID_BDINTEREST = "DI";
+
+    /**
+     * Id For badDebtCapital.
+     */
+    protected static final String ID_BDCAPITAL = "DC";
 
     /**
      * Id For fees.
@@ -180,7 +195,12 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     protected static final String ID_CASHBACK = "CB";
 
     /**
-     * Id For basDebt.
+     * Id For losses.
+     */
+    protected static final String ID_LOSSES = "L";
+
+    /**
+     * Id For badDebt.
      */
     protected static final String ID_BADDEBT = "BD";
 
@@ -197,13 +217,13 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     /**
      * The market.
      */
-    private final CoeusLoanMarket<L, T, S, H> theMarket;
+    private final CoeusMarket theMarket;
 
     /**
      * Constructor.
      * @param pMarket the loanMarket
      */
-    protected CoeusTransaction(final CoeusLoanMarket<L, T, S, H> pMarket) {
+    protected CoeusTransaction(final CoeusMarket pMarket) {
         /* Store parameters */
         theMarket = pMarket;
         theId = pMarket.getNextTransactionId();
@@ -218,7 +238,7 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
      * Obtain the market.
      * @return the market
      */
-    public CoeusLoanMarket<L, T, S, H> getMarket() {
+    public CoeusMarket getMarket() {
         return theMarket;
     }
 
@@ -226,7 +246,7 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
      * Obtain the loan.
      * @return the loan
      */
-    public abstract L getLoan();
+    public abstract CoeusLoan getLoan();
 
     /**
      * Obtain the date.
@@ -253,12 +273,6 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     public abstract String getLoanId();
 
     /**
-     * Obtain the value.
-     * @return the value
-     */
-    public abstract TethysDecimal getValue();
-
-    /**
      * Obtain the invested.
      * @return the invested
      */
@@ -271,22 +285,28 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
     public abstract TethysDecimal getHolding();
 
     /**
-     * Obtain the capital.
-     * @return the capital
+     * Obtain the loanBook.
+     * @return the loanBook
      */
-    public abstract TethysDecimal getCapital();
-
-    /**
-     * Obtain the Nett interest.
-     * @return the interest
-     */
-    public abstract TethysDecimal getNettInterest();
+    public abstract TethysDecimal getLoanBook();
 
     /**
      * Obtain the interest.
      * @return the interest
      */
     public abstract TethysDecimal getInterest();
+
+    /**
+     * Obtain the badDebtInterest.
+     * @return the interest
+     */
+    public abstract TethysDecimal getBadDebtInterest();
+
+    /**
+     * Obtain the badDebtCapital.
+     * @return the interest
+     */
+    public abstract TethysDecimal getBadDebtCapital();
 
     /**
      * Obtain the fees.
@@ -331,15 +351,15 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
         StringBuilder myBuilder = new StringBuilder();
 
         /* Add the values */
-        formatValue(myBuilder, ID_VALUE, getValue());
+        formatValue(myBuilder, ID_INVESTED, getInvested());
         formatValue(myBuilder, ID_HOLDING, getHolding());
-        formatValue(myBuilder, ID_CAPITAL, getCapital());
-        formatValue(myBuilder, ID_NETINTEREST, getNettInterest());
+        formatValue(myBuilder, ID_LOANBOOK, getLoanBook());
         formatValue(myBuilder, ID_INTEREST, getInterest());
+        formatValue(myBuilder, ID_BDINTEREST, getBadDebtInterest());
+        formatValue(myBuilder, ID_BDCAPITAL, getBadDebtCapital());
         formatValue(myBuilder, ID_FEES, getFees());
         formatValue(myBuilder, ID_CASHBACK, getCashBack());
         formatValue(myBuilder, ID_BADDEBT, getBadDebt());
-        formatValue(myBuilder, ID_INVESTED, getInvested());
         formatValue(myBuilder, ID_RECOVERED, getRecovered());
 
         /* Add brackets around the values */
@@ -389,7 +409,7 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
             return theMarket;
         }
         if (FIELD_LOAN.equals(pField)) {
-            L myLoan = getLoan();
+            CoeusLoan myLoan = getLoan();
             return myLoan == null
                                   ? MetisFieldValue.SKIP
                                   : myLoan;
@@ -403,12 +423,6 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
         if (FIELD_TYPE.equals(pField)) {
             return getTransType();
         }
-        if (FIELD_VALUE.equals(pField)) {
-            TethysDecimal myValue = getValue();
-            return myValue.isZero()
-                                    ? MetisFieldValue.SKIP
-                                    : myValue;
-        }
         if (FIELD_INVESTED.equals(pField)) {
             TethysDecimal myInvested = getInvested();
             return myInvested.isZero()
@@ -421,23 +435,29 @@ public abstract class CoeusTransaction<L extends CoeusLoan<L, T, S, H>, T extend
                                       ? MetisFieldValue.SKIP
                                       : myHolding;
         }
-        if (FIELD_CAPITAL.equals(pField)) {
-            TethysDecimal myCapital = getCapital();
+        if (FIELD_LOANBOOK.equals(pField)) {
+            TethysDecimal myCapital = getLoanBook();
             return myCapital.isZero()
                                       ? MetisFieldValue.SKIP
                                       : myCapital;
-        }
-        if (FIELD_NETINTEREST.equals(pField)) {
-            TethysDecimal myInterest = getNettInterest();
-            return myInterest.isZero()
-                                       ? MetisFieldValue.SKIP
-                                       : myInterest;
         }
         if (FIELD_INTEREST.equals(pField)) {
             TethysDecimal myInterest = getInterest();
             return myInterest.isZero()
                                        ? MetisFieldValue.SKIP
                                        : myInterest;
+        }
+        if (FIELD_BADDEBTINTEREST.equals(pField)) {
+            TethysDecimal myInterest = getBadDebtInterest();
+            return myInterest.isZero()
+                                       ? MetisFieldValue.SKIP
+                                       : myInterest;
+        }
+        if (FIELD_BADDEBTCAPITAL.equals(pField)) {
+            TethysDecimal myCapital = getBadDebtCapital();
+            return myCapital.isZero()
+                                      ? MetisFieldValue.SKIP
+                                      : myCapital;
         }
         if (FIELD_FEES.equals(pField)) {
             TethysDecimal myFees = getFees();

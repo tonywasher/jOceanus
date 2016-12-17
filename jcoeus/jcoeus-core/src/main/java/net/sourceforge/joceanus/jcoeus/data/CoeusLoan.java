@@ -22,22 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
-import net.sourceforge.joceanus.jcoeus.CoeusResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Coeus Loan.
- * @param <L> the loan type
- * @param <T> the transaction type
- * @param <S> the totals type
- * @param <H> the history type
  */
-public abstract class CoeusLoan<L extends CoeusLoan<L, T, S, H>, T extends CoeusTransaction<L, T, S, H>, S extends CoeusTotals<L, T, S, H>, H extends CoeusHistory<L, T, S, H>>
+public abstract class CoeusLoan
         implements MetisDataContents {
     /**
      * Report fields.
@@ -60,9 +56,29 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T, S, H>, T extends Coeus
     private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_HISTORY.getValue());
 
     /**
+     * StartDate Field Id.
+     */
+    private static final MetisField FIELD_STARTDATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_STARTDATE.getValue());
+
+    /**
+     * InitialLoan Field Id.
+     */
+    private static final MetisField FIELD_INITIALLOAN = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LENT.getValue());
+
+    /**
+     * LastDate Field Id.
+     */
+    private static final MetisField FIELD_LASTDATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LASTDATE.getValue());
+
+    /**
+     * BadDebtDate Field Id.
+     */
+    private static final MetisField FIELD_BADDEBTDATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBTDATE.getValue());
+
+    /**
      * Loan Market.
      */
-    private final CoeusLoanMarket<L, T, S, H> theMarket;
+    private final CoeusMarket theMarket;
 
     /**
      * Loan Id.
@@ -72,14 +88,39 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T, S, H>, T extends Coeus
     /**
      * The TotalsHistory.
      */
-    private final H theHistory;
+    private final CoeusHistory theHistory;
+
+    /**
+     * The Status.
+     */
+    private CoeusLoanStatus theStatus;
+
+    /**
+     * The Start date.
+     */
+    private TethysDate theStartDate;
+
+    /**
+     * The InitialLoan.
+     */
+    private TethysDecimal theInitialLoan;
+
+    /**
+     * The Last date.
+     */
+    private TethysDate theLastDate;
+
+    /**
+     * The BadDebt date.
+     */
+    private TethysDate theBadDebtDate;
 
     /**
      * Constructor.
      * @param pMarket the loanMarket
      * @param pId the loan Id
      */
-    protected CoeusLoan(final CoeusLoanMarket<L, T, S, H> pMarket,
+    protected CoeusLoan(final CoeusMarket pMarket,
                         final String pId) {
         /* Store parameters */
         theMarket = pMarket;
@@ -87,13 +128,16 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T, S, H>, T extends Coeus
 
         /* Create the histories */
         theHistory = newHistory();
+
+        /* Initial status is Active */
+        theStatus = CoeusLoanStatus.ACTIVE;
     }
 
     /**
      * Obtain the market.
      * @return the market
      */
-    public CoeusLoanMarket<L, T, S, H> getMarket() {
+    public CoeusMarket getMarket() {
         return theMarket;
     }
 
@@ -109,7 +153,7 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T, S, H>, T extends Coeus
      * Obtain the history.
      * @return the history
      */
-    public H getHistory() {
+    public CoeusHistory getHistory() {
         return theHistory;
     }
 
@@ -117,8 +161,16 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T, S, H>, T extends Coeus
      * Obtain the totals.
      * @return the totals
      */
-    public S getTotals() {
+    public CoeusTotals getTotals() {
         return theHistory.getTotals();
+    }
+
+    /**
+     * Obtain the status.
+     * @return the status
+     */
+    public CoeusLoanStatus getStatus() {
+        return theStatus;
     }
 
     /**
@@ -135,18 +187,102 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T, S, H>, T extends Coeus
     }
 
     /**
+     * Obtain the start date.
+     * @return the date
+     */
+    public TethysDate getStartDate() {
+        return theStartDate;
+    }
+
+    /**
+     * Obtain the initialLoan.
+     * @return the loan
+     */
+    public TethysDecimal getInitialLoan() {
+        return theInitialLoan;
+    }
+
+    /**
+     * Obtain the last date.
+     * @return the date
+     */
+    public TethysDate getLastDate() {
+        return theLastDate;
+    }
+
+    /**
+     * Set the badDebt date.
+     * @param pDate the date
+     */
+    public void setBadDebtDate(final TethysDate pDate) {
+        theBadDebtDate = pDate;
+    }
+
+    /**
+     * Obtain the badDebt date.
+     * @return the date
+     */
+    public TethysDate getBadDebtDate() {
+        return theBadDebtDate;
+    }
+
+    /**
+     * Is this a badDebtCapital loan.
+     * @return true/false
+     */
+    public boolean isBadDebtCapital() {
+        return theBadDebtDate != null
+               && CoeusLoanStatus.isCapitalBadDebt(theBadDebtDate);
+    }
+
+    /**
      * Add the transaction to the history.
+     * @param pDate the date
      * @param pTrans the transaction
      */
-    protected void addTransactionToHistory(final T pTrans) {
+    protected void addTransactionToHistory(final TethysDate pDate,
+                                           final CoeusTransaction pTrans) {
+        /* Adjust the history */
         theHistory.addTransactionToHistory(pTrans);
+
+        /* Record dates */
+        theLastDate = pTrans.getDate();
+        if (theStartDate == null) {
+            /* record date and initial loan */
+            theStartDate = theLastDate;
+            theInitialLoan = pTrans.getLoanBook();
+        }
+
+        /* If the loan has zero Capital outstanding */
+        CoeusTotals myTotals = theHistory.getTotals();
+        if (myTotals.getTotalLoanBook().isZero()) {
+            /* Determine outstanding badDebt */
+            TethysDecimal myBadDebt = myTotals.getTotalBadDebt();
+            TethysDecimal myRecovered = myTotals.getTotalRecovered();
+
+            /* Check whether this is a rePaid badDebt */
+            boolean isBadDebt = myBadDebt.isNonZero();
+            boolean isRePaid = myBadDebt.equals(myRecovered);
+
+            /* Must be either badDebt or rePaid */
+            theStatus = isBadDebt && !isRePaid
+                                               ? CoeusLoanStatus.BADDEBT
+                                               : CoeusLoanStatus.REPAID;
+        }
     }
 
     /**
      * New history.
      * @return the history
      */
-    protected abstract H newHistory();
+    protected abstract CoeusHistory newHistory();
+
+    /**
+     * New dated history.
+     * @param pDate the date
+     * @return the history
+     */
+    protected abstract CoeusHistory newHistory(TethysDate pDate);
 
     /**
      * CheckLoan.
@@ -183,6 +319,20 @@ public abstract class CoeusLoan<L extends CoeusLoan<L, T, S, H>, T extends Coeus
         }
         if (FIELD_HISTORY.equals(pField)) {
             return theHistory;
+        }
+        if (FIELD_STARTDATE.equals(pField)) {
+            return theStartDate;
+        }
+        if (FIELD_INITIALLOAN.equals(pField)) {
+            return theInitialLoan;
+        }
+        if (FIELD_LASTDATE.equals(pField)) {
+            return theLastDate;
+        }
+        if (FIELD_BADDEBTDATE.equals(pField)) {
+            return theBadDebtDate == null
+                                          ? MetisFieldValue.SKIP
+                                          : theBadDebtDate;
         }
 
         /* Not recognised */

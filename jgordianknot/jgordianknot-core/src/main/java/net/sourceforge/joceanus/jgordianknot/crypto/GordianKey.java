@@ -54,5 +54,5 @@ public abstract class GordianKey<T> {
      * @param pKeyType the new keyType
      * @return the new key
      */
-    public abstract <X> GordianKey<X> convertToKeyType(final X pKeyType);
+    public abstract <X> GordianKey<X> convertToKeyType(X pKeyType);
 }

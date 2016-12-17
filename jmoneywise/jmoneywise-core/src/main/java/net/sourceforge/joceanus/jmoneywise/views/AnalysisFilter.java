@@ -189,21 +189,21 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @param pTrans the transaction
      * @return the values
      */
-    public abstract BucketValues<?, T> getValuesForTransaction(final Transaction pTrans);
+    public abstract BucketValues<?, T> getValuesForTransaction(Transaction pTrans);
 
     /**
      * Obtain delta value for transaction.
      * @param pTrans the transaction
      * @return the delta value
      */
-    public abstract TethysDecimal getDeltaForTransaction(final Transaction pTrans);
+    public abstract TethysDecimal getDeltaForTransaction(Transaction pTrans);
 
     /**
      * Populate new transaction.
      * @param pBuilder the transaction builder
      * @return the new transaction (or null)
      */
-    public abstract Transaction buildNewTransaction(final TransactionBuilder pBuilder);
+    public abstract Transaction buildNewTransaction(TransactionBuilder pBuilder);
 
     /**
      * is the counter relevant?

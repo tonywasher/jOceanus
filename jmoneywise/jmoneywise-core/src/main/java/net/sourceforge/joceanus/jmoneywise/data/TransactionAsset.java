@@ -79,7 +79,7 @@ public interface TransactionAsset
      * Touch underlying item.
      * @param pItem the object that is touching the item
      */
-    void touchItem(final DataItem<MoneyWiseDataType> pItem);
+    void touchItem(DataItem<MoneyWiseDataType> pItem);
 
     /**
      * Is the account capital?

@@ -971,7 +971,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @param pBase the base bucket
          * @return the new bucket
          */
-        protected abstract B newBucket(final B pBase);
+        protected abstract B newBucket(B pBase);
 
         /**
          * Construct a dated List.
@@ -1003,8 +1003,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @param pDate the Date
          * @return the new bucket
          */
-        protected abstract B newBucket(final B pBase,
-                                       final TethysDate pDate);
+        protected abstract B newBucket(B pBase,
+                                       TethysDate pDate);
 
         /**
          * Construct a ranged List.
@@ -1035,8 +1035,8 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @param pRange the Range
          * @return the new bucket
          */
-        protected abstract B newBucket(final B pBase,
-                                       final TethysDateRange pRange);
+        protected abstract B newBucket(B pBase,
+                                       TethysDateRange pRange);
 
         /**
          * Obtain the AccountBucket for a given account.
@@ -1065,7 +1065,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @param pAccount the Account
          * @return the new bucket
          */
-        protected abstract B newBucket(final T pAccount);
+        protected abstract B newBucket(T pAccount);
 
         /**
          * Mark active accounts.

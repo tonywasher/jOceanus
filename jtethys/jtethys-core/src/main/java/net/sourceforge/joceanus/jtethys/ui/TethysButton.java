@@ -105,7 +105,7 @@ public abstract class TethysButton<N, I>
      * Set text for button.
      * @param pText the text
      */
-    public abstract void setText(final String pText);
+    public abstract void setText(String pText);
 
     /**
      * Obtain the Border Padding.
@@ -143,38 +143,38 @@ public abstract class TethysButton<N, I>
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    public abstract void setPreferredWidth(final Integer pWidth);
+    public abstract void setPreferredWidth(Integer pWidth);
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    public abstract void setPreferredHeight(final Integer pHeight);
+    public abstract void setPreferredHeight(Integer pHeight);
 
     /**
      * Set icon for button.
      * @param <K> the keyId type
      * @param pId the icon Id
      */
-    public abstract <K extends Enum<K> & TethysIconId> void setIcon(final K pId);
+    public abstract <K extends Enum<K> & TethysIconId> void setIcon(K pId);
 
     /**
      * Set icon for button.
      * @param pIcon the icon
      */
-    public abstract void setIcon(final TethysArrowIconId pIcon);
+    public abstract void setIcon(TethysArrowIconId pIcon);
 
     /**
      * Set icon for button.
      * @param pIcon the icon
      */
-    public abstract void setIcon(final I pIcon);
+    public abstract void setIcon(I pIcon);
 
     /**
      * Set toolTip for button.
      * @param pTip the icon
      */
-    public abstract void setToolTip(final String pTip);
+    public abstract void setToolTip(String pTip);
 
     /**
      * Set Null Margins.

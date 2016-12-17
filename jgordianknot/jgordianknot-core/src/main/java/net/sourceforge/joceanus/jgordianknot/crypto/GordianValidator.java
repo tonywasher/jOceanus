@@ -35,5 +35,5 @@ public interface GordianValidator
      * @return the signature
      * @throws OceanusException on error
      */
-    boolean verify(final byte[] pSignature) throws OceanusException;
+    boolean verify(byte[] pSignature) throws OceanusException;
 }

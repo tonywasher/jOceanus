@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui;
 
+import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusAction;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
@@ -82,11 +83,6 @@ public enum PrometheusIcon implements TethysIconId {
      * Cancel.
      */
     CANCEL("icons/OrangeJellyUndo.png");
-
-    /**
-     * Default icon size.
-     */
-    public static final int ICON_SIZE = 24;
 
     /**
      * Delete Button ToolTip.
@@ -162,16 +158,6 @@ public enum PrometheusIcon implements TethysIconId {
     }
 
     /**
-     * Configure button.
-     * @param pButton the button
-     */
-    public static void configureButton(final TethysButton<?, ?> pButton) {
-        pButton.setIconOnly();
-        pButton.setIconWidth(ICON_SIZE);
-        pButton.setNullMargins();
-    }
-
-    /**
      * Configure new scroll button.
      * @param pButton the button manager
      */
@@ -185,7 +171,7 @@ public enum PrometheusIcon implements TethysIconId {
      */
     public static void configureGoToScrollButton(final TethysScrollButtonManager<?, ?, ?> pButton) {
         pButton.setNullMargins();
-        pButton.setSimpleDetails(GOTO, ICON_SIZE, TIP_GOTO);
+        pButton.setSimpleDetails(GOTO, MetisIcon.ICON_SIZE, TIP_GOTO);
     }
 
     /**
@@ -193,7 +179,7 @@ public enum PrometheusIcon implements TethysIconId {
      * @param pButton the button manager
      */
     public static void configureNewIconButton(final TethysButton<?, ?> pButton) {
-        configureButton(pButton);
+        MetisIcon.configureButton(pButton);
         pButton.setIcon(NEW);
         pButton.setToolTip(TIP_NEW);
     }
@@ -203,7 +189,7 @@ public enum PrometheusIcon implements TethysIconId {
      * @param pButton the button manager
      */
     public static void configureEditIconButton(final TethysButton<?, ?> pButton) {
-        configureButton(pButton);
+        MetisIcon.configureButton(pButton);
         pButton.setIcon(EDIT);
         pButton.setToolTip(TIP_EDIT);
     }
@@ -213,7 +199,7 @@ public enum PrometheusIcon implements TethysIconId {
      * @param pButton the button manager
      */
     public static void configureDeleteIconButton(final TethysButton<?, ?> pButton) {
-        configureButton(pButton);
+        MetisIcon.configureButton(pButton);
         pButton.setIcon(DELETE);
         pButton.setToolTip(TIP_DELETE);
     }
@@ -223,7 +209,7 @@ public enum PrometheusIcon implements TethysIconId {
      * @param pButton the button manager
      */
     public static void configureCommitIconButton(final TethysButton<?, ?> pButton) {
-        configureButton(pButton);
+        MetisIcon.configureButton(pButton);
         pButton.setIcon(COMMIT);
         pButton.setToolTip(TIP_COMMIT);
     }
@@ -233,7 +219,7 @@ public enum PrometheusIcon implements TethysIconId {
      * @param pButton the button manager
      */
     public static void configureUndoIconButton(final TethysButton<?, ?> pButton) {
-        configureButton(pButton);
+        MetisIcon.configureButton(pButton);
         pButton.setIcon(UNDO);
         pButton.setToolTip(TIP_UNDO);
     }
@@ -243,7 +229,7 @@ public enum PrometheusIcon implements TethysIconId {
      * @param pButton the button manager
      */
     public static void configureResetIconButton(final TethysButton<?, ?> pButton) {
-        configureButton(pButton);
+        MetisIcon.configureButton(pButton);
         pButton.setIcon(RESET);
         pButton.setToolTip(TIP_RESET);
     }
@@ -253,7 +239,7 @@ public enum PrometheusIcon implements TethysIconId {
      * @param pButton the button manager
      */
     public static void configureCancelIconButton(final TethysButton<?, ?> pButton) {
-        configureButton(pButton);
+        MetisIcon.configureButton(pButton);
         pButton.setIcon(CANCEL);
         pButton.setToolTip(TIP_CANCEL);
     }

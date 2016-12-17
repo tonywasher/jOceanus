@@ -54,7 +54,7 @@ public interface MetisThread<T, N, I> {
      * @return the result
      * @throws OceanusException on error
      */
-    T performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException;
+    T performTask(MetisToolkit<N, I> pToolkit) throws OceanusException;
 
     /**
      * process result.
