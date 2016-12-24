@@ -30,14 +30,14 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldEnum;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
@@ -136,7 +136,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     /**
      * The error panel.
      */
-    private final PrometheusErrorPanel<?, E, JComponent, Icon> theError;
+    private final MetisErrorPanel<JComponent, Icon> theError;
 
     /**
      * The action buttons panel.
@@ -188,7 +188,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Create the error panel */
-        theError = new PrometheusErrorPanel<>(pControl, theViewerEntry);
+        theError = theControl.getToolkit().newErrorPanel(theViewerEntry);
 
         /* Create the action buttons panel */
         theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);

@@ -31,7 +31,8 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketAnnual;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
-import net.sourceforge.joceanus.jcoeus.ui.report.CoeusFilter.CoeusMarketYearFilter;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusMarketYearFilter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
@@ -43,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 /**
  * TaxBook Report.
  */
-public class CoeusReportTaxBook
+public class CoeusReportAnnual
         extends MetisReportBase<CoeusMarketAnnual, CoeusFilter> {
     /**
      * HTML builder.
@@ -64,7 +65,7 @@ public class CoeusReportTaxBook
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected CoeusReportTaxBook(final MetisReportManager<CoeusFilter> pManager) {
+    protected CoeusReportAnnual(final MetisReportManager<CoeusFilter> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();

@@ -40,13 +40,13 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.C
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
-import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseSpotRatesSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
@@ -165,7 +165,7 @@ public class SpotRatesTable
     /**
      * The error panel.
      */
-    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel<JComponent, Icon> theError;
 
     /**
      * The exchange rates list.
@@ -223,7 +223,7 @@ public class SpotRatesTable
         theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new MoneyWiseErrorPanel<>(theView, theViewerPrice);
+        theError = theView.getToolkit().newErrorPanel(theViewerPrice);
 
         /* Create the header panel */
         JPanel myHeader = new TethysSwingEnablePanel();

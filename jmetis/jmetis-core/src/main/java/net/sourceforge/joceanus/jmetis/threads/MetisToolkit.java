@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPrefere
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelPair;
 import net.sourceforge.joceanus.jmetis.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
@@ -228,6 +229,15 @@ public abstract class MetisToolkit<N, I> {
      * @return the help Window
      */
     public abstract TethysHelpWindow<N, I> newHelpWindow();
+
+    /**
+     * Create a ErrorPanel.
+     * @param pParent the parent viewer entry
+     * @return the error panel
+     */
+    public MetisErrorPanel<N, I> newErrorPanel(final MetisViewerEntry pParent) {
+        return new MetisErrorPanel<>(theGuiFactory, theViewerManager, pParent);
+    }
 
     /**
      * Create a Viewer Window.

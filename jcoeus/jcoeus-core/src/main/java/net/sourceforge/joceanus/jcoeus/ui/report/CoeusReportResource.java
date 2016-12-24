@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMetis: Java Data Framework
+ * jCoeus: Peer2Peer Analysis
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,44 +20,44 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.ui;
+package net.sourceforge.joceanus.jcoeus.ui.report;
 
+import java.util.EnumMap;
+import java.util.Map;
+
+import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
- * Resource IDs for jMetis UI Fields.
+ * Resource IDs for Coeus Reports.
  */
-public enum MetisUIResource implements TethysResourceId {
+public enum CoeusReportResource
+        implements TethysResourceId {
     /**
-     * Download ToolTip.
+     * BalanceSheet ReportType.
      */
-    ICON_DOWNLOAD("icons.Tip.Download"),
+    REPORTTYPE_BALANCESHEET("BalanceSheet"),
 
     /**
-     * Print ToolTip.
+     * LoanBook ReportType.
      */
-    ICON_PRINT("icons.Tip.Print"),
+    REPORTTYPE_LOANBOOK("LoanBook"),
 
     /**
-     * Save ToolTip.
+     * Annual ReportType.
      */
-    ICON_SAVE("icons.Tip.SaveToFile"),
+    REPORTTYPE_ANNUAL("Annual");
 
     /**
-     * ErrorPanel Clear Button.
+     * The Report Map.
      */
-    ERROR_BUTTON_CLEAR("ErrorPanel.Button.Clear"),
-
-    /**
-     * ErrorPanel Title.
-     */
-    ERROR_TITLE("ErrorPanel.Title");
+    private static final Map<CoeusReportType, TethysResourceId> REPORT_MAP = buildReportMap();
 
     /**
      * The Resource Builder.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MetisUIResource.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(CoeusDataException.class.getCanonicalName());
 
     /**
      * The Id.
@@ -73,7 +73,7 @@ public enum MetisUIResource implements TethysResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    MetisUIResource(final String pKeyName) {
+    CoeusReportResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 
@@ -84,7 +84,7 @@ public enum MetisUIResource implements TethysResourceId {
 
     @Override
     public String getNameSpace() {
-        return "jMetis.ui";
+        return "coeus.report";
     }
 
     @Override
@@ -97,5 +97,27 @@ public enum MetisUIResource implements TethysResourceId {
 
         /* return the value */
         return theValue;
+    }
+
+    /**
+     * Build report map.
+     * @return the map
+     */
+    private static Map<CoeusReportType, TethysResourceId> buildReportMap() {
+        /* Create the map and return it */
+        Map<CoeusReportType, TethysResourceId> myMap = new EnumMap<>(CoeusReportType.class);
+        myMap.put(CoeusReportType.BALANCESHEET, REPORTTYPE_BALANCESHEET);
+        myMap.put(CoeusReportType.LOANBOOK, REPORTTYPE_LOANBOOK);
+        myMap.put(CoeusReportType.ANNUAL, REPORTTYPE_ANNUAL);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for report type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    protected static TethysResourceId getKeyForReportType(final CoeusReportType pValue) {
+        return TethysResourceBuilder.getKeyForEnum(REPORT_MAP, pValue);
     }
 }

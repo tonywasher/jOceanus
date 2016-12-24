@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+ * jCoeus: Peer2Peer Analysis
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,116 +20,114 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui.swing;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
+package net.sourceforge.joceanus.jcoeus.ui.panels;
 
 import org.w3c.dom.Document;
 
+import net.sourceforge.joceanus.jcoeus.CoeusDataException;
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarketAnnual;
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSnapShot;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
+import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportBuilder;
+import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportResource;
+import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportType;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.report.MetisReportEvent;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportBuilder;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportResource;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportType;
-import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
-import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
-import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseReportSelect;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusViewerEntryId;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
+import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 
 /**
- * Report panel.
+ * Report Panel.
+ * @param <N> the node type
+ * @param <I> the icon type
  */
-public class ReportTab
-        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
-    /**
-     * Text for DataEntry Title.
-     */
-    private static final String NLS_DATAENTRY = MoneyWiseUIResource.REPORT_DATAENTRY.getValue();
-
+public abstract class CoeusReportPanel<N, I>
+        implements TethysEventProvider<CoeusDataEvent>, TethysNode<N> {
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<CoeusDataEvent> theEventManager;
 
     /**
-     * The Data View.
+     * The Toolkit.
      */
-    private final SwingView theView;
+    private final MetisToolkit<N, I> theToolkit;
+
+    /**
+     * The MarketCache.
+     */
+    private final CoeusMarketCache theCache;
 
     /**
      * The Panel.
      */
-    private final TethysSwingBorderPaneManager thePanel;
+    private final TethysBorderPaneManager<N, I> thePanel;
 
     /**
      * The HTML pane.
      */
-    private final TethysSwingHTMLManager theHTMLPane;
+    private final TethysHTMLManager<N, I> theHTMLPane;
 
     /**
      * The Report selection Panel.
      */
-    private final MoneyWiseReportSelect<JComponent, Icon> theSelect;
+    private final CoeusReportSelect<N, I> theSelect;
 
     /**
-     * The Spot Analysis Entry.
+     * The Market Entry.
      */
-    private final MetisViewerEntry theSpotEntry;
+    private final MetisViewerEntry theMarketEntry;
 
     /**
      * The Error Panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel<N, I> theError;
 
     /**
      * The Report Manager.
      */
-    private final MetisReportManager<AnalysisFilter<?, ?>> theManager;
+    private final MetisReportManager<CoeusFilter> theManager;
 
     /**
      * The ReportBuilder.
      */
-    private final MoneyWiseReportBuilder theBuilder;
+    private final CoeusReportBuilder theBuilder;
 
     /**
-     * Constructor for Report Window.
-     * @param pView the data view
+     * Constructor.
+     * @param pToolkit the toolkit
+     * @param pCache the market cache
      * @throws OceanusException on error
      */
-    public ReportTab(final SwingView pView) throws OceanusException {
-        /* Store the view */
-        theView = pView;
+    public CoeusReportPanel(final MetisToolkit<N, I> pToolkit,
+                            final CoeusMarketCache pCache) throws OceanusException {
+        /* Store the parameters */
+        theToolkit = pToolkit;
+        theCache = pCache;
 
-        /* Access GUI Factory */
-        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        /* Access the GUI factory */
+        TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -138,50 +136,45 @@ public class ReportTab
         thePanel = myFactory.newBorderPane();
 
         /* Create the top level debug entry for this view */
-        MetisViewerManager myDataMgr = theView.getViewerManager();
-        MetisViewerEntry mySection = theView.getViewerEntry(PrometheusViewerEntryId.VIEW);
-        MetisViewerEntry myReport = myDataMgr.newEntry(mySection, NLS_DATAENTRY);
-        theSpotEntry = myDataMgr.newEntry(myReport, PrometheusViewerEntryId.ANALYSIS.toString());
-        theSpotEntry.setVisible(false);
+        MetisViewerManager myDataMgr = pToolkit.getViewerManager();
+        MetisViewerEntry mySection = myDataMgr.getStandardEntry(MetisViewerStandardEntry.VIEW);
+        MetisViewerEntry myReport = myDataMgr.newEntry(mySection, "Report");
+        theMarketEntry = myDataMgr.newEntry(myReport, "Market");
+        theMarketEntry.setVisible(false);
 
         /* Create the HTML Pane */
         theHTMLPane = myFactory.newHTMLManager();
 
         /* Create Report Manager */
-        theManager = new MetisReportManager<>(new MetisReportHTMLBuilder(pView.getDataFormatter()));
+        theManager = new MetisReportManager<>(new MetisReportHTMLBuilder(pToolkit.getFormatter()));
 
         /* Create the report builder */
-        theBuilder = new MoneyWiseReportBuilder(theManager);
+        theBuilder = new CoeusReportBuilder(theManager);
 
         /* Create the Report Selection panel */
-        theSelect = new MoneyWiseReportSelect<>(myFactory);
+        theSelect = new CoeusReportSelect<>(myFactory);
 
         /* Create the error panel for this view */
-        theError = theView.getToolkit().newErrorPanel(myReport);
+        theError = theToolkit.newErrorPanel(myReport);
 
         /* Create a scroll pane */
-        TethysSwingScrollPaneManager myHTMLScroll = myFactory.newScrollPane();
+        TethysScrollPaneManager<N, I> myHTMLScroll = myFactory.newScrollPane();
         myHTMLScroll.setContent(theHTMLPane);
 
-        /* Create the header panel */
-        TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
-        myHeader.setCentre(theSelect);
-        myHeader.setNorth(theError);
-
         /* Now define the panel */
-        thePanel.setNorth(myHeader);
+        thePanel.setNorth(theSelect);
         thePanel.setCentre(myHTMLScroll);
 
         /* Load the CSS */
         loadCSS("MoneyWiseReports.css");
 
         /* Create listeners */
-        theView.getEventRegistrar().addEventListener(e -> refreshData());
-        theManager.getEventRegistrar().addEventListener(this::handleGoToRequest);
+        theCache.getEventRegistrar().addEventListener(e -> refreshData());
         theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
-        TethysEventRegistrar<PrometheusDataEvent> myRegistrar = theSelect.getEventRegistrar();
-        myRegistrar.addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
-        myRegistrar.addEventListener(PrometheusDataEvent.PRINT, e -> theHTMLPane.printIt());
+        theManager.getEventRegistrar().addEventListener(this::handleGoToRequest);
+        TethysEventRegistrar<CoeusDataEvent> myRegistrar = theSelect.getEventRegistrar();
+        myRegistrar.addEventListener(CoeusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
+        myRegistrar.addEventListener(CoeusDataEvent.PRINT, e -> theHTMLPane.printIt());
         theHTMLPane.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -> {
             theManager.processReference(e.getDetails(String.class), theHTMLPane);
             e.consume();
@@ -194,18 +187,17 @@ public class ReportTab
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public TethysEventRegistrar<CoeusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
     @Override
-    public JComponent getNode() {
+    public N getNode() {
         return thePanel.getNode();
     }
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        /* Pass on to important elements */
         theSelect.setEnabled(pEnabled);
         theError.setEnabled(pEnabled);
         theHTMLPane.setEnabled(pEnabled);
@@ -222,7 +214,7 @@ public class ReportTab
      * @throws OceanusException on error
      */
     private void loadCSS(final String pName) throws OceanusException {
-        String myCSS = TethysResourceBuilder.loadResourceToString(MoneyWiseReportResource.class, pName);
+        String myCSS = TethysResourceBuilder.loadResourceToString(CoeusReportResource.class, pName);
         theHTMLPane.setCSSContent(myCSS);
     }
 
@@ -231,23 +223,23 @@ public class ReportTab
      */
     private void refreshData() {
         /* Obtain the active profile */
-        MetisProfile myTask = theView.getActiveTask();
+        MetisProfile myTask = theToolkit.getActiveTask();
         myTask = myTask.startTask("Reports");
 
         /* Protect against exceptions */
         try {
             /* Hide the instant debug since it is now invalid */
-            theSpotEntry.setVisible(false);
+            theMarketEntry.setVisible(false);
 
             /* Refresh the data */
-            theSelect.setRange(theView.getRange());
             buildReport();
 
             /* Create SavePoint */
             theSelect.createSavePoint();
         } catch (OceanusException e) {
             /* Show the error */
-            theView.addError(e);
+            theError.addError(e);
+            handleErrorPane();
 
             /* Restore SavePoint */
             theSelect.restoreSavePoint();
@@ -263,37 +255,32 @@ public class ReportTab
      */
     private void buildReport() throws OceanusException {
         /* Access the values from the selection */
-        MoneyWiseReportType myReportType = theSelect.getReportType();
-        TethysDateRange myRange = theSelect.getDateRange();
-        AnalysisManager myManager = theView.getAnalysisManager();
+        CoeusReportType myReportType = theSelect.getReportType();
+        CoeusMarketProvider myMarket = theSelect.getMarket();
+        TethysDate myDate = theSelect.getDate();
         Document myDoc;
-        Analysis myAnalysis;
 
         /* set lockDown of selection */
         theSelect.setEnabled(true);
 
-        /* Skip if we have no analysis */
-        if (myManager.isIdle()) {
+        /* Skip if we have no markets */
+        if (theCache.isIdle()) {
             return;
         }
 
         /* Switch on report type */
         switch (myReportType) {
-            case NETWORTH:
-            case PORTFOLIO:
-            case CAPITALGAINS:
-                myAnalysis = myManager.getAnalysis(myRange.getEnd());
-                myDoc = theBuilder.createReport(myAnalysis, myReportType);
+            case ANNUAL:
+                CoeusMarketAnnual myAnnual = theCache.getAnnual(myMarket, myDate);
+                theMarketEntry.setObject(myAnnual);
+                myDoc = theBuilder.createReport(myReportType, myAnnual);
                 break;
 
             case BALANCESHEET:
-            case CASHFLOW:
-            case INCOMEEXPENSE:
-            case MARKETGROWTH:
-            case TAXBASIS:
-            case TAXCALC:
-                myAnalysis = myManager.getAnalysis(myRange);
-                myDoc = theBuilder.createReport(myAnalysis, myReportType);
+            case LOANBOOK:
+                CoeusMarketSnapShot mySnapShot = theCache.getSnapShot(myMarket, myDate);
+                theMarketEntry.setObject(mySnapShot);
+                myDoc = theBuilder.createReport(myReportType, mySnapShot);
                 break;
 
             default:
@@ -301,8 +288,7 @@ public class ReportTab
         }
 
         /* Declare to debugger */
-        theSpotEntry.setObject(myAnalysis);
-        theSpotEntry.setVisible(true);
+        theMarketEntry.setVisible(true);
 
         /* Declare the document */
         theManager.setDocument(myDoc);
@@ -331,13 +317,11 @@ public class ReportTab
      * @param pEvent the event
      */
     private void handleGoToRequest(final TethysEvent<MetisReportEvent> pEvent) {
-        /* Create the details of the report */
-        TethysDateRangeSelector<JComponent, Icon> mySelect = theSelect.getDateRangeSelector();
-        AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
-        StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(mySelect, myFilter);
+        /* Create the details of the request */
+        CoeusFilter myFilter = pEvent.getDetails(CoeusFilter.class);
 
         /* Request the action */
-        theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, new PrometheusGoToEvent<>(MoneyWiseGoToId.STATEMENT, myStatement));
+        theEventManager.fireEvent(CoeusDataEvent.GOTOSTATEMENT, myFilter);
     }
 
     /**
@@ -355,7 +339,7 @@ public class ReportTab
             /* Catch Exceptions */
         } catch (OceanusException e) {
             /* Build the error */
-            OceanusException myError = new MoneyWiseDataException("Failed to change selection", e);
+            OceanusException myError = new CoeusDataException("Failed to change selection", e);
 
             /* Show the error */
             theError.addError(myError);

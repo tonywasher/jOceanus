@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.Ico
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -44,7 +45,6 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Region;
 import net.sourceforge.joceanus.jmoneywise.data.Region.RegionList;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
-import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.RegionPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
@@ -107,7 +107,7 @@ public class RegionTable
     /**
      * The error panel.
      */
-    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel<JComponent, Icon> theError;
 
     /**
      * The Table Model.
@@ -157,7 +157,7 @@ public class RegionTable
      */
     public RegionTable(final SwingView pView,
                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                       final MoneyWiseErrorPanel<JComponent, Icon> pError) {
+                       final MetisErrorPanel<JComponent, Icon> pError) {
         /* initialise the underlying class */
         super(pView.getGuiFactory());
 

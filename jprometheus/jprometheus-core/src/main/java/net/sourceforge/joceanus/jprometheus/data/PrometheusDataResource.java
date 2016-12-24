@@ -59,11 +59,6 @@ public enum PrometheusDataResource implements TethysResourceId {
     DATASET_SECURITY("DataSet.Security"),
 
     /**
-     * DataErrorList Name.
-     */
-    ERRORLIST_NAME("ErrorList.Name"),
-
-    /**
      * DataItem Name.
      */
     DATAITEM_NAME("DataItem.Name"),
@@ -207,11 +202,6 @@ public enum PrometheusDataResource implements TethysResourceId {
      * DataList Style.
      */
     DATALIST_STYLE("DataList.Style"),
-
-    /**
-     * DataList Size.
-     */
-    DATALIST_SIZE("DataList.Size"),
 
     /**
      * DataList Maps.

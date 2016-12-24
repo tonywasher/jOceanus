@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPrometheus: Application Framework
+ * jMetis: Java Data Framework
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,21 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.data;
+package net.sourceforge.joceanus.jmetis.data;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
  * Report-able object list.
  * @param <T> the object type
  */
-public class DataErrorList<T extends MetisDataContents>
+public class MetisErrorList<T extends MetisDataContents>
         extends ArrayList<T>
         implements MetisDataContents {
     /**
@@ -45,12 +43,12 @@ public class DataErrorList<T extends MetisDataContents>
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.ERRORLIST_NAME.getValue());
+    private static final MetisFields FIELD_DEFS = new MetisFields(MetisDataResource.ERRORLIST_NAME.getValue());
 
     /**
      * Size Field Id.
      */
-    public static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+    public static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
 
     @Override
     public MetisFields getDataFields() {
@@ -77,7 +75,7 @@ public class DataErrorList<T extends MetisDataContents>
      * Add elements.
      * @param pValues the list of values to add
      */
-    public void addList(final DataErrorList<T> pValues) {
+    public void addList(final MetisErrorList<T> pValues) {
         /* Loop through the new values */
         Iterator<T> myIterator = pValues.iterator();
         while (myIterator.hasNext()) {

@@ -20,22 +20,35 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jcoeus.data;
+package net.sourceforge.joceanus.jcoeus.ui;
 
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarketAnnual;
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSet;
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSnapShot;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Loan MarketCache.
  */
-public class CoeusMarketCache {
+public class CoeusMarketCache
+        implements TethysEventProvider<CoeusDataEvent> {
     /**
      * The MarketSet.
      */
     private CoeusMarketSet theMarketSet;
+
+    /**
+     * The Event Manager.
+     */
+    private final TethysEventManager<CoeusDataEvent> theEventManager;
 
     /**
      * The Map of MarketSnapShots.
@@ -51,9 +64,17 @@ public class CoeusMarketCache {
      * Constructor.
      */
     public CoeusMarketCache() {
+        /* Create Event Manager */
+        theEventManager = new TethysEventManager<>();
+
         /* Create the maps */
         theSnapShotMap = new EnumMap<>(CoeusMarketProvider.class);
         theAnnualMap = new EnumMap<>(CoeusMarketProvider.class);
+    }
+
+    @Override
+    public TethysEventRegistrar<CoeusDataEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -111,6 +132,14 @@ public class CoeusMarketCache {
     }
 
     /**
+     * Is the cache idle?
+     * @return true/false
+     */
+    public boolean isIdle() {
+        return theMarketSet == null;
+    }
+
+    /**
      * Declare marketSet.
      * @param pMarketSet the market set
      */
@@ -125,5 +154,6 @@ public class CoeusMarketCache {
     private void resetMaps() {
         theSnapShotMap.clear();
         theAnnualMap.clear();
+        theEventManager.fireEvent(CoeusDataEvent.REFRESHVIEW);
     }
 }

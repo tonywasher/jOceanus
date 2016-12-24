@@ -48,6 +48,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.D
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -63,7 +64,6 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.AnalysisColumnSet;
-import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
@@ -281,7 +281,7 @@ public class TransactionTable
     /**
      * The error panel.
      */
-    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel<JComponent, Icon> theError;
 
     /**
      * The table model.
@@ -381,7 +381,7 @@ public class TransactionTable
         theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new MoneyWiseErrorPanel<>(theView, myRegister);
+        theError = theView.getToolkit().newErrorPanel(myRegister);
 
         /* Create the table model */
         theModel = new AnalysisTableModel(this);

@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.Ico
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -48,7 +49,6 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
-import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TaxYearPanel;
@@ -124,7 +124,7 @@ public class TaxYearTable
     /**
      * The error panel.
      */
-    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel<JComponent, Icon> theError;
 
     /**
      * Action Buttons.
@@ -190,7 +190,7 @@ public class TaxYearTable
         theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new MoneyWiseErrorPanel<>(theView, theViewerEntry);
+        theError = theView.getToolkit().newErrorPanel(theViewerEntry);
 
         /* Create the action buttons */
         theActionButtons = new PrometheusActionButtons<>(pView.getUtilitySet().getGuiFactory(), theUpdateSet, false);

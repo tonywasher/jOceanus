@@ -81,7 +81,17 @@ public enum MetisDataResource implements TethysResourceId {
     /**
      * Profile Hidden Field.
      */
-    PROFILE_HIDDEN("profile.Hidden");
+    PROFILE_HIDDEN("profile.Hidden"),
+
+    /**
+     * List Size.
+     */
+    LIST_SIZE("List.Size"),
+
+    /**
+     * ErrorList Name.
+     */
+    ERRORLIST_NAME("ErrorList.Name");
 
     /**
      * The Difference Map.

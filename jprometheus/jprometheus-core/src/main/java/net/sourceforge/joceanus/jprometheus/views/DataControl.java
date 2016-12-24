@@ -29,6 +29,7 @@ import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisErrorList;
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
@@ -37,7 +38,6 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSpreadSheet;
@@ -74,7 +74,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
     /**
      * The Error List.
      */
-    private final DataErrorList<MetisExceptionWrapper> theErrors;
+    private final MetisErrorList<MetisExceptionWrapper> theErrors;
 
     /**
      * The Frame.
@@ -87,7 +87,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
     private final JOceanusUtilitySet<N, I> theUtilitySet;
 
     /**
-     * The Active Profile.
+     * The Toolkit.
      */
     private final MetisToolkit<N, I> theToolkit;
 
@@ -116,7 +116,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
         theEventManager = new TethysEventManager<>();
 
         /* Create the error list */
-        theErrors = new DataErrorList<>();
+        theErrors = new MetisErrorList<>();
     }
 
     @Override
@@ -206,7 +206,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * Obtain current error.
      * @return the current Error
      */
-    public DataErrorList<MetisExceptionWrapper> getErrors() {
+    public MetisErrorList<MetisExceptionWrapper> getErrors() {
         return theErrors;
     }
 
@@ -272,6 +272,14 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      */
     public TethysGuiFactory<N, I> getGuiFactory() {
         return theToolkit.getGuiFactory();
+    }
+
+    /**
+     * Obtain Toolkit.
+     * @return the Toolkit
+     */
+    public MetisToolkit<N, I> getToolkit() {
+        return theToolkit;
     }
 
     /**

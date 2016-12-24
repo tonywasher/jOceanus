@@ -529,7 +529,7 @@ public enum CoeusResource
 
     @Override
     public String getNameSpace() {
-        return "coeus";
+        return "coeus.ui";
     }
 
     @Override

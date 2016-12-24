@@ -33,10 +33,10 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemActions;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions;
@@ -115,7 +115,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * The ErrorPanel.
      */
-    private final PrometheusErrorPanel<?, E, JComponent, Icon> theError;
+    private final MetisErrorPanel<JComponent, Icon> theError;
 
     /**
      * The MainPanel.
@@ -168,7 +168,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     protected DataItemPanel(final TethysSwingGuiFactory pFactory,
                             final MetisFieldManager pFieldMgr,
                             final UpdateSet<E> pUpdateSet,
-                            final PrometheusErrorPanel<?, E, JComponent, Icon> pError) {
+                            final MetisErrorPanel<JComponent, Icon> pError) {
         /* Store parameters */
         theUpdateSet = pUpdateSet;
         theError = pError;

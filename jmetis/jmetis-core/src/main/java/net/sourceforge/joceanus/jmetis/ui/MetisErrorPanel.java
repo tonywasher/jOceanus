@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPrometheus: Application Framework
+ * jMetis: Java Data Framework
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,17 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui;
+package net.sourceforge.joceanus.jmetis.ui;
 
+import net.sourceforge.joceanus.jmetis.data.MetisErrorList;
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jprometheus.views.ErrorDisplay;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusViewerEntryId;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -43,27 +39,25 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Error panel.
- * @param <T> the DataSet type
- * @param <E> the data type enum class
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class PrometheusErrorPanel<T extends DataSet<T, E>, E extends Enum<E>, N, I>
-        implements ErrorDisplay, TethysEventProvider<PrometheusDataEvent>, TethysNode<N> {
+public class MetisErrorPanel<N, I>
+        implements TethysEventProvider<MetisUIEvent>, TethysNode<N> {
     /**
      * Text for Clear Button.
      */
-    private static final String NLS_CLEAR = PrometheusUIResource.ERROR_BUTTON_CLEAR.getValue();
+    private static final String NLS_CLEAR = MetisUIResource.ERROR_BUTTON_CLEAR.getValue();
 
     /**
      * Text for Box title.
      */
-    private static final String NLS_TITLE = PrometheusUIResource.ERROR_TITLE.getValue();
+    private static final String NLS_TITLE = MetisUIResource.ERROR_TITLE.getValue();
 
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final TethysEventManager<MetisUIEvent> theEventManager;
 
     /**
      * The Panel.
@@ -88,36 +82,34 @@ public class PrometheusErrorPanel<T extends DataSet<T, E>, E extends Enum<E>, N,
     /**
      * The error itself.
      */
-    private final DataErrorList<MetisExceptionWrapper> theErrors;
+    private final MetisErrorList<MetisExceptionWrapper> theErrors;
 
     /**
      * Constructor.
-     * @param pControl the data control
-     * @param pParent the parent data entry
+     * @param pFactory the GUI factory
+     * @param pViewerMgr the Viewer manager
+     * @param pParent the parent viewer entry
      */
-    public PrometheusErrorPanel(final DataControl<T, E, N, I> pControl,
-                                final MetisViewerEntry pParent) {
-        /* Access components from control */
-        TethysGuiFactory<N, I> myFactory = pControl.getGuiFactory();
-        MetisViewerManager myViewer = pControl.getViewerManager();
-
-        /* Create the error debug entry for this view */
-        theViewerError = myViewer.newEntry(pParent, PrometheusViewerEntryId.ERROR.toString());
+    public MetisErrorPanel(final TethysGuiFactory<N, I> pFactory,
+                           final MetisViewerManager pViewerMgr,
+                           final MetisViewerEntry pParent) {
+        /* Create the error viewer entry for this view */
+        theViewerError = pViewerMgr.newEntry(pParent, MetisViewerStandardEntry.ERROR.toString());
         theViewerError.setVisible(false);
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the error list */
-        theErrors = new DataErrorList<>();
+        theErrors = new MetisErrorList<>();
         theViewerError.setObject(theErrors);
 
         /* Create the error field */
-        theErrorField = myFactory.newLabel();
+        theErrorField = pFactory.newLabel();
         theErrorField.setErrorText();
 
         /* Create the clear button */
-        theClearButton = myFactory.newButton();
+        theClearButton = pFactory.newButton();
         theClearButton.setTextOnly();
         theClearButton.setText(NLS_CLEAR);
 
@@ -125,7 +117,7 @@ public class PrometheusErrorPanel<T extends DataSet<T, E>, E extends Enum<E>, N,
         theClearButton.getEventRegistrar().addEventListener(e -> clearErrors());
 
         /* Create the error panel */
-        thePanel = myFactory.newHBoxPane();
+        thePanel = pFactory.newHBoxPane();
         thePanel.setBorderTitle(NLS_TITLE);
 
         /* Define the layout */
@@ -147,7 +139,7 @@ public class PrometheusErrorPanel<T extends DataSet<T, E>, E extends Enum<E>, N,
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public TethysEventRegistrar<MetisUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -188,7 +180,7 @@ public class PrometheusErrorPanel<T extends DataSet<T, E>, E extends Enum<E>, N,
         setErrorText(pException.getMessage());
 
         /* Notify listeners */
-        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
+        theEventManager.fireEvent(MetisUIEvent.VISIBILITY);
     }
 
     /**
@@ -203,8 +195,11 @@ public class PrometheusErrorPanel<T extends DataSet<T, E>, E extends Enum<E>, N,
         thePanel.setVisible(true);
     }
 
-    @Override
-    public void setErrors(final DataErrorList<MetisExceptionWrapper> pExceptions) {
+    /**
+     * Set error list
+     * @param pExceptions the error list
+     */
+    public void setErrors(final MetisErrorList<MetisExceptionWrapper> pExceptions) {
         /* If we currently have an error */
         if (hasError()) {
             /* Clear the error */
@@ -225,7 +220,7 @@ public class PrometheusErrorPanel<T extends DataSet<T, E>, E extends Enum<E>, N,
         }
 
         /* Notify listeners */
-        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
+        theEventManager.fireEvent(MetisUIEvent.VISIBILITY);
     }
 
     /**
@@ -243,6 +238,6 @@ public class PrometheusErrorPanel<T extends DataSet<T, E>, E extends Enum<E>, N,
         setVisible(false);
 
         /* Notify listeners */
-        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
+        theEventManager.fireEvent(MetisUIEvent.VISIBILITY);
     }
 }

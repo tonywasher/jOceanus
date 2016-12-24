@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMetis: Java Data Framework
+ * jCoeus: Peer2Peer Analysis
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,44 +20,36 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.ui;
+package net.sourceforge.joceanus.jcoeus.ui.panels;
 
+import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
- * Resource IDs for jMetis UI Fields.
+ * Resource IDs for Coeus UI.
  */
-public enum MetisUIResource implements TethysResourceId {
+public enum CoeusUIResource
+        implements TethysResourceId {
     /**
-     * Download ToolTip.
+     * Report Selection Title.
      */
-    ICON_DOWNLOAD("icons.Tip.Download"),
+    REPORT_TITLE("report.selection"),
 
     /**
-     * Print ToolTip.
+     * ReportType prompt.
      */
-    ICON_PRINT("icons.Tip.Print"),
+    REPORT_PROMPT("report.type"),
 
     /**
-     * Save ToolTip.
+     * Market prompt.
      */
-    ICON_SAVE("icons.Tip.SaveToFile"),
-
-    /**
-     * ErrorPanel Clear Button.
-     */
-    ERROR_BUTTON_CLEAR("ErrorPanel.Button.Clear"),
-
-    /**
-     * ErrorPanel Title.
-     */
-    ERROR_TITLE("ErrorPanel.Title");
+    MARKET_PROMPT("market.prompt");
 
     /**
      * The Resource Builder.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MetisUIResource.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(CoeusDataException.class.getCanonicalName());
 
     /**
      * The Id.
@@ -73,7 +65,7 @@ public enum MetisUIResource implements TethysResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    MetisUIResource(final String pKeyName) {
+    CoeusUIResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 
@@ -84,7 +76,7 @@ public enum MetisUIResource implements TethysResourceId {
 
     @Override
     public String getNameSpace() {
-        return "jMetis.ui";
+        return "coeus.ui";
     }
 
     @Override

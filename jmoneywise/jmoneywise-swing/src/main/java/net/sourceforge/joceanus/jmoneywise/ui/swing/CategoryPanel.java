@@ -26,6 +26,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -36,7 +37,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Region;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
-import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
@@ -173,7 +173,7 @@ public class CategoryPanel
     /**
      * The error panel.
      */
-    private final MoneyWiseErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel<JComponent, Icon> theError;
 
     /**
      * Are we refreshing?
@@ -212,7 +212,7 @@ public class CategoryPanel
         theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Create the error panel */
-        theError = new MoneyWiseErrorPanel<>(pView, theViewerEntry);
+        theError = pView.getToolkit().newErrorPanel(theViewerEntry);
 
         /* Create the action buttons panel */
         theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);

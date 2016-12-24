@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+ * jCoeus: Peer2Peer Analysis
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,28 +20,34 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui;
-
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusErrorPanel;
+package net.sourceforge.joceanus.jcoeus.ui;
 
 /**
- * Error panel.
- * @param <N> the node type
- * @param <I> the icon type
+ * DataEvents.
  */
-public class MoneyWiseErrorPanel<N, I>
-        extends PrometheusErrorPanel<MoneyWiseData, MoneyWiseDataType, N, I> {
+public enum CoeusDataEvent {
     /**
-     * Constructor.
-     * @param pView the view
-     * @param pParent the parent data entry
+     * Refresh View.
      */
-    public MoneyWiseErrorPanel(final View<N, I> pView,
-                               final MetisViewerEntry pParent) {
-        super(pView, pParent);
-    }
+    REFRESHVIEW,
+
+    /**
+     * Statement.
+     */
+    GOTOSTATEMENT,
+
+    /**
+     * Selection Changed.
+     */
+    SELECTIONCHANGED,
+
+    /**
+     * Print.
+     */
+    PRINT,
+
+    /**
+     * SaveToFile.
+     */
+    SAVETOFILE;
 }

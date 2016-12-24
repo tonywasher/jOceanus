@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPrometheus: Application Framework
+ * jMetis: Java Data Framework
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,19 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.views;
-
-import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
+package net.sourceforge.joceanus.jmetis.ui;
 
 /**
- * Interface to Error Panel.
+ * Metis UI Events.
  */
-@FunctionalInterface
-public interface ErrorDisplay {
+public enum MetisUIEvent {
     /**
-     * Set error list for window.
-     * @param pExceptions the exceptions
+     * VisibilityChanged.
      */
-    void setErrors(DataErrorList<MetisExceptionWrapper> pExceptions);
+    VISIBILITY;
 }

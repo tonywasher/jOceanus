@@ -31,12 +31,13 @@ import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisErrorList;
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
@@ -601,7 +602,7 @@ public class UpdateSet<E extends Enum<E>>
      * @param pError the error panel
      */
     public void processCommand(final PrometheusUIEvent pCmd,
-                               final ErrorDisplay pError) {
+                               final MetisErrorPanel<?, ?> pError) {
         /* Create a new profile */
         MetisProfile myTask = theControl.getNewProfile("EditCommand");
 
@@ -621,7 +622,7 @@ public class UpdateSet<E extends Enum<E>>
         }
 
         /* Access any error */
-        DataErrorList<MetisExceptionWrapper> myErrors = theControl.getErrors();
+        MetisErrorList<MetisExceptionWrapper> myErrors = theControl.getErrors();
 
         /* Show the error */
         if (!myErrors.isEmpty()) {
@@ -640,7 +641,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     public void processEditCommand(final PrometheusUIEvent pCmd,
                                    final int pVersion,
-                                   final ErrorDisplay pError) {
+                                   final MetisErrorPanel<?, ?> pError) {
         /* Create a new profile */
         MetisProfile myTask = theControl.getNewProfile("ItemCommand");
 
@@ -660,7 +661,7 @@ public class UpdateSet<E extends Enum<E>>
         }
 
         /* Access any error */
-        DataErrorList<MetisExceptionWrapper> myErrors = theControl.getErrors();
+        MetisErrorList<MetisExceptionWrapper> myErrors = theControl.getErrors();
 
         /* Show the error */
         if (!myErrors.isEmpty()) {

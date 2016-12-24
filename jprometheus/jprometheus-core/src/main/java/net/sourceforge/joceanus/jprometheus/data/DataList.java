@@ -26,8 +26,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisErrorList;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -71,7 +73,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * Size Field Id.
      */
-    public static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_SIZE.getValue());
+    public static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
 
     /**
      * Granularity Field Id.
@@ -741,9 +743,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * Validate the data items.
      * @return the error list (or null if no errors)
      */
-    public DataErrorList<DataItem<E>> validate() {
+    public MetisErrorList<DataItem<E>> validate() {
         /* Allocate error list */
-        DataErrorList<DataItem<E>> myErrors = null;
+        MetisErrorList<DataItem<E>> myErrors = null;
         MetisEditState myState = MetisEditState.CLEAN;
 
         /* Loop through the items */
@@ -770,7 +772,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
                 /* If this is the first error */
                 if (myErrors == null) {
                     /* Allocate error list */
-                    myErrors = new DataErrorList<>();
+                    myErrors = new MetisErrorList<>();
                 }
 
                 /* Add to the error list */
@@ -791,7 +793,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void validateOnLoad() throws OceanusException {
         /* Validate the list */
-        DataErrorList<DataItem<E>> myErrors = validate();
+        MetisErrorList<DataItem<E>> myErrors = validate();
         if (myErrors != null) {
             throw new PrometheusDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

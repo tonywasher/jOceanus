@@ -95,16 +95,6 @@ public enum PrometheusUIResource implements TethysResourceId {
     ACTION_TITLE_SAVE("Action.Title.Save"),
 
     /**
-     * ErrorBox Clear Button.
-     */
-    ERROR_BUTTON_CLEAR("Error.Button.Clear"),
-
-    /**
-     * ErrorBox Title.
-     */
-    ERROR_TITLE("Error.Title"),
-
-    /**
      * StatusBar Cancel Button.
      */
     STATUSBAR_BUTTON_CANCEL("StatusBar.Button.Cancel"),
