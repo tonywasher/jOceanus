@@ -23,9 +23,11 @@
 package net.sourceforge.joceanus.jmetis.threads.javafx;
 
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.threads.MetisTestThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
 import net.sourceforge.joceanus.jmetis.viewer.javafx.MetisFXViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -67,7 +69,7 @@ public class MetisFXThreadTester
     /**
      * the status panel.
      */
-    private final MetisFXThreadProgressStatus theStatusPanel;
+    private final MetisThreadStatusManager<Node> theStatusPanel;
 
     /**
      * the main panel.

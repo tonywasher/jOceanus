@@ -34,19 +34,18 @@ import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jthemis.ui.ThemisSvnManager;
 
 /**
- * Top level JSvnManager starter.
- * @author Tony Washer
+ * Themis Swing entryPoint.
  */
-public final class ThemisSvnStarter {
+public final class Themis4Swing {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThemisSvnStarter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Themis4Swing.class);
 
     /**
      * Private constructor.
      */
-    private ThemisSvnStarter() {
+    private Themis4Swing() {
     }
 
     /**

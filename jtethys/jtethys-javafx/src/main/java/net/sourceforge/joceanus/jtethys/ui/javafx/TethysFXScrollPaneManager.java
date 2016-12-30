@@ -56,6 +56,8 @@ public class TethysFXScrollPaneManager
         super(pFactory);
         theScrollPane = new ScrollPane();
         theNode = theScrollPane;
+        theScrollPane.setFitToHeight(true);
+        theScrollPane.setFitToWidth(true);
     }
 
     @Override

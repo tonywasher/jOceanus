@@ -27,6 +27,7 @@ import javafx.scene.Node;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.layout.Region;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
@@ -63,6 +64,9 @@ public class TethysFXTabPaneManager
         theTabPane = new TabPane();
         theModel = theTabPane.getSelectionModel();
         theNode = theTabPane;
+
+        /* Tabs cannot be closed */
+        theTabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 
         /* Listen to selections */
         theModel.selectedItemProperty().addListener((v, o, n) -> notifySelection(n.getUserData()));

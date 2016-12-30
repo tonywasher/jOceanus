@@ -61,10 +61,10 @@ public class MetisFXThreadManager
         theToolkit = pToolkit;
     }
 
-    @Override
-    public MetisFXThreadProgressStatus getStatusManager() {
-        return (MetisFXThreadProgressStatus) super.getStatusManager();
-    }
+    // @Override
+    // public MetisFXThreadProgressStatus getStatusManager() {
+    // return (MetisFXThreadProgressStatus) super.getStatusManager();
+    // }
 
     @Override
     public String getTaskName() {

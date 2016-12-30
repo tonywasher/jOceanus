@@ -74,8 +74,9 @@ public class TethysFXCardPaneManager<P extends TethysNode<Node>>
     @Override
     public void addCard(final String pName,
                         final P pCard) {
+        boolean isActiveCard = getActiveCard() == null;
         super.addCard(pName, pCard);
-        if (getActiveCard() == null) {
+        if (isActiveCard) {
             theCardPane.setCenter(pCard.getNode());
         }
     }

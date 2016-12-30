@@ -23,13 +23,10 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.awt.Point;
-import java.util.EnumMap;
-import java.util.Map;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
 
 /**
@@ -77,11 +74,6 @@ public enum TethysFXArrowIcon {
     DOUBLERIGHT(new Point(1, 1), new Point(1, 9), new Point(5, 5), new Point(5, 9), new Point(9, 5), new Point(5, 1), new Point(5, 5));
 
     /**
-     * The Icon Map.
-     */
-    private static final Map<TethysArrowIconId, Node> ICON_MAP = buildIconMap();
-
-    /**
      * locations of points.
      */
     private final Double[] thePoints;
@@ -123,29 +115,30 @@ public enum TethysFXArrowIcon {
     }
 
     /**
-     * Build icon map.
-     * @return the map
-     */
-    private static Map<TethysArrowIconId, Node> buildIconMap() {
-        /* Create the map and return it */
-        Map<TethysArrowIconId, Node> myMap = new EnumMap<>(TethysArrowIconId.class);
-        myMap.put(TethysArrowIconId.UP, UP.getArrow());
-        myMap.put(TethysArrowIconId.DOWN, DOWN.getArrow());
-        myMap.put(TethysArrowIconId.LEFT, LEFT.getArrow());
-        myMap.put(TethysArrowIconId.RIGHT, RIGHT.getArrow());
-        myMap.put(TethysArrowIconId.DOUBLEUP, DOUBLEUP.getArrow());
-        myMap.put(TethysArrowIconId.DOUBLEDOWN, DOUBLEDOWN.getArrow());
-        myMap.put(TethysArrowIconId.DOUBLELEFT, DOUBLELEFT.getArrow());
-        myMap.put(TethysArrowIconId.DOUBLERIGHT, DOUBLERIGHT.getArrow());
-        return myMap;
-    }
-
-    /**
      * Obtain icon for id.
      * @param pId the id
      * @return the icon
      */
     protected static Node getIconForId(final TethysArrowIconId pId) {
-        return TethysResourceBuilder.getIconForEnum(ICON_MAP, pId);
+        switch (pId) {
+            case UP:
+                return UP.getArrow();
+            case DOWN:
+                return DOWN.getArrow();
+            case LEFT:
+                return LEFT.getArrow();
+            case RIGHT:
+                return RIGHT.getArrow();
+            case DOUBLEUP:
+                return DOUBLEUP.getArrow();
+            case DOUBLEDOWN:
+                return DOUBLEDOWN.getArrow();
+            case DOUBLELEFT:
+                return DOUBLELEFT.getArrow();
+            case DOUBLERIGHT:
+                return DOUBLERIGHT.getArrow();
+            default:
+                return null;
+        }
     }
 }

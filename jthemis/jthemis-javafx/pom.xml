@@ -38,7 +38,7 @@
   <properties>
     <appDir>../../../backup/</appDir>
     <appLibDir>lib/</appLibDir>
-    <packageMain>${packageName}.svn.ui.JSvnStarter</packageMain>
+    <packageMain>${packageName}.ui.javafx.Themis4FX</packageMain>
   </properties>
   <build>
     <plugins>
