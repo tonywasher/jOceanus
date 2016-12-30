@@ -36,7 +36,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 
 /**
  * Loan Market.
@@ -79,11 +78,6 @@ public abstract class CoeusMarket
     private final MetisDataFormatter theFormatter;
 
     /**
-     * FiscalYear.
-     */
-    private final TethysFiscalYear theFiscalYear;
-
-    /**
      * Loan Map.
      */
     private final Map<String, CoeusLoan> theLoanMap;
@@ -97,11 +91,6 @@ public abstract class CoeusMarket
      * The TotalsHistory.
      */
     private final CoeusHistory theHistory;
-
-    /**
-     * Use calendar monthly totals.
-     */
-    private boolean makeCalendarTotals;
 
     /**
      * The next transactionId.
@@ -118,9 +107,6 @@ public abstract class CoeusMarket
         /* Store parameters */
         theFormatter = pFormatter;
         theProvider = pProvider;
-
-        /* Determine the fiscal year */
-        theFiscalYear = TethysFiscalYear.determineFiscalYear(theFormatter.getLocale());
 
         /* Create maps */
         theLoanMap = new LinkedHashMap<>();
@@ -170,14 +156,6 @@ public abstract class CoeusMarket
      */
     protected List<CoeusTransaction> getTransactions() {
         return theTransactions;
-    }
-
-    /**
-     * Make calendar totals rather than fiscal totals.
-     * @param pCalendar true/false
-     */
-    public void setCalendarTotals(final boolean pCalendar) {
-        makeCalendarTotals = pCalendar;
     }
 
     /**
@@ -319,59 +297,13 @@ public abstract class CoeusMarket
 
     /**
      * Obtain market annual.
+     * @param pCalendar the calendar
      * @param pDate the date
      * @return the annual
      */
-    public CoeusMarketAnnual getAnnual(final TethysDate pDate) {
-        return new CoeusMarketAnnual(this, pDate);
-    }
-
-    /**
-     * Obtain end of year.
-     * @param pDate the date
-     * @return the end of the year
-     */
-    protected TethysDate getEndOfYear(final TethysDate pDate) {
-        /* Determine the end of the year */
-        return makeCalendarTotals
-                                  ? getEndOfCalendarYear(pDate)
-                                  : theFiscalYear.endOfYear(pDate);
-    }
-
-    /**
-     * Obtain end of month.
-     * @param pDate the date
-     * @return the end of the month
-     */
-    protected TethysDate getEndOfMonth(final TethysDate pDate) {
-        /* Determine the end of the month */
-        return makeCalendarTotals
-                                  ? getEndOfCalendarMonth(pDate)
-                                  : theFiscalYear.endOfMonth(pDate);
-    }
-
-    /**
-     * Obtain end of calendar month.
-     * @param pDate the date
-     * @return the end of the calendar month
-     */
-    private TethysDate getEndOfCalendarMonth(final TethysDate pDate) {
-        /* Determine the end of the calendar month */
-        TethysDate myDate = new TethysDate(pDate);
-        myDate.endCalendarMonth();
-        return myDate;
-    }
-
-    /**
-     * Obtain end of calendar month.
-     * @param pDate the date
-     * @return the end of the calendar month
-     */
-    private TethysDate getEndOfCalendarYear(final TethysDate pDate) {
-        /* Determine the end of the calendar year */
-        TethysDate myDate = new TethysDate(pDate);
-        myDate.endCalendarYear();
-        return myDate;
+    public CoeusMarketAnnual getAnnual(final CoeusCalendar pCalendar,
+                                       final TethysDate pDate) {
+        return new CoeusMarketAnnual(this, pCalendar, pDate);
     }
 
     /**
@@ -379,15 +311,6 @@ public abstract class CoeusMarket
      * @return the totals
      */
     protected abstract CoeusTotals newTotals();
-
-    /**
-     * New totals.
-     * @param pDate the date
-     * @param pTotals the totals
-     * @return the totals
-     */
-    protected abstract CoeusTotals newTotals(TethysDate pDate,
-                                             CoeusTotals pTotals);
 
     /**
      * New history.

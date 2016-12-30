@@ -117,7 +117,7 @@ public abstract class ThemisSvnPreference {
     }
 
     /**
-     * ThemisGitPreferences.
+     * ThemisSvnPreferences.
      */
     public static class ThemisSvnPreferences
             extends MetisPreferenceSet<ThemisSvnPreferenceKey> {

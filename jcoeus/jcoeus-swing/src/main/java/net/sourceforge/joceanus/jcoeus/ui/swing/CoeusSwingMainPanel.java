@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
+ * jCoeus: Peer2Peer Analysis
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.ui.swing;
+package net.sourceforge.joceanus.jcoeus.ui.swing;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -30,16 +30,16 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import net.sourceforge.joceanus.jcoeus.ui.panels.CoeusMainPanel;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
-import net.sourceforge.joceanus.jthemis.ui.ThemisSvnManager;
 
 /**
- * Top level Swing SvnManager window.
+ * Coeus Swing Main Panel.
  */
-public class ThemisSwingSvnManager
-        extends ThemisSvnManager<JComponent, Icon> {
+public class CoeusSwingMainPanel
+        extends CoeusMainPanel<JComponent, Icon> {
     /**
      * The frame.
      */
@@ -51,8 +51,8 @@ public class ThemisSwingSvnManager
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    protected ThemisSwingSvnManager(final JFrame pFrame,
-                                    final MetisSwingToolkit pToolkit) throws OceanusException {
+    protected CoeusSwingMainPanel(final JFrame pFrame,
+                                  final MetisSwingToolkit pToolkit) throws OceanusException {
         /* Initialise underlying class */
         super(pToolkit);
         theFrame = pFrame;
@@ -78,9 +78,6 @@ public class ThemisSwingSvnManager
             extends WindowAdapter {
         @Override
         public void windowClosing(final WindowEvent evt) {
-            /* terminate the executor */
-            handleWindowClosed();
-
             /* Dispose of the frame */
             theFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             theFrame.dispose();

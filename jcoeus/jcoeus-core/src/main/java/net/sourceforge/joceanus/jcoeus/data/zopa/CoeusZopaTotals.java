@@ -207,34 +207,6 @@ public class CoeusZopaTotals
         theTotalRecovered = new TethysDecimal(pTotals.getTotalRecovered());
     }
 
-    /**
-     * Constructor for monthly totals.
-     * @param pDate the date
-     * @param pTotals the totals
-     */
-    protected CoeusZopaTotals(final TethysDate pDate,
-                              final CoeusZopaTotals pTotals) {
-        /* Initialise underlying class */
-        super(pTotals.getMarket(), pTotals.getLoan(), pDate);
-
-        /* Initialise values from previous totals */
-        theTotalAssetValue = new TethysDecimal(pTotals.getTotalAssetValue());
-        theTotalHolding = new TethysDecimal(pTotals.getTotalHolding());
-        theTotalLoanBook = new TethysDecimal(pTotals.getTotalLoanBook());
-        theTotalSourceValue = new TethysDecimal(pTotals.getTotalSourceValue());
-        theTotalInvested = new TethysDecimal(pTotals.getTotalInvested());
-        theTotalEarnings = new TethysDecimal(pTotals.getTotalEarnings());
-        theTotalTaxableEarnings = new TethysDecimal(pTotals.getTotalTaxableEarnings());
-        theTotalInterest = new TethysDecimal(pTotals.getTotalInterest());
-        theTotalBadDebtInterest = new TethysDecimal(pTotals.getTotalBadDebtInterest());
-        theTotalBadDebtCapital = new TethysDecimal(pTotals.getTotalBadDebtCapital());
-        theTotalFees = new TethysDecimal(pTotals.getTotalFees());
-        theTotalCashBack = new TethysDecimal(pTotals.getTotalCashBack());
-        theTotalLosses = new TethysDecimal(pTotals.getTotalLosses());
-        theTotalBadDebt = new TethysDecimal(pTotals.getTotalBadDebt());
-        theTotalRecovered = new TethysDecimal(pTotals.getTotalRecovered());
-    }
-
     @Override
     protected void addTotalsToTotals(final CoeusTotals pTotals) {
         /* Add values from totals */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
+ * jCoeus: Peer2Peer Analysis
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.ui.swing;
+package net.sourceforge.joceanus.jcoeus.ui.swing;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -28,25 +28,24 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jcoeus.ui.panels.CoeusMainPanel;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
-import net.sourceforge.joceanus.jthemis.ui.ThemisSvnManager;
 
 /**
- * Top level JSvnManager starter.
- * @author Tony Washer
+ * Coeus Swing StartUp.
  */
-public final class ThemisSvnStarter {
+public class Coeus4Swing {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThemisSvnStarter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Coeus4Swing.class);
 
     /**
      * Private constructor.
      */
-    private ThemisSvnStarter() {
+    private Coeus4Swing() {
     }
 
     /**
@@ -61,11 +60,11 @@ public final class ThemisSvnStarter {
             MetisSwingToolkit myToolkit = new MetisSwingToolkit(null, false);
 
             /* Create the frame and declare it */
-            JFrame myFrame = new JFrame(ThemisSvnManager.class.getSimpleName());
+            JFrame myFrame = new JFrame(CoeusMainPanel.class.getSimpleName());
             myToolkit.getGuiFactory().setFrame(myFrame);
 
-            /* Create the SvnManager program */
-            new ThemisSwingSvnManager(myFrame, myToolkit);
+            /* Create the Coeus program */
+            new CoeusSwingMainPanel(myFrame, myToolkit);
 
             /* Show the frame */
             myFrame.pack();

@@ -207,34 +207,6 @@ public class CoeusFundingCircleTotals
         theTotalRecovered = new TethysMoney(pTotals.getTotalRecovered());
     }
 
-    /**
-     * Constructor for monthly totals.
-     * @param pDate the date
-     * @param pTotals the totals
-     */
-    protected CoeusFundingCircleTotals(final TethysDate pDate,
-                                       final CoeusFundingCircleTotals pTotals) {
-        /* Initialise underlying class */
-        super(pTotals.getMarket(), pTotals.getLoan(), pDate);
-
-        /* Initialise values from previous totals */
-        theTotalAssetValue = new TethysMoney(pTotals.getTotalAssetValue());
-        theTotalHolding = new TethysMoney(pTotals.getTotalHolding());
-        theTotalLoanBook = new TethysMoney(pTotals.getTotalLoanBook());
-        theTotalSourceValue = new TethysMoney(pTotals.getTotalSourceValue());
-        theTotalInvested = new TethysMoney(pTotals.getTotalInvested());
-        theTotalEarnings = new TethysMoney(pTotals.getTotalEarnings());
-        theTotalTaxableEarnings = new TethysMoney(pTotals.getTotalTaxableEarnings());
-        theTotalInterest = new TethysMoney(pTotals.getTotalInterest());
-        theTotalBadDebtInterest = new TethysMoney(pTotals.getTotalBadDebtInterest());
-        theTotalBadDebtCapital = new TethysMoney(pTotals.getTotalBadDebtCapital());
-        theTotalFees = new TethysMoney(pTotals.getTotalFees());
-        theTotalCashBack = new TethysMoney(pTotals.getTotalCashBack());
-        theTotalLosses = new TethysMoney(pTotals.getTotalLosses());
-        theTotalBadDebt = new TethysMoney(pTotals.getTotalBadDebt());
-        theTotalRecovered = new TethysMoney(pTotals.getTotalRecovered());
-    }
-
     @Override
     protected void addTotalsToTotals(final CoeusTotals pTotals) {
         /* Cast correctly */

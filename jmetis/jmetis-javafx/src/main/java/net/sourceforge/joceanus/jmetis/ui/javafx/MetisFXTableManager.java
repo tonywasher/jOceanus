@@ -75,8 +75,8 @@ public class MetisFXTableManager<R extends MetisIndexedItem>
      * @param pFactory the GUI Factory
      * @param pList the edit list
      */
-    protected MetisFXTableManager(final TethysFXGuiFactory pFactory,
-                                  final MetisEditList<R> pList) {
+    public MetisFXTableManager(final TethysFXGuiFactory pFactory,
+                               final MetisEditList<R> pList) {
         this(pFactory, pList, false);
     }
 
@@ -85,8 +85,8 @@ public class MetisFXTableManager<R extends MetisIndexedItem>
      * @param pFactory the GUI Factory
      * @param pList the base list
      */
-    protected MetisFXTableManager(final TethysFXGuiFactory pFactory,
-                                  final MetisBaseList<R> pList) {
+    public MetisFXTableManager(final TethysFXGuiFactory pFactory,
+                               final MetisBaseList<R> pList) {
         this(pFactory, pList, true);
     }
 

@@ -151,26 +151,6 @@ public class CoeusLendingWorksTotals
         theTotalInterest = new TethysDecimal(pTotals.getTotalInterest());
     }
 
-    /**
-     * Constructor for monthly totals.
-     * @param pDate the date
-     * @param pTotals the totals
-     */
-    protected CoeusLendingWorksTotals(final TethysDate pDate,
-                                      final CoeusLendingWorksTotals pTotals) {
-        /* Initialise underlying class */
-        super(pTotals.getMarket(), pTotals.getLoan(), pDate);
-
-        /* Initialise values from previous totals */
-        theTotalAssetValue = new TethysDecimal(pTotals.getTotalAssetValue());
-        theTotalHolding = new TethysDecimal(pTotals.getTotalHolding());
-        theTotalLoanBook = new TethysDecimal(pTotals.getTotalLoanBook());
-        theTotalSourceValue = new TethysDecimal(pTotals.getTotalSourceValue());
-        theTotalInvested = new TethysDecimal(pTotals.getTotalInvested());
-        theTotalEarnings = new TethysDecimal(pTotals.getTotalEarnings());
-        theTotalInterest = new TethysDecimal(pTotals.getTotalInterest());
-    }
-
     @Override
     protected void addTotalsToTotals(final CoeusTotals pTotals) {
         /* Add values from totals */

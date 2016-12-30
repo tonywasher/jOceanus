@@ -41,11 +41,6 @@ public class CoeusMarketSet
     private final Map<CoeusMarketProvider, CoeusMarket> theMarketMap;
 
     /**
-     * Use calendar monthly totals.
-     */
-    private boolean makeCalendarTotals;
-
-    /**
      * Constructor.
      */
     public CoeusMarketSet() {
@@ -65,23 +60,6 @@ public class CoeusMarketSet
     public void declareMarket(final CoeusMarketProvider pProvider,
                               final CoeusMarket pMarket) {
         theMarketMap.put(pProvider, pMarket);
-        pMarket.setCalendarTotals(makeCalendarTotals);
-    }
-
-    /**
-     * Make calendar totals rather than fiscal totals.
-     * @param pCalendar true/false
-     */
-    public void setCalendarTotals(final boolean pCalendar) {
-        /* Record the selection */
-        makeCalendarTotals = pCalendar;
-
-        /* Loop through the markets setting the flag */
-        Iterator<CoeusMarket> myIterator = theMarketMap.values().iterator();
-        while (myIterator.hasNext()) {
-            CoeusMarket myMarket = myIterator.next();
-            myMarket.setCalendarTotals(pCalendar);
-        }
     }
 
     /**
@@ -123,14 +101,16 @@ public class CoeusMarketSet
     /**
      * Obtain market annual.
      * @param pProvider the market provider
+     * @param pCalendar the calendar
      * @param pDate the date
      * @return the annual
      */
     public CoeusMarketAnnual getAnnual(final CoeusMarketProvider pProvider,
+                                       final CoeusCalendar pCalendar,
                                        final TethysDate pDate) {
         CoeusMarket myMarket = theMarketMap.get(pProvider);
         return myMarket == null
                                 ? null
-                                : myMarket.getAnnual(pDate);
+                                : myMarket.getAnnual(pCalendar, pDate);
     }
 }

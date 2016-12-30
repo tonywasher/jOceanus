@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -207,12 +206,6 @@ public class CoeusFundingCircleMarket
     @Override
     protected CoeusFundingCircleTotals newTotals() {
         return new CoeusFundingCircleTotals(this);
-    }
-
-    @Override
-    protected CoeusFundingCircleTotals newTotals(final TethysDate pDate,
-                                                 final CoeusTotals pTotals) {
-        return new CoeusFundingCircleTotals(pDate, (CoeusFundingCircleTotals) pTotals);
     }
 
     @Override

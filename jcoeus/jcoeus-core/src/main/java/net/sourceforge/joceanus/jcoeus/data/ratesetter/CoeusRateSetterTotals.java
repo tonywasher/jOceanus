@@ -158,27 +158,6 @@ public class CoeusRateSetterTotals
         theTotalFees = new TethysMoney(pTotals.getTotalFees());
     }
 
-    /**
-     * Constructor for monthly totals.
-     * @param pDate the date
-     * @param pTotals the totals
-     */
-    protected CoeusRateSetterTotals(final TethysDate pDate,
-                                    final CoeusRateSetterTotals pTotals) {
-        /* Initialise underlying class */
-        super(pTotals.getMarket(), pTotals.getLoan(), pDate);
-
-        /* Initialise values from previous totals */
-        theTotalAssetValue = new TethysMoney(pTotals.getTotalAssetValue());
-        theTotalHolding = new TethysMoney(pTotals.getTotalHolding());
-        theTotalLoanBook = new TethysMoney(pTotals.getTotalLoanBook());
-        theTotalSourceValue = new TethysMoney(pTotals.getTotalSourceValue());
-        theTotalInvested = new TethysMoney(pTotals.getTotalInvested());
-        theTotalEarnings = new TethysMoney(pTotals.getTotalEarnings());
-        theTotalInterest = new TethysMoney(pTotals.getTotalInterest());
-        theTotalFees = new TethysMoney(pTotals.getTotalFees());
-    }
-
     @Override
     protected void addTotalsToTotals(final CoeusTotals pTotals) {
         /* Cast correctly */

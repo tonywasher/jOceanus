@@ -28,13 +28,13 @@ import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketAnnual;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSnapShot;
+import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportBuilder;
 import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportResource;
 import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportType;
-import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.report.MetisReportEvent;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
@@ -62,7 +62,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <N> the node type
  * @param <I> the icon type
  */
-public abstract class CoeusReportPanel<N, I>
+public class CoeusReportPanel<N, I>
         implements TethysEventProvider<CoeusDataEvent>, TethysNode<N> {
     /**
      * The Event Manager.
@@ -135,11 +135,11 @@ public abstract class CoeusReportPanel<N, I>
         /* Create the Panel */
         thePanel = myFactory.newBorderPane();
 
-        /* Create the top level debug entry for this view */
+        /* Create the viewer entries */
         MetisViewerManager myDataMgr = pToolkit.getViewerManager();
         MetisViewerEntry mySection = myDataMgr.getStandardEntry(MetisViewerStandardEntry.VIEW);
         MetisViewerEntry myReport = myDataMgr.newEntry(mySection, "Report");
-        theMarketEntry = myDataMgr.newEntry(myReport, "Market");
+        theMarketEntry = myDataMgr.newEntry(myReport, CoeusResource.DATA_MARKET.getValue());
         theMarketEntry.setVisible(false);
 
         /* Create the HTML Pane */
@@ -153,6 +153,7 @@ public abstract class CoeusReportPanel<N, I>
 
         /* Create the Report Selection panel */
         theSelect = new CoeusReportSelect<>(myFactory);
+        theSelect.setCalendar(theCache.getCalendar());
 
         /* Create the error panel for this view */
         theError = theToolkit.newErrorPanel(myReport);
@@ -166,7 +167,7 @@ public abstract class CoeusReportPanel<N, I>
         thePanel.setCentre(myHTMLScroll);
 
         /* Load the CSS */
-        loadCSS("MoneyWiseReports.css");
+        loadCSS("CoeusReports.css");
 
         /* Create listeners */
         theCache.getEventRegistrar().addEventListener(e -> refreshData());
@@ -222,16 +223,13 @@ public abstract class CoeusReportPanel<N, I>
      * Refresh views/controls after a load/update of underlying data.
      */
     private void refreshData() {
-        /* Obtain the active profile */
-        MetisProfile myTask = theToolkit.getActiveTask();
-        myTask = myTask.startTask("Reports");
-
         /* Protect against exceptions */
         try {
             /* Hide the instant debug since it is now invalid */
             theMarketEntry.setVisible(false);
 
             /* Refresh the data */
+            theSelect.setCalendar(theCache.getCalendar());
             buildReport();
 
             /* Create SavePoint */
@@ -244,9 +242,6 @@ public abstract class CoeusReportPanel<N, I>
             /* Restore SavePoint */
             theSelect.restoreSavePoint();
         }
-
-        /* Complete the task */
-        myTask.end();
     }
 
     /**

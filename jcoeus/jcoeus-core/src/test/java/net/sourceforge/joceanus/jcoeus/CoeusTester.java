@@ -51,11 +51,10 @@ public class CoeusTester {
             MetisDataFormatter myFormatter = new MetisDataFormatter();
 
             /* Create the loaders */
-            CoeusFundingCircleLoader myFundingCircleLoader = new CoeusFundingCircleLoader(myFormatter, BASE_PATH + "FundingCircle");
-            CoeusRateSetterLoader myRateSetterLoader = new CoeusRateSetterLoader(myFormatter,
-                    BASE_PATH + "RateSetter");
-            CoeusZopaLoader myZopaLoader = new CoeusZopaLoader(myFormatter, BASE_PATH + "Zopa");
-            CoeusLendingWorksLoader myLendingWorksLoader = new CoeusLendingWorksLoader(myFormatter, BASE_PATH + "LendingWorks");
+            CoeusFundingCircleLoader myFundingCircleLoader = new CoeusFundingCircleLoader(myFormatter, BASE_PATH);
+            CoeusRateSetterLoader myRateSetterLoader = new CoeusRateSetterLoader(myFormatter, BASE_PATH);
+            CoeusZopaLoader myZopaLoader = new CoeusZopaLoader(myFormatter, BASE_PATH);
+            CoeusLendingWorksLoader myLendingWorksLoader = new CoeusLendingWorksLoader(myFormatter, BASE_PATH);
 
             /* Create the loan market set */
             CoeusMarketSet myMarketSet = new CoeusMarketSet();

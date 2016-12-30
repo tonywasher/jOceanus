@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jcoeus.data.zopa;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -94,8 +96,13 @@ public class CoeusZopaLoader {
      */
     public CoeusZopaLoader(final MetisDataFormatter pFormatter,
                            final String pPath) throws OceanusException {
+        /* Store the formatter */
         theFormatter = pFormatter;
-        theBasePath = FileSystems.getDefault().getPath(pPath);
+
+        /* Adjust and store the path */
+        FileSystem mySystem = FileSystems.getDefault();
+        String myPath = pPath + mySystem.getSeparator() + CoeusMarketProvider.ZOPA;
+        theBasePath = mySystem.getPath(myPath);
     }
 
     /**

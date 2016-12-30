@@ -22,9 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data.lendingworks;
 
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -60,8 +62,13 @@ public class CoeusLendingWorksLoader {
      */
     public CoeusLendingWorksLoader(final MetisDataFormatter pFormatter,
                                    final String pPath) throws OceanusException {
+        /* Store the formatter */
         theFormatter = pFormatter;
-        theBasePath = FileSystems.getDefault().getPath(pPath);
+
+        /* Adjust and store the path */
+        FileSystem mySystem = FileSystems.getDefault();
+        String myPath = pPath + mySystem.getSeparator() + CoeusMarketProvider.LENDINGWORKS;
+        theBasePath = mySystem.getPath(myPath);
     }
 
     /**

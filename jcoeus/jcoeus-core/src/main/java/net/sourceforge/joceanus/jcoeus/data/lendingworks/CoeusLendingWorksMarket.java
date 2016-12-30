@@ -27,7 +27,6 @@ import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
-import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -108,12 +107,6 @@ public class CoeusLendingWorksMarket
     @Override
     protected CoeusLendingWorksTotals newTotals() {
         return new CoeusLendingWorksTotals(this);
-    }
-
-    @Override
-    protected CoeusLendingWorksTotals newTotals(final TethysDate pDate,
-                                                final CoeusTotals pTotals) {
-        return new CoeusLendingWorksTotals(pDate, (CoeusLendingWorksTotals) pTotals);
     }
 
     @Override

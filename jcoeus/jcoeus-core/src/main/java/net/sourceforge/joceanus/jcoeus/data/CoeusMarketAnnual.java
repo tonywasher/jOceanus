@@ -58,6 +58,16 @@ public class CoeusMarketAnnual
     private final CoeusMarket theMarket;
 
     /**
+     * Calendar.
+     */
+    private final CoeusCalendar theCalendar;
+
+    /**
+     * Initial Date.
+     */
+    private final TethysDate theInitialDate;
+
+    /**
      * Date.
      */
     private final TethysDate theDate;
@@ -90,13 +100,21 @@ public class CoeusMarketAnnual
     /**
      * Constructor.
      * @param pMarket the market
+     * @param pCalendar the calendar
      * @param pDate the annual date
      */
     protected CoeusMarketAnnual(final CoeusMarket pMarket,
+                                final CoeusCalendar pCalendar,
                                 final TethysDate pDate) {
         /* Store parameters */
         theMarket = pMarket;
+        theCalendar = pCalendar;
         theDate = pDate;
+
+        /* Determine the initial date */
+        theInitialDate = new TethysDate(theDate);
+        theInitialDate.adjustYear(-1);
+        theInitialDate.adjustDay(1);
 
         /* Create monthly history map */
         theMonthlyHistories = new LinkedHashMap<>();
@@ -218,7 +236,7 @@ public class CoeusMarketAnnual
      */
     public CoeusHistory getMonthlyHistory(final TethysDate pDate) {
         /* Determine the date of the month */
-        TethysDate myDate = theMarket.getEndOfMonth(pDate);
+        TethysDate myDate = theCalendar.getEndOfMonth(pDate);
 
         /* Look up an existing history */
         CoeusHistory myHistory = theMonthlyHistories.get(myDate);
@@ -238,6 +256,11 @@ public class CoeusMarketAnnual
      * @return true/false
      */
     private boolean relevantTransaction(final CoeusTransaction pTrans) {
+        /* Check that the date is later than the initialDate */
+        if (theInitialDate.compareTo(pTrans.getDate()) > 0) {
+            return false;
+        }
+
         /* Switch on transaction type */
         switch (pTrans.getTransType()) {
             case INTEREST:

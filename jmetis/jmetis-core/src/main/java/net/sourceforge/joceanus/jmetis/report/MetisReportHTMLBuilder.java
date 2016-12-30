@@ -144,6 +144,11 @@ public class MetisReportHTMLBuilder {
     private static final String CLASS_LINKVALUE = "linkValue";
 
     /**
+     * Name of linkObject class.
+     */
+    private static final String CLASS_LINKOBJECT = "linkObject";
+
+    /**
      * Name of dataValue class.
      */
     private static final String CLASS_DATAVALUE = "dataValue";
@@ -487,8 +492,8 @@ public class MetisReportHTMLBuilder {
                                    final String pLink,
                                    final Object pValue) {
         Element myCell = pControl.createNewCell(false);
+        myCell.setAttribute(ATTR_CLASS, CLASS_LINKOBJECT);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
-        myLink.setAttribute(ATTR_CLASS, CLASS_LINKVALUE);
         myLink.setAttribute(ATTR_HREF, REF_FILTER
                                        + pLink);
         setCellValue(myLink, pValue);

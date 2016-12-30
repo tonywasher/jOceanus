@@ -20,7 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jcoeus.ui.panels;
+package net.sourceforge.joceanus.jcoeus.ui;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
@@ -32,6 +35,16 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 public enum CoeusUIResource
         implements TethysResourceId {
     /**
+     * Filter Selection Title.
+     */
+    FILTER_TITLE("filter.selection"),
+
+    /**
+     * TotalSet prompt.
+     */
+    TOTALS_PROMPT("totals.prompt"),
+
+    /**
      * Report Selection Title.
      */
     REPORT_TITLE("report.selection"),
@@ -39,17 +52,57 @@ public enum CoeusUIResource
     /**
      * ReportType prompt.
      */
-    REPORT_PROMPT("report.type"),
+    REPORT_PROMPT("report.prompt"),
 
     /**
      * Market prompt.
      */
-    MARKET_PROMPT("market.prompt");
+    MARKET_PROMPT("market.prompt"),
+
+    /**
+     * Preference Base.
+     */
+    PREFERENCE_BASE("pref.base"),
+
+    /**
+     * Preference Calendar.
+     */
+    PREFERENCE_CALENDAR("pref.calendar"),
+
+    /**
+     * Menu Help.
+     */
+    MENU_HELP("menu.help"),
+
+    /**
+     * Menu DataViewer.
+     */
+    MENU_DATAVIEWER("menu.dataViewer"),
+
+    /**
+     * Tab Reports.
+     */
+    TAB_REPORTS("tab.reports"),
+
+    /**
+     * Tab Statements.
+     */
+    TAB_STATEMENTS("tab.statements"),
+
+    /**
+     * Tab Preferences.
+     */
+    TAB_PREFERENCES("tab.preferences");
 
     /**
      * The Resource Builder.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(CoeusDataException.class.getCanonicalName());
+    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(CoeusDataException.class.getCanonicalName());
+
+    /**
+     * The MenuItem Map.
+     */
+    private static final Map<CoeusMenuItem, TethysResourceId> MENUITEM_MAP = buildMenuItemMap();
 
     /**
      * The Id.
@@ -89,5 +142,26 @@ public enum CoeusUIResource
 
         /* return the value */
         return theValue;
+    }
+
+    /**
+     * Build menuItem map.
+     * @return the map
+     */
+    private static Map<CoeusMenuItem, TethysResourceId> buildMenuItemMap() {
+        /* Create the map and return it */
+        Map<CoeusMenuItem, TethysResourceId> myMap = new EnumMap<>(CoeusMenuItem.class);
+        myMap.put(CoeusMenuItem.HELP, MENU_HELP);
+        myMap.put(CoeusMenuItem.DATAVIEWER, MENU_DATAVIEWER);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for menuItem.
+     * @param pMenuItem the menuItem
+     * @return the resource key
+     */
+    public static TethysResourceId getKeyForMenuItem(final CoeusMenuItem pMenuItem) {
+        return TethysResourceBuilder.getKeyForEnum(MENUITEM_MAP, pMenuItem);
     }
 }

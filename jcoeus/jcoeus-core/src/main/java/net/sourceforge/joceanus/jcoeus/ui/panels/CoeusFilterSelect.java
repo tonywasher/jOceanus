@@ -22,19 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui.panels;
 
-import net.sourceforge.joceanus.jcoeus.data.CoeusCalendar;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
+import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusUIResource;
-import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
-import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
@@ -44,26 +41,26 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
- * Report Select.
+ * Filter Select.
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class CoeusReportSelect<N, I>
+public class CoeusFilterSelect<N, I>
         implements TethysEventProvider<CoeusDataEvent>, TethysNode<N> {
-    /**
-     * Text for Report Label.
-     */
-    private static final String NLS_REPORT = CoeusUIResource.REPORT_PROMPT.getValue();
-
     /**
      * Text for Market Label.
      */
     private static final String NLS_MARKET = CoeusUIResource.MARKET_PROMPT.getValue();
 
     /**
+     * Text for Totals Label.
+     */
+    private static final String NLS_TOTALS = CoeusUIResource.TOTALS_PROMPT.getValue();
+
+    /**
      * Text for Selection Title.
      */
-    private static final String NLS_TITLE = CoeusUIResource.REPORT_TITLE.getValue();
+    private static final String NLS_TITLE = CoeusUIResource.FILTER_TITLE.getValue();
 
     /**
      * The Event Manager.
@@ -76,9 +73,9 @@ public class CoeusReportSelect<N, I>
     private final TethysBoxPaneManager<N, I> thePanel;
 
     /**
-     * Reports scroll button.
+     * Totals scroll button.
      */
-    private final TethysScrollButtonManager<CoeusReportType, N, I> theReportButton;
+    private final TethysScrollButtonManager<CoeusTotalSet, N, I> theTotalsButton;
 
     /**
      * Market scroll button.
@@ -91,38 +88,22 @@ public class CoeusReportSelect<N, I>
     private final TethysDateButtonManager<N, I> theDateButton;
 
     /**
-     * Print button.
-     */
-    private final TethysButton<N, I> thePrintButton;
-
-    /**
-     * Save button.
-     */
-    private final TethysButton<N, I> theSaveButton;
-
-    /**
-     * Calendar.
-     */
-    private CoeusCalendar theCalendar;
-
-    /**
      * Current state.
      */
-    private ReportState theState;
+    private FilterState theState;
 
     /**
      * Saved state.
      */
-    private ReportState theSavePoint;
+    private FilterState theSavePoint;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public CoeusReportSelect(final TethysGuiFactory<N, I> pFactory) {
-        /* Create the report button */
-        theReportButton = pFactory.newScrollButton();
-        buildReportMenu();
+    public CoeusFilterSelect(final TethysGuiFactory<N, I> pFactory) {
+        /* Create the totals button */
+        theTotalsButton = pFactory.newScrollButton();
 
         /* Create the market button */
         theMarketButton = pFactory.newScrollButton();
@@ -133,19 +114,12 @@ public class CoeusReportSelect<N, I>
         theDateButton.setSelectedDate(new TethysDate());
 
         /* Create initial state */
-        theState = new ReportState();
+        theState = new FilterState();
+        theState.setDate(theDateButton);
 
         /* Create the labels */
-        TethysLabel<N, I> myRepLabel = pFactory.newLabel(NLS_REPORT);
+        TethysLabel<N, I> myTotLabel = pFactory.newLabel(NLS_TOTALS);
         TethysLabel<N, I> myMktLabel = pFactory.newLabel(NLS_MARKET);
-
-        /* Create the print button */
-        thePrintButton = pFactory.newButton();
-        MetisIcon.configurePrintIconButton(thePrintButton);
-
-        /* Create the save button */
-        theSaveButton = pFactory.newButton();
-        MetisIcon.configureSaveIconButton(theSaveButton);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -155,27 +129,23 @@ public class CoeusReportSelect<N, I>
         thePanel.setBorderTitle(NLS_TITLE);
 
         /* Define the layout */
-        thePanel.addNode(myRepLabel);
-        thePanel.addNode(theReportButton);
-        thePanel.addSpacer();
         thePanel.addNode(myMktLabel);
         thePanel.addNode(theMarketButton);
         thePanel.addSpacer();
         thePanel.addNode(theDateButton);
         thePanel.addSpacer();
-        thePanel.addNode(thePrintButton);
-        thePanel.addNode(theSaveButton);
+        thePanel.addNode(myTotLabel);
+        thePanel.addNode(theTotalsButton);
 
-        /* Initialise the state */
-        theState.setType(CoeusReportType.BALANCESHEET);
+        /* Initialise the current state */
+        theState.setTotalSet(CoeusTotalSet.LOANBOOK);
         theState.setMarket(CoeusMarketProvider.FUNDINGCIRCLE);
         theState.setDate(theDateButton);
         theState.applyState();
 
         /* Add the listeners */
-        thePrintButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(CoeusDataEvent.PRINT));
-        theSaveButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(CoeusDataEvent.SAVETOFILE));
-        theReportButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewReport());
+        theTotalsButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTotalSet());
+        theTotalsButton.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> handleTotalSetMenu());
         theMarketButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewMarket());
         theDateButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDate());
     }
@@ -196,11 +166,11 @@ public class CoeusReportSelect<N, I>
     }
 
     /**
-     * Obtain the report type.
-     * @return the report type
+     * Obtain the totals type.
+     * @return the totals type
      */
-    public CoeusReportType getReportType() {
-        return theState.getType();
+    public CoeusTotalSet getTotalSet() {
+        return theState.getTotalSet();
     }
 
     /**
@@ -216,20 +186,27 @@ public class CoeusReportSelect<N, I>
      * @return the date
      */
     public TethysDate getDate() {
-        return theState.getActualDate();
+        return theState.getSelectedDate();
     }
 
     /**
-     * Build report menu.
+     * Build totals menu.
      */
-    private void buildReportMenu() {
+    private void handleTotalSetMenu() {
         /* Create builder */
-        TethysScrollMenu<CoeusReportType, ?> myBuilder = theReportButton.getMenu();
+        TethysScrollMenu<CoeusTotalSet, ?> myBuilder = theTotalsButton.getMenu();
+        myBuilder.removeAllItems();
 
-        /* Loop through the reports */
-        for (CoeusReportType myType : CoeusReportType.values()) {
-            /* Create a new MenuItem for the report type */
-            myBuilder.addItem(myType);
+        /* Access the selected market */
+        CoeusMarketProvider myMarket = theState.getMarket();
+
+        /* Loop through the totals */
+        for (CoeusTotalSet myTotals : CoeusTotalSet.values()) {
+            /* If the totalSet is supported */
+            if (myMarket.supportsTotalSet(myTotals)) {
+                /* Create a new MenuItem for the totalSet */
+                myBuilder.addItem(myTotals);
+            }
         }
     }
 
@@ -252,7 +229,7 @@ public class CoeusReportSelect<N, I>
      */
     public void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new ReportState(theState);
+        theSavePoint = new FilterState(theState);
     }
 
     /**
@@ -260,7 +237,7 @@ public class CoeusReportSelect<N, I>
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new ReportState(theSavePoint);
+        theState = new FilterState(theSavePoint);
 
         /* Apply the state */
         theState.applyState();
@@ -270,8 +247,7 @@ public class CoeusReportSelect<N, I>
     public void setEnabled(final boolean bEnable) {
         theDateButton.setEnabled(bEnable);
         theMarketButton.setEnabled(bEnable);
-        theReportButton.setEnabled(bEnable);
-        thePrintButton.setEnabled(bEnable);
+        theTotalsButton.setEnabled(bEnable);
     }
 
     @Override
@@ -280,20 +256,11 @@ public class CoeusReportSelect<N, I>
     }
 
     /**
-     * Set the calendar.
-     * @param pCalendar the calendar
-     */
-    protected void setCalendar(final CoeusCalendar pCalendar) {
-        theCalendar = pCalendar;
-        theState.determineActualDate();
-    }
-
-    /**
      * Handle new report.
      */
-    private void handleNewReport() {
-        /* Look for a changed report type */
-        if (theState.setType(theReportButton.getValue())) {
+    private void handleNewTotalSet() {
+        /* Look for a changed totalSet */
+        if (theState.setTotalSet(theTotalsButton.getValue())) {
             /* Notify that the state has changed */
             theEventManager.fireEvent(CoeusDataEvent.SELECTIONCHANGED);
         }
@@ -324,16 +291,11 @@ public class CoeusReportSelect<N, I>
     /**
      * SavePoint values.
      */
-    private final class ReportState {
+    private final class FilterState {
         /**
          * The selected market.
          */
         private CoeusMarketProvider theMarket;
-
-        /**
-         * The actual date.
-         */
-        private TethysDate theActualDate;
 
         /**
          * The selected date.
@@ -341,25 +303,24 @@ public class CoeusReportSelect<N, I>
         private TethysDate theSelectedDate;
 
         /**
-         * The selected report type.
+         * The selected totalSet.
          */
-        private CoeusReportType theType;
+        private CoeusTotalSet theTotalSet;
 
         /**
          * Constructor.
          */
-        private ReportState() {
+        private FilterState() {
         }
 
         /**
          * Constructor.
          * @param pState state to copy from
          */
-        private ReportState(final ReportState pState) {
+        private FilterState(final FilterState pState) {
             theMarket = pState.getMarket();
             theSelectedDate = pState.getSelectedDate();
-            theActualDate = pState.getActualDate();
-            theType = pState.getType();
+            theTotalSet = pState.getTotalSet();
         }
 
         /**
@@ -379,19 +340,11 @@ public class CoeusReportSelect<N, I>
         }
 
         /**
-         * Obtain the selected range.
-         * @return the range
+         * Obtain the selected totalSet.
+         * @return the totalSet
          */
-        private TethysDate getActualDate() {
-            return theActualDate;
-        }
-
-        /**
-         * Obtain the selected report type.
-         * @return the report type
-         */
-        private CoeusReportType getType() {
-            return theType;
+        private CoeusTotalSet getTotalSet() {
+            return theTotalSet;
         }
 
         /**
@@ -409,7 +362,6 @@ public class CoeusReportSelect<N, I>
             /* Record any change and report change */
             if (!MetisDifference.isEqual(myDate, theSelectedDate)) {
                 theSelectedDate = myDate;
-                determineActualDate();
                 return true;
             }
             return false;
@@ -430,34 +382,24 @@ public class CoeusReportSelect<N, I>
         }
 
         /**
-         * Set new Report Type.
-         * @param pType the new type
+         * Set new TotalSet.
+         * @param pTotals the new totalSet
          * @return true/false did a change occur
          */
-        private boolean setType(final CoeusReportType pType) {
-            if (!pType.equals(theType)) {
-                /* Store the new type */
-                theType = pType;
-                determineActualDate();
+        private boolean setTotalSet(final CoeusTotalSet pTotals) {
+            if (!pTotals.equals(theTotalSet)) {
+                /* Store the new totals */
+                theTotalSet = pTotals;
                 return true;
             }
             return false;
         }
 
         /**
-         * Determine actual date.
-         */
-        private void determineActualDate() {
-            theActualDate = theType.useAnnualDate()
-                                                    ? theCalendar.getEndOfYear(theSelectedDate)
-                                                    : theSelectedDate;
-        }
-
-        /**
          * Apply the State.
          */
         private void applyState() {
-            theReportButton.setValue(theType);
+            theTotalsButton.setValue(theTotalSet);
             theMarketButton.setValue(theMarket);
             theDateButton.setSelectedDate(theSelectedDate);
         }

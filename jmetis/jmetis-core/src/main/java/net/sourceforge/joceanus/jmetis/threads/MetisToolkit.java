@@ -27,12 +27,16 @@ import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
+import net.sourceforge.joceanus.jmetis.newlist.MetisBaseList;
+import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelPair;
 import net.sourceforge.joceanus.jmetis.ui.MetisPreferenceView;
+import net.sourceforge.joceanus.jmetis.ui.MetisTableManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
@@ -229,6 +233,22 @@ public abstract class MetisToolkit<N, I> {
      * @return the help Window
      */
     public abstract TethysHelpWindow<N, I> newHelpWindow();
+
+    /**
+     * Create a readOnly TableManager.
+     * @param <R> the row type
+     * @param pBaseList the base list
+     * @return the error panel
+     */
+    public abstract <R extends MetisIndexedItem> MetisTableManager<R, N, I> newTableManager(MetisBaseList<R> pBaseList);
+
+    /**
+     * Create an editable TableManager.
+     * @param <R> the row type
+     * @param pEditList the edit list
+     * @return the error panel
+     */
+    public abstract <R extends MetisIndexedItem> MetisTableManager<R, N, I> newTableManager(MetisEditList<R> pEditList);
 
     /**
      * Create a ErrorPanel.

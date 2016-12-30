@@ -210,6 +210,26 @@ public enum CoeusResource
     DATA_ID("data.id"),
 
     /**
+     * Data MarketCache.
+     */
+    DATA_MARKETCACHE("data.marketCache"),
+
+    /**
+     * Data MarketSet.
+     */
+    DATA_MARKETSET("data.marketSet"),
+
+    /**
+     * Data SnapShotMap.
+     */
+    DATA_SNAPSHOTMAP("data.snapShotMap"),
+
+    /**
+     * Data MarketSet.
+     */
+    DATA_ANNUALMAP("data.annualMap"),
+
+    /**
      * Data Market.
      */
     DATA_MARKET("data.market"),
@@ -267,7 +287,7 @@ public enum CoeusResource
     /**
      * Data TaxableEarnings.
      */
-    DATA_TAXABLEEARNINGS("data.taxableEarning"),
+    DATA_TAXABLEEARNINGS("data.taxableEarnings"),
 
     /**
      * Data BadDebtInterest.
@@ -303,6 +323,11 @@ public enum CoeusResource
      * Data Recovered.
      */
     DATA_RECOVERED("data.recovered"),
+
+    /**
+     * Data Transaction.
+     */
+    DATA_TRANSACTION("data.transaction"),
 
     /**
      * Data Total Value.
@@ -529,7 +554,7 @@ public enum CoeusResource
 
     @Override
     public String getNameSpace() {
-        return "coeus.ui";
+        return "coeus";
     }
 
     @Override

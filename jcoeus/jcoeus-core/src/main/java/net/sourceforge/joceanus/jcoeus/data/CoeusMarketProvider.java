@@ -62,4 +62,44 @@ public enum CoeusMarketProvider {
         /* return the name */
         return theName;
     }
+
+    /**
+     * Does the market support badDebt?
+     * @return true/false
+     */
+    public boolean supportsBadDebt() {
+        switch (this) {
+            case RATESETTER:
+            case LENDINGWORKS:
+                return false;
+            case FUNDINGCIRCLE:
+            case ZOPA:
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Does the market support the totalSet?
+     * @param pTotalSet the totalSet
+     * @return true/false
+     */
+    public boolean supportsTotalSet(final CoeusTotalSet pTotalSet) {
+        /* If we have no badDebt */
+        if (!supportsBadDebt()) {
+            switch (pTotalSet) {
+                case LOSSES:
+                case BADDEBT:
+                case RECOVERED:
+                case BADDEBTINTEREST:
+                case BADDEBTCAPITAL:
+                    return false;
+                default:
+                    break;
+            }
+        }
+
+        /* Support everything else */
+        return true;
+    }
 }

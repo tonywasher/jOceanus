@@ -153,7 +153,7 @@ public class CoeusReportLoanBook
             theBuilder.makeValueCell(myTable, myLoan.getStartDate());
             theBuilder.makeValueCell(myTable, myLoan.getInitialLoan());
             theBuilder.makeValueCell(myTable, myLoan.getLastDate());
-            theBuilder.makeValueCell(myTable, myTotals.getLoanBook());
+            theBuilder.makeValueCell(myTable, myTotals.getTotalLoanBook());
 
             /* Record the filter */
             setFilterForId(myId, myLoan);

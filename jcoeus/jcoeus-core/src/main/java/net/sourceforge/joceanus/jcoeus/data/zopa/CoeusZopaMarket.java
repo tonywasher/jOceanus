@@ -29,7 +29,6 @@ import java.util.ListIterator;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
@@ -193,12 +192,6 @@ public class CoeusZopaMarket
     @Override
     protected CoeusZopaTotals newTotals() {
         return new CoeusZopaTotals(this);
-    }
-
-    @Override
-    protected CoeusZopaTotals newTotals(final TethysDate pDate,
-                                        final CoeusTotals pTotals) {
-        return new CoeusZopaTotals(pDate, (CoeusZopaTotals) pTotals);
     }
 
     @Override

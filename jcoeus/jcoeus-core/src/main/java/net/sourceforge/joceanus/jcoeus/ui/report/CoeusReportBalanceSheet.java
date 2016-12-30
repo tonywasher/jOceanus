@@ -105,6 +105,7 @@ public class CoeusReportBalanceSheet
 
         /* Create the CashBack row */
         makeTableFilterRow(mySubTable, CoeusTotalSet.CASHBACK, myTotals.getTotalCashBack());
+        theBuilder.embedTable(mySubTable);
 
         /* If we have badDebt */
         if (theMarket.hasBadDebt()) {
@@ -119,6 +120,7 @@ public class CoeusReportBalanceSheet
 
             /* Create the Recovered row */
             makeTableFilterRow(mySubTable, CoeusTotalSet.RECOVERED, myTotals.getTotalRecovered());
+            theBuilder.embedTable(mySubTable);
         }
 
         /* Initialise the assets table */
@@ -132,7 +134,7 @@ public class CoeusReportBalanceSheet
         makeTableFilterRow(myTable, CoeusTotalSet.HOLDING, myTotals.getTotalHolding());
 
         /* Create the LoanBook row */
-        makeTableFilterRow(mySubTable, CoeusTotalSet.LOANBOOK, myTotals.getTotalLoanBook());
+        makeTableFilterRow(myTable, CoeusTotalSet.LOANBOOK, myTotals.getTotalLoanBook());
 
         /* Return the document */
         return theBuilder.getDocument();

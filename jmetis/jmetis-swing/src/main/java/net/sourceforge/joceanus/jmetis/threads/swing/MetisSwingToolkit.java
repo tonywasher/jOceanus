@@ -29,8 +29,12 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.newlist.MetisBaseList;
+import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
+import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.ui.swing.MetisSwingTableManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
@@ -107,5 +111,15 @@ public class MetisSwingToolkit
     @Override
     protected MetisSwingThreadProgressStatus newThreadSliderStatus(final MetisThreadManager<JComponent, Icon> pManager) {
         return new MetisSwingThreadProgressStatus(pManager, getGuiFactory());
+    }
+
+    @Override
+    public <R extends MetisIndexedItem> MetisSwingTableManager<R> newTableManager(final MetisBaseList<R> pBaseList) {
+        return new MetisSwingTableManager<>(getGuiFactory(), pBaseList);
+    }
+
+    @Override
+    public <R extends MetisIndexedItem> MetisSwingTableManager<R> newTableManager(final MetisEditList<R> pEditList) {
+        return new MetisSwingTableManager<>(getGuiFactory(), pEditList);
     }
 }

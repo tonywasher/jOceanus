@@ -83,8 +83,8 @@ public class MetisSwingTableManager<R extends MetisIndexedItem>
      * @param pFactory the GUI Factory
      * @param pList the edit list
      */
-    protected MetisSwingTableManager(final TethysSwingGuiFactory pFactory,
-                                     final MetisEditList<R> pList) {
+    public MetisSwingTableManager(final TethysSwingGuiFactory pFactory,
+                                  final MetisEditList<R> pList) {
         this(pFactory, pList, false);
     }
 
@@ -93,8 +93,8 @@ public class MetisSwingTableManager<R extends MetisIndexedItem>
      * @param pFactory the GUI Factory
      * @param pList the base list
      */
-    protected MetisSwingTableManager(final TethysSwingGuiFactory pFactory,
-                                     final MetisBaseList<R> pList) {
+    public MetisSwingTableManager(final TethysSwingGuiFactory pFactory,
+                                  final MetisBaseList<R> pList) {
         this(pFactory, pList, true);
     }
 

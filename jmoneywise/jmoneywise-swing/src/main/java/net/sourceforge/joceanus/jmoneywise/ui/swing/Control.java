@@ -28,16 +28,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.SplashScreen;
-import java.util.Properties;
 
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 
 /**
  * Main entry point for program.
@@ -53,11 +52,6 @@ public final class Control {
      * The Splash Character Width.
      */
     private static final int SPLASH_CHARWIDTH = 10;
-
-    /**
-     * The Main window.
-     */
-    private static MainTab theWindow = null;
 
     /**
      * Logger.
@@ -77,16 +71,11 @@ public final class Control {
     private static void createAndShowGUI(final MetisProfile pProfile) {
         try {
             /* Configure log4j */
-            Properties myLogProp = new Properties();
-            myLogProp.setProperty("log4j.rootLogger", "ERROR, A1");
-            myLogProp.setProperty("log4j.appender.A1", "org.apache.log4j.ConsoleAppender");
-            myLogProp.setProperty("log4j.appender.A1.layout", "org.apache.log4j.PatternLayout");
-            myLogProp.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
-            PropertyConfigurator.configure(myLogProp);
+            TethysLogConfig.configureLog4j();
 
             /* Create the window */
-            theWindow = new MainTab(pProfile);
-            theWindow.makeFrame();
+            MainTab myWindow = new MainTab(pProfile);
+            myWindow.makeFrame();
 
         } catch (OceanusException e) {
             LOGGER.error("createGUI didn't complete successfully", e);

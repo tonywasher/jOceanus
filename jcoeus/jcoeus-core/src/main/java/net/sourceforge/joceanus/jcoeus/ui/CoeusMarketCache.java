@@ -26,10 +26,21 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jcoeus.data.CoeusCalendar;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketAnnual;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSet;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSnapShot;
+import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferenceKey;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferences;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -39,7 +50,27 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Loan MarketCache.
  */
 public class CoeusMarketCache
-        implements TethysEventProvider<CoeusDataEvent> {
+        implements TethysEventProvider<CoeusDataEvent>, MetisDataContents {
+    /**
+     * Report fields.
+     */
+    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusMarketCache.class.getSimpleName());
+
+    /**
+     * MarketSet Field Id.
+     */
+    private static final MetisField FIELD_MARKETSET = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MARKETSET.getValue());
+
+    /**
+     * SnapShot Field Id.
+     */
+    private static final MetisField FIELD_SNAPSHOT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_SNAPSHOTMAP.getValue());
+
+    /**
+     * Annual Field Id.
+     */
+    private static final MetisField FIELD_ANNUAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ANNUALMAP.getValue());
+
     /**
      * The MarketSet.
      */
@@ -53,23 +84,48 @@ public class CoeusMarketCache
     /**
      * The Map of MarketSnapShots.
      */
-    private Map<CoeusMarketProvider, Map<TethysDate, CoeusMarketSnapShot>> theSnapShotMap;
+    private final Map<CoeusMarketProvider, Map<TethysDate, CoeusMarketSnapShot>> theSnapShotMap;
 
     /**
      * The Map of MarketAnnuals.
      */
-    private Map<CoeusMarketProvider, Map<TethysDate, CoeusMarketAnnual>> theAnnualMap;
+    private final Map<CoeusMarketProvider, Map<TethysDate, CoeusMarketAnnual>> theAnnualMap;
+
+    /**
+     * Preferences.
+     */
+    private final CoeusPreferences thePreferences;
+
+    /**
+     * the formatter.
+     */
+    private final MetisDataFormatter theFormatter;
+
+    /**
+     * the calendar.
+     */
+    private CoeusCalendar theCalendar;
 
     /**
      * Constructor.
+     * @param pToolkit the toolkit
      */
-    public CoeusMarketCache() {
+    public CoeusMarketCache(final MetisToolkit<?, ?> pToolkit) {
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the maps */
         theSnapShotMap = new EnumMap<>(CoeusMarketProvider.class);
         theAnnualMap = new EnumMap<>(CoeusMarketProvider.class);
+
+        /* Obtain the formatter */
+        theFormatter = pToolkit.getFormatter();
+
+        /* Obtain default value for calendar totals and listen to changes */
+        MetisPreferenceManager myPrefMgr = pToolkit.getPreferenceManager();
+        thePreferences = myPrefMgr.getPreferenceSet(CoeusPreferences.class);
+        theCalendar = new CoeusCalendar(theFormatter.getLocale(), thePreferences.getBooleanValue(CoeusPreferenceKey.CALENDARYEAR));
+        thePreferences.getEventRegistrar().addEventListener(e -> handlePrefChange());
     }
 
     @Override
@@ -123,12 +179,20 @@ public class CoeusMarketCache
         CoeusMarketAnnual myAnnual = myMap.get(pDate);
         if ((myAnnual == null)
             && (theMarketSet != null)) {
-            myAnnual = theMarketSet.getAnnual(pProvider, pDate);
+            myAnnual = theMarketSet.getAnnual(pProvider, theCalendar, pDate);
             myMap.put(pDate, myAnnual);
         }
 
         /* Return the annual */
         return myAnnual;
+    }
+
+    /**
+     * Obtain the calendar.
+     * @return the calendar
+     */
+    public CoeusCalendar getCalendar() {
+        return theCalendar;
     }
 
     /**
@@ -155,5 +219,45 @@ public class CoeusMarketCache
         theSnapShotMap.clear();
         theAnnualMap.clear();
         theEventManager.fireEvent(CoeusDataEvent.REFRESHVIEW);
+    }
+
+    /**
+     * Handle Preference change.
+     */
+    private void handlePrefChange() {
+        /* If the Totals preference has changed */
+        Boolean myTotals = thePreferences.getBooleanValue(CoeusPreferenceKey.CALENDARYEAR);
+        if (myTotals != theCalendar.useCalendarTotals()) {
+            /* Create new calendar and reset maps */
+            theCalendar = new CoeusCalendar(theFormatter.getLocale(), myTotals);
+            resetMaps();
+        }
+    }
+
+    @Override
+    public Object getFieldValue(final MetisField pField) {
+        /* Handle standard fields */
+        if (FIELD_MARKETSET.equals(pField)) {
+            return theMarketSet;
+        }
+        if (FIELD_SNAPSHOT.equals(pField)) {
+            return theSnapShotMap;
+        }
+        if (FIELD_ANNUAL.equals(pField)) {
+            return theAnnualMap;
+        }
+
+        /* Not recognised */
+        return MetisFieldValue.UNKNOWN;
+    }
+
+    @Override
+    public String formatObject() {
+        return FIELD_DEFS.getName();
+    }
+
+    @Override
+    public MetisFields getDataFields() {
+        return FIELD_DEFS;
     }
 }
