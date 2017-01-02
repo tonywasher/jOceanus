@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
+import java.time.Month;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -53,6 +54,16 @@ public class CoeusMarketAnnual
     private static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_DATE.getValue());
 
     /**
+     * Monthly Histories Field Id.
+     */
+    private static final MetisField FIELD_MONTHS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MONTHLYTOTALS.getValue());
+
+    /**
+     * History Field Id.
+     */
+    private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_HISTORY.getValue());
+
+    /**
      * Loan Market.
      */
     private final CoeusMarket theMarket;
@@ -75,7 +86,7 @@ public class CoeusMarketAnnual
     /**
      * The Map of MonthlyHistories.
      */
-    private final Map<TethysDate, CoeusHistory> theMonthlyHistories;
+    private final Map<Month, CoeusHistory> theMonthlyHistories;
 
     /**
      * The AnnualHistory.
@@ -153,6 +164,15 @@ public class CoeusMarketAnnual
      */
     public Iterator<CoeusHistory> monthlyIterator() {
         return theMonthlyHistories.values().iterator();
+    }
+
+    /**
+     * Is there history for the month?
+     * @param pMonth the month
+     * @return true/false
+     */
+    public boolean availableMonth(final Month pMonth) {
+        return theMonthlyHistories.containsKey(pMonth);
     }
 
     /**
@@ -234,20 +254,30 @@ public class CoeusMarketAnnual
      * @param pDate the date
      * @return the history
      */
-    public CoeusHistory getMonthlyHistory(final TethysDate pDate) {
+    private CoeusHistory getMonthlyHistory(final TethysDate pDate) {
         /* Determine the date of the month */
         TethysDate myDate = theCalendar.getEndOfMonth(pDate);
+        Month myMonth = myDate.getMonthValue();
 
         /* Look up an existing history */
-        CoeusHistory myHistory = theMonthlyHistories.get(myDate);
+        CoeusHistory myHistory = theMonthlyHistories.get(myMonth);
         if (myHistory == null) {
             /* Create new history and record it */
             myHistory = theMarket.newHistory(myDate);
-            theMonthlyHistories.put(myDate, myHistory);
+            theMonthlyHistories.put(myMonth, myHistory);
         }
 
         /* Return the history */
         return myHistory;
+    }
+
+    /**
+     * Obtain monthly history.
+     * @param pDate the date
+     * @return the history
+     */
+    public CoeusHistory getMonthlyHistory(final Month pDate) {
+        return theMonthlyHistories.get(pDate);
     }
 
     /**
@@ -306,6 +336,12 @@ public class CoeusMarketAnnual
         }
         if (FIELD_DATE.equals(pField)) {
             return theDate;
+        }
+        if (FIELD_MONTHS.equals(pField)) {
+            return theMonthlyHistories;
+        }
+        if (FIELD_HISTORY.equals(pField)) {
+            return theHistory;
         }
 
         /* Not recognised */

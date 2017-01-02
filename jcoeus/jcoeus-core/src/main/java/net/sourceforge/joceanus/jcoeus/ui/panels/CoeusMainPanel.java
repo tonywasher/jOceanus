@@ -62,7 +62,7 @@ public abstract class CoeusMainPanel<N, I> {
     /**
      * The Totals Table.
      */
-    private final CoeusTotalsTable<N, I> theTotalsTable;
+    private final CoeusStatementTable<N, I> theTotalsTable;
 
     /**
      * The tabs.
@@ -115,7 +115,7 @@ public abstract class CoeusMainPanel<N, I> {
         myRegistrar.addEventListener(CoeusDataEvent.GOTOSTATEMENT, this::handleGoToEvent);
 
         /* Create the totals table */
-        theTotalsTable = new CoeusTotalsTable<>(pToolkit, theMarketCache);
+        theTotalsTable = new CoeusStatementTable<>(pToolkit, theMarketCache);
         theTotalsTab = theTabs.addTabItem(CoeusUIResource.TAB_STATEMENTS.getValue(), theTotalsTable);
 
         /* Create the Preferences Tab */

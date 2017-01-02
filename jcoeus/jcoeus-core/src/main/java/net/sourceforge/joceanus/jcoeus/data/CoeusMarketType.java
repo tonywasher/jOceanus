@@ -20,39 +20,44 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jcoeus.ui;
+package net.sourceforge.joceanus.jcoeus.data;
 
 /**
- * DataEvents.
+ * Market Type.
  */
-public enum CoeusDataEvent {
+public enum CoeusMarketType {
     /**
-     * Refresh View.
+     * SnapShot.
      */
-    REFRESHVIEW,
+    SNAPSHOT,
 
     /**
-     * Statement.
+     * Annual.
      */
-    GOTOSTATEMENT,
+    ANNUAL;
 
     /**
-     * Selection Changed.
+     * The String name.
      */
-    SELECTIONCHANGED,
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = CoeusResource.getKeyForMarketType(this).getValue();
+        }
+
+        /* return the name */
+        return theName;
+    }
 
     /**
-     * Filter Changed.
+     * Obtain marketType date?
+     * @return true/false
      */
-    FILTERCHANGED,
-
-    /**
-     * Print.
-     */
-    PRINT,
-
-    /**
-     * SaveToFile.
-     */
-    SAVETOFILE;
+    public boolean useAnnualDate() {
+        return this != CoeusMarketType.SNAPSHOT;
+    }
 }

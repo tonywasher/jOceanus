@@ -211,7 +211,7 @@ public class MetisOasisCell
         String myType = theOasisCell.getOfficeValueTypeAttribute();
         return (myType != null)
                                 ? OfficeValueTypeAttribute.Value.enumValueOf(myType)
-                                : null;
+                                : Value.VOID;
     }
 
     @Override

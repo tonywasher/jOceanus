@@ -341,7 +341,8 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
      */
     protected void fireEvent(final MetisListChange<T> pEvent) {
         /* If the change is non-empty */
-        if (!pEvent.isEmpty()) {
+        if (MetisListEvent.REFRESH.equals(pEvent.getEventType())
+            || !pEvent.isEmpty()) {
             theEventManager.fireEvent(pEvent.getEventType(), pEvent);
         }
     }

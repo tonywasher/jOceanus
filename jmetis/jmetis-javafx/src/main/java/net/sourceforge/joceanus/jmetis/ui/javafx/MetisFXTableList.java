@@ -69,8 +69,8 @@ public class MetisFXTableList<R extends MetisIndexedItem>
 
         /* Create the list */
         theList = theListFields.hasComparisons()
-                                                 ? FXCollections.observableArrayList()
-                                                 : FXCollections.observableArrayList(theListFields::getComparisons);
+                                                 ? FXCollections.observableArrayList(theListFields::getComparisons)
+                                                 : FXCollections.observableArrayList();
 
         /* Listen to events on the versionedList */
         TethysEventRegistrar<MetisListEvent> myRegistrar = theVersionedList.getEventRegistrar();

@@ -50,6 +50,16 @@ public enum CoeusResource
     MARKET_RATESETTER("market.ratesetter"),
 
     /**
+     * SnapShot Market.
+     */
+    MARKETTYPE_SNAPSHOT("marketType.snapShot"),
+
+    /**
+     * Annual Market.
+     */
+    MARKETTYPE_ANNUAL("marketType.annual"),
+
+    /**
      * Zopa Market.
      */
     MARKET_ZOPA("market.zopa"),
@@ -485,24 +495,19 @@ public enum CoeusResource
     DATA_HISTORY("data.history"),
 
     /**
-     * Data MonthlyDeltas.
-     */
-    DATA_MONTHLYDELTAS("data.deltas.monthly"),
-
-    /**
-     * Data AnnualDeltas.
-     */
-    DATA_ANNUALDELTAS("data.deltas.annually"),
-
-    /**
      * Data MonthlyTotals.
      */
-    DATA_MONTHLYTOTALS("data.totals.monthly");
+    DATA_MONTHLYTOTALS("data.monthly");
 
     /**
      * The MarketProvider Map.
      */
     private static final Map<CoeusMarketProvider, TethysResourceId> MARKET_MAP = buildMarketMap();
+
+    /**
+     * The MarketType Map.
+     */
+    private static final Map<CoeusMarketType, TethysResourceId> MARKETTYPE_MAP = buildMarketTypeMap();
 
     /**
      * The LoanStatus Map.
@@ -590,6 +595,27 @@ public enum CoeusResource
      */
     public static TethysResourceId getKeyForMarket(final CoeusMarketProvider pMarket) {
         return TethysResourceBuilder.getKeyForEnum(MARKET_MAP, pMarket);
+    }
+
+    /**
+     * Build marketType map.
+     * @return the map
+     */
+    private static Map<CoeusMarketType, TethysResourceId> buildMarketTypeMap() {
+        /* Create the map and return it */
+        Map<CoeusMarketType, TethysResourceId> myMap = new EnumMap<>(CoeusMarketType.class);
+        myMap.put(CoeusMarketType.SNAPSHOT, MARKETTYPE_SNAPSHOT);
+        myMap.put(CoeusMarketType.ANNUAL, MARKETTYPE_ANNUAL);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for marketType.
+     * @param pMarketType the marketType
+     * @return the resource key
+     */
+    public static TethysResourceId getKeyForMarketType(final CoeusMarketType pMarketType) {
+        return TethysResourceBuilder.getKeyForEnum(MARKETTYPE_MAP, pMarketType);
     }
 
     /**

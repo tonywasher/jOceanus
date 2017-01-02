@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSnapShot;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
-import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusMarketSnapShotFilter;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
@@ -167,7 +167,9 @@ public class CoeusReportBalanceSheet
         if (pSource instanceof CoeusTotalSet) {
             /* Create the new filter */
             CoeusTotalSet myTotalSet = (CoeusTotalSet) pSource;
-            return new CoeusMarketSnapShotFilter(theMarket, myTotalSet);
+            CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(theMarket);
+            myFilter.setTotalSet(myTotalSet);
+            return myFilter;
         }
         return null;
     }

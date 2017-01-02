@@ -196,7 +196,7 @@ public class MetisErrorPanel<N, I>
     }
 
     /**
-     * Set error list
+     * Set error list.
      * @param pExceptions the error list
      */
     public void setErrors(final MetisErrorList<MetisExceptionWrapper> pExceptions) {

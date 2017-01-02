@@ -72,7 +72,7 @@ public abstract class MetisTableManager<R extends MetisIndexedItem, N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Handle events */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theEventManager.getEventRegistrar();
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.CELLCREATE, theEventManager::cascadeEvent);
         myRegistrar.addEventListener(TethysUIEvent.CELLPREEDIT, this::handlePreEditEvent);
         myRegistrar.addEventListener(TethysUIEvent.CELLPRECOMMIT, theEventManager::cascadeEvent);

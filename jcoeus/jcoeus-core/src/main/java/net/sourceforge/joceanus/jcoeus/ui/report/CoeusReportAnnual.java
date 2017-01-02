@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui.report;
 
+import java.time.Month;
 import java.util.Iterator;
 
 import org.w3c.dom.Document;
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusMarketAnnual;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
-import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusMarketYearFilter;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusAnnualFilter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
@@ -111,28 +112,29 @@ public class CoeusReportAnnual
         /* Loop through the months */
         Iterator<CoeusHistory> myIterator = theMarket.monthlyIterator();
         while (myIterator.hasNext()) {
-            CoeusHistory myMonth = myIterator.next();
-            CoeusTotals myTotals = myMonth.getTotals();
-            myDate = myMonth.getDate();
+            CoeusHistory myHistory = myIterator.next();
+            CoeusTotals myTotals = myHistory.getTotals();
+            myDate = myHistory.getDate();
+            Month myMonth = myDate.getMonthValue();
 
             /* Create the row */
             theBuilder.startRow(myTable);
             theBuilder.makeValueCell(myTable, myDate.toString());
-            makeTableFilterCell(myTable, CoeusTotalSet.INTEREST, myDate, myTotals.getTotalInterest());
+            makeTableFilterCell(myTable, CoeusTotalSet.INTEREST, myMonth, myTotals.getTotalInterest());
 
             /* Handle optional parts */
             if (hasFees) {
-                makeTableFilterCell(myTable, CoeusTotalSet.FEES, myDate, myTotals.getTotalFees());
+                makeTableFilterCell(myTable, CoeusTotalSet.FEES, myMonth, myTotals.getTotalFees());
             }
             if (hasCashBack) {
-                makeTableFilterCell(myTable, CoeusTotalSet.CASHBACK, myDate, myTotals.getTotalCashBack());
+                makeTableFilterCell(myTable, CoeusTotalSet.CASHBACK, myMonth, myTotals.getTotalCashBack());
             }
             if (hasBadDebt) {
-                makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTINTEREST, myDate, myTotals.getTotalBadDebtInterest());
-                makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTCAPITAL, myDate, myTotals.getTotalBadDebtCapital());
+                makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTINTEREST, myMonth, myTotals.getTotalBadDebtInterest());
+                makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTCAPITAL, myMonth, myTotals.getTotalBadDebtCapital());
             }
             if (needTaxableEarnings) {
-                makeTableFilterCell(myTable, CoeusTotalSet.TAXABLEEARNINGS, myDate, myTotals.getTotalTaxableEarnings());
+                makeTableFilterCell(myTable, CoeusTotalSet.TAXABLEEARNINGS, myMonth, myTotals.getTotalTaxableEarnings());
             }
         }
 
@@ -177,15 +179,15 @@ public class CoeusReportAnnual
      * Make Table Link Cell.
      * @param pTable the table
      * @param pTotalSet the totalSet
-     * @param pDate the date
+     * @param pMonth the month
      * @param pValue the value
      */
     private void makeTableFilterCell(final HTMLTable pTable,
                                      final CoeusTotalSet pTotalSet,
-                                     final TethysDate pDate,
+                                     final Month pMonth,
                                      final TethysDecimal pValue) {
         /* Create the filter definition */
-        CoeusFilterDefinition myDef = new CoeusFilterDefinition(pTotalSet, pDate);
+        CoeusFilterDefinition myDef = new CoeusFilterDefinition(pTotalSet, pMonth);
         String myId = myDef.getFilterId();
 
         /* Create the LinkCell */
@@ -199,7 +201,10 @@ public class CoeusReportAnnual
         if (pSource instanceof CoeusFilterDefinition) {
             /* Create the new filter */
             CoeusFilterDefinition myDef = (CoeusFilterDefinition) pSource;
-            return new CoeusMarketYearFilter(theMarket, myDef.theTotalSet, myDef.theMonth);
+            CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theMarket, theMarket.getDate());
+            myFilter.setMonth(myDef.theMonth);
+            myFilter.setTotalSet(myDef.theTotalSet);
+            return myFilter;
         }
         return null;
     }
@@ -216,7 +221,7 @@ public class CoeusReportAnnual
         /**
          * The month.
          */
-        private final TethysDate theMonth;
+        private final Month theMonth;
 
         /**
          * Constructor.
@@ -224,7 +229,7 @@ public class CoeusReportAnnual
          * @param pMonth the month
          */
         private CoeusFilterDefinition(final CoeusTotalSet pTotalSet,
-                                      final TethysDate pMonth) {
+                                      final Month pMonth) {
             theTotalSet = pTotalSet;
             theMonth = pMonth;
         }
@@ -237,7 +242,7 @@ public class CoeusReportAnnual
             StringBuilder myBuilder = new StringBuilder("total");
             myBuilder.append(theTotalSet.toString());
             if (theMonth != null) {
-                myBuilder.append(theMonth.getMonth());
+                myBuilder.append(theMonth.toString());
             }
             return myBuilder.toString();
         }

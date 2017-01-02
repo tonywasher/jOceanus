@@ -22,8 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui.panels;
 
+import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.jmetis.newlist.MetisBaseList;
@@ -38,13 +40,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
  * @param <N> Node type
  * @param <I> Icon type
  */
-public class CoeusTotalsTable<N, I>
+public class CoeusStatementTable<N, I>
         implements TethysNode<N> {
-    /**
-     * The MarketCache.
-     */
-    private final CoeusMarketCache theCache;
-
     /**
      * The List.
      */
@@ -58,7 +55,7 @@ public class CoeusTotalsTable<N, I>
     /**
      * The Selector.
      */
-    private final CoeusFilterSelect<N, I> theSelector;
+    private final CoeusStatementSelect<N, I> theSelector;
 
     /**
      * The BorderPane.
@@ -70,11 +67,8 @@ public class CoeusTotalsTable<N, I>
      * @param pToolkit the Toolkit
      * @param pCache the market cache
      */
-    public CoeusTotalsTable(final MetisToolkit<N, I> pToolkit,
-                            final CoeusMarketCache pCache) {
-        /* Store the cache */
-        theCache = pCache;
-
+    public CoeusStatementTable(final MetisToolkit<N, I> pToolkit,
+                               final CoeusMarketCache pCache) {
         /* Access the GUI factory */
         TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
 
@@ -86,10 +80,12 @@ public class CoeusTotalsTable<N, I>
         theTable.declareDateColumn(CoeusTotals.FIELD_DATE);
         theTable.declareScrollColumn(CoeusTotals.FIELD_TYPE, CoeusTransactionType.class);
         theTable.declareStringColumn(CoeusTotals.FIELD_DESC);
-        theTable.declareStringColumn(CoeusTotals.FIELD_LOAN);
+        theTable.declareScrollColumn(CoeusTotals.FIELD_LOAN, CoeusLoan.class);
 
         /* Create the selector */
-        theSelector = new CoeusFilterSelect<>(myFactory);
+        theSelector = new CoeusStatementSelect<>(myFactory, pCache);
+        theSelector.getEventRegistrar().addEventListener(CoeusDataEvent.SELECTIONCHANGED, e -> updateStatement(theSelector.getFilter()));
+        theSelector.getEventRegistrar().addEventListener(CoeusDataEvent.FILTERCHANGED, e -> filterChanged());
 
         /* Create and configure the Pane */
         thePane = myFactory.newBorderPane();
@@ -122,6 +118,23 @@ public class CoeusTotalsTable<N, I>
      * @param pFilter the filter
      */
     public void processFilter(final CoeusFilter pFilter) {
+        theSelector.setFilter(pFilter);
+        updateStatement(pFilter);
+    }
 
+    /**
+     * Update Statement.
+     * @param pFilter the filter
+     */
+    public void updateStatement(final CoeusFilter pFilter) {
+        theList.resetContent(pFilter.getHistory().historyIterator());
+        filterChanged();
+    }
+
+    /**
+     * Handle a change in filter.
+     */
+    private void filterChanged() {
+        /* To be Implemented */
     }
 }

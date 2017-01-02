@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui.report;
 
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarketType;
+
 /**
  * Coeus Report Types.
  */
@@ -59,10 +61,20 @@ public enum CoeusReportType {
     }
 
     /**
-     * Use annual date?
+     * Obtain marketType?
+     * @return the marketType
+     */
+    public CoeusMarketType getMarketType() {
+        return this == CoeusReportType.ANNUAL
+                                              ? CoeusMarketType.ANNUAL
+                                              : CoeusMarketType.SNAPSHOT;
+    }
+
+    /**
+     * Use Annual Date?
      * @return true/false
      */
     public boolean useAnnualDate() {
-        return this == CoeusReportType.ANNUAL;
+        return getMarketType().useAnnualDate();
     }
 }

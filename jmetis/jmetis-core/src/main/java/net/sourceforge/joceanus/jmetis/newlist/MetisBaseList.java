@@ -73,19 +73,37 @@ public class MetisBaseList<T extends MetisIndexedItem>
      */
     public void resetContent(final MetisBaseList<T> pSource) {
         /* Clear the list */
+        resetContent(pSource.iterator(), pSource.getVersion());
+    }
+
+    /**
+     * Reset content.
+     * @param pSource the source list
+     */
+    public void resetContent(final Iterator<T> pSource) {
+        resetContent(pSource, 0);
+    }
+
+    /**
+     * Reset content.
+     * @param pSource the source iterator
+     * @param pVersion the version
+     */
+    private void resetContent(final Iterator<T> pSource,
+                              final int pVersion) {
+        /* Clear the list */
         clear();
 
         /* Loop through the list */
-        Iterator<T> myIterator = pSource.iterator();
-        while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
+        while (pSource.hasNext()) {
+            T myCurr = pSource.next();
 
             /* Add the item to the list */
             addToList(myCurr);
         }
 
         /* Reset the version */
-        setVersion(pSource.getVersion());
+        setVersion(pVersion);
 
         /* Report the refresh */
         MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REFRESH);

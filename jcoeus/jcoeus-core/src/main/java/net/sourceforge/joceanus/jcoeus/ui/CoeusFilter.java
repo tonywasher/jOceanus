@@ -22,11 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui;
 
+import java.time.Month;
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
-import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketAnnual;
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSnapShot;
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarketType;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -35,10 +39,16 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  */
 public interface CoeusFilter {
     /**
-     * Obtain the market.
-     * @return the market
+     * Obtain the market provider.
+     * @return the market provider
      */
-    CoeusMarket getMarket();
+    CoeusMarketProvider getProvider();
+
+    /**
+     * Obtain the market type.
+     * @return the market type
+     */
+    CoeusMarketType getMarketType();
 
     /**
      * Obtain the totalSet.
@@ -47,7 +57,19 @@ public interface CoeusFilter {
     CoeusTotalSet getTotalSet();
 
     /**
-     * Obtain the history.
+     * Set the TotalSet.
+     * @param pTotalSet the totalSet
+     */
+    void setTotalSet(CoeusTotalSet pTotalSet);
+
+    /**
+     * Obtain the selected date.
+     * @return the selected date
+     */
+    TethysDate getSelectedDate();
+
+    /**
+     * ,/ Obtain the history.
      * @return the history
      */
     CoeusHistory getHistory();
@@ -55,65 +77,87 @@ public interface CoeusFilter {
     /**
      * The Market SnapShot Filter.
      */
-    class CoeusMarketSnapShotFilter
+    class CoeusSnapShotFilter
             implements CoeusFilter {
         /**
-         * The Market Year.
+         * The Market SnapShot.
          */
         private final CoeusMarketSnapShot theSnapShot;
 
         /**
          * The Loan.
          */
-        private final CoeusLoan theLoan;
+        private CoeusLoan theLoan;
 
         /**
          * The TotalSet.
          */
-        private final CoeusTotalSet theTotalSet;
+        private CoeusTotalSet theTotalSet;
 
         /**
          * Constructor.
          * @param pSnapShot the marketSnapShot.
-         * @param pTotalSet the totalSet.
          */
-        public CoeusMarketSnapShotFilter(final CoeusMarketSnapShot pSnapShot,
-                                         final CoeusTotalSet pTotalSet) {
-            this(pSnapShot, pTotalSet, null);
-        }
-
-        /**
-         * Constructor.
-         * @param pSnapShot the marketSnapShot.
-         * @param pLoan the loan.
-         */
-        public CoeusMarketSnapShotFilter(final CoeusMarketSnapShot pSnapShot,
-                                         final CoeusLoan pLoan) {
-            this(pSnapShot, null, pLoan);
-        }
-
-        /**
-         * Constructor.
-         * @param pSnapShot the marketSnapShot.
-         * @param pTotalSet the totalSet
-         * @param pLoan the loan.
-         */
-        private CoeusMarketSnapShotFilter(final CoeusMarketSnapShot pSnapShot,
-                                          final CoeusTotalSet pTotalSet,
-                                          final CoeusLoan pLoan) {
+        public CoeusSnapShotFilter(final CoeusMarketSnapShot pSnapShot) {
             theSnapShot = pSnapShot;
-            theTotalSet = pTotalSet;
-            theLoan = pLoan;
+        }
+
+        /**
+         * is the loan available?
+         * @param pLoan the loan
+         * @return true/false
+         */
+        public boolean availableLoan(final CoeusLoan pLoan) {
+            return theSnapShot.availableLoan(pLoan);
+        }
+
+        /**
+         * Obtain the loans iterator.
+         * @return the iterator
+         */
+        public Iterator<CoeusLoan> loanIterator() {
+            return theSnapShot.loanIterator();
         }
 
         @Override
-        public CoeusMarket getMarket() {
-            return theSnapShot.getMarket();
+        public CoeusMarketProvider getProvider() {
+            return theSnapShot.getMarket().getProvider();
+        }
+
+        @Override
+        public CoeusMarketType getMarketType() {
+            return CoeusMarketType.SNAPSHOT;
+        }
+
+        /**
+         * Obtain the loan.
+         * @return the loan
+         */
+        public CoeusLoan getLoan() {
+            return theLoan;
+        }
+
+        /**
+         * Set the Loan.
+         * @param pLoan the loan
+         */
+        public void setLoan(final CoeusLoan pLoan) {
+            theLoan = pLoan;
         }
 
         @Override
         public CoeusTotalSet getTotalSet() {
             return theTotalSet;
+        }
+
+        @Override
+        public void setTotalSet(final CoeusTotalSet pTotalSet) {
+            theTotalSet = pTotalSet;
+        }
+
+        @Override
+        public TethysDate getSelectedDate() {
+            return theSnapShot.getDate();
         }
 
         @Override
@@ -125,42 +169,58 @@ public interface CoeusFilter {
     }
 
     /**
-     * The Market Year Filter.
+     * The Market Annual Filter.
      */
-    class CoeusMarketYearFilter
+    class CoeusAnnualFilter
             implements CoeusFilter {
         /**
-         * The Market Year.
+         * The Market Annual.
          */
-        private final CoeusMarketAnnual theYear;
+        private final CoeusMarketAnnual theAnnual;
+
+        /**
+         * The Selected Date.
+         */
+        private final TethysDate theSelectedDate;
 
         /**
          * The TotalSet.
          */
-        private final CoeusTotalSet theTotalSet;
+        private CoeusTotalSet theTotalSet;
 
         /**
          * The Market Month.
          */
-        private final TethysDate theMonth;
+        private Month theMonth;
 
         /**
          * Constructor.
-         * @param pYear the marketYear.
-         * @param pTotalSet the totalSet
-         * @param pMonth the month.
+         * @param pAnnual the marketAnnual.
+         * @param pDate the selected date
          */
-        public CoeusMarketYearFilter(final CoeusMarketAnnual pYear,
-                                     final CoeusTotalSet pTotalSet,
-                                     final TethysDate pMonth) {
-            theYear = pYear;
-            theTotalSet = pTotalSet;
-            theMonth = pMonth;
+        public CoeusAnnualFilter(final CoeusMarketAnnual pAnnual,
+                                 final TethysDate pDate) {
+            theAnnual = pAnnual;
+            theSelectedDate = pDate;
+        }
+
+        /**
+         * is the month available?
+         * @param pMonth the month
+         * @return true/false
+         */
+        public boolean availableMonth(final Month pMonth) {
+            return theAnnual.availableMonth(pMonth);
         }
 
         @Override
-        public CoeusMarket getMarket() {
-            return theYear.getMarket();
+        public CoeusMarketProvider getProvider() {
+            return theAnnual.getMarket().getProvider();
+        }
+
+        @Override
+        public CoeusMarketType getMarketType() {
+            return CoeusMarketType.ANNUAL;
         }
 
         @Override
@@ -168,19 +228,37 @@ public interface CoeusFilter {
             return theTotalSet;
         }
 
+        @Override
+        public void setTotalSet(final CoeusTotalSet pTotalSet) {
+            theTotalSet = pTotalSet;
+        }
+
         /**
          * Obtain the month.
          * @return the month
          */
-        public TethysDate getMonth() {
+        public Month getMonth() {
             return theMonth;
+        }
+
+        /**
+         * Set the Month.
+         * @param pMonth the month
+         */
+        public void setMonth(final Month pMonth) {
+            theMonth = pMonth;
+        }
+
+        @Override
+        public TethysDate getSelectedDate() {
+            return theSelectedDate;
         }
 
         @Override
         public CoeusHistory getHistory() {
             return theMonth == null
-                                    ? theYear.getHistory()
-                                    : theYear.getMonthlyHistory(theMonth);
+                                    ? theAnnual.getHistory()
+                                    : theAnnual.getMonthlyHistory(theMonth);
         }
     }
 }

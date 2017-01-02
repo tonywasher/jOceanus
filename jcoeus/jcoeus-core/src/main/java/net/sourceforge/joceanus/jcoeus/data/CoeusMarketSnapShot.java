@@ -154,6 +154,15 @@ public class CoeusMarketSnapShot
     }
 
     /**
+     * Is there history for the loan?
+     * @param pLoan the loan
+     * @return true/false
+     */
+    public boolean availableLoan(final CoeusLoan pLoan) {
+        return theLoanMap.containsKey(pLoan.getLoanId());
+    }
+
+    /**
      * Determine the history.
      * @return the history
      */

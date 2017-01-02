@@ -152,8 +152,7 @@ public class CoeusReportPanel<N, I>
         theBuilder = new CoeusReportBuilder(theManager);
 
         /* Create the Report Selection panel */
-        theSelect = new CoeusReportSelect<>(myFactory);
-        theSelect.setCalendar(theCache.getCalendar());
+        theSelect = new CoeusReportSelect<>(myFactory, theCache.getCalendar());
 
         /* Create the error panel for this view */
         theError = theToolkit.newErrorPanel(myReport);
@@ -251,7 +250,7 @@ public class CoeusReportPanel<N, I>
     private void buildReport() throws OceanusException {
         /* Access the values from the selection */
         CoeusReportType myReportType = theSelect.getReportType();
-        CoeusMarketProvider myMarket = theSelect.getMarket();
+        CoeusMarketProvider myProvider = theSelect.getProvider();
         TethysDate myDate = theSelect.getDate();
         Document myDoc;
 
@@ -266,14 +265,14 @@ public class CoeusReportPanel<N, I>
         /* Switch on report type */
         switch (myReportType) {
             case ANNUAL:
-                CoeusMarketAnnual myAnnual = theCache.getAnnual(myMarket, myDate);
+                CoeusMarketAnnual myAnnual = theCache.getAnnual(myProvider, myDate);
                 theMarketEntry.setObject(myAnnual);
                 myDoc = theBuilder.createReport(myReportType, myAnnual);
                 break;
 
             case BALANCESHEET:
             case LOANBOOK:
-                CoeusMarketSnapShot mySnapShot = theCache.getSnapShot(myMarket, myDate);
+                CoeusMarketSnapShot mySnapShot = theCache.getSnapShot(myProvider, myDate);
                 theMarketEntry.setObject(mySnapShot);
                 myDoc = theBuilder.createReport(myReportType, mySnapShot);
                 break;

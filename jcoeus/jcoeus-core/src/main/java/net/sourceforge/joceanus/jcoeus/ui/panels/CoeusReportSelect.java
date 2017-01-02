@@ -118,8 +118,13 @@ public class CoeusReportSelect<N, I>
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pCalendar the calendar
      */
-    public CoeusReportSelect(final TethysGuiFactory<N, I> pFactory) {
+    public CoeusReportSelect(final TethysGuiFactory<N, I> pFactory,
+                             final CoeusCalendar pCalendar) {
+        /* Store parameters */
+        theCalendar = pCalendar;
+
         /* Create the report button */
         theReportButton = pFactory.newScrollButton();
         buildReportMenu();
@@ -168,7 +173,7 @@ public class CoeusReportSelect<N, I>
 
         /* Initialise the state */
         theState.setType(CoeusReportType.BALANCESHEET);
-        theState.setMarket(CoeusMarketProvider.FUNDINGCIRCLE);
+        theState.setProvider(CoeusMarketProvider.FUNDINGCIRCLE);
         theState.setDate(theDateButton);
         theState.applyState();
 
@@ -207,8 +212,8 @@ public class CoeusReportSelect<N, I>
      * Obtain the market.
      * @return the market
      */
-    public CoeusMarketProvider getMarket() {
-        return theState.getMarket();
+    public CoeusMarketProvider getProvider() {
+        return theState.getProvider();
     }
 
     /**
@@ -303,8 +308,8 @@ public class CoeusReportSelect<N, I>
      * Handle new market.
      */
     private void handleNewMarket() {
-        /* Look for a changed market type */
-        if (theState.setMarket(theMarketButton.getValue())) {
+        /* Look for a changed market provider */
+        if (theState.setProvider(theMarketButton.getValue())) {
             /* Notify that the state has changed */
             theEventManager.fireEvent(CoeusDataEvent.SELECTIONCHANGED);
         }
@@ -326,9 +331,9 @@ public class CoeusReportSelect<N, I>
      */
     private final class ReportState {
         /**
-         * The selected market.
+         * The market provider.
          */
-        private CoeusMarketProvider theMarket;
+        private CoeusMarketProvider theProvider;
 
         /**
          * The actual date.
@@ -341,7 +346,7 @@ public class CoeusReportSelect<N, I>
         private TethysDate theSelectedDate;
 
         /**
-         * The selected report type.
+         * The report type.
          */
         private CoeusReportType theType;
 
@@ -356,7 +361,7 @@ public class CoeusReportSelect<N, I>
          * @param pState state to copy from
          */
         private ReportState(final ReportState pState) {
-            theMarket = pState.getMarket();
+            theProvider = pState.getProvider();
             theSelectedDate = pState.getSelectedDate();
             theActualDate = pState.getActualDate();
             theType = pState.getType();
@@ -364,23 +369,23 @@ public class CoeusReportSelect<N, I>
 
         /**
          * Obtain the selected market provider.
-         * @return the market
+         * @return the provider
          */
-        private CoeusMarketProvider getMarket() {
-            return theMarket;
+        private CoeusMarketProvider getProvider() {
+            return theProvider;
         }
 
         /**
          * Obtain the selected date.
-         * @return the range
+         * @return the date
          */
         private TethysDate getSelectedDate() {
             return theSelectedDate;
         }
 
         /**
-         * Obtain the selected range.
-         * @return the range
+         * Obtain the actual date.
+         * @return the date
          */
         private TethysDate getActualDate() {
             return theActualDate;
@@ -416,14 +421,14 @@ public class CoeusReportSelect<N, I>
         }
 
         /**
-         * Set new Market.
-         * @param pMarket the new market
+         * Set new Market Provider.
+         * @param pProvider the new provider
          * @return true/false did a change occur
          */
-        private boolean setMarket(final CoeusMarketProvider pMarket) {
-            if (!pMarket.equals(theMarket)) {
-                /* Store the new market */
-                theMarket = pMarket;
+        private boolean setProvider(final CoeusMarketProvider pProvider) {
+            if (!pProvider.equals(theProvider)) {
+                /* Store the new provider */
+                theProvider = pProvider;
                 return true;
             }
             return false;
@@ -458,7 +463,7 @@ public class CoeusReportSelect<N, I>
          */
         private void applyState() {
             theReportButton.setValue(theType);
-            theMarketButton.setValue(theMarket);
+            theMarketButton.setValue(theProvider);
             theDateButton.setSelectedDate(theSelectedDate);
         }
     }

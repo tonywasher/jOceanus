@@ -60,6 +60,26 @@ public enum CoeusUIResource
     MARKET_PROMPT("market.prompt"),
 
     /**
+     * Type prompt.
+     */
+    TYPE_PROMPT("type.prompt"),
+
+    /**
+     * Month prompt.
+     */
+    MONTH_PROMPT("month.prompt"),
+
+    /**
+     * Loan prompt.
+     */
+    LOAN_PROMPT("loan.prompt"),
+
+    /**
+     * Menu All.
+     */
+    MENU_ALL("menu.all"),
+
+    /**
      * Preference Base.
      */
     PREFERENCE_BASE("pref.base"),
