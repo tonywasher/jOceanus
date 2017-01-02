@@ -29,7 +29,7 @@ import org.apache.log4j.PropertyConfigurator;
 /**
  * Log4j Configuration.
  */
-public class TethysLogConfig {
+public final class TethysLogConfig {
     /**
      * Private constructor.
      */

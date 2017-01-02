@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 /**
  * Coeus Swing StartUp.
  */
-public class Coeus4Swing {
+public final class Coeus4Swing {
     /**
      * Logger.
      */
