@@ -29,7 +29,8 @@
         <dt>v1.5.0-b3</dt> <dd>Phase 2 of migration to javaFX infrastructure</dd>
         <dt>v1.5.0-b4</dt> <dd>Phase 3 of migration to javaFX infrastructure</dd>
         <dt>v1.5.1-b1</dt> <dd>Full support for multiple currencies</dd>
-        <dt>v1.5.2-b1</dt> <dd>Re-vamp of taxation</dd>
+        <dt>v1.5.1-b2</dt> <dd>Re-vamp of taxation</dd>
+        <dt>v1.5.1-b3</dt> <dd>Peer2Peer GUI</dd>
       </dl>
     </section>
   </body>
