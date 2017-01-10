@@ -32,8 +32,10 @@ import net.sourceforge.joceanus.jmetis.newlist.MetisBaseList;
 import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
 import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedList;
+import net.sourceforge.joceanus.jmetis.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.ui.MetisTableManager;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -56,6 +58,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysS
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTablePriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableRateColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableRatioColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableRawDecimalColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableScrollColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableShortColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStateIconColumn;
@@ -77,6 +80,11 @@ public class MetisSwingTableManager<R extends MetisIndexedItem>
      * is the table readOnly.
      */
     private final boolean isReadOnly;
+
+    /**
+     * Table Calculator.
+     */
+    private MetisTableCalculator<R> theCalculator;
 
     /**
      * Constructor.
@@ -137,6 +145,22 @@ public class MetisSwingTableManager<R extends MetisIndexedItem>
     private <T> T getItemFieldValue(final R pItem,
                                     final MetisField pId,
                                     final Class<T> pClass) {
+        return pId.getStorage().isCalculated()
+                                               ? getCalculatedFieldValue(pItem, pId, pClass)
+                                               : getStandardFieldValue(pItem, pId, pClass);
+    }
+
+    /**
+     * Obtain a value of a specific class.
+     * @param <T> the class
+     * @param pItem the item
+     * @param pId the field id
+     * @param pClass the item class
+     * @return the value
+     */
+    private <T> T getStandardFieldValue(final R pItem,
+                                        final MetisField pId,
+                                        final Class<T> pClass) {
         Object myValue = pItem.getFieldValue(pId);
         if (myValue == MetisFieldValue.SKIP) {
             myValue = null;
@@ -144,6 +168,23 @@ public class MetisSwingTableManager<R extends MetisIndexedItem>
         if (myValue instanceof MetisEncryptedField) {
             myValue = ((MetisEncryptedField<?>) myValue).getValue();
         }
+        return pClass.cast(myValue);
+    }
+
+    /**
+     * Obtain a value of a specific class.
+     * @param <T> the class
+     * @param pItem the item
+     * @param pId the field id
+     * @param pClass the item class
+     * @return the value
+     */
+    private <T> T getCalculatedFieldValue(final R pItem,
+                                          final MetisField pId,
+                                          final Class<T> pClass) {
+        Object myValue = theCalculator == null
+                                               ? null
+                                               : theCalculator.calculateValue(pItem, pId);
         return pClass.cast(myValue);
     }
 
@@ -179,6 +220,12 @@ public class MetisSwingTableManager<R extends MetisIndexedItem>
     }
 
     @Override
+    public void setCalculator(final MetisTableCalculator<R> pCalculator) {
+        theCalculator = pCalculator;
+        getTable().fireTableDataChanged();
+    }
+
+    @Override
     public TethysSwingTableStringColumn<MetisField, R> declareStringColumn(final MetisField pId) {
         TethysSwingTableStringColumn<MetisField, R> myColumn = getTable().declareStringColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, String.class));
@@ -210,6 +257,13 @@ public class MetisSwingTableManager<R extends MetisIndexedItem>
     public TethysSwingTableLongColumn<MetisField, R> declareLongColumn(final MetisField pId) {
         TethysSwingTableLongColumn<MetisField, R> myColumn = getTable().declareLongColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, Long.class));
+        return myColumn;
+    }
+
+    @Override
+    public TethysSwingTableRawDecimalColumn<MetisField, R> declareRawDecimalColumn(final MetisField pId) {
+        TethysSwingTableRawDecimalColumn<MetisField, R> myColumn = getTable().declareRawDecimalColumn(pId);
+        myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, TethysDecimal.class));
         return myColumn;
     }
 

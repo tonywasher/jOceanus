@@ -27,13 +27,16 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.newlist.MetisBaseList;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.ui.MetisTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
 
 /**
  * Statement Panel.
@@ -63,6 +66,16 @@ public class CoeusStatementTable<N, I>
     private final TethysBorderPaneManager<N, I> thePane;
 
     /**
+     * The Loan Column.
+     */
+    private final TethysTableColumn<MetisField, CoeusTotals, N, I> theLoanColumn;
+
+    /**
+     * The Statement Calculator.
+     */
+    private final CoeusStatementCalculator theCalculator;
+
+    /**
      * Constructor.
      * @param pToolkit the Toolkit
      * @param pCache the market cache
@@ -80,7 +93,9 @@ public class CoeusStatementTable<N, I>
         theTable.declareDateColumn(CoeusTotals.FIELD_DATE);
         theTable.declareScrollColumn(CoeusTotals.FIELD_TYPE, CoeusTransactionType.class);
         theTable.declareStringColumn(CoeusTotals.FIELD_DESC);
-        theTable.declareScrollColumn(CoeusTotals.FIELD_LOAN, CoeusLoan.class);
+        theLoanColumn = theTable.declareScrollColumn(CoeusTotals.FIELD_LOAN, CoeusLoan.class);
+        theTable.declareRawDecimalColumn(CoeusTotals.FIELD_DELTA);
+        theTable.declareRawDecimalColumn(CoeusTotals.FIELD_BALANCE);
 
         /* Create the selector */
         theSelector = new CoeusStatementSelect<>(myFactory, pCache);
@@ -91,6 +106,9 @@ public class CoeusStatementTable<N, I>
         thePane = myFactory.newBorderPane();
         thePane.setNorth(theSelector);
         thePane.setCentre(theTable);
+
+        /* Create the calculator */
+        theCalculator = new CoeusStatementCalculator();
     }
 
     @Override
@@ -135,6 +153,20 @@ public class CoeusStatementTable<N, I>
      * Handle a change in filter.
      */
     private void filterChanged() {
-        /* To be Implemented */
+        /* Adjust the calculator */
+        CoeusFilter myFilter = theSelector.getFilter();
+        theCalculator.setTotalSet(myFilter.getTotalSet());
+
+        /* Show or hide the loan column */
+        boolean showLoan = (!(myFilter instanceof CoeusSnapShotFilter))
+                           || ((CoeusSnapShotFilter) myFilter).getLoan() == null;
+
+        theLoanColumn.setVisible(showLoan);
+
+        /* Reset the filter */
+        theTable.setFilter(theCalculator.getFilter());
+
+        /* Declare the calculator */
+        theTable.setCalculator(theCalculator);
     }
 }

@@ -36,7 +36,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import net.sourceforge.jdatebutton.javafx.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -146,7 +145,7 @@ public abstract class TethysFXDataTextField<T>
 
         /* Create the command button */
         theCmdButton = new Button();
-        theCmdButton.setGraphic(ArrowIcon.DOWN.getArrow());
+        theCmdButton.setGraphic(TethysFXArrowIcon.DOWN.getArrow());
         theCmdButton.setFocusTraversable(false);
 
         /* declare the menu */

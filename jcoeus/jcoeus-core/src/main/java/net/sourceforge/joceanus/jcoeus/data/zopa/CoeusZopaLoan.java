@@ -163,12 +163,12 @@ public class CoeusZopaLoan
 
         /* Access the total capital */
         CoeusZopaTotals myTotals = getTotals();
-        TethysDecimal myLoanBalance = myTotals.getTotalLoanBook();
+        TethysDecimal myLoanBalance = myTotals.getLoanBook();
 
         /* If this is a badDebt */
         if (CoeusLoanStatus.BADDEBT.equals(theBookItem.getStatus())) {
             /* Loan Balance is badDebt */
-            myLoanBalance = myTotals.getTotalBadDebt();
+            myLoanBalance = myTotals.getBadDebt();
         }
 
         /* Check that this matches the book balance */

@@ -175,6 +175,7 @@ public class CoeusReportPanel<N, I>
         TethysEventRegistrar<CoeusDataEvent> myRegistrar = theSelect.getEventRegistrar();
         myRegistrar.addEventListener(CoeusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
         myRegistrar.addEventListener(CoeusDataEvent.PRINT, e -> theHTMLPane.printIt());
+        myRegistrar.addEventListener(CoeusDataEvent.SAVETOFILE, e -> theHTMLPane.saveToFile());
         theHTMLPane.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -> {
             theManager.processReference(e.getDetails(String.class), theHTMLPane);
             e.consume();

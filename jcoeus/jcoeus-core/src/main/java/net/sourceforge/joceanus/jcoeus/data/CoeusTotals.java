@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Transaction Totals.
@@ -77,77 +78,87 @@ public abstract class CoeusTotals
     /**
      * TotalSourceValue Field Id.
      */
-    private static final MetisField FIELD_TOTAL_SOURCEVALUE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALSOURCEVALUE.getValue());
+    private static final MetisField FIELD_SOURCEVALUE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_SOURCEVALUE.getValue());
 
     /**
      * TotalAssetValue Field Id.
      */
-    private static final MetisField FIELD_TOTAL_ASSETVALUE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALASSETVALUE.getValue());
+    private static final MetisField FIELD_ASSETVALUE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ASSETVALUE.getValue());
 
     /**
      * TotalInvested Field Id.
      */
-    private static final MetisField FIELD_TOTAL_INVESTED = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALINVESTED.getValue());
+    private static final MetisField FIELD_INVESTED = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INVESTED.getValue());
 
     /**
      * TotalHolding Field Id.
      */
-    private static final MetisField FIELD_TOTAL_HOLDING = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALHOLDING.getValue());
+    private static final MetisField FIELD_HOLDING = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_HOLDING.getValue());
 
     /**
      * TotalLoanBook Field Id.
      */
-    private static final MetisField FIELD_TOTAL_LOANBOOK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALLOANBOOK.getValue());
+    private static final MetisField FIELD_LOANBOOK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANBOOK.getValue());
 
     /**
      * TotalEarnings Field Id.
      */
-    private static final MetisField FIELD_TOTAL_EARNINGS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALEARNINGS.getValue());
+    private static final MetisField FIELD_EARNINGS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_EARNINGS.getValue());
 
     /**
      * TotalTaxableEarnings Field Id.
      */
-    private static final MetisField FIELD_TOTAL_TAXEARNINGS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALTAXABLEEARNINGS.getValue());
+    private static final MetisField FIELD_TAXEARNINGS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TAXABLEEARNINGS.getValue());
 
     /**
      * TotalInterest Field Id.
      */
-    private static final MetisField FIELD_TOTAL_INTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALINTEREST.getValue());
+    private static final MetisField FIELD_INTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INTEREST.getValue());
 
     /**
      * TotalBadDebtInterest Field Id.
      */
-    private static final MetisField FIELD_TOTAL_BADDEBTINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALBADDEBTINTEREST.getValue());
+    private static final MetisField FIELD_BADDEBTINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBTINTEREST.getValue());
 
     /**
      * TotalBadDebtCapital Field Id.
      */
-    private static final MetisField FIELD_TOTAL_BADDEBTCAPITAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALBADDEBTCAPITAL.getValue());
+    private static final MetisField FIELD_BADDEBTCAPITAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBTCAPITAL.getValue());
 
     /**
      * TotalFees Field Id.
      */
-    private static final MetisField FIELD_TOTAL_FEES = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALFEES.getValue());
+    private static final MetisField FIELD_FEES = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_FEES.getValue());
 
     /**
      * TotalCashBack Field Id.
      */
-    private static final MetisField FIELD_TOTAL_CASHBACK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALCASHBACK.getValue());
+    private static final MetisField FIELD_CASHBACK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_CASHBACK.getValue());
 
     /**
      * TotalLosses Field Id.
      */
-    private static final MetisField FIELD_TOTAL_LOSSES = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALLOSSES.getValue());
+    private static final MetisField FIELD_LOSSES = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOSSES.getValue());
 
     /**
      * TotalBadDebt Field Id.
      */
-    private static final MetisField FIELD_TOTAL_BADDEBT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALBADDEBT.getValue());
+    private static final MetisField FIELD_BADDEBT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBT.getValue());
 
     /**
      * TotalRecovered Field Id.
      */
-    private static final MetisField FIELD_TOTAL_RECOVERED = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALRECOVERED.getValue());
+    private static final MetisField FIELD_RECOVERED = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_RECOVERED.getValue());
+
+    /**
+     * Delta Field Id.
+     */
+    public static final MetisField FIELD_DELTA = FIELD_DEFS.declareCalculatedField(CoeusResource.DATA_DELTA.getValue());
+
+    /**
+     * TotalRecovered Field Id.
+     */
+    public static final MetisField FIELD_BALANCE = FIELD_DEFS.declareCalculatedField(CoeusResource.DATA_BALANCE.getValue());
 
     /**
      * The market.
@@ -170,6 +181,11 @@ public abstract class CoeusTotals
     private final CoeusTransaction theTransaction;
 
     /**
+     * The previous Totals.
+     */
+    private final CoeusTotals thePrevious;
+
+    /**
      * Constructor.
      * @param pMarket the market.
      * @param pLoan the loan.
@@ -182,17 +198,23 @@ public abstract class CoeusTotals
         theLoan = pLoan;
         theTransaction = null;
         theDate = pDate;
+        thePrevious = null;
     }
 
     /**
      * Constructor.
      * @param pUnderlying the underlying transaction.
+     * @param pPrevious the previous totals (or null)
      */
-    protected CoeusTotals(final CoeusTransaction pUnderlying) {
+    protected CoeusTotals(final CoeusTransaction pUnderlying,
+                          final CoeusTotals pPrevious) {
         theMarket = pUnderlying.getMarket();
         theLoan = pUnderlying.getLoan();
         theDate = pUnderlying.getDate();
         theTransaction = pUnderlying;
+        thePrevious = pPrevious.theTransaction == null
+                                                       ? null
+                                                       : pPrevious;
     }
 
     @Override
@@ -237,204 +259,94 @@ public abstract class CoeusTotals
     }
 
     /**
-     * Obtain the transactionType.
-     * @return the transactionType
-     */
-    public CoeusTransactionType getTransType() {
-        return theTransaction == null
-                                      ? CoeusTransactionType.TOTALS
-                                      : theTransaction.getTransType();
-    }
-
-    /**
-     * Obtain the invested.
-     * @return the invested
-     */
-    public TethysDecimal getInvested() {
-        return theTransaction == null
-                                      ? null
-                                      : theTransaction.getInvested();
-    }
-
-    /**
-     * Obtain the holding.
-     * @return the holding
-     */
-    public TethysDecimal getHolding() {
-        return theTransaction == null
-                                      ? null
-                                      : theTransaction.getHolding();
-    }
-
-    /**
-     * Obtain the loanBook.
-     * @return the loanBook
-     */
-    public TethysDecimal getLoanBook() {
-        return theTransaction == null
-                                      ? null
-                                      : theTransaction.getLoanBook();
-    }
-
-    /**
-     * Obtain the interest.
-     * @return the interest
-     */
-    public TethysDecimal getInterest() {
-        return theTransaction == null
-                                      ? null
-                                      : theTransaction.getInterest();
-    }
-
-    /**
-     * Obtain the badDebtInterest.
-     * @return the interest
-     */
-    public TethysDecimal getBadDebtInterest() {
-        return theTransaction == null
-                                      ? null
-                                      : theTransaction.getBadDebtInterest();
-    }
-
-    /**
-     * Obtain the badDebtCapital.
-     * @return the capital
-     */
-    public TethysDecimal getBadDebtCapital() {
-        return theTransaction == null
-                                      ? null
-                                      : theTransaction.getBadDebtInterest();
-    }
-
-    /**
-     * Obtain the fees.
-     * @return the fees
-     */
-    public TethysDecimal getFees() {
-        return theTransaction == null
-                                      ? null
-                                      : theTransaction.getFees();
-    }
-
-    /**
-     * Obtain the cashBack.
-     * @return the cashBack
-     */
-    public TethysDecimal getCashBack() {
-        return theTransaction == null
-                                      ? null
-                                      : theTransaction.getCashBack();
-    }
-
-    /**
-     * Obtain the badDebt.
-     * @return the badDebt
-     */
-    public TethysDecimal getBadDebt() {
-        return theTransaction == null
-                                      ? null
-                                      : theTransaction.getBadDebt();
-    }
-
-    /**
-     * Obtain the recovered.
-     * @return the recovered
-     */
-    public TethysDecimal getRecovered() {
-        return theTransaction == null
-                                      ? null
-                                      : theTransaction.getRecovered();
-    }
-
-    /**
      * Obtain the total source value.
      * @return the value
      */
-    public abstract TethysDecimal getTotalSourceValue();
+    public abstract TethysDecimal getSourceValue();
 
     /**
      * Obtain the total asset value.
      * @return the value
      */
-    public abstract TethysDecimal getTotalAssetValue();
+    public abstract TethysDecimal getAssetValue();
 
     /**
      * Obtain the total invested.
      * @return the invested
      */
-    public abstract TethysDecimal getTotalInvested();
+    public abstract TethysDecimal getInvested();
 
     /**
      * Obtain the total holding.
      * @return the holding
      */
-    public abstract TethysDecimal getTotalHolding();
+    public abstract TethysDecimal getHolding();
 
     /**
      * Obtain the total loanBook.
      * @return the loanBook
      */
-    public abstract TethysDecimal getTotalLoanBook();
+    public abstract TethysDecimal getLoanBook();
 
     /**
      * Obtain the total earnings.
      * @return the earnings
      */
-    public abstract TethysDecimal getTotalEarnings();
+    public abstract TethysDecimal getEarnings();
 
     /**
      * Obtain the total taxable interest.
      * @return the interest
      */
-    public abstract TethysDecimal getTotalTaxableEarnings();
+    public abstract TethysDecimal getTaxableEarnings();
 
     /**
      * Obtain the total interest.
      * @return the interest
      */
-    public abstract TethysDecimal getTotalInterest();
+    public abstract TethysDecimal getInterest();
 
     /**
      * Obtain the total badDebt interest.
      * @return the interest
      */
-    public abstract TethysDecimal getTotalBadDebtInterest();
+    public abstract TethysDecimal getBadDebtInterest();
 
     /**
      * Obtain the total badDebt capital.
      * @return the capital
      */
-    public abstract TethysDecimal getTotalBadDebtCapital();
+    public abstract TethysDecimal getBadDebtCapital();
 
     /**
      * Obtain the total fees.
      * @return the fees
      */
-    public abstract TethysDecimal getTotalFees();
+    public abstract TethysDecimal getFees();
 
     /**
      * Obtain the total cashBack.
      * @return the cashBack
      */
-    public abstract TethysDecimal getTotalCashBack();
+    public abstract TethysDecimal getCashBack();
 
     /**
      * Obtain the total losses.
      * @return the losses
      */
-    public abstract TethysDecimal getTotalLosses();
+    public abstract TethysDecimal getLosses();
 
     /**
      * Obtain the total badDebt.
      * @return the badDebt
      */
-    public abstract TethysDecimal getTotalBadDebt();
+    public abstract TethysDecimal getBadDebt();
 
     /**
      * Obtain the total recovered.
      * @return the recovered
      */
-    public abstract TethysDecimal getTotalRecovered();
+    public abstract TethysDecimal getRecovered();
 
     /**
      * Add totals to totals.
@@ -452,22 +364,119 @@ public abstract class CoeusTotals
      * Reset the totals.
      */
     protected void resetTotals() {
-        getTotalSourceValue().setZero();
-        getTotalAssetValue().setZero();
-        getTotalInvested().setZero();
-        getTotalHolding().setZero();
-        getTotalLoanBook().setZero();
-        getTotalEarnings().setZero();
-        getTotalTaxableEarnings().setZero();
-        getTotalInterest().setZero();
-        getTotalBadDebtInterest().setZero();
-        getTotalBadDebtCapital().setZero();
-        getTotalFees().setZero();
-        getTotalCashBack().setZero();
-        getTotalLosses().setZero();
-        getTotalBadDebt().setZero();
-        getTotalRecovered().setZero();
+        getSourceValue().setZero();
+        getAssetValue().setZero();
+        getInvested().setZero();
+        getHolding().setZero();
+        getLoanBook().setZero();
+        getEarnings().setZero();
+        getTaxableEarnings().setZero();
+        getInterest().setZero();
+        getBadDebtInterest().setZero();
+        getBadDebtCapital().setZero();
+        getFees().setZero();
+        getCashBack().setZero();
+        getLosses().setZero();
+        getBadDebt().setZero();
+        getRecovered().setZero();
     }
+
+    /**
+     * Obtain delta for field.
+     * @param pField the field
+     * @return the delta (or null)
+     */
+    public TethysDecimal getDeltaForField(final MetisField pField) {
+        /* Obtain the field value */
+        Object myValue = getFieldValue(pField);
+        if (MetisFieldValue.SKIP.equals(myValue)) {
+            myValue = getZero();
+        }
+
+        /* If we do not have Decimal value, return null */
+        if (!(myValue instanceof TethysDecimal)) {
+            return null;
+        }
+        TethysDecimal myDecimal = (TethysDecimal) myValue;
+
+        /* Obtain the previous field value */
+        myValue = thePrevious == null
+                                      ? null
+                                      : thePrevious.getFieldValue(pField);
+        if (MetisFieldValue.SKIP.equals(myValue)) {
+            myValue = null;
+        }
+
+        /* If we do not have a preceding total */
+        if (!(myValue instanceof TethysDecimal)) {
+            /* Return non-zero value or null */
+            return myDecimal.isNonZero()
+                                         ? myDecimal
+                                         : null;
+        }
+
+        /* Return null if there is no change */
+        TethysDecimal myPrevious = (TethysDecimal) myValue;
+        if (myPrevious.equals(myDecimal)) {
+            return null;
+        }
+
+        /* If this is a money value */
+        if ((myPrevious instanceof TethysMoney)
+            && (myDecimal instanceof TethysMoney)) {
+            TethysMoney myResult = new TethysMoney((TethysMoney) myDecimal);
+            myResult.subtractAmount((TethysMoney) myPrevious);
+            return myResult;
+        }
+
+        /* Handle standard result */
+        TethysDecimal myResult = new TethysDecimal(myDecimal);
+        myResult.subtractValue(myPrevious);
+        return myResult;
+    }
+
+    /**
+     * Obtain balance field for TotalSet.
+     * @param pTotalSet the totalSet
+     * @return the balance field
+     */
+    protected static MetisField getBalanceField(final CoeusTotalSet pTotalSet) {
+        switch (pTotalSet) {
+            case INVESTED:
+                return FIELD_INVESTED;
+            case EARNINGS:
+                return FIELD_EARNINGS;
+            case TAXABLEEARNINGS:
+                return FIELD_TAXEARNINGS;
+            case INTEREST:
+                return FIELD_INTEREST;
+            case FEES:
+                return FIELD_FEES;
+            case CASHBACK:
+                return FIELD_CASHBACK;
+            case BADDEBTCAPITAL:
+                return FIELD_BADDEBTCAPITAL;
+            case BADDEBTINTEREST:
+                return FIELD_BADDEBTINTEREST;
+            case LOSSES:
+                return FIELD_LOSSES;
+            case BADDEBT:
+                return FIELD_BADDEBT;
+            case RECOVERED:
+                return FIELD_RECOVERED;
+            case HOLDING:
+                return FIELD_HOLDING;
+            case LOANBOOK:
+            default:
+                return FIELD_LOANBOOK;
+        }
+    }
+
+    /**
+     * Obtain zero total.
+     * @return zero total
+     */
+    protected abstract TethysDecimal getZero();
 
     /**
      * Obtain the data fields.
@@ -488,21 +497,21 @@ public abstract class CoeusTotals
         StringBuilder myBuilder = new StringBuilder();
 
         /* Add the values */
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_ASSETVALUE, getTotalAssetValue());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_HOLDING, getTotalHolding());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_LOANBOOK, getTotalLoanBook());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_SOURCEVALUE, getTotalSourceValue());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_INVESTED, getTotalInvested());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_EARNINGS, getTotalEarnings());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_INTEREST, getTotalInterest());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_TAXEARNINGS, getTotalTaxableEarnings());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_BDINTEREST, getTotalBadDebtInterest());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_BDCAPITAL, getTotalBadDebtCapital());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_FEES, getTotalFees());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_CASHBACK, getTotalCashBack());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_LOSSES, getTotalLosses());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_BADDEBT, getTotalBadDebt());
-        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_RECOVERED, getTotalRecovered());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_ASSETVALUE, getAssetValue());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_HOLDING, getHolding());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_LOANBOOK, getLoanBook());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_SOURCEVALUE, getSourceValue());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_INVESTED, getInvested());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_EARNINGS, getEarnings());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_INTEREST, getInterest());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_TAXEARNINGS, getTaxableEarnings());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_BDINTEREST, getBadDebtInterest());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_BDCAPITAL, getBadDebtCapital());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_FEES, getFees());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_CASHBACK, getCashBack());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_LOSSES, getLosses());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_BADDEBT, getBadDebt());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_RECOVERED, getRecovered());
 
         /* Add brackets around the values */
         myBuilder.insert(0, CoeusTransaction.CHAR_OPEN);
@@ -546,99 +555,101 @@ public abstract class CoeusTotals
             return getDescription();
         }
         if (FIELD_TYPE.equals(pField)) {
-            return getTransType();
+            return theTransaction == null
+                                          ? CoeusTransactionType.TOTALS
+                                          : theTransaction.getTransType();
         }
         if (FIELD_TRANSACTION.equals(pField)) {
             return theTransaction == null
                                           ? MetisFieldValue.SKIP
                                           : theTransaction;
         }
-        if (FIELD_TOTAL_ASSETVALUE.equals(pField)) {
-            TethysDecimal myValue = getTotalAssetValue();
+        if (FIELD_ASSETVALUE.equals(pField)) {
+            TethysDecimal myValue = getAssetValue();
             return myValue.isZero()
                                     ? MetisFieldValue.SKIP
                                     : myValue;
         }
-        if (FIELD_TOTAL_HOLDING.equals(pField)) {
-            TethysDecimal myHolding = getTotalHolding();
+        if (FIELD_HOLDING.equals(pField)) {
+            TethysDecimal myHolding = getHolding();
             return myHolding.isZero()
                                       ? MetisFieldValue.SKIP
                                       : myHolding;
         }
-        if (FIELD_TOTAL_LOANBOOK.equals(pField)) {
-            TethysDecimal myLoanBook = getTotalLoanBook();
+        if (FIELD_LOANBOOK.equals(pField)) {
+            TethysDecimal myLoanBook = getLoanBook();
             return myLoanBook.isZero()
                                        ? MetisFieldValue.SKIP
                                        : myLoanBook;
         }
-        if (FIELD_TOTAL_SOURCEVALUE.equals(pField)) {
-            TethysDecimal myValue = getTotalSourceValue();
+        if (FIELD_SOURCEVALUE.equals(pField)) {
+            TethysDecimal myValue = getSourceValue();
             return myValue.isZero()
                                     ? MetisFieldValue.SKIP
                                     : myValue;
         }
-        if (FIELD_TOTAL_INVESTED.equals(pField)) {
-            TethysDecimal myInvested = getTotalInvested();
+        if (FIELD_INVESTED.equals(pField)) {
+            TethysDecimal myInvested = getInvested();
             return myInvested.isZero()
                                        ? MetisFieldValue.SKIP
                                        : myInvested;
         }
-        if (FIELD_TOTAL_EARNINGS.equals(pField)) {
-            TethysDecimal myEarnings = getTotalEarnings();
+        if (FIELD_EARNINGS.equals(pField)) {
+            TethysDecimal myEarnings = getEarnings();
             return myEarnings.isZero()
                                        ? MetisFieldValue.SKIP
                                        : myEarnings;
         }
-        if (FIELD_TOTAL_TAXEARNINGS.equals(pField)) {
-            TethysDecimal myEarnings = getTotalTaxableEarnings();
+        if (FIELD_TAXEARNINGS.equals(pField)) {
+            TethysDecimal myEarnings = getTaxableEarnings();
             return myEarnings.isZero()
                                        ? MetisFieldValue.SKIP
                                        : myEarnings;
         }
-        if (FIELD_TOTAL_INTEREST.equals(pField)) {
-            TethysDecimal myInterest = getTotalInterest();
+        if (FIELD_INTEREST.equals(pField)) {
+            TethysDecimal myInterest = getInterest();
             return myInterest.isZero()
                                        ? MetisFieldValue.SKIP
                                        : myInterest;
         }
-        if (FIELD_TOTAL_BADDEBTINTEREST.equals(pField)) {
-            TethysDecimal myInterest = getTotalBadDebtInterest();
+        if (FIELD_BADDEBTINTEREST.equals(pField)) {
+            TethysDecimal myInterest = getBadDebtInterest();
             return myInterest.isZero()
                                        ? MetisFieldValue.SKIP
                                        : myInterest;
         }
-        if (FIELD_TOTAL_BADDEBTCAPITAL.equals(pField)) {
-            TethysDecimal myCapital = getTotalBadDebtCapital();
+        if (FIELD_BADDEBTCAPITAL.equals(pField)) {
+            TethysDecimal myCapital = getBadDebtCapital();
             return myCapital.isZero()
                                       ? MetisFieldValue.SKIP
                                       : myCapital;
         }
-        if (FIELD_TOTAL_FEES.equals(pField)) {
-            TethysDecimal myFees = getTotalFees();
+        if (FIELD_FEES.equals(pField)) {
+            TethysDecimal myFees = getFees();
             return myFees.isZero()
                                    ? MetisFieldValue.SKIP
                                    : myFees;
         }
-        if (FIELD_TOTAL_CASHBACK.equals(pField)) {
-            TethysDecimal myCashBack = getTotalCashBack();
+        if (FIELD_CASHBACK.equals(pField)) {
+            TethysDecimal myCashBack = getCashBack();
             return myCashBack.isZero()
                                        ? MetisFieldValue.SKIP
                                        : myCashBack;
         }
-        if (FIELD_TOTAL_LOSSES.equals(pField)) {
-            TethysDecimal myLosses = getTotalEarnings();
+        if (FIELD_LOSSES.equals(pField)) {
+            TethysDecimal myLosses = getEarnings();
             return myLosses.isZero()
                                      ? MetisFieldValue.SKIP
                                      : myLosses;
         }
-        if (FIELD_TOTAL_BADDEBT.equals(pField)) {
-            TethysDecimal myBadDebt = getTotalBadDebt();
+        if (FIELD_BADDEBT.equals(pField)) {
+            TethysDecimal myBadDebt = getBadDebt();
             return myBadDebt.isZero()
                                       ? MetisFieldValue.SKIP
                                       : myBadDebt;
         }
-        if (FIELD_TOTAL_RECOVERED.equals(pField)) {
-            TethysDecimal myRecovered = getTotalRecovered();
+        if (FIELD_RECOVERED.equals(pField)) {
+            TethysDecimal myRecovered = getRecovered();
             return myRecovered.isZero()
                                         ? MetisFieldValue.SKIP
                                         : myRecovered;

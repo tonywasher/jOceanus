@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jcoeus.data.ratesetter;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -41,42 +42,42 @@ public class CoeusRateSetterTotals
     /**
      * Asset Value.
      */
-    private final TethysMoney theTotalAssetValue;
+    private final TethysMoney theAssetValue;
 
     /**
      * Holding.
      */
-    private final TethysMoney theTotalHolding;
+    private final TethysMoney theHolding;
 
     /**
      * LoanBook.
      */
-    private final TethysMoney theTotalLoanBook;
+    private final TethysMoney theLoanBook;
 
     /**
      * Source Value.
      */
-    private final TethysMoney theTotalSourceValue;
+    private final TethysMoney theSourceValue;
 
     /**
      * Invested.
      */
-    private final TethysMoney theTotalInvested;
+    private final TethysMoney theInvested;
 
     /**
      * Earnings.
      */
-    private final TethysMoney theTotalEarnings;
+    private final TethysMoney theEarnings;
 
     /**
      * Interest.
      */
-    private final TethysMoney theTotalInterest;
+    private final TethysMoney theInterest;
 
     /**
      * Fees.
      */
-    private final TethysMoney theTotalFees;
+    private final TethysMoney theFees;
 
     /**
      * Constructor for zeroed totals.
@@ -127,14 +128,14 @@ public class CoeusRateSetterTotals
         super(pMarket, pLoan, pDate);
 
         /* Initialise values */
-        theTotalAssetValue = new TethysMoney(CoeusRateSetterTransaction.ZERO_MONEY);
-        theTotalHolding = new TethysMoney(CoeusRateSetterTransaction.ZERO_MONEY);
-        theTotalLoanBook = new TethysMoney(CoeusRateSetterTransaction.ZERO_MONEY);
-        theTotalSourceValue = new TethysMoney(CoeusRateSetterTransaction.ZERO_MONEY);
-        theTotalInvested = new TethysMoney(CoeusRateSetterTransaction.ZERO_MONEY);
-        theTotalEarnings = new TethysMoney(CoeusRateSetterTransaction.ZERO_MONEY);
-        theTotalInterest = new TethysMoney(CoeusRateSetterTransaction.ZERO_MONEY);
-        theTotalFees = new TethysMoney(CoeusRateSetterTransaction.ZERO_MONEY);
+        theAssetValue = new TethysMoney(getZero());
+        theHolding = new TethysMoney(getZero());
+        theLoanBook = new TethysMoney(getZero());
+        theSourceValue = new TethysMoney(getZero());
+        theInvested = new TethysMoney(getZero());
+        theEarnings = new TethysMoney(getZero());
+        theInterest = new TethysMoney(getZero());
+        theFees = new TethysMoney(getZero());
     }
 
     /**
@@ -145,17 +146,17 @@ public class CoeusRateSetterTotals
     protected CoeusRateSetterTotals(final CoeusRateSetterTotals pTotals,
                                     final CoeusRateSetterTransaction pUnderlying) {
         /* Initialise underlying class */
-        super(pUnderlying);
+        super(pUnderlying, pTotals);
 
         /* Initialise values from previous totals */
-        theTotalAssetValue = new TethysMoney(pTotals.getTotalAssetValue());
-        theTotalHolding = new TethysMoney(pTotals.getTotalHolding());
-        theTotalLoanBook = new TethysMoney(pTotals.getTotalLoanBook());
-        theTotalSourceValue = new TethysMoney(pTotals.getTotalSourceValue());
-        theTotalInvested = new TethysMoney(pTotals.getTotalInvested());
-        theTotalEarnings = new TethysMoney(pTotals.getTotalEarnings());
-        theTotalInterest = new TethysMoney(pTotals.getTotalInterest());
-        theTotalFees = new TethysMoney(pTotals.getTotalFees());
+        theAssetValue = new TethysMoney(pTotals.getAssetValue());
+        theHolding = new TethysMoney(pTotals.getHolding());
+        theLoanBook = new TethysMoney(pTotals.getLoanBook());
+        theSourceValue = new TethysMoney(pTotals.getSourceValue());
+        theInvested = new TethysMoney(pTotals.getInvested());
+        theEarnings = new TethysMoney(pTotals.getEarnings());
+        theInterest = new TethysMoney(pTotals.getInterest());
+        theFees = new TethysMoney(pTotals.getFees());
     }
 
     @Override
@@ -164,14 +165,14 @@ public class CoeusRateSetterTotals
         CoeusRateSetterTotals myTotals = (CoeusRateSetterTotals) pTotals;
 
         /* Add values from totals */
-        theTotalAssetValue.addAmount(myTotals.getTotalAssetValue());
-        theTotalHolding.addAmount(myTotals.getTotalHolding());
-        theTotalLoanBook.addAmount(myTotals.getTotalLoanBook());
-        theTotalSourceValue.addAmount(myTotals.getTotalSourceValue());
-        theTotalInvested.addAmount(myTotals.getTotalInvested());
-        theTotalEarnings.addAmount(myTotals.getTotalEarnings());
-        theTotalInterest.addAmount(myTotals.getTotalInterest());
-        theTotalFees.addAmount(myTotals.getTotalFees());
+        theAssetValue.addAmount(myTotals.getAssetValue());
+        theHolding.addAmount(myTotals.getHolding());
+        theLoanBook.addAmount(myTotals.getLoanBook());
+        theSourceValue.addAmount(myTotals.getSourceValue());
+        theInvested.addAmount(myTotals.getInvested());
+        theEarnings.addAmount(myTotals.getEarnings());
+        theInterest.addAmount(myTotals.getInterest());
+        theFees.addAmount(myTotals.getFees());
     }
 
     @Override
@@ -180,144 +181,109 @@ public class CoeusRateSetterTotals
         CoeusRateSetterTransaction myTransaction = (CoeusRateSetterTransaction) pTransaction;
 
         /* Add values from transaction */
-        theTotalInvested.addAmount(myTransaction.getInvested());
-        theTotalHolding.addAmount(myTransaction.getHolding());
-        theTotalLoanBook.addAmount(myTransaction.getLoanBook());
-        theTotalInterest.addAmount(myTransaction.getInterest());
-        theTotalFees.addAmount(myTransaction.getFees());
+        theInvested.addAmount(myTransaction.getInvested());
+        theHolding.addAmount(myTransaction.getHolding());
+        theLoanBook.addAmount(myTransaction.getLoanBook());
+        theInterest.addAmount(myTransaction.getInterest());
+        theFees.addAmount(myTransaction.getFees());
 
         /* Adjust earnings */
-        theTotalEarnings.addAmount(myTransaction.getInterest());
-        theTotalEarnings.addAmount(myTransaction.getFees());
+        theEarnings.addAmount(myTransaction.getInterest());
+        theEarnings.addAmount(myTransaction.getFees());
 
         /* Adjust asset values */
-        theTotalAssetValue.addAmount(myTransaction.getHolding());
-        theTotalAssetValue.addAmount(myTransaction.getLoanBook());
+        theAssetValue.addAmount(myTransaction.getHolding());
+        theAssetValue.addAmount(myTransaction.getLoanBook());
 
         /* Adjust source values */
-        theTotalSourceValue.addAmount(myTransaction.getInvested());
-        theTotalSourceValue.addAmount(myTransaction.getInterest());
-        theTotalSourceValue.addAmount(myTransaction.getFees());
+        theSourceValue.addAmount(myTransaction.getInvested());
+        theSourceValue.addAmount(myTransaction.getInterest());
+        theSourceValue.addAmount(myTransaction.getFees());
     }
 
     @Override
-    public TethysMoney getInvested() {
-        return (TethysMoney) super.getInvested();
+    protected TethysMoney getZero() {
+        return CoeusRateSetterTransaction.ZERO_MONEY;
+    }
+
+    @Override
+    public TethysMoney getDeltaForField(final MetisField pField) {
+        return (TethysMoney) super.getDeltaForField(pField);
+    }
+
+    @Override
+    public TethysMoney getAssetValue() {
+        return theAssetValue;
     }
 
     @Override
     public TethysMoney getHolding() {
-        return (TethysMoney) super.getHolding();
+        return theHolding;
     }
 
     @Override
     public TethysMoney getLoanBook() {
-        return (TethysMoney) super.getLoanBook();
+        return theLoanBook;
+    }
+
+    @Override
+    public TethysMoney getSourceValue() {
+        return theSourceValue;
+    }
+
+    @Override
+    public TethysMoney getInvested() {
+        return theInvested;
+    }
+
+    @Override
+    public TethysMoney getEarnings() {
+        return theEarnings;
+    }
+
+    @Override
+    public TethysMoney getTaxableEarnings() {
+        return theInterest;
     }
 
     @Override
     public TethysMoney getInterest() {
-        return (TethysMoney) super.getInterest();
-    }
-
-    @Override
-    public TethysMoney getBadDebtInterest() {
-        return (TethysMoney) super.getBadDebtInterest();
+        return theInterest;
     }
 
     @Override
     public TethysMoney getFees() {
-        return (TethysMoney) super.getFees();
+        return theFees;
+    }
+
+    @Override
+    public TethysMoney getBadDebtInterest() {
+        return getZero();
+    }
+
+    @Override
+    public TethysMoney getBadDebtCapital() {
+        return getZero();
     }
 
     @Override
     public TethysMoney getCashBack() {
-        return (TethysMoney) super.getCashBack();
+        return getZero();
+    }
+
+    @Override
+    public TethysMoney getLosses() {
+        return getZero();
     }
 
     @Override
     public TethysMoney getBadDebt() {
-        return (TethysMoney) super.getBadDebt();
+        return getZero();
     }
 
     @Override
     public TethysMoney getRecovered() {
-        return (TethysMoney) super.getRecovered();
-    }
-
-    @Override
-    public TethysMoney getTotalAssetValue() {
-        return theTotalAssetValue;
-    }
-
-    @Override
-    public TethysMoney getTotalHolding() {
-        return theTotalHolding;
-    }
-
-    @Override
-    public TethysMoney getTotalLoanBook() {
-        return theTotalLoanBook;
-    }
-
-    @Override
-    public TethysMoney getTotalSourceValue() {
-        return theTotalSourceValue;
-    }
-
-    @Override
-    public TethysMoney getTotalInvested() {
-        return theTotalInvested;
-    }
-
-    @Override
-    public TethysMoney getTotalEarnings() {
-        return theTotalEarnings;
-    }
-
-    @Override
-    public TethysMoney getTotalTaxableEarnings() {
-        return theTotalInterest;
-    }
-
-    @Override
-    public TethysMoney getTotalInterest() {
-        return theTotalInterest;
-    }
-
-    @Override
-    public TethysMoney getTotalFees() {
-        return theTotalFees;
-    }
-
-    @Override
-    public TethysMoney getTotalBadDebtInterest() {
-        return CoeusRateSetterTransaction.ZERO_MONEY;
-    }
-
-    @Override
-    public TethysMoney getTotalBadDebtCapital() {
-        return CoeusRateSetterTransaction.ZERO_MONEY;
-    }
-
-    @Override
-    public TethysMoney getTotalCashBack() {
-        return CoeusRateSetterTransaction.ZERO_MONEY;
-    }
-
-    @Override
-    public TethysMoney getTotalLosses() {
-        return CoeusRateSetterTransaction.ZERO_MONEY;
-    }
-
-    @Override
-    public TethysMoney getTotalBadDebt() {
-        return CoeusRateSetterTransaction.ZERO_MONEY;
-    }
-
-    @Override
-    public TethysMoney getTotalRecovered() {
-        return CoeusRateSetterTransaction.ZERO_MONEY;
+        return getZero();
     }
 
     @Override

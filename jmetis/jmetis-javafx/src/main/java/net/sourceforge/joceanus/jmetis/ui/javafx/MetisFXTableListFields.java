@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmetis.ui.javafx;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javafx.beans.Observable;
@@ -31,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedList;
+import net.sourceforge.joceanus.jmetis.ui.MetisTableCalculator;
 
 /**
  * Table List fields.
@@ -48,12 +50,42 @@ public class MetisFXTableListFields<R extends MetisIndexedItem> {
     private final Map<Integer, MetisFXTableFieldSet<R>> theIdMap;
 
     /**
+     * Table Calculator.
+     */
+    private MetisTableCalculator<R> theCalculator;
+
+    /**
      * Constructor.
      * @param pList the editList
      */
     public MetisFXTableListFields(final MetisVersionedList<R> pList) {
         theFields = pList.getItemFields();
         theIdMap = new HashMap<>();
+    }
+
+    /**
+     * Obtain the fields.
+     * @return the fields
+     */
+    protected MetisFields getFields() {
+        return theFields;
+    }
+
+    /**
+     * Obtain the calculator.
+     * @return the calculator
+     */
+    protected MetisTableCalculator<R> getCalculator() {
+        return theCalculator;
+    }
+
+    /**
+     * Set the table calculator.
+     * @param pCalculator the calculator
+     */
+    protected void setCalculator(final MetisTableCalculator<R> pCalculator) {
+        theCalculator = pCalculator;
+        recalculateValues();
     }
 
     /**
@@ -65,7 +97,7 @@ public class MetisFXTableListFields<R extends MetisIndexedItem> {
         Integer myId = pItem.getIndexedId();
         MetisFXTableFieldSet<R> myFieldSet = theIdMap.get(myId);
         if (myFieldSet == null) {
-            myFieldSet = new MetisFXTableFieldSet<>(pItem, theFields);
+            myFieldSet = new MetisFXTableFieldSet<>(pItem, this);
             theIdMap.put(myId, myFieldSet);
         }
         return myFieldSet;
@@ -135,5 +167,19 @@ public class MetisFXTableListFields<R extends MetisIndexedItem> {
      */
     protected boolean hasComparisons() {
         return theFields.hasComparisons();
+    }
+
+    /**
+     * ReCalculate the values.
+     */
+    private void recalculateValues() {
+        /* Iterate through the fieldSets */
+        Iterator<MetisFXTableFieldSet<R>> myIterator = theIdMap.values().iterator();
+        while (myIterator.hasNext()) {
+            MetisFXTableFieldSet<R> myFieldSet = myIterator.next();
+
+            /* Recalculate values */
+            myFieldSet.recalculateValues();
+        }
     }
 }

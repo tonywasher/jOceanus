@@ -110,12 +110,12 @@ public class CoeusFundingCircleLoan
         /* Access details */
         TethysMoney myBookBalance = getBalance();
         CoeusFundingCircleTotals myTotals = getTotals();
-        TethysMoney myLoanBalance = myTotals.getTotalLoanBook();
+        TethysMoney myLoanBalance = myTotals.getLoanBook();
 
         /* If this is a badDebt */
         if (theBookItem.getStatus().isBadDebt()) {
             /* Loan Balance is badDebt */
-            myLoanBalance = new TethysMoney(myTotals.getTotalBadDebt());
+            myLoanBalance = new TethysMoney(myTotals.getBadDebt());
             myLoanBalance.negate();
         }
 

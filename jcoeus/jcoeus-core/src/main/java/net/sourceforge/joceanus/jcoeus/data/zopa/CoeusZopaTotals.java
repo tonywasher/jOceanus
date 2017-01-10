@@ -41,77 +41,77 @@ public class CoeusZopaTotals
     /**
      * AssetValue.
      */
-    private final TethysDecimal theTotalAssetValue;
+    private final TethysDecimal theAssetValue;
 
     /**
      * Holding.
      */
-    private final TethysDecimal theTotalHolding;
+    private final TethysDecimal theHolding;
 
     /**
      * LoanBook.
      */
-    private final TethysDecimal theTotalLoanBook;
+    private final TethysDecimal theLoanBook;
 
     /**
      * Source Value.
      */
-    private final TethysDecimal theTotalSourceValue;
+    private final TethysDecimal theSourceValue;
 
     /**
      * Invested.
      */
-    private final TethysDecimal theTotalInvested;
+    private final TethysDecimal theInvested;
 
     /**
      * Earnings.
      */
-    private final TethysDecimal theTotalEarnings;
+    private final TethysDecimal theEarnings;
 
     /**
      * Taxable Earnings.
      */
-    private final TethysDecimal theTotalTaxableEarnings;
+    private final TethysDecimal theTaxableEarnings;
 
     /**
      * Interest.
      */
-    private final TethysDecimal theTotalInterest;
+    private final TethysDecimal theInterest;
 
     /**
      * BadDebtInterest.
      */
-    private final TethysDecimal theTotalBadDebtInterest;
+    private final TethysDecimal theBadDebtInterest;
 
     /**
      * BadDebtCapital.
      */
-    private final TethysDecimal theTotalBadDebtCapital;
+    private final TethysDecimal theBadDebtCapital;
 
     /**
      * Fees.
      */
-    private final TethysDecimal theTotalFees;
+    private final TethysDecimal theFees;
 
     /**
      * CashBack.
      */
-    private final TethysDecimal theTotalCashBack;
+    private final TethysDecimal theCashBack;
 
     /**
      * Losses.
      */
-    private final TethysDecimal theTotalLosses;
+    private final TethysDecimal theLosses;
 
     /**
      * BadDebt.
      */
-    private final TethysDecimal theTotalBadDebt;
+    private final TethysDecimal theBadDebt;
 
     /**
      * Recovered.
      */
-    private final TethysDecimal theTotalRecovered;
+    private final TethysDecimal theRecovered;
 
     /**
      * Constructor for zeroed totals.
@@ -162,21 +162,21 @@ public class CoeusZopaTotals
         super(pMarket, pLoan, pDate);
 
         /* Initialise values */
-        theTotalAssetValue = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalHolding = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalLoanBook = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalSourceValue = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalInvested = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalEarnings = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalTaxableEarnings = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalInterest = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalBadDebtInterest = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalBadDebtCapital = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalFees = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalCashBack = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalLosses = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalBadDebt = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
-        theTotalRecovered = new TethysDecimal(CoeusZopaTransaction.ZERO_MONEY);
+        theAssetValue = new TethysDecimal(getZero());
+        theHolding = new TethysDecimal(getZero());
+        theLoanBook = new TethysDecimal(getZero());
+        theSourceValue = new TethysDecimal(getZero());
+        theInvested = new TethysDecimal(getZero());
+        theEarnings = new TethysDecimal(getZero());
+        theTaxableEarnings = new TethysDecimal(getZero());
+        theInterest = new TethysDecimal(getZero());
+        theBadDebtInterest = new TethysDecimal(getZero());
+        theBadDebtCapital = new TethysDecimal(getZero());
+        theFees = new TethysDecimal(getZero());
+        theCashBack = new TethysDecimal(getZero());
+        theLosses = new TethysDecimal(getZero());
+        theBadDebt = new TethysDecimal(getZero());
+        theRecovered = new TethysDecimal(getZero());
     }
 
     /**
@@ -187,85 +187,90 @@ public class CoeusZopaTotals
     protected CoeusZopaTotals(final CoeusZopaTotals pTotals,
                               final CoeusZopaTransaction pUnderlying) {
         /* Initialise underlying class */
-        super(pUnderlying);
+        super(pUnderlying, pTotals);
 
         /* Initialise values from previous totals */
-        theTotalAssetValue = new TethysDecimal(pTotals.getTotalAssetValue());
-        theTotalHolding = new TethysDecimal(pTotals.getTotalHolding());
-        theTotalLoanBook = new TethysDecimal(pTotals.getTotalLoanBook());
-        theTotalSourceValue = new TethysDecimal(pTotals.getTotalSourceValue());
-        theTotalInvested = new TethysDecimal(pTotals.getTotalInvested());
-        theTotalEarnings = new TethysDecimal(pTotals.getTotalEarnings());
-        theTotalTaxableEarnings = new TethysDecimal(pTotals.getTotalTaxableEarnings());
-        theTotalInterest = new TethysDecimal(pTotals.getTotalInterest());
-        theTotalBadDebtInterest = new TethysDecimal(pTotals.getTotalBadDebtInterest());
-        theTotalBadDebtCapital = new TethysDecimal(pTotals.getTotalBadDebtCapital());
-        theTotalFees = new TethysDecimal(pTotals.getTotalFees());
-        theTotalCashBack = new TethysDecimal(pTotals.getTotalCashBack());
-        theTotalLosses = new TethysDecimal(pTotals.getTotalLosses());
-        theTotalBadDebt = new TethysDecimal(pTotals.getTotalBadDebt());
-        theTotalRecovered = new TethysDecimal(pTotals.getTotalRecovered());
+        theAssetValue = new TethysDecimal(pTotals.getAssetValue());
+        theHolding = new TethysDecimal(pTotals.getHolding());
+        theLoanBook = new TethysDecimal(pTotals.getLoanBook());
+        theSourceValue = new TethysDecimal(pTotals.getSourceValue());
+        theInvested = new TethysDecimal(pTotals.getInvested());
+        theEarnings = new TethysDecimal(pTotals.getEarnings());
+        theTaxableEarnings = new TethysDecimal(pTotals.getTaxableEarnings());
+        theInterest = new TethysDecimal(pTotals.getInterest());
+        theBadDebtInterest = new TethysDecimal(pTotals.getBadDebtInterest());
+        theBadDebtCapital = new TethysDecimal(pTotals.getBadDebtCapital());
+        theFees = new TethysDecimal(pTotals.getFees());
+        theCashBack = new TethysDecimal(pTotals.getCashBack());
+        theLosses = new TethysDecimal(pTotals.getLosses());
+        theBadDebt = new TethysDecimal(pTotals.getBadDebt());
+        theRecovered = new TethysDecimal(pTotals.getRecovered());
     }
 
     @Override
     protected void addTotalsToTotals(final CoeusTotals pTotals) {
         /* Add values from totals */
-        theTotalAssetValue.addValue(pTotals.getTotalAssetValue());
-        theTotalHolding.addValue(pTotals.getTotalHolding());
-        theTotalLoanBook.addValue(pTotals.getTotalLoanBook());
-        theTotalSourceValue.addValue(pTotals.getTotalSourceValue());
-        theTotalInvested.addValue(pTotals.getTotalInvested());
-        theTotalEarnings.addValue(pTotals.getTotalEarnings());
-        theTotalTaxableEarnings.addValue(pTotals.getTotalTaxableEarnings());
-        theTotalInterest.addValue(pTotals.getTotalInterest());
-        theTotalBadDebtInterest.addValue(pTotals.getTotalBadDebtInterest());
-        theTotalBadDebtCapital.addValue(pTotals.getTotalBadDebtCapital());
-        theTotalFees.addValue(pTotals.getTotalFees());
-        theTotalCashBack.addValue(pTotals.getTotalCashBack());
-        theTotalLosses.addValue(pTotals.getTotalLosses());
-        theTotalBadDebt.addValue(pTotals.getTotalBadDebt());
-        theTotalRecovered.addValue(pTotals.getTotalRecovered());
+        theAssetValue.addValue(pTotals.getAssetValue());
+        theHolding.addValue(pTotals.getHolding());
+        theLoanBook.addValue(pTotals.getLoanBook());
+        theSourceValue.addValue(pTotals.getSourceValue());
+        theInvested.addValue(pTotals.getInvested());
+        theEarnings.addValue(pTotals.getEarnings());
+        theTaxableEarnings.addValue(pTotals.getTaxableEarnings());
+        theInterest.addValue(pTotals.getInterest());
+        theBadDebtInterest.addValue(pTotals.getBadDebtInterest());
+        theBadDebtCapital.addValue(pTotals.getBadDebtCapital());
+        theFees.addValue(pTotals.getFees());
+        theCashBack.addValue(pTotals.getCashBack());
+        theLosses.addValue(pTotals.getLosses());
+        theBadDebt.addValue(pTotals.getBadDebt());
+        theRecovered.addValue(pTotals.getRecovered());
     }
 
     @Override
     protected void addTransactionToTotals(final CoeusTransaction pTransaction) {
         /* Add values from transaction */
-        theTotalInvested.addValue(pTransaction.getInvested());
-        theTotalHolding.addValue(pTransaction.getHolding());
-        theTotalLoanBook.addValue(pTransaction.getLoanBook());
-        theTotalInterest.addValue(pTransaction.getInterest());
-        theTotalBadDebtInterest.addValue(pTransaction.getBadDebtInterest());
-        theTotalBadDebtCapital.addValue(pTransaction.getBadDebtCapital());
-        theTotalFees.addValue(pTransaction.getFees());
-        theTotalCashBack.addValue(pTransaction.getCashBack());
-        theTotalBadDebt.addValue(pTransaction.getBadDebt());
-        theTotalRecovered.addValue(pTransaction.getRecovered());
+        theInvested.addValue(pTransaction.getInvested());
+        theHolding.addValue(pTransaction.getHolding());
+        theLoanBook.addValue(pTransaction.getLoanBook());
+        theInterest.addValue(pTransaction.getInterest());
+        theBadDebtInterest.addValue(pTransaction.getBadDebtInterest());
+        theBadDebtCapital.addValue(pTransaction.getBadDebtCapital());
+        theFees.addValue(pTransaction.getFees());
+        theCashBack.addValue(pTransaction.getCashBack());
+        theBadDebt.addValue(pTransaction.getBadDebt());
+        theRecovered.addValue(pTransaction.getRecovered());
 
         /* Adjust earnings */
-        theTotalEarnings.addValue(pTransaction.getInterest());
-        theTotalEarnings.addValue(pTransaction.getFees());
-        theTotalEarnings.addValue(pTransaction.getCashBack());
+        theEarnings.addValue(pTransaction.getInterest());
+        theEarnings.addValue(pTransaction.getFees());
+        theEarnings.addValue(pTransaction.getCashBack());
 
         /* Adjust taxable earnings */
-        theTotalTaxableEarnings.addValue(pTransaction.getInterest());
-        theTotalTaxableEarnings.addValue(pTransaction.getBadDebtInterest());
-        theTotalTaxableEarnings.addValue(pTransaction.getFees());
+        theTaxableEarnings.addValue(pTransaction.getInterest());
+        theTaxableEarnings.addValue(pTransaction.getBadDebtInterest());
+        theTaxableEarnings.addValue(pTransaction.getFees());
 
         /* Adjust losses */
-        theTotalLosses.addValue(pTransaction.getBadDebt());
-        theTotalLosses.addValue(pTransaction.getRecovered());
+        theLosses.addValue(pTransaction.getBadDebt());
+        theLosses.addValue(pTransaction.getRecovered());
 
         /* Adjust asset values */
-        theTotalAssetValue.addValue(pTransaction.getHolding());
-        theTotalAssetValue.addValue(pTransaction.getLoanBook());
+        theAssetValue.addValue(pTransaction.getHolding());
+        theAssetValue.addValue(pTransaction.getLoanBook());
 
         /* Adjust source values */
-        theTotalSourceValue.addValue(pTransaction.getInvested());
-        theTotalSourceValue.addValue(pTransaction.getInterest());
-        theTotalSourceValue.addValue(pTransaction.getCashBack());
-        theTotalSourceValue.addValue(pTransaction.getFees());
-        theTotalSourceValue.addValue(pTransaction.getBadDebt());
-        theTotalSourceValue.addValue(pTransaction.getRecovered());
+        theSourceValue.addValue(pTransaction.getInvested());
+        theSourceValue.addValue(pTransaction.getInterest());
+        theSourceValue.addValue(pTransaction.getCashBack());
+        theSourceValue.addValue(pTransaction.getFees());
+        theSourceValue.addValue(pTransaction.getBadDebt());
+        theSourceValue.addValue(pTransaction.getRecovered());
+    }
+
+    @Override
+    protected TethysDecimal getZero() {
+        return CoeusZopaTransaction.ZERO_MONEY;
     }
 
     @Override
@@ -274,78 +279,78 @@ public class CoeusZopaTotals
     }
 
     @Override
-    public TethysDecimal getTotalAssetValue() {
-        return theTotalAssetValue;
+    public TethysDecimal getAssetValue() {
+        return theAssetValue;
     }
 
     @Override
-    public TethysDecimal getTotalHolding() {
-        return theTotalHolding;
+    public TethysDecimal getHolding() {
+        return theHolding;
     }
 
     @Override
-    public TethysDecimal getTotalLoanBook() {
-        return theTotalLoanBook;
+    public TethysDecimal getLoanBook() {
+        return theLoanBook;
     }
 
     @Override
-    public TethysDecimal getTotalSourceValue() {
-        return theTotalSourceValue;
+    public TethysDecimal getSourceValue() {
+        return theSourceValue;
     }
 
     @Override
-    public TethysDecimal getTotalInvested() {
-        return theTotalInvested;
+    public TethysDecimal getInvested() {
+        return theInvested;
     }
 
     @Override
-    public TethysDecimal getTotalEarnings() {
-        return theTotalEarnings;
+    public TethysDecimal getEarnings() {
+        return theEarnings;
     }
 
     @Override
-    public TethysDecimal getTotalTaxableEarnings() {
-        return theTotalTaxableEarnings;
+    public TethysDecimal getTaxableEarnings() {
+        return theTaxableEarnings;
     }
 
     @Override
-    public TethysDecimal getTotalInterest() {
-        return theTotalInterest;
+    public TethysDecimal getInterest() {
+        return theInterest;
     }
 
     @Override
-    public TethysDecimal getTotalBadDebtInterest() {
-        return theTotalBadDebtInterest;
+    public TethysDecimal getBadDebtInterest() {
+        return theBadDebtInterest;
     }
 
     @Override
-    public TethysDecimal getTotalBadDebtCapital() {
-        return theTotalBadDebtCapital;
+    public TethysDecimal getBadDebtCapital() {
+        return theBadDebtCapital;
     }
 
     @Override
-    public TethysDecimal getTotalFees() {
-        return theTotalFees;
+    public TethysDecimal getFees() {
+        return theFees;
     }
 
     @Override
-    public TethysDecimal getTotalCashBack() {
-        return theTotalCashBack;
+    public TethysDecimal getCashBack() {
+        return theCashBack;
     }
 
     @Override
-    public TethysDecimal getTotalLosses() {
-        return theTotalLosses;
+    public TethysDecimal getLosses() {
+        return theLosses;
     }
 
     @Override
-    public TethysDecimal getTotalBadDebt() {
-        return theTotalBadDebt;
+    public TethysDecimal getBadDebt() {
+        return theBadDebt;
     }
 
     @Override
-    public TethysDecimal getTotalRecovered() {
-        return theTotalRecovered;
+    public TethysDecimal getRecovered() {
+        return theRecovered;
     }
 
     @Override

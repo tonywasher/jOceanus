@@ -141,7 +141,7 @@ public class CoeusRateSetterRepair {
                 /* Add repayments to the amount of the loan which is currently the balance */
                 TethysMoney myLent = myItem.getLent();
                 CoeusRateSetterTotals myTotals = myLoan.getTotals();
-                myLent.subtractAmount(myTotals.getTotalLoanBook());
+                myLent.subtractAmount(myTotals.getLoanBook());
             }
 
             /* Add the loan to the list */

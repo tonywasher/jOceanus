@@ -153,7 +153,7 @@ public class CoeusReportLoanBook
             theBuilder.makeValueCell(myTable, myLoan.getStartDate());
             theBuilder.makeValueCell(myTable, myLoan.getInitialLoan());
             theBuilder.makeValueCell(myTable, myLoan.getLastDate());
-            theBuilder.makeValueCell(myTable, myTotals.getTotalLoanBook());
+            theBuilder.makeValueCell(myTable, myTotals.getLoanBook());
 
             /* Record the filter */
             setFilterForId(myId, myLoan);
@@ -192,10 +192,10 @@ public class CoeusReportLoanBook
                 theBuilder.makeFilterLinkCell(myTable, myId);
                 theBuilder.makeValueCell(myTable, myLoan.getInitialLoan());
                 theBuilder.makeValueCell(myTable, myLoan.getBadDebtDate());
-                theBuilder.makeValueCell(myTable, myTotals.getTotalBadDebt());
-                theBuilder.makeValueCell(myTable, myTotals.getTotalRecovered());
+                theBuilder.makeValueCell(myTable, myTotals.getBadDebt());
+                theBuilder.makeValueCell(myTable, myTotals.getRecovered());
                 theBuilder.makeValueCell(myTable, myLoan.getLastDate());
-                theBuilder.makeValueCell(myTable, myTotals.getTotalLosses());
+                theBuilder.makeValueCell(myTable, myTotals.getLosses());
 
                 /* Record the filter */
                 setFilterForId(myId, myLoan);

@@ -86,40 +86,40 @@ public class CoeusReportBalanceSheet
         HTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, "Total Source");
-        theBuilder.makeTotalCell(myTable, myTotals.getTotalSourceValue());
+        theBuilder.makeTotalCell(myTable, myTotals.getSourceValue());
 
         /* Create the Invested row */
-        makeTableFilterRow(myTable, CoeusTotalSet.INVESTED, myTotals.getTotalInvested());
+        makeTableFilterRow(myTable, CoeusTotalSet.INVESTED, myTotals.getInvested());
 
         /* Create the Earnings row */
-        makeTableFilterRow(myTable, CoeusTotalSet.EARNINGS, myTotals.getTotalEarnings());
+        makeTableFilterRow(myTable, CoeusTotalSet.EARNINGS, myTotals.getEarnings());
 
         /* Create an embedded table */
         HTMLTable mySubTable = theBuilder.createEmbeddedTable(myTable);
 
         /* Create the Interest row */
-        makeTableFilterRow(mySubTable, CoeusTotalSet.INTEREST, myTotals.getTotalInterest());
+        makeTableFilterRow(mySubTable, CoeusTotalSet.INTEREST, myTotals.getInterest());
 
         /* Create the Fees row */
-        makeTableFilterRow(mySubTable, CoeusTotalSet.FEES, myTotals.getTotalFees());
+        makeTableFilterRow(mySubTable, CoeusTotalSet.FEES, myTotals.getFees());
 
         /* Create the CashBack row */
-        makeTableFilterRow(mySubTable, CoeusTotalSet.CASHBACK, myTotals.getTotalCashBack());
+        makeTableFilterRow(mySubTable, CoeusTotalSet.CASHBACK, myTotals.getCashBack());
         theBuilder.embedTable(mySubTable);
 
         /* If we have badDebt */
         if (theMarket.hasBadDebt()) {
             /* Create the Losses row */
-            makeTableFilterRow(myTable, CoeusTotalSet.LOSSES, myTotals.getTotalLosses());
+            makeTableFilterRow(myTable, CoeusTotalSet.LOSSES, myTotals.getLosses());
 
             /* Create an embedded table */
             mySubTable = theBuilder.createEmbeddedTable(myTable);
 
             /* Create the BadDebt row */
-            makeTableFilterRow(mySubTable, CoeusTotalSet.BADDEBT, myTotals.getTotalBadDebt());
+            makeTableFilterRow(mySubTable, CoeusTotalSet.BADDEBT, myTotals.getBadDebt());
 
             /* Create the Recovered row */
-            makeTableFilterRow(mySubTable, CoeusTotalSet.RECOVERED, myTotals.getTotalRecovered());
+            makeTableFilterRow(mySubTable, CoeusTotalSet.RECOVERED, myTotals.getRecovered());
             theBuilder.embedTable(mySubTable);
         }
 
@@ -128,13 +128,13 @@ public class CoeusReportBalanceSheet
         myTable = theBuilder.startTable(myBody);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, "Total Assets");
-        theBuilder.makeTotalCell(myTable, myTotals.getTotalAssetValue());
+        theBuilder.makeTotalCell(myTable, myTotals.getAssetValue());
 
         /* Create the Holding row */
-        makeTableFilterRow(myTable, CoeusTotalSet.HOLDING, myTotals.getTotalHolding());
+        makeTableFilterRow(myTable, CoeusTotalSet.HOLDING, myTotals.getHolding());
 
         /* Create the LoanBook row */
-        makeTableFilterRow(myTable, CoeusTotalSet.LOANBOOK, myTotals.getTotalLoanBook());
+        makeTableFilterRow(myTable, CoeusTotalSet.LOANBOOK, myTotals.getLoanBook());
 
         /* Return the document */
         return theBuilder.getDocument();

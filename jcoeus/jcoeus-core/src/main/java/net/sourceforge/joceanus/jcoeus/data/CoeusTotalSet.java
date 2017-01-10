@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+
 /**
  * TotalSet.
  */
@@ -106,5 +108,14 @@ public enum CoeusTotalSet {
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Obtain balance field for TotalSet.
+     * @param pTotalSet
+     * @return the balance field
+     */
+    public MetisField getBalanceField() {
+        return CoeusTotals.getBalanceField(this);
     }
 }

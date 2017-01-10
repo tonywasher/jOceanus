@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPrometheus: Application Framework
+ * jMetis: Java Data Framework
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,49 +20,22 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.views;
+package net.sourceforge.joceanus.jmetis.ui;
+
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
- * Prometheus Data Events.
+ * Table Calculator.
+ * @param <R> the row type
  */
-public enum PrometheusDataEvent {
+@FunctionalInterface
+public interface MetisTableCalculator<R> {
     /**
-     * Refresh Views.
+     * Obtain calculated value.
+     * @param pRow the row
+     * @param pField the field
+     * @return the value
      */
-    REFRESHVIEWS,
-
-    /**
-     * Rewind Updates.
-     */
-    REWINDUPDATES,
-
-    /**
-     * GoTo Window.
-     */
-    GOTOWINDOW,
-
-    /**
-     * Adjust Visibility.
-     */
-    ADJUSTVISIBILITY,
-
-    /**
-     * Selection Changed.
-     */
-    SELECTIONCHANGED,
-
-    /**
-     * Download.
-     */
-    DOWNLOAD,
-
-    /**
-     * Print.
-     */
-    PRINT,
-
-    /**
-     * SaveToFile.
-     */
-    SAVETOFILE,
+    Object calculateValue(R pRow,
+                          MetisField pField);
 }

@@ -255,10 +255,10 @@ public abstract class CoeusLoan
 
         /* If the loan has zero Capital outstanding */
         CoeusTotals myTotals = theHistory.getTotals();
-        if (myTotals.getTotalLoanBook().isZero()) {
+        if (myTotals.getLoanBook().isZero()) {
             /* Determine outstanding badDebt */
-            TethysDecimal myBadDebt = myTotals.getTotalBadDebt();
-            TethysDecimal myRecovered = myTotals.getTotalRecovered();
+            TethysDecimal myBadDebt = myTotals.getBadDebt();
+            TethysDecimal myRecovered = myTotals.getRecovered();
 
             /* Check whether this is a rePaid badDebt */
             boolean isBadDebt = myBadDebt.isNonZero();

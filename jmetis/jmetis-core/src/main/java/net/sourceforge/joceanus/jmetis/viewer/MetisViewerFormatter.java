@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldStorage;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
@@ -234,15 +235,16 @@ public class MetisViewerFormatter {
         while (myIterator.hasNext()) {
             /* Access Field */
             MetisField myField = myIterator.next();
-            Object myValue;
+            MetisFieldStorage myStorage = myField.getStorage();
+            Object myValue = MetisFieldValue.SKIP;
 
             /* Access the value */
-            if ((myField.getStorage().isValueSet())
+            if ((myStorage.isValueSet())
                 && (myValues != null)) {
                 myValue = myValueCtl.skipField(myField)
                                                         ? MetisFieldValue.SKIP
                                                         : myValues.getValue(myField);
-            } else {
+            } else if (!myStorage.isCalculated()) {
                 myValue = pContents.getFieldValue(myField);
             }
 

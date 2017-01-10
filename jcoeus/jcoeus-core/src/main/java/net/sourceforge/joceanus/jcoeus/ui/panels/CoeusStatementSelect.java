@@ -739,6 +739,8 @@ public class CoeusStatementSelect<N, I>
                 && !myFilter.availableMonth(theMonth)) {
                 theMonth = null;
             }
+            myFilter.setMonth(theMonth);
+            myFilter.setTotalSet(theTotalSet);
             theFilter = myFilter;
         }
 
@@ -762,6 +764,8 @@ public class CoeusStatementSelect<N, I>
                 && !myFilter.availableLoan(theLoan)) {
                 theLoan = null;
             }
+            myFilter.setLoan(theLoan);
+            myFilter.setTotalSet(theTotalSet);
             theFilter = myFilter;
         }
 

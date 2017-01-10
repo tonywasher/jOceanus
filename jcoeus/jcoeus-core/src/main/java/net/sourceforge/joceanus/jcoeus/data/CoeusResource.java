@@ -340,79 +340,14 @@ public enum CoeusResource
     DATA_TRANSACTION("data.transaction"),
 
     /**
-     * Data Total Value.
+     * Data SourceValue.
      */
-    DATA_TOTALSOURCEVALUE("data.total.value.source"),
+    DATA_SOURCEVALUE("data.value.source"),
 
     /**
-     * Data Total Value.
+     * Data AssetValue.
      */
-    DATA_TOTALASSETVALUE("data.total.value.asset"),
-
-    /**
-     * Data Total Invested.
-     */
-    DATA_TOTALINVESTED("data.total.invested"),
-
-    /**
-     * Data Total Holding.
-     */
-    DATA_TOTALHOLDING("data.total.holding"),
-
-    /**
-     * Data Total LoanBook.
-     */
-    DATA_TOTALLOANBOOK("data.total.loanBook"),
-
-    /**
-     * Data Total Earnings.
-     */
-    DATA_TOTALEARNINGS("data.total.earnings"),
-
-    /**
-     * Data Total taxableInterest.
-     */
-    DATA_TOTALTAXABLEEARNINGS("data.total.earnings.tax"),
-
-    /**
-     * Data Total Interest.
-     */
-    DATA_TOTALINTEREST("data.total.interest"),
-
-    /**
-     * Data Total badDebtInterest.
-     */
-    DATA_TOTALBADDEBTINTEREST("data.total.badDebt.interest"),
-
-    /**
-     * Data Total badDebtCapital.
-     */
-    DATA_TOTALBADDEBTCAPITAL("data.total.badDebt.capital"),
-
-    /**
-     * Data Total Fees.
-     */
-    DATA_TOTALFEES("data.total.fees"),
-
-    /**
-     * Data Total CashBack.
-     */
-    DATA_TOTALCASHBACK("data.total.cashback"),
-
-    /**
-     * Data Total Losses.
-     */
-    DATA_TOTALLOSSES("data.total.losses"),
-
-    /**
-     * Data Total BadDebt.
-     */
-    DATA_TOTALBADDEBT("data.total.baddebt"),
-
-    /**
-     * Data Total Recovered.
-     */
-    DATA_TOTALRECOVERED("data.total.recovered"),
+    DATA_ASSETVALUE("data.value.asset"),
 
     /**
      * Data StartDate.
@@ -433,6 +368,11 @@ public enum CoeusResource
      * Data Balance.
      */
     DATA_BALANCE("data.balance"),
+
+    /**
+     * Data Delta.
+     */
+    DATA_DELTA("data.delta"),
 
     /**
      * Data Rate.

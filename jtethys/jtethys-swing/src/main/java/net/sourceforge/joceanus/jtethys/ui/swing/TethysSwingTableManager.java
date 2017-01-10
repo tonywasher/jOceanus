@@ -116,6 +116,7 @@ public class TethysSwingTableManager<C, R>
         theColumns = theTable.getColumnModel();
         theCellFactory = new TethysSwingTableCellFactory<>(pFactory);
         theSorter = new TethysSwingTableSorter<>(theModel);
+        theTable.setRowSorter(theSorter);
 
         /* Listen to factory */
         theCellFactory.getEventRegistrar().addEventListener(this::cascadeEvent);

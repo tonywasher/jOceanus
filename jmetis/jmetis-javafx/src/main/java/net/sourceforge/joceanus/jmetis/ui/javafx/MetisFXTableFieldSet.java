@@ -34,13 +34,20 @@ import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedFie
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldStorage;
 import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.ui.MetisTableCalculator;
 
 /**
  * Table FieldSet.
  * @param <R> the item type
  */
 public class MetisFXTableFieldSet<R extends MetisIndexedItem> {
+    /**
+     * List Fields.
+     */
+    private final MetisFXTableListFields<R> theFields;
+
     /**
      * The Item.
      */
@@ -62,13 +69,14 @@ public class MetisFXTableFieldSet<R extends MetisIndexedItem> {
      * @param pFields the fields
      */
     protected MetisFXTableFieldSet(final R pItem,
-                                   final MetisFields pFields) {
+                                   final MetisFXTableListFields<R> pFields) {
         /* Store the parameters */
         theItem = pItem;
+        theFields = pFields;
 
         /* Create the map and populate it */
         thePropertyMap = new HashMap<>();
-        theComparisons = initialiseMap(pFields);
+        theComparisons = initialiseMap(pFields.getFields());
     }
 
     /**
@@ -148,9 +156,30 @@ public class MetisFXTableFieldSet<R extends MetisIndexedItem> {
             MetisField myField = myEntry.getKey();
 
             /* If the field is changeable */
-            if (myField.getStorage().isValueSet()) {
-                /* Obtain the value */
+            MetisFieldStorage myStorage = myField.getStorage();
+            if (myStorage.isValueSet()
+                || myStorage.isCalculated()) {
+                /* Set the value */
                 setValue(myField, myEntry.getValue());
+            }
+        }
+    }
+
+    /**
+     * ReCalculate the values.
+     */
+    protected void recalculateValues() {
+        /* Iterate through the entries */
+        Iterator<Map.Entry<MetisField, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
+        while (myIterator.hasNext()) {
+            Map.Entry<MetisField, ObjectProperty<Object>> myEntry = myIterator.next();
+            MetisField myField = myEntry.getKey();
+
+            /* If the field is calculated */
+            MetisFieldStorage myStorage = myField.getStorage();
+            if (myStorage.isCalculated()) {
+                /* Set the value */
+                setCalculatedValue(myField, myEntry.getValue());
             }
         }
     }
@@ -162,6 +191,20 @@ public class MetisFXTableFieldSet<R extends MetisIndexedItem> {
      */
     private void setValue(final MetisField pField,
                           final ObjectProperty<Object> pProperty) {
+        if (pField.getStorage().isCalculated()) {
+            setCalculatedValue(pField, pProperty);
+        } else {
+            setStandardValue(pField, pProperty);
+        }
+    }
+
+    /**
+     * Set a property.
+     * @param pField the field
+     * @param pProperty the property
+     */
+    private void setStandardValue(final MetisField pField,
+                                  final ObjectProperty<Object> pProperty) {
         /* Obtain the value */
         Object myValue = theItem.getFieldValue(pField);
         if (myValue == MetisFieldValue.SKIP) {
@@ -170,6 +213,23 @@ public class MetisFXTableFieldSet<R extends MetisIndexedItem> {
         if (myValue instanceof MetisEncryptedField) {
             myValue = ((MetisEncryptedField<?>) myValue).getValue();
         }
+
+        /* Store into the property */
+        pProperty.setValue(myValue);
+    }
+
+    /**
+     * Set a property.
+     * @param pField the field
+     * @param pProperty the property
+     */
+    private void setCalculatedValue(final MetisField pField,
+                                    final ObjectProperty<Object> pProperty) {
+        /* Obtain the value */
+        MetisTableCalculator<R> myCalculator = theFields.getCalculator();
+        Object myValue = myCalculator == null
+                                              ? null
+                                              : myCalculator.calculateValue(theItem, pField);
 
         /* Store into the property */
         pProperty.setValue(myValue);

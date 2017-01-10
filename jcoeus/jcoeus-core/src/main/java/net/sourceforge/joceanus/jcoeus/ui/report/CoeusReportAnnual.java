@@ -120,21 +120,21 @@ public class CoeusReportAnnual
             /* Create the row */
             theBuilder.startRow(myTable);
             theBuilder.makeValueCell(myTable, myDate.toString());
-            makeTableFilterCell(myTable, CoeusTotalSet.INTEREST, myMonth, myTotals.getTotalInterest());
+            makeTableFilterCell(myTable, CoeusTotalSet.INTEREST, myMonth, myTotals.getInterest());
 
             /* Handle optional parts */
             if (hasFees) {
-                makeTableFilterCell(myTable, CoeusTotalSet.FEES, myMonth, myTotals.getTotalFees());
+                makeTableFilterCell(myTable, CoeusTotalSet.FEES, myMonth, myTotals.getFees());
             }
             if (hasCashBack) {
-                makeTableFilterCell(myTable, CoeusTotalSet.CASHBACK, myMonth, myTotals.getTotalCashBack());
+                makeTableFilterCell(myTable, CoeusTotalSet.CASHBACK, myMonth, myTotals.getCashBack());
             }
             if (hasBadDebt) {
-                makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTINTEREST, myMonth, myTotals.getTotalBadDebtInterest());
-                makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTCAPITAL, myMonth, myTotals.getTotalBadDebtCapital());
+                makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTINTEREST, myMonth, myTotals.getBadDebtInterest());
+                makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTCAPITAL, myMonth, myTotals.getBadDebtCapital());
             }
             if (needTaxableEarnings) {
-                makeTableFilterCell(myTable, CoeusTotalSet.TAXABLEEARNINGS, myMonth, myTotals.getTotalTaxableEarnings());
+                makeTableFilterCell(myTable, CoeusTotalSet.TAXABLEEARNINGS, myMonth, myTotals.getTaxableEarnings());
             }
         }
 
@@ -142,21 +142,21 @@ public class CoeusReportAnnual
         CoeusTotals myTotals = theMarket.getHistory().getTotals();
         theBuilder.startRow(myTable);
         theBuilder.makeTotalCell(myTable, "Totals");
-        makeTableFilterCell(myTable, CoeusTotalSet.INTEREST, myTotals.getTotalInterest());
+        makeTableFilterCell(myTable, CoeusTotalSet.INTEREST, myTotals.getInterest());
 
         /* Handle optional parts */
         if (hasFees) {
-            makeTableFilterCell(myTable, CoeusTotalSet.FEES, myTotals.getTotalFees());
+            makeTableFilterCell(myTable, CoeusTotalSet.FEES, myTotals.getFees());
         }
         if (hasCashBack) {
-            makeTableFilterCell(myTable, CoeusTotalSet.CASHBACK, myTotals.getTotalCashBack());
+            makeTableFilterCell(myTable, CoeusTotalSet.CASHBACK, myTotals.getCashBack());
         }
         if (hasBadDebt) {
-            makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTINTEREST, myTotals.getTotalBadDebtInterest());
-            makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTCAPITAL, myTotals.getTotalBadDebtCapital());
+            makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTINTEREST, myTotals.getBadDebtInterest());
+            makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTCAPITAL, myTotals.getBadDebtCapital());
         }
         if (needTaxableEarnings) {
-            makeTableFilterCell(myTable, CoeusTotalSet.TAXABLEEARNINGS, myTotals.getTotalTaxableEarnings());
+            makeTableFilterCell(myTable, CoeusTotalSet.TAXABLEEARNINGS, myTotals.getTaxableEarnings());
         }
 
         /* Return the document */

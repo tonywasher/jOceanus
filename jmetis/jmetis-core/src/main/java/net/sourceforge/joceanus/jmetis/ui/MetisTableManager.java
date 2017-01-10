@@ -209,6 +209,12 @@ public abstract class MetisTableManager<R extends MetisIndexedItem, N, I>
     }
 
     /**
+     * Set the table calculator.
+     * @param pCalculator the calculator
+     */
+    public abstract void setCalculator(MetisTableCalculator<R> pCalculator);
+
+    /**
      * Declare string column.
      * @param pId the column id
      * @return the column
@@ -242,6 +248,13 @@ public abstract class MetisTableManager<R extends MetisIndexedItem, N, I>
      * @return the column
      */
     public abstract TethysTableColumn<MetisField, R, N, I> declareLongColumn(MetisField pId);
+
+    /**
+     * Declare rawDecimal column.
+     * @param pId the column id
+     * @return the column
+     */
+    public abstract TethysTableColumn<MetisField, R, N, I> declareRawDecimalColumn(MetisField pId);
 
     /**
      * Declare money column.

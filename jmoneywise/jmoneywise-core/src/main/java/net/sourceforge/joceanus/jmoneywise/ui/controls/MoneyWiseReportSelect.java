@@ -85,6 +85,11 @@ public class MoneyWiseReportSelect<N, I>
     private final TethysButton<N, I> thePrintButton;
 
     /**
+     * Save button.
+     */
+    private final TethysButton<N, I> theSaveButton;
+
+    /**
      * Current state.
      */
     private ReportState theState;
@@ -122,6 +127,10 @@ public class MoneyWiseReportSelect<N, I>
         thePrintButton = pFactory.newButton();
         MetisIcon.configurePrintIconButton(thePrintButton);
 
+        /* Create the save button */
+        theSaveButton = pFactory.newButton();
+        MetisIcon.configureSaveIconButton(theSaveButton);
+
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
@@ -136,12 +145,14 @@ public class MoneyWiseReportSelect<N, I>
         thePanel.addNode(theRangeSelect);
         thePanel.addSpacer();
         thePanel.addNode(thePrintButton);
+        thePanel.addNode(theSaveButton);
 
         /* Apply the current state */
         theState.setType(MoneyWiseReportType.NETWORTH);
 
         /* Add the listeners */
         thePrintButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.PRINT));
+        theSaveButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.SAVETOFILE));
         theReportButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewReport());
         theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
     }

@@ -266,6 +266,15 @@ public final class MetisFields {
     }
 
     /**
+     * Declare field used for calculation.
+     * @param pName the name of the field
+     * @return the field
+     */
+    public MetisField declareCalculatedField(final String pName) {
+        return declareDataField(pName, MetisFieldEquality.DERIVED, MetisFieldStorage.CALCULATED);
+    }
+
+    /**
      * Declare local field referenced by index.
      * @param pName the name of the field
      * @return the field
@@ -676,14 +685,20 @@ public final class MetisFields {
         /**
          * Encrypted.
          */
-        ENCRYPTED;
+        ENCRYPTED,
+
+        /**
+         * Calculated.
+         */
+        CALCULATED;
 
         /**
          * Is the field stored in valueSet?
          * @return true/false
          */
         public boolean isValueSet() {
-            return this != LOCAL;
+            return this == VALUESET
+                   || this == ENCRYPTED;
         }
 
         /**
@@ -692,6 +707,14 @@ public final class MetisFields {
          */
         public boolean isEncrypted() {
             return this == ENCRYPTED;
+        }
+
+        /**
+         * Is the field calculated?
+         * @return true/false
+         */
+        public boolean isCalculated() {
+            return this == CALCULATED;
         }
     }
 

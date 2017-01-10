@@ -93,12 +93,18 @@ public abstract class CoeusHistory
     private final CoeusTotals theTotals;
 
     /**
+     * The last totals.
+     */
+    private CoeusTotals theLastTotals;
+
+    /**
      * Constructor.
      * @param pTotals the totals
      */
     protected CoeusHistory(final CoeusTotals pTotals) {
         /* Record parameters */
         theTotals = pTotals;
+        theLastTotals = theTotals;
 
         /* Record details */
         theMarket = pTotals.getMarket();
@@ -154,12 +160,14 @@ public abstract class CoeusHistory
      * @param pTrans the transaction to add
      */
     public void addTransactionToHistory(final CoeusTransaction pTrans) {
+        /* Create the new entry and add to the list */
+        CoeusTotals myTotals = newTotals(theLastTotals, pTrans);
+        myTotals.addTransactionToTotals(pTrans);
+        theHistory.add(myTotals);
+        theLastTotals = myTotals;
+
         /* Add to the totals */
         theTotals.addTransactionToTotals(pTrans);
-
-        /* Create the new entry and add to the list */
-        CoeusTotals myTotals = newTotals(theTotals, pTrans);
-        theHistory.add(myTotals);
     }
 
     /**

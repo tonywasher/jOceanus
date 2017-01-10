@@ -231,6 +231,13 @@ public abstract class TethysHTMLManager<N, I>
     public abstract void printIt();
 
     /**
+     * SaveToFile.
+     */
+    public void saveToFile() {
+        /* Not Yet */
+    }
+
+    /**
      * Load new page.
      * @param pPageRef the page reference
      * @return was new page loaded? true/false

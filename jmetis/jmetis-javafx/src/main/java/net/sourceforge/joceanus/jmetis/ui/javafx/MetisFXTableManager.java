@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmetis.newlist.MetisBaseList;
 import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
 import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedList;
+import net.sourceforge.joceanus.jmetis.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.ui.MetisTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager;
@@ -43,6 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXT
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTablePriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableRateColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableRatioColumn;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableRawDecimalColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableScrollColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableShortColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableStateIconColumn;
@@ -120,6 +122,11 @@ public class MetisFXTableManager<R extends MetisIndexedItem>
     }
 
     @Override
+    public void setCalculator(final MetisTableCalculator<R> pCalculator) {
+        theItemFields.setCalculator(pCalculator);
+    }
+
+    @Override
     public TethysFXTableStringColumn<MetisField, R> declareStringColumn(final MetisField pId) {
         TethysFXTableStringColumn<MetisField, R> myColumn = getTable().declareStringColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
@@ -150,6 +157,13 @@ public class MetisFXTableManager<R extends MetisIndexedItem>
     @Override
     public TethysFXTableLongColumn<MetisField, R> declareLongColumn(final MetisField pId) {
         TethysFXTableLongColumn<MetisField, R> myColumn = getTable().declareLongColumn(pId);
+        myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        return myColumn;
+    }
+
+    @Override
+    public TethysFXTableRawDecimalColumn<MetisField, R> declareRawDecimalColumn(final MetisField pId) {
+        TethysFXTableRawDecimalColumn<MetisField, R> myColumn = getTable().declareRawDecimalColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
         return myColumn;
     }

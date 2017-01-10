@@ -83,7 +83,7 @@
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.22</SLF4JVersion>
     <LOG4JVersion>2.7</LOG4JVersion>
-    <JSoupVersion>1.10.1</JSoupVersion>
+    <JSoupVersion>1.10.2</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
   </properties>
   <build>
