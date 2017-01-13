@@ -243,6 +243,7 @@ public class MoneyWiseReportSelect<N, I>
         theRangeSelect.setEnabled(bEnable);
         theReportButton.setEnabled(bEnable);
         thePrintButton.setEnabled(bEnable);
+        theSaveButton.setEnabled(bEnable);
     }
 
     @Override

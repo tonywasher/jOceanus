@@ -284,9 +284,14 @@ public enum StaticDataResource implements TethysResourceId {
     TRANSTYPE_EXPENSE("TransType.Expense"),
 
     /**
-     * TransType BadDebt.
+     * TransType BadDebtCapital.
      */
-    TRANSTYPE_BADDEBT("TransType.BadDebt"),
+    TRANSTYPE_BADDEBTCAPITAL("TransType.BadDebt.Capital"),
+
+    /**
+     * TransType BadDebtInterest.
+     */
+    TRANSTYPE_BADDEBTINTEREST("TransType.BadDebt.Interest"),
 
     /**
      * TransType LocalTaxes.
@@ -502,11 +507,6 @@ public enum StaticDataResource implements TethysResourceId {
      * TaxBasis CapitalGains.
      */
     TAXBASIS_CAPITALGAINS("TaxBasis.CapitalGains"),
-
-    /**
-     * TaxBasis BadDebt.
-     */
-    TAXBASIS_BADDEBT("TaxBasis.BadDebt"),
 
     /**
      * TaxBasis TaxPaid.
@@ -1371,7 +1371,8 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(TransactionCategoryClass.OPTIONSVEST, TRANSTYPE_OPTIONSVEST);
         myMap.put(TransactionCategoryClass.OPTIONSEXERCISE, TRANSTYPE_OPTIONSEXERCISE);
         myMap.put(TransactionCategoryClass.EXPENSE, TRANSTYPE_EXPENSE);
-        myMap.put(TransactionCategoryClass.BADDEBT, TRANSTYPE_BADDEBT);
+        myMap.put(TransactionCategoryClass.BADDEBTCAPITAL, TRANSTYPE_BADDEBTCAPITAL);
+        myMap.put(TransactionCategoryClass.BADDEBTINTEREST, TRANSTYPE_BADDEBTINTEREST);
         myMap.put(TransactionCategoryClass.LOCALTAXES, TRANSTYPE_LOCALTAXES);
         myMap.put(TransactionCategoryClass.WRITEOFF, TRANSTYPE_WRITEOFF);
         myMap.put(TransactionCategoryClass.RENTALEXPENSE, TRANSTYPE_RENTALEXPENSE);
@@ -1434,7 +1435,8 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(TaxBasisClass.CHARGEABLEGAINS, TAXBASIS_CHARGEABLEGAINS);
         myMap.put(TaxBasisClass.RESIDENTIALGAINS, TAXBASIS_RESIDENTIALGAINS);
         myMap.put(TaxBasisClass.CAPITALGAINS, TAXBASIS_CAPITALGAINS);
-        myMap.put(TaxBasisClass.BADDEBT, TAXBASIS_BADDEBT);
+        myMap.put(TaxBasisClass.BADDEBTCAPITAL, TRANSTYPE_BADDEBTCAPITAL);
+        myMap.put(TaxBasisClass.BADDEBTINTEREST, TRANSTYPE_BADDEBTINTEREST);
         myMap.put(TaxBasisClass.TAXPAID, TAXBASIS_TAXPAID);
         myMap.put(TaxBasisClass.MARKET, TAXBASIS_MARKET);
         myMap.put(TaxBasisClass.TAXFREE, TAXBASIS_TAXFREE);

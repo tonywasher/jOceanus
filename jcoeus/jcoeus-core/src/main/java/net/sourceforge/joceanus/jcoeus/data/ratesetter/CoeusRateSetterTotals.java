@@ -243,12 +243,17 @@ public class CoeusRateSetterTotals
 
     @Override
     public TethysMoney getTaxableEarnings() {
-        return theInterest;
+        return theEarnings;
     }
 
     @Override
     public TethysMoney getInterest() {
         return theInterest;
+    }
+
+    @Override
+    public TethysMoney getNettInterest() {
+        return theEarnings;
     }
 
     @Override

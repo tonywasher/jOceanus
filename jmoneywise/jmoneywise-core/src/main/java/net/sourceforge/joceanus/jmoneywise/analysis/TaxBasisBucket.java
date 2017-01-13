@@ -1187,9 +1187,14 @@ public class TaxBasisBucket
                     myBucket = getBucket(TaxBasisClass.TAXFREE);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
-                case BADDEBT:
-                    /* Adjust the BadDebt bucket */
-                    myBucket = getBucket(TaxBasisClass.BADDEBT);
+                case BADDEBTCAPITAL:
+                    /* Adjust the BadDebtCapital bucket */
+                    myBucket = getBucket(TaxBasisClass.BADDEBTCAPITAL);
+                    myBucket.addExpenseTransaction(pTrans);
+                    break;
+                case BADDEBTINTEREST:
+                    /* Adjust the BadDebtInterest bucket */
+                    myBucket = getBucket(TaxBasisClass.BADDEBTINTEREST);
                     myBucket.addExpenseTransaction(pTrans);
                     break;
                 case EXPENSE:

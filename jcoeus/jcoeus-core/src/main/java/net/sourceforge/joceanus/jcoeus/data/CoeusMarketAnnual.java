@@ -219,7 +219,7 @@ public class CoeusMarketAnnual
             }
 
             /* If this is a relevant transaction */
-            if (relevantTransaction(myTransaction)) {
+            if (theInitialDate.compareTo(myTransaction.getDate()) <= 0) {
                 /* Obtain the monthly history and adjust */
                 CoeusHistory myMonth = getMonthlyHistory(myDate);
                 myMonth.addTransactionToHistory(myTransaction);
@@ -278,35 +278,6 @@ public class CoeusMarketAnnual
      */
     public CoeusHistory getMonthlyHistory(final Month pDate) {
         return theMonthlyHistories.get(pDate);
-    }
-
-    /**
-     * Determine whether we are interested in this transaction.
-     * @param pTrans the transaction
-     * @return true/false
-     */
-    private boolean relevantTransaction(final CoeusTransaction pTrans) {
-        /* Check that the date is later than the initialDate */
-        if (theInitialDate.compareTo(pTrans.getDate()) > 0) {
-            return false;
-        }
-
-        /* Switch on transaction type */
-        switch (pTrans.getTransType()) {
-            case INTEREST:
-            case FEES:
-            case CASHBACK:
-            case RATEPROMISE:
-            case RECOVERY:
-            case BADDEBT:
-                return true;
-            case TRANSFER:
-            case CAPITALLOAN:
-            case CAPITALREPAYMENT:
-            case BUYLOAN:
-            default:
-                return false;
-        }
     }
 
     @Override

@@ -170,6 +170,11 @@ public abstract class CoeusTransaction
     protected static final String ID_INTEREST = "I";
 
     /**
+     * Id For nettInterest.
+     */
+    protected static final String ID_NETTINTEREST = "NI";
+
+    /**
      * Id For badDebtInterest.
      */
     protected static final String ID_BDINTEREST = "DI";

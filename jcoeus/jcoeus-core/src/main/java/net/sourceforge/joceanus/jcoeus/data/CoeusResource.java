@@ -295,6 +295,11 @@ public enum CoeusResource
     DATA_INTEREST("data.interest"),
 
     /**
+     * Data NettInterest.
+     */
+    DATA_NETTINTEREST("data.nettInterest"),
+
+    /**
      * Data TaxableEarnings.
      */
     DATA_TAXABLEEARNINGS("data.taxableEarnings"),
@@ -651,6 +656,7 @@ public enum CoeusResource
         myMap.put(CoeusTotalSet.EARNINGS, DATA_EARNINGS);
         myMap.put(CoeusTotalSet.TAXABLEEARNINGS, DATA_TAXABLEEARNINGS);
         myMap.put(CoeusTotalSet.INTEREST, DATA_INTEREST);
+        myMap.put(CoeusTotalSet.NETTINTEREST, DATA_NETTINTEREST);
         myMap.put(CoeusTotalSet.BADDEBTINTEREST, DATA_BADDEBTINTEREST);
         myMap.put(CoeusTotalSet.BADDEBTCAPITAL, DATA_BADDEBTCAPITAL);
         myMap.put(CoeusTotalSet.FEES, DATA_FEES);

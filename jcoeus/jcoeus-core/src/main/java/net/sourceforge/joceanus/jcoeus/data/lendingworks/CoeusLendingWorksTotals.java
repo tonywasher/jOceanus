@@ -230,6 +230,11 @@ public class CoeusLendingWorksTotals
     }
 
     @Override
+    public TethysDecimal getNettInterest() {
+        return theEarnings;
+    }
+
+    @Override
     public TethysDecimal getFees() {
         return getZero();
     }

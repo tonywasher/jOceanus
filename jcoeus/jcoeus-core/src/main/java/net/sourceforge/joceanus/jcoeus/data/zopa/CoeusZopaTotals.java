@@ -79,6 +79,11 @@ public class CoeusZopaTotals
     private final TethysDecimal theInterest;
 
     /**
+     * NettInterest.
+     */
+    private final TethysDecimal theNettInterest;
+
+    /**
      * BadDebtInterest.
      */
     private final TethysDecimal theBadDebtInterest;
@@ -170,6 +175,7 @@ public class CoeusZopaTotals
         theEarnings = new TethysDecimal(getZero());
         theTaxableEarnings = new TethysDecimal(getZero());
         theInterest = new TethysDecimal(getZero());
+        theNettInterest = new TethysDecimal(getZero());
         theBadDebtInterest = new TethysDecimal(getZero());
         theBadDebtCapital = new TethysDecimal(getZero());
         theFees = new TethysDecimal(getZero());
@@ -198,6 +204,7 @@ public class CoeusZopaTotals
         theEarnings = new TethysDecimal(pTotals.getEarnings());
         theTaxableEarnings = new TethysDecimal(pTotals.getTaxableEarnings());
         theInterest = new TethysDecimal(pTotals.getInterest());
+        theNettInterest = new TethysDecimal(pTotals.getNettInterest());
         theBadDebtInterest = new TethysDecimal(pTotals.getBadDebtInterest());
         theBadDebtCapital = new TethysDecimal(pTotals.getBadDebtCapital());
         theFees = new TethysDecimal(pTotals.getFees());
@@ -218,6 +225,7 @@ public class CoeusZopaTotals
         theEarnings.addValue(pTotals.getEarnings());
         theTaxableEarnings.addValue(pTotals.getTaxableEarnings());
         theInterest.addValue(pTotals.getInterest());
+        theNettInterest.addValue(pTotals.getNettInterest());
         theBadDebtInterest.addValue(pTotals.getBadDebtInterest());
         theBadDebtCapital.addValue(pTotals.getBadDebtCapital());
         theFees.addValue(pTotals.getFees());
@@ -250,6 +258,10 @@ public class CoeusZopaTotals
         theTaxableEarnings.addValue(pTransaction.getInterest());
         theTaxableEarnings.addValue(pTransaction.getBadDebtInterest());
         theTaxableEarnings.addValue(pTransaction.getFees());
+
+        /* Adjust nett interest */
+        theNettInterest.addValue(pTransaction.getInterest());
+        theNettInterest.addValue(pTransaction.getFees());
 
         /* Adjust losses */
         theLosses.addValue(pTransaction.getBadDebt());
@@ -316,6 +328,11 @@ public class CoeusZopaTotals
     @Override
     public TethysDecimal getInterest() {
         return theInterest;
+    }
+
+    @Override
+    public TethysDecimal getNettInterest() {
+        return theNettInterest;
     }
 
     @Override

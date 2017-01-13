@@ -74,9 +74,14 @@ public enum AccountAttribute implements BucketAttribute {
     SPEND,
 
     /**
-     * BadDebt.
+     * BadDebtCapital.
      */
-    BADDEBT;
+    BADDEBTCAPITAL,
+
+    /**
+     * BadDebtInterest.
+     */
+    BADDEBTINTEREST;
 
     /**
      * The String name.
@@ -103,7 +108,8 @@ public enum AccountAttribute implements BucketAttribute {
             case LOCALVALUE:
             case CURRENCYFLUCT:
             case SPEND:
-            case BADDEBT:
+            case BADDEBTCAPITAL:
+            case BADDEBTINTEREST:
                 return true;
             case DEPOSITRATE:
             case EXCHANGERATE:
@@ -129,7 +135,8 @@ public enum AccountAttribute implements BucketAttribute {
             case VALUEDELTA:
             case CURRENCYFLUCT:
             case SPEND:
-            case BADDEBT:
+            case BADDEBTCAPITAL:
+            case BADDEBTINTEREST:
             default:
                 return MetisDataType.MONEY;
         }

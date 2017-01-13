@@ -102,6 +102,7 @@ public class CoeusReportAnnual
             theBuilder.makeTitleCell(myTable, CoeusTotalSet.CASHBACK.toString());
         }
         if (hasBadDebt) {
+            theBuilder.makeTitleCell(myTable, CoeusTotalSet.NETTINTEREST.toString());
             theBuilder.makeTitleCell(myTable, CoeusTotalSet.BADDEBTINTEREST.toString());
             theBuilder.makeTitleCell(myTable, CoeusTotalSet.BADDEBTCAPITAL.toString());
         }
@@ -130,6 +131,7 @@ public class CoeusReportAnnual
                 makeTableFilterCell(myTable, CoeusTotalSet.CASHBACK, myMonth, myTotals.getCashBack());
             }
             if (hasBadDebt) {
+                makeTableFilterCell(myTable, CoeusTotalSet.NETTINTEREST, myMonth, myTotals.getNettInterest());
                 makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTINTEREST, myMonth, myTotals.getBadDebtInterest());
                 makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTCAPITAL, myMonth, myTotals.getBadDebtCapital());
             }
@@ -152,6 +154,7 @@ public class CoeusReportAnnual
             makeTableFilterCell(myTable, CoeusTotalSet.CASHBACK, myTotals.getCashBack());
         }
         if (hasBadDebt) {
+            makeTableFilterCell(myTable, CoeusTotalSet.NETTINTEREST, myTotals.getNettInterest());
             makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTINTEREST, myTotals.getBadDebtInterest());
             makeTableFilterCell(myTable, CoeusTotalSet.BADDEBTCAPITAL, myTotals.getBadDebtCapital());
         }

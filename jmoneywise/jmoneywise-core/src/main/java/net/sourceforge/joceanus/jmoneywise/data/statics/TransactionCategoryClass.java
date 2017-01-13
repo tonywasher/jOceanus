@@ -156,154 +156,159 @@ public enum TransactionCategoryClass implements CategoryInterface {
     EXPENSE(25, 28),
 
     /**
-     * BadDebt.
+     * BadDebtCapital.
      */
-    BADDEBT(26, 29),
+    BADDEBTCAPITAL(26, 29),
+
+    /**
+     * BadDebtInterest.
+     */
+    BADDEBTINTEREST(27, 30),
 
     /**
      * LocalTaxes.
      */
-    LOCALTAXES(27, 30),
+    LOCALTAXES(28, 31),
 
     /**
      * Write Off.
      */
-    WRITEOFF(28, 31),
+    WRITEOFF(29, 32),
 
     /**
      * Interest charged on Loans.
      */
-    LOANINTERESTCHARGED(29, 32),
+    LOANINTERESTCHARGED(30, 33),
 
     /**
      * Rental Expense.
      */
-    RENTALEXPENSE(30, 33),
+    RENTALEXPENSE(31, 34),
 
     /**
      * Tax Relief.
      */
-    TAXRELIEF(31, 34),
+    TAXRELIEF(32, 35),
 
     /**
      * Tax Settlement.
      */
-    TAXSETTLEMENT(32, 35),
+    TAXSETTLEMENT(33, 36),
 
     /**
      * Taxed Interest.
      */
-    TAXEDINTEREST(33, 36),
+    TAXEDINTEREST(34, 37),
 
     /**
      * Gross Interest.
      */
-    GROSSINTEREST(34, 37),
+    GROSSINTEREST(35, 38),
 
     /**
      * Tax Free Interest.
      */
-    TAXFREEINTEREST(35, 38),
+    TAXFREEINTEREST(36, 39),
 
     /**
      * Share Dividend Income.
      */
-    SHAREDIVIDEND(36, 39),
+    SHAREDIVIDEND(37, 40),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UNITTRUSTDIVIDEND(37, 40),
+    UNITTRUSTDIVIDEND(38, 41),
 
     /**
      * Foreign Dividend.
      */
-    FOREIGNDIVIDEND(38, 41),
+    FOREIGNDIVIDEND(39, 42),
 
     /**
      * Tax Free Dividend.
      */
-    TAXFREEDIVIDEND(39, 42),
+    TAXFREEDIVIDEND(40, 43),
 
     /**
      * Taxed Loyalty Bonus.
      */
-    TAXEDLOYALTYBONUS(40, 43),
+    TAXEDLOYALTYBONUS(41, 44),
 
     /**
      * Gross LoyaltyBonus.
      */
-    GROSSLOYALTYBONUS(41, 44),
+    GROSSLOYALTYBONUS(42, 45),
 
     /**
      * Tax Free LoyaltyBonus.
      */
-    TAXFREELOYALTYBONUS(42, 45),
+    TAXFREELOYALTYBONUS(43, 46),
 
     /**
      * Chargeable Gain.
      */
-    CHARGEABLEGAIN(43, 46),
+    CHARGEABLEGAIN(44, 47),
 
     /**
      * Residential Gain.
      */
-    RESIDENTIALGAIN(44, 47),
+    RESIDENTIALGAIN(45, 48),
 
     /**
      * Capital Gain.
      */
-    CAPITALGAIN(45, 48),
+    CAPITALGAIN(46, 49),
 
     /**
      * TaxFreeCapital Gain.
      */
-    TAXFREEGAIN(46, 49),
+    TAXFREEGAIN(47, 50),
 
     /**
      * Market Growth.
      */
-    MARKETGROWTH(47, 50),
+    MARKETGROWTH(48, 51),
 
     /**
      * CurrencyFluctuation.
      */
-    CURRENCYFLUCTUATION(48, 51),
+    CURRENCYFLUCTUATION(49, 52),
 
     /**
      * Tax Credit.
      * <p>
      * This is a singular category catching tax credits associated with an event.
      */
-    TAXCREDIT(49, 52),
+    TAXCREDIT(50, 53),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NATINSURANCE(50, 53),
+    NATINSURANCE(51, 54),
 
     /**
      * Deemed Benefit.
      * <p>
      * This is a singular category catching deemed benefit payments associated with an event.
      */
-    DEEMEDBENEFIT(51, 54),
+    DEEMEDBENEFIT(52, 55),
 
     /**
      * CharityDonation.
      * <p>
      * This is a singular category catching charity donations associated with an event.
      */
-    CHARITYDONATION(52, 55),
+    CHARITYDONATION(53, 56),
 
     /**
      * OpeningBalance.
      * <p>
      * This is a singular category catching opening balances.
      */
-    OPENINGBALANCE(53, 56),
+    OPENINGBALANCE(54, 57),
 
     /**
      * Income Totals.
@@ -311,7 +316,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of income sub-categories and is used
      * purely for reporting purposes.
      */
-    INCOMETOTALS(54, 1),
+    INCOMETOTALS(55, 1),
 
     /**
      * Expense Totals.
@@ -319,7 +324,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of expense sub-categories and is used
      * purely for reporting purposes.
      */
-    EXPENSETOTALS(55, 2),
+    EXPENSETOTALS(56, 2),
 
     /**
      * Security Parent.
@@ -327,7 +332,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of security transfer sub-categories and is
      * used purely for holding purposes.
      */
-    SECURITYPARENT(56, 3),
+    SECURITYPARENT(57, 3),
 
     /**
      * Totals.
@@ -335,7 +340,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for the total of all non-transfer categories and is used purely for reporting
      * purposes.
      */
-    TOTALS(57, 0);
+    TOTALS(58, 0);
 
     /**
      * The String name.

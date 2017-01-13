@@ -212,14 +212,15 @@ public final class DepositBucket
     protected void adjustForDebit(final TransactionHelper pHelper) {
         /* If this is a peer2peer and a bad debt transaction */
         if (isPeer2Peer
-            && pHelper.isCategoryClass(TransactionCategoryClass.BADDEBT)) {
+            && isBadDebt(pHelper)) {
             /* Access the amount */
             TethysMoney myAmount = pHelper.getDebitAmount();
+            AccountAttribute myAttr = badDebtAttr(pHelper);
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
                 /* Adjust counter */
-                adjustCounter(AccountAttribute.BADDEBT, myAmount);
+                adjustCounter(myAttr, myAmount);
             }
         }
 
@@ -231,21 +232,43 @@ public final class DepositBucket
     protected void adjustForCredit(final TransactionHelper pHelper) {
         /* If this is a peer2peer and a bad debt transaction */
         if (isPeer2Peer
-            && pHelper.isCategoryClass(TransactionCategoryClass.BADDEBT)) {
+            && isBadDebt(pHelper)) {
             /* Access the amount */
             TethysMoney myAmount = pHelper.getCreditAmount();
+            AccountAttribute myAttr = badDebtAttr(pHelper);
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
                 /* Adjust bad debt */
                 myAmount = new TethysMoney(myAmount);
                 myAmount.negate();
-                adjustCounter(AccountAttribute.BADDEBT, myAmount);
+                adjustCounter(myAttr, myAmount);
             }
         }
 
         /* Pass call on */
         super.adjustForCredit(pHelper);
+    }
+
+    /**
+     * Is the transaction a badDebt?
+     * @param pHelper the transaction helper
+     * @return true/false
+     */
+    private boolean isBadDebt(final TransactionHelper pHelper) {
+        return pHelper.isCategoryClass(TransactionCategoryClass.BADDEBTCAPITAL)
+               || pHelper.isCategoryClass(TransactionCategoryClass.BADDEBTINTEREST);
+    }
+
+    /**
+     * Obtain the badDebt attribute.
+     * @param pHelper the transaction helper
+     * @return the attribute
+     */
+    private AccountAttribute badDebtAttr(final TransactionHelper pHelper) {
+        return pHelper.isCategoryClass(TransactionCategoryClass.BADDEBTCAPITAL)
+                                                                                ? AccountAttribute.BADDEBTCAPITAL
+                                                                                : AccountAttribute.BADDEBTINTEREST;
     }
 
     /**
@@ -262,7 +285,8 @@ public final class DepositBucket
             super(pCurrency);
 
             /* Initialise BadDebt to zero */
-            setValue(AccountAttribute.BADDEBT, new TethysMoney(pCurrency));
+            setValue(AccountAttribute.BADDEBTCAPITAL, new TethysMoney(pCurrency));
+            setValue(AccountAttribute.BADDEBTINTEREST, new TethysMoney(pCurrency));
         }
 
         /**
@@ -276,7 +300,8 @@ public final class DepositBucket
             super(pCurrency, pReportingCurrency);
 
             /* Initialise BadDebt to zero */
-            setValue(AccountAttribute.BADDEBT, new TethysMoney(pCurrency));
+            setValue(AccountAttribute.BADDEBTCAPITAL, new TethysMoney(pCurrency));
+            setValue(AccountAttribute.BADDEBTINTEREST, new TethysMoney(pCurrency));
         }
 
         /**

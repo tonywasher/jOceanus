@@ -27,6 +27,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
+import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
@@ -367,7 +368,12 @@ public enum AnalysisResource implements TethysResourceId {
     /**
      * AccountAttr BadDebt.
      */
-    ACCOUNTATTR_BADDEBT("AccountAttr.BadDebt"),
+    ACCOUNTATTR_BADDEBTCAPITAL(StaticDataResource.TRANSTYPE_BADDEBTCAPITAL),
+
+    /**
+     * AccountAttr BadDebt.
+     */
+    ACCOUNTATTR_BADDEBTINTEREST(StaticDataResource.TRANSTYPE_BADDEBTINTEREST),
 
     /**
      * PayeeAttr Valuation.
@@ -619,7 +625,8 @@ public enum AnalysisResource implements TethysResourceId {
         myMap.put(AccountAttribute.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
         myMap.put(AccountAttribute.MATURITY, ACCOUNTATTR_MATURITY);
         myMap.put(AccountAttribute.SPEND, ACCOUNTATTR_SPEND);
-        myMap.put(AccountAttribute.BADDEBT, ACCOUNTATTR_BADDEBT);
+        myMap.put(AccountAttribute.BADDEBTCAPITAL, ACCOUNTATTR_BADDEBTCAPITAL);
+        myMap.put(AccountAttribute.BADDEBTINTEREST, ACCOUNTATTR_BADDEBTINTEREST);
         return myMap;
     }
 

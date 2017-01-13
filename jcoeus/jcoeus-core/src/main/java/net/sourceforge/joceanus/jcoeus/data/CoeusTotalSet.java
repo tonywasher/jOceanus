@@ -54,6 +54,11 @@ public enum CoeusTotalSet {
     INTEREST,
 
     /**
+     * nettInterest.
+     */
+    NETTINTEREST,
+
+    /**
      * BadDebtInterest.
      */
     BADDEBTINTEREST,

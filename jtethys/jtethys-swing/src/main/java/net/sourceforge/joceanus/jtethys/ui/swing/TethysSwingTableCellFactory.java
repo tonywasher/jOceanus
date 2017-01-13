@@ -626,7 +626,7 @@ public class TethysSwingTableCellFactory<C, R>
                 theRenderControl.setTheAttributeState(TethysFieldAttribute.DISABLED, myTable.isDisabled(myRow));
                 theRenderControl.setTheAttributeState(TethysFieldAttribute.ERROR, myTable.isError(myId, myRow));
                 theRenderControl.setTheAttributeState(TethysFieldAttribute.SELECTED, pSelected);
-                theRenderControl.setTheAttributeState(TethysFieldAttribute.ALTERNATE, (myRowIndex & 1) == 0);
+                theRenderControl.setTheAttributeState(TethysFieldAttribute.ALTERNATE, (pRow & 1) == 0);
 
                 /* Format the cell */
                 theEventManager.fireEvent(TethysUIEvent.CELLFORMAT, TethysSwingTableCell.this);

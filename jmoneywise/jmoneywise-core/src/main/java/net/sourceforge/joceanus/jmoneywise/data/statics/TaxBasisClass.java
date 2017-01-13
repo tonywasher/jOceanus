@@ -62,64 +62,69 @@ public enum TaxBasisClass implements StaticInterface {
     UNTAXEDINTEREST(6, 5),
 
     /**
+     * BadDebtInterest.
+     */
+    BADDEBTINTEREST(7, 6),
+
+    /**
      * Dividend Income.
      */
-    DIVIDEND(7, 6),
+    DIVIDEND(8, 7),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UNITTRUSTDIVIDEND(8, 7),
+    UNITTRUSTDIVIDEND(9, 8),
 
     /**
      * Foreign Dividend Income.
      */
-    FOREIGNDIVIDEND(9, 8),
+    FOREIGNDIVIDEND(10, 9),
 
     /**
      * Chargeable gains.
      */
-    CHARGEABLEGAINS(10, 9),
+    CHARGEABLEGAINS(11, 10),
 
     /**
      * Residential gains.
      */
-    RESIDENTIALGAINS(11, 10),
+    RESIDENTIALGAINS(12, 11),
 
     /**
      * Capital gains.
      */
-    CAPITALGAINS(12, 11),
+    CAPITALGAINS(13, 12),
+
+    /**
+     * BadDebtCapital.
+     */
+    BADDEBTCAPITAL(14, 13),
 
     /**
      * Tax Free Income.
      */
-    TAXFREE(13, 12),
-
-    /**
-     * BadDebt.
-     */
-    BADDEBT(14, 13),
+    TAXFREE(15, 14),
 
     /**
      * Market Growth.
      */
-    MARKET(15, 14),
+    MARKET(16, 15),
 
     /**
      * Total Tax Paid.
      */
-    TAXPAID(16, 15),
+    TAXPAID(17, 16),
 
     /**
      * Gross Expense.
      */
-    EXPENSE(17, 16),
+    EXPENSE(18, 17),
 
     /**
      * Virtual Income.
      */
-    VIRTUAL(18, 17);
+    VIRTUAL(19, 18);
 
     /**
      * The String name.
@@ -204,7 +209,8 @@ public enum TaxBasisClass implements StaticInterface {
             case CAPITALGAINS:
             case RESIDENTIALGAINS:
             case TAXFREE:
-            case BADDEBT:
+            case BADDEBTCAPITAL:
+            case BADDEBTINTEREST:
                 return true;
             default:
                 return false;
@@ -217,7 +223,8 @@ public enum TaxBasisClass implements StaticInterface {
      */
     public boolean isExpense() {
         switch (this) {
-            case BADDEBT:
+            case BADDEBTCAPITAL:
+            case BADDEBTINTEREST:
             case EXPENSE:
             case TAXPAID:
             case VIRTUAL:

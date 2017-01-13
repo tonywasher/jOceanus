@@ -116,6 +116,11 @@ public abstract class CoeusTotals
     private static final MetisField FIELD_INTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INTEREST.getValue());
 
     /**
+     * TotalNettInterest Field Id.
+     */
+    private static final MetisField FIELD_NETTINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_NETTINTEREST.getValue());
+
+    /**
      * TotalBadDebtInterest Field Id.
      */
     private static final MetisField FIELD_BADDEBTINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBTINTEREST.getValue());
@@ -307,6 +312,12 @@ public abstract class CoeusTotals
     public abstract TethysDecimal getInterest();
 
     /**
+     * Obtain the total nettInterest.
+     * @return the interest
+     */
+    public abstract TethysDecimal getNettInterest();
+
+    /**
      * Obtain the total badDebt interest.
      * @return the interest
      */
@@ -372,6 +383,7 @@ public abstract class CoeusTotals
         getEarnings().setZero();
         getTaxableEarnings().setZero();
         getInterest().setZero();
+        getNettInterest().setZero();
         getBadDebtInterest().setZero();
         getBadDebtCapital().setZero();
         getFees().setZero();
@@ -450,6 +462,8 @@ public abstract class CoeusTotals
                 return FIELD_TAXEARNINGS;
             case INTEREST:
                 return FIELD_INTEREST;
+            case NETTINTEREST:
+                return FIELD_NETTINTEREST;
             case FEES:
                 return FIELD_FEES;
             case CASHBACK:
@@ -504,6 +518,7 @@ public abstract class CoeusTotals
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_INVESTED, getInvested());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_EARNINGS, getEarnings());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_INTEREST, getInterest());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_NETTINTEREST, getNettInterest());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_TAXEARNINGS, getTaxableEarnings());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_BDINTEREST, getBadDebtInterest());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_BDCAPITAL, getBadDebtCapital());
@@ -608,6 +623,12 @@ public abstract class CoeusTotals
         }
         if (FIELD_INTEREST.equals(pField)) {
             TethysDecimal myInterest = getInterest();
+            return myInterest.isZero()
+                                       ? MetisFieldValue.SKIP
+                                       : myInterest;
+        }
+        if (FIELD_NETTINTEREST.equals(pField)) {
+            TethysDecimal myInterest = getNettInterest();
             return myInterest.isZero()
                                        ? MetisFieldValue.SKIP
                                        : myInterest;

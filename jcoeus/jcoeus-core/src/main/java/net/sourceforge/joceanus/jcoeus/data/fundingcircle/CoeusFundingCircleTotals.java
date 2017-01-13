@@ -80,6 +80,11 @@ public class CoeusFundingCircleTotals
     private final TethysMoney theInterest;
 
     /**
+     * NettInterest.
+     */
+    private final TethysMoney theNettInterest;
+
+    /**
      * BadDebtInterest.
      */
     private final TethysMoney theBadDebtInterest;
@@ -171,6 +176,7 @@ public class CoeusFundingCircleTotals
         theEarnings = new TethysMoney(getZero());
         theTaxableEarnings = new TethysMoney(getZero());
         theInterest = new TethysMoney(getZero());
+        theNettInterest = new TethysMoney(getZero());
         theBadDebtInterest = new TethysMoney(getZero());
         theBadDebtCapital = new TethysMoney(getZero());
         theFees = new TethysMoney(getZero());
@@ -199,6 +205,7 @@ public class CoeusFundingCircleTotals
         theEarnings = new TethysMoney(pTotals.getEarnings());
         theTaxableEarnings = new TethysMoney(pTotals.getTaxableEarnings());
         theInterest = new TethysMoney(pTotals.getInterest());
+        theNettInterest = new TethysMoney(pTotals.getNettInterest());
         theBadDebtInterest = new TethysMoney(pTotals.getBadDebtInterest());
         theBadDebtCapital = new TethysMoney(pTotals.getBadDebtCapital());
         theFees = new TethysMoney(pTotals.getFees());
@@ -222,6 +229,7 @@ public class CoeusFundingCircleTotals
         theEarnings.addAmount(myTotals.getEarnings());
         theTaxableEarnings.addAmount(myTotals.getTaxableEarnings());
         theInterest.addAmount(myTotals.getInterest());
+        theNettInterest.addAmount(myTotals.getNettInterest());
         theBadDebtInterest.addAmount(myTotals.getBadDebtInterest());
         theBadDebtCapital.addAmount(myTotals.getBadDebtCapital());
         theFees.addAmount(myTotals.getFees());
@@ -257,6 +265,10 @@ public class CoeusFundingCircleTotals
         theTaxableEarnings.addAmount(myTransaction.getInterest());
         theTaxableEarnings.addAmount(myTransaction.getBadDebtInterest());
         theTaxableEarnings.addAmount(myTransaction.getFees());
+
+        /* Adjust nettInterest */
+        theNettInterest.addAmount(myTransaction.getInterest());
+        theNettInterest.addAmount(myTransaction.getFees());
 
         /* Adjust losses */
         theLosses.addAmount(myTransaction.getBadDebt());
@@ -328,6 +340,11 @@ public class CoeusFundingCircleTotals
     @Override
     public TethysMoney getInterest() {
         return theInterest;
+    }
+
+    @Override
+    public TethysMoney getNettInterest() {
+        return theNettInterest;
     }
 
     @Override

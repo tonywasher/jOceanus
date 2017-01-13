@@ -91,6 +91,7 @@ public enum CoeusMarketProvider {
                 case LOSSES:
                 case BADDEBT:
                 case RECOVERED:
+                case NETTINTEREST:
                 case BADDEBTINTEREST:
                 case BADDEBTCAPITAL:
                     return false;

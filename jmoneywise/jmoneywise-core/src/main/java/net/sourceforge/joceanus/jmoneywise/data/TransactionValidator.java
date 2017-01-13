@@ -94,8 +94,9 @@ public final class TransactionValidator {
                 /* Account must be SecurityHolding */
                 return myType.isSecurityHolding();
 
-            case BADDEBT:
-                /* Account must bee peer2Peer */
+            case BADDEBTCAPITAL:
+            case BADDEBTINTEREST:
+                /* Account must be peer2Peer */
                 return (pAccount instanceof Deposit)
                        && (((Deposit) pAccount).isDepositClass(DepositCategoryClass.PEER2PEER));
 
@@ -325,7 +326,8 @@ public final class TransactionValidator {
             case LOYALTYBONUS:
                 return checkLoyaltyBonus(pAccount, pPartner);
 
-            case BADDEBT:
+            case BADDEBTCAPITAL:
+            case BADDEBTINTEREST:
                 return (pPartner instanceof Payee)
                        && MetisDifference.isEqual(pPartner, pAccount.getParent());
 
