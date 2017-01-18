@@ -375,6 +375,13 @@ public class CashTable
      * @param pCash the cash to select
      */
     protected void selectCash(final Cash pCash) {
+        /* If the item is closed, but we are not showing closed items */
+        if (pCash.isClosed()
+            && !theLockedCheckBox.isSelected()) {
+            theLockedCheckBox.setSelected(true);
+            setShowAll(true);
+        }
+
         /* Find the item in the list */
         int myIndex = theCash.indexOf(pCash);
         myIndex = getTable().convertRowIndexToView(myIndex);

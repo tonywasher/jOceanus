@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
@@ -117,6 +118,11 @@ public abstract class ThemisSvnManager<N, I> {
     private final MetisViewerWindow<N, I> theDataWdw;
 
     /**
+     * The about box.
+     */
+    private final TethysAbout<N, I> theAboutBox;
+
+    /**
      * The repository.
      */
     private ThemisSvnRepository theRepository;
@@ -177,6 +183,7 @@ public abstract class ThemisSvnManager<N, I> {
 
         /* Create the Viewer menuItem */
         myHelp.newMenuItem(ThemisSvnMenuItem.DATAVIEWER, e -> handleDataViewer());
+        myHelp.newMenuItem(ThemisSvnMenuItem.ABOUT, e -> handleAboutBox());
 
         /* Create the menuItems */
         myTasks.newSubMenu(ThemisThreadId.CREATEGITREPO);
@@ -187,6 +194,9 @@ public abstract class ThemisSvnManager<N, I> {
         /* Create the data window */
         theDataWdw = pToolkit.newViewerWindow();
         theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(ThemisSvnMenuItem.DATAVIEWER, true));
+
+        /* Create the aboutBox */
+        theAboutBox = theGuiFactory.newAboutBox();
 
         /* Listen for thread completion */
         theThreadMgr.getEventRegistrar().addEventListener(MetisThreadEvent.THREADEND, e -> completeTask(e.getDetails()));
@@ -350,6 +360,13 @@ public abstract class ThemisSvnManager<N, I> {
     private void handleDataViewer() {
         theMenuBar.setEnabled(ThemisSvnMenuItem.DATAVIEWER, false);
         theDataWdw.showDialog();
+    }
+
+    /**
+     * Handle AboutBox.
+     */
+    private void handleAboutBox() {
+        theAboutBox.showDialog();
     }
 
     /**

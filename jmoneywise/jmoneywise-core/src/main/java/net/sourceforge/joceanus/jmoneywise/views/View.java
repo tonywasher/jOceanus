@@ -82,13 +82,11 @@ public class View<N, I>
     /**
      * Constructor.
      * @param pUtilitySet the utility set
-     * @param pProfile the startup profile
      * @throws OceanusException on error
      */
-    public View(final JOceanusUtilitySet<N, I> pUtilitySet,
-                final MetisProfile pProfile) throws OceanusException {
+    public View(final JOceanusUtilitySet<N, I> pUtilitySet) throws OceanusException {
         /* Call super-constructor */
-        super(pUtilitySet, pProfile);
+        super(pUtilitySet);
 
         /* Create an empty data set */
         setData(getNewData());

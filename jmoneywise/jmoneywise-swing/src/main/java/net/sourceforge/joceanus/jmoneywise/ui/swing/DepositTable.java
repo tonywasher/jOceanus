@@ -395,6 +395,13 @@ public class DepositTable
      * @param pDeposit the deposit to select
      */
     protected void selectDeposit(final Deposit pDeposit) {
+        /* If the item is closed, but we are not showing closed items */
+        if (pDeposit.isClosed()
+            && !theLockedCheckBox.isSelected()) {
+            theLockedCheckBox.setSelected(true);
+            setShowAll(true);
+        }
+
         /* Find the item in the list */
         int myIndex = theDeposits.indexOf(pDeposit);
         myIndex = getTable().convertRowIndexToView(myIndex);

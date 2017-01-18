@@ -32,6 +32,7 @@ import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
@@ -89,16 +90,26 @@ public class TethysFXGuiFactory
      * Constructor.
      */
     public TethysFXGuiFactory() {
-        this(new TethysDataFormatter());
+        this(null);
+    }
+
+    /**
+     * Constructor.
+     * @param pApp the program definition
+     */
+    public TethysFXGuiFactory(final TethysProgram pApp) {
+        this(new TethysDataFormatter(), pApp);
     }
 
     /**
      * Constructor.
      * @param pFormatter the formatter
+     * @param pApp the program definition
      */
-    public TethysFXGuiFactory(final TethysDataFormatter pFormatter) {
+    public TethysFXGuiFactory(final TethysDataFormatter pFormatter,
+                              final TethysProgram pApp) {
         /* Initialise class */
-        super(pFormatter);
+        super(pFormatter, pApp);
         theScenes = new ArrayList<>();
 
         /* Add value listener */
@@ -447,5 +458,10 @@ public class TethysFXGuiFactory
     @Override
     public <C, R> TethysFXTableManager<C, R> newTable() {
         return new TethysFXTableManager<>(this);
+    }
+
+    @Override
+    public TethysFXAbout newAboutBox() {
+        return new TethysFXAbout(this);
     }
 }

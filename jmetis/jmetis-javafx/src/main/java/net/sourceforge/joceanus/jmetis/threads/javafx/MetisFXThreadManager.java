@@ -190,7 +190,10 @@ public class MetisFXThreadManager
     @Override
     public void cancelWorker() {
         /* cancel the thread */
-        theWorker.cancel(true);
-        theWorker.interruptForCancel();
+        MetisFXThread<?> myWorker = theWorker;
+        if (myWorker != null) {
+            myWorker.cancel(true);
+            myWorker.interruptForCancel();
+        }
     }
 }

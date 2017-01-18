@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmetis.ui.swing.MetisSwingTableManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
+import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
@@ -50,27 +51,20 @@ public class MetisSwingToolkit
      * @throws OceanusException on error
      */
     public MetisSwingToolkit() throws OceanusException {
-        this(null);
+        this(null, null, true);
     }
 
     /**
      * Constructor.
-     * @param pProfile the initial profile
-     * @throws OceanusException on error
-     */
-    public MetisSwingToolkit(final MetisProfile pProfile) throws OceanusException {
-        this(pProfile, true);
-    }
-
-    /**
-     * Constructor.
-     * @param pProfile the initial profile
+     * @param pProfile the profile
+     * @param pApp the program definition
      * @param pSlider use slider status
      * @throws OceanusException on error
      */
     public MetisSwingToolkit(final MetisProfile pProfile,
+                             final TethysProgram pApp,
                              final boolean pSlider) throws OceanusException {
-        super(pProfile, pSlider);
+        super(pProfile, pApp, pSlider);
     }
 
     @Override
@@ -85,7 +79,7 @@ public class MetisSwingToolkit
 
     @Override
     protected TethysSwingGuiFactory newGuiFactory() {
-        return new TethysSwingGuiFactory(getFormatter());
+        return new TethysSwingGuiFactory(getFormatter(), getProgramDefinitions());
     }
 
     @Override

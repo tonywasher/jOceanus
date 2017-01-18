@@ -27,9 +27,11 @@ import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
@@ -40,10 +42,12 @@ public class SwingView
     /**
      * Constructor.
      * @param pProfile the profile
+     * @param pApp the program definitions
      * @throws OceanusException on error
      */
-    public SwingView(final MetisProfile pProfile) throws OceanusException {
-        super(new JOceanusSwingUtilitySet(pProfile), pProfile);
+    public SwingView(final MetisProfile pProfile,
+                     final TethysProgram pApp) throws OceanusException {
+        super(new JOceanusSwingUtilitySet(pProfile, pApp));
     }
 
     @Override
@@ -59,11 +63,13 @@ public class SwingView
         return getUtilitySet().getFieldManager();
     }
 
-    /**
-     * Obtain the GUI factory.
-     * @return the GuiFactory
-     */
+    @Override
     public TethysSwingGuiFactory getGuiFactory() {
         return (TethysSwingGuiFactory) super.getGuiFactory();
+    }
+
+    @Override
+    public MetisSwingToolkit getToolkit() {
+        return (MetisSwingToolkit) super.getToolkit();
     }
 }

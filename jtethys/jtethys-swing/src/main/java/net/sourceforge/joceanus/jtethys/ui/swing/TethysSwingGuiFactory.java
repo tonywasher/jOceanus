@@ -29,6 +29,7 @@ import javax.swing.JFrame;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingIconButtonField;
@@ -70,15 +71,25 @@ public class TethysSwingGuiFactory
      * Constructor.
      */
     public TethysSwingGuiFactory() {
-        this(new TethysDataFormatter());
+        this(null);
+    }
+
+    /**
+     * Constructor.
+     * @param pApp the program definition
+     */
+    public TethysSwingGuiFactory(final TethysProgram pApp) {
+        this(new TethysDataFormatter(), pApp);
     }
 
     /**
      * Constructor.
      * @param pFormatter the formatter
+     * @param pApp the program definition
      */
-    public TethysSwingGuiFactory(final TethysDataFormatter pFormatter) {
-        super(pFormatter);
+    public TethysSwingGuiFactory(final TethysDataFormatter pFormatter,
+                                 final TethysProgram pApp) {
+        super(pFormatter, pApp);
         theAdjuster = new TethysSwingDataFieldAdjust(this);
     }
 
@@ -368,5 +379,10 @@ public class TethysSwingGuiFactory
     @Override
     public <C, R> TethysSwingTableManager<C, R> newTable() {
         return new TethysSwingTableManager<>(this);
+    }
+
+    @Override
+    public TethysSwingAbout newAboutBox() {
+        return new TethysSwingAbout(this);
     }
 }

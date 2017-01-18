@@ -98,6 +98,11 @@ public class TethysSwingBoxPaneManager
     private JPanel createContainer(final JComponent pNode) {
         JPanel myPanel = new JPanel();
         setLayout(myPanel);
+        if (isHorizontal) {
+            pNode.setAlignmentY(Component.CENTER_ALIGNMENT);
+        } else {
+            pNode.setAlignmentX(Component.CENTER_ALIGNMENT);
+        }
         myPanel.add(createStrut());
         myPanel.add(pNode);
         myPanel.add(createStrut());

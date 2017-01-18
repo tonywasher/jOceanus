@@ -35,12 +35,17 @@ public enum MoneyWiseIcon implements TethysIconId {
     /**
      * The program icon.
      */
-    PROGRAM("icons/MoneyWiseIcon.png"),
+    SMALL("icons/MoneyWiseSmall.png"),
+
+    /**
+     * The program icon.
+     */
+    BIG("icons/MoneyWiseBig.png"),
 
     /**
      * The program splash icon.
      */
-    SPLASH("icons/MoneyWiseBig.png"),
+    SPLASH("icons/MoneyWiseSplash.png"),
 
     /**
      * The locked icon.

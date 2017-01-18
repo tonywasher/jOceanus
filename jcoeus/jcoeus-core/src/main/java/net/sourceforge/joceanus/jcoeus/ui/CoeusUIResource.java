@@ -100,6 +100,11 @@ public enum CoeusUIResource
     MENU_DATAVIEWER("menu.dataViewer"),
 
     /**
+     * Menu About.
+     */
+    MENU_ABOUT("menu.about"),
+
+    /**
      * Tab Reports.
      */
     TAB_REPORTS("tab.reports"),
@@ -173,6 +178,7 @@ public enum CoeusUIResource
         Map<CoeusMenuItem, TethysResourceId> myMap = new EnumMap<>(CoeusMenuItem.class);
         myMap.put(CoeusMenuItem.HELP, MENU_HELP);
         myMap.put(CoeusMenuItem.DATAVIEWER, MENU_DATAVIEWER);
+        myMap.put(CoeusMenuItem.ABOUT, MENU_ABOUT);
         return myMap;
     }
 

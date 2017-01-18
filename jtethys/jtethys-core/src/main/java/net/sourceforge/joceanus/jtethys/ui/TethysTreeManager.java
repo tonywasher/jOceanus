@@ -195,7 +195,7 @@ public abstract class TethysTreeManager<T, N, I>
 
         /* If this name already exists */
         if (theItemMap.get(myName) != null) {
-            LOGGER.error("Name not unique: " + myName);
+            LOGGER.error("Name not unique: %s", myName);
         }
 
         /* register item */

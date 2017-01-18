@@ -66,6 +66,11 @@ public abstract class TethysGuiFactory<N, I> {
     private final Map<Integer, TethysParentNode<N>> theParentMap;
 
     /**
+     * Program Definition.
+     */
+    private final TethysProgram theProgram;
+
+    /**
      * ParentNode.
      * @param <N> the node type
      */
@@ -83,11 +88,14 @@ public abstract class TethysGuiFactory<N, I> {
     /**
      * Constructor.
      * @param pFormatter the formatter
+     * @param pApp the program definition
      */
-    protected TethysGuiFactory(final TethysDataFormatter pFormatter) {
+    protected TethysGuiFactory(final TethysDataFormatter pFormatter,
+                               final TethysProgram pApp) {
         theFormatter = pFormatter;
         theParentMap = new HashMap<>();
         theValueSet = new TethysValueSet();
+        theProgram = pApp;
     }
 
     /**
@@ -144,6 +152,14 @@ public abstract class TethysGuiFactory<N, I> {
      */
     protected void deRegisterChild(final TethysNode<N> pChild) {
         theParentMap.remove(pChild.getId());
+    }
+
+    /**
+     * Obtain the program definition.
+     * @return the definition
+     */
+    public TethysProgram getProgramDefinitions() {
+        return theProgram;
     }
 
     /**
@@ -476,4 +492,10 @@ public abstract class TethysGuiFactory<N, I> {
      * @return the new field
      */
     public abstract <C, R> TethysTableManager<C, R, N, I> newTable();
+
+    /**
+     * Obtain a new aboutBox.
+     * @return the new box
+     */
+    public abstract TethysAbout<N, I> newAboutBox();
 }

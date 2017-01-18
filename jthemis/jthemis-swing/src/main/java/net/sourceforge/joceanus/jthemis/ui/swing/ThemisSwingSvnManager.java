@@ -47,23 +47,21 @@ public class ThemisSwingSvnManager
 
     /**
      * Constructor.
-     * @param pFrame the frame
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    protected ThemisSwingSvnManager(final JFrame pFrame,
-                                    final MetisSwingToolkit pToolkit) throws OceanusException {
+    protected ThemisSwingSvnManager(final MetisSwingToolkit pToolkit) throws OceanusException {
         /* Initialise underlying class */
         super(pToolkit);
-        theFrame = pFrame;
+        theFrame = pToolkit.getGuiFactory().getFrame();
 
         /* Add the Menu bar */
-        pFrame.setJMenuBar(getMenuBar().getNode());
+        theFrame.setJMenuBar(getMenuBar().getNode());
 
         /* Attach the panel to the frame */
-        pFrame.setContentPane(getTabs().getNode());
-        pFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        pFrame.addWindowListener(new WindowClose());
+        theFrame.setContentPane(getTabs().getNode());
+        theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        theFrame.addWindowListener(new WindowClose());
     }
 
     @Override

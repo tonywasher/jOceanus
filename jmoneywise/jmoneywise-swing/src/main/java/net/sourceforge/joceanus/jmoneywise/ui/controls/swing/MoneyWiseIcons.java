@@ -22,10 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.controls.swing;
 
-import java.awt.Image;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -41,16 +37,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.ComplexIconButtonSt
 @Deprecated
 public final class MoneyWiseIcons
         extends PrometheusIcons {
-    /**
-     * The program icon.
-     */
-    private static final ImageIcon ICON_PROGRAM = new ImageIcon(MoneyWiseUIResource.class.getResource("icons/MoneyWiseIcon.png"));
-
-    /**
-     * The program splash icon.
-     */
-    private static final ImageIcon ICON_SPLASH = new ImageIcon(MoneyWiseUIResource.class.getResource("icons/MoneyWiseBig.png"));
-
     /**
      * The locked icon.
      */
@@ -161,17 +147,6 @@ public final class MoneyWiseIcons
      * Private constructor to prevent instantiation.
      */
     private MoneyWiseIcons() {
-    }
-
-    /**
-     * Obtain the program Image.
-     * @return the program Image
-     */
-    public static List<Image> getProgramImages() {
-        List<Image> myList = new ArrayList<>();
-        myList.add(ICON_PROGRAM.getImage());
-        myList.add(ICON_SPLASH.getImage());
-        return myList;
     }
 
     /**

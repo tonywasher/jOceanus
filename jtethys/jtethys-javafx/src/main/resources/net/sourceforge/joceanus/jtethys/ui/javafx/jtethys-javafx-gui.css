@@ -97,3 +97,7 @@
   -fx-text-fill: -jtethys-changed-color;
 }
 
+.-jtethys-about {
+	-fx-border-width:2;
+	-fx-border-color:Black;
+}

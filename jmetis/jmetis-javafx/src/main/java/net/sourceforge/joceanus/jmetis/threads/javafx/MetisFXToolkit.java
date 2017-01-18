@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.ui.javafx.MetisFXTableManager;
 import net.sourceforge.joceanus.jmetis.viewer.javafx.MetisFXViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.javafx.TethysFXHelpWindow;
+import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
@@ -48,27 +49,20 @@ public class MetisFXToolkit
      * @throws OceanusException on error
      */
     public MetisFXToolkit() throws OceanusException {
-        this(null);
+        this(null, null, true);
     }
 
     /**
      * Constructor.
-     * @param pProfile the initial profile
-     * @throws OceanusException on error
-     */
-    public MetisFXToolkit(final MetisProfile pProfile) throws OceanusException {
-        this(pProfile, true);
-    }
-
-    /**
-     * Constructor.
-     * @param pProfile the initial profile
+     * @param pProfile the profile
+     * @param pApp the program definition
      * @param pSlider use slider status
      * @throws OceanusException on error
      */
     public MetisFXToolkit(final MetisProfile pProfile,
+                          final TethysProgram pApp,
                           final boolean pSlider) throws OceanusException {
-        super(pProfile, pSlider);
+        super(pProfile, pApp, pSlider);
     }
 
     @Override
@@ -83,7 +77,7 @@ public class MetisFXToolkit
 
     @Override
     protected TethysFXGuiFactory newGuiFactory() {
-        return new TethysFXGuiFactory(getFormatter());
+        return new TethysFXGuiFactory(getFormatter(), getProgramDefinitions());
     }
 
     @Override

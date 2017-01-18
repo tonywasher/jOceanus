@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
@@ -55,11 +56,13 @@ public class JOceanusSwingUtilitySet
     /**
      * Constructor.
      * @param pProfile the profile
+     * @param pApp the program definitions
      * @throws OceanusException on error
      */
-    public JOceanusSwingUtilitySet(final MetisProfile pProfile) throws OceanusException {
+    public JOceanusSwingUtilitySet(final MetisProfile pProfile,
+                                   final TethysProgram pApp) throws OceanusException {
         /* Create Toolkit */
-        super(new MetisSwingToolkit(pProfile));
+        super(new MetisSwingToolkit(pProfile, pApp, true));
 
         /* Access the Colour Preferences */
         theColorPreferences = getPreferenceManager().getPreferenceSet(MetisColorPreferences.class);

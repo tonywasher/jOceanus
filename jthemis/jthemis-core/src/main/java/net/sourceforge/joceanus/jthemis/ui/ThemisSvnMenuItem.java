@@ -39,7 +39,12 @@ public enum ThemisSvnMenuItem {
     /**
      * DataViewer.
      */
-    DATAVIEWER("DataViewer");
+    DATAVIEWER("DataViewer"),
+
+    /**
+     * About.
+     */
+    ABOUT("About");
 
     /**
      * The name.

@@ -22,37 +22,28 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.swing;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.SplashScreen;
+import java.awt.Image;
+import java.util.Arrays;
 
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
+import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseApp;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
 
 /**
  * Main entry point for program.
- * @author Tony Washer
  */
 public final class Control {
-    /**
-     * The Splash Font.
-     */
-    private static final int SPLASH_PITCH = 16;
-
-    /**
-     * The Splash Character Width.
-     */
-    private static final int SPLASH_CHARWIDTH = 10;
-
     /**
      * Logger.
      */
@@ -67,61 +58,38 @@ public final class Control {
     /**
      * Create and show the GUI.
      * @param pProfile the startup profile
+     * @param pApp the application details
      */
-    private static void createAndShowGUI(final MetisProfile pProfile) {
+    private static void createAndShowGUI(final MetisProfile pProfile,
+                                         final MoneyWiseApp pApp) {
         try {
-            /* Configure log4j */
-            TethysLogConfig.configureLog4j();
+            /* Create the view */
+            SwingView myView = new SwingView(pProfile, pApp);
+            MetisSwingToolkit myToolkit = myView.getToolkit();
+
+            /* Create the frame and declare it */
+            JFrame myFrame = new JFrame(pApp.getName());
+            myToolkit.getGuiFactory().setFrame(myFrame);
 
             /* Create the window */
-            MainTab myWindow = new MainTab(pProfile);
+            MainTab myWindow = new MainTab(myView);
             myWindow.makeFrame();
+
+            /* Add the icons to the frame */
+            MoneyWiseIcon[] myIds = pApp.getIcons();
+            Image[] myIcons = TethysSwingGuiUtils.getIcons(myIds);
+            myFrame.setIconImages(Arrays.asList(myIcons));
+
+            /* Show the frame */
+            myFrame.pack();
+            myFrame.setLocationRelativeTo(null);
+            myFrame.setVisible(true);
+
+            /* Record startUp completion */
+            pProfile.end();
 
         } catch (OceanusException e) {
             LOGGER.error("createGUI didn't complete successfully", e);
-        }
-    }
-
-    /**
-     * Add text to the splash screen.
-     */
-    private static void renderSplashFrame() {
-        /* Access the splash screen */
-        final SplashScreen mySplash = SplashScreen.getSplashScreen();
-        if (mySplash != null) {
-            /* Access the graphics */
-            Graphics2D myGraphics = mySplash.createGraphics();
-            if (myGraphics != null) {
-                /* Access the names */
-                String myName = ProgramResource.PROGRAM_NAME.getValue();
-                String myVersion = ProgramResource.PROGRAM_VERSION.getValue();
-
-                /* Determine width of the box */
-                int myNameLen = myName.length();
-                int myVerLen = myVersion.length();
-
-                /* Access the splash screen dimensions */
-                Dimension mySize = mySplash.getSize();
-                int myWidth = Math.max(myNameLen, myVerLen + 1) * SPLASH_CHARWIDTH;
-                int myX = (mySize.width - myWidth) >> 1;
-                int myY = mySize.height - (mySize.height >> 2);
-
-                /* Set up for painting */
-                Font myFont = new Font("Courier", Font.BOLD, SPLASH_PITCH);
-                myGraphics.setComposite(AlphaComposite.Clear);
-                myGraphics.setPaintMode();
-                myGraphics.setFont(myFont);
-                myGraphics.setColor(Color.BLUE);
-                myGraphics.fillRect(myX, myY - SPLASH_PITCH + (SPLASH_PITCH >> 2), myWidth, SPLASH_PITCH << 1);
-                myGraphics.setColor(Color.WHITE);
-
-                /* Write text */
-                myGraphics.drawString(myName, myX, myY);
-                myGraphics.drawString(myVersion, myX + SPLASH_CHARWIDTH, myY + SPLASH_PITCH);
-
-                /* Update the screen */
-                mySplash.update();
-            }
         }
     }
 
@@ -133,10 +101,16 @@ public final class Control {
         /* Create a timer */
         MetisProfile myProfile = new MetisProfile("StartUp");
 
+        /* Configure log4j */
+        TethysLogConfig.configureLog4j();
+
+        /* Obtain program details */
+        MoneyWiseApp myApp = new MoneyWiseApp();
+
         /* Sort out splash frame */
-        renderSplashFrame();
+        TethysSwingGuiUtils.renderSplashFrame(myApp.getName(), myApp.getVersion());
 
         /* Build the GUI */
-        SwingUtilities.invokeLater(() -> createAndShowGUI(myProfile));
+        SwingUtilities.invokeLater(() -> createAndShowGUI(myProfile, myApp));
     }
 }

@@ -381,6 +381,13 @@ public class LoanTable
      * @param pLoan the loan to select
      */
     protected void selectLoan(final Loan pLoan) {
+        /* If the item is closed, but we are not showing closed items */
+        if (pLoan.isClosed()
+            && !theLockedCheckBox.isSelected()) {
+            theLockedCheckBox.setSelected(true);
+            setShowAll(true);
+        }
+
         /* Find the item in the list */
         int myIndex = theLoans.indexOf(pLoan);
         myIndex = getTable().convertRowIndexToView(myIndex);

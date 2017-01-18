@@ -162,14 +162,6 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
     }
 
     /**
-     * Get the frame.
-     * @return the frame
-     */
-    public JFrame getFrame() {
-        return theFrame;
-    }
-
-    /**
      * Get the panel.
      * @return the panel
      */
@@ -191,12 +183,6 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      * @throws OceanusException on error
      */
     protected abstract JComponent buildMainPanel() throws OceanusException;
-
-    /**
-     * Obtain the frame name.
-     * @return the frame name
-     */
-    protected abstract String getFrameName();
 
     /**
      * Obtain the Help Module.
@@ -226,9 +212,8 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
         /* Create the panel */
         thePanel = new JPanel();
 
-        /* Create the frame */
-        theFrame = new JFrame(getFrameName());
-        pUtilitySet.getGuiFactory().setFrame(theFrame);
+        /* Obtain the frame */
+        theFrame = theGuiFactory.getFrame();
 
         /* Build the Main Panel */
         JComponent myMainPanel = buildMainPanel();
@@ -256,6 +241,10 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
         /* Create the data window */
         theDataWdw = theToolkit.newViewerWindow();
         theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(PrometheusMenuId.DATAVIEWER, true));
+
+        /* Add a window listener */
+        theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        theFrame.addWindowListener(theListener);
 
         /* Complete task */
         myTask.end();
@@ -353,16 +342,6 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      * @throws OceanusException on error
      */
     public void makeFrame() throws OceanusException {
-        /* Show the frame */
-        theFrame.pack();
-        theFrame.setLocationRelativeTo(null);
-        theFrame.setVisible(true);
-
-        /* Add a window listener */
-        theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        theFrame.addWindowListener(theListener);
-        theView.setFrame(theFrame);
-
         /* Set visibility */
         setVisibility();
     }

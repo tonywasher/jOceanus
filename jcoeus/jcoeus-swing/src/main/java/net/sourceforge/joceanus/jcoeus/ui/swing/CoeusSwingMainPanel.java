@@ -30,6 +30,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
 import net.sourceforge.joceanus.jcoeus.ui.panels.CoeusMainPanel;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -49,21 +50,22 @@ public class CoeusSwingMainPanel
      * Constructor.
      * @param pFrame the frame
      * @param pToolkit the toolkit
+     * @param pApp the application details
      * @throws OceanusException on error
      */
-    protected CoeusSwingMainPanel(final JFrame pFrame,
-                                  final MetisSwingToolkit pToolkit) throws OceanusException {
+    protected CoeusSwingMainPanel(final MetisSwingToolkit pToolkit,
+                                  final CoeusApp pApp) throws OceanusException {
         /* Initialise underlying class */
         super(pToolkit);
-        theFrame = pFrame;
+        theFrame = pToolkit.getGuiFactory().getFrame();
 
         /* Add the Menu bar */
-        pFrame.setJMenuBar(getMenuBar().getNode());
+        theFrame.setJMenuBar(getMenuBar().getNode());
 
         /* Attach the panel to the frame */
-        pFrame.setContentPane(getTabs().getNode());
-        pFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        pFrame.addWindowListener(new WindowClose());
+        theFrame.setContentPane(getTabs().getNode());
+        theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        theFrame.addWindowListener(new WindowClose());
     }
 
     @Override

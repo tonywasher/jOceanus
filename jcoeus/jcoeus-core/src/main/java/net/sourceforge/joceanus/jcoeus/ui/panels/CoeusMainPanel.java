@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.Promethe
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
@@ -83,6 +84,11 @@ public abstract class CoeusMainPanel<N, I> {
      * The data window.
      */
     private final MetisViewerWindow<N, I> theDataWdw;
+
+    /**
+     * The about box.
+     */
+    private final TethysAbout<N, I> theAboutBox;
 
     /**
      * Constructor.
@@ -133,10 +139,14 @@ public abstract class CoeusMainPanel<N, I> {
 
         /* Create the Viewer menuItem */
         myHelp.newMenuItem(CoeusMenuItem.DATAVIEWER, e -> handleDataViewer());
+        myHelp.newMenuItem(CoeusMenuItem.ABOUT, e -> handleAboutBox());
 
         /* Create the data window */
         theDataWdw = pToolkit.newViewerWindow();
         theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(CoeusMenuItem.DATAVIEWER, true));
+
+        /* Create the aboutBox */
+        theAboutBox = myFactory.newAboutBox();
 
         /* Create the loader */
         CoeusDataLoader myLoader = new CoeusDataLoader(pToolkit);
@@ -166,6 +176,13 @@ public abstract class CoeusMainPanel<N, I> {
     private void handleDataViewer() {
         theMenuBar.setEnabled(CoeusMenuItem.DATAVIEWER, false);
         theDataWdw.showDialog();
+    }
+
+    /**
+     * Handle AboutBox.
+     */
+    private void handleAboutBox() {
+        theAboutBox.showDialog();
     }
 
     /**

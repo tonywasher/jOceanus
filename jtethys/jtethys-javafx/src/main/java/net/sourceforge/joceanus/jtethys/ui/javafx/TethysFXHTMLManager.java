@@ -195,7 +195,7 @@ public class TethysFXHTMLManager
                 Integer myYOffset = getJSInteger(myWin.getMember("pageYOffset"));
                 myWin.call("scrollTo", myXOffset + myAdjustX, myYOffset + myAdjustY);
             } else {
-                LOGGER.error("Failed to locate reference <" + pReference + ">");
+                LOGGER.error("Failed to locate reference <%s>", pReference);
             }
 
             /* else still loading */

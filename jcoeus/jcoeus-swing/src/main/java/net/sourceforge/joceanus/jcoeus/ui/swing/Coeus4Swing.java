@@ -22,16 +22,22 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui.swing;
 
+import java.awt.Image;
+import java.util.Arrays;
+
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jcoeus.ui.panels.CoeusMainPanel;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
+import net.sourceforge.joceanus.jcoeus.ui.CoeusIcon;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
 
 /**
  * Coeus Swing StartUp.
@@ -50,26 +56,34 @@ public final class Coeus4Swing {
 
     /**
      * Create and show the GUI.
+     * @param pProfile the startup profile
+     * @param pApp the application details
      */
-    private static void createAndShowGUI() {
+    private static void createAndShowGUI(final MetisProfile pProfile,
+                                         final CoeusApp pApp) {
         try {
-            /* Configure log4j */
-            TethysLogConfig.configureLog4j();
-
             /* Create the Toolkit */
-            MetisSwingToolkit myToolkit = new MetisSwingToolkit(null, false);
+            MetisSwingToolkit myToolkit = new MetisSwingToolkit(pProfile, pApp, false);
 
             /* Create the frame and declare it */
-            JFrame myFrame = new JFrame(CoeusMainPanel.class.getSimpleName());
+            JFrame myFrame = new JFrame(pApp.getName());
             myToolkit.getGuiFactory().setFrame(myFrame);
 
             /* Create the Coeus program */
-            new CoeusSwingMainPanel(myFrame, myToolkit);
+            new CoeusSwingMainPanel(myToolkit, pApp);
+
+            /* Add the icons to the frame */
+            CoeusIcon[] myIds = pApp.getIcons();
+            Image[] myIcons = TethysSwingGuiUtils.getIcons(myIds);
+            myFrame.setIconImages(Arrays.asList(myIcons));
 
             /* Show the frame */
             myFrame.pack();
             myFrame.setLocationRelativeTo(null);
             myFrame.setVisible(true);
+
+            /* Record startUp completion */
+            pProfile.end();
 
         } catch (OceanusException e) {
             LOGGER.error("createGUI didn't complete successfully", e);
@@ -81,6 +95,19 @@ public final class Coeus4Swing {
      * @param args the arguments
      */
     public static void main(final String[] args) {
-        SwingUtilities.invokeLater(() -> createAndShowGUI());
+        /* Create a timer */
+        MetisProfile myProfile = new MetisProfile("StartUp");
+
+        /* Configure log4j */
+        TethysLogConfig.configureLog4j();
+
+        /* Obtain program details */
+        CoeusApp myApp = new CoeusApp();
+
+        /* Sort out splash frame */
+        TethysSwingGuiUtils.renderSplashFrame(myApp.getName(), myApp.getVersion());
+
+        /* Build the GUI */
+        SwingUtilities.invokeLater(() -> createAndShowGUI(myProfile, myApp));
     }
 }

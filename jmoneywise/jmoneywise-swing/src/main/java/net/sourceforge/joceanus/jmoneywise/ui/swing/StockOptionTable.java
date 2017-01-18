@@ -372,6 +372,13 @@ public class StockOptionTable
      * @param pOption the option to select
      */
     protected void selectOption(final StockOption pOption) {
+        /* If the item is closed, but we are not showing closed items */
+        if (pOption.isClosed()
+            && !theLockedCheckBox.isSelected()) {
+            theLockedCheckBox.setSelected(true);
+            setShowAll(true);
+        }
+
         /* Find the item in the list */
         int myIndex = theOptions.indexOf(pOption);
         myIndex = getTable().convertRowIndexToView(myIndex);

@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 
 /**
@@ -94,18 +95,28 @@ public abstract class MetisToolkit<N, I> {
     private final MetisColorPreferences theColorPreferences;
 
     /**
+     * Program Definition.
+     */
+    private final TethysProgram theProgram;
+
+    /**
      * The Active Profile.
      */
     private MetisProfile theProfile;
 
     /**
      * Constructor.
-     * @param pProfile the initial profile
+     * @param pProfile the profile
+     * @param pApp the program definition
      * @param pSlider use slider status
      * @throws OceanusException on error
      */
     protected MetisToolkit(final MetisProfile pProfile,
+                           final TethysProgram pApp,
                            final boolean pSlider) throws OceanusException {
+        /* Store parameters */
+        theProgram = pApp;
+
         /* Create the formatter */
         theFormatter = new MetisDataFormatter();
 
@@ -115,9 +126,10 @@ public abstract class MetisToolkit<N, I> {
         /* Access the profile entry */
         theProfileEntry = theViewerManager.getStandardEntry(MetisViewerStandardEntry.PROFILE);
 
-        /* record the initial profile */
-        theProfile = pProfile;
-        theProfileEntry.setObject(theProfile);
+        /* Record the profile */
+        setProfile(pProfile == null
+                                    ? new MetisProfile("StartUp")
+                                    : pProfile);
 
         /* Create the preference manager */
         thePreferenceManager = new MetisPreferenceManager(theViewerManager);
@@ -141,6 +153,14 @@ public abstract class MetisToolkit<N, I> {
         /* Create listener */
         TethysEventRegistrar<MetisPreferenceEvent> myRegistrar = theColorPreferences.getEventRegistrar();
         myRegistrar.addEventListener(e -> processColorPreferences());
+    }
+
+    /**
+     * Obtain the Program Definitions.
+     * @return the definitions
+     */
+    public TethysProgram getProgramDefinitions() {
+        return theProgram;
     }
 
     /**
@@ -293,16 +313,25 @@ public abstract class MetisToolkit<N, I> {
     }
 
     /**
+     * Set profile.
+     * @param pProfile the profile
+     */
+    private void setProfile(final MetisProfile pProfile) {
+        /* Create a new profile */
+        theProfile = pProfile;
+
+        /* Update the Profile Viewer entry */
+        theProfileEntry.setObject(theProfile);
+    }
+
+    /**
      * Create new profile.
      * @param pTask the name of the task
      * @return the new profile
      */
     public MetisProfile getNewProfile(final String pTask) {
         /* Create a new profile */
-        theProfile = new MetisProfile(pTask);
-
-        /* Update the Profile Viewer entry */
-        theProfileEntry.setObject(theProfile);
+        setProfile(new MetisProfile(pTask));
 
         /* Return the new profile */
         return theProfile;

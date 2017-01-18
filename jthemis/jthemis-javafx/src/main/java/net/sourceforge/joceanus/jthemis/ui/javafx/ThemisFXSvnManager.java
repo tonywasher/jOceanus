@@ -38,12 +38,10 @@ public class ThemisFXSvnManager
         extends ThemisSvnManager<Node, Node> {
     /**
      * Constructor.
-     * @param pStage the stage
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    protected ThemisFXSvnManager(final Stage pStage,
-                                 final MetisFXToolkit pToolkit) throws OceanusException {
+    protected ThemisFXSvnManager(final MetisFXToolkit pToolkit) throws OceanusException {
         /* Initialise underlying class */
         super(pToolkit);
 
@@ -53,10 +51,13 @@ public class ThemisFXSvnManager
         myBorderPane.setCenter(getTabs().getNode());
 
         /* Create the scene and attach to the stage */
+        Stage myStage = pToolkit.getGuiFactory().getStage();
         Scene myScene = new Scene(myBorderPane);
         pToolkit.getGuiFactory().registerScene(myScene);
-        pStage.setTitle("Coeus JavaFX");
-        pStage.setScene(myScene);
+        myStage.setScene(myScene);
+
+        /* Close application properly */
+        myStage.setOnCloseRequest(e -> handleWindowClosed());
     }
 
     @Override

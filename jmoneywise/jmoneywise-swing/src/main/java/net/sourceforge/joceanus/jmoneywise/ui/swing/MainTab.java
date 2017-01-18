@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadWriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.swing.MainWindow;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
@@ -45,6 +44,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
+import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
@@ -82,11 +82,6 @@ public class MainTab
     private static final String TITLE_MAINT = MoneyWiseUIResource.MAIN_MAINTENANCE.getValue();
 
     /**
-     * Program name.
-     */
-    private static final String PROGRAM_NAME = ProgramResource.PROGRAM_NAME.getValue();
-
-    /**
      * The data view.
      */
     private final SwingView theView;
@@ -117,13 +112,18 @@ public class MainTab
     private MaintenanceTab theMaint;
 
     /**
+     * The about box.
+     */
+    private TethysAbout<JComponent, Icon> theAboutBox;
+
+    /**
      * Constructor.
-     * @param pProfile the startup profile
+     * @param pView the view
      * @throws OceanusException on error
      */
-    public MainTab(final MetisProfile pProfile) throws OceanusException {
-        /* Create the view */
-        theView = new SwingView(pProfile);
+    public MainTab(final SwingView pView) throws OceanusException {
+        /* Record the view */
+        theView = pView;
 
         /* Build the main window */
         buildMainWindow(theView, theView.getUtilitySet());
@@ -132,15 +132,6 @@ public class MainTab
     @Override
     public SwingView getView() {
         return theView;
-    }
-
-    /**
-     * Obtain the frame name.
-     * @return the frame name
-     */
-    @Override
-    protected String getFrameName() {
-        return PROGRAM_NAME;
     }
 
     @Override
@@ -195,11 +186,11 @@ public class MainTab
         setChildListeners(theRegister.getEventRegistrar());
         setChildListeners(theMaint.getEventRegistrar());
 
+        /* Create the aboutBox */
+        theAboutBox = theView.getGuiFactory().newAboutBox();
+
         /* Create listener and initialise focus */
         determineFocus();
-
-        /* Set the icon */
-        getFrame().setIconImages(MoneyWiseIcons.getProgramImages());
 
         /* Complete task */
         myTask.end();
@@ -403,11 +394,7 @@ public class MainTab
 
     @Override
     protected void displayAbout() {
-        /* Create a new AboutBox */
-        AboutBox myAbout = new AboutBox(getFrame(), getFrameName());
-
-        /* Show the box */
-        myAbout.showDialog();
+        theAboutBox.showDialog();
     }
 
     /**

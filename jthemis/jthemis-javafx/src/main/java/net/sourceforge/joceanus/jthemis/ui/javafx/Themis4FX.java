@@ -27,9 +27,11 @@ import org.slf4j.LoggerFactory;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
+import net.sourceforge.joceanus.jthemis.ui.ThemisApp;
 
 /**
  * Themis javaFX entryPoint.
@@ -44,17 +46,28 @@ public class Themis4FX
     @Override
     public void start(final Stage pStage) {
         try {
+            /* Create a timer */
+            MetisProfile myProfile = new MetisProfile("StartUp");
+
             /* Configure log4j */
             TethysLogConfig.configureLog4j();
 
+            /* Obtain program details */
+            ThemisApp myApp = new ThemisApp();
+
             /* Create the Toolkit */
-            MetisFXToolkit myToolkit = new MetisFXToolkit(null, false);
+            MetisFXToolkit myToolkit = new MetisFXToolkit(myProfile, myApp, false);
+            myToolkit.getGuiFactory().setStage(pStage);
 
             /* Create the SvnManager program */
-            new ThemisFXSvnManager(pStage, myToolkit);
+            new ThemisFXSvnManager(myToolkit);
 
             /* Show the stage */
+            pStage.setTitle(myApp.getName());
             pStage.show();
+
+            /* Record startUp completion */
+            myProfile.end();
 
         } catch (OceanusException e) {
             LOGGER.error("createStage didn't complete successfully", e);

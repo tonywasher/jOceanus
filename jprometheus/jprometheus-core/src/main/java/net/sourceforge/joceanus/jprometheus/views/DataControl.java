@@ -25,8 +25,6 @@ package net.sourceforge.joceanus.jprometheus.views;
 import java.util.EnumMap;
 import java.util.Map;
 
-import javax.swing.JFrame;
-
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisErrorList;
@@ -77,11 +75,6 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
     private final MetisErrorList<MetisExceptionWrapper> theErrors;
 
     /**
-     * The Frame.
-     */
-    private JFrame theFrame;
-
-    /**
      * The UtilitySet.
      */
     private final JOceanusUtilitySet<N, I> theUtilitySet;
@@ -99,11 +92,9 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
     /**
      * Constructor for default control.
      * @param pUtilitySet the utility set
-     * @param pProfile the startup profile
      * @throws OceanusException on error
      */
-    protected DataControl(final JOceanusUtilitySet<N, I> pUtilitySet,
-                          final MetisProfile pProfile) throws OceanusException {
+    protected DataControl(final JOceanusUtilitySet<N, I> pUtilitySet) throws OceanusException {
         /* Store the parameters */
         theUtilitySet = pUtilitySet;
         theToolkit = pUtilitySet.getToolkit();
@@ -208,22 +199,6 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      */
     public MetisErrorList<MetisExceptionWrapper> getErrors() {
         return theErrors;
-    }
-
-    /**
-     * Set Frame.
-     * @param pFrame the frame
-     */
-    public void setFrame(final JFrame pFrame) {
-        theFrame = pFrame;
-    }
-
-    /**
-     * Obtain Frame.
-     * @return the Frame
-     */
-    public JFrame getFrame() {
-        return theFrame;
     }
 
     /**

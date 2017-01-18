@@ -392,6 +392,13 @@ public class SecurityTable
      * @param pSecurity the security to select
      */
     protected void selectSecurity(final Security pSecurity) {
+        /* If the item is closed, but we are not showing closed items */
+        if (pSecurity.isClosed()
+            && !theLockedCheckBox.isSelected()) {
+            theLockedCheckBox.setSelected(true);
+            setShowAll(true);
+        }
+
         /* Find the item in the list */
         int myIndex = theSecurities.indexOf(pSecurity);
         myIndex = getTable().convertRowIndexToView(myIndex);

@@ -375,6 +375,13 @@ public class PortfolioTable
      * @param pPortfolio the portfolio to select
      */
     protected void selectPortfolio(final Portfolio pPortfolio) {
+        /* If the item is closed, but we are not showing closed items */
+        if (pPortfolio.isClosed()
+            && !theLockedCheckBox.isSelected()) {
+            theLockedCheckBox.setSelected(true);
+            setShowAll(true);
+        }
+
         /* Find the item in the list */
         int myIndex = thePortfolios.indexOf(pPortfolio);
         myIndex = getTable().convertRowIndexToView(myIndex);

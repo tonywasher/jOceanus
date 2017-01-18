@@ -34,7 +34,12 @@ public enum CoeusMenuItem {
     /**
      * DataViewer.
      */
-    DATAVIEWER;
+    DATAVIEWER,
+
+    /**
+     * About.
+     */
+    ABOUT;
 
     /**
      * The name.

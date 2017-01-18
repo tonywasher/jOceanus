@@ -135,7 +135,10 @@ public class MetisSwingThreadManager
     @Override
     public void cancelWorker() {
         /* cancel the thread */
-        theWorker.cancel(true);
-        theWorker.interruptForCancel();
+        MetisSwingThread<?> myWorker = theWorker;
+        if (myWorker != null) {
+            myWorker.cancel(true);
+            myWorker.interruptForCancel();
+        }
     }
 }

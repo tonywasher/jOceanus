@@ -156,7 +156,7 @@ public abstract class TethysHTMLManager<N, I>
             && !loadNewPage(myRef)) {
             /* Don't attempt to scroll to internal reference */
             myInternal = null;
-            LOGGER.error("Failed to load page <" + myRef + ">");
+            LOGGER.error("Failed to load page <%s>", myRef);
         }
 
         /* If we have an internal reference */
