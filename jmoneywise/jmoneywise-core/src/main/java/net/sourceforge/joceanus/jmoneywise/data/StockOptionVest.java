@@ -840,9 +840,8 @@ public class StockOptionVest
                                      final TethysDate pDate) {
             /* Access the map */
             Map<TethysDate, Integer> myMap = theMapOfMaps.get(pOption);
-            return myMap != null
-                                 ? myMap.get(pDate) == null
-                                 : true;
+            return myMap == null
+                   || myMap.get(pDate) == null;
         }
     }
 }

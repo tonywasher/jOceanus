@@ -133,13 +133,13 @@ public abstract class TethysProgram {
      * Obtain the program iconIds.
      * @return the icon Ids.
      */
-    public abstract <K extends Enum<K> & TethysIconId> K[] getIcons();
+    public abstract TethysIconId[] getIcons();
 
     /**
      * Obtain the splash iconId.
-     * @return the icon Id.
+     * @return the iconId.
      */
-    public abstract TethysIconId getSplashIcon();
+    public abstract TethysIconId getSplash();
 
     /**
      * Obtain program name.

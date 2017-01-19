@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmetis.threads;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.newlist.MetisBaseList;
 import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
@@ -33,6 +32,8 @@ import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
+import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.ui.MetisFieldSetPanelPair;
 import net.sourceforge.joceanus.jmetis.ui.MetisPreferenceView;
@@ -106,16 +107,16 @@ public abstract class MetisToolkit<N, I> {
 
     /**
      * Constructor.
-     * @param pProfile the profile
-     * @param pApp the program definition
+     * @param pInfo the program info
      * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    protected MetisToolkit(final MetisProfile pProfile,
-                           final TethysProgram pApp,
+    protected MetisToolkit(final MetisProgram pInfo,
                            final boolean pSlider) throws OceanusException {
-        /* Store parameters */
-        theProgram = pApp;
+        /* Store program definitions */
+        theProgram = pInfo == null
+                                   ? null
+                                   : pInfo.getProgramDefinitions();
 
         /* Create the formatter */
         theFormatter = new MetisDataFormatter();
@@ -127,9 +128,9 @@ public abstract class MetisToolkit<N, I> {
         theProfileEntry = theViewerManager.getStandardEntry(MetisViewerStandardEntry.PROFILE);
 
         /* Record the profile */
-        setProfile(pProfile == null
-                                    ? new MetisProfile("StartUp")
-                                    : pProfile);
+        setProfile(pInfo == null
+                                 ? new MetisProfile("StartUp")
+                                 : pInfo.getProfile());
 
         /* Create the preference manager */
         thePreferenceManager = new MetisPreferenceManager(theViewerManager);
@@ -342,7 +343,6 @@ public abstract class MetisToolkit<N, I> {
      * @return the active profile
      */
     public MetisProfile getActiveProfile() {
-        /* Create a new profile */
         return theProfile;
     }
 

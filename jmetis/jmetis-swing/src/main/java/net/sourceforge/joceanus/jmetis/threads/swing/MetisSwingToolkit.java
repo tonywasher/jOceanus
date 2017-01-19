@@ -28,17 +28,16 @@ import javax.swing.JComponent;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
-import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.newlist.MetisBaseList;
 import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
 import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.ui.swing.MetisSwingTableManager;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
-import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
@@ -51,20 +50,27 @@ public class MetisSwingToolkit
      * @throws OceanusException on error
      */
     public MetisSwingToolkit() throws OceanusException {
-        this(null, null, true);
+        this(null, true);
     }
 
     /**
      * Constructor.
-     * @param pProfile the profile
-     * @param pApp the program definition
      * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    public MetisSwingToolkit(final MetisProfile pProfile,
-                             final TethysProgram pApp,
+    public MetisSwingToolkit(final boolean pSlider) throws OceanusException {
+        this(null, pSlider);
+    }
+
+    /**
+     * Constructor.
+     * @param pInfo the program info
+     * @param pSlider use slider status
+     * @throws OceanusException on error
+     */
+    public MetisSwingToolkit(final MetisProgram pInfo,
                              final boolean pSlider) throws OceanusException {
-        super(pProfile, pApp, pSlider);
+        super(pInfo, pSlider);
     }
 
     @Override

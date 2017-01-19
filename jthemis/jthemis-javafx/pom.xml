@@ -39,23 +39,24 @@
     <appDir>../../../backup/</appDir>
     <appLibDir>lib/</appLibDir>
     <packageMain>${packageName}.ui.javafx.Themis4FX</packageMain>
+    <packagePreLoader>${packageName}.ui.javafx.ThemisFXpreLoader</packagePreLoader>
   </properties>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
+        <artifactId>maven-dependency-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-          <configuration>
-            <archive>
-              <manifestEntries>
-   	        <JavaFX-Preloader-Class>${packagePreLoader}</JavaFX-Preloader-Class>
-              </manifestEntries>
-            </archive>
-          </configuration>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+   	      <JavaFX-Preloader-Class>${packagePreLoader}</JavaFX-Preloader-Class>
+            </manifestEntries>
+          </archive>
+        </configuration>
       </plugin>
     </plugins>
   </build>

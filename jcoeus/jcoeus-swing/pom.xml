@@ -39,6 +39,7 @@
     <appDir>../../../backup/</appDir>
     <appLibDir>lib/</appLibDir>
     <packageMain>${packageName}.ui.swing.Coeus4Swing</packageMain>
+    <packageSplash>net/sourceforge/joceanus/jcoeus/ui/icons/CoeusSplash.png</packageSplash>
   </properties>
   <build>
     <plugins>
@@ -49,6 +50,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <SplashScreen-Image>${packageSplash}</SplashScreen-Image>
+            </manifestEntries>
+          </archive>    
+        </configuration>
       </plugin>
     </plugins>
   </build>

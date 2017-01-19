@@ -25,13 +25,12 @@ package net.sourceforge.joceanus.jmoneywise.swing;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
@@ -41,13 +40,11 @@ public class SwingView
         extends View<JComponent, Icon> {
     /**
      * Constructor.
-     * @param pProfile the profile
-     * @param pApp the program definitions
+     * @param pInfo the program info
      * @throws OceanusException on error
      */
-    public SwingView(final MetisProfile pProfile,
-                     final TethysProgram pApp) throws OceanusException {
-        super(new JOceanusSwingUtilitySet(pProfile, pApp));
+    public SwingView(final MetisProgram pInfo) throws OceanusException {
+        super(new JOceanusSwingUtilitySet(pInfo));
     }
 
     @Override

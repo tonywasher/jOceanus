@@ -114,9 +114,8 @@ public class Frequency
      */
     public boolean isBaseFrequency() {
         FrequencyClass myFreq = getFrequency();
-        return (myFreq == null)
-                               ? false
-                               : myFreq.isBaseFrequency();
+        return myFreq != null
+               && myFreq.isBaseFrequency();
     }
 
     /**
@@ -126,9 +125,8 @@ public class Frequency
      */
     public boolean isValidRepeat(final Frequency pFrequency) {
         FrequencyClass myFreq = getFrequency();
-        return (myFreq == null)
-                               ? false
-                               : myFreq.isValidRepeat(pFrequency.getFrequency());
+        return myFreq != null
+               && myFreq.isValidRepeat(pFrequency.getFrequency());
     }
 
     /**
@@ -137,9 +135,8 @@ public class Frequency
      */
     public boolean hasRepeatFrequency() {
         FrequencyClass myFreq = getFrequency();
-        return (myFreq == null)
-                               ? false
-                               : myFreq.hasRepeatFrequency();
+        return myFreq != null
+               && myFreq.hasRepeatFrequency();
     }
 
     /**
@@ -148,9 +145,8 @@ public class Frequency
      */
     public boolean hasRepeatInterval() {
         FrequencyClass myFreq = getFrequency();
-        return (myFreq == null)
-                               ? false
-                               : myFreq.hasRepeatInterval();
+        return myFreq != null
+               && myFreq.hasRepeatInterval();
     }
 
     /**
@@ -159,9 +155,8 @@ public class Frequency
      */
     public boolean hasPattern() {
         FrequencyClass myFreq = getFrequency();
-        return (myFreq == null)
-                               ? false
-                               : myFreq.hasPattern();
+        return myFreq != null
+               && myFreq.hasPattern();
     }
 
     @Override

@@ -787,9 +787,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     public boolean isInterest() {
         /* Check for interest */
         TransactionCategoryClass myClass = getCategoryClass();
-        return myClass == null
-                               ? false
-                               : myClass.isInterest();
+        return myClass != null
+               && myClass.isInterest();
     }
 
     /**
@@ -798,9 +797,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     public boolean isDividend() {
         TransactionCategoryClass myClass = getCategoryClass();
-        return myClass == null
-                               ? false
-                               : myClass.isDividend();
+        return myClass != null
+               && myClass.isDividend();
     }
 
     /**
@@ -809,9 +807,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     public boolean needsZeroAmount() {
         TransactionCategoryClass myClass = getCategoryClass();
-        return myClass == null
-                               ? false
-                               : myClass.needsZeroAmount();
+        return myClass != null
+               && myClass.needsZeroAmount();
     }
 
     /**

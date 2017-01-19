@@ -447,24 +447,35 @@ public final class TethysFXGuiUtils {
 
     /**
      * Obtain the raw icon.
-     * @param <K> the keyId type
      * @param pId the icon Id
      * @return the icon
      */
-    public static <K extends Enum<K> & TethysIconId> ImageView getIcon(final K pId) {
+    public static ImageView getIcon(final TethysIconId pId) {
         Image myImage = new Image(TethysIconBuilder.getResourceAsStream(pId));
         return new ImageView(myImage);
     }
 
     /**
+     * Obtain raw icons.
+     * @param pIds the icon Id
+     * @return the icon
+     */
+    public static Image[] getIcons(final TethysIconId[] pIds) {
+        Image[] myIcons = new Image[pIds.length];
+        for (int i = 0; i < pIds.length; i++) {
+            myIcons[i] = getIcon(pIds[i]).getImage();
+        }
+        return myIcons;
+    }
+
+    /**
      * Obtain the reSized icon.
-     * @param <K> the keyId type
      * @param pId the icon Id
      * @param pWidth the new width for the icon
      * @return the icon
      */
-    public static <K extends Enum<K> & TethysIconId> ImageView getIconAtSize(final K pId,
-                                                                             final int pWidth) {
+    public static ImageView getIconAtSize(final TethysIconId pId,
+                                          final int pWidth) {
         ImageView myNewImage = getIcon(pId);
         myNewImage.setFitWidth(pWidth);
         myNewImage.setPreserveRatio(true);

@@ -54,21 +54,19 @@ public abstract class TethysIconBuilder {
 
     /**
      * Obtain resource.
-     * @param <K> the keyId type
      * @param pId the icon Id
      * @return the URL reference
      */
-    public static <K extends Enum<K> & TethysIconId> URL getResource(final K pId) {
+    public static URL getResource(final TethysIconId pId) {
         return pId.getClass().getResource(pId.getSourceName());
     }
 
     /**
      * Obtain resource as Stream.
-     * @param <K> the keyId type
      * @param pId the icon Id
      * @return the inputStream
      */
-    public static <K extends Enum<K> & TethysIconId> InputStream getResourceAsStream(final K pId) {
+    public static InputStream getResourceAsStream(final TethysIconId pId) {
         return pId.getClass().getResourceAsStream(pId.getSourceName());
     }
 }

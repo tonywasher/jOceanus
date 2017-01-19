@@ -241,8 +241,7 @@ public abstract class TethysTabPaneManager<N, I>
                 if (myChild.isVisible()) {
                     /* set correct enabled status */
                     myChild.enableTab(pEnabled
-                                               ? myChild.isEnabled()
-                                               : false);
+                                      && myChild.isEnabled());
                 }
 
                 /* Move to next child */

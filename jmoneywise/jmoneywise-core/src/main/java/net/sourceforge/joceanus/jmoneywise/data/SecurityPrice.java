@@ -864,9 +864,8 @@ public class SecurityPrice
                                      final TethysDate pDate) {
             /* Access the map */
             Map<TethysDate, Integer> myMap = theMapOfMaps.get(pSecurity);
-            return myMap != null
-                                 ? myMap.get(pDate) == null
-                                 : true;
+            return myMap == null
+                   || myMap.get(pDate) == null;
         }
 
         /**

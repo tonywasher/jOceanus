@@ -117,7 +117,6 @@ public enum CoeusTotalSet {
 
     /**
      * Obtain balance field for TotalSet.
-     * @param pTotalSet
      * @return the balance field
      */
     public MetisField getBalanceField() {

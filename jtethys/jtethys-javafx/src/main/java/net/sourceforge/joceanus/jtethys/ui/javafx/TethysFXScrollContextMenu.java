@@ -54,6 +54,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
@@ -61,6 +64,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Scroll-able version of ContextMenu.
@@ -69,8 +73,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollS
  * @param <T> the value type
  */
 public class TethysFXScrollContextMenu<T>
-        extends Stage
-        implements TethysScrollMenu<T, Node> {
+        implements TethysScrollMenu<T, Node>, TethysEventProvider<TethysUIEvent> {
     /**
      * StyleSheet Name.
      */
@@ -90,6 +93,11 @@ public class TethysFXScrollContextMenu<T>
      * The item style.
      */
     private static final String STYLE_ITEM = STYLE_MENU + "-item";
+
+    /**
+     * The Event Manager.
+     */
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * List of menu items.
@@ -135,6 +143,11 @@ public class TethysFXScrollContextMenu<T>
      * The Parent contextMenu.
      */
     private final TethysFXScrollContextMenu<T> theParentContext;
+
+    /**
+     * The Stage.
+     */
+    private Stage theStage;
 
     /**
      * The Active subMenu.
@@ -196,14 +209,13 @@ public class TethysFXScrollContextMenu<T>
      */
     private TethysFXScrollContextMenu(final TethysFXScrollSubMenu<T> pParent,
                                       final int pMaxDisplayItems) {
-        /* Non-Modal and undecorated */
-        super(StageStyle.UNDECORATED);
-        initModality(Modality.NONE);
-
         /* Check parameters */
         if (pMaxDisplayItems <= 0) {
             throw new IllegalArgumentException(TethysScrollMenuContent.ERROR_MAXITEMS);
         }
+
+        /* Create event manager */
+        theEventManager = new TethysEventManager<>();
 
         /* Record parameters */
         theMaxDisplayItems = pMaxDisplayItems;
@@ -231,21 +243,46 @@ public class TethysFXScrollContextMenu<T>
 
         /* Create the scene */
         theContainer = new BorderPane();
-        Scene myScene = new Scene(theContainer);
         theContainer.setCenter(myBox);
+        theContainer.getStyleClass().add(STYLE_MENU);
+    }
+
+    @Override
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Ensure the Stage.
+     */
+    private void ensureStage() {
+        if (theStage == null) {
+            createStage();
+        }
+    }
+
+    /**
+     * Create the Stage.
+     */
+    private void createStage() {
+        /* Non-Modal and undecorated */
+        theStage = new Stage(StageStyle.UNDECORATED);
+        theStage.initModality(Modality.NONE);
+
+        /* Create the scene */
+        Scene myScene = new Scene(theContainer);
         ObservableList<String> mySheets = myScene.getStylesheets();
         mySheets.add(CSS_STYLE);
-        theContainer.getStyleClass().add(STYLE_MENU);
-        setScene(myScene);
+        theStage.setScene(myScene);
 
         /* Add listener to shut dialog on loss of focus */
-        focusedProperty().addListener((v, o, n) -> handleFocusChange(n));
+        theStage.focusedProperty().addListener((v, o, n) -> handleFocusChange(n));
 
         /* ensure that escape closes menu */
         myScene.setOnKeyPressed(this::handleKeyPress);
 
         /* Handle scroll events */
-        addEventFilter(ScrollEvent.SCROLL, this::handleScroll);
+        theStage.addEventFilter(ScrollEvent.SCROLL, this::handleScroll);
     }
 
     /**
@@ -279,6 +316,15 @@ public class TethysFXScrollContextMenu<T>
     public void setCloseOnToggle(final boolean pCloseOnToggle) {
         /* Set value */
         closeOnToggle = pCloseOnToggle;
+    }
+
+    /**
+     * Is the menu showing?
+     * @return true/false
+     */
+    public boolean isShowing() {
+        return theStage != null
+               && theStage.isShowing();
     }
 
     @Override
@@ -320,6 +366,9 @@ public class TethysFXScrollContextMenu<T>
      */
     public void showMenuAtPosition(final Node pAnchor,
                                    final Side pSide) {
+        /* Ensure the stage */
+        ensureStage();
+
         /* determine the size of the menu */
         determineSize();
 
@@ -339,6 +388,9 @@ public class TethysFXScrollContextMenu<T>
     public void showMenuAtPosition(final Node pAnchor,
                                    final double pX,
                                    final double pY) {
+        /* Ensure the stage */
+        ensureStage();
+
         /* determine the size of the menu */
         determineSize();
 
@@ -356,8 +408,8 @@ public class TethysFXScrollContextMenu<T>
      */
     private void showMenuAtLocation(final Point2D pLocation) {
         /* Record position */
-        setX(pLocation.getX());
-        setY(pLocation.getY());
+        theStage.setX(pLocation.getX());
+        theStage.setY(pLocation.getY());
 
         /* Show menu */
         showMenu();
@@ -373,7 +425,7 @@ public class TethysFXScrollContextMenu<T>
         theActiveItem = null;
 
         /* show the menu */
-        show();
+        theStage.show();
     }
 
     /**
@@ -384,7 +436,7 @@ public class TethysFXScrollContextMenu<T>
         closeChildren();
 
         /* Close the menu */
-        close();
+        theStage.close();
     }
 
     /**
@@ -417,7 +469,7 @@ public class TethysFXScrollContextMenu<T>
             }
 
             /* fire selection event */
-            fireEvent(new TethysFXContextEvent<T>(theSelectedItem));
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theSelectedItem);
         }
     }
 
@@ -433,7 +485,7 @@ public class TethysFXScrollContextMenu<T>
             /* else we are top-level */
         } else {
             /* fire cancellation event */
-            fireEvent(new TethysFXContextEvent<T>());
+            theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
 
             /* Notify the cancel */
             closeMenu();
@@ -461,7 +513,7 @@ public class TethysFXScrollContextMenu<T>
             && (theActiveMenu == null)) {
             /* fire cancellation event */
             if (theParentMenu == null) {
-                fireEvent(new TethysFXContextEvent<T>());
+                theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
             }
 
             /* Close the menu hierarchy if we are currently showing */
@@ -740,11 +792,11 @@ public class TethysFXScrollContextMenu<T>
                 }
 
                 /* Calculate size of menu */
-                show();
-                close();
+                theStage.show();
+                theStage.close();
 
                 /* Determine the size */
-                theMenuSize = new Dimension2D(getWidth(), getHeight());
+                theMenuSize = new Dimension2D(theStage.getWidth(), theStage.getHeight());
 
                 /* else need to set up scroll */
             } else {
@@ -761,9 +813,9 @@ public class TethysFXScrollContextMenu<T>
                 }
 
                 /* Calculate size of menu */
-                show();
-                close();
-                double myWidth = getWidth();
+                theStage.show();
+                theStage.close();
+                double myWidth = theStage.getWidth();
 
                 /* Remove all items */
                 theActiveItems.clear();
@@ -790,9 +842,9 @@ public class TethysFXScrollContextMenu<T>
                 }
 
                 /* Calculate size of menu */
-                show();
-                close();
-                double myHeight = getHeight();
+                theStage.show();
+                theStage.close();
+                double myHeight = theStage.getHeight();
 
                 /* Set visibility of scroll items */
                 theUpItem.setVisible(theFirstIndex > 0);
@@ -802,7 +854,7 @@ public class TethysFXScrollContextMenu<T>
                 theMenuSize = new Dimension2D(myWidth, myHeight);
 
                 /* Fix the width */
-                setMinWidth(myWidth);
+                theStage.setMinWidth(myWidth);
             }
         }
 
@@ -1009,10 +1061,10 @@ public class TethysFXScrollContextMenu<T>
             theIndex = theContext.getItemCount();
 
             /* Handle removal of subMenus */
-            addEventFilter(MouseEvent.MOUSE_ENTERED, e -> theContext.handleActiveItem(TethysFXScrollMenuItem.this));
+            addEventFilter(MouseEvent.MOUSE_ENTERED, e -> theContext.handleActiveItem(this));
 
             /* Handle selection */
-            addEventFilter(MouseEvent.MOUSE_CLICKED, e -> theContext.setSelectedItem(TethysFXScrollMenuItem.this));
+            addEventFilter(MouseEvent.MOUSE_CLICKED, e -> theContext.setSelectedItem(this));
         }
 
         @Override
@@ -1118,8 +1170,8 @@ public class TethysFXScrollContextMenu<T>
 
             /* Handle show menu */
             addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
-                theContext.handleActiveMenu(TethysFXScrollSubMenu.this);
-                theSubMenu.showMenuAtPosition(TethysFXScrollSubMenu.this, Side.RIGHT);
+                theContext.handleActiveMenu(this);
+                theSubMenu.showMenuAtPosition(this, Side.RIGHT);
             });
         }
 
@@ -1148,7 +1200,7 @@ public class TethysFXScrollContextMenu<T>
          * Hide the subMenu.
          */
         private void hide() {
-            theSubMenu.hide();
+            theSubMenu.closeMenu();
         }
 
         /**

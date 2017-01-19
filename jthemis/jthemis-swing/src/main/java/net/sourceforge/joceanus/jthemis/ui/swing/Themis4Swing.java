@@ -22,22 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.ui.swing;
 
-import java.awt.Image;
-import java.util.Arrays;
-
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.TethysSplash;
 import net.sourceforge.joceanus.jthemis.ui.ThemisApp;
-import net.sourceforge.joceanus.jthemis.ui.ThemisIcon;
 
 /**
  * Themis Swing entryPoint.
@@ -56,34 +52,19 @@ public final class Themis4Swing {
 
     /**
      * Create and show the GUI.
-     * @param pProfile the startup profile
-     * @param pApp the application details
+     * @param pInfo the program info
      */
-    private static void createAndShowGUI(final MetisProfile pProfile,
-                                         final ThemisApp pApp) {
+    private static void createAndShowGUI(final MetisProgram pInfo) {
         try {
             /* Create the Toolkit */
-            MetisSwingToolkit myToolkit = new MetisSwingToolkit(pProfile, pApp, false);
+            MetisSwingToolkit myToolkit = new MetisSwingToolkit(pInfo, false);
 
             /* Create the frame and declare it */
-            JFrame myFrame = new JFrame(pApp.getName());
+            JFrame myFrame = new JFrame();
             myToolkit.getGuiFactory().setFrame(myFrame);
 
             /* Create the SvnManager program */
             new ThemisSwingSvnManager(myToolkit);
-
-            /* Add the icons to the frame */
-            ThemisIcon[] myIds = pApp.getIcons();
-            Image[] myIcons = TethysSwingGuiUtils.getIcons(myIds);
-            myFrame.setIconImages(Arrays.asList(myIcons));
-
-            /* Show the frame */
-            myFrame.pack();
-            myFrame.setLocationRelativeTo(null);
-            myFrame.setVisible(true);
-
-            /* Record startUp completion */
-            pProfile.end();
 
         } catch (OceanusException e) {
             LOGGER.error("createGUI didn't complete successfully", e);
@@ -95,19 +76,21 @@ public final class Themis4Swing {
      * @param args the arguments
      */
     public static void main(final String[] args) {
-        /* Create a timer */
-        MetisProfile myProfile = new MetisProfile("StartUp");
+        try {
+            /* Create a timer */
+            MetisProgram myInfo = new MetisProgram(ThemisApp.class);
 
-        /* Configure log4j */
-        TethysLogConfig.configureLog4j();
+            /* Obtain program details */
+            TethysProgram myApp = myInfo.getProgramDefinitions();
 
-        /* Obtain program details */
-        ThemisApp myApp = new ThemisApp();
+            /* Sort out splash frame */
+            TethysSplash.renderSplashFrame(myApp.getName(), myApp.getVersion());
 
-        /* Sort out splash frame */
-        TethysSwingGuiUtils.renderSplashFrame(myApp.getName(), myApp.getVersion());
+            /* Start up the GUI */
+            SwingUtilities.invokeLater(() -> createAndShowGUI(myInfo));
 
-        /* Start up the GUI */
-        SwingUtilities.invokeLater(() -> createAndShowGUI(myProfile, myApp));
+        } catch (OceanusException e) {
+            LOGGER.error("main didn't complete successfully", e);
+        }
     }
 }

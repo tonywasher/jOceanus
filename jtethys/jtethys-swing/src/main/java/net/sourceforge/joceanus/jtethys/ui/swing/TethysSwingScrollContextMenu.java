@@ -88,21 +88,6 @@ public class TethysSwingScrollContextMenu<T>
     protected static final Color COLOR_BACKGROUND = Color.decode("#add8e6");
 
     /**
-     * Value updated.
-     */
-    public static final int ACTION_SELECTED = 100;
-
-    /**
-     * Value toggled.
-     */
-    public static final int ACTION_TOGGLED = 101;
-
-    /**
-     * Menu cancelled.
-     */
-    public static final int ACTION_MENU_CANCELLED = 102;
-
-    /**
      * Timer.
      */
     private Timer theTimer;
@@ -583,7 +568,6 @@ public class TethysSwingScrollContextMenu<T>
         } else {
             /* We assume that we will close the menu */
             boolean doCloseMenu = true;
-            TethysUIEvent myEvent = TethysUIEvent.NEWVALUE;
 
             /* record selection */
             theSelectedItem = pItem;
@@ -600,7 +584,7 @@ public class TethysSwingScrollContextMenu<T>
             }
 
             /* fire selection event */
-            theEventManager.fireEvent(myEvent, theSelectedItem);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theSelectedItem);
         }
     }
 

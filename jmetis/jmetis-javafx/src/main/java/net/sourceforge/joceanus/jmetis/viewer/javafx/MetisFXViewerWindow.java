@@ -45,9 +45,9 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
 public class MetisFXViewerWindow
         extends MetisViewerWindow<Node, Node> {
     /**
-     * The stage.
+     * The GUI Factory.
      */
-    private final Stage theStage;
+    private final TethysFXGuiFactory theFactory;
 
     /**
      * The help dialog.
@@ -64,7 +64,7 @@ public class MetisFXViewerWindow
                                final MetisViewerManager pDataManager) throws OceanusException {
         /* Initialise underlying class */
         super(pFactory, pDataManager);
-        theStage = pFactory.getStage();
+        theFactory = pFactory;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class MetisFXViewerWindow
 
             /* Initialise the dialog */
             initModality(Modality.NONE);
-            initOwner(theStage);
+            initOwner(theFactory.getStage());
 
             /* Create the scene */
             BorderPane myContainer = new BorderPane();

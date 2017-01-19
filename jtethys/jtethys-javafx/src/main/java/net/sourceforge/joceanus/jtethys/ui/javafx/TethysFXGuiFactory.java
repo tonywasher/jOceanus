@@ -29,10 +29,14 @@ import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
@@ -60,7 +64,8 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager.Teth
  * Tethys GUI Factory.
  */
 public class TethysFXGuiFactory
-        extends TethysGuiFactory<Node, Node> {
+        extends TethysGuiFactory<Node, Node>
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * Base StyleSheet Class.
      */
@@ -75,6 +80,11 @@ public class TethysFXGuiFactory
      * PreLoad StyleSheet.
      */
     private static final String CSS_STYLE = TethysFXGuiFactory.class.getResource(CSS_STYLE_NAME).toExternalForm();
+
+    /**
+     * Event Manager.
+     */
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Scenes.
@@ -112,8 +122,16 @@ public class TethysFXGuiFactory
         super(pFormatter, pApp);
         theScenes = new ArrayList<>();
 
+        /* Create event manager */
+        theEventManager = new TethysEventManager<>();
+
         /* Add value listener */
         getValueSet().getEventRegistrar().addEventListener(e -> applyValuesToScenes());
+    }
+
+    @Override
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -186,6 +204,7 @@ public class TethysFXGuiFactory
      */
     public void setStage(final Stage pStage) {
         theStage = pStage;
+        theEventManager.fireEvent(TethysUIEvent.NEWSTAGE);
     }
 
     /**

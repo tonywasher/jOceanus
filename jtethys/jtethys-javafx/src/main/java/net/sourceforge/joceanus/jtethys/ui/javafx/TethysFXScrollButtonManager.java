@@ -25,9 +25,10 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.TethysFXContextEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * JavaFX Button which provides a PopUpMenu selection.
@@ -64,9 +65,9 @@ public final class TethysFXScrollButtonManager<T>
     @Override
     protected void registerListeners() {
         /* Set context menu listener */
-        TethysFXScrollContextMenu<T> myMenu = getMenu();
-        myMenu.addEventHandler(TethysFXContextEvent.MENU_SELECT, e -> handleMenuClosed());
-        myMenu.addEventHandler(TethysFXContextEvent.MENU_CANCEL, e -> notifyCancelled());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleMenuClosed());
+        myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> notifyCancelled());
     }
 
     @Override

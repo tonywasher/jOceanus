@@ -24,4 +24,3 @@
  * Preference Set Manager.
  */
 package net.sourceforge.joceanus.jmetis.preference;
-

@@ -69,7 +69,6 @@
     <svnBase>${svnParent}/trunk</svnBase>
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
-    <packagePreLoader/>
     <appLibDir/>
     <JDateButtonVersion>v2.1.0-SNAPSHOT</JDateButtonVersion>
     <BouncyCastleVersion>1.56</BouncyCastleVersion>
@@ -98,7 +97,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.6.0</version>
+        <version>3.6.1</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
@@ -143,7 +142,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.10</version>
+          <version>3.0.0</version>
           <executions>
             <execution>
               <id>copy-installed</id>

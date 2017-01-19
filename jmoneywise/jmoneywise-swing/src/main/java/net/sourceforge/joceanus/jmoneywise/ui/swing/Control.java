@@ -31,13 +31,14 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.data.MetisProfile;
+import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseApp;
-import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.TethysSplash;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
 
 /**
@@ -57,18 +58,19 @@ public final class Control {
 
     /**
      * Create and show the GUI.
-     * @param pProfile the startup profile
-     * @param pApp the application details
+     * @param pInfo the program info
      */
-    private static void createAndShowGUI(final MetisProfile pProfile,
-                                         final MoneyWiseApp pApp) {
+    private static void createAndShowGUI(final MetisProgram pInfo) {
         try {
             /* Create the view */
-            SwingView myView = new SwingView(pProfile, pApp);
+            SwingView myView = new SwingView(pInfo);
             MetisSwingToolkit myToolkit = myView.getToolkit();
 
+            /* Obtain program details */
+            TethysProgram myApp = pInfo.getProgramDefinitions();
+
             /* Create the frame and declare it */
-            JFrame myFrame = new JFrame(pApp.getName());
+            JFrame myFrame = new JFrame(myApp.getName());
             myToolkit.getGuiFactory().setFrame(myFrame);
 
             /* Create the window */
@@ -76,7 +78,7 @@ public final class Control {
             myWindow.makeFrame();
 
             /* Add the icons to the frame */
-            MoneyWiseIcon[] myIds = pApp.getIcons();
+            TethysIconId[] myIds = myApp.getIcons();
             Image[] myIcons = TethysSwingGuiUtils.getIcons(myIds);
             myFrame.setIconImages(Arrays.asList(myIcons));
 
@@ -86,7 +88,7 @@ public final class Control {
             myFrame.setVisible(true);
 
             /* Record startUp completion */
-            pProfile.end();
+            pInfo.getProfile().end();
 
         } catch (OceanusException e) {
             LOGGER.error("createGUI didn't complete successfully", e);
@@ -98,19 +100,21 @@ public final class Control {
      * @param args the command line arguments
      */
     public static void main(final String[] args) {
-        /* Create a timer */
-        MetisProfile myProfile = new MetisProfile("StartUp");
+        try {
+            /* Create a timer */
+            MetisProgram myInfo = new MetisProgram(MoneyWiseApp.class);
 
-        /* Configure log4j */
-        TethysLogConfig.configureLog4j();
+            /* Obtain program details */
+            TethysProgram myApp = myInfo.getProgramDefinitions();
 
-        /* Obtain program details */
-        MoneyWiseApp myApp = new MoneyWiseApp();
+            /* Sort out splash frame */
+            TethysSplash.renderSplashFrame(myApp.getName(), myApp.getVersion());
 
-        /* Sort out splash frame */
-        TethysSwingGuiUtils.renderSplashFrame(myApp.getName(), myApp.getVersion());
+            /* Build the GUI */
+            SwingUtilities.invokeLater(() -> createAndShowGUI(myInfo));
 
-        /* Build the GUI */
-        SwingUtilities.invokeLater(() -> createAndShowGUI(myProfile, myApp));
+        } catch (OceanusException e) {
+            LOGGER.error("main didn't complete successfully", e);
+        }
     }
 }

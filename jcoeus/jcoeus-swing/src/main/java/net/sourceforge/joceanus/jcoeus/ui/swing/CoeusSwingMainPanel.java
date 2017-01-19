@@ -22,18 +22,22 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui.swing;
 
+import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
 import net.sourceforge.joceanus.jcoeus.ui.panels.CoeusMainPanel;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
 
 /**
@@ -48,13 +52,10 @@ public class CoeusSwingMainPanel
 
     /**
      * Constructor.
-     * @param pFrame the frame
      * @param pToolkit the toolkit
-     * @param pApp the application details
      * @throws OceanusException on error
      */
-    protected CoeusSwingMainPanel(final MetisSwingToolkit pToolkit,
-                                  final CoeusApp pApp) throws OceanusException {
+    protected CoeusSwingMainPanel(final MetisSwingToolkit pToolkit) throws OceanusException {
         /* Initialise underlying class */
         super(pToolkit);
         theFrame = pToolkit.getGuiFactory().getFrame();
@@ -66,6 +67,21 @@ public class CoeusSwingMainPanel
         theFrame.setContentPane(getTabs().getNode());
         theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         theFrame.addWindowListener(new WindowClose());
+
+        /* Add the icons to the frame */
+        TethysProgram myApp = pToolkit.getProgramDefinitions();
+        TethysIconId[] myIds = myApp.getIcons();
+        Image[] myIcons = TethysSwingGuiUtils.getIcons(myIds);
+        theFrame.setIconImages(Arrays.asList(myIcons));
+        theFrame.setTitle(myApp.getName());
+
+        /* Show the frame */
+        theFrame.pack();
+        theFrame.setLocationRelativeTo(null);
+        theFrame.setVisible(true);
+
+        /* Record startUp completion */
+        pToolkit.getActiveProfile().end();
     }
 
     @Override

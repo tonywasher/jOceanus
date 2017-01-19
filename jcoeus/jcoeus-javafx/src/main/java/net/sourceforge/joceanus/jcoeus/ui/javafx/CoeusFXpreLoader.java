@@ -25,76 +25,56 @@ package net.sourceforge.joceanus.jcoeus.ui.javafx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javafx.application.Application;
+import javafx.application.Preloader;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram.MetisApplication;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
+import net.sourceforge.joceanus.jmetis.ui.javafx.MetisFXSplash;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Coeus javaFX StartUp.
+ * Coeus javaFX preLoader.
  */
-public class Coeus4FX
-        extends Application
-        implements MetisApplication {
+public class CoeusFXpreLoader
+        extends Preloader {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Coeus4FX.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoeusFXpreLoader.class);
 
     /**
-     * Main panel.
+     * The splashPane.
      */
-    private CoeusFXMainPanel thePanel;
-
-    /**
-     * Program information.
-     */
-    private MetisProgram theInfo;
-
-    @Override
-    public void setProgramInfo(final MetisProgram pInfo) {
-        theInfo = pInfo;
-    }
+    private MetisFXSplash theSplash;
 
     @Override
     public void init() {
-        /* Protect against exceptions */
         try {
-            /* Create a timer */
-            if (theInfo == null) {
-                theInfo = new MetisProgram(CoeusApp.class);
-            }
+            /* Access program info */
+            MetisProgram myInfo = new MetisProgram(CoeusApp.class);
 
-            /* Create the Toolkit */
-            MetisFXToolkit myToolkit = new MetisFXToolkit(theInfo, false);
+            /* Create a StackPane */
+            theSplash = new MetisFXSplash(myInfo);
 
-            /* Create the main panel */
-            thePanel = new CoeusFXMainPanel(myToolkit);
-
-            /* Handle Exceptions */
         } catch (OceanusException e) {
-            LOGGER.error("createPanel didn't complete successfully", e);
+            LOGGER.error("createGUI didn't complete successfully", e);
         }
     }
 
     @Override
     public void start(final Stage pStage) {
-        /* If we have a panel */
-        if (thePanel != null) {
-            /* Attach to the stage and show */
-            thePanel.attachToStage(pStage);
+        /* If we have a pane */
+        if (theSplash != null) {
+            /* Configure the stage */
+            theSplash.attachToStage(pStage);
             pStage.show();
         }
     }
 
-    /**
-     * Main function.
-     * @param args the arguments
-     */
-    public static void main(final String[] args) {
-        launch(args);
+    @Override
+    public void handleStateChangeNotification(final StateChangeNotification pEvent) {
+        if (theSplash != null) {
+            theSplash.handleStateChange(pEvent);
+        }
     }
 }

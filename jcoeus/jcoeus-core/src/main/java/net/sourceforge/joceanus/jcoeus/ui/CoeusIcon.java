@@ -39,7 +39,7 @@ public enum CoeusIcon implements TethysIconId {
     BIG("icons/CoeusBig.png"),
 
     /**
-     * The program splash icon.
+     * The splash program icon.
      */
     SPLASH("icons/CoeusSplash.png");
 

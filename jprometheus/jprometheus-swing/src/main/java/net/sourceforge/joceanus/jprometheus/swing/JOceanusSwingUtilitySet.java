@@ -25,17 +25,16 @@ package net.sourceforge.joceanus.jprometheus.swing;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
+import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
@@ -55,14 +54,12 @@ public class JOceanusSwingUtilitySet
 
     /**
      * Constructor.
-     * @param pProfile the profile
-     * @param pApp the program definitions
+     * @param pInfo the program info
      * @throws OceanusException on error
      */
-    public JOceanusSwingUtilitySet(final MetisProfile pProfile,
-                                   final TethysProgram pApp) throws OceanusException {
+    public JOceanusSwingUtilitySet(final MetisProgram pInfo) throws OceanusException {
         /* Create Toolkit */
-        super(new MetisSwingToolkit(pProfile, pApp, true));
+        super(new MetisSwingToolkit(pInfo, true));
 
         /* Access the Colour Preferences */
         theColorPreferences = getPreferenceManager().getPreferenceSet(MetisColorPreferences.class);

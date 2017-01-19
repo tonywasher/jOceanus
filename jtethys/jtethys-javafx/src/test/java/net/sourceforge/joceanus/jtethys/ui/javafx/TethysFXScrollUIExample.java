@@ -36,7 +36,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager.TethysFXSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager.TethysFXStateIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.TethysFXContextEvent;
 
 /**
  * Scroll utilities examples.
@@ -199,7 +198,7 @@ public class TethysFXScrollUIExample
         myContextArea.setContextMenu(theContextMenu);
 
         /* Add listener */
-        theContextMenu.addEventHandler(TethysFXContextEvent.MENU_SELECT, e -> {
+        theContextMenu.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             /* If we selected a value */
             TethysScrollMenuItem<String> mySelected = theContextMenu.getSelectedItem();
             if (mySelected != null) {

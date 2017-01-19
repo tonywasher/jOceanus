@@ -132,9 +132,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @return true/false
      */
     public boolean isHeader(final R pRow) {
-        return theHeader == null
-                                 ? false
-                                 : theHeader.test(pRow);
+        return theHeader != null
+               && theHeader.test(pRow);
     }
 
     /**
@@ -153,9 +152,8 @@ public abstract class TethysTableManager<C, R, N, I>
      */
     public boolean isError(final C pId,
                            final R pRow) {
-        return theError == null
-                                ? false
-                                : theError.test(pId, pRow);
+        return theError != null
+               && theError.test(pId, pRow);
     }
 
     /**
@@ -174,9 +172,8 @@ public abstract class TethysTableManager<C, R, N, I>
      */
     public boolean isChanged(final C pId,
                              final R pRow) {
-        return theChanged == null
-                                  ? false
-                                  : theChanged.test(pId, pRow);
+        return theChanged != null
+               && theChanged.test(pId, pRow);
     }
 
     /**
@@ -193,9 +190,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @return true/false
      */
     public boolean isDisabled(final R pRow) {
-        return theDisabled == null
-                                   ? false
-                                   : theDisabled.test(pRow);
+        return theDisabled != null
+               && theDisabled.test(pRow);
     }
 
     /**

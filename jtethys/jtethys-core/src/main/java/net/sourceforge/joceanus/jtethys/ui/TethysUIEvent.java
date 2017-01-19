@@ -89,5 +89,10 @@ public enum TethysUIEvent {
     /**
      * Cell has been committed.
      */
-    CELLCOMMITTED;
+    CELLCOMMITTED,
+
+    /**
+     * New Stage declared.
+     */
+    NEWSTAGE;
 }

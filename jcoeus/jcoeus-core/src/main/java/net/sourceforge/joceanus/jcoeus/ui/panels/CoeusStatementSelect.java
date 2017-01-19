@@ -751,8 +751,7 @@ public class CoeusStatementSelect<N, I>
          */
         private boolean availableMonth(final Month pMonth) {
             return theFilter instanceof CoeusAnnualFilter
-                                                          ? ((CoeusAnnualFilter) theFilter).availableMonth(pMonth)
-                                                          : false;
+                   && ((CoeusAnnualFilter) theFilter).availableMonth(pMonth);
         }
 
         /**

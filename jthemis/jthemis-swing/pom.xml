@@ -39,16 +39,24 @@
     <appDir>../../../backup/</appDir>
     <appLibDir>lib/</appLibDir>
     <packageMain>${packageName}.ui.swing.Themis4Swing</packageMain>
+    <packageSplash>net/sourceforge/joceanus/jthemis/ui/icons/ThemisSplash.png</packageSplash>
   </properties>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
+        <artifactId>maven-dependency-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <SplashScreen-Image>${packageSplash}</SplashScreen-Image>
+            </manifestEntries>
+          </archive>
+        </configuration>
       </plugin>
     </plugins>
   </build>

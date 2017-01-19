@@ -43,9 +43,9 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
 public class TethysFXHelpWindow
         extends TethysHelpWindow<Node, Node> {
     /**
-     * The stage.
+     * The GUI Factory.
      */
-    private final Stage theStage;
+    private final TethysFXGuiFactory theFactory;
 
     /**
      * The help dialog.
@@ -59,7 +59,7 @@ public class TethysFXHelpWindow
     public TethysFXHelpWindow(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
-        theStage = pFactory.getStage();
+        theFactory = pFactory;
     }
 
     @Override
@@ -126,7 +126,7 @@ public class TethysFXHelpWindow
 
             /* Initialise the dialog */
             initModality(Modality.NONE);
-            initOwner(theStage);
+            initOwner(theFactory.getStage());
 
             /* Create the scene */
             BorderPane myContainer = new BorderPane();

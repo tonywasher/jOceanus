@@ -39,6 +39,7 @@
     <appDir>../../../backup/</appDir>
     <appLibDir>lib/</appLibDir>
     <packageMain>${packageName}.ui.javafx.Coeus4FX</packageMain>
+    <packagePreLoader>${packageName}.ui.javafx.CoeusFXpreLoader</packagePreLoader>
   </properties>
   <build>
     <plugins>
@@ -46,17 +47,17 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
       </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <configuration>
-            <archive>
-              <manifestEntries>
-   	        <JavaFX-Preloader-Class>${packagePreLoader}</JavaFX-Preloader-Class>
-              </manifestEntries>
-            </archive>
-          </configuration>
-        </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+   	      <JavaFX-Preloader-Class>${packagePreLoader}</JavaFX-Preloader-Class>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>

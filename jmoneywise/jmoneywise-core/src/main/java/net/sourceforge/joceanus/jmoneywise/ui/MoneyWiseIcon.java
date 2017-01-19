@@ -43,7 +43,7 @@ public enum MoneyWiseIcon implements TethysIconId {
     BIG("icons/MoneyWiseBig.png"),
 
     /**
-     * The program splash icon.
+     * The splash program icon.
      */
     SPLASH("icons/MoneyWiseSplash.png"),
 

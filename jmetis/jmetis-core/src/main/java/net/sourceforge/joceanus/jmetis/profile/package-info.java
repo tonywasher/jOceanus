@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
+ * jMetis: Java Data Framework
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,44 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.ui;
-
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
-
 /**
- * Themis Icon IDs.
+ * Profiles.
  */
-public enum ThemisIcon implements TethysIconId {
-    /**
-     * The small program icon.
-     */
-    SMALL("icons/ThemisSmall.png"),
-
-    /**
-     * The big program icon.
-     */
-    BIG("icons/ThemisBig.png"),
-
-    /**
-     * The splash program icon.
-     */
-    SPLASH("icons/ThemisSplash.png");
-
-    /**
-     * Source name.
-     */
-    private final String theSource;
-
-    /**
-     * Constructor.
-     * @param pSourceName the source name
-     */
-    ThemisIcon(final String pSourceName) {
-        theSource = pSourceName;
-    }
-
-    @Override
-    public String getSourceName() {
-        return theSource;
-    }
-}
+package net.sourceforge.joceanus.jmetis.profile;

@@ -22,12 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.ui.javafx;
 
+import java.util.Arrays;
+
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXMenuBarManager;
 import net.sourceforge.joceanus.jthemis.ui.ThemisSvnManager;
 
@@ -37,6 +44,16 @@ import net.sourceforge.joceanus.jthemis.ui.ThemisSvnManager;
 public class ThemisFXSvnManager
         extends ThemisSvnManager<Node, Node> {
     /**
+     * The Toolkit.
+     */
+    private final MetisFXToolkit theToolkit;
+
+    /**
+     * The Panel.
+     */
+    private final BorderPane thePane;
+
+    /**
      * Constructor.
      * @param pToolkit the toolkit
      * @throws OceanusException on error
@@ -45,19 +62,43 @@ public class ThemisFXSvnManager
         /* Initialise underlying class */
         super(pToolkit);
 
-        /* Create the borderPane */
-        BorderPane myBorderPane = new BorderPane();
-        myBorderPane.setTop(getMenuBar().getNode());
-        myBorderPane.setCenter(getTabs().getNode());
+        /* Store the toolkit */
+        theToolkit = pToolkit;
 
-        /* Create the scene and attach to the stage */
-        Stage myStage = pToolkit.getGuiFactory().getStage();
-        Scene myScene = new Scene(myBorderPane);
-        pToolkit.getGuiFactory().registerScene(myScene);
-        myStage.setScene(myScene);
+        /* Create the borderPane */
+        thePane = new BorderPane();
+        thePane.setTop(getMenuBar().getNode());
+        thePane.setCenter(getTabs().getNode());
+    }
+
+    /**
+     * Attach to stage.
+     * @param pStage the stage
+     */
+    protected void attachToStage(final Stage pStage) {
+        /* Access the GUI factory and program definitions */
+        TethysFXGuiFactory myFactory = theToolkit.getGuiFactory();
+        TethysProgram myApp = theToolkit.getProgramDefinitions();
+
+        /* Create the scene */
+        Scene myScene = new Scene(thePane);
+        myFactory.registerScene(myScene);
+
+        /* Configure the stage */
+        myFactory.setStage(pStage);
+        pStage.setTitle(myApp.getName());
+        pStage.setScene(myScene);
 
         /* Close application properly */
-        myStage.setOnCloseRequest(e -> handleWindowClosed());
+        pStage.setOnCloseRequest(e -> handleWindowClosed());
+
+        /* Add the icons to the frame */
+        TethysIconId[] myIds = myApp.getIcons();
+        Image[] myIcons = TethysFXGuiUtils.getIcons(myIds);
+        pStage.getIcons().addAll(Arrays.asList(myIcons));
+
+        /* Record startUp completion */
+        theToolkit.getActiveProfile().end();
     }
 
     @Override

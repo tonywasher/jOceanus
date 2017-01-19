@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -253,9 +253,8 @@ public class Schedule
      */
     public boolean hasRepeatFrequency() {
         Frequency myFreq = getFrequency();
-        return (myFreq == null)
-                               ? false
-                               : myFreq.hasRepeatFrequency();
+        return myFreq != null
+               && myFreq.hasRepeatFrequency();
     }
 
     /**
@@ -264,9 +263,8 @@ public class Schedule
      */
     public boolean hasRepeatInterval() {
         Frequency myFreq = getFrequency();
-        return (myFreq == null)
-                               ? false
-                               : myFreq.hasRepeatInterval();
+        return myFreq != null
+               && myFreq.hasRepeatInterval();
     }
 
     /**
@@ -275,9 +273,8 @@ public class Schedule
      */
     public boolean hasPattern() {
         Frequency myFreq = getFrequency();
-        return (myFreq == null)
-                               ? false
-                               : myFreq.hasPattern();
+        return myFreq != null
+               && myFreq.hasPattern();
     }
 
     /**
@@ -295,8 +292,8 @@ public class Schedule
     public Integer getFrequencyId() {
         Frequency myFreq = getFrequency();
         return (myFreq == null)
-                               ? null
-                               : myFreq.getId();
+                                ? null
+                                : myFreq.getId();
     }
 
     /**
@@ -305,8 +302,8 @@ public class Schedule
      */
     public Frequency getRepeatFrequency() {
         return hasRepeatFrequency()
-                                   ? getRepeatFrequency(getValueSet())
-                                   : null;
+                                    ? getRepeatFrequency(getValueSet())
+                                    : null;
     }
 
     /**
@@ -316,8 +313,8 @@ public class Schedule
     public Integer getRepeatFrequencyId() {
         Frequency myFreq = getRepeatFrequency();
         return (myFreq == null)
-                               ? getRepeatInterval()
-                               : myFreq.getId();
+                                ? getRepeatInterval()
+                                : myFreq.getId();
     }
 
     /**
@@ -326,8 +323,8 @@ public class Schedule
      */
     public Integer getRepeatInterval() {
         return hasRepeatInterval()
-                                  ? getRepeatInterval(getValueSet())
-                                  : null;
+                                   ? getRepeatInterval(getValueSet())
+                                   : null;
     }
 
     /**
@@ -345,8 +342,8 @@ public class Schedule
     public Integer getPatternValue() {
         SchedulePattern myPattern = getPattern();
         return (myPattern == null)
-                                  ? null
-                                  : myPattern.getPatternValue();
+                                   ? null
+                                   : myPattern.getPatternValue();
     }
 
     /**

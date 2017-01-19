@@ -111,12 +111,12 @@ public abstract class TethysAbout<N, I>
     }
 
     @Override
-    public void setEnabled(boolean pEnabled) {
+    public void setEnabled(final boolean pEnabled) {
         thePanel.setEnabled(pEnabled);
     }
 
     @Override
-    public void setVisible(boolean pVisible) {
+    public void setVisible(final boolean pVisible) {
         thePanel.setVisible(pVisible);
     }
 

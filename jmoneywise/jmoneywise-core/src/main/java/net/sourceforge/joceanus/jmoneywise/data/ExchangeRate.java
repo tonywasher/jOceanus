@@ -1054,9 +1054,8 @@ public class ExchangeRate
                                      final TethysDate pDate) {
             /* Access the map */
             Map<TethysDate, Integer> myMap = theMapOfMaps.get(pCurrency);
-            return myMap != null
-                                 ? myMap.get(pDate) == null
-                                 : true;
+            return myMap == null
+                   || myMap.get(pDate) == null;
         }
 
         /**

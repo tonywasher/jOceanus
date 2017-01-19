@@ -47,7 +47,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.TethysFXContextEvent;
 
 /**
  * Generic class for displaying and editing a data field.
@@ -158,7 +157,8 @@ public abstract class TethysFXDataTextField<T>
         theCmdButton.setOnAction(e -> handleCmdMenuRequest());
 
         /* Set context menu listener */
-        getCmdMenu().addEventHandler(TethysFXContextEvent.MENU_SELECT, e -> handleCmdMenuClosed());
+        getCmdMenu().getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
+                e -> handleCmdMenuClosed());
     }
 
     /**

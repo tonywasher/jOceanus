@@ -34,18 +34,17 @@ public class CoeusApp
      * Constructor.
      */
     public CoeusApp() {
-        super("../CoeusApp.properties");
+        super("CoeusApp.properties");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public CoeusIcon[] getIcons() {
-        return new CoeusIcon[]
+    public TethysIconId[] getIcons() {
+        return new TethysIconId[]
         { CoeusIcon.SMALL, CoeusIcon.BIG };
     }
 
     @Override
-    public TethysIconId getSplashIcon() {
+    public TethysIconId getSplash() {
         return CoeusIcon.SPLASH;
     }
 }

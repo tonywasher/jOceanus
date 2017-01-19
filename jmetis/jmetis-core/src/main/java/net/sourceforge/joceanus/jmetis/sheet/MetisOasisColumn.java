@@ -85,9 +85,8 @@ public class MetisOasisColumn
     @Override
     public boolean isHidden() {
         String myString = theOasisColumn.getTableVisibilityAttribute();
-        return (myString == null)
-                                  ? false
-                                  : myString.equals(TableVisibilityAttribute.Value.COLLAPSE.toString());
+        return myString != null
+               && myString.equals(TableVisibilityAttribute.Value.COLLAPSE.toString());
     }
 
     @Override

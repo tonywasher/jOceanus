@@ -184,9 +184,6 @@ public class ThemisBackup {
         } catch (SVNException e) {
             throw new ThemisIOException("Failed", e);
         }
-
-        /* Return to caller */
-        return;
     }
 
     /**

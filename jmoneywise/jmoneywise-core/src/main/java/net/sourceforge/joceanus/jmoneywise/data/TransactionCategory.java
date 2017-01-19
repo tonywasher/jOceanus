@@ -213,9 +213,8 @@ public final class TransactionCategory
     public boolean isTransfer() {
         /* Check for match */
         TransactionCategoryClass myClass = getCategoryTypeClass();
-        return (myClass == null)
-                                 ? false
-                                 : myClass.isTransfer();
+        return myClass != null
+               && myClass.isTransfer();
     }
 
     /**
@@ -405,9 +404,8 @@ public final class TransactionCategory
      */
     public boolean isHidden() {
         TransactionCategoryClass myClass = this.getCategoryTypeClass();
-        return (myClass == null)
-                                 ? false
-                                 : myClass.isHiddenType();
+        return myClass != null
+               && myClass.isHiddenType();
     }
 
     /**

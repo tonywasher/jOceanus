@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.ui;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 
@@ -33,21 +32,19 @@ public class ThemisApp
         extends TethysProgram {
     /**
      * Constructor.
-     * @throws OceanusException on error
      */
     public ThemisApp() {
-        super("../ThemisApp.properties");
+        super("ThemisApp.properties");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public ThemisIcon[] getIcons() {
-        return new ThemisIcon[]
+    public TethysIconId[] getIcons() {
+        return new TethysIconId[]
         { ThemisIcon.SMALL, ThemisIcon.BIG };
     }
 
     @Override
-    public TethysIconId getSplashIcon() {
+    public TethysIconId getSplash() {
         return ThemisIcon.SPLASH;
     }
 }

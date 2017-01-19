@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 
@@ -33,21 +32,19 @@ public class MoneyWiseApp
         extends TethysProgram {
     /**
      * Constructor.
-     * @throws OceanusException on error
      */
     public MoneyWiseApp() {
-        super("../MoneyWiseApp.properties");
+        super("MoneyWiseApp.properties");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public MoneyWiseIcon[] getIcons() {
-        return new MoneyWiseIcon[]
+    public TethysIconId[] getIcons() {
+        return new TethysIconId[]
         { MoneyWiseIcon.SMALL, MoneyWiseIcon.BIG };
     }
 
     @Override
-    public TethysIconId getSplashIcon() {
+    public TethysIconId getSplash() {
         return MoneyWiseIcon.SPLASH;
     }
 }

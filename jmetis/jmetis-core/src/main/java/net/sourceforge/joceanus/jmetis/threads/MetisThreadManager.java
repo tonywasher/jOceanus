@@ -26,8 +26,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.data.MetisProfile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadPreference.MetisThreadPreferenceKey;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadPreference.MetisThreadPreferences;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;

@@ -503,9 +503,8 @@ public class Payee
     @Override
     public boolean isHidden() {
         PayeeTypeClass myClass = this.getPayeeTypeClass();
-        return (myClass == null)
-                                 ? false
-                                 : myClass.isHiddenType();
+        return myClass != null
+               && myClass.isHiddenType();
     }
 
     /**

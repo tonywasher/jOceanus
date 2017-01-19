@@ -902,9 +902,8 @@ public abstract class DataItem<E extends Enum<E>>
      * @return <code>true/false</code>
      */
     public boolean hasErrors(final MetisField pField) {
-        return (pField != null)
-                                ? theErrors.hasErrors(pField)
-                                : false;
+        return pField != null
+               && theErrors.hasErrors(pField);
     }
 
     /**

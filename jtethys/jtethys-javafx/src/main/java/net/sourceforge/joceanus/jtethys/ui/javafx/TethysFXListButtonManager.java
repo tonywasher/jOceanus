@@ -25,8 +25,9 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu.TethysFXContextEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * PopUp menu that displays a list of checkMenu items.
@@ -63,9 +64,9 @@ public final class TethysFXListButtonManager<T>
     @Override
     protected void registerListeners() {
         /* Set context menu listener */
-        TethysFXScrollContextMenu<T> myMenu = getMenu();
-        myMenu.addEventHandler(TethysFXContextEvent.MENU_TOGGLE, e -> handleToggleItem());
-        myMenu.addEventHandler(TethysFXContextEvent.MENU_CANCEL, e -> handleMenuClosed());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleToggleItem());
+        myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
     }
 
     @Override

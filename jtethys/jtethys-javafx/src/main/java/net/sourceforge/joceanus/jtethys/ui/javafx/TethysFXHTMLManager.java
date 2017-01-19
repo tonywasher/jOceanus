@@ -41,9 +41,9 @@ import javafx.print.Paper;
 import javafx.print.Printer;
 import javafx.print.PrinterJob;
 import javafx.scene.Node;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import netscape.javascript.JSObject;
 
@@ -83,24 +83,29 @@ public class TethysFXHTMLManager
     private static final String ATTR_REF = "href";
 
     /**
-     * The Stage.
+     * The GuiFactory.
      */
-    private final Stage theStage;
+    private final TethysFXGuiFactory theFactory;
 
     /**
-     * WebView.
+     * Pane.
      */
-    private final WebView theWebView;
-
-    /**
-     * WebEngine.
-     */
-    private final WebEngine theWebEngine;
+    private final BorderPane thePane;
 
     /**
      * HyperLink Listener.
      */
     private final EventListener theListener;
+
+    /**
+     * WebView.
+     */
+    private WebView theWebView;
+
+    /**
+     * WebEngine.
+     */
+    private WebEngine theWebEngine;
 
     /**
      * Pending scroll.
@@ -115,47 +120,73 @@ public class TethysFXHTMLManager
         /* Initialise underlying class */
         super(pFactory);
 
-        /* Store the stage */
-        theStage = pFactory.getStage();
+        /* Store the factory */
+        theFactory = pFactory;
 
-        /* Create WebView and access the engine */
-        theWebView = new WebView();
-        theWebEngine = theWebView.getEngine();
-        theWebEngine.setJavaScriptEnabled(true);
+        /* Allocate the Pane */
+        thePane = new BorderPane();
+
+        /* Attach a listener to the Factory */
+        theFactory.getEventRegistrar().addEventListener(e -> allocateWebView());
 
         /* Create the hyperLink listener */
         theListener = this::handleClick;
-
-        /* Create the load listener */
-        theWebEngine.getLoadWorker().stateProperty().addListener((v, o, n) -> handleStateChange(n));
     }
 
     @Override
     public Node getNode() {
-        return theWebView;
+        return thePane;
     }
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        theWebView.setDisable(!pEnabled);
+        if (theWebView != null) {
+            theWebView.setDisable(!pEnabled);
+        }
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theWebView.setManaged(pVisible);
-        theWebView.setVisible(pVisible);
+        if (theWebView != null) {
+            theWebView.setManaged(pVisible);
+            theWebView.setVisible(pVisible);
+        }
     }
 
     @Override
     protected void loadHTMLContent(final String pHTMLString) {
         /* Load the content */
-        theWebEngine.loadContent(pHTMLString);
+        if (theWebView != null) {
+            theWebEngine.loadContent(pHTMLString);
+        }
     }
 
     @Override
     protected void loadCSSContents() {
         /* reLoad the content */
         loadHTMLContent(getHTMLString());
+    }
+
+    /**
+     * Allocate webView.
+     */
+    private void allocateWebView() {
+        /* If we do not have a webView */
+        if (theWebView == null) {
+            /* Create WebView and access the engine */
+            theWebView = new WebView();
+            theWebEngine = theWebView.getEngine();
+            theWebEngine.setJavaScriptEnabled(true);
+
+            /* Attach to the pane */
+            thePane.setCenter(theWebView);
+
+            /* Create the load listener */
+            theWebEngine.getLoadWorker().stateProperty().addListener((v, o, n) -> handleStateChange(n));
+
+            /* load CSS contents */
+            loadCSSContents();
+        }
     }
 
     @Override
@@ -260,7 +291,7 @@ public class TethysFXHTMLManager
         /* Prepare to print the webPage */
         PrinterJob job = PrinterJob.createPrinterJob();
         if ((job != null)
-            && job.showPrintDialog(theStage)) {
+            && job.showPrintDialog(theFactory.getStage())) {
             /* Access printer and determine orientation */
             Printer myPrinter = job.getPrinter();
 
