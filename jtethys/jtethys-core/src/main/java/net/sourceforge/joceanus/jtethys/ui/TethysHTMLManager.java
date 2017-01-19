@@ -57,6 +57,11 @@ public abstract class TethysHTMLManager<N, I>
     private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
+     * The HTMLToFile Manager.
+     */
+    private final TethysHTMLToFile<N, I> theHTMLToFile;
+
+    /**
      * The ValueSet.
      */
     private final TethysValueSet theValueSet;
@@ -89,6 +94,9 @@ public abstract class TethysHTMLManager<N, I>
         /* Build standard fields */
         theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
+
+        /* Create the HTMLtoFile Manager */
+        theHTMLToFile = new TethysHTMLToFile<>(pFactory, this);
 
         /* Obtain the valueSet */
         theValueSet = pFactory.getValueSet();
@@ -234,7 +242,7 @@ public abstract class TethysHTMLManager<N, I>
      * SaveToFile.
      */
     public void saveToFile() {
-        /* Not Yet */
+        theHTMLToFile.writeToFile();
     }
 
     /**

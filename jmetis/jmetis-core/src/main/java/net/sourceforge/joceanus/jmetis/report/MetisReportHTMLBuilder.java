@@ -69,29 +69,9 @@ public class MetisReportHTMLBuilder {
     private static final String ATTR_ALIGN = "align";
 
     /**
-     * The width attribute.
-     */
-    private static final String ATTR_WIDTH = "width";
-
-    /**
      * The align centre value.
      */
     private static final String ALIGN_CENTER = "center";
-
-    /**
-     * The align right value.
-     */
-    private static final String ALIGN_RIGHT = "right";
-
-    /**
-     * The main table width value.
-     */
-    private static final String WIDTH_MAIN = "90%";
-
-    /**
-     * The embedded table width value.
-     */
-    private static final String WIDTH_EMBED = "99%";
 
     /**
      * Name of total table row class.
@@ -117,6 +97,11 @@ public class MetisReportHTMLBuilder {
      * Name of alternate detailed summary row class.
      */
     private static final String CLASS_ALTDTLSUMMROW = "altDtlSummRow";
+
+    /**
+     * Name of subTable class.
+     */
+    private static final String CLASS_SUBTABLE = "subtable";
 
     /**
      * Name of detail row class.
@@ -645,7 +630,6 @@ public class MetisReportHTMLBuilder {
         Element myTable = theDocument.createElement(ELEMENT_TABLE);
         pBody.appendChild(myTable);
         myTable.setAttribute(ATTR_ALIGN, ALIGN_CENTER);
-        myTable.setAttribute(ATTR_WIDTH, WIDTH_MAIN);
 
         /* Create the table control */
         return new HTMLTable(myTable);
@@ -659,8 +643,8 @@ public class MetisReportHTMLBuilder {
     public HTMLTable createEmbeddedTable(final HTMLTable pParent) {
         /* Create the table */
         Element myTable = theDocument.createElement(ELEMENT_TABLE);
-        myTable.setAttribute(ATTR_ALIGN, ALIGN_RIGHT);
-        myTable.setAttribute(ATTR_WIDTH, WIDTH_EMBED);
+        myTable.setAttribute(ATTR_CLASS, CLASS_SUBTABLE);
+        myTable.setAttribute(ATTR_ALIGN, ALIGN_CENTER);
 
         /* Create the table control */
         return new HTMLTable(myTable, pParent);

@@ -22,6 +22,9 @@ table {
   border-top: solid;
   border-bottom: solid;
 }
+.subtable {
+  width: 99%;
+}
 
 /* Define table headers as bold */
 th {
@@ -107,4 +110,7 @@ td {
 a {
   font-weight: bold;
   text-decoration: none;
+}
+div {
+  font-weight: bold;
 }
