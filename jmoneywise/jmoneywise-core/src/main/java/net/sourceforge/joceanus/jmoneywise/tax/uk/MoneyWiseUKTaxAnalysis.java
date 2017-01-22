@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxDueBucket;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxSource;
+import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKChargeableGainsScheme.MoneyWiseUKSlicedTaxDueBucket;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -289,6 +290,13 @@ public class MoneyWiseUKTaxAnalysis
             /* Add the values */
             theTaxableIncome.addAmount(myBucket.getTaxableIncome());
             theTaxDue.addAmount(myBucket.getTaxDue());
+
+            /* If this is a sliced tax bucket */
+            if (myBucket instanceof MoneyWiseUKSlicedTaxDueBucket) {
+                /* Apply Tax Relief */
+                MoneyWiseUKSlicedTaxDueBucket mySliced = (MoneyWiseUKSlicedTaxDueBucket) myBucket;
+                theTaxDue.subtractAmount(mySliced.getTaxRelief());
+            }
         }
     }
 
@@ -324,8 +332,17 @@ public class MoneyWiseUKTaxAnalysis
         /* Allocate the amount to the various taxBands */
         MoneyWiseTaxBandSet myBands = pScheme.allocateToTaxBands(theTaxConfig, pBasis, myAmount);
 
-        /* Create the TaxDueBucket and add it to the list */
+        /* Create the TaxDueBucket */
         MoneyWiseTaxDueBucket myBucket = new MoneyWiseTaxDueBucket(pBasis, myBands, myConfig);
+
+        /* If this is ChargeableGains, and we have multiple Bands */
+        if (TaxBasisClass.CHARGEABLEGAINS.equals(pBasis)
+            && myBands.multipleBands()) {
+            /* Analyse the Slices */
+            myBucket = new MoneyWiseUKSlicedTaxDueBucket(myBucket, theTaxSource);
+        }
+
+        /* Add the bucket to the list */
         theTaxBuckets.add(myBucket);
     }
 

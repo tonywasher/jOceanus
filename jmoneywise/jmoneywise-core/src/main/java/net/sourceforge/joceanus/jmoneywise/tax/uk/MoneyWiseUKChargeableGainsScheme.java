@@ -22,16 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax.uk;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseChargeableGainSlice;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxDueBucket;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -43,14 +41,21 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 public class MoneyWiseUKChargeableGainsScheme
         extends MoneyWiseUKIncomeScheme {
     /**
-     * Sliced Gains.
+     * Constructor.
      */
-    public static class MoneyWiseUKSlicedGains
-            implements MetisDataContents, MetisDataList<MoneyWiseChargeableGainSlice> {
+    protected MoneyWiseUKChargeableGainsScheme() {
+        super(Boolean.FALSE);
+    }
+
+    /**
+     * Chargeable Gains Sliced Tax Due.
+     */
+    public static class MoneyWiseUKSlicedTaxDueBucket
+            extends MoneyWiseTaxDueBucket {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKSlicedGains.class.getSimpleName());
+        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKSlicedTaxDueBucket.class.getSimpleName(), MoneyWiseTaxDueBucket.getBaseFields());
 
         /**
          * Total Gains Field Id.
@@ -68,29 +73,19 @@ public class MoneyWiseUKChargeableGainsScheme
         private static final MetisField FIELD_RATIO = FIELD_DEFS.declareEqualityField("Ratio");
 
         /**
-         * TaxedGains Field Id.
-         */
-        private static final MetisField FIELD_TAXEDGAINS = FIELD_DEFS.declareEqualityField("TaxedGains");
-
-        /**
          * TaxedSlices Field Id.
          */
         private static final MetisField FIELD_TAXEDSLICES = FIELD_DEFS.declareEqualityField("TaxedSlices");
 
         /**
-         * TaxDue Field Id.
+         * NettTaxDue Field Id.
          */
-        private static final MetisField FIELD_TAXDUE = FIELD_DEFS.declareEqualityField("TaxDue");
+        private static final MetisField FIELD_NETTTAXDUE = FIELD_DEFS.declareEqualityField("NettTaxDue");
 
         /**
-         * Ratio Field Id.
+         * TaxRelief Field Id.
          */
         private static final MetisField FIELD_TAXRELIEF = FIELD_DEFS.declareEqualityField("TaxRelief");
-
-        /**
-         * The list of Slices.
-         */
-        private final List<MoneyWiseChargeableGainSlice> theSlices;
 
         /**
          * The total gains.
@@ -108,39 +103,36 @@ public class MoneyWiseUKChargeableGainsScheme
         private final TethysRatio theRatio;
 
         /**
-         * The taxAnalysis on gains.
+         * The slices taxDueBucket.
          */
-        private MoneyWiseUKChargeableTaxDueBucket theTaxedGains;
-
-        /**
-         * The taxAnalysis on slices.
-         */
-        private MoneyWiseTaxDueBucket theTaxedSlices;
-
-        /**
-         * The taxDue on slices.
-         */
-        private TethysMoney theTaxDue;
+        private final MoneyWiseTaxDueBucket theSliceBucket;
 
         /**
          * The taxRelief.
          */
-        private TethysMoney theTaxRelief;
+        private final TethysMoney theTaxRelief;
+
+        /**
+         * The nett taxDue.
+         */
+        private final TethysMoney theNettTaxDue;
 
         /**
          * Constructor.
-         * @param pConfig the tax configuration
+         * @param pBase the underlying bucket
          * @param pSource the tax source
          */
-        protected MoneyWiseUKSlicedGains(final MoneyWiseUKTaxConfig pConfig,
-                                         final MoneyWiseTaxSource pSource) {
-            /* Create the slices */
-            theSlices = new ArrayList<>();
+        protected MoneyWiseUKSlicedTaxDueBucket(final MoneyWiseTaxDueBucket pBase,
+                                                final MoneyWiseTaxSource pSource) {
+            /* Initialise underlying bucket */
+            super(pBase);
 
             /* Create the totals */
-            TethysMoney myZero = pConfig.getTaxBands().getZeroAmount();
+            TethysMoney myZero = new TethysMoney(pBase.getTaxDue());
             theTotalGains = new TethysMoney(myZero);
             theTotalSlices = new TethysMoney(myZero);
+            theTaxRelief = new TethysMoney(myZero);
+            theNettTaxDue = new TethysMoney(myZero);
 
             /* Process the slices */
             Iterator<MoneyWiseChargeableGainSlice> myIterator = pSource.getGainSlices().getUnderlyingList().iterator();
@@ -151,11 +143,15 @@ public class MoneyWiseUKChargeableGainsScheme
 
             /* Calculate the ratio */
             theRatio = new TethysRatio(theTotalGains, theTotalSlices);
+
+            /* Determine tax due on slices */
+            theSliceBucket = buildSliceBucket();
+            calculateTax();
         }
 
         /**
          * Obtain the total gains.
-         * @return the basis
+         * @return the gains
          */
         public TethysMoney getTotalGains() {
             return theTotalGains;
@@ -163,10 +159,10 @@ public class MoneyWiseUKChargeableGainsScheme
 
         /**
          * Obtain the total slices.
-         * @return the basis
+         * @return the slices
          */
         public TethysMoney getTotalSlices() {
-            return theTotalGains;
+            return theTotalSlices;
         }
 
         /**
@@ -178,11 +174,11 @@ public class MoneyWiseUKChargeableGainsScheme
         }
 
         /**
-         * Obtain the taxed gains.
-         * @return the taxed gains
+         * Obtain the tax due bucket for slices.
+         * @return the tax due on slices
          */
-        public MoneyWiseUKChargeableTaxDueBucket getTaxedGains() {
-            return theTaxedGains;
+        public MoneyWiseTaxDueBucket getSliceBucket() {
+            return theSliceBucket;
         }
 
         /**
@@ -190,15 +186,15 @@ public class MoneyWiseUKChargeableGainsScheme
          * @return the taxed slices
          */
         public MoneyWiseTaxDueBucket getTaxedSlices() {
-            return theTaxedSlices;
+            return theSliceBucket;
         }
 
         /**
          * Obtain the tax due.
          * @return the tax due
          */
-        public TethysMoney getTaxDue() {
-            return theTaxDue;
+        public TethysMoney getNettTaxDue() {
+            return theNettTaxDue;
         }
 
         /**
@@ -214,26 +210,54 @@ public class MoneyWiseUKChargeableGainsScheme
          * @param pSlice the slice
          */
         private void processSlice(final MoneyWiseChargeableGainSlice pSlice) {
-            /* Add the slice to the list */
-            theSlices.add(pSlice);
-
             /* Adjust totals */
             theTotalGains.addAmount(pSlice.getGain());
             theTotalSlices.addAmount(pSlice.getSlice());
         }
 
         /**
-         * calculate the tax.
+         * build slice bucket.
+         * @return the slice bucket
          */
-        protected void calculateTax() {
-            /* Calculate tax due */
-            theTaxDue = theTaxedSlices.getTaxDue().valueAtRatio(theRatio);
+        private MoneyWiseTaxDueBucket buildSliceBucket() {
+            /* Create a new taxBand set */
+            MoneyWiseTaxBandSet myTaxBands = new MoneyWiseTaxBandSet();
+            TethysMoney myRemaining = new TethysMoney(theTotalSlices);
 
-            /* Calculate tax relief */
-            theTaxRelief = theTaxedGains.getTaxDue();
-            theTaxRelief.subtractAmount(theTaxDue);
+            /* Calculate new tax allocation */
+            Iterator<MoneyWiseTaxBandBucket> myIterator = taxBandIterator();
+            while (myRemaining.isNonZero()
+                   && myIterator.hasNext()) {
+                MoneyWiseTaxBandBucket myBucket = myIterator.next();
+
+                /* Determine amount in band */
+                TethysMoney myAmount = MoneyWiseUKIncomeScheme.getAmountInBand(myBucket.getAmount(), myRemaining);
+                myAmount = new TethysMoney(myAmount);
+
+                /* allocate band and adjust */
+                myTaxBands.addTaxBand(new MoneyWiseTaxBand(myAmount, myBucket.getRate()));
+                myRemaining.subtractAmount(myAmount);
+            }
+
+            /* Create the new tax bucket */
+            return new MoneyWiseTaxDueBucket(getTaxBasis(), myTaxBands, getTaxConfig());
         }
 
+        /**
+         * calculate the tax.
+         */
+        private void calculateTax() {
+            /* Calculate tax due */
+            theNettTaxDue.add(theSliceBucket.getTaxDue().valueAtRatio(theRatio));
+
+            /* Calculate tax relief */
+            theTaxRelief.addAmount(getTaxDue());
+            theTaxRelief.subtractAmount(theNettTaxDue);
+        }
+
+        /**
+         * determine
+         */
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();
@@ -256,26 +280,18 @@ public class MoneyWiseUKChargeableGainsScheme
             if (FIELD_RATIO.equals(pField)) {
                 return theRatio;
             }
-            if (FIELD_TAXEDGAINS.equals(pField)) {
-                return theTaxedGains;
-            }
             if (FIELD_TAXEDSLICES.equals(pField)) {
-                return theTaxedSlices;
-            }
-            if (FIELD_TAXDUE.equals(pField)) {
-                return theTaxDue;
+                return theSliceBucket;
             }
             if (FIELD_TAXRELIEF.equals(pField)) {
                 return theTaxRelief;
             }
+            if (FIELD_NETTTAXDUE.equals(pField)) {
+                return theNettTaxDue;
+            }
 
             /* Not recognised */
             return MetisFieldValue.UNKNOWN;
-        }
-
-        @Override
-        public List<MoneyWiseChargeableGainSlice> getUnderlyingList() {
-            return theSlices;
         }
     }
 }

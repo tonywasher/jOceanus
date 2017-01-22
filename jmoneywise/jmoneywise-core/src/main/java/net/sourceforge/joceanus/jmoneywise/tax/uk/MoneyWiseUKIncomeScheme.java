@@ -240,8 +240,8 @@ public class MoneyWiseUKIncomeScheme
      * @param pAmount the amount available
      * @return the amount within the band
      */
-    protected TethysMoney getAmountInBand(final TethysMoney pBand,
-                                          final TethysMoney pAmount) {
+    protected static TethysMoney getAmountInBand(final TethysMoney pBand,
+                                                 final TethysMoney pAmount) {
         /* Return the lesser of the two */
         return pBand != null && pAmount.compareTo(pBand) > 0
                                                              ? pBand

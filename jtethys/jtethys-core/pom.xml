@@ -40,6 +40,11 @@
       <version>${LOG4JVersion}</version>
     </dependency>
     <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>${JFreeChartVersion}</version>
+    </dependency>
+    <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
       <version>${JSoupVersion}</version>

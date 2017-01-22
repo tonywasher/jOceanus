@@ -22,15 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Document.OutputSettings;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,6 +134,12 @@ public class TethysHTMLToFile<N, I> {
         /* Parse the document */
         Document myDoc = Jsoup.parse(pXML);
 
+        /* Adjust the outputSettings */
+        OutputSettings mySettings = myDoc.outputSettings();
+        mySettings.charset(StandardCharsets.UTF_8);
+        mySettings.escapeMode(EscapeMode.extended);
+        mySettings.prettyPrint(true);
+
         /* Create the style element */
         Element myElement = myDoc.createElement(ELEMENT_STYLE);
         myElement.text(pStyleSheet);
@@ -162,10 +169,10 @@ public class TethysHTMLToFile<N, I> {
     private void writeDocumentToFile(final Document pDoc,
                                      final File pFile) throws OceanusException {
         /* Protect the write */
-        try (PrintStream myStream = new PrintStream(new BufferedOutputStream(new FileOutputStream(pFile)))) {
+        try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8.name())) {
             /* Format the XML and write to stream */
             String myHTML = pDoc.outerHtml();
-            myStream.print(myHTML);
+            myWriter.print(myHTML);
 
         } catch (IOException e) {
             throw new TethysDataException("Failed to output XML", e);

@@ -122,10 +122,27 @@ public class MoneyWiseTaxDueBucket
             }
         }
 
-        /* Create the values */
+        /* Copy the values */
         theTaxableIncome = pBands.getZeroAmount();
         theTaxDue = pBands.getZeroAmount();
         calculateTaxDue();
+    }
+
+    /**
+     * Constructor.
+     * @param pBase the underlying bucket
+     */
+    protected MoneyWiseTaxDueBucket(final MoneyWiseTaxDueBucket pBase) {
+        /* Store parameters */
+        theTaxBasis = pBase.getTaxBasis();
+        theTaxConfig = pBase.getTaxConfig();
+
+        /* Allocate the tax band list */
+        theTaxBands = pBase.theTaxBands;
+
+        /* Create the values */
+        theTaxableIncome = pBase.getTaxableIncome();
+        theTaxDue = pBase.getTaxDue();
     }
 
     /**

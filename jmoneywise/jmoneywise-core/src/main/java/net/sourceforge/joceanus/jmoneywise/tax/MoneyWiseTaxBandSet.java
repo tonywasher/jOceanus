@@ -110,6 +110,14 @@ public class MoneyWiseTaxBandSet
     }
 
     /**
+     * Are there multiple taxBands?
+     * @return true/false
+     */
+    public boolean multipleBands() {
+        return theTaxBands.size() > 1;
+    }
+
+    /**
      * MoneyWiseTaxBand class.
      */
     public static class MoneyWiseTaxBand

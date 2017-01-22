@@ -149,11 +149,13 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
                                              final E pAttr) {
         /* Access current and previous values */
         TethysMoney myCurr = getMoneyValue(pAttr);
-        TethysMoney myPrev = pPrevious.getMoneyValue(pAttr);
+        if (pPrevious != null) {
+            TethysMoney myPrev = pPrevious.getMoneyValue(pAttr);
 
-        /* Calculate delta */
-        myCurr = new TethysMoney(myCurr);
-        myCurr.subtractAmount(myPrev);
+            /* Calculate delta */
+            myCurr = new TethysMoney(myCurr);
+            myCurr.subtractAmount(myPrev);
+        }
         return myCurr;
     }
 
@@ -167,11 +169,13 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
                                              final E pAttr) {
         /* Access current and previous values */
         TethysUnits myCurr = getUnitsValue(pAttr);
-        TethysUnits myPrev = pPrevious.getUnitsValue(pAttr);
+        if (pPrevious != null) {
+            TethysUnits myPrev = pPrevious.getUnitsValue(pAttr);
 
-        /* Calculate delta */
-        myCurr = new TethysUnits(myCurr);
-        myCurr.subtractUnits(myPrev);
+            /* Calculate delta */
+            myCurr = new TethysUnits(myCurr);
+            myCurr.subtractUnits(myPrev);
+        }
         return myCurr;
     }
 
