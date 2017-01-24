@@ -102,4 +102,27 @@ public enum MoneyWiseReportType {
                 return false;
         }
     }
+
+    /**
+     * do we need to have securities for this report?
+     * @return true/false
+     */
+    public boolean needSecurities() {
+        switch (this) {
+            case MARKETGROWTH:
+            case PORTFOLIO:
+            case CAPITALGAINS:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Obtain the default report.
+     * @return the default
+     */
+    public static MoneyWiseReportType getDefault() {
+        return NETWORTH;
+    }
 }

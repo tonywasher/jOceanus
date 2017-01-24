@@ -58,7 +58,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
@@ -73,9 +72,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
@@ -95,14 +91,14 @@ import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 public class ArchiveLoader {
     /**
      * Number of base archive load areas.
-     * 14xStatic,TransactionTags,Regions,2*Category,Schedule,Rate,Price,Account,TaxYear,Range+Transaction.
+     * 11xStatic,TransactionTags,Regions,2*Category,Schedule,Rate,Price,Account,Range+Transaction.
      */
-    private static final int NUM_ARCHIVE_AREAS = 25;
+    private static final int NUM_ARCHIVE_AREAS = 21;
 
     /**
      * Year boundary.
      */
-    private static final int YEAR_BDY = 50;
+    private static final int YEAR_BDY = 60;
 
     /**
      * Year constant.
@@ -329,16 +325,10 @@ public class ArchiveLoader {
             SheetTransCategoryType.loadArchive(pReport, myWorkbook, pData);
             myStage.startTask(TaxBasis.LIST_NAME);
             SheetTaxBasis.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(TaxCategory.LIST_NAME);
-            SheetTaxCategory.loadArchive(pReport, myWorkbook, pData);
             myStage.startTask(AssetCurrency.LIST_NAME);
             SheetAssetCurrency.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(TaxRegime.LIST_NAME);
-            SheetTaxRegime.loadArchive(pReport, myWorkbook, pData);
             myStage.startTask(Frequency.LIST_NAME);
             SheetFrequency.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(TaxYearInfoType.LIST_NAME);
-            SheetTaxYearInfoType.loadArchive(pReport, myWorkbook, pData);
             myStage.startTask(AccountInfoType.LIST_NAME);
             SheetAccountInfoType.loadArchive(pReport, myWorkbook, pData);
             myStage.startTask(TransactionInfoType.LIST_NAME);
@@ -357,11 +347,6 @@ public class ArchiveLoader {
             SheetAccountCategory.loadArchive(pReport, myWorkbook, pData);
             myStage.startTask(TransactionCategory.LIST_NAME);
             SheetTransCategory.loadArchive(pReport, myWorkbook, pData, this);
-
-            /* Load TaxYears */
-            myStage.startTask(TaxYear.LIST_NAME);
-            SheetTaxYear.loadArchive(pReport, myWorkbook, pData, this);
-            pData.calculateDateRange();
 
             /* Load ExchangeRates */
             myStage.startTask(ExchangeRate.LIST_NAME);

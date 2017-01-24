@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
@@ -977,7 +978,7 @@ public class Security
 
     @Override
     public TransactionCategory getDetailedCategory(final TransactionCategory pCategory,
-                                                   final TaxYear pYear) {
+                                                   final MoneyWiseTaxCredit pYear) {
         /* Switch on category type */
         if (TransactionCategoryClass.DIVIDEND.equals(pCategory.getCategoryTypeClass())) {
             TransactionCategoryList myCategories = getDataSet().getTransCategories();

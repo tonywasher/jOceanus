@@ -28,6 +28,7 @@ import javax.swing.JComponent;
 import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
+import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -44,7 +45,7 @@ public class SwingView
      * @throws OceanusException on error
      */
     public SwingView(final MetisProgram pInfo) throws OceanusException {
-        super(new JOceanusSwingUtilitySet(pInfo));
+        super(new JOceanusSwingUtilitySet(pInfo), new MoneyWiseUKTaxYearCache());
     }
 
     @Override

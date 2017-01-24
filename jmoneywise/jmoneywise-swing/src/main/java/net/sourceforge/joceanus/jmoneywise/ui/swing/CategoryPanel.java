@@ -663,7 +663,6 @@ public class CategoryPanel
             /* Pass through the event */
             case STATEMENT:
             case ACCOUNT:
-            case TAXYEAR:
             case STATIC:
                 theEventManager.cascadeEvent(pEvent);
                 break;

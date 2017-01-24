@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
@@ -85,7 +85,7 @@ public class MoneyWiseReportCashFlow
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 
         /* Initialise the table */
-        HTMLTable myTable = theBuilder.startTable(myBody);
+        MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTotalCell(myTable);
         theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);

@@ -51,11 +51,6 @@ public enum AnalysisResource implements TethysResourceId {
     ANALYSIS_MANAGER("Analysis.Manager"),
 
     /**
-     * Analysis TaxCalculation.
-     */
-    ANALYSIS_TAXCALC("Analysis.TaxCalc"),
-
-    /**
      * Analysis Chargeable Events.
      */
     ANALYSIS_CHARGES("Analysis.Charges"),
@@ -244,46 +239,6 @@ public enum AnalysisResource implements TethysResourceId {
      * TaxBasisAccount List.
      */
     TAXBASIS_ACCOUNTLIST("TaxBasis.AccountList"),
-
-    /**
-     * TaxCalc Name.
-     */
-    TAXCALC_NAME("TaxCalc.Name"),
-
-    /**
-     * TaxCalc List.
-     */
-    TAXCALC_LIST("TaxCalc.List"),
-
-    /**
-     * TaxCalc Section.
-     */
-    TAXCALC_SECTION("TaxCalc.Section"),
-
-    /**
-     * TaxCalc Parent.
-     */
-    TAXCALC_PARENT("TaxCalc.Parent"),
-
-    /**
-     * TaxCalc Slices.
-     */
-    TAXCALC_SLICES("TaxCalc.Slices"),
-
-    /**
-     * TaxCalc List.
-     */
-    TAXCALC_YEAR("TaxCalc.Year"),
-
-    /**
-     * TaxCalc Age.
-     */
-    TAXCALC_AGE("TaxCalc.Age"),
-
-    /**
-     * TaxCalc Allowances.
-     */
-    TAXCALC_ALLOW("TaxCalc.Allow"),
 
     /**
      * Dilution Name.

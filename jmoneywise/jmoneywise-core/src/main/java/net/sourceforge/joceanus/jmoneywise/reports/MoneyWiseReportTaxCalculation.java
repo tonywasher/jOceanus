@@ -30,25 +30,17 @@ import org.w3c.dom.Element;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataResource;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxAnalysis;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxDueBucket;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxDueBucket.MoneyWiseTaxBandBucket;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxResource;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYear;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 
 /**
@@ -92,11 +84,6 @@ public class MoneyWiseReportTaxCalculation
     private final MetisDataFormatter theFormatter;
 
     /**
-     * Data Analysis.
-     */
-    private Analysis theAnalysis;
-
-    /**
      * Constructor.
      * @param pManager the Report Manager
      */
@@ -113,75 +100,16 @@ public class MoneyWiseReportTaxCalculation
      */
     @Override
     public Document createReport(final Analysis pAnalysis) {
-        /* Store the analysis */
-        theAnalysis = pAnalysis;
-
         /* Access the bucket lists */
-        MoneyWiseTaxAnalysis myTaxAnalysis = theAnalysis.getTaxAnalysis();
-        TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
-        TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
-        TaxYear myYear = myList.getTaxYear();
-        TaxCalcBucket myTax;
-
-        /* Make sure that the tax is calculated */
-        myList.calculateTax();
+        MoneyWiseTaxAnalysis myTaxAnalysis = pAnalysis.getTaxAnalysis();
+        MoneyWiseTaxYear myYear = myTaxAnalysis.getTaxYear();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myYear.getTaxYear()));
+        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myYear.getYearEnd()));
 
         /* Format the header */
-        theBuilder.makeSubTitle(myBody, "Taxation Summary");
-        HTMLTable myTable = theBuilder.startTable(myBody);
-        theBuilder.startHdrRow(myTable);
-        theBuilder.makeTitleCell(myTable, "Class");
-        theBuilder.makeTitleCell(myTable, "Total Income");
-        theBuilder.makeTitleCell(myTable, "Taxation Due");
-
-        /* Loop through the Tax Calculation Buckets */
-        Iterator<TaxCalcBucket> myIterator = myList.iterator();
-        while (myIterator.hasNext()) {
-            TaxCalcBucket myBucket = myIterator.next();
-
-            /* Skip the non-summary elements */
-            if (myBucket.getCategorySection() != TaxCategorySection.TAXSUMM) {
-                continue;
-            }
-
-            /* Format the line */
-            theBuilder.startRow(myTable);
-            theBuilder.makeTableLinkCell(myTable, myBucket.getName());
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyValue(TaxAttribute.AMOUNT));
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyValue(TaxAttribute.TAXATION));
-
-            /* Format the detail */
-            makeTaxReport(myTable, myBucket);
-        }
-
-        /* Access the Total taxation bucket */
-        myTax = myList.getBucket(TaxCategoryClass.TOTALTAXATIONDUE);
-        theBuilder.startTotalRow(myTable);
-        theBuilder.makeTotalCell(myTable, myTax.getName());
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.AMOUNT));
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.TAXATION));
-
-        /* Access the Tax Paid bucket */
-        TaxBasisBucket myTaxPaid = myBasis.getBucket(TaxBasisClass.TAXPAID);
-        theBuilder.startTotalRow(myTable);
-        theBuilder.makeTotalCell(myTable, myTaxPaid.getName());
-        theBuilder.makeTotalCell(myTable);
-        theBuilder.makeTotalCell(myTable, myTaxPaid.getMoneyValue(TaxBasisAttribute.GROSS));
-
-        /* Access the Tax Profit bucket */
-        myTax = myList.getBucket(TaxCategoryClass.TAXPROFITLOSS);
-        theBuilder.startTotalRow(myTable);
-        theBuilder.makeTotalCell(myTable, myTax.getName());
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.AMOUNT));
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.TAXATION));
-
-        /* Format the header */
-        theBuilder.makeSubTitle(myBody, "New Taxation");
-        myTable = theBuilder.startTable(myBody);
+        MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable, MoneyWiseDataTypeResource.TAXBASIS_NAME.getValue());
         theBuilder.makeTitleCell(myTable, TEXT_INCOME);
@@ -223,55 +151,10 @@ public class MoneyWiseReportTaxCalculation
      * @param pParent the parent table
      * @param pSummary the tax summary
      */
-    public void makeTaxReport(final HTMLTable pParent,
-                              final TaxCalcBucket pSummary) {
-        /* Access the bucket lists */
-        TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
-
-        /* Format the detail */
-        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
-        theBuilder.startRow(myTable);
-        theBuilder.makeTitleCell(myTable, "Class");
-        theBuilder.makeTitleCell(myTable, "Income");
-        theBuilder.makeTitleCell(myTable, "Rate");
-        theBuilder.makeTitleCell(myTable, "Taxation Due");
-
-        /* Loop through the Transaction Detail Buckets */
-        Iterator<TaxCalcBucket> myIterator = myList.iterator();
-        while (myIterator.hasNext()) {
-            TaxCalcBucket myBucket = myIterator.next();
-
-            /* Skip non-detail buckets */
-            if (myBucket.getCategorySection() != TaxCategorySection.TAXDETAIL) {
-                continue;
-            }
-
-            /* Skip record if incorrect parent */
-            if (!pSummary.equals(myBucket.getParent())) {
-                continue;
-            }
-
-            /* Format the detail */
-            theBuilder.startRow(myTable);
-            theBuilder.makeTitleCell(myTable, myBucket.getName());
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyValue(TaxAttribute.AMOUNT));
-            theBuilder.makeValueCell(myTable, myBucket.getRateValue(TaxAttribute.RATE));
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyValue(TaxAttribute.TAXATION));
-        }
-
-        /* Embed the table correctly */
-        theBuilder.embedTable(myTable, pSummary.getName());
-    }
-
-    /**
-     * Build a standard tax report element.
-     * @param pParent the parent table
-     * @param pSummary the tax summary
-     */
-    public void makeTaxReport(final HTMLTable pParent,
+    public void makeTaxReport(final MetisHTMLTable pParent,
                               final MoneyWiseTaxDueBucket pSummary) {
         /* Format the detail */
-        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
         theBuilder.startRow(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_INCOME);
         theBuilder.makeTitleCell(myTable, TEXT_RATE);

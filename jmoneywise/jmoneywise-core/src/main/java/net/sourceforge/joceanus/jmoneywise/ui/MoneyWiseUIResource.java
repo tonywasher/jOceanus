@@ -298,11 +298,6 @@ public enum MoneyWiseUIResource implements TethysResourceId {
     REPORT_DATAENTRY("Report.DataEntry"),
 
     /**
-     * TaxYear DataEntry.
-     */
-    TAXYEAR_DATAENTRY("TaxYear.DataEntry"),
-
-    /**
      * SpotPrices DataEntry.
      */
     PRICES_DATAENTRY("SpotPrices.DataEntry"),
@@ -376,11 +371,6 @@ public enum MoneyWiseUIResource implements TethysResourceId {
      * Maintenance Category Tab.
      */
     MAINTENANCE_CATEGORY("Maintenance.Tab.Category"),
-
-    /**
-     * Maintenance TaxYear Tab.
-     */
-    MAINTENANCE_TAXYEAR("Maintenance.Tab.TaxYear"),
 
     /**
      * Maintenance Static Tab.

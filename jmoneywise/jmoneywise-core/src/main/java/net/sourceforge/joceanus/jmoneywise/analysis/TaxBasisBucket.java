@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Currency;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
@@ -1318,10 +1319,19 @@ public class TaxBasisBucket
 
         @Override
         public TethysMoney getAmountForTaxBasis(final TaxBasisClass pBasis) {
+            /* Access the bucket */
             TaxBasisBucket myItem = findItemById(pBasis.getClassId());
-            return myItem == null
-                                  ? new TethysMoney(theAnalysis.getCurrency().getCurrency())
-                                  : myItem.getMoneyValue(TaxBasisAttribute.GROSS);
+
+            /* If the bucket is not found */
+            if (myItem == null) {
+                AssetCurrency myAssetCurrency = theAnalysis.getCurrency();
+                Currency myCurrency = myAssetCurrency == null
+                                                              ? Currency.getInstance(Locale.getDefault())
+                                                              : myAssetCurrency.getCurrency();
+                return new TethysMoney(myCurrency);
+            }
+
+            return myItem.getMoneyValue(TaxBasisAttribute.GROSS);
         }
     }
 }

@@ -52,11 +52,6 @@ public enum MoneyWiseGoToId {
     REGION,
 
     /**
-     * TaxYear.
-     */
-    TAXYEAR,
-
-    /**
      * Static.
      */
     STATIC;

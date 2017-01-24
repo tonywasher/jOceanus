@@ -37,7 +37,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseTax.MoneyWiseTaxCredit;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
@@ -88,7 +89,7 @@ public class Transaction
     /**
      * TaxYear Field Id.
      */
-    public static final MetisField FIELD_TAXYEAR = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataType.TAXYEAR.getItemName());
+    public static final MetisField FIELD_TAXYEAR = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_TAXYEAR.getValue());
 
     /**
      * EventInfoSet field Id.
@@ -262,15 +263,15 @@ public class Transaction
      */
     private void setValueDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_DATE, pValue);
-        TaxYearList myYears = getDataSet().getTaxYears();
-        setValueTaxYear(myYears.findTaxYearForDate(pValue));
+        MoneyWiseTaxFactory myFactory = getDataSet().getTaxFactory();
+        setValueTaxYear(myFactory.findTaxYearForDate(pValue));
     }
 
     /**
      * Obtain TaxYear.
      * @return the taxYear
      */
-    public TaxYear getTaxYear() {
+    public MoneyWiseTaxCredit getTaxYear() {
         return getTaxYear(getValueSet());
     }
 
@@ -279,15 +280,15 @@ public class Transaction
      * @param pValueSet the valueSet
      * @return the TaxYear
      */
-    public static TaxYear getTaxYear(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_TAXYEAR, TaxYear.class);
+    public static MoneyWiseTaxCredit getTaxYear(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_TAXYEAR, MoneyWiseTaxCredit.class);
     }
 
     /**
      * Set taxYear value.
      * @param pValue the value
      */
-    private void setValueTaxYear(final TaxYear pValue) {
+    private void setValueTaxYear(final MoneyWiseTaxCredit pValue) {
         getValueSet().setValue(FIELD_TAXYEAR, pValue);
     }
 
@@ -645,9 +646,6 @@ public class Transaction
         /* Update the Transaction details */
         super.resolveDataSetLinks();
 
-        /* Resolve taxYear */
-        resolveDataLink(FIELD_TAXYEAR, getDataSet().getTaxYears());
-
         /* Sort linkSets */
         if (hasInfoSet) {
             theInfoSet.sortLinkSets();
@@ -683,8 +681,7 @@ public class Transaction
         }
 
         /* Determine date range to check for */
-        TransactionList myList = getList();
-        TethysDateRange myRange = myList.getValidDateRange();
+        TethysDateRange myRange = getDataSet().getDateRange();
 
         /* The date must be non-null */
         if (myDate == null) {
@@ -740,26 +737,26 @@ public class Transaction
      * @return the calculated tax credit
      */
     public final TethysMoney calculateTaxCredit() {
-        MoneyWiseData myData = getDataSet();
-        TaxYearList myList = myData.getTaxYears();
+        MoneyWiseTaxCredit myTax = getTaxYear();
+        TethysMoney myCredit = getTaxCredit();
 
         /* Ignore unless tax credit is null/zero */
-        if ((getTaxCredit() != null) && (getTaxCredit().isNonZero())) {
-            return getTaxCredit();
+        if (myCredit != null
+            && myCredit.isNonZero()) {
+            return myCredit;
         }
 
         /* Ignore unless category is interest/dividend */
-        if ((getCategory() == null) || ((!isInterest()) && (!isDividend()))) {
-            return getTaxCredit();
+        if ((getCategory() == null)
+            || (!isInterest()
+                && !isDividend())) {
+            return myCredit;
         }
-
-        /* Access the relevant tax year */
-        TaxYear myTax = myList.findTaxYearForDate(getDate());
 
         /* Determine the tax credit rate */
         TethysRate myRate = isInterest()
-                                         ? myTax.getIntTaxRate()
-                                         : myTax.getDivTaxRate();
+                                         ? myTax.getTaxCreditRateForInterest()
+                                         : myTax.getTaxCreditRateForDividend();
 
         /* Calculate the tax credit */
         return getAmount().taxCreditAtRate(myRate);
@@ -1043,12 +1040,12 @@ public class Transaction
         /**
          * The TransactionInfo List.
          */
-        private TransactionInfoList theInfoList = null;
+        private TransactionInfoList theInfoList;
 
         /**
          * The TransactionInfoType list.
          */
-        private TransactionInfoTypeList theInfoTypeList = null;
+        private TransactionInfoTypeList theInfoTypeList;
 
         /**
          * Construct an empty CORE list.
@@ -1151,7 +1148,12 @@ public class Transaction
             Transaction myTrans = new Transaction(this);
 
             /* Set the Date as the start of the range */
-            myTrans.setDate(getValidDateRange().getStart());
+            TethysDate myDate = new TethysDate();
+            TethysDateRange myRange = getDataSet().getDateRange();
+            if (myRange.compareTo(myDate) != 0) {
+                myDate = myRange.getStart();
+            }
+            myTrans.setDate(myDate);
 
             /* Add to list and return */
             add(myTrans);

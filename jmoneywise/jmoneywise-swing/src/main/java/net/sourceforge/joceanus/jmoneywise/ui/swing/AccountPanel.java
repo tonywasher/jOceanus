@@ -689,7 +689,6 @@ public class AccountPanel
             case CATEGORY:
             case REGION:
             case TAG:
-            case TAXYEAR:
             case STATIC:
                 theEventManager.cascadeEvent(pEvent);
                 break;

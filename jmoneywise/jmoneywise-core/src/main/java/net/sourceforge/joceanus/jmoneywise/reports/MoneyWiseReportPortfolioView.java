@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
@@ -122,7 +122,7 @@ public class MoneyWiseReportPortfolioView
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDate));
 
         /* Initialise the table */
-        HTMLTable myTable = theBuilder.startTable(myBody);
+        MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
@@ -179,7 +179,7 @@ public class MoneyWiseReportPortfolioView
     }
 
     @Override
-    public HTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         Object mySource = pTable.getSource();
         if (mySource instanceof PortfolioBucket) {
@@ -197,13 +197,13 @@ public class MoneyWiseReportPortfolioView
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    private HTMLTable createDelayedPortfolio(final HTMLTable pParent,
+    private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
                                              final PortfolioBucket pSource) {
         /* Access the securities and portfolio */
         SecurityBucketList mySecurities = pSource.getSecurities();
 
         /* Create a new table */
-        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Security Buckets */
         Iterator<SecurityBucket> myIterator = mySecurities.iterator();

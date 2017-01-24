@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAnalyser;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
@@ -50,14 +51,14 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 public class View<N, I>
         extends DataControl<MoneyWiseData, MoneyWiseDataType, N, I> {
     /**
+     * The TaxFactory.
+     */
+    private final MoneyWiseTaxFactory theTaxFactory;
+
+    /**
      * The DataSet.
      */
     private MoneyWiseData theData;
-
-    /**
-     * The Date range for the view.
-     */
-    private TethysDateRange theRange;
 
     /**
      * The analysis manager.
@@ -82,14 +83,27 @@ public class View<N, I>
     /**
      * Constructor.
      * @param pUtilitySet the utility set
+     * @param pTaxFactory the tax factory
      * @throws OceanusException on error
      */
-    public View(final JOceanusUtilitySet<N, I> pUtilitySet) throws OceanusException {
+    public View(final JOceanusUtilitySet<N, I> pUtilitySet,
+                final MoneyWiseTaxFactory pTaxFactory) throws OceanusException {
         /* Call super-constructor */
         super(pUtilitySet);
 
+        /* Record the tax factory */
+        theTaxFactory = pTaxFactory;
+
         /* Create an empty data set */
         setData(getNewData());
+    }
+
+    /**
+     * Obtain Tax Factory.
+     * @return the taxFactory
+     */
+    public MoneyWiseTaxFactory getTaxFactory() {
+        return theTaxFactory;
     }
 
     /**
@@ -97,7 +111,7 @@ public class View<N, I>
      * @return the date range
      */
     public TethysDateRange getRange() {
-        return theRange;
+        return theTaxFactory.getDateRange();
     }
 
     /**
@@ -138,7 +152,7 @@ public class View<N, I>
      */
     @Override
     public final MoneyWiseData getNewData() {
-        return new MoneyWiseData(getUtilitySet());
+        return new MoneyWiseData(getUtilitySet(), theTaxFactory);
     }
 
     @Override
@@ -206,12 +220,6 @@ public class View<N, I>
             clearErrors();
         }
 
-        /* Calculate the Data Range */
-        theData.calculateDateRange();
-
-        /* Access the range */
-        theRange = theData.getDateRange();
-
         /* Protect against exceptions */
         try {
             /* Analyse the data */
@@ -263,8 +271,5 @@ public class View<N, I>
 
         /* Register the changes */
         incrementVersion();
-
-        /* Discover data */
-        theData.calculateDateRange();
     }
 }

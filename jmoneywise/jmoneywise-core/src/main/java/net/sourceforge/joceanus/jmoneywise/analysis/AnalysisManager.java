@@ -43,10 +43,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYear;
-import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYearCache;
-import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -67,19 +63,9 @@ public class AnalysisManager
     private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisManager.class.getSimpleName());
 
     /**
-     * TaxYears Field Id.
-     */
-    private static final MetisField FIELD_TAXYEARS = FIELD_DEFS.declareEqualityField("TaxYears");
-
-    /**
      * BaseAnalysis Field Id.
      */
     private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
-
-    /**
-     * The taxYear cache.
-     */
-    private final MoneyWiseTaxYearCache theTaxYearCache;
 
     /**
      * The analysis map.
@@ -90,11 +76,6 @@ public class AnalysisManager
      * The base analysis.
      */
     private final Analysis theAnalysis;
-
-    /**
-     * The first date.
-     */
-    private final TethysDate theFirstDate;
 
     /**
      * Do we have active securities?
@@ -114,14 +95,8 @@ public class AnalysisManager
         /* Store the parameters */
         theAnalysis = pAnalysis;
 
-        /* Create the taxYear cache and analysis map */
-        theTaxYearCache = new MoneyWiseUKTaxYearCache();
+        /* Create the analysis map */
         theAnalysisMap = new HashMap<>();
-
-        /* Store the first date */
-        MoneyWiseData myData = theAnalysis.getData();
-        TethysDateRange myRange = myData.getDateRange();
-        theFirstDate = myRange.getStart();
     }
 
     @Override
@@ -132,9 +107,6 @@ public class AnalysisManager
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Handle standard fields */
-        if (FIELD_TAXYEARS.equals(pField)) {
-            return theTaxYearCache;
-        }
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
@@ -158,7 +130,7 @@ public class AnalysisManager
      * @return true/false
      */
     public boolean isIdle() {
-        return theFirstDate == null;
+        return theAnalysis.isIdle();
     }
 
     /**
@@ -183,24 +155,6 @@ public class AnalysisManager
      */
     public Boolean haveActiveSecurities() {
         return haveActiveSecurities;
-    }
-
-    /**
-     * Obtain the taxYear for the date.
-     * @param pDate the date
-     * @return the taxYear
-     */
-    public MoneyWiseTaxYear getTaxYearForDate(final TethysDate pDate) {
-        return theTaxYearCache.getTaxYearForDate(pDate);
-    }
-
-    /**
-     * Obtain the taxYear for the date range.
-     * @param pRange the date range
-     * @return the taxYear (or null)
-     */
-    public MoneyWiseTaxYear getTaxYearForRange(final TethysDateRange pRange) {
-        return theTaxYearCache.getTaxYearForRange(pRange);
     }
 
     /**

@@ -64,29 +64,14 @@ public enum MoneyWiseDataType implements MetisFieldEnum {
     TAXBASIS,
 
     /**
-     * TaxType.
-     */
-    TAXTYPE,
-
-    /**
      * Currency.
      */
     CURRENCY,
 
     /**
-     * TaxRegime.
-     */
-    TAXREGIME,
-
-    /**
      * Frequency.
      */
     FREQUENCY,
-
-    /**
-     * TaxInfoType.
-     */
-    TAXINFOTYPE,
 
     /**
      * AccountInfoType.
@@ -97,16 +82,6 @@ public enum MoneyWiseDataType implements MetisFieldEnum {
      * TransactionInfoType.
      */
     TRANSINFOTYPE,
-
-    /**
-     * TaxYear.
-     */
-    TAXYEAR,
-
-    /**
-     * TaxYearInfo.
-     */
-    TAXYEARINFO,
 
     /**
      * TransactionTag.

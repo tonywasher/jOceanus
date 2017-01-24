@@ -3,7 +3,7 @@ package net.sourceforge.joceanus.jmetis.report;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 
 /**
  * Reference Manager for report builders.
@@ -69,7 +69,7 @@ public class MetisReportReferenceManager<F> {
         theDelayedMap.remove(pReference);
 
         /* Create the delayed table */
-        HTMLTable myTable = theReport.createDelayedTable(myDelay);
+        MetisHTMLTable myTable = theReport.createDelayedTable(myDelay);
 
         /* Embed the table correctly */
         pBuilder.embedTable(myTable, myDelay.getId());
@@ -106,7 +106,7 @@ public class MetisReportReferenceManager<F> {
      * @param pSource the selection object
      */
     protected void setDelayedTable(final String pId,
-                                   final HTMLTable pParent,
+                                   final MetisHTMLTable pParent,
                                    final Object pSource) {
         /* Create the delayed table reference */
         DelayedTable myTable = new DelayedTable(pId, pParent, pSource);
@@ -128,7 +128,7 @@ public class MetisReportReferenceManager<F> {
         /**
          * The parent control.
          */
-        private final HTMLTable theParent;
+        private final MetisHTMLTable theParent;
 
         /**
          * The table source.
@@ -142,7 +142,7 @@ public class MetisReportReferenceManager<F> {
          * @param pSource the source
          */
         private DelayedTable(final String pId,
-                             final HTMLTable pParent,
+                             final MetisHTMLTable pParent,
                              final Object pSource) {
             /* Store details */
             theId = pId;
@@ -162,7 +162,7 @@ public class MetisReportReferenceManager<F> {
          * Obtain the parent.
          * @return the parent
          */
-        public HTMLTable getParent() {
+        public MetisHTMLTable getParent() {
             return theParent;
         }
 

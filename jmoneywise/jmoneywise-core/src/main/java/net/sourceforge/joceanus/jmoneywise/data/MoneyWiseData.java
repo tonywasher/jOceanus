@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfo.LoanInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
@@ -58,8 +59,6 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOption.StockOptionList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionInfo.StockOptionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.StockOptionVest.StockOptionVestList;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
@@ -75,9 +74,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis.TaxBasisList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.JOceanusUtilitySet;
@@ -102,11 +98,6 @@ public class MoneyWiseData
     private static final Map<MetisField, MoneyWiseDataType> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, MoneyWiseDataType.class);
 
     /**
-     * DateRange Type Field Id.
-     */
-    public static final MetisField FIELD_DATERANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
-
-    /**
      * DefaultCurrency Field Id.
      */
     public static final MetisField FIELD_DEFCURR = FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
@@ -117,9 +108,9 @@ public class MoneyWiseData
     public static final MetisField FIELD_HOLDINGSMAP = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_HOLDINGSMAP.getValue());
 
     /**
-     * DataSet range.
+     * TaxFactory.
      */
-    private TethysDateRange theDateRange;
+    private final MoneyWiseTaxFactory theTaxFactory;
 
     /**
      * Default Currency.
@@ -139,10 +130,15 @@ public class MoneyWiseData
     /**
      * Standard constructor.
      * @param pUtilitySet the utility set
+     * @param pTaxFactory the tax factory
      */
-    public MoneyWiseData(final JOceanusUtilitySet<?, ?> pUtilitySet) {
+    public MoneyWiseData(final JOceanusUtilitySet<?, ?> pUtilitySet,
+                         final MoneyWiseTaxFactory pTaxFactory) {
         /* Call Super-constructor */
         super(MoneyWiseDataType.class, pUtilitySet);
+
+        /* Record the tax factory */
+        theTaxFactory = pTaxFactory;
 
         /* Loop through the list types */
         for (MoneyWiseDataType myType : MoneyWiseDataType.values()) {
@@ -157,6 +153,7 @@ public class MoneyWiseData
      */
     private MoneyWiseData(final MoneyWiseData pSource) {
         super(pSource);
+        theTaxFactory = pSource.getTaxFactory();
     }
 
     @Override
@@ -166,11 +163,6 @@ public class MoneyWiseData
 
     @Override
     public Object getFieldValue(final MetisField pField) {
-        if (FIELD_DATERANGE.equals(pField)) {
-            return theDateRange == null
-                                        ? MetisFieldValue.SKIP
-                                        : theDateRange;
-        }
         if (FIELD_DEFCURR.equals(pField)) {
             return theDefaultCurrency == null
                                               ? MetisFieldValue.SKIP
@@ -255,14 +247,6 @@ public class MoneyWiseData
     }
 
     /**
-     * Obtain TaxCategories.
-     * @return the Tax categories
-     */
-    public TaxCategoryList getTaxCategories() {
-        return getDataList(MoneyWiseDataType.TAXTYPE, TaxCategoryList.class);
-    }
-
-    /**
      * Obtain Asset Currencies.
      * @return the Asset Currencies
      */
@@ -271,27 +255,11 @@ public class MoneyWiseData
     }
 
     /**
-     * Obtain TaxRegimes.
-     * @return the TaxRegimes
-     */
-    public TaxRegimeList getTaxRegimes() {
-        return getDataList(MoneyWiseDataType.TAXREGIME, TaxRegimeList.class);
-    }
-
-    /**
      * Obtain Frequencies.
      * @return the Frequencies
      */
     public FrequencyList getFrequencys() {
         return getDataList(MoneyWiseDataType.FREQUENCY, FrequencyList.class);
-    }
-
-    /**
-     * Obtain TaxInfoTypes.
-     * @return the TaxYear Info types
-     */
-    public TaxYearInfoTypeList getTaxInfoTypes() {
-        return getDataList(MoneyWiseDataType.TAXINFOTYPE, TaxYearInfoTypeList.class);
     }
 
     /**
@@ -356,22 +324,6 @@ public class MoneyWiseData
      */
     public TransactionCategoryList getTransCategories() {
         return getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
-    }
-
-    /**
-     * Obtain TaxYears.
-     * @return the TaxYears
-     */
-    public TaxYearList getTaxYears() {
-        return getDataList(MoneyWiseDataType.TAXYEAR, TaxYearList.class);
-    }
-
-    /**
-     * Obtain TaxInfo.
-     * @return the Tax Info
-     */
-    public TaxInfoList getTaxInfo() {
-        return getDataList(MoneyWiseDataType.TAXYEARINFO, TaxInfoList.class);
     }
 
     /**
@@ -543,11 +495,19 @@ public class MoneyWiseData
     }
 
     /**
+     * Obtain Tax Factory.
+     * @return the taxFactory
+     */
+    public MoneyWiseTaxFactory getTaxFactory() {
+        return theTaxFactory;
+    }
+
+    /**
      * Obtain Date range.
      * @return the Date Range
      */
     public TethysDateRange getDateRange() {
-        return theDateRange;
+        return theTaxFactory.getDateRange();
     }
 
     /**
@@ -637,16 +597,10 @@ public class MoneyWiseData
                 return new TransactionCategoryTypeList(this);
             case TAXBASIS:
                 return new TaxBasisList(this);
-            case TAXTYPE:
-                return new TaxCategoryList(this);
             case CURRENCY:
                 return new AssetCurrencyList(this);
-            case TAXREGIME:
-                return new TaxRegimeList(this);
             case FREQUENCY:
                 return new FrequencyList(this);
-            case TAXINFOTYPE:
-                return new TaxYearInfoTypeList(this);
             case ACCOUNTINFOTYPE:
                 return new AccountInfoTypeList(this);
             case TRANSINFOTYPE:
@@ -663,10 +617,6 @@ public class MoneyWiseData
                 return new LoanCategoryList(this);
             case TRANSCATEGORY:
                 return new TransactionCategoryList(this);
-            case TAXYEAR:
-                return new TaxYearList(this);
-            case TAXYEARINFO:
-                return new TaxInfoList(this);
             case EXCHANGERATE:
                 return new ExchangeRateList(this);
             case PAYEE:
@@ -762,14 +712,6 @@ public class MoneyWiseData
 
         /* Return the differences */
         return myDiffers;
-    }
-
-    /**
-     * Calculate the allowed Date Range.
-     */
-    public void calculateDateRange() {
-        theDateRange = getTaxYears().getRange();
-        getTransactions().setRange(theDateRange);
     }
 
     /**

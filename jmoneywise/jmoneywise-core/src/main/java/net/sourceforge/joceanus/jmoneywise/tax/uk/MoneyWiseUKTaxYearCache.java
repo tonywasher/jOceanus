@@ -44,6 +44,11 @@ public class MoneyWiseUKTaxYearCache
     private final Map<TethysDate, MoneyWiseUKTaxYear> theCache;
 
     /**
+     * The date range.
+     */
+    private final TethysDateRange theDateRange;
+
+    /**
      * Constructor.
      */
     public MoneyWiseUKTaxYearCache() {
@@ -91,6 +96,14 @@ public class MoneyWiseUKTaxYearCache
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2015);
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2016);
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2017);
+        setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2018);
+
+        /* Determine the dateRange */
+        TethysDate myStart = MoneyWiseUKTaxYearFactory.YEAR_1981.getYearEnd();
+        TethysDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2018.getYearEnd();
+        myStart.adjustDay(1);
+        myStart.adjustYear(-1);
+        theDateRange = new TethysDateRange(myStart, myEnd);
     }
 
     /**
@@ -98,18 +111,23 @@ public class MoneyWiseUKTaxYearCache
      * @param pTaxYear the taxYear
      */
     private void setTaxYearInCache(final MoneyWiseUKTaxYear pTaxYear) {
-        theCache.put(pTaxYear.getYear(), pTaxYear);
+        theCache.put(pTaxYear.getYearEnd(), pTaxYear);
     }
 
     @Override
-    public MoneyWiseUKTaxYear getTaxYearForRange(final TethysDateRange pRange) {
+    public TethysDateRange getDateRange() {
+        return theDateRange;
+    }
+
+    @Override
+    public MoneyWiseUKTaxYear findTaxYearForRange(final TethysDateRange pRange) {
         return checkTaxYearRange(pRange)
-                                         ? getTaxYearForDate(pRange.getEnd())
+                                         ? findTaxYearForDate(pRange.getEnd())
                                          : null;
     }
 
     @Override
-    public MoneyWiseUKTaxYear getTaxYearForDate(final TethysDate pDate) {
+    public MoneyWiseUKTaxYear findTaxYearForDate(final TethysDate pDate) {
         TethysDate myDate = getTaxYearDate(pDate);
         return theCache.get(myDate);
     }

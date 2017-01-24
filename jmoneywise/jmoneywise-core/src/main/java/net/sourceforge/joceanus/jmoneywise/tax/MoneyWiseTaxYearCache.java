@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.tax;
 
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
@@ -29,7 +30,8 @@ import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 /**
  * Tax Year cache.
  */
-public abstract class MoneyWiseTaxYearCache {
+public abstract class MoneyWiseTaxYearCache
+        implements MoneyWiseTaxFactory {
     /**
      * The Fiscal Year.
      */
@@ -48,14 +50,14 @@ public abstract class MoneyWiseTaxYearCache {
      * @param pRange the range
      * @return the taxYear or null if not a taxYear period
      */
-    public abstract MoneyWiseTaxYear getTaxYearForRange(TethysDateRange pRange);
+    public abstract MoneyWiseTaxYear findTaxYearForRange(TethysDateRange pRange);
 
     /**
      * Obtain the taxYear for the date.
      * @param pDate the date
      * @return the taxYear
      */
-    public abstract MoneyWiseTaxYear getTaxYearForDate(TethysDate pDate);
+    public abstract MoneyWiseTaxYear findTaxYearForDate(TethysDate pDate);
 
     /**
      * Obtain the taxYear date.

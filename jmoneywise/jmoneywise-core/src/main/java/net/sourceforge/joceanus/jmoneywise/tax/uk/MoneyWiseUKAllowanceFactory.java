@@ -257,6 +257,12 @@ public final class MoneyWiseUKAllowanceFactory {
             getAmount(11100), getAmount(1000), getAmount(5000), ADDITIONAL_THRESHOLD);
 
     /**
+     * The 2018 Allowance.
+     */
+    protected static final MoneyWiseUKBasicAllowance ALLOWANCE_2018 = new MoneyWiseUKSavingsAllowance(getAmount(11500), NEW_RENTAL,
+            getAmount(11100), getAmount(1000), getAmount(5000), ADDITIONAL_THRESHOLD);
+
+    /**
      * Constructor.
      */
     private MoneyWiseUKAllowanceFactory() {

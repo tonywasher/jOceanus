@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
@@ -43,9 +42,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType.LoanCat
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis.TaxBasisList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
@@ -76,11 +72,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.Tethy
  */
 public class MaintenanceTab
         implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
-    /**
-     * TaxYears tab title.
-     */
-    private static final String TITLE_TAXYEARS = MoneyWiseUIResource.MAINTENANCE_TAXYEAR.getValue();
-
     /**
      * Preferences tab title.
      */
@@ -130,11 +121,6 @@ public class MaintenanceTab
      * The Tabs.
      */
     private final TethysSwingTabPaneManager theTabs;
-
-    /**
-     * The TaxYear Panel.
-     */
-    private final TaxYearTable theTaxYearTab;
 
     /**
      * The Account Panel.
@@ -191,10 +177,6 @@ public class MaintenanceTab
         theCategoryTab = new CategoryPanel(theView);
         theTabs.addTabItem(TITLE_CATEGORY, theCategoryTab);
 
-        /* Create the TaxYears Tab */
-        theTaxYearTab = new TaxYearTable(theView);
-        theTabs.addTabItem(TITLE_TAXYEARS, theTaxYearTab);
-
         /* Create the Static Tab */
         theStatic = new StaticDataPanel<>(theView, theView.getUtilitySet(), MoneyWiseDataType.class);
         theTabs.addTabItem(TITLE_STATIC, theStatic);
@@ -208,10 +190,7 @@ public class MaintenanceTab
         theStatic.addStatic(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
         theStatic.addStatic(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
         theStatic.addStatic(MoneyWiseDataType.TAXBASIS, TaxBasisList.class);
-        theStatic.addStatic(MoneyWiseDataType.TAXTYPE, TaxCategoryList.class);
-        theStatic.addStatic(MoneyWiseDataType.TAXREGIME, TaxRegimeList.class);
         theStatic.addStatic(MoneyWiseDataType.FREQUENCY, FrequencyList.class);
-        theStatic.addStatic(MoneyWiseDataType.TAXINFOTYPE, TaxYearInfoTypeList.class);
         theStatic.addStatic(MoneyWiseDataType.ACCOUNTINFOTYPE, AccountInfoTypeList.class);
         theStatic.addStatic(MoneyWiseDataType.TRANSINFOTYPE, TransactionInfoTypeList.class);
 
@@ -236,7 +215,6 @@ public class MaintenanceTab
         theTabs.getEventRegistrar().addEventListener(e -> determineFocus());
         setChildListeners(theAccountTab.getEventRegistrar());
         setChildListeners(theCategoryTab.getEventRegistrar());
-        setChildListeners(theTaxYearTab.getEventRegistrar());
         setChildListeners(theStatic.getEventRegistrar());
         thePreferences.getEventRegistrar().addEventListener(e -> setVisibility());
 
@@ -320,7 +298,6 @@ public class MaintenanceTab
             /* Refresh sub-panels */
             theAccountTab.refreshData();
             theCategoryTab.refreshData();
-            theTaxYearTab.refreshData();
             theStatic.refreshData();
 
         } catch (OceanusException e) {
@@ -343,9 +320,6 @@ public class MaintenanceTab
             hasUpdates = theCategoryTab.hasUpdates();
         }
         if (!hasUpdates) {
-            hasUpdates = theTaxYearTab.hasUpdates();
-        }
-        if (!hasUpdates) {
             hasUpdates = theStatic.hasUpdates();
         }
         if (!hasUpdates) {
@@ -365,9 +339,6 @@ public class MaintenanceTab
         boolean hasUpdates = theAccountTab.hasSession();
         if (!hasUpdates) {
             hasUpdates = theCategoryTab.hasSession();
-        }
-        if (!hasUpdates) {
-            hasUpdates = theTaxYearTab.hasSession();
         }
         if (!hasUpdates) {
             hasUpdates = theStatic.hasSession();
@@ -427,16 +398,6 @@ public class MaintenanceTab
                 gotoNamedTab(TITLE_CATEGORY);
                 break;
 
-            /* View the requested taxYear */
-            case TAXYEAR:
-                /* Select the requested tag */
-                TaxYear myYear = pEvent.getDetails(TaxYear.class);
-                theTaxYearTab.selectTaxYear(myYear);
-
-                /* Goto the TaxYears tab */
-                gotoNamedTab(TITLE_TAXYEARS);
-                break;
-
             /* View the requested static */
             case STATIC:
                 /* Select the requested tag */
@@ -481,10 +442,6 @@ public class MaintenanceTab
         doEnabled = !hasSession || theCategoryTab.hasSession();
         theTabs.enableItemByName(TITLE_CATEGORY, doEnabled);
 
-        /* Enable/Disable the TaxYear tab */
-        doEnabled = !hasSession || theTaxYearTab.hasSession();
-        theTabs.enableItemByName(TITLE_TAXYEARS, doEnabled);
-
         /* Enable/Disable the static tab */
         doEnabled = !hasSession || theStatic.hasSession();
         theTabs.enableItemByName(TITLE_STATIC, doEnabled);
@@ -514,11 +471,6 @@ public class MaintenanceTab
         } else if (myComponent.equals(theCategoryTab.getNode())) {
             /* Set the debug focus */
             theCategoryTab.determineFocus();
-
-            /* If the selected component is TaxYear */
-        } else if (myComponent.equals(theTaxYearTab.getNode())) {
-            /* Set the debug focus */
-            theTaxYearTab.determineFocus();
 
             /* If the selected component is Static */
         } else if (myComponent.equals(theStatic.getNode())) {
@@ -550,7 +502,6 @@ public class MaintenanceTab
 
             /* Access maintenance */
             case ACCOUNT:
-            case TAXYEAR:
             case CATEGORY:
             case TAG:
             case REGION:

@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -601,7 +602,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @return detailed category
      */
     public TransactionCategory getDetailedCategory(final TransactionCategory pCategory,
-                                                   final TaxYear pYear) {
+                                                   final MoneyWiseTaxCredit pYear) {
         /* return the unchanged category */
         return pCategory;
     }

@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -125,7 +125,7 @@ public class CoeusReportLoanBook
 
         /* Initialise the active Loan table */
         theBuilder.makeSubTitle(myBody, "Active Loans");
-        HTMLTable myTable = theBuilder.startTable(myBody);
+        MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_LOANID);
         theBuilder.makeTitleCell(myTable, TEXT_STARTDATE);

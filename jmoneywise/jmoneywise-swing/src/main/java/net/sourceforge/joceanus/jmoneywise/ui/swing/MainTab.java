@@ -417,7 +417,6 @@ public class MainTab
 
             /* Access maintenance */
             case ACCOUNT:
-            case TAXYEAR:
             case CATEGORY:
             case REGION:
             case TAG:

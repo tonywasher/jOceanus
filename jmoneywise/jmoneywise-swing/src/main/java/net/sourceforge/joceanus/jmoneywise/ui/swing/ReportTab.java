@@ -242,6 +242,7 @@ public class ReportTab
 
             /* Refresh the data */
             theSelect.setRange(theView.getRange());
+            theSelect.setSecurities(theView.hasActiveSecurities());
             buildReport();
 
             /* Create SavePoint */

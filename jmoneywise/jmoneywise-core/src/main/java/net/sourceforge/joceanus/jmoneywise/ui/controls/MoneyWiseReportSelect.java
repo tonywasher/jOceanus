@@ -111,14 +111,9 @@ public class MoneyWiseReportSelect<N, I>
     public MoneyWiseReportSelect(final TethysGuiFactory<N, I> pFactory) {
         /* Create the report button */
         theReportButton = pFactory.newScrollButton();
-        buildReportMenu();
 
         /* Create the Range Select and disable its border */
         theRangeSelect = pFactory.newDateRangeSelector();
-
-        /* Create initial state */
-        theState = new ReportState();
-        theState.setRange(theRangeSelect);
 
         /* Create the labels */
         TethysLabel<N, I> myRepLabel = pFactory.newLabel(NLS_REPORT);
@@ -130,6 +125,11 @@ public class MoneyWiseReportSelect<N, I>
         /* Create the save button */
         theSaveButton = pFactory.newButton();
         MetisIcon.configureSaveIconButton(theSaveButton);
+
+        /* Create initial state */
+        theState = new ReportState();
+        theState.setRange(theRangeSelect);
+        theState.setType(MoneyWiseReportType.getDefault());
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -147,13 +147,12 @@ public class MoneyWiseReportSelect<N, I>
         thePanel.addNode(thePrintButton);
         thePanel.addNode(theSaveButton);
 
-        /* Apply the current state */
-        theState.setType(MoneyWiseReportType.NETWORTH);
-
         /* Add the listeners */
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theReportButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewReport());
+        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildReportMenu());
         thePrintButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.PRINT));
         theSaveButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.SAVETOFILE));
-        theReportButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewReport());
         theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
     }
 
@@ -200,13 +199,19 @@ public class MoneyWiseReportSelect<N, I>
      * Build report menu.
      */
     private void buildReportMenu() {
-        /* Create builder */
+        /* Access builder */
+        boolean hasSecurities = theState.hasSecurities();
         TethysScrollMenu<MoneyWiseReportType, ?> myBuilder = theReportButton.getMenu();
+        myBuilder.removeAllItems();
 
         /* Loop through the reports */
         for (MoneyWiseReportType myType : MoneyWiseReportType.values()) {
-            /* Create a new JMenuItem for the report type */
-            myBuilder.addItem(myType);
+            /* If we can produce the report */
+            if (hasSecurities
+                || !myType.needSecurities()) {
+                /* Create a new MenuItem for the report type */
+                myBuilder.addItem(myType);
+            }
         }
     }
 
@@ -217,6 +222,14 @@ public class MoneyWiseReportSelect<N, I>
     public final void setRange(final TethysDateRange pRange) {
         /* Set up range */
         theRangeSelect.setOverallRange(pRange);
+    }
+
+    /**
+     * Set securities flag.
+     * @param pSecurities do we have securities?
+     */
+    public void setSecurities(final boolean pSecurities) {
+        theState.setSecurities(pSecurities);
     }
 
     /**
@@ -290,6 +303,11 @@ public class MoneyWiseReportSelect<N, I>
         private TethysDateRange theRange;
 
         /**
+         * Do we have securities?
+         */
+        private boolean hasSecurities;
+
+        /**
          * The selected report type.
          */
         private MoneyWiseReportType theType;
@@ -306,6 +324,7 @@ public class MoneyWiseReportSelect<N, I>
          */
         private ReportState(final ReportState pState) {
             theRange = pState.getRange();
+            hasSecurities = pState.hasSecurities();
             theType = pState.getType();
         }
 
@@ -315,6 +334,14 @@ public class MoneyWiseReportSelect<N, I>
          */
         private TethysDateRange getRange() {
             return theRange;
+        }
+
+        /**
+         * Do we have securities?
+         * @return true/false
+         */
+        private boolean hasSecurities() {
+            return hasSecurities;
         }
 
         /**
@@ -332,12 +359,26 @@ public class MoneyWiseReportSelect<N, I>
          */
         private boolean setRange(final TethysDateRangeSelector<N, I> pSelect) {
             /* Adjust the date and build the new range */
-            TethysDateRange myRange = new TethysDateRange(pSelect.getRange());
+            TethysDateRange myRange = pSelect.getRange();
             if (!MetisDifference.isEqual(myRange, theRange)) {
-                theRange = myRange;
+                theRange = new TethysDateRange(myRange);
                 return true;
             }
             return false;
+        }
+
+        /**
+         * Set securities flag.
+         * @param pSecurities do we have securities?
+         */
+        private void setSecurities(final boolean pSecurities) {
+            /* Adjust the flag */
+            if (pSecurities != hasSecurities) {
+                hasSecurities = pSecurities;
+                if (!hasSecurities && theType.needSecurities()) {
+                    theType = MoneyWiseReportType.getDefault();
+                }
+            }
         }
 
         /**

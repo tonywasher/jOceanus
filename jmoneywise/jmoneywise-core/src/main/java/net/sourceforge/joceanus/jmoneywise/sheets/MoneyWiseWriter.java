@@ -54,11 +54,8 @@ public class MoneyWiseWriter
         addSheet(new SheetSecurityType(this));
         addSheet(new SheetTransCategoryType(this));
         addSheet(new SheetTaxBasis(this));
-        addSheet(new SheetTaxCategory(this));
         addSheet(new SheetAssetCurrency(this));
-        addSheet(new SheetTaxRegime(this));
         addSheet(new SheetFrequency(this));
-        addSheet(new SheetTaxYearInfoType(this));
         addSheet(new SheetAccountInfoType(this));
         addSheet(new SheetTransInfoType(this));
         addSheet(new SheetTransTag(this));
@@ -67,8 +64,6 @@ public class MoneyWiseWriter
         addSheet(new SheetCashCategory(this));
         addSheet(new SheetLoanCategory(this));
         addSheet(new SheetTransCategory(this));
-        addSheet(new SheetTaxYear(this));
-        addSheet(new SheetTaxYearInfo(this));
         addSheet(new SheetExchangeRate(this));
         addSheet(new SheetPayee(this));
         addSheet(new SheetPayeeInfo(this));

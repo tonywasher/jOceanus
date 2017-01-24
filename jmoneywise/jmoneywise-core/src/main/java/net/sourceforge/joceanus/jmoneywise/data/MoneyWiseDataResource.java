@@ -71,6 +71,11 @@ public enum MoneyWiseDataResource implements TethysResourceId {
     MONEYWISEDATA_FIELD_RATE("MoneyWiseData.Field.Rate"),
 
     /**
+     * MoneyWiseData TaxYear.
+     */
+    MONEYWISEDATA_FIELD_TAXYEAR("MoneyWiseData.Field.TaxYear"),
+
+    /**
      * MoneyWiseData Dilution.
      */
     MONEYWISEDATA_FIELD_DILUTION(StaticDataResource.TRANSINFO_DILUTION),
@@ -174,31 +179,6 @@ public enum MoneyWiseDataResource implements TethysResourceId {
      * Region New region.
      */
     REGION_NEWREGION("Region.NewRegion"),
-
-    /**
-     * TaxYear InfoSet.
-     */
-    TAXYEAR_INFOSET("TaxYear.InfoSet"),
-
-    /**
-     * TaxYear Bad Date Error.
-     */
-    TAXYEAR_ERROR_BADDATE("TaxYear.Error.BadDate"),
-
-    /**
-     * TaxYear List Gap Error.
-     */
-    TAXYEAR_ERROR_LISTGAP("TaxYear.Error.ListGap"),
-
-    /**
-     * TaxYear Allowance Gap Error.
-     */
-    TAXYEAR_ERROR_ALLOWANCE("TaxYear.Error.Allowance"),
-
-    /**
-     * TaxYear LoAgeAllowance Error.
-     */
-    TAXYEAR_ERROR_LOALLOWANCE("TaxYear.Error.LoAllowance"),
 
     /**
      * Asset Closed.

@@ -531,11 +531,8 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
         myMap.put(MoneyWiseDataType.PAYEETYPE, PAYEETYPE_NAME);
         myMap.put(MoneyWiseDataType.TRANSTYPE, TRANSTYPE_NAME);
         myMap.put(MoneyWiseDataType.TAXBASIS, TAXBASIS_NAME);
-        myMap.put(MoneyWiseDataType.TAXTYPE, TAXTYPE_NAME);
-        myMap.put(MoneyWiseDataType.TAXREGIME, TAXREGIME_NAME);
         myMap.put(MoneyWiseDataType.FREQUENCY, FREQUENCY_NAME);
         myMap.put(MoneyWiseDataType.CURRENCY, CURRENCY_NAME);
-        myMap.put(MoneyWiseDataType.TAXINFOTYPE, TAXINFOTYPE_NAME);
         myMap.put(MoneyWiseDataType.ACCOUNTINFOTYPE, ACCOUNTINFOTYPE_NAME);
         myMap.put(MoneyWiseDataType.TRANSINFOTYPE, TRANSINFOTYPE_NAME);
         myMap.put(MoneyWiseDataType.DEPOSITCATEGORY, DEPOSITCAT_NAME);
@@ -545,8 +542,6 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
         myMap.put(MoneyWiseDataType.EXCHANGERATE, XCHGRATE_NAME);
         myMap.put(MoneyWiseDataType.TRANSTAG, TRANSTAG_NAME);
         myMap.put(MoneyWiseDataType.REGION, REGION_NAME);
-        myMap.put(MoneyWiseDataType.TAXYEAR, TAXYEAR_NAME);
-        myMap.put(MoneyWiseDataType.TAXYEARINFO, TAXINFO_NAME);
         myMap.put(MoneyWiseDataType.PAYEE, PAYEE_NAME);
         myMap.put(MoneyWiseDataType.PAYEEINFO, PAYEEINFO_NAME);
         myMap.put(MoneyWiseDataType.SECURITY, SECURITY_NAME);
@@ -593,11 +588,8 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
         myMap.put(MoneyWiseDataType.PAYEETYPE, PAYEETYPE_LIST);
         myMap.put(MoneyWiseDataType.TRANSTYPE, TRANSTYPE_LIST);
         myMap.put(MoneyWiseDataType.TAXBASIS, TAXBASIS_LIST);
-        myMap.put(MoneyWiseDataType.TAXTYPE, TAXTYPE_LIST);
-        myMap.put(MoneyWiseDataType.TAXREGIME, TAXREGIME_LIST);
         myMap.put(MoneyWiseDataType.FREQUENCY, FREQUENCY_LIST);
         myMap.put(MoneyWiseDataType.CURRENCY, CURRENCY_LIST);
-        myMap.put(MoneyWiseDataType.TAXINFOTYPE, TAXINFOTYPE_LIST);
         myMap.put(MoneyWiseDataType.ACCOUNTINFOTYPE, ACCOUNTINFOTYPE_LIST);
         myMap.put(MoneyWiseDataType.TRANSINFOTYPE, TRANSINFOTYPE_LIST);
         myMap.put(MoneyWiseDataType.DEPOSITCATEGORY, DEPOSITCAT_LIST);
@@ -607,8 +599,6 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
         myMap.put(MoneyWiseDataType.EXCHANGERATE, XCHGRATE_LIST);
         myMap.put(MoneyWiseDataType.TRANSTAG, TRANSTAG_LIST);
         myMap.put(MoneyWiseDataType.REGION, REGION_LIST);
-        myMap.put(MoneyWiseDataType.TAXYEAR, TAXYEAR_LIST);
-        myMap.put(MoneyWiseDataType.TAXYEARINFO, TAXINFO_LIST);
         myMap.put(MoneyWiseDataType.PAYEE, PAYEE_LIST);
         myMap.put(MoneyWiseDataType.PAYEEINFO, PAYEEINFO_LIST);
         myMap.put(MoneyWiseDataType.SECURITY, SECURITY_LIST);

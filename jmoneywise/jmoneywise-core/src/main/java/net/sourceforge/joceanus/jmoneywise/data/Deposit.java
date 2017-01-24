@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
@@ -998,7 +999,7 @@ public class Deposit
 
     @Override
     public TransactionCategory getDetailedCategory(final TransactionCategory pCategory,
-                                                   final TaxYear pYear) {
+                                                   final MoneyWiseTaxCredit pYear) {
         /* Switch on category type */
         TransactionCategoryList myCategories = getDataSet().getTransCategories();
         switch (pCategory.getCategoryTypeClass()) {
@@ -1006,16 +1007,18 @@ public class Deposit
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREEINTEREST);
                 }
-                return myCategories.getSingularClass(isGross() || pYear.hasSavingsAllowance()
-                                                                                              ? TransactionCategoryClass.GROSSINTEREST
-                                                                                              : TransactionCategoryClass.TAXEDINTEREST);
+                return myCategories.getSingularClass(isGross()
+                                                     || !pYear.isTaxCreditRequired()
+                                                                                     ? TransactionCategoryClass.GROSSINTEREST
+                                                                                     : TransactionCategoryClass.TAXEDINTEREST);
             case LOYALTYBONUS:
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREELOYALTYBONUS);
                 }
-                return myCategories.getSingularClass(isGross() || pYear.hasSavingsAllowance()
-                                                                                              ? TransactionCategoryClass.GROSSLOYALTYBONUS
-                                                                                              : TransactionCategoryClass.TAXEDLOYALTYBONUS);
+                return myCategories.getSingularClass(isGross()
+                                                     || !pYear.isTaxCreditRequired()
+                                                                                     ? TransactionCategoryClass.GROSSLOYALTYBONUS
+                                                                                     : TransactionCategoryClass.TAXEDLOYALTYBONUS);
             default:
                 return pCategory;
         }

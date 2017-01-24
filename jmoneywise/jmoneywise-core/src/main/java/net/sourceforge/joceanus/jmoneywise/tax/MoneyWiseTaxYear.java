@@ -27,14 +27,14 @@ import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
  * The Tax Year.
  */
 public abstract class MoneyWiseTaxYear
-        implements MetisDataContents {
+        implements MetisDataContents, MoneyWiseTaxCredit {
     /**
      * Report fields.
      */
@@ -58,31 +58,10 @@ public abstract class MoneyWiseTaxYear
         theYear = pDate;
     }
 
-    /**
-     * Obtain the Year.
-     * @return the tax year end
-     */
-    public TethysDate getYear() {
+    @Override
+    public TethysDate getYearEnd() {
         return theYear;
     }
-
-    /**
-     * Is a taxCredit required for interest/dividend?
-     * @return true/false
-     */
-    public abstract boolean isTaxCreditRequired();
-
-    /**
-     * Obtain the taxCredit rate for interest.
-     * @return the rate
-     */
-    public abstract TethysRate getTaxCreditRateForInterest();
-
-    /**
-     * Obtain the taxCredit rate for dividend.
-     * @return the rate
-     */
-    public abstract TethysRate getTaxCreditRateForDividend();
 
     /**
      * Obtain the taxAnalysis for the year.

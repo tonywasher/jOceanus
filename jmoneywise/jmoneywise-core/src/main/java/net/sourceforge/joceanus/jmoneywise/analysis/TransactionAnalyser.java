@@ -52,14 +52,13 @@ import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceDataMap;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionAsset;
@@ -208,7 +207,6 @@ public class TransactionAnalyser
         thePriceMap = pData.getSecurityPriceDataMap();
 
         /* Access the lists */
-        TaxYearList myTaxYears = pData.getTaxYears();
         TransactionList myTrans = pData.getTransactions();
 
         /* Create a new analysis */
@@ -232,34 +230,15 @@ public class TransactionAnalyser
         theDilutions = theAnalysis.getDilutions();
         theTaxMan = thePayeeBuckets.getBucket(PayeeTypeClass.TAXMAN);
 
-        /* Initialise data */
-        TaxYear myTax = null;
-        TethysDate myDate = null;
-        int myResult = -1;
-
         /* Loop through the Transactions extracting relevant elements */
         myTask.startTask("Transactions");
         Iterator<Transaction> myIterator = myTrans.listIterator();
         while (myIterator.hasNext()) {
             Transaction myCurr = myIterator.next();
-            TethysDate myCurrDay = myCurr.getDate();
 
             /* Ignore deleted transactions */
             if (myCurr.isDeleted()) {
                 continue;
-            }
-
-            /* If we have a current tax year */
-            if (myDate != null) {
-                /* Check that this event is still in the tax year */
-                myResult = myDate.compareTo(myCurrDay);
-            }
-
-            /* If we have exhausted the tax year or else this is the first tax year */
-            if (myResult < 0) {
-                /* Access the relevant tax year */
-                myTax = myTaxYears.findTaxYearForDate(myCurrDay);
-                myDate = myTax.getTaxYear();
             }
 
             /* Touch underlying items */
@@ -273,9 +252,6 @@ public class TransactionAnalyser
 
             /* Process the transaction in the report set */
             processTransaction(myCurr);
-
-            /* Touch tax year */
-            myTax.touchItem(myCurr);
         }
 
         /* Complete the task */
@@ -423,7 +399,7 @@ public class TransactionAnalyser
         /* Access key details */
         TransactionAsset myDebitAsset = theHelper.getDebitAsset();
         TransactionAsset myCreditAsset = theHelper.getCreditAsset();
-        TaxYear myYear = pTrans.getTaxYear();
+        MoneyWiseTaxCredit myYear = pTrans.getTaxYear();
 
         /* Look for tags */
         Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
@@ -990,7 +966,7 @@ public class TransactionAnalyser
         TethysMoney myAmount = theHelper.getDebitAmount();
         TethysMoney myTaxCredit = theHelper.getTaxCredit();
         TethysUnits myDeltaUnits = theHelper.getCreditUnits();
-        TaxYear myYear = theHelper.getTransaction().getTaxYear();
+        MoneyWiseTaxCredit myYear = theHelper.getTransaction().getTaxYear();
 
         /* Obtain detailed category */
         TransactionCategory myCat = myPortfolio.getDetailedCategory(theHelper.getCategory(), myYear);
@@ -1362,7 +1338,6 @@ public class TransactionAnalyser
         theTaxMan.adjustForTaxPayments(theHelper);
 
         /* Add the chargeable event */
-        theAnalysis.getCharges().addTransaction(theHelper.getTransaction(), myDeltaGains);
         theTaxBasisBuckets.recordChargeableGain(theHelper.getTransaction(), myDeltaGains);
     }
 

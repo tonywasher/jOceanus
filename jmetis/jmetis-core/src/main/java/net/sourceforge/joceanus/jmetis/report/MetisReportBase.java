@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmetis.report;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 
 /**
@@ -70,7 +70,7 @@ public abstract class MetisReportBase<D, F> {
      * @param pSource the selection object
      */
     protected void setDelayedTable(final String pId,
-                                   final HTMLTable pParent,
+                                   final MetisHTMLTable pParent,
                                    final Object pSource) {
         theReferenceMgr.setDelayedTable(pId, pParent, pSource);
     }
@@ -89,7 +89,7 @@ public abstract class MetisReportBase<D, F> {
      * @param pTable the delayed table definition
      * @return the newly created table
      */
-    public HTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         return null;
     }
 

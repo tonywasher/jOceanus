@@ -26,7 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
@@ -70,12 +70,12 @@ public class MoneyWiseReportGainsAnalysis {
     /**
      * The table.
      */
-    private final HTMLTable theTable;
+    private final MetisHTMLTable theTable;
 
     /**
      * The attribute table.
      */
-    private HTMLTable theAttrTable;
+    private MetisHTMLTable theAttrTable;
 
     /**
      * Constructor.
@@ -84,7 +84,7 @@ public class MoneyWiseReportGainsAnalysis {
      * @param pSecurity the security bucket
      */
     public MoneyWiseReportGainsAnalysis(final MoneyWiseReportCapitalGains pReport,
-                                        final HTMLTable pParent,
+                                        final MetisHTMLTable pParent,
                                         final SecurityBucket pSecurity) {
         /* Store parameters */
         theFormatter = pReport.getFormatter();
@@ -108,7 +108,7 @@ public class MoneyWiseReportGainsAnalysis {
      * Obtain the table.
      * @return the table
      */
-    protected HTMLTable getTable() {
+    protected MetisHTMLTable getTable() {
         return theTable;
     }
 

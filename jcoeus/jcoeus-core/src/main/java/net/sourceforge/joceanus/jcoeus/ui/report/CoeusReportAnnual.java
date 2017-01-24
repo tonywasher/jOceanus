@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusAnnualFilter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -89,7 +89,7 @@ public class CoeusReportAnnual
         theBuilder.makeTitle(myBody, "TaxBook for " + theMarket.getMarket().getProvider().toString(), theFormatter.formatObject(myDate));
 
         /* Initialise the tax table */
-        HTMLTable myTable = theBuilder.startTable(myBody);
+        MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, "Date");
         theBuilder.makeTitleCell(myTable, CoeusTotalSet.INTEREST.toString());
@@ -172,7 +172,7 @@ public class CoeusReportAnnual
      * @param pTotalSet the totalSet
      * @param pValue the value
      */
-    private void makeTableFilterCell(final HTMLTable pTable,
+    private void makeTableFilterCell(final MetisHTMLTable pTable,
                                      final CoeusTotalSet pTotalSet,
                                      final TethysDecimal pValue) {
         makeTableFilterCell(pTable, pTotalSet, null, pValue);
@@ -185,7 +185,7 @@ public class CoeusReportAnnual
      * @param pMonth the month
      * @param pValue the value
      */
-    private void makeTableFilterCell(final HTMLTable pTable,
+    private void makeTableFilterCell(final MetisHTMLTable pTable,
                                      final CoeusTotalSet pTotalSet,
                                      final Month pMonth,
                                      final TethysDecimal pValue) {

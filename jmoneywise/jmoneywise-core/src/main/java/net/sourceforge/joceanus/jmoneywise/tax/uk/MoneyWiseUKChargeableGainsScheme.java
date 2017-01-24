@@ -255,9 +255,6 @@ public class MoneyWiseUKChargeableGainsScheme
             theTaxRelief.subtractAmount(theNettTaxDue);
         }
 
-        /**
-         * determine
-         */
         @Override
         public String formatObject() {
             return FIELD_DEFS.getName();

@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityHolding.SecurityHoldingMap;
@@ -794,7 +795,7 @@ public class Portfolio
 
     @Override
     public TransactionCategory getDetailedCategory(final TransactionCategory pCategory,
-                                                   final TaxYear pYear) {
+                                                   final MoneyWiseTaxCredit pYear) {
         /* Switch on category type */
         TransactionCategoryList myCategories = getDataSet().getTransCategories();
         switch (pCategory.getCategoryTypeClass()) {
@@ -802,9 +803,10 @@ public class Portfolio
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREEINTEREST);
                 }
-                return myCategories.getSingularClass(isGross() || pYear.hasSavingsAllowance()
-                                                                                              ? TransactionCategoryClass.GROSSINTEREST
-                                                                                              : TransactionCategoryClass.TAXEDINTEREST);
+                return myCategories.getSingularClass(isGross()
+                                                     || !pYear.isTaxCreditRequired()
+                                                                                     ? TransactionCategoryClass.GROSSINTEREST
+                                                                                     : TransactionCategoryClass.TAXEDINTEREST);
             case LOYALTYBONUS:
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREELOYALTYBONUS);

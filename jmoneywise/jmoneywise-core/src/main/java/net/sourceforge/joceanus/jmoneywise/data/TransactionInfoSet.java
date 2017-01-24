@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
@@ -200,7 +201,7 @@ public class TransactionInfoSet
         TransactionAsset myPartner = myTransaction.getPartner();
         AssetDirection myDir = myTransaction.getDirection();
         TransactionCategory myCategory = myTransaction.getCategory();
-        TaxYear myYear = myTransaction.getTaxYear();
+        MoneyWiseTaxCredit myYear = myTransaction.getTaxYear();
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
@@ -308,7 +309,7 @@ public class TransactionInfoSet
      */
     private static MetisFieldRequired isTaxCreditClassRequired(final TransactionAsset pDebit,
                                                                final TransactionCategoryClass pClass,
-                                                               final TaxYear pYear) {
+                                                               final MoneyWiseTaxCredit pYear) {
         /* Switch on class */
         switch (pClass) {
             case TAXEDINCOME:
@@ -318,17 +319,21 @@ public class TransactionInfoSet
             case LOANINTERESTCHARGED:
                 return MetisFieldRequired.CANEXIST;
             case LOYALTYBONUS:
-                return (pDebit.isTaxFree() || pDebit.isGross())
-                                                                ? MetisFieldRequired.NOTALLOWED
-                                                                : MetisFieldRequired.MUSTEXIST;
+                return pDebit.isTaxFree()
+                       || pDebit.isGross()
+                                           ? MetisFieldRequired.NOTALLOWED
+                                           : MetisFieldRequired.MUSTEXIST;
             case INTEREST:
-                return (pDebit.isTaxFree() || pDebit.isGross() || pYear.hasSavingsAllowance())
-                                                                                               ? MetisFieldRequired.NOTALLOWED
-                                                                                               : MetisFieldRequired.MUSTEXIST;
+                return pDebit.isTaxFree()
+                       || pDebit.isGross()
+                       || !pYear.isTaxCreditRequired()
+                                                       ? MetisFieldRequired.NOTALLOWED
+                                                       : MetisFieldRequired.MUSTEXIST;
             case DIVIDEND:
-                return pDebit.isTaxFree() || pYear.hasSavingsAllowance()
-                                                                         ? MetisFieldRequired.NOTALLOWED
-                                                                         : MetisFieldRequired.MUSTEXIST;
+                return pDebit.isTaxFree()
+                       || !pYear.isTaxCreditRequired()
+                                                       ? MetisFieldRequired.NOTALLOWED
+                                                       : MetisFieldRequired.MUSTEXIST;
             case TRANSFER:
                 return (pDebit instanceof SecurityHolding)
                        && (((SecurityHolding) pDebit).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND))

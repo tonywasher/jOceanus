@@ -199,7 +199,7 @@ public class MoneyWiseUKTaxConfig
         theTaxYear = pTaxYear;
         theTaxSource = pTaxSource;
         theBirthday = pBirthday;
-        theClientAge = theBirthday.ageOn(pTaxYear.getYear());
+        theClientAge = theBirthday.ageOn(pTaxYear.getYearEnd());
 
         /* calculate the gross taxable income and preSavings */
         theGrossPreSavings = determineGrossPreSavings();

@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
@@ -1051,16 +1050,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         protected static final MetisFields FIELD_DEFS = new MetisFields(TransactionBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         /**
-         * Range field id.
-         */
-        private static final MetisField FIELD_RANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
-
-        /**
-         * DataSet range.
-         */
-        private TethysDateRange theRange = null;
-
-        /**
          * AssetPair Manager.
          */
         private final AssetPairManager theManager;
@@ -1094,24 +1083,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
-            if (FIELD_RANGE.equals(pField)) {
-                return theRange;
-            }
-            return super.getFieldValue(pField);
-        }
-
-        @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
-        }
-
-        /**
-         * Obtain valid date range.
-         * @return the valid range
-         */
-        public TethysDateRange getValidDateRange() {
-            return theRange;
         }
 
         /**
@@ -1120,14 +1093,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
          */
         public AssetPairManager getAssetPairManager() {
             return theManager;
-        }
-
-        /**
-         * Set the range.
-         * @param pRange the range
-         */
-        protected void setRange(final TethysDateRange pRange) {
-            theRange = pRange;
         }
     }
 }

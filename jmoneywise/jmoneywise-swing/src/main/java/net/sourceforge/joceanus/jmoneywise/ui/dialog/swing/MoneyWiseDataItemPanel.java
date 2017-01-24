@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.data.Region;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
@@ -106,7 +105,7 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
      * Declare GoTo Items.
      * @param pUpdates are there active updates?
      */
-    protected abstract void declareGoToItems(final boolean pUpdates);
+    protected abstract void declareGoToItems(boolean pUpdates);
 
     /**
      * Declare GoTo Item.
@@ -190,10 +189,6 @@ public abstract class MoneyWiseDataItemPanel<T extends DataItem<MoneyWiseDataTyp
                 CategoryBase<?, ?, ?> myCategory = (CategoryBase<?, ?, ?>) myItem;
                 myId = MoneyWiseGoToId.CATEGORY;
                 myName = myCategory.getName();
-            } else if (myItem instanceof TaxYear) {
-                TaxYear myYear = (TaxYear) myItem;
-                myId = MoneyWiseGoToId.TAXYEAR;
-                myName = myYear.getTaxYear().toString();
             } else if (myItem instanceof Region) {
                 Region myRegion = (Region) myItem;
                 myId = MoneyWiseGoToId.REGION;
