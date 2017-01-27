@@ -605,6 +605,13 @@ public class TransactionPanel
         bShowField = bEditField || myTrans.getThirdParty() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the thirdPartyAmount field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTYAMOUNT);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.THIRDPARTYAMOUNT);
+        bShowField = bEditField || myTrans.getThirdPartyAmount() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
         theFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the years field should be visible */
@@ -623,12 +630,14 @@ public class TransactionPanel
 
         /* Determine basic editing */
         boolean canEdit = isEditable && !bIsReconciled;
+        boolean needsNullAmount = myTrans.needsNullAmount();
         theFieldSet.setEditable(Transaction.FIELD_DIRECTION, canEdit && myTrans.canSwitchDirection());
         theFieldSet.setEditable(Transaction.FIELD_ACCOUNT, canEdit);
         theFieldSet.setEditable(Transaction.FIELD_PARTNER, canEdit);
         theFieldSet.setEditable(Transaction.FIELD_CATEGORY, canEdit);
         theFieldSet.setEditable(Transaction.FIELD_DATE, canEdit);
-        theFieldSet.setEditable(Transaction.FIELD_AMOUNT, canEdit && !myTrans.needsZeroAmount());
+        theFieldSet.setEditable(Transaction.FIELD_AMOUNT, canEdit && !needsNullAmount);
+        theFieldSet.setVisibility(Transaction.FIELD_AMOUNT, !needsNullAmount);
         theFieldSet.setAssumedCurrency(Transaction.FIELD_AMOUNT, myCurrency);
 
         /* Set the range for the dateButton */

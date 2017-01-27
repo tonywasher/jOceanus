@@ -61,7 +61,7 @@ public class TableTransaction
         myTableDef.addIntegerColumn(Transaction.FIELD_PAIR);
         myTableDef.addIntegerColumn(Transaction.FIELD_ACCOUNT);
         myTableDef.addIntegerColumn(Transaction.FIELD_PARTNER);
-        myTableDef.addEncryptedColumn(Transaction.FIELD_AMOUNT, MetisEncryptedData.MONEYLEN);
+        myTableDef.addNullEncryptedColumn(Transaction.FIELD_AMOUNT, MetisEncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(Transaction.FIELD_CATEGORY, TableTransCategory.TABLE_NAME);
         myTableDef.addBooleanColumn(Transaction.FIELD_RECONCILED);
 

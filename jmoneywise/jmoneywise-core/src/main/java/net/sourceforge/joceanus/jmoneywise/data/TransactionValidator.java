@@ -542,7 +542,12 @@ public final class TransactionValidator {
         /* If account is portfolio */
         if (pAccount instanceof Portfolio) {
             /* Cannot be recursive */
-            return !MetisDifference.isEqual(pAccount, pPartner);
+            if (!MetisDifference.isEqual(pAccount, pPartner)) {
+                return false;
+            }
+
+            /* Must be same currency */
+            return MetisDifference.isEqual(pAccount.getAssetCurrency(), pPartner.getAssetCurrency());
         }
 
         /* If account is security holding */

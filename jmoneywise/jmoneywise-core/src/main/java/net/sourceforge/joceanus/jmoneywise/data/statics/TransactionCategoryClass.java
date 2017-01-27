@@ -654,10 +654,10 @@ public enum TransactionCategoryClass implements CategoryInterface {
     }
 
     /**
-     * Determine whether the CategoryType needs zero Amount.
-     * @return <code>true</code> if the category needs zero amount, <code>false</code> otherwise.
+     * Determine whether the CategoryType has null Amount.
+     * @return <code>true</code> if the category needs null amount, <code>false</code> otherwise.
      */
-    public boolean needsZeroAmount() {
+    public boolean needsNullAmount() {
         switch (this) {
             case STOCKSPLIT:
             case UNITSADJUST:

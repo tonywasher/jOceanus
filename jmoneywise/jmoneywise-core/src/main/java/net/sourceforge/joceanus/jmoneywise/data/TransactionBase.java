@@ -237,7 +237,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             return true;
         }
         if (FIELD_AMOUNT.equals(pField)) {
-            return true;
+            return getAmount() != null;
         }
         if (FIELD_RECONCILED.equals(pField)) {
             return isReconciled();
@@ -804,10 +804,10 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Determines whether an event needs a zero amount.
      * @return true/false
      */
-    public boolean needsZeroAmount() {
+    public boolean needsNullAmount() {
         TransactionCategoryClass myClass = getCategoryClass();
         return myClass != null
-               && myClass.needsZeroAmount();
+               && myClass.needsNullAmount();
     }
 
     /**
@@ -965,31 +965,29 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             addError(ERROR_MISSING, FIELD_PARTNER);
 
         } else {
-            /* Holding currency combo must be valid */
-            // if ((myPartner instanceof SecurityHolding)
-            // && !((SecurityHolding) myPartner).validCurrencies()) {
-            // addError(SecurityHolding.ERROR_CURRENCYCOMBO, FIELD_PARTNER);
-            // }
-
             /* Partner must be valid for Account */
             if (doCheckCombo && !TransactionValidator.isValidPartner(myAccount, myCategory, myPartner)) {
                 addError(ERROR_COMBO, FIELD_PARTNER);
             }
         }
 
-        /* Money must not be null */
+        /* If money is null */
         if (myAmount == null) {
-            addError(ERROR_MISSING, FIELD_AMOUNT);
+            /* Check that it must be null */
+            if (!needsNullAmount()) {
+                addError(ERROR_MISSING, FIELD_AMOUNT);
+            }
+
+            /* else non-null money */
         } else {
+            /* Check that it must be null */
+            if (needsNullAmount()) {
+                addError(ERROR_EXIST, FIELD_AMOUNT);
+            }
+
             /* Money must not be negative */
             if (!myAmount.isPositive()) {
                 addError(ERROR_NEGATIVE, FIELD_AMOUNT);
-            }
-
-            /* Check that if money needs to be zero it is */
-            if (needsZeroAmount()
-                && (myAmount.isNonZero())) {
-                addError(ERROR_ZEROAMOUNT, FIELD_AMOUNT);
             }
 
             /* Check that amount is correct currency */

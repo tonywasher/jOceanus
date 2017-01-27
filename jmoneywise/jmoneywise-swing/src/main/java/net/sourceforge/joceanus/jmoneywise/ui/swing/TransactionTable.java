@@ -1456,7 +1456,7 @@ public class TransactionTable
                 case COLUMN_DIRECTION:
                     return !pItem.isReconciled() && pItem.canSwitchDirection();
                 case COLUMN_AMOUNT:
-                    return !pItem.isReconciled() && !pItem.needsZeroAmount();
+                    return !pItem.isReconciled() && !pItem.needsNullAmount();
                 case COLUMN_DESC:
                 case COLUMN_REF:
                 case COLUMN_TAGS:

@@ -722,8 +722,10 @@ public class ArchiveLoader {
             myValues.addValue(Transaction.FIELD_PAIR, thePair);
             myValues.addValue(Transaction.FIELD_ACCOUNT, theAccount);
             myValues.addValue(Transaction.FIELD_PARTNER, thePartner);
-            myValues.addValue(Transaction.FIELD_AMOUNT, pAmount);
             myValues.addValue(Transaction.FIELD_RECONCILED, pReconciled);
+            if (pAmount != null) {
+                myValues.addValue(Transaction.FIELD_AMOUNT, pAmount);
+            }
 
             /* Add the value into the list */
             Transaction myTrans = theList.addValuesItem(myValues);

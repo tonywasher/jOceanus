@@ -271,7 +271,7 @@ public class TransactionInfoSet
                 return isThirdPartyAmountRequired(myTransaction);
 
             case PARTNERAMOUNT:
-                return isPartnerAmountClassRequired(myAccount, myPartner);
+                return isPartnerAmountClassRequired(myClass, myAccount, myPartner);
 
             case PENSION:
             case XCHANGERATE:
@@ -437,12 +437,19 @@ public class TransactionInfoSet
 
     /**
      * Determine if a PartnerAmount infoSet class is required.
+     * @param pCategory the category
      * @param pAccount the account
      * @param pPartner the partner
      * @return the status
      */
-    protected static MetisFieldRequired isPartnerAmountClassRequired(final TransactionAsset pAccount,
+    protected static MetisFieldRequired isPartnerAmountClassRequired(final TransactionCategoryClass pCategory,
+                                                                     final TransactionAsset pAccount,
                                                                      final TransactionAsset pPartner) {
+        /* If the transaction requires null amount, then partner amount must also be null */
+        if (pCategory.needsNullAmount()) {
+            return MetisFieldRequired.NOTALLOWED;
+        }
+
         /* If Partner currency is null or the same as Account then Partner amount is not allowed */
         AssetCurrency myCurrency = pAccount.getAssetCurrency();
         AssetCurrency myPartnerCurrency = pPartner.getAssetCurrency();
@@ -533,13 +540,7 @@ public class TransactionInfoSet
                 case PARTNERAMOUNT:
                     /* Check value */
                     myAmount = myInfo.getValue(TethysMoney.class);
-                    if (myAmount.isZero()) {
-                        if (!myTransaction.needsZeroAmount()) {
-                            myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
-                        }
-                    } else if (myTransaction.needsZeroAmount()) {
-                        myTransaction.addError(TransactionBase.ERROR_ZEROAMOUNT, getFieldForClass(myClass));
-                    } else if (!myAmount.isPositive()) {
+                    if (!myAmount.isPositive()) {
                         myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
                     } else if (!myAmount.getCurrency().equals(myPartner.getCurrency())) {
                         myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));

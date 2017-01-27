@@ -260,7 +260,10 @@ public class SheetTransaction
         String myCredit = (myCell != null)
                                            ? myCell.getStringValue()
                                            : null;
-        String myAmount = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        String myAmount = (myCell != null)
+                                           ? myCell.getStringValue()
+                                           : null;
         String myCategory = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Handle Reconciled which may be missing */

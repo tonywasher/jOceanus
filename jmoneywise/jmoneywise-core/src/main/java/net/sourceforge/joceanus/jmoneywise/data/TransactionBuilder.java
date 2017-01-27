@@ -132,17 +132,24 @@ public class TransactionBuilder {
             pTrans.setPartner(myPartner);
         }
 
-        /* If we need to change currency */
-        if (!myCurrency.equals(myAmount.getCurrency())) {
-            /* Convert the currency */
-            pTrans.setAmount(myAmount.changeCurrency(myCurrency));
-        }
+        /* If we need to null money */
+        if (myCategory.getCategoryTypeClass().needsNullAmount()) {
+            if (myAmount != null) {
+                /* Create a zero amount */
+                pTrans.setAmount(null);
+            }
 
-        /* If we need to reset money to zero */
-        if (myCategory.getCategoryTypeClass().needsZeroAmount()
-            && myAmount.isNonZero()) {
-            /* Create a zero amount */
-            pTrans.setAmount(new TethysMoney(myCurrency));
+            /* Else money is required */
+        } else {
+            if (myAmount == null) {
+                /* Create a zero amount */
+                pTrans.setAmount(new TethysMoney(myCurrency));
+
+                /* If we need to change currency */
+            } else if (!myCurrency.equals(myAmount.getCurrency())) {
+                /* Convert the currency */
+                pTrans.setAmount(myAmount.changeCurrency(myCurrency));
+            }
         }
 
         /* AutoCorrect the InfoSet */

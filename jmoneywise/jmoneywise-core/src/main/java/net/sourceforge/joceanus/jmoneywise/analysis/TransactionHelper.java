@@ -474,18 +474,14 @@ public class TransactionHelper {
                                                                                     : new ForeignAccountDetail(this, myActCurrency, myAmount);
 
             /* If we have a partner amount */
-            if (myPartnerAmount != null) {
-                /* Determine foreign partner detail */
-                myActCurrency = thePartner.getAssetCurrency();
-                theForeignPartner = MetisDifference.isEqual(myActCurrency, theCurrency)
-                                                                                        ? null
-                                                                                        : new ForeignPartnerDetail(myActCurrency, myPartnerAmount);
-            } else {
-                theForeignPartner = null;
-            }
+            myActCurrency = thePartner.getAssetCurrency();
+            theForeignPartner = myActCurrency == null
+                                || MetisDifference.isEqual(myActCurrency, theCurrency)
+                                                                                       ? null
+                                                                                       : new ForeignPartnerDetail(myActCurrency, myPartnerAmount);
 
-            /* If we have a thirdParty amount */
-            if (myThirdPartyAmount != null) {
+            /* If we have a thirdParty account */
+            if (theThirdParty != null) {
                 /* Determine foreign thirdParty detail */
                 myActCurrency = theThirdParty.getAssetCurrency();
                 theForeignThirdParty = MetisDifference.isEqual(myActCurrency, theCurrency)
@@ -815,7 +811,9 @@ public class TransactionHelper {
             Currency myCurrency = theCurrency.getCurrency();
 
             /* Obtain local amount */
-            theAmount = pAmount.convertCurrency(myCurrency, myRate);
+            theAmount = theBase != null
+                                        ? theBase.convertCurrency(myCurrency, myRate)
+                                        : null;
 
             /* Obtain tax value */
             TethysMoney myValue = pTrans.theTaxCredit;
@@ -875,7 +873,9 @@ public class TransactionHelper {
             Currency myCurrency = theCurrency.getCurrency();
 
             /* Obtain local amount */
-            theAmount = pAmount.convertCurrency(myCurrency, myRate);
+            theAmount = theBase != null
+                                        ? theBase.convertCurrency(myCurrency, myRate)
+                                        : null;
         }
     }
 }
