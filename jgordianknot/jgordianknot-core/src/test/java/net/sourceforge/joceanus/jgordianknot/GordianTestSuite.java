@@ -54,6 +54,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
@@ -515,19 +516,33 @@ public class GordianTestSuite {
 
         /* Access predicates */
         Predicate<GordianDigestType> myDigestPredicate = myFactory.supportedDigests();
+        Predicate<GordianDigestType> myHMacPredicate = myFactory.supportedHMacDigests();
         Predicate<GordianSymKeyType> mySymKeyPredicate = myFactory.supportedSymKeys();
         Predicate<GordianSymKeyType> myMacSymKeyPredicate = myFactory.standardSymKeys();
         Predicate<GordianStreamKeyType> myStreamKeyPredicate = myFactory.supportedStreamKeys();
 
-        /* Create instance of each digest and associated hMac */
+        /* Loop through the digests */
         for (GordianDigestType myDigest : GordianDigestType.values()) {
+            /* If the digest is supported */
             if (myDigestPredicate.test(myDigest)) {
+                /* Create the digest */
                 myFactory.createDigest(myDigest);
-                GordianMacSpec myMacSpec = new GordianMacSpec(GordianMacType.HMAC, myDigest);
-                GordianMac myMac = myFactory.createMac(myMacSpec);
-                GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(myMacSpec);
-                GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
-                myMac.initMac(myKey);
+
+                /* Loop through the possible lengths */
+                for (GordianLength myLen : myDigest.getSupportedLengths()) {
+                    /* Create the digest at the explicit length */
+                    myFactory.createDigest(myDigest, myLen);
+                }
+
+                /* If the digest is supported for HMacs */
+                if (myHMacPredicate.test(myDigest)) {
+                    /* Generate a digest */
+                    GordianMacSpec myMacSpec = new GordianMacSpec(GordianMacType.HMAC, myDigest);
+                    GordianMac myMac = myFactory.createMac(myMacSpec);
+                    GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(myMacSpec);
+                    GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
+                    myMac.initMac(myKey);
+                }
             }
         }
 

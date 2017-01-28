@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -119,23 +120,156 @@ public final class JcaDigest
     protected static String getAlgorithm(final GordianDigestType pDigestType) throws OceanusException {
         switch (pDigestType) {
             case SKEIN:
-                return "SKEIN-512-512";
-            case KECCAK:
-                return "KECCAK-512";
+                return getSkeinAlgorithm(GordianDigestType.SKEIN.getDefaultLength());
+            case SHA3:
+                return getSHA3Algorithm(GordianDigestType.SHA3.getDefaultLength());
             case SHA2:
-                return "SHA512";
+                return getSHA2Algorithm(GordianDigestType.SHA2.getDefaultLength());
             case RIPEMD:
-                return "RIPEMD320";
+                return getRIPEMDAlgorithm(GordianDigestType.RIPEMD.getDefaultLength());
             case GOST:
-                return "GOST3411";
+                return getGOSTAlgorithm(GordianDigestType.GOST.getDefaultLength());
+            case BLAKE:
+                return getBlake2bAlgorithm(GordianDigestType.BLAKE.getDefaultLength());
             case WHIRLPOOL:
             case TIGER:
-                return pDigestType.name();
+            case SHA1:
+            case MD5:
             case SM3:
-            case BLAKE:
+                return pDigestType.name();
             default:
                 throw new GordianDataException("Invalid DigestType :- " + pDigestType);
         }
+    }
+
+    /**
+     * Create the BouncyCastle digest.
+     * @param pDigestType the digest type
+     * @param pLength the digest length
+     * @return the digest
+     * @throws OceanusException on error
+     */
+    protected static String getAlgorithm(final GordianDigestType pDigestType,
+                                         final GordianLength pLength) throws OceanusException {
+        switch (pDigestType) {
+            case SHA2:
+                return getSHA2Algorithm(pLength);
+            case GOST:
+                return getGOSTAlgorithm(pLength);
+            case RIPEMD:
+                return getRIPEMDAlgorithm(pLength);
+            case SKEIN:
+                return getSkeinAlgorithm(pLength);
+            case SHA3:
+                return getSHA3Algorithm(pLength);
+            case BLAKE:
+                return getBlake2bAlgorithm(pLength);
+            default:
+                return getAlgorithm(pDigestType);
+        }
+    }
+
+    /**
+     * Determine the RIPEMD algorithm.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static String getRIPEMDAlgorithm(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_128:
+                return "RIPEMD128";
+            case LEN_160:
+                return "RIPEMD160";
+            case LEN_256:
+                return "RIPEMD256";
+            case LEN_320:
+            default:
+                return "RIPEMD320";
+        }
+    }
+
+    /**
+     * Determine the Blake2b algorithm.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static String getBlake2bAlgorithm(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_160:
+                return "RIPEMD128";
+            case LEN_256:
+                return "RIPEMD160";
+            case LEN_384:
+                return "RIPEMD256";
+            case LEN_512:
+            default:
+                return "RIPEMD320";
+        }
+    }
+
+    /**
+     * Determine the SHA2 algorithm.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static String getSHA2Algorithm(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_224:
+                return "SHA224";
+            case LEN_256:
+                return "SHA256";
+            case LEN_384:
+                return "SHA384";
+            case LEN_512:
+            default:
+                return "SHA512";
+        }
+    }
+
+    /**
+     * Determine the SHA3 algorithm.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static String getSHA3Algorithm(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_224:
+                return "SHA3-224";
+            case LEN_256:
+                return "SHA3-256";
+            case LEN_384:
+                return "SHA3-384";
+            case LEN_512:
+            default:
+                return "SHA3-512";
+        }
+    }
+
+    /**
+     * Determine the Skein algorithm.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static String getSkeinAlgorithm(final GordianLength pLength) {
+        String myLen = Integer.toString(pLength.getLength());
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append("SKEIN-");
+        myBuilder.append(myLen);
+        myBuilder.append("-");
+        myBuilder.append(myLen);
+        return myBuilder.toString();
+    }
+
+    /**
+     * Determine the GOST algorithm.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static String getGOSTAlgorithm(final GordianLength pLength) {
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append("GOST3411-2012-");
+        myBuilder.append(pLength.getLength());
+        return myBuilder.toString();
     }
 
     /**
@@ -143,7 +277,7 @@ public final class JcaDigest
      * @param pDigestType the digest type
      * @return true/false
      */
-    protected static boolean isSupported(final GordianDigestType pDigestType) {
+    protected static boolean isHMacSupported(final GordianDigestType pDigestType) {
         switch (pDigestType) {
             case SM3:
             case BLAKE:

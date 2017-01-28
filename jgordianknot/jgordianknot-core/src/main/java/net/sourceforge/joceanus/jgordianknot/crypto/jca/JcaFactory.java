@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
@@ -85,6 +86,11 @@ public final class JcaFactory
      * Predicate for all supported digest types.
      */
     private static final Predicate<GordianDigestType> PREDICATE_DIGESTS;
+
+    /**
+     * Predicate for all supported hMac digest types.
+     */
+    private static final Predicate<GordianDigestType> PREDICATE_HMACDIGESTS;
 
     /**
      * Predicate for all supported macTypes.
@@ -135,6 +141,7 @@ public final class JcaFactory
 
         /* Create the Predicates */
         PREDICATE_DIGESTS = generateDigestPredicate();
+        PREDICATE_HMACDIGESTS = generateHMacDigestPredicate();
         PREDICATE_SIGNDIGESTS = p -> p == GordianDigestType.SHA2;
         PREDICATE_MACS = p -> true;
 
@@ -198,8 +205,29 @@ public final class JcaFactory
     }
 
     @Override
+    public JcaDigest createDigest(final GordianDigestType pDigestType,
+                                  final GordianLength pLength) throws OceanusException {
+        /* Check validity of Digests */
+        if (!supportedDigests().test(pDigestType)) {
+            throw new GordianDataException(getInvalidText(pDigestType));
+        }
+
+        /* Adjust the length to ensure support */
+        GordianLength myLength = pDigestType.adjustLength(pLength);
+
+        /* Create digest */
+        MessageDigest myJavaDigest = getJavaDigest(pDigestType, myLength);
+        return new JcaDigest(pDigestType, myJavaDigest);
+    }
+
+    @Override
     public Predicate<GordianDigestType> supportedDigests() {
         return PREDICATE_DIGESTS;
+    }
+
+    @Override
+    public Predicate<GordianDigestType> supportedHMacDigests() {
+        return PREDICATE_HMACDIGESTS;
     }
 
     @Override
@@ -384,6 +412,27 @@ public final class JcaFactory
         try {
             /* Return a digest for the algorithm */
             return MessageDigest.getInstance(JcaDigest.getAlgorithm(pDigestType), BCPROV);
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException e) {
+            /* Throw the exception */
+            throw new GordianCryptoException("Failed to create Digest", e);
+        }
+    }
+
+    /**
+     * Create the BouncyCastle digest via JCA.
+     * @param pDigestType the digest type
+     * @param pLength the length
+     * @return the digest
+     * @throws OceanusException on error
+     */
+    private static MessageDigest getJavaDigest(final GordianDigestType pDigestType,
+                                               final GordianLength pLength) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Return a digest for the algorithm */
+            return MessageDigest.getInstance(JcaDigest.getAlgorithm(pDigestType, pLength), BCPROV);
 
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException e) {
@@ -584,9 +633,9 @@ public final class JcaFactory
      * @throws OceanusException on error
      */
     private static String getHMacAlgorithm(final GordianDigestType pDigestType) throws OceanusException {
-        return GordianDigestType.KECCAK.equals(pDigestType)
-                                                            ? "HMacKECCAK512"
-                                                            : "HMac" + JcaDigest.getAlgorithm(pDigestType);
+        return GordianDigestType.SHA3.equals(pDigestType)
+                                                          ? "HMacKECCAK512"
+                                                          : "HMac" + JcaDigest.getAlgorithm(pDigestType);
     }
 
     /**
@@ -728,6 +777,7 @@ public final class JcaFactory
             case SALSA20:
             case XSALSA20:
             case ISAAC:
+            case RC4:
                 return pKeyType.name();
             default:
                 throw new GordianDataException(getInvalidText(pKeyType));
@@ -781,7 +831,15 @@ public final class JcaFactory
      * @return the predicate
      */
     public static Predicate<GordianDigestType> generateDigestPredicate() {
-        return JcaDigest::isSupported;
+        return p -> true;
+    }
+
+    /**
+     * Generate Digest predicate.
+     * @return the predicate
+     */
+    public static Predicate<GordianDigestType> generateHMacDigestPredicate() {
+        return JcaDigest::isHMacSupported;
     }
 
     /**

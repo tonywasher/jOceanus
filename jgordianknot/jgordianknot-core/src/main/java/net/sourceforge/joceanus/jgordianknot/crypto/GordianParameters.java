@@ -46,7 +46,7 @@ public class GordianParameters {
     /**
      * Default Hash Algorithm.
      */
-    public static final GordianDigestType DEFAULT_HASHALGO = GordianDigestType.KECCAK;
+    public static final GordianDigestType DEFAULT_HASHALGO = GordianDigestType.SHA3;
 
     /**
      * Minimum Cipher Steps.

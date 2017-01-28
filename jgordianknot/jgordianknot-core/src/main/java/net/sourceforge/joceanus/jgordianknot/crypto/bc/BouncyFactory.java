@@ -32,9 +32,18 @@ import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.digests.Blake2bDigest;
-import org.bouncycastle.crypto.digests.GOST3411Digest;
-import org.bouncycastle.crypto.digests.KeccakDigest;
+import org.bouncycastle.crypto.digests.GOST3411_2012_256Digest;
+import org.bouncycastle.crypto.digests.GOST3411_2012_512Digest;
+import org.bouncycastle.crypto.digests.MD5Digest;
+import org.bouncycastle.crypto.digests.RIPEMD128Digest;
+import org.bouncycastle.crypto.digests.RIPEMD160Digest;
+import org.bouncycastle.crypto.digests.RIPEMD256Digest;
 import org.bouncycastle.crypto.digests.RIPEMD320Digest;
+import org.bouncycastle.crypto.digests.SHA1Digest;
+import org.bouncycastle.crypto.digests.SHA224Digest;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.digests.SHA384Digest;
+import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.digests.SkeinDigest;
@@ -87,6 +96,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
@@ -123,19 +133,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public final class BouncyFactory
         extends GordianFactory {
     /**
-     * Skein state size.
-     */
-    protected static final int SKEIN_STATE = 512;
-
-    /**
      * ThreeFish block size.
      */
     protected static final int THREEFISH_BLOCK = 256;
-
-    /**
-     * Preferred length.
-     */
-    protected static final int PREFERRED_LENGTH = 512;
 
     /**
      * Predicate for all digestTypes.
@@ -251,7 +251,28 @@ public final class BouncyFactory
     }
 
     @Override
+    public BouncyDigest createDigest(final GordianDigestType pDigestType,
+                                     final GordianLength pLength) throws OceanusException {
+        /* Check validity of Digests */
+        if (!supportedDigests().test(pDigestType)) {
+            throw new GordianDataException(getInvalidText(pDigestType));
+        }
+
+        /* Adjust the length to ensure support */
+        GordianLength myLength = pDigestType.adjustLength(pLength);
+
+        /* Create digest */
+        Digest myBCDigest = getBCDigest(pDigestType, myLength);
+        return new BouncyDigest(pDigestType, myBCDigest);
+    }
+
+    @Override
     public Predicate<GordianDigestType> supportedDigests() {
+        return PREDICATE_DIGESTS;
+    }
+
+    @Override
+    public Predicate<GordianDigestType> supportedHMacDigests() {
         return PREDICATE_DIGESTS;
     }
 
@@ -458,26 +479,133 @@ public final class BouncyFactory
     private static Digest getBCDigest(final GordianDigestType pDigestType) throws OceanusException {
         switch (pDigestType) {
             case SHA2:
-                return new SHA512Digest();
+                return getSHA2Digest(GordianDigestType.SHA2.getDefaultLength());
             case TIGER:
                 return new TigerDigest();
             case WHIRLPOOL:
                 return new WhirlpoolDigest();
             case GOST:
-                return new GOST3411Digest();
+                return getGOSTDigest(GordianDigestType.GOST.getDefaultLength());
             case RIPEMD:
-                return new RIPEMD320Digest();
+                return getRIPEMDDigest(GordianDigestType.RIPEMD.getDefaultLength());
             case SKEIN:
-                return new SkeinDigest(SKEIN_STATE, PREFERRED_LENGTH);
+                return getSkeinDigest(GordianDigestType.SKEIN.getDefaultLength());
             case SM3:
                 return new SM3Digest();
             case BLAKE:
-                return new Blake2bDigest();
-            case KECCAK:
-                return new KeccakDigest(PREFERRED_LENGTH);
+                return getBlake2bDigest(GordianDigestType.BLAKE.getDefaultLength());
+            case SHA3:
+                return getSHA3Digest(GordianDigestType.SHA3.getDefaultLength());
+            case SHA1:
+                return new SHA1Digest();
+            case MD5:
+                return new MD5Digest();
             default:
                 throw new GordianDataException(getInvalidText(pDigestType));
         }
+    }
+
+    /**
+     * Create the BouncyCastle digest.
+     * @param pDigestType the digest type
+     * @param pLength the digest length
+     * @return the digest
+     * @throws OceanusException on error
+     */
+    private static Digest getBCDigest(final GordianDigestType pDigestType,
+                                      final GordianLength pLength) throws OceanusException {
+        switch (pDigestType) {
+            case SHA2:
+                return getSHA2Digest(pLength);
+            case GOST:
+                return getGOSTDigest(pLength);
+            case RIPEMD:
+                return getRIPEMDDigest(pLength);
+            case SKEIN:
+                return getSkeinDigest(pLength);
+            case SHA3:
+                return getSHA3Digest(pLength);
+            case BLAKE:
+                return getBlake2bDigest(pLength);
+            default:
+                return getBCDigest(pDigestType);
+        }
+    }
+
+    /**
+     * Create the BouncyCastle RIPEMD digest.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static Digest getRIPEMDDigest(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_128:
+                return new RIPEMD128Digest();
+            case LEN_160:
+                return new RIPEMD160Digest();
+            case LEN_256:
+                return new RIPEMD256Digest();
+            case LEN_320:
+            default:
+                return new RIPEMD320Digest();
+        }
+    }
+
+    /**
+     * Create the BouncyCastle Blake2B digest.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static Digest getBlake2bDigest(final GordianLength pLength) {
+        return new Blake2bDigest(pLength.getLength());
+    }
+
+    /**
+     * Create the BouncyCastle SHA2 digest.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static Digest getSHA2Digest(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_224:
+                return new SHA224Digest();
+            case LEN_256:
+                return new SHA256Digest();
+            case LEN_384:
+                return new SHA384Digest();
+            case LEN_512:
+            default:
+                return new SHA512Digest();
+        }
+    }
+
+    /**
+     * Create the BouncyCastle SHA3 digest.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static Digest getSHA3Digest(final GordianLength pLength) {
+        return new SHA3Digest(pLength.getLength());
+    }
+
+    /**
+     * Create the BouncyCastle Skein digest.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static Digest getSkeinDigest(final GordianLength pLength) {
+        return new SkeinDigest(pLength.getLength(), pLength.getLength());
+    }
+
+    /**
+     * Create the BouncyCastle GOST digest.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static Digest getGOSTDigest(final GordianLength pLength) {
+        return GordianLength.LEN_256.equals(pLength)
+                                                     ? new GOST3411_2012_256Digest()
+                                                     : new GOST3411_2012_512Digest();
     }
 
     /**
@@ -539,7 +667,8 @@ public final class BouncyFactory
      * @return the MAC
      */
     private static Mac getBCSkeinMac() {
-        return new SkeinMac(SKEIN_STATE, PREFERRED_LENGTH);
+        int myLength = GordianLength.LEN_512.getLength();
+        return new SkeinMac(myLength, myLength);
     }
 
     /**

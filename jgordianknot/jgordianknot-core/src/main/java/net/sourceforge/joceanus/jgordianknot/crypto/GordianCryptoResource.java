@@ -69,9 +69,9 @@ public enum GordianCryptoResource implements TethysResourceId {
     DIGEST_GOST("digest.GOST"),
 
     /**
-     * Digest KECCAK.
+     * Digest SHA3.
      */
-    DIGEST_KECCAK("digest.KECCAK"),
+    DIGEST_SHA3("digest.SHA3"),
 
     /**
      * Digest Skein.
@@ -87,6 +87,16 @@ public enum GordianCryptoResource implements TethysResourceId {
      * Digest BLAKE.
      */
     DIGEST_BLAKE("digest.BLAKE"),
+
+    /**
+     * Digest SHA.
+     */
+    DIGEST_SHA1("digest.SHA1"),
+
+    /**
+     * Digest MD5.
+     */
+    DIGEST_MD5("digest.MD5"),
 
     /**
      * MAC HMAC.
@@ -306,10 +316,12 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianDigestType.WHIRLPOOL, DIGEST_WHIRLPOOL);
         myMap.put(GordianDigestType.RIPEMD, DIGEST_RIPEMD);
         myMap.put(GordianDigestType.GOST, DIGEST_GOST);
-        myMap.put(GordianDigestType.KECCAK, DIGEST_KECCAK);
+        myMap.put(GordianDigestType.SHA3, DIGEST_SHA3);
         myMap.put(GordianDigestType.SKEIN, DIGEST_SKEIN);
         myMap.put(GordianDigestType.SM3, DIGEST_SM3);
         myMap.put(GordianDigestType.BLAKE, DIGEST_BLAKE);
+        myMap.put(GordianDigestType.SHA1, DIGEST_SHA1);
+        myMap.put(GordianDigestType.MD5, DIGEST_MD5);
         return myMap;
     }
 

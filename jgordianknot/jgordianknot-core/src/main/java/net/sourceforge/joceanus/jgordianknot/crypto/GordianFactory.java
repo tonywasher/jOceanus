@@ -273,10 +273,26 @@ public abstract class GordianFactory {
     public abstract GordianDigest createDigest(GordianDigestType pDigestType) throws OceanusException;
 
     /**
+     * create GordianDigest.
+     * @param pDigestType the DigestType
+     * @param pLength the DigestLength
+     * @return the new Digest
+     * @throws OceanusException on error
+     */
+    public abstract GordianDigest createDigest(GordianDigestType pDigestType,
+                                               GordianLength pLength) throws OceanusException;
+
+    /**
      * Obtain predicate for supported digestTypes.
      * @return the predicate
      */
     public abstract Predicate<GordianDigestType> supportedDigests();
+
+    /**
+     * Obtain predicate for supported hMac digestTypes.
+     * @return the predicate
+     */
+    public abstract Predicate<GordianDigestType> supportedHMacDigests();
 
     /**
      * generate random GordianMac.

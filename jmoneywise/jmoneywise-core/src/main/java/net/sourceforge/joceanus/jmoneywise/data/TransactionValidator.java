@@ -542,7 +542,7 @@ public final class TransactionValidator {
         /* If account is portfolio */
         if (pAccount instanceof Portfolio) {
             /* Cannot be recursive */
-            if (!MetisDifference.isEqual(pAccount, pPartner)) {
+            if (MetisDifference.isEqual(pAccount, pPartner)) {
                 return false;
             }
 

@@ -29,52 +29,75 @@ public enum GordianDigestType {
     /**
      * SHA2.
      */
-    SHA2,
+    SHA2(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
 
     /**
      * Tiger.
      */
-    TIGER,
+    TIGER(GordianLength.LEN_192),
 
     /**
      * WhirlPool.
      */
-    WHIRLPOOL,
+    WHIRLPOOL(GordianLength.LEN_512),
 
     /**
      * RIPEMD.
      */
-    RIPEMD,
+    RIPEMD(GordianLength.LEN_320, GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_256),
 
     /**
      * GOST.
      */
-    GOST,
+    GOST(GordianLength.LEN_512, GordianLength.LEN_256),
 
     /**
-     * KECCAK.
+     * SHA3.
      */
-    KECCAK,
+    SHA3(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
 
     /**
      * Skein.
      */
-    SKEIN,
+    SKEIN(GordianLength.LEN_512, GordianLength.LEN_256, GordianLength.LEN_1024),
 
     /**
      * SM3.
      */
-    SM3,
+    SM3(GordianLength.LEN_256),
 
     /**
-     * Blake.
+     * Blake2B.
      */
-    BLAKE;
+    BLAKE(GordianLength.LEN_512, GordianLength.LEN_160, GordianLength.LEN_256, GordianLength.LEN_384),
+
+    /**
+     * SHA1.
+     */
+    SHA1(GordianLength.LEN_160),
+
+    /**
+     * MD5.
+     */
+    MD5(GordianLength.LEN_128);
+
+    /**
+     * The Supported lengths.
+     */
+    private final GordianLength[] theLengths;
 
     /**
      * The String name.
      */
     private String theName;
+
+    /**
+     * Constructor.
+     * @param pLengths the supported lengths
+     */
+    GordianDigestType(final GordianLength... pLengths) {
+        theLengths = pLengths;
+    }
 
     @Override
     public String toString() {
@@ -86,5 +109,54 @@ public enum GordianDigestType {
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Obtain default length.
+     * @return the default length
+     */
+    public GordianLength getDefaultLength() {
+        return theLengths[0];
+    }
+
+    /**
+     * Obtain supported lengths.
+     * @return the supported lengths (first is default)
+     */
+    public GordianLength[] getSupportedLengths() {
+        return theLengths;
+    }
+
+    /**
+     * Adjust length to ensure support.
+     * @param pLength the requested length
+     * @return the valid length
+     */
+    public GordianLength adjustLength(final GordianLength pLength) {
+        return isLengthAvailable(pLength)
+                                          ? pLength
+                                          : getDefaultLength();
+    }
+
+    /**
+     * is length available?
+     * @param pLength the length
+     * @return true/false
+     */
+    public boolean isLengthAvailable(final GordianLength pLength) {
+        for (GordianLength myLength : theLengths) {
+            if (myLength.equals(pLength)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * is this available as a hashDigest?
+     * @return true/false
+     */
+    public boolean isHashDigest() {
+        return isLengthAvailable(GordianLength.LEN_512);
     }
 }

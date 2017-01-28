@@ -60,9 +60,14 @@ public class GordianIdManager {
     private static final int LOC_MAC = 17;
 
     /**
+     * The HMac personalisation location.
+     */
+    private static final int LOC_HMAC = 19;
+
+    /**
      * The Cipher personalisation location.
      */
-    private static final int LOC_CIPHER = 19;
+    private static final int LOC_CIPHER = 23;
 
     /**
      * The SecureRandom.
@@ -105,6 +110,11 @@ public class GordianIdManager {
     private final GordianDigestType[] theDigests;
 
     /**
+     * The list of hMacDigests.
+     */
+    private final GordianDigestType[] theHMacDigests;
+
+    /**
      * The list of MACs.
      */
     private final GordianMacType[] theMacs;
@@ -123,6 +133,7 @@ public class GordianIdManager {
         theStdSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_STDSYM, pFactory.standardSymKeys());
         theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), LOC_STREAM, pFactory.supportedStreamKeys());
         theDigests = shuffleTypes(GordianDigestType.values(), LOC_DIGEST, pFactory.supportedDigests());
+        theHMacDigests = shuffleTypes(GordianDigestType.values(), LOC_HMAC, pFactory.supportedHMacDigests());
         theMacs = shuffleTypes(GordianMacType.values(), LOC_MAC, pFactory.supportedMacs());
 
         /* Determine the cipher indentation */
@@ -290,6 +301,31 @@ public class GordianIdManager {
     }
 
     /**
+     * Obtain random hMacDigestType.
+     * @return the random digestType
+     */
+    protected GordianDigestType generateRandomHMacDigestType() {
+        /* Determine a random digestType */
+        GordianDigestType[] myDigest = getRandomTypes(theHMacDigests, 1);
+
+        /* Return the single digestType */
+        return myDigest[0];
+    }
+
+    /**
+     * Derive set of standard hMacDigestTypes from seed.
+     * @param pSeed the seed
+     * @param pCount the count
+     * @return the digestTypes
+     */
+    protected GordianDigestType[] deriveHMacDigestTypesFromSeed(final int pSeed,
+                                                                final int pCount) {
+        GordianDigestType[] myResult = Arrays.copyOf(theHMacDigests, pCount);
+        getSeededTypes(theHMacDigests, myResult, pSeed);
+        return myResult;
+    }
+
+    /**
      * Obtain digestType from external DigestId.
      * @param pId the external id
      * @return the digestType
@@ -317,7 +353,7 @@ public class GordianIdManager {
         GordianMacType myMacType = generateRandomMacType();
         switch (myMacType) {
             case HMAC:
-                GordianDigestType myDigestType = generateRandomDigestType();
+                GordianDigestType myDigestType = generateRandomHMacDigestType();
                 return new GordianMacSpec(myMacType, myDigestType);
             case POLY1305:
             case GMAC:
