@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>v1.5.1-SNAPSHOT</version>
+  <version>v1.5.1-b4</version>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
   <inceptionYear>2012</inceptionYear>
@@ -65,12 +65,12 @@
     <svnParent>jOceanus</svnParent>
     <svnComponent>${svnParent}</svnComponent>
     <svnBranch>v1.5.1</svnBranch>
-    <svnTag>SNAPSHOT</svnTag>
-    <svnBase>${svnParent}/trunk</svnBase>
+    <svnTag>b4</svnTag>
+    <svnBase>${svnParent}/tags/${svnBranch}-${svnTag}</svnBase>
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
     <appLibDir/>
-    <JDateButtonVersion>v2.1.0-SNAPSHOT</JDateButtonVersion>
+    <JDateButtonVersion>v2.1.0-b3</JDateButtonVersion>
     <BouncyCastleVersion>1.56</BouncyCastleVersion>
     <SvnKitVersion>1.8.12</SvnKitVersion>
     <JGitVersion>4.6.0.201612231935-r</JGitVersion>
