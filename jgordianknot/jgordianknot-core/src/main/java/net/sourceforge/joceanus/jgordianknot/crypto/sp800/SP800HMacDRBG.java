@@ -50,8 +50,8 @@ import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianByteArrayInteger;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Implementation of HMacSP800DRBG based on the BouncyCastle Code.
@@ -110,9 +110,9 @@ public final class SP800HMacDRBG
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      */
     protected SP800HMacDRBG(final GordianMac pHMac,
-                       final EntropySource pEntropy,
-                       final byte[] pSecurityBytes,
-                       final byte[] pInitVector) {
+                            final EntropySource pEntropy,
+                            final byte[] pSecurityBytes,
+                            final byte[] pInitVector) {
         /* Store hMac and entropy source */
         theHMac = pHMac;
         theEntropy = pEntropy;

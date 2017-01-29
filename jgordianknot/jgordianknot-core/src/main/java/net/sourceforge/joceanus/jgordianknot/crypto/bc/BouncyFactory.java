@@ -52,6 +52,7 @@ import org.bouncycastle.crypto.digests.WhirlpoolDigest;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.engines.CAST6Engine;
 import org.bouncycastle.crypto.engines.CamelliaEngine;
+import org.bouncycastle.crypto.engines.ChaCha7539Engine;
 import org.bouncycastle.crypto.engines.ChaChaEngine;
 import org.bouncycastle.crypto.engines.Grain128Engine;
 import org.bouncycastle.crypto.engines.HC128Engine;
@@ -188,7 +189,7 @@ public final class BouncyFactory
     static {
         /* Create the Predicates */
         PREDICATE_DIGESTS = generateDigestPredicate();
-        PREDICATE_SIGNDIGESTS = p -> p == GordianDigestType.SHA2;
+        PREDICATE_SIGNDIGESTS = GordianDigestType::isSignatureDigest;
         PREDICATE_MACS = p -> true;
 
         /* Calculate max cipher Steps */
@@ -594,7 +595,7 @@ public final class BouncyFactory
      * @return the digest
      */
     private static Digest getSkeinDigest(final GordianLength pLength) {
-        return new SkeinDigest(pLength.getLength(), pLength.getLength());
+        return new SkeinDigest(pLength.getSkeinState().getLength(), pLength.getLength());
     }
 
     /**
@@ -617,13 +618,13 @@ public final class BouncyFactory
     private Mac getBCMac(final GordianMacSpec pMacSpec) throws OceanusException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
-                return getBCHMac(pMacSpec.getDigestType());
+                return getBCHMac(pMacSpec.getDigestType(), pMacSpec.getDigestLength());
             case GMAC:
                 return getBCGMac(pMacSpec.getKeyType());
             case POLY1305:
                 return getBCPoly1305Mac(pMacSpec.getKeyType());
             case SKEIN:
-                return getBCSkeinMac();
+                return getBCSkeinMac(pMacSpec.getDigestLength());
             case VMPC:
                 return getBCVMPCMac();
             default:
@@ -634,11 +635,13 @@ public final class BouncyFactory
     /**
      * Create the BouncyCastle HMAC.
      * @param pDigestType the digest type
+     * @param pLength the length
      * @return the MAC
      * @throws OceanusException on error
      */
-    private Mac getBCHMac(final GordianDigestType pDigestType) throws OceanusException {
-        BouncyDigest myDigest = createDigest(pDigestType);
+    private Mac getBCHMac(final GordianDigestType pDigestType,
+                          final GordianLength pLength) throws OceanusException {
+        BouncyDigest myDigest = createDigest(pDigestType, pLength);
         return new HMac(myDigest.getDigest());
     }
 
@@ -664,11 +667,14 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle SkeinMac.
+     * @param pLength the length
      * @return the MAC
      */
-    private static Mac getBCSkeinMac() {
-        int myLength = GordianLength.LEN_512.getLength();
-        return new SkeinMac(myLength, myLength);
+    private static Mac getBCSkeinMac(final GordianLength pLength) {
+        GordianLength myLength = pLength == null
+                                                 ? GordianDigestType.SKEIN.getDefaultLength()
+                                                 : pLength;
+        return new SkeinMac(myLength.getSkeinState().getLength(), myLength.getLength());
     }
 
     /**
@@ -710,6 +716,8 @@ public final class BouncyFactory
                                       : new HC256Engine();
             case CHACHA:
                 return new ChaChaEngine();
+            case CHACHA7539:
+                return new ChaCha7539Engine();
             case SALSA20:
                 return new Salsa20Engine();
             case XSALSA20:

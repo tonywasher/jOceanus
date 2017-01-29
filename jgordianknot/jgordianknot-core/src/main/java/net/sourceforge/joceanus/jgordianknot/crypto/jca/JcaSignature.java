@@ -22,18 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto.jca;
 
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
-import java.security.spec.MGF1ParameterSpec;
-import java.security.spec.PSSParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianConsumer;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPrivateKey;
@@ -53,22 +51,12 @@ public abstract class JcaSignature
     /**
      * The RSA Algorithm.
      */
-    private static final String RSA_ALGO = "SHA512withRSAandMGF1";
+    private static final String RSA_ALGOBASE = "withRSAandMGF1";
 
     /**
      * The ECDSA Signature.
      */
-    private static final String ECDSA_ALGO = "SHA512withECDSA";
-
-    /**
-     * The MGF1 Signature.
-     */
-    private static final String MGF1_ALGO = "MGF1";
-
-    /**
-     * The SHA2 Signature.
-     */
-    private static final String SHA2_ALGO = "SHA512";
+    private static final String ECDSA_ALGOBASE = "withECDSA";
 
     /**
      * The RSA Signer.
@@ -129,24 +117,23 @@ public abstract class JcaSignature
         /**
          * Constructor.
          * @param pPrivateKey the private key
+         * @param pDigestType the digest type
          * @param pRandom the secure random
          * @throws OceanusException on error
          */
         protected JcaRSASigner(final JcaPrivateKey pPrivateKey,
+                               final GordianDigestType pDigestType,
                                final SecureRandom pRandom) throws OceanusException {
             /* Create the PSSParameterSpec */
             try {
-                setSigner(Signature.getInstance(RSA_ALGO));
-                PSSParameterSpec myPSSParms = new PSSParameterSpec(SHA2_ALGO, MGF1_ALGO,
-                        MGF1ParameterSpec.SHA512, GordianKeyPair.MGF1_SALTLEN, 1);
-                getSigner().setParameter(myPSSParms);
+                String myDigest = JcaDigest.getAlgorithm(pDigestType, GordianLength.LEN_512);
+                setSigner(Signature.getInstance(myDigest + RSA_ALGOBASE));
 
                 /* Initialise and set the signer */
                 getSigner().initSign(pPrivateKey.getPrivateKey(), pRandom);
 
                 /* Catch exceptions */
             } catch (NoSuchAlgorithmException
-                    | InvalidAlgorithmParameterException
                     | InvalidKeyException e) {
                 throw new GordianCryptoException(SIG_ERROR, e);
             }
@@ -172,22 +159,21 @@ public abstract class JcaSignature
         /**
          * Constructor.
          * @param pPublicKey the public key
+         * @param pDigestType the digest type
          * @throws OceanusException on error
          */
-        protected JcaRSAValidator(final JcaPublicKey pPublicKey) throws OceanusException {
+        protected JcaRSAValidator(final JcaPublicKey pPublicKey,
+                                  final GordianDigestType pDigestType) throws OceanusException {
             /* Create the PSSParameterSpec */
             try {
-                setSigner(Signature.getInstance(RSA_ALGO));
-                PSSParameterSpec myPSSParms = new PSSParameterSpec(SHA2_ALGO, MGF1_ALGO,
-                        MGF1ParameterSpec.SHA512, GordianKeyPair.MGF1_SALTLEN, 1);
-                getSigner().setParameter(myPSSParms);
+                String myDigest = JcaDigest.getAlgorithm(pDigestType, GordianLength.LEN_512);
+                setSigner(Signature.getInstance(myDigest + RSA_ALGOBASE));
 
                 /* Initialise and set the signer */
                 getSigner().initVerify(pPublicKey.getPublicKey());
 
                 /* Catch exceptions */
             } catch (NoSuchAlgorithmException
-                    | InvalidAlgorithmParameterException
                     | InvalidKeyException e) {
                 throw new GordianCryptoException(SIG_ERROR, e);
             }
@@ -213,14 +199,17 @@ public abstract class JcaSignature
         /**
          * Constructor.
          * @param pPrivateKey the private key
+         * @param pDigestType the digest type
          * @param pRandom the secure random
          * @throws OceanusException on error
          */
         protected JcaECDSASigner(final JcaPrivateKey pPrivateKey,
+                                 final GordianDigestType pDigestType,
                                  final SecureRandom pRandom) throws OceanusException {
             /* Create the Signer */
             try {
-                setSigner(Signature.getInstance(ECDSA_ALGO));
+                String myDigest = JcaDigest.getAlgorithm(pDigestType, GordianLength.LEN_512);
+                setSigner(Signature.getInstance(myDigest + ECDSA_ALGOBASE));
 
                 /* Initialise and set the signer */
                 getSigner().initSign(pPrivateKey.getPrivateKey(), pRandom);
@@ -252,12 +241,15 @@ public abstract class JcaSignature
         /**
          * Constructor.
          * @param pPublicKey the public key
+         * @param pDigestType the digest type
          * @throws OceanusException on error
          */
-        protected JcaECDSAValidator(final JcaPublicKey pPublicKey) throws OceanusException {
+        protected JcaECDSAValidator(final JcaPublicKey pPublicKey,
+                                    final GordianDigestType pDigestType) throws OceanusException {
             /* Create the PSSParameterSpec */
             try {
-                setSigner(Signature.getInstance(ECDSA_ALGO));
+                String myDigest = JcaDigest.getAlgorithm(pDigestType, GordianLength.LEN_512);
+                setSigner(Signature.getInstance(myDigest + ECDSA_ALGOBASE));
 
                 /* Initialise and set the signer */
                 getSigner().initVerify(pPublicKey.getPublicKey());

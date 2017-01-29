@@ -126,9 +126,9 @@ public final class SP800HashDRBG
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      */
     protected SP800HashDRBG(final GordianDigest pDigest,
-                       final EntropySource pEntropy,
-                       final byte[] pSecurityBytes,
-                       final byte[] pInitVector) {
+                            final EntropySource pEntropy,
+                            final byte[] pSecurityBytes,
+                            final byte[] pInitVector) {
         /* Store digest and entropy source */
         theDigest = pDigest;
         theEntropy = pEntropy;
@@ -262,7 +262,7 @@ public final class SP800HashDRBG
      * @return the new hash as a counter
      */
     private GordianByteArrayInteger hashDerive(final byte[] pSeedMaterial,
-                                        final int pSeedLength) {
+                                               final int pSeedLength) {
         /* Determine sizes */
         int mySize = theDigest.getDigestSize();
         int myLen = pSeedLength >> BIT_SHIFT;

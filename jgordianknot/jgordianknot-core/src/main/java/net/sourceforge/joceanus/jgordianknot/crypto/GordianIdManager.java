@@ -133,7 +133,7 @@ public class GordianIdManager {
         theStdSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_STDSYM, pFactory.standardSymKeys());
         theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), LOC_STREAM, pFactory.supportedStreamKeys());
         theDigests = shuffleTypes(GordianDigestType.values(), LOC_DIGEST, pFactory.supportedDigests());
-        theHMacDigests = shuffleTypes(GordianDigestType.values(), LOC_HMAC, pFactory.supportedHMacDigests());
+        theHMacDigests = shuffleTypes(GordianDigestType.values(), LOC_HMAC, pFactory.supportedHMacDigests().and(GordianDigestType::isCombinedHashDigest));
         theMacs = shuffleTypes(GordianMacType.values(), LOC_MAC, pFactory.supportedMacs());
 
         /* Determine the cipher indentation */

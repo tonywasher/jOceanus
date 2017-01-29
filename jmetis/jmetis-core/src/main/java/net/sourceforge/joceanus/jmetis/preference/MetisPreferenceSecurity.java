@@ -331,7 +331,7 @@ public class MetisPreferenceSecurity {
             }
 
             /* Set appropriate filter */
-            myHashPref.setFilter(GordianHashManager.getDigestPredicate(myFactPref.getValue()).and(GordianDigestType::isHashDigest));
+            myHashPref.setFilter(GordianHashManager.getDigestPredicate(myFactPref.getValue()).and(GordianDigestType::isExternalHashDigest));
 
             /* Make sure that the security phrase is specified */
             MetisCharArrayPreference<MetisSecurityPreferenceKey> myPhrasePref = getCharArrayPreference(MetisSecurityPreferenceKey.SECURITYPHRASE);

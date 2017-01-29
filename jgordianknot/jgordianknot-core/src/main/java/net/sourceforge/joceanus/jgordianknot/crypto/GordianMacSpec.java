@@ -49,6 +49,11 @@ public final class GordianMacSpec {
     private final GordianSymKeyType theKeyType;
 
     /**
+     * The Digest Length.
+     */
+    private final GordianLength theLength;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -58,8 +63,19 @@ public final class GordianMacSpec {
      * @param pMacType the macType
      */
     public GordianMacSpec(final GordianMacType pMacType) {
+        this(pMacType, (GordianLength) null);
+    }
+
+    /**
+     * Constructor.
+     * @param pMacType the macType
+     * @param pLength the length
+     */
+    public GordianMacSpec(final GordianMacType pMacType,
+                          final GordianLength pLength) {
         theMacType = pMacType;
         theDigestType = null;
+        theLength = pLength;
         theKeyType = null;
     }
 
@@ -69,10 +85,23 @@ public final class GordianMacSpec {
      * @param pDigestType the digestType
      */
     public GordianMacSpec(final GordianMacType pMacType,
-                   final GordianDigestType pDigestType) {
+                          final GordianDigestType pDigestType) {
+        this(pMacType, pDigestType, pDigestType.getDefaultLength());
+    }
+
+    /**
+     * Constructor.
+     * @param pMacType the macType
+     * @param pDigestType the digestType
+     * @param pLength the length
+     */
+    public GordianMacSpec(final GordianMacType pMacType,
+                          final GordianDigestType pDigestType,
+                          final GordianLength pLength) {
         /* Store parameters */
         theMacType = pMacType;
         theDigestType = pDigestType;
+        theLength = pLength;
         theKeyType = null;
     }
 
@@ -82,10 +111,11 @@ public final class GordianMacSpec {
      * @param pKeyType the keyType
      */
     public GordianMacSpec(final GordianMacType pMacType,
-                   final GordianSymKeyType pKeyType) {
+                          final GordianSymKeyType pKeyType) {
         /* Store parameters */
         theMacType = pMacType;
         theDigestType = null;
+        theLength = null;
         theKeyType = pKeyType;
     }
 
@@ -106,6 +136,14 @@ public final class GordianMacSpec {
     }
 
     /**
+     * Obtain Digest Length.
+     * @return the Length
+     */
+    public GordianLength getDigestLength() {
+        return theLength;
+    }
+
+    /**
      * Obtain SymKey Type.
      * @return the KeyType
      */
@@ -123,6 +161,9 @@ public final class GordianMacSpec {
                 theName += SEP + theDigestType.toString();
             } else if (theKeyType != null) {
                 theName += SEP + theKeyType.toString();
+            }
+            if (theLength != null) {
+                theName += SEP + theLength.toString();
             }
         }
 
@@ -155,10 +196,14 @@ public final class GordianMacSpec {
 
         /* Match subfields */
         if (theDigestType != null) {
-            return theDigestType.equals(myThat.getDigestType());
+            return theDigestType.equals(myThat.getDigestType())
+                   && theLength.equals(myThat.getDigestLength());
         }
         if (theKeyType != null) {
             return theKeyType.equals(myThat.getKeyType());
+        }
+        if (theLength != null) {
+            return theLength.equals(myThat.getDigestLength());
         }
         return true;
     }
@@ -171,6 +216,9 @@ public final class GordianMacSpec {
         }
         if (theKeyType != null) {
             hashCode += theKeyType.ordinal();
+        }
+        if (theLength != null) {
+            hashCode += theLength.ordinal();
         }
         return hashCode;
     }

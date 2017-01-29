@@ -287,9 +287,13 @@ public class GordianTestSuite {
         GordianKeySet myKeySet = myHash.getKeySet();
         GordianFactory myFactory = myKeySet.getFactory();
 
-        /* Create new Asymmetric KeyPair */
-        GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(GordianAsymKeyType.RSA);
-        GordianKeyPair myPair = myGenerator.generateKeyPair();
+        /* Create new RSA KeyPair */
+        GordianKeyPairGenerator myRSAGenerator = myFactory.getKeyPairGenerator(GordianAsymKeyType.RSA);
+        GordianKeyPair myRSAPair = myRSAGenerator.generateKeyPair();
+
+        /* Create new EC KeyPair */
+        GordianKeyPairGenerator myECGenerator = myFactory.getKeyPairGenerator(GordianAsymKeyType.EC1);
+        GordianKeyPair myECPair = myECGenerator.generateKeyPair();
 
         /* Create new symmetric key and stream Key */
         GordianKey<GordianSymKeyType> mySym = myFactory.generateRandomSymKey();
@@ -298,8 +302,10 @@ public class GordianTestSuite {
         /* Secure the keys */
         byte[] mySymSafe = myKeySet.secureKey(mySym);
         byte[] myStreamSafe = myKeySet.secureKey(myStream);
-        byte[] myPrivateSafe = myKeySet.secureKey(myPair.getPrivateKey());
-        X509EncodedKeySpec myPublicSpec = myGenerator.getX509Encoding(myPair.getPublicKey());
+        byte[] myRSASafe = myKeySet.secureKey(myRSAPair.getPrivateKey());
+        byte[] myECSafe = myKeySet.secureKey(myECPair.getPrivateKey());
+        X509EncodedKeySpec myRSAPublicSpec = myRSAGenerator.getX509Encoding(myRSAPair.getPublicKey());
+        X509EncodedKeySpec myECPublicSpec = myECGenerator.getX509Encoding(myECPair.getPublicKey());
 
         /* Encrypt some bytes */
         String myTest = "TestString";
@@ -323,11 +329,23 @@ public class GordianTestSuite {
         byte[] myIV = myMac.getInitVector();
         int myMacId = myKeySet.deriveExternalIdForType(myMac.getMacSpec());
 
-        /* Create a signature */
-        GordianSigner mySigner = myFactory.createSigner(myPair.getPrivateKey(), GordianDigestType.SHA2);
+        /* Create signatures */
+        GordianSigner mySigner = myFactory.createSigner(myRSAPair.getPrivateKey(), GordianDigestType.SHA2);
         mySigner.update(mySymSafe);
         mySigner.update(myStreamSafe);
-        byte[] mySignerBytes = mySigner.sign();
+        byte[] myRSASignerSHA2 = mySigner.sign();
+        mySigner = myFactory.createSigner(myRSAPair.getPrivateKey(), GordianDigestType.SHA3);
+        mySigner.update(mySymSafe);
+        mySigner.update(myStreamSafe);
+        byte[] myRSASignerSHA3 = mySigner.sign();
+        mySigner = myFactory.createSigner(myECPair.getPrivateKey(), GordianDigestType.SHA2);
+        mySigner.update(mySymSafe);
+        mySigner.update(myStreamSafe);
+        byte[] myECSignerSHA2 = mySigner.sign();
+        mySigner = myFactory.createSigner(myECPair.getPrivateKey(), GordianDigestType.SHA3);
+        mySigner.update(mySymSafe);
+        mySigner.update(myStreamSafe);
+        byte[] myECSignerSHA3 = mySigner.sign();
 
         /* Start a new session */
         myManager = theCreator.newSecureManager(myParams);
@@ -366,9 +384,12 @@ public class GordianTestSuite {
         /* Derive the keys */
         GordianKey<GordianSymKeyType> mySym1 = myKeySet1.deriveKey(mySymSafe, mySym.getKeyType());
         GordianKey<GordianStreamKeyType> myStm1 = myKeySet1.deriveKey(myStreamSafe, myStream.getKeyType());
-        myGenerator = myFactory.getKeyPairGenerator(myPair.getKeyType());
-        GordianPrivateKey myPrivate = myKeySet1.deriveKey(myPrivateSafe, myPair.getKeyType());
-        GordianPublicKey myPublic = myGenerator.derivePublicKey(myPublicSpec);
+        myRSAGenerator = myFactory.getKeyPairGenerator(myRSAPair.getKeyType());
+        myECGenerator = myFactory.getKeyPairGenerator(myECPair.getKeyType());
+        GordianPrivateKey myRSAPrivate = myKeySet1.deriveKey(myRSASafe, myRSAPair.getKeyType());
+        GordianPublicKey myRSAPublic = myRSAGenerator.derivePublicKey(myRSAPublicSpec);
+        GordianPrivateKey myECPrivate = myKeySet1.deriveKey(myECSafe, myECPair.getKeyType());
+        GordianPublicKey myECPublic = myECGenerator.derivePublicKey(myECPublicSpec);
 
         /* Check the keys are the same */
         if (!mySym1.equals(mySym)) {
@@ -377,19 +398,43 @@ public class GordianTestSuite {
         if (!myStm1.equals(myStream)) {
             System.out.println("Failed to decrypt StreamKey");
         }
-        if (!myPrivate.equals(myPair.getPrivateKey())) {
-            System.out.println("Failed to decrypt PrivateKey");
+        if (!myRSAPrivate.equals(myRSAPair.getPrivateKey())) {
+            System.out.println("Failed to decrypt RSAPrivateKey");
         }
-        if (!myPublic.equals(myPair.getPublicKey())) {
-            System.out.println("Failed to decrypt PublicKey");
+        if (!myRSAPublic.equals(myRSAPair.getPublicKey())) {
+            System.out.println("Failed to decrypt RSAPublicKey");
+        }
+        if (!myECPrivate.equals(myECPair.getPrivateKey())) {
+            System.out.println("Failed to decrypt ECPrivateKey");
+        }
+        if (!myECPublic.equals(myECPair.getPublicKey())) {
+            System.out.println("Failed to decrypt ECPublicKey");
         }
 
-        /* Verify a signature */
-        GordianValidator myValidator = myFactory.createValidator(myPair.getPublicKey(), GordianDigestType.SHA2);
+        /* Verify signatures */
+        GordianValidator myValidator = myFactory.createValidator(myRSAPair.getPublicKey(), GordianDigestType.SHA2);
         myValidator.update(mySymSafe);
         myValidator.update(myStreamSafe);
-        if (!myValidator.verify(mySignerBytes)) {
-            System.out.println("Failed to validate signature");
+        if (!myValidator.verify(myRSASignerSHA2)) {
+            System.out.println("Failed to validate RSA SHA2 signature");
+        }
+        myValidator = myFactory.createValidator(myRSAPair.getPublicKey(), GordianDigestType.SHA3);
+        myValidator.update(mySymSafe);
+        myValidator.update(myStreamSafe);
+        if (!myValidator.verify(myRSASignerSHA3)) {
+            System.out.println("Failed to validate RSA SHA3 signature");
+        }
+        myValidator = myFactory.createValidator(myECPair.getPublicKey(), GordianDigestType.SHA2);
+        myValidator.update(mySymSafe);
+        myValidator.update(myStreamSafe);
+        if (!myValidator.verify(myECSignerSHA2)) {
+            System.out.println("Failed to validate EC SHA2 signature");
+        }
+        myValidator = myFactory.createValidator(myECPair.getPublicKey(), GordianDigestType.SHA3);
+        myValidator.update(mySymSafe);
+        myValidator.update(myStreamSafe);
+        if (!myValidator.verify(myECSignerSHA3)) {
+            System.out.println("Failed to validate EC SHA3 signature");
         }
 
         /* Decrypt the bytes */

@@ -136,7 +136,7 @@ public abstract class GordianKeyEncapsulation {
          * Obtain the cipherText.
          * @return the cipherText
          */
-        protected byte[] getCipherText() {
+        public byte[] getCipherText() {
             return theCipherText;
         }
     }

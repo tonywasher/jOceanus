@@ -59,7 +59,7 @@ public enum GordianDigestType {
     /**
      * Skein.
      */
-    SKEIN(GordianLength.LEN_512, GordianLength.LEN_256, GordianLength.LEN_1024),
+    SKEIN(GordianLength.LEN_512, GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_1024),
 
     /**
      * SM3.
@@ -153,10 +153,32 @@ public enum GordianDigestType {
     }
 
     /**
-     * is this available as a hashDigest?
+     * is this available as a signature Digest?
      * @return true/false
      */
-    public boolean isHashDigest() {
+    public boolean isSignatureDigest() {
+        switch (this) {
+            case SHA2:
+            case SHA3:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * is this available as an external hashDigest?
+     * @return true/false
+     */
+    public boolean isExternalHashDigest() {
         return isLengthAvailable(GordianLength.LEN_512);
+    }
+
+    /**
+     * is this available as a combined hashDigest?
+     * @return true/false
+     */
+    public boolean isCombinedHashDigest() {
+        return getDefaultLength().getLength() >= GordianLength.LEN_256.getLength();
     }
 }

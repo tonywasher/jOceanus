@@ -74,7 +74,7 @@
     <BouncyCastleVersion>1.56</BouncyCastleVersion>
     <SvnKitVersion>1.8.12</SvnKitVersion>
     <JGitVersion>4.6.0.201612231935-r</JGitVersion>
-    <HttpClientVersion>4.5.2</HttpClientVersion>
+    <HttpClientVersion>4.5.3</HttpClientVersion>
     <JSONVersion>20160810</JSONVersion>
     <ApacheMavenVersion>3.3.9</ApacheMavenVersion>
     <MySQLVersion>6.0.5</MySQLVersion>
@@ -82,7 +82,7 @@
     <ApachePOIVersion>3.15</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.22</SLF4JVersion>
-    <LOG4JVersion>2.7</LOG4JVersion>
+    <LOG4JVersion>2.8</LOG4JVersion>
     <JFreeChartVersion>1.0.19</JFreeChartVersion>
     <JSoupVersion>1.10.2</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>

@@ -78,6 +78,8 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * ChaCha
 
+    * ChaCha7539 (unrestricted keys)
+
     * Salsa20
 
     * XSalsa20 (unrestricted keys)
@@ -92,35 +94,39 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * Grain128 (restricted keys)
 
-  The following MessageDigest algorithms are supported.
+  The following MessageDigest algorithms are supported (bit lengths in brackets).
 
-    * SHA2
+    * SHA2 (224, 256, 384, 512)
 
-    * Tiger
+    * Tiger (192)
 
-    * WHIRLPOOL
+    * WHIRLPOOL (512)
 
-    * GOST1411
+    * GOST1411-2012 (256, 512)
 
-    * RIPEMD320
+    * RIPEMD (128, 160, 256, 320)
 
-    * KECCAK
+    * SHA3 (224, 256, 384, 512)
 
-    * Skein
+    * Skein (128, 160, 224, 256, 384, 512, 1024)
 
-    * SM3
+    * SM3 (256)
 
-    * Blake2b
+    * Blake2b (160, 256, 384, 512)
+
+    * SHA1 (160)
+
+    * MD5 (128)
 
   The following Mac Algorithms are supported
 
-    * HMac (for each supported message digest)
+    * HMac (for each supported message digest/length)
 
     * GMac (for each symmetric algorithm except for ThreeFish)
 
     * Poly1305 (for each symmetric algorithm except for ThreeFish)
 
-    * SkeinMAC
+    * SkeinMAC (for each supported Skein digest length)
 
     * VMPCMAC
 

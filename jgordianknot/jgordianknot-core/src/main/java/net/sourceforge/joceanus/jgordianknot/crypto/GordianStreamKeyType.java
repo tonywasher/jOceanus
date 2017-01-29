@@ -47,6 +47,11 @@ public enum GordianStreamKeyType {
     CHACHA(8),
 
     /**
+     * ChaCha7539.
+     */
+    CHACHA7539(12),
+
+    /**
      * VMPC.
      */
     VMPC(16),
@@ -112,6 +117,7 @@ public enum GordianStreamKeyType {
     public boolean validForRestriction(final boolean pRestricted) {
         switch (this) {
             case XSALSA20:
+            case CHACHA7539:
                 return !pRestricted;
             case GRAIN:
                 return pRestricted;

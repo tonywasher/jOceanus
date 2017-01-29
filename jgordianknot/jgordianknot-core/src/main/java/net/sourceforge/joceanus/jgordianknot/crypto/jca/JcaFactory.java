@@ -142,7 +142,7 @@ public final class JcaFactory
         /* Create the Predicates */
         PREDICATE_DIGESTS = generateDigestPredicate();
         PREDICATE_HMACDIGESTS = generateHMacDigestPredicate();
-        PREDICATE_SIGNDIGESTS = p -> p == GordianDigestType.SHA2;
+        PREDICATE_SIGNDIGESTS = GordianDigestType::isSignatureDigest;
         PREDICATE_MACS = p -> true;
 
         /* Calculate max cipher Steps */
@@ -368,7 +368,7 @@ public final class JcaFactory
         }
 
         /* Create the signer */
-        return getJcaSigner((JcaPrivateKey) pPrivateKey);
+        return getJcaSigner((JcaPrivateKey) pPrivateKey, pDigestType);
     }
 
     @Override
@@ -380,7 +380,7 @@ public final class JcaFactory
         }
 
         /* Create the validator */
-        return getJcaValidator((JcaPublicKey) pPublicKey);
+        return getJcaValidator((JcaPublicKey) pPublicKey, pDigestType);
     }
 
     /**
@@ -450,14 +450,12 @@ public final class JcaFactory
     private Mac getJavaMac(final GordianMacSpec pMacSpec) throws OceanusException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
-                return getJavaMac(getHMacAlgorithm(pMacSpec.getDigestType()));
             case GMAC:
-                return getJavaMac(getGMacAlgorithm(pMacSpec.getKeyType()));
             case POLY1305:
-                return getJavaMac(getPoly1305Algorithm(pMacSpec.getKeyType()));
             case SKEIN:
+                return getJavaMac(getMacSpecAlgorithm(pMacSpec));
             case VMPC:
-                return getJavaMac(getMacAlgorithm(pMacSpec.getMacType()));
+                return getJavaMac("VMPC-MAC");
             default:
                 throw new GordianDataException(getInvalidText(pMacSpec));
         }
@@ -535,13 +533,13 @@ public final class JcaFactory
     private String getMacSpecAlgorithm(final GordianMacSpec pMacSpec) throws OceanusException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
-                return getHMacAlgorithm(pMacSpec.getDigestType());
+                return getHMacAlgorithm(pMacSpec.getDigestType(), pMacSpec.getDigestLength());
             case GMAC:
                 return getGMacAlgorithm(pMacSpec.getKeyType());
             case POLY1305:
                 return getPoly1305Algorithm(pMacSpec.getKeyType());
             case SKEIN:
-                return getMacAlgorithm(pMacSpec.getMacType());
+                return getSkeinMacAlgorithm(pMacSpec.getDigestLength());
             case VMPC:
                 return getStreamKeyAlgorithm(GordianStreamKeyType.VMPC);
             default:
@@ -629,13 +627,13 @@ public final class JcaFactory
     /**
      * Return the associated HMac algorithm.
      * @param pDigestType the digest type
+     * @param pLength the length
      * @return the algorithm
      * @throws OceanusException on error
      */
-    private static String getHMacAlgorithm(final GordianDigestType pDigestType) throws OceanusException {
-        return GordianDigestType.SHA3.equals(pDigestType)
-                                                          ? "HMacKECCAK512"
-                                                          : "HMac" + JcaDigest.getAlgorithm(pDigestType);
+    private static String getHMacAlgorithm(final GordianDigestType pDigestType,
+                                           final GordianLength pLength) throws OceanusException {
+        return "HMac" + JcaDigest.getAlgorithm(pDigestType, pLength);
     }
 
     /**
@@ -671,19 +669,22 @@ public final class JcaFactory
     }
 
     /**
-     * Obtain the MAC algorithm.
-     * @param pMacType the MAC type
+     * Obtain the Skein MAC algorithm.
+     * @param pLength the length
      * @return the algorithm
      */
-    private static String getMacAlgorithm(final GordianMacType pMacType) {
-        switch (pMacType) {
-            case VMPC:
-                return "VMPC-MAC";
-            case SKEIN:
-                return "SKEIN-MAC-512-512";
-            default:
-                return null;
-        }
+    private static String getSkeinMacAlgorithm(final GordianLength pLength) {
+        GordianLength myLength = pLength == null
+                                                 ? GordianDigestType.SKEIN.getDefaultLength()
+                                                 : pLength;
+        String myLen = Integer.toString(myLength.getLength());
+        String myState = Integer.toString(myLength.getSkeinState().getLength());
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append("Skein-MAC-");
+        myBuilder.append(myState);
+        myBuilder.append("-");
+        myBuilder.append(myLen);
+        return myBuilder.toString();
     }
 
     /**
@@ -774,6 +775,7 @@ public final class JcaFactory
             case GRAIN:
                 return "Grain128";
             case CHACHA:
+            case CHACHA7539:
             case SALSA20:
             case XSALSA20:
             case ISAAC:
@@ -801,28 +803,32 @@ public final class JcaFactory
     /**
      * Create the BouncyCastle Signer.
      * @param pPrivateKey the privateKey
+     * @param pDigestType the digest type
      * @return the Signer
      * @throws OceanusException on error
      */
-    private GordianSigner getJcaSigner(final JcaPrivateKey pPrivateKey) throws OceanusException {
+    private GordianSigner getJcaSigner(final JcaPrivateKey pPrivateKey,
+                                       final GordianDigestType pDigestType) throws OceanusException {
         if (GordianAsymKeyType.RSA.equals(pPrivateKey.getKeyType())) {
-            return new JcaRSASigner(pPrivateKey, getRandom());
+            return new JcaRSASigner(pPrivateKey, pDigestType, getRandom());
         } else {
-            return new JcaECDSASigner(pPrivateKey, getRandom());
+            return new JcaECDSASigner(pPrivateKey, pDigestType, getRandom());
         }
     }
 
     /**
      * Create the BouncyCastle KEM Sender.
      * @param pPublicKey the publicKey
+     * @param pDigestType the digest type
      * @return the Validator
      * @throws OceanusException on error
      */
-    private static GordianValidator getJcaValidator(final JcaPublicKey pPublicKey) throws OceanusException {
+    private static GordianValidator getJcaValidator(final JcaPublicKey pPublicKey,
+                                                    final GordianDigestType pDigestType) throws OceanusException {
         if (GordianAsymKeyType.RSA.equals(pPublicKey.getKeyType())) {
-            return new JcaRSAValidator(pPublicKey);
+            return new JcaRSAValidator(pPublicKey, pDigestType);
         } else {
-            return new JcaECDSAValidator(pPublicKey);
+            return new JcaECDSAValidator(pPublicKey, pDigestType);
         }
     }
 

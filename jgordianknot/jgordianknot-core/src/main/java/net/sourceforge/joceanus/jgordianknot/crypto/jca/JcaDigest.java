@@ -196,14 +196,14 @@ public final class JcaDigest
     private static String getBlake2bAlgorithm(final GordianLength pLength) {
         switch (pLength) {
             case LEN_160:
-                return "RIPEMD128";
+                return "BLAKE2B-160";
             case LEN_256:
-                return "RIPEMD160";
+                return "BLAKE2B-256";
             case LEN_384:
-                return "RIPEMD256";
+                return "BLAKE2B-384";
             case LEN_512:
             default:
-                return "RIPEMD320";
+                return "BLAKE2B-512";
         }
     }
 
@@ -252,9 +252,10 @@ public final class JcaDigest
      */
     private static String getSkeinAlgorithm(final GordianLength pLength) {
         String myLen = Integer.toString(pLength.getLength());
+        String myState = Integer.toString(pLength.getSkeinState().getLength());
         StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append("SKEIN-");
-        myBuilder.append(myLen);
+        myBuilder.append("Skein-");
+        myBuilder.append(myState);
         myBuilder.append("-");
         myBuilder.append(myLen);
         return myBuilder.toString();
