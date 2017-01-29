@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jgordianknot</artifactId>
-    <version>v1.5.1-SNAPSHOT</version>   
+    <version>v1.5.2-SNAPSHOT</version>   
   </parent>
   <artifactId>jgordianknot-core</artifactId>
   <name>jGordianKnot Core Security Framework</name>
