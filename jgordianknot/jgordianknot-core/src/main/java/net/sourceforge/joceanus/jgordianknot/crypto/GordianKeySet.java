@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -199,17 +200,17 @@ public final class GordianKeySet {
 
     /**
      * secure Key.
-     * @param pKey the key to wrap
+     * @param pKeyPair the keyPair to wrap
      * @return the wrapped key
      * @throws OceanusException on error
      */
-    public byte[] secureKey(final GordianPrivateKey pKey) throws OceanusException {
+    public byte[] secureKey(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Generate set of keys */
         GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, false);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
 
         /* Wrap the key */
-        byte[] myBytes = theCipher.wrapKey(myKeyTypes, pKey);
+        byte[] myBytes = theCipher.wrapKey(myKeyTypes, pKeyPair);
 
         /* Package and return the encrypted bytes */
         return myRecipe.buildExternal(theFactory, myBytes);
@@ -218,19 +219,17 @@ public final class GordianKeySet {
     /**
      * derive Key.
      * @param pKeySpec the wrapped key
-     * @param pKeyType the key type
      * @return the key
      * @throws OceanusException on error
      */
-    public GordianPrivateKey deriveKey(final byte[] pKeySpec,
-                                       final GordianAsymKeyType pKeyType) throws OceanusException {
+    public PKCS8EncodedKeySpec deriveKeySpec(final byte[] pKeySpec) throws OceanusException {
         /* Parse the bytes into the separate parts */
         GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pKeySpec, false);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
         byte[] myBytes = myRecipe.getBytes();
 
         /* Unwrap the key and return it */
-        return theCipher.unwrapKey(myKeyTypes, myBytes, pKeyType);
+        return theCipher.unwrapKey(myKeyTypes, myBytes);
     }
 
     /**

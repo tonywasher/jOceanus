@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto.jca;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGeneratorCache;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
@@ -54,8 +54,8 @@ public class JcaKeyGeneratorCache
     }
 
     @Override
-    protected JcaKeyPairGenerator getCachedKeyPairGenerator(final GordianAsymKeyType pKeyType) {
-        return (JcaKeyPairGenerator) super.getCachedKeyPairGenerator(pKeyType);
+    protected JcaKeyPairGenerator getCachedKeyPairGenerator(final GordianAsymKeySpec pKeySpec) {
+        return (JcaKeyPairGenerator) super.getCachedKeyPairGenerator(pKeySpec);
     }
 
     /**

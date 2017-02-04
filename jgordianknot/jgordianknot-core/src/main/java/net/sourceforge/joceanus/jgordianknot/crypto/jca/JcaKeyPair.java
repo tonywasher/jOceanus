@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto.jca;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPrivateKey;
@@ -76,12 +76,12 @@ public class JcaKeyPair
 
         /**
          * Constructor.
-         * @param pKeyType the key type
+         * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected JcaPublicKey(final GordianAsymKeyType pKeyType,
+        protected JcaPublicKey(final GordianAsymKeySpec pKeySpec,
                                final PublicKey pPublicKey) {
-            super(pKeyType);
+            super(pKeySpec);
             theKey = pPublicKey;
         }
 
@@ -112,12 +112,13 @@ public class JcaKeyPair
             JcaPublicKey myThat = (JcaPublicKey) pThat;
 
             /* Check differences */
-            return theKey.equals(myThat.getPublicKey());
+            return getKeySpec().equals(myThat.getKeySpec())
+                   && theKey.equals(myThat.getPublicKey());
         }
 
         @Override
         public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeyType().hashCode()
+            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
                    + theKey.hashCode();
         }
     }
@@ -134,12 +135,12 @@ public class JcaKeyPair
 
         /**
          * Constructor.
-         * @param pKeyType the key type
+         * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected JcaPrivateKey(final GordianAsymKeyType pKeyType,
+        protected JcaPrivateKey(final GordianAsymKeySpec pKeySpec,
                                 final PrivateKey pPrivateKey) {
-            super(pKeyType);
+            super(pKeySpec);
             theKey = pPrivateKey;
         }
 
@@ -170,12 +171,13 @@ public class JcaKeyPair
             JcaPrivateKey myThat = (JcaPrivateKey) pThat;
 
             /* Check differences */
-            return theKey.equals(myThat.getPrivateKey());
+            return getKeySpec().equals(myThat.getKeySpec())
+                   && theKey.equals(myThat.getPrivateKey());
         }
 
         @Override
         public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeyType().hashCode()
+            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
                    + theKey.hashCode();
         }
     }

@@ -29,13 +29,13 @@ import java.security.spec.X509EncodedKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * GordianKnot interface for KeyPair Generators.
+ * GordianKnot class for KeyPair Generators.
  */
 public abstract class GordianKeyPairGenerator {
     /**
-     * The Key Type.
+     * The KeySpec.
      */
-    private final GordianAsymKeyType theKeyType;
+    private final GordianAsymKeySpec theKeySpec;
 
     /**
      * The Security Factory.
@@ -50,12 +50,12 @@ public abstract class GordianKeyPairGenerator {
     /**
      * Constructor.
      * @param pFactory the Security Factory
-     * @param pKeyType the keyType
+     * @param pKeySpec the keySpec
      */
     protected GordianKeyPairGenerator(final GordianFactory pFactory,
-                                      final GordianAsymKeyType pKeyType) {
+                                      final GordianAsymKeySpec pKeySpec) {
         /* Store parameters */
-        theKeyType = pKeyType;
+        theKeySpec = pKeySpec;
         theFactory = pFactory;
 
         /* Cache some values */
@@ -63,11 +63,11 @@ public abstract class GordianKeyPairGenerator {
     }
 
     /**
-     * Obtain keyType.
-     * @return the keyType
+     * Obtain keySpec.
+     * @return the keySpec
      */
-    public GordianAsymKeyType getKeyType() {
-        return theKeyType;
+    public GordianAsymKeySpec getKeySpec() {
+        return theKeySpec;
     }
 
     /**
@@ -93,34 +93,54 @@ public abstract class GordianKeyPairGenerator {
     public abstract GordianKeyPair generateKeyPair();
 
     /**
+     * Obtain public key from pair.
+     * @param pKeyPair the keyPair
+     * @return the public key
+     */
+    protected GordianPublicKey getPublicKey(final GordianKeyPair pKeyPair) {
+        return pKeyPair.getPublicKey();
+    }
+
+    /**
+     * Obtain private key from pair.
+     * @param pKeyPair the keyPair
+     * @return the private key
+     */
+    protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) {
+        return pKeyPair.getPrivateKey();
+    }
+
+    /**
      * Obtain PKCS8EncodedKeySpec.
-     * @param pPrivateKey the privateKey
+     * @param pKeyPair the privateKey
      * @return the EncodedKeySpec
      * @throws OceanusException on error
      */
-    protected abstract PKCS8EncodedKeySpec getPKCS8Encoding(GordianPrivateKey pPrivateKey) throws OceanusException;
+    protected abstract PKCS8EncodedKeySpec getPKCS8Encoding(GordianKeyPair pKeyPair) throws OceanusException;
 
     /**
-     * Create the private key from the PKCS8 encoding.
-     * @param pEncodedKey the encoded private key
-     * @return the private key
+     * Create the keyPair from the PKCS8/X509 encodings.
+     * @param pPublicKey the encoded public key
+     * @param pPrivateKey the encoded private key
+     * @return the keyPair
      * @throws OceanusException on error
      */
-    protected abstract GordianPrivateKey derivePrivateKey(PKCS8EncodedKeySpec pEncodedKey) throws OceanusException;
+    public abstract GordianKeyPair deriveKeyPair(X509EncodedKeySpec pPublicKey,
+                                                 PKCS8EncodedKeySpec pPrivateKey) throws OceanusException;
 
     /**
      * Extract the X509 encoding for the public key.
-     * @param pPublicKey the public key
+     * @param pKeyPair the keyPair
      * @return the X509 encoding
      * @throws OceanusException on error
      */
-    public abstract X509EncodedKeySpec getX509Encoding(GordianPublicKey pPublicKey) throws OceanusException;
+    public abstract X509EncodedKeySpec getX509Encoding(GordianKeyPair pKeyPair) throws OceanusException;
 
     /**
-     * Create the public key from the X509 encoding.
-     * @param pEncodedKey the encoded public key
-     * @return the public key
+     * Create the public-only keyPair from the X509 encoding.
+     * @param pPublicKey the encoded public key
+     * @return the public-only keyPair
      * @throws OceanusException on error
      */
-    public abstract GordianPublicKey derivePublicKey(X509EncodedKeySpec pEncodedKey) throws OceanusException;
+    public abstract GordianKeyPair derivePublicOnlyKeyPair(X509EncodedKeySpec pPublicKey) throws OceanusException;
 }

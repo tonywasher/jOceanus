@@ -48,7 +48,7 @@ public abstract class GordianKeyGeneratorCache {
     /**
      * KeyPair Cache.
      */
-    private final Map<GordianAsymKeyType, GordianKeyPairGenerator> theKeyPairCache;
+    private final Map<GordianAsymKeySpec, GordianKeyPairGenerator> theKeyPairCache;
 
     /**
      * Constructor.
@@ -57,7 +57,7 @@ public abstract class GordianKeyGeneratorCache {
         theSymKeyCache = new EnumMap<>(GordianSymKeyType.class);
         theStreamKeyCache = new EnumMap<>(GordianStreamKeyType.class);
         theMacKeyCache = new HashMap<>();
-        theKeyPairCache = new EnumMap<>(GordianAsymKeyType.class);
+        theKeyPairCache = new HashMap<>();
     }
 
     /**
@@ -113,11 +113,11 @@ public abstract class GordianKeyGeneratorCache {
 
     /**
      * Lookup KeyPairGenerator in cache.
-     * @param pKeyType the keyType
+     * @param pKeySpec the keySpec
      * @return the generator (or null)
      */
-    protected GordianKeyPairGenerator getCachedKeyPairGenerator(final GordianAsymKeyType pKeyType) {
-        return theKeyPairCache.get(pKeyType);
+    protected GordianKeyPairGenerator getCachedKeyPairGenerator(final GordianAsymKeySpec pKeySpec) {
+        return theKeyPairCache.get(pKeySpec);
     }
 
     /**
@@ -125,6 +125,6 @@ public abstract class GordianKeyGeneratorCache {
      * @param pGenerator the generator
      */
     protected void addToKeyPairCache(final GordianKeyPairGenerator pGenerator) {
-        theKeyPairCache.put(pGenerator.getKeyType(), pGenerator);
+        theKeyPairCache.put(pGenerator.getKeySpec(), pGenerator);
     }
 }

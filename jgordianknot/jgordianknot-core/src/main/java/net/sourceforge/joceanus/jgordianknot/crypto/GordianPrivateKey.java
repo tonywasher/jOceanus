@@ -27,23 +27,23 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
  */
 public class GordianPrivateKey {
     /**
-     * Key Type.
+     * KeySpec.
      */
-    private final GordianAsymKeyType theKeyType;
+    private final GordianAsymKeySpec theKeySpec;
 
     /**
      * Constructor.
-     * @param pKeyType the key type
+     * @param pKeySpec the keySpec
      */
-    protected GordianPrivateKey(final GordianAsymKeyType pKeyType) {
-        theKeyType = pKeyType;
+    protected GordianPrivateKey(final GordianAsymKeySpec pKeySpec) {
+        theKeySpec = pKeySpec;
     }
 
     /**
-     * Obtain the keyType.
-     * @return the keyType
+     * Obtain the keySpec.
+     * @return the keySpec
      */
-    public GordianAsymKeyType getKeyType() {
-        return theKeyType;
+    public GordianAsymKeySpec getKeySpec() {
+        return theKeySpec;
     }
 }

@@ -31,21 +31,27 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Provider;
 import java.security.Security;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAADCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianElliptic;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
@@ -58,10 +64,9 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
@@ -288,12 +293,28 @@ public class GordianTestSuite {
         GordianFactory myFactory = myKeySet.getFactory();
 
         /* Create new RSA KeyPair */
-        GordianKeyPairGenerator myRSAGenerator = myFactory.getKeyPairGenerator(GordianAsymKeyType.RSA);
+        GordianKeyPairGenerator myRSAGenerator = myFactory.getKeyPairGenerator(new GordianAsymKeySpec(GordianAsymKeyType.RSA, GordianModulus.MOD2048));
         GordianKeyPair myRSAPair = myRSAGenerator.generateKeyPair();
 
         /* Create new EC KeyPair */
-        GordianKeyPairGenerator myECGenerator = myFactory.getKeyPairGenerator(GordianAsymKeyType.EC1);
+        GordianKeyPairGenerator myECGenerator = myFactory.getKeyPairGenerator(new GordianAsymKeySpec(GordianElliptic.SECT571K1));
         GordianKeyPair myECPair = myECGenerator.generateKeyPair();
+
+        /* Create new DH KeyPair */
+        GordianKeyPairGenerator myDHGenerator = myFactory.getKeyPairGenerator(new GordianAsymKeySpec(GordianAsymKeyType.DIFFIEHELLMAN, GordianModulus.MOD4096));
+        GordianKeyPair myDHPair = myDHGenerator.generateKeyPair();
+
+        /* Create new SPHINCS KeyPair */
+        GordianKeyPairGenerator mySPHINCSGenerator = myFactory.getKeyPairGenerator(new GordianAsymKeySpec(GordianAsymKeyType.SPHINCS));
+        GordianKeyPair mySPHINCSPair = mySPHINCSGenerator.generateKeyPair();
+
+        /* Create new Rainbow KeyPair */
+        GordianKeyPairGenerator myRainbowGenerator = myFactory.getKeyPairGenerator(new GordianAsymKeySpec(GordianAsymKeyType.RAINBOW));
+        GordianKeyPair myRainbowPair = myRainbowGenerator.generateKeyPair();
+
+        /* Create new NewHope KeyPair */
+        GordianKeyPairGenerator myNHGenerator = myFactory.getKeyPairGenerator(new GordianAsymKeySpec(GordianAsymKeyType.NEWHOPE));
+        GordianKeyPair myNHPair = myNHGenerator.generateKeyPair();
 
         /* Create new symmetric key and stream Key */
         GordianKey<GordianSymKeyType> mySym = myFactory.generateRandomSymKey();
@@ -302,10 +323,18 @@ public class GordianTestSuite {
         /* Secure the keys */
         byte[] mySymSafe = myKeySet.secureKey(mySym);
         byte[] myStreamSafe = myKeySet.secureKey(myStream);
-        byte[] myRSASafe = myKeySet.secureKey(myRSAPair.getPrivateKey());
-        byte[] myECSafe = myKeySet.secureKey(myECPair.getPrivateKey());
-        X509EncodedKeySpec myRSAPublicSpec = myRSAGenerator.getX509Encoding(myRSAPair.getPublicKey());
-        X509EncodedKeySpec myECPublicSpec = myECGenerator.getX509Encoding(myECPair.getPublicKey());
+        byte[] myRSASafe = myKeySet.secureKey(myRSAPair);
+        byte[] myECSafe = myKeySet.secureKey(myECPair);
+        byte[] myDHSafe = myKeySet.secureKey(myDHPair);
+        byte[] mySPHINCSSafe = myKeySet.secureKey(mySPHINCSPair);
+        byte[] myRainbowSafe = myKeySet.secureKey(myRainbowPair);
+        byte[] myNHSafe = myKeySet.secureKey(myNHPair);
+        X509EncodedKeySpec myRSAPublicSpec = myRSAGenerator.getX509Encoding(myRSAPair);
+        X509EncodedKeySpec myECPublicSpec = myECGenerator.getX509Encoding(myECPair);
+        X509EncodedKeySpec myDHPublicSpec = myDHGenerator.getX509Encoding(myDHPair);
+        X509EncodedKeySpec mySPHINCSPublicSpec = mySPHINCSGenerator.getX509Encoding(mySPHINCSPair);
+        X509EncodedKeySpec myRainbowPublicSpec = myRainbowGenerator.getX509Encoding(myRainbowPair);
+        X509EncodedKeySpec myNHPublicSpec = myNHGenerator.getX509Encoding(myNHPair);
 
         /* Encrypt some bytes */
         String myTest = "TestString";
@@ -329,23 +358,28 @@ public class GordianTestSuite {
         byte[] myIV = myMac.getInitVector();
         int myMacId = myKeySet.deriveExternalIdForType(myMac.getMacSpec());
 
+        /* Create signature maps */
+        Map<GordianDigestType, byte[]> myRSAMap = new EnumMap<>(GordianDigestType.class);
+        Map<GordianDigestType, byte[]> myECMap = new EnumMap<>(GordianDigestType.class);
+        Predicate<GordianDigestType> mySignPredicate = myFactory.signatureDigests();
+
         /* Create signatures */
-        GordianSigner mySigner = myFactory.createSigner(myRSAPair.getPrivateKey(), GordianDigestType.SHA2);
-        mySigner.update(mySymSafe);
-        mySigner.update(myStreamSafe);
-        byte[] myRSASignerSHA2 = mySigner.sign();
-        mySigner = myFactory.createSigner(myRSAPair.getPrivateKey(), GordianDigestType.SHA3);
-        mySigner.update(mySymSafe);
-        mySigner.update(myStreamSafe);
-        byte[] myRSASignerSHA3 = mySigner.sign();
-        mySigner = myFactory.createSigner(myECPair.getPrivateKey(), GordianDigestType.SHA2);
-        mySigner.update(mySymSafe);
-        mySigner.update(myStreamSafe);
-        byte[] myECSignerSHA2 = mySigner.sign();
-        mySigner = myFactory.createSigner(myECPair.getPrivateKey(), GordianDigestType.SHA3);
-        mySigner.update(mySymSafe);
-        mySigner.update(myStreamSafe);
-        byte[] myECSignerSHA3 = mySigner.sign();
+        for (GordianDigestType myType : GordianDigestType.values()) {
+            /* Ignore if not a signature digest */
+            if (!mySignPredicate.test(myType)) {
+                continue;
+            }
+
+            GordianSigner mySigner = myFactory.createSigner(myRSAPair, myType);
+            mySigner.update(mySymSafe);
+            mySigner.update(myStreamSafe);
+            myRSAMap.put(myType, mySigner.sign());
+
+            mySigner = myFactory.createSigner(myECPair, myType);
+            mySigner.update(mySymSafe);
+            mySigner.update(myStreamSafe);
+            myECMap.put(myType, mySigner.sign());
+        }
 
         /* Start a new session */
         myManager = theCreator.newSecureManager(myParams);
@@ -384,12 +418,24 @@ public class GordianTestSuite {
         /* Derive the keys */
         GordianKey<GordianSymKeyType> mySym1 = myKeySet1.deriveKey(mySymSafe, mySym.getKeyType());
         GordianKey<GordianStreamKeyType> myStm1 = myKeySet1.deriveKey(myStreamSafe, myStream.getKeyType());
-        myRSAGenerator = myFactory.getKeyPairGenerator(myRSAPair.getKeyType());
-        myECGenerator = myFactory.getKeyPairGenerator(myECPair.getKeyType());
-        GordianPrivateKey myRSAPrivate = myKeySet1.deriveKey(myRSASafe, myRSAPair.getKeyType());
-        GordianPublicKey myRSAPublic = myRSAGenerator.derivePublicKey(myRSAPublicSpec);
-        GordianPrivateKey myECPrivate = myKeySet1.deriveKey(myECSafe, myECPair.getKeyType());
-        GordianPublicKey myECPublic = myECGenerator.derivePublicKey(myECPublicSpec);
+        myRSAGenerator = myFactory.getKeyPairGenerator(myRSAPair.getKeySpec());
+        PKCS8EncodedKeySpec myKeySpec = myKeySet1.deriveKeySpec(myRSASafe);
+        GordianKeyPair myNewRSAPair = myRSAGenerator.deriveKeyPair(myRSAPublicSpec, myKeySpec);
+        myECGenerator = myFactory.getKeyPairGenerator(myECPair.getKeySpec());
+        myKeySpec = myKeySet1.deriveKeySpec(myECSafe);
+        GordianKeyPair myNewECPair = myECGenerator.deriveKeyPair(myECPublicSpec, myKeySpec);
+        myDHGenerator = myFactory.getKeyPairGenerator(myDHPair.getKeySpec());
+        myKeySpec = myKeySet1.deriveKeySpec(myDHSafe);
+        GordianKeyPair myNewDHPair = myDHGenerator.deriveKeyPair(myDHPublicSpec, myKeySpec);
+        mySPHINCSGenerator = myFactory.getKeyPairGenerator(mySPHINCSPair.getKeySpec());
+        myKeySpec = myKeySet1.deriveKeySpec(mySPHINCSSafe);
+        GordianKeyPair myNewSPHINCSPair = mySPHINCSGenerator.deriveKeyPair(mySPHINCSPublicSpec, myKeySpec);
+        myRainbowGenerator = myFactory.getKeyPairGenerator(myRainbowPair.getKeySpec());
+        myKeySpec = myKeySet1.deriveKeySpec(myRainbowSafe);
+        GordianKeyPair myNewRainbowPair = myRainbowGenerator.deriveKeyPair(myRainbowPublicSpec, myKeySpec);
+        myNHGenerator = myFactory.getKeyPairGenerator(myNHPair.getKeySpec());
+        myKeySpec = myKeySet1.deriveKeySpec(myNHSafe);
+        GordianKeyPair myNewNHPair = myNHGenerator.deriveKeyPair(myNHPublicSpec, myKeySpec);
 
         /* Check the keys are the same */
         if (!mySym1.equals(mySym)) {
@@ -398,43 +444,45 @@ public class GordianTestSuite {
         if (!myStm1.equals(myStream)) {
             System.out.println("Failed to decrypt StreamKey");
         }
-        if (!myRSAPrivate.equals(myRSAPair.getPrivateKey())) {
-            System.out.println("Failed to decrypt RSAPrivateKey");
+        if (!myNewRSAPair.equals(myRSAPair)) {
+            System.out.println("Failed to decrypt RSAKeyPair");
         }
-        if (!myRSAPublic.equals(myRSAPair.getPublicKey())) {
-            System.out.println("Failed to decrypt RSAPublicKey");
+        if (!myNewECPair.equals(myECPair)) {
+            System.out.println("Failed to decrypt ECKeyPair");
         }
-        if (!myECPrivate.equals(myECPair.getPrivateKey())) {
-            System.out.println("Failed to decrypt ECPrivateKey");
+        if (!myNewDHPair.equals(myDHPair)) {
+            System.out.println("Failed to decrypt DHKeyPair");
         }
-        if (!myECPublic.equals(myECPair.getPublicKey())) {
-            System.out.println("Failed to decrypt ECPublicKey");
+        if (!myNewSPHINCSPair.equals(mySPHINCSPair)) {
+            System.out.println("Failed to decrypt SPHINCSKeyPair");
+        }
+        if (!myNewRainbowPair.equals(myRainbowPair)) {
+            System.out.println("Failed to decrypt RainbowKeyPair");
+        }
+        if (!myNewNHPair.equals(myNHPair)) {
+            System.out.println("Failed to decrypt NewHopeKeyPair");
         }
 
         /* Verify signatures */
-        GordianValidator myValidator = myFactory.createValidator(myRSAPair.getPublicKey(), GordianDigestType.SHA2);
-        myValidator.update(mySymSafe);
-        myValidator.update(myStreamSafe);
-        if (!myValidator.verify(myRSASignerSHA2)) {
-            System.out.println("Failed to validate RSA SHA2 signature");
-        }
-        myValidator = myFactory.createValidator(myRSAPair.getPublicKey(), GordianDigestType.SHA3);
-        myValidator.update(mySymSafe);
-        myValidator.update(myStreamSafe);
-        if (!myValidator.verify(myRSASignerSHA3)) {
-            System.out.println("Failed to validate RSA SHA3 signature");
-        }
-        myValidator = myFactory.createValidator(myECPair.getPublicKey(), GordianDigestType.SHA2);
-        myValidator.update(mySymSafe);
-        myValidator.update(myStreamSafe);
-        if (!myValidator.verify(myECSignerSHA2)) {
-            System.out.println("Failed to validate EC SHA2 signature");
-        }
-        myValidator = myFactory.createValidator(myECPair.getPublicKey(), GordianDigestType.SHA3);
-        myValidator.update(mySymSafe);
-        myValidator.update(myStreamSafe);
-        if (!myValidator.verify(myECSignerSHA3)) {
-            System.out.println("Failed to validate EC SHA3 signature");
+        for (GordianDigestType myType : GordianDigestType.values()) {
+            /* Ignore if not a signature digest */
+            if (!mySignPredicate.test(myType)) {
+                continue;
+            }
+
+            GordianValidator myValidator = myFactory.createValidator(myRSAPair, myType);
+            myValidator.update(mySymSafe);
+            myValidator.update(myStreamSafe);
+            if (!myValidator.verify(myRSAMap.get(myType))) {
+                System.out.println("Failed to validate RSA signature " + myType);
+            }
+
+            myValidator = myFactory.createValidator(myECPair, myType);
+            myValidator.update(mySymSafe);
+            myValidator.update(myStreamSafe);
+            if (!myValidator.verify(myECMap.get(myType))) {
+                System.out.println("Failed to validate EC signature " + myType);
+            }
         }
 
         /* Decrypt the bytes */
@@ -462,10 +510,12 @@ public class GordianTestSuite {
         Set<String> remaining = new HashSet<String>();
 
         Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(new BouncyCastlePQCProvider());
         Provider[] providers = Security.getProviders();
 
         for (int i = 0; i != providers.length; i++) {
-            if (!providers[i].getName().equals("BC")) {
+            if (!providers[i].getName().equals("BC")
+                && !providers[i].getName().equals("BCPQC")) {
                 continue;
             }
             Iterator<Object> it = providers[i].keySet().iterator();
@@ -473,6 +523,10 @@ public class GordianTestSuite {
                 String entry = (String) it.next();
                 if (entry.startsWith("Alg.Alias.")) {
                     entry = entry.substring("Alg.Alias.".length());
+                }
+                if (entry.contains(".OID.")
+                    || entry.contains(".1.")) {
+                    continue;
                 }
                 if (entry.startsWith("Cipher.")) {
                     ciphers.add(entry.substring("Cipher.".length()));

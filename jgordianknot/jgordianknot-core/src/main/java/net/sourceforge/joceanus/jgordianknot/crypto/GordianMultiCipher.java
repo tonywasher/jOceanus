@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
@@ -547,7 +548,7 @@ public final class GordianMultiCipher {
      * @throws OceanusException on error
      */
     public byte[] wrapKey(final GordianSymKeyType[] pKeyTypes,
-                          final GordianPrivateKey pKeyToWrap) throws OceanusException {
+                          final GordianKeyPair pKeyToWrap) throws OceanusException {
         /* Check the keys */
         checkSymKeys(pKeyTypes);
 
@@ -572,13 +573,11 @@ public final class GordianMultiCipher {
      * unWrap key.
      * @param pKeyTypes the keyTypes
      * @param pBytes the bytes to unwrap
-     * @param pKeyType the type of key to be unwrapped
      * @return the unwrapped key
      * @throws OceanusException on error
      */
-    public GordianPrivateKey unwrapKey(final GordianSymKeyType[] pKeyTypes,
-                                       final byte[] pBytes,
-                                       final GordianAsymKeyType pKeyType) throws OceanusException {
+    public PKCS8EncodedKeySpec unwrapKey(final GordianSymKeyType[] pKeyTypes,
+                                         final byte[] pBytes) throws OceanusException {
         /* Check the keys */
         checkSymKeys(pKeyTypes);
 
@@ -593,7 +592,7 @@ public final class GordianMultiCipher {
         /* Finally unwrap the key with the first cipher */
         KeyCiphers myCiphers = getKeyCiphers(pKeyTypes[0]);
         GordianWrapCipher myCipher = myCiphers.getWrapCipher();
-        return myCipher.unwrapKey(myCiphers.getKey(), myBytes, pKeyType);
+        return myCipher.unwrapKey(myCiphers.getKey(), myBytes);
     }
 
     /**

@@ -32,49 +32,37 @@ public enum GordianAsymKeyType {
     RSA,
 
     /**
-     * EC1.
+     * EllipticCurve.
      */
-    EC1,
+    EC,
 
     /**
-     * EC2.
+     * ElGamal.
      */
-    EC2,
+    ELGAMAL,
 
     /**
-     * EC3.
+     * DiffieHellman.
      */
-    EC3,
+    DIFFIEHELLMAN,
 
     /**
-     * EC4.
+     * SPHINCS.
      */
-    EC4;
+    SPHINCS,
 
     /**
-     * Is the key elliptic?
-     * @return true/false
+     * McEliece.
      */
-    public boolean isElliptic() {
-        return this != RSA;
-    }
+    MCELIECE,
 
     /**
-     * Obtain the named elliptic curve.
-     * @return the curve name
+     * Rainbow.
      */
-    public String getCurve() {
-        switch (this) {
-            case EC1:
-                return "sect571r1";
-            case EC2:
-                return "sect571k1";
-            case EC3:
-                return "brainpoolP512r1";
-            case EC4:
-                return "brainpoolP512t1";
-            default:
-                return null;
-        }
-    }
+    RAINBOW,
+
+    /**
+     * NewHope.
+     */
+    NEWHOPE;
 }

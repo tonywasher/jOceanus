@@ -340,11 +340,11 @@ public abstract class GordianFactory {
 
     /**
      * Obtain keyPair generator.
-     * @param pKeyType the key type
+     * @param pKeySpec the keySpec
      * @return the generator
      * @throws OceanusException on error
      */
-    public abstract GordianKeyPairGenerator getKeyPairGenerator(GordianAsymKeyType pKeyType) throws OceanusException;
+    public abstract GordianKeyPairGenerator getKeyPairGenerator(GordianAsymKeySpec pKeySpec) throws OceanusException;
 
     /**
      * generate random SymKey.
@@ -469,22 +469,22 @@ public abstract class GordianFactory {
 
     /**
      * Create signer.
-     * @param pPrivateKey the privateKey
+     * @param pKeyPair the keyPair
      * @param pDigestType the digest type
      * @return the signer
      * @throws OceanusException on error
      */
-    public abstract GordianSigner createSigner(GordianPrivateKey pPrivateKey,
+    public abstract GordianSigner createSigner(GordianKeyPair pKeyPair,
                                                GordianDigestType pDigestType) throws OceanusException;
 
     /**
      * Create validator.
-     * @param pPublicKey the publicKey
+     * @param pKeyPair the keyPair
      * @param pDigestType the digest type
      * @return the validator
      * @throws OceanusException on error
      */
-    public abstract GordianValidator createValidator(GordianPublicKey pPublicKey,
+    public abstract GordianValidator createValidator(GordianKeyPair pKeyPair,
                                                      GordianDigestType pDigestType) throws OceanusException;
 
     /**

@@ -120,9 +120,9 @@ public abstract class GordianWrapCipher {
      * @throws OceanusException on error
      */
     public byte[] wrapKey(final GordianKey<GordianSymKeyType> pKey,
-                          final GordianPrivateKey pKeyToWrap) throws OceanusException {
+                          final GordianKeyPair pKeyToWrap) throws OceanusException {
         /* Access the KeyPair Generator */
-        GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyToWrap.getKeyType());
+        GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyToWrap.getKeySpec());
         PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyToWrap);
         return wrapBytes(pKey, myPKCS8Key.getEncoded());
     }
@@ -131,17 +131,14 @@ public abstract class GordianWrapCipher {
      * unWrap private key.
      * @param pKey the key to use to unwrap the key
      * @param pBytes the bytes to unwrap
-     * @param pKeyType the type of key to be unwrapped
      * @return the unwrapped key
      * @throws OceanusException on error
      */
-    public GordianPrivateKey unwrapKey(final GordianKey<GordianSymKeyType> pKey,
-                                       final byte[] pBytes,
-                                       final GordianAsymKeyType pKeyType) throws OceanusException {
+    public PKCS8EncodedKeySpec unwrapKey(final GordianKey<GordianSymKeyType> pKey,
+                                         final byte[] pBytes) throws OceanusException {
         /* Access the KeyPair Generator */
-        GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyType);
         byte[] myBytes = unwrapBytes(pKey, pBytes);
-        return myGenerator.derivePrivateKey(new PKCS8EncodedKeySpec(myBytes));
+        return new PKCS8EncodedKeySpec(myBytes);
     }
 
     /**

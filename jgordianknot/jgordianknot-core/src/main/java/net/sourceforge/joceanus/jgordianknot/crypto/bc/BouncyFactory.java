@@ -91,19 +91,18 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.paddings.X923Padding;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSP800Type;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
@@ -115,16 +114,28 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.Bo
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.BouncyRSAKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyECPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyECPublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyRSAPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyRSAPublicKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyRainbowPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyRainbowPublicKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncySPHINCSPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncySPHINCSPublicKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyDiffieHellmanKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyECKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyElGamalKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyMcElieceKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyNewHopeKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyRSAKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyRainbowKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncySPHINCSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyECDSASigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyECDSAValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyRSASigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyRSAValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyRainbowSigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyRainbowValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncySPHINCSSigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncySPHINCSValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.sp800.SP800Factory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -189,7 +200,7 @@ public final class BouncyFactory
     static {
         /* Create the Predicates */
         PREDICATE_DIGESTS = generateDigestPredicate();
-        PREDICATE_SIGNDIGESTS = GordianDigestType::isSignatureDigest;
+        PREDICATE_SIGNDIGESTS = GordianDigestType::isExternalHashDigest;
         PREDICATE_MACS = p -> true;
 
         /* Calculate max cipher Steps */
@@ -304,12 +315,12 @@ public final class BouncyFactory
     }
 
     @Override
-    public BouncyKeyPairGenerator getKeyPairGenerator(final GordianAsymKeyType pKeyType) throws OceanusException {
+    public BouncyKeyPairGenerator getKeyPairGenerator(final GordianAsymKeySpec pKeySpec) throws OceanusException {
         /* Look up in the cache */
-        BouncyKeyPairGenerator myGenerator = theGeneratorCache.getCachedKeyPairGenerator(pKeyType);
+        BouncyKeyPairGenerator myGenerator = theGeneratorCache.getCachedKeyPairGenerator(pKeySpec);
         if (myGenerator == null) {
             /* Create the new generator */
-            myGenerator = getBCKeyPairGenerator(pKeyType);
+            myGenerator = getBCKeyPairGenerator(pKeySpec);
 
             /* Add to cache */
             theGeneratorCache.cacheKeyPairGenerator(myGenerator);
@@ -406,7 +417,7 @@ public final class BouncyFactory
     }
 
     @Override
-    public GordianSigner createSigner(final GordianPrivateKey pPrivateKey,
+    public GordianSigner createSigner(final GordianKeyPair pKeyPair,
                                       final GordianDigestType pDigestType) throws OceanusException {
         /* Check validity of Digest */
         if (!signatureDigests().test(pDigestType)) {
@@ -414,11 +425,11 @@ public final class BouncyFactory
         }
 
         /* Create the signer */
-        return getBCSigner((BouncyPrivateKey) pPrivateKey, createDigest(pDigestType));
+        return getBCSigner((BouncyKeyPair) pKeyPair, pDigestType);
     }
 
     @Override
-    public GordianValidator createValidator(final GordianPublicKey pPublicKey,
+    public GordianValidator createValidator(final GordianKeyPair pKeyPair,
                                             final GordianDigestType pDigestType) throws OceanusException {
         /* Check validity of Digest */
         if (!signatureDigests().test(pDigestType)) {
@@ -426,31 +437,31 @@ public final class BouncyFactory
         }
 
         /* Create the validator */
-        return getBCValidator((BouncyPublicKey) pPublicKey, createDigest(pDigestType));
+        return getBCValidator((BouncyKeyPair) pKeyPair, pDigestType);
     }
 
     /**
      * Create KEMessage.
-     * @param pPublicKey the publicKey
+     * @param pKeyPair the keyPair
      * @return the KEMSender
      * @throws OceanusException on error
      */
-    public GordianKEMSender createKEMessage(final GordianPublicKey pPublicKey) throws OceanusException {
+    public GordianKEMSender createKEMessage(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Create the sender */
-        return getBCKEMSender((BouncyPublicKey) pPublicKey);
+        return getBCKEMSender((BouncyKeyPair) pKeyPair);
     }
 
     /**
      * Parse KEMessage.
-     * @param pPrivateKey the publicKey
+     * @param pKeyPair the keyPair
      * @param pMessage the cipherText
      * @return the parsed KEMessage
      * @throws OceanusException on error
      */
-    public GordianKeyEncapsulation parseKEMessage(final GordianPrivateKey pPrivateKey,
+    public GordianKeyEncapsulation parseKEMessage(final GordianKeyPair pKeyPair,
                                                   final byte[] pMessage) throws OceanusException {
         /* Create the parser */
-        return getBCKEMParser((BouncyPrivateKey) pPrivateKey, pMessage);
+        return getBCKEMParser((BouncyKeyPair) pKeyPair, pMessage);
     }
 
     /**
@@ -868,74 +879,114 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle KeyPairGenerator.
-     * @param pKeyType the keyType
+     * @param pKeySpec the keySpec
      * @return the KeyGenerator
+     * @throws OceanusException on error
      */
-    private BouncyKeyPairGenerator getBCKeyPairGenerator(final GordianAsymKeyType pKeyType) {
-        if (GordianAsymKeyType.RSA.equals(pKeyType)) {
-            return new BouncyRSAKeyPairGenerator(this);
-        } else {
-            return new BouncyECKeyPairGenerator(this, pKeyType);
+    private BouncyKeyPairGenerator getBCKeyPairGenerator(final GordianAsymKeySpec pKeySpec) throws OceanusException {
+        switch (pKeySpec.getKeyType()) {
+            case RSA:
+                return new BouncyRSAKeyPairGenerator(this, pKeySpec);
+            case EC:
+                return new BouncyECKeyPairGenerator(this, pKeySpec);
+            case ELGAMAL:
+                return new BouncyElGamalKeyPairGenerator(this, pKeySpec);
+            case DIFFIEHELLMAN:
+                return new BouncyDiffieHellmanKeyPairGenerator(this, pKeySpec);
+            case SPHINCS:
+                return new BouncySPHINCSKeyPairGenerator(this, pKeySpec);
+            case RAINBOW:
+                return new BouncyRainbowKeyPairGenerator(this, pKeySpec);
+            case MCELIECE:
+                return new BouncyMcElieceKeyPairGenerator(this, pKeySpec);
+            case NEWHOPE:
+                return new BouncyNewHopeKeyPairGenerator(this, pKeySpec);
+            default:
+                throw new GordianDataException(getInvalidText(pKeySpec.getKeyType()));
         }
     }
 
     /**
      * Create the BouncyCastle Signer.
-     * @param pPrivateKey the privateKey
-     * @param pDigest the digest
+     * @param pKeyPair the privateKey
+     * @param pDigestType the digest type
      * @return the Signer
+     * @throws OceanusException on error
      */
-    private GordianSigner getBCSigner(final BouncyPrivateKey pPrivateKey,
-                                      final BouncyDigest pDigest) {
-        if (GordianAsymKeyType.RSA.equals(pPrivateKey.getKeyType())) {
-            return new BouncyRSASigner((BouncyRSAPrivateKey) pPrivateKey, pDigest, getRandom());
-        } else {
-            return new BouncyECDSASigner((BouncyECPrivateKey) pPrivateKey, pDigest, getRandom());
+    private GordianSigner getBCSigner(final BouncyKeyPair pKeyPair,
+                                      final GordianDigestType pDigestType) throws OceanusException {
+        switch (pKeyPair.getKeySpec().getKeyType()) {
+            case RSA:
+                return new BouncyRSASigner((BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), createDigest(pDigestType), getRandom());
+            case EC:
+                return new BouncyECDSASigner((BouncyECPrivateKey) pKeyPair.getPrivateKey(), createDigest(pDigestType), getRandom());
+            case SPHINCS:
+                return new BouncySPHINCSSigner((BouncySPHINCSPrivateKey) pKeyPair.getPrivateKey(), createDigest(pDigestType),
+                        createDigest(pDigestType, GordianLength.LEN_256), createDigest(pDigestType, GordianLength.LEN_512), getRandom());
+            case RAINBOW:
+                return new BouncyRainbowSigner((BouncyRainbowPrivateKey) pKeyPair.getPrivateKey(), createDigest(pDigestType), getRandom());
+            default:
+                throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }
     }
 
     /**
-     * Create the BouncyCastle KEM Sender.
-     * @param pPublicKey the publicKey
-     * @param pDigest the digest
+     * Create the BouncyCastle Validator.
+     * @param pKeyPair the keyPair
+     * @param pDigestType the digest type
      * @return the Validator
+     * @throws OceanusException on error
      */
-    private static GordianValidator getBCValidator(final BouncyPublicKey pPublicKey,
-                                                   final BouncyDigest pDigest) {
-        if (GordianAsymKeyType.RSA.equals(pPublicKey.getKeyType())) {
-            return new BouncyRSAValidator((BouncyRSAPublicKey) pPublicKey, pDigest);
-        } else {
-            return new BouncyECDSAValidator((BouncyECPublicKey) pPublicKey, pDigest);
+    private GordianValidator getBCValidator(final BouncyKeyPair pKeyPair,
+                                            final GordianDigestType pDigestType) throws OceanusException {
+        switch (pKeyPair.getKeySpec().getKeyType()) {
+            case RSA:
+                return new BouncyRSAValidator((BouncyRSAPublicKey) pKeyPair.getPublicKey(), createDigest(pDigestType));
+            case EC:
+                return new BouncyECDSAValidator((BouncyECPublicKey) pKeyPair.getPublicKey(), createDigest(pDigestType));
+            case SPHINCS:
+                return new BouncySPHINCSValidator((BouncySPHINCSPublicKey) pKeyPair.getPublicKey(), createDigest(pDigestType),
+                        createDigest(pDigestType, GordianLength.LEN_256), createDigest(pDigestType, GordianLength.LEN_512));
+            case RAINBOW:
+                return new BouncyRainbowValidator((BouncyRainbowPublicKey) pKeyPair.getPublicKey(), createDigest(pDigestType));
+            default:
+                throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }
     }
 
     /**
      * Create the BouncyCastle KEM Sender.
-     * @param pPublicKey the publicKey
+     * @param pKeyPair the keyPair
      * @return the KEMSender
      * @throws OceanusException on error
      */
-    private GordianKEMSender getBCKEMSender(final BouncyPublicKey pPublicKey) throws OceanusException {
-        if (GordianAsymKeyType.RSA.equals(pPublicKey.getKeyType())) {
-            return new BouncyRSAKEMSender(this, (BouncyRSAPublicKey) pPublicKey);
-        } else {
-            return new BouncyECIESSender(this, (BouncyECPublicKey) pPublicKey);
+    private GordianKEMSender getBCKEMSender(final BouncyKeyPair pKeyPair) throws OceanusException {
+        switch (pKeyPair.getKeySpec().getKeyType()) {
+            case RSA:
+                return new BouncyRSAKEMSender(this, (BouncyRSAPublicKey) pKeyPair.getPublicKey());
+            case EC:
+                return new BouncyECIESSender(this, (BouncyECPublicKey) pKeyPair.getPublicKey());
+            default:
+                throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }
     }
 
     /**
      * Create the BouncyCastle KEM Receiver.
-     * @param pPrivateKey the privateKey
+     * @param pKeyPair the keyPair
      * @param pCipherText the cipherText
      * @return the KEMParser
      * @throws OceanusException on error
      */
-    private GordianKeyEncapsulation getBCKEMParser(final BouncyPrivateKey pPrivateKey,
+    private GordianKeyEncapsulation getBCKEMParser(final BouncyKeyPair pKeyPair,
                                                    final byte[] pCipherText) throws OceanusException {
-        if (GordianAsymKeyType.RSA.equals(pPrivateKey.getKeyType())) {
-            return new BouncyRSAKEMReceiver(this, (BouncyRSAPrivateKey) pPrivateKey, pCipherText);
-        } else {
-            return new BouncyECIESReceiver(this, (BouncyECPrivateKey) pPrivateKey, pCipherText);
+        switch (pKeyPair.getKeySpec().getKeyType()) {
+            case RSA:
+                return new BouncyRSAKEMReceiver(this, (BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), pCipherText);
+            case EC:
+                return new BouncyECIESReceiver(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pCipherText);
+            default:
+                throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }
     }
 

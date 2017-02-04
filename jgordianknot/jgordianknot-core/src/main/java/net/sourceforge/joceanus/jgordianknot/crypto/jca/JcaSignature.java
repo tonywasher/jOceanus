@@ -59,6 +59,16 @@ public abstract class JcaSignature
     private static final String ECDSA_ALGOBASE = "withECDSA";
 
     /**
+     * The SPHINCS Signature.
+     */
+    private static final String SPHINCS_ALGOBASE = "withSPHINCS256";
+
+    /**
+     * The Rainbow Signature.
+     */
+    private static final String RAINBOW_ALGOBASE = "withRainbow";
+
+    /**
      * The RSA Signer.
      */
     private Signature theSigner;
@@ -250,6 +260,170 @@ public abstract class JcaSignature
             try {
                 String myDigest = JcaDigest.getAlgorithm(pDigestType, GordianLength.LEN_512);
                 setSigner(Signature.getInstance(myDigest + ECDSA_ALGOBASE));
+
+                /* Initialise and set the signer */
+                getSigner().initVerify(pPublicKey.getPublicKey());
+
+                /* Catch exceptions */
+            } catch (NoSuchAlgorithmException
+                    | InvalidKeyException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+
+        @Override
+        public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Protect against exception */
+            try {
+                return getSigner().verify(pSignature);
+            } catch (SignatureException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+    }
+
+    /**
+     * SPHINCS signer.
+     */
+    public static class JcaSPHINCSSigner
+            extends JcaSignature
+            implements GordianSigner {
+        /**
+         * Constructor.
+         * @param pPrivateKey the private key
+         * @param pDigestType the digest type
+         * @param pRandom the secure random
+         * @throws OceanusException on error
+         */
+        protected JcaSPHINCSSigner(final JcaPrivateKey pPrivateKey,
+                                   final GordianDigestType pDigestType,
+                                   final SecureRandom pRandom) throws OceanusException {
+            /* Create the Signer */
+            try {
+                String myDigest = JcaDigest.getAlgorithm(pDigestType);
+                setSigner(Signature.getInstance(myDigest + SPHINCS_ALGOBASE));
+
+                /* Initialise and set the signer */
+                getSigner().initSign(pPrivateKey.getPrivateKey(), pRandom);
+
+                /* Catch exceptions */
+            } catch (NoSuchAlgorithmException
+                    | InvalidKeyException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+
+        @Override
+        public byte[] sign() throws OceanusException {
+            /* Protect against exception */
+            try {
+                return getSigner().sign();
+            } catch (SignatureException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+    }
+
+    /**
+     * SPHINCS Validator.
+     */
+    public static class JcaSPHINCSValidator
+            extends JcaSignature
+            implements GordianValidator {
+        /**
+         * Constructor.
+         * @param pPublicKey the public key
+         * @param pDigestType the digest type
+         * @throws OceanusException on error
+         */
+        protected JcaSPHINCSValidator(final JcaPublicKey pPublicKey,
+                                      final GordianDigestType pDigestType) throws OceanusException {
+            /* Create the PSSParameterSpec */
+            try {
+                String myDigest = JcaDigest.getAlgorithm(pDigestType);
+                setSigner(Signature.getInstance(myDigest + SPHINCS_ALGOBASE));
+
+                /* Initialise and set the signer */
+                getSigner().initVerify(pPublicKey.getPublicKey());
+
+                /* Catch exceptions */
+            } catch (NoSuchAlgorithmException
+                    | InvalidKeyException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+
+        @Override
+        public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Protect against exception */
+            try {
+                return getSigner().verify(pSignature);
+            } catch (SignatureException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+    }
+
+    /**
+     * Rainbow signer.
+     */
+    public static class JcaRainbowSigner
+            extends JcaSignature
+            implements GordianSigner {
+        /**
+         * Constructor.
+         * @param pPrivateKey the private key
+         * @param pDigestType the digest type
+         * @param pRandom the secure random
+         * @throws OceanusException on error
+         */
+        protected JcaRainbowSigner(final JcaPrivateKey pPrivateKey,
+                                   final GordianDigestType pDigestType,
+                                   final SecureRandom pRandom) throws OceanusException {
+            /* Create the Signer */
+            try {
+                String myDigest = JcaDigest.getAlgorithm(pDigestType);
+                setSigner(Signature.getInstance(myDigest + RAINBOW_ALGOBASE));
+
+                /* Initialise and set the signer */
+                getSigner().initSign(pPrivateKey.getPrivateKey(), pRandom);
+
+                /* Catch exceptions */
+            } catch (NoSuchAlgorithmException
+                    | InvalidKeyException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+
+        @Override
+        public byte[] sign() throws OceanusException {
+            /* Protect against exception */
+            try {
+                return getSigner().sign();
+            } catch (SignatureException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+    }
+
+    /**
+     * Rainbow Validator.
+     */
+    public static class JcaRainbowValidator
+            extends JcaSignature
+            implements GordianValidator {
+        /**
+         * Constructor.
+         * @param pPublicKey the public key
+         * @param pDigestType the digest type
+         * @throws OceanusException on error
+         */
+        protected JcaRainbowValidator(final JcaPublicKey pPublicKey,
+                                      final GordianDigestType pDigestType) throws OceanusException {
+            /* Create the PSSParameterSpec */
+            try {
+                String myDigest = JcaDigest.getAlgorithm(pDigestType);
+                setSigner(Signature.getInstance(myDigest + RAINBOW_ALGOBASE));
 
                 /* Initialise and set the signer */
                 getSigner().initVerify(pPublicKey.getPublicKey());

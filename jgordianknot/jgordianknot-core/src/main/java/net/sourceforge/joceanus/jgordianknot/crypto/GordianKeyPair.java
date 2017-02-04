@@ -27,14 +27,9 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
  */
 public class GordianKeyPair {
     /**
-     * MGF1 Salt length.
+     * Key Spec.
      */
-    public static final int MGF1_SALTLEN = 64;
-
-    /**
-     * Key Type.
-     */
-    private final GordianAsymKeyType theKeyType;
+    private final GordianAsymKeySpec theKeySpec;
 
     /**
      * Public Key.
@@ -56,11 +51,11 @@ public class GordianKeyPair {
         /* Store the keys */
         thePublicKey = pPublic;
         thePrivateKey = pPrivate;
+        theKeySpec = pPublic.getKeySpec();
 
-        /* Obtain and check keyType */
-        theKeyType = pPublic.getKeyType();
-        if ((pPrivate != null)
-            && !theKeyType.equals(pPrivate.getKeyType())) {
+        /* Check that the KeySpec matches the keys */
+        if (pPrivate != null
+            && !theKeySpec.equals(pPrivate.getKeySpec())) {
             throw new IllegalArgumentException("MisMatch on keyTypes");
         }
     }
@@ -69,8 +64,8 @@ public class GordianKeyPair {
      * Obtain the keyType.
      * @return the keyType
      */
-    public GordianAsymKeyType getKeyType() {
-        return theKeyType;
+    public GordianAsymKeySpec getKeySpec() {
+        return theKeySpec;
     }
 
     /**
@@ -85,7 +80,7 @@ public class GordianKeyPair {
      * Obtain the public key.
      * @return the public key
      */
-    public GordianPublicKey getPublicKey() {
+    protected GordianPublicKey getPublicKey() {
         return thePublicKey;
     }
 
@@ -93,7 +88,7 @@ public class GordianKeyPair {
      * Obtain the private key.
      * @return the private key
      */
-    public GordianPrivateKey getPrivateKey() {
+    protected GordianPrivateKey getPrivateKey() {
         return thePrivateKey;
     }
 
@@ -115,6 +110,11 @@ public class GordianKeyPair {
         /* Access the target field */
         GordianKeyPair myThat = (GordianKeyPair) pThat;
 
+        /* Check key Spec */
+        if (!theKeySpec.equals(myThat.getKeySpec())) {
+            return false;
+        }
+
         /* Check public key */
         if (!thePublicKey.equals(myThat.getPublicKey())) {
             return false;
@@ -132,7 +132,7 @@ public class GordianKeyPair {
                                     ? 1
                                     : thePrivateKey.hashCode();
         myHash *= GordianFactory.HASH_PRIME;
-        myHash += getKeyType().hashCode();
+        myHash += getKeySpec().hashCode();
         myHash *= GordianFactory.HASH_PRIME;
         return myHash + thePublicKey.hashCode();
     }
