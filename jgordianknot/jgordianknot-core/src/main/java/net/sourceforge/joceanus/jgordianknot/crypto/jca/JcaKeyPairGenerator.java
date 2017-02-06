@@ -33,6 +33,7 @@ import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.spec.DHParameterSpec;
 
+import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.pqc.jcajce.spec.SPHINCS256KeyGenParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
@@ -93,8 +94,8 @@ public abstract class JcaKeyPairGenerator
     }
 
     @Override
-    public JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                    final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+    protected JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                       final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
         try {
             JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), theFactory.generatePrivate(pPrivateKey));
             JcaPublicKey myPublic = derivePublicKey(pPublicKey);
@@ -289,11 +290,12 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create the parameter generator */
                 GordianModulus myModulus = pKeySpec.getModulus();
-                DHParameterSpec myParms = new DHParameterSpec(myModulus.getPrime(), GordianModulus.DH_GENERATOR);
+                DHParameters myParms = myModulus.getDHParameters();
+                DHParameterSpec mySpec = new DHParameterSpec(myParms.getP(), myParms.getG());
 
                 /* Create and initialise the generator */
                 theGenerator = JcaFactory.getJavaKeyPairGenerator(DH_ALGO, false);
-                theGenerator.initialize(myParms, getRandom());
+                theGenerator.initialize(mySpec, getRandom());
 
                 /* Create the factory */
                 setKeyFactory(JcaFactory.getJavaKeyFactory(DH_ALGO, false));
@@ -429,20 +431,19 @@ public abstract class JcaKeyPairGenerator
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
-            /* Protect against exceptions */
-            // try {
             /* Create and initialise the generator */
             theGenerator = JcaFactory.getJavaKeyPairGenerator(MCELIECE_ALGO, true);
-            // McElieceCCA2KeyGenParameterSpec myParms = new McElieceCCA2KeyGenParameterSpec();
-            // SPHINCS256KeyGenParameterSpec myParms = new
-            // SPHINCS256KeyGenParameterSpec(SPHINCS256KeyGenParameterSpec.SHA3_256);
+
+            /*
+             * Note that we should create McEliece parameters and initialise using them, but that
+             * call is not yet supported and is a No-OP leading to a NullPointer exception when we
+             * try to generate the keyPair. Note also that obtaining PKCS8 and X509 encoding also
+             * leads to NullPointer exceptions, since this is also not yet supported.
+             */
             theGenerator.initialize(GordianModulus.MOD1024.getModulus(), getRandom());
 
             /* Create the factory */
             setKeyFactory(JcaFactory.getJavaKeyFactory(MCELIECE_ALGO, true));
-            // } catch (InvalidAlgorithmParameterException e) {
-            // throw new GordianCryptoException("Failed to create McElieceGenerator", e);
-            // }
         }
 
         @Override

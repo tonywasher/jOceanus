@@ -207,12 +207,11 @@ public abstract class BouncyKeyPairGenerator
         }
 
         @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pEncodedKey) throws OceanusException {
+        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
-                PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncodedKey.getEncoded());
-                RSAPrivateKey myKey;
-                myKey = RSAPrivateKey.getInstance(myInfo.parsePrivateKey());
+                PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
+                RSAPrivateKey myKey = RSAPrivateKey.getInstance(myInfo.parsePrivateKey());
                 RSAPrivateCrtKeyParameters myParms = new RSAPrivateCrtKeyParameters(myKey.getModulus(), myKey.getPublicExponent(), myKey.getPrivateExponent(),
                         myKey.getPrime1(), myKey.getPrime2(), myKey.getExponent1(), myKey.getExponent2(), myKey.getCoefficient());
                 BouncyRSAPrivateKey myPrivate = new BouncyRSAPrivateKey(getKeySpec(), myParms);
@@ -316,8 +315,8 @@ public abstract class BouncyKeyPairGenerator
         }
 
         @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 ECPrivateKey myKey = ECPrivateKey.getInstance(myInfo.parsePrivateKey());
@@ -416,8 +415,8 @@ public abstract class BouncyKeyPairGenerator
         }
 
         @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 ElGamalParameter myParams = ElGamalParameter.getInstance(myInfo.getPrivateKeyAlgorithm().getParameters());
@@ -436,8 +435,8 @@ public abstract class BouncyKeyPairGenerator
             BouncyElGamalPublicKey myPublicKey = BouncyElGamalPublicKey.class.cast(getPublicKey(pKeyPair));
             ElGamalPublicKeyParameters myKey = myPublicKey.getPublicKey();
             ElGamalParameters myParms = myKey.getParameters();
-            byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(OIWObjectIdentifiers.elGamalAlgorithm, new ElGamalParameter(myParms.getP(), myParms.getG())
-                    .toASN1Primitive()), new ASN1Integer(myKey.getY()));
+            byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(OIWObjectIdentifiers.elGamalAlgorithm,
+                    new ElGamalParameter(myParms.getP(), myParms.getG()).toASN1Primitive()), new ASN1Integer(myKey.getY()));
             return new X509EncodedKeySpec(myBytes);
         }
 
@@ -488,7 +487,7 @@ public abstract class BouncyKeyPairGenerator
 
             /* Create the parameter generator */
             GordianModulus myModulus = pKeySpec.getModulus();
-            DHParameters myParms = new DHParameters(myModulus.getPrime(), GordianModulus.DH_GENERATOR);
+            DHParameters myParms = myModulus.getDHParameters();
             DHKeyGenerationParameters myParams = new DHKeyGenerationParameters(getRandom(), myParms);
 
             /* Create and initialise the generator */
@@ -510,8 +509,8 @@ public abstract class BouncyKeyPairGenerator
                 BouncyDiffieHellmanPrivateKey myPrivateKey = BouncyDiffieHellmanPrivateKey.class.cast(getPrivateKey(pKeyPair));
                 DHPrivateKeyParameters myKey = myPrivateKey.getPrivateKey();
                 DHParameters myParms = myKey.getParameters();
-                PrivateKeyInfo myInfo = new PrivateKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement, new DHParameter(myParms.getP(), myParms.getG(), myParms.getL())
-                        .toASN1Primitive()), new ASN1Integer(myKey.getX()));
+                PrivateKeyInfo myInfo = new PrivateKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,
+                        new DHParameter(myParms.getP(), myParms.getG(), myParms.getL()).toASN1Primitive()), new ASN1Integer(myKey.getX()));
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -519,8 +518,8 @@ public abstract class BouncyKeyPairGenerator
         }
 
         @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 BCDHPrivateKey myKey = new BCDHPrivateKey(myInfo);
@@ -539,8 +538,8 @@ public abstract class BouncyKeyPairGenerator
             BouncyDiffieHellmanPublicKey myPublicKey = BouncyDiffieHellmanPublicKey.class.cast(getPublicKey(pKeyPair));
             DHPublicKeyParameters myKey = myPublicKey.getPublicKey();
             DHParameters myParms = myKey.getParameters();
-            byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement, new DHParameter(myParms.getP(), myParms.getG(), myParms.getL())
-                    .toASN1Primitive()), new ASN1Integer(myKey.getY()));
+            byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,
+                    new DHParameter(myParms.getP(), myParms.getG(), myParms.getL()).toASN1Primitive()), new ASN1Integer(myKey.getY()));
             return new X509EncodedKeySpec(myBytes);
         }
 
@@ -618,8 +617,8 @@ public abstract class BouncyKeyPairGenerator
         }
 
         @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 SPHINCSPrivateKeyParameters myParms = new SPHINCSPrivateKeyParameters(ASN1OctetString.getInstance(myInfo.parsePrivateKey()).getOctets());
@@ -702,8 +701,8 @@ public abstract class BouncyKeyPairGenerator
         }
 
         @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 RainbowPrivateKey myKey = RainbowPrivateKey.getInstance(myInfo.parsePrivateKey());
@@ -797,8 +796,8 @@ public abstract class BouncyKeyPairGenerator
         }
 
         @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 McElieceCCA2PrivateKey myKey = McElieceCCA2PrivateKey.getInstance(myInfo.parsePrivateKey());
@@ -887,8 +886,8 @@ public abstract class BouncyKeyPairGenerator
         }
 
         @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 BCNHPrivateKey myKey = new BCNHPrivateKey(myInfo);

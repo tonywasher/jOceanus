@@ -42,6 +42,11 @@ public enum GordianElliptic {
     SECP521R1("secp521r1"),
 
     /**
+     * c2tnb431r1.
+     */
+    C2TNB431R1("c2tnb431r1"),
+
+    /**
      * sect409k1.
      */
     SECT409K1("sect409k1"),
@@ -57,6 +62,21 @@ public enum GordianElliptic {
     SECP384R1("secp384r1"),
 
     /**
+     * c2pnb368w1.
+     */
+    C2PNB368W1("c2pnb368w1"),
+
+    /**
+     * c2tnb359r1.
+     */
+    C2TNB359R1("c2tnb359r1"),
+
+    /**
+     * c2pnb304w1.
+     */
+    C2PNB304W1("c2pnb304w1"),
+
+    /**
      * sect283k1.
      */
     SECT283K1("sect283k1"),
@@ -67,6 +87,11 @@ public enum GordianElliptic {
     SECT283R1("sect283r1"),
 
     /**
+     * c2pnb272w1.
+     */
+    C2PNB272W1("c2pnb272w1"),
+
+    /**
      * secp256r1.
      */
     SECP256R1("secp256r1"),
@@ -75,6 +100,11 @@ public enum GordianElliptic {
      * secp256k1.
      */
     SECP256K1("secp256k1"),
+
+    /**
+     * prime256v1.
+     */
+    PRIME256V1("prime256v1"),
 
     /**
      * brainpoolp512r1.

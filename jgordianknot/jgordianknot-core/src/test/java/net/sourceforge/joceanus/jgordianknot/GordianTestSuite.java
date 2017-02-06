@@ -31,7 +31,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Provider;
 import java.security.Security;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -323,12 +322,12 @@ public class GordianTestSuite {
         /* Secure the keys */
         byte[] mySymSafe = myKeySet.secureKey(mySym);
         byte[] myStreamSafe = myKeySet.secureKey(myStream);
-        byte[] myRSASafe = myKeySet.secureKey(myRSAPair);
-        byte[] myECSafe = myKeySet.secureKey(myECPair);
-        byte[] myDHSafe = myKeySet.secureKey(myDHPair);
-        byte[] mySPHINCSSafe = myKeySet.secureKey(mySPHINCSPair);
-        byte[] myRainbowSafe = myKeySet.secureKey(myRainbowPair);
-        byte[] myNHSafe = myKeySet.secureKey(myNHPair);
+        byte[] myRSASafe = myRSAGenerator.securePrivateKey(myRSAPair, myKeySet);
+        byte[] myECSafe = myECGenerator.securePrivateKey(myECPair, myKeySet);
+        byte[] myDHSafe = myDHGenerator.securePrivateKey(myDHPair, myKeySet);
+        byte[] mySPHINCSSafe = mySPHINCSGenerator.securePrivateKey(mySPHINCSPair, myKeySet);
+        byte[] myRainbowSafe = myRainbowGenerator.securePrivateKey(myRainbowPair, myKeySet);
+        byte[] myNHSafe = myNHGenerator.securePrivateKey(myNHPair, myKeySet);
         X509EncodedKeySpec myRSAPublicSpec = myRSAGenerator.getX509Encoding(myRSAPair);
         X509EncodedKeySpec myECPublicSpec = myECGenerator.getX509Encoding(myECPair);
         X509EncodedKeySpec myDHPublicSpec = myDHGenerator.getX509Encoding(myDHPair);
@@ -419,23 +418,17 @@ public class GordianTestSuite {
         GordianKey<GordianSymKeyType> mySym1 = myKeySet1.deriveKey(mySymSafe, mySym.getKeyType());
         GordianKey<GordianStreamKeyType> myStm1 = myKeySet1.deriveKey(myStreamSafe, myStream.getKeyType());
         myRSAGenerator = myFactory.getKeyPairGenerator(myRSAPair.getKeySpec());
-        PKCS8EncodedKeySpec myKeySpec = myKeySet1.deriveKeySpec(myRSASafe);
-        GordianKeyPair myNewRSAPair = myRSAGenerator.deriveKeyPair(myRSAPublicSpec, myKeySpec);
+        GordianKeyPair myNewRSAPair = myRSAGenerator.deriveKeyPair(myRSAPublicSpec, myRSASafe, myKeySet1);
         myECGenerator = myFactory.getKeyPairGenerator(myECPair.getKeySpec());
-        myKeySpec = myKeySet1.deriveKeySpec(myECSafe);
-        GordianKeyPair myNewECPair = myECGenerator.deriveKeyPair(myECPublicSpec, myKeySpec);
+        GordianKeyPair myNewECPair = myECGenerator.deriveKeyPair(myECPublicSpec, myECSafe, myKeySet1);
         myDHGenerator = myFactory.getKeyPairGenerator(myDHPair.getKeySpec());
-        myKeySpec = myKeySet1.deriveKeySpec(myDHSafe);
-        GordianKeyPair myNewDHPair = myDHGenerator.deriveKeyPair(myDHPublicSpec, myKeySpec);
+        GordianKeyPair myNewDHPair = myDHGenerator.deriveKeyPair(myDHPublicSpec, myDHSafe, myKeySet1);
         mySPHINCSGenerator = myFactory.getKeyPairGenerator(mySPHINCSPair.getKeySpec());
-        myKeySpec = myKeySet1.deriveKeySpec(mySPHINCSSafe);
-        GordianKeyPair myNewSPHINCSPair = mySPHINCSGenerator.deriveKeyPair(mySPHINCSPublicSpec, myKeySpec);
+        GordianKeyPair myNewSPHINCSPair = mySPHINCSGenerator.deriveKeyPair(mySPHINCSPublicSpec, mySPHINCSSafe, myKeySet1);
         myRainbowGenerator = myFactory.getKeyPairGenerator(myRainbowPair.getKeySpec());
-        myKeySpec = myKeySet1.deriveKeySpec(myRainbowSafe);
-        GordianKeyPair myNewRainbowPair = myRainbowGenerator.deriveKeyPair(myRainbowPublicSpec, myKeySpec);
+        GordianKeyPair myNewRainbowPair = myRainbowGenerator.deriveKeyPair(myRainbowPublicSpec, myRainbowSafe, myKeySet1);
         myNHGenerator = myFactory.getKeyPairGenerator(myNHPair.getKeySpec());
-        myKeySpec = myKeySet1.deriveKeySpec(myNHSafe);
-        GordianKeyPair myNewNHPair = myNHGenerator.deriveKeyPair(myNHPublicSpec, myKeySpec);
+        GordianKeyPair myNewNHPair = myNHGenerator.deriveKeyPair(myNHPublicSpec, myDHSafe, myKeySet1);
 
         /* Check the keys are the same */
         if (!mySym1.equals(mySym)) {

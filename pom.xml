@@ -48,6 +48,12 @@
     <tag>HEAD</tag>
     <url>http://${svnHost}/viewvc/${svnRepository}/${svnBase}</url>
   </scm>
+  <repositories>
+    <repository>
+      <id>jenkins</id>
+      <url>http://repo.jenkins-ci.org/releases/</url>
+    </repository>
+  </repositories>
   <distributionManagement>
     <site>
       <id>jOceanus.website</id>
@@ -72,7 +78,7 @@
     <appLibDir/>
     <JDateButtonVersion>v2.1.0-SNAPSHOT</JDateButtonVersion>
     <BouncyCastleVersion>1.56</BouncyCastleVersion>
-    <SvnKitVersion>1.8.12</SvnKitVersion>
+    <SvnKitVersion>1.8.14</SvnKitVersion>
     <JGitVersion>4.6.0.201612231935-r</JGitVersion>
     <HttpClientVersion>4.5.3</HttpClientVersion>
     <JSONVersion>20160810</JSONVersion>

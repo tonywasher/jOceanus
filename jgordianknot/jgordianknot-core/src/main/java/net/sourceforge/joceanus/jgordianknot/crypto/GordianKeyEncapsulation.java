@@ -107,6 +107,24 @@ public abstract class GordianKeyEncapsulation {
     }
 
     /**
+     * Obtain public key from pair.
+     * @param pKeyPair the keyPair
+     * @return the public key
+     */
+    protected GordianPublicKey getPublicKey(final GordianKeyPair pKeyPair) {
+        return pKeyPair.getPublicKey();
+    }
+
+    /**
+     * Obtain private key from pair.
+     * @param pKeyPair the keyPair
+     * @return the private key
+     */
+    protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) {
+        return pKeyPair.getPrivateKey();
+    }
+
+    /**
      * GordianKnot Key Encapsulation Sender.
      */
     public abstract static class GordianKEMSender

@@ -204,7 +204,7 @@ public final class GordianKeySet {
      * @return the wrapped key
      * @throws OceanusException on error
      */
-    public byte[] secureKey(final GordianKeyPair pKeyPair) throws OceanusException {
+    protected byte[] secureKey(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Generate set of keys */
         GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, false);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
@@ -222,7 +222,7 @@ public final class GordianKeySet {
      * @return the key
      * @throws OceanusException on error
      */
-    public PKCS8EncodedKeySpec deriveKeySpec(final byte[] pKeySpec) throws OceanusException {
+    protected PKCS8EncodedKeySpec deriveKeySpec(final byte[] pKeySpec) throws OceanusException {
         /* Parse the bytes into the separate parts */
         GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pKeySpec, false);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
