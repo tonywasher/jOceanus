@@ -249,7 +249,7 @@ public final class GordianKeySetHashRecipe {
             /* Generate recipe and derive digestTypes */
             int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
-            theDigests = myManager.deriveHMacDigestTypesFromSeed(mySeed, NUM_DIGESTS);
+            theDigests = myManager.deriveKeyHashDigestTypesFromSeed(mySeed, NUM_DIGESTS);
 
             /* Derive random adjustment value */
             theAdjust = (mySeed >> (Short.SIZE + Byte.SIZE)) & TethysDataConverter.NYBBLE_MASK;
@@ -269,7 +269,7 @@ public final class GordianKeySetHashRecipe {
             /* Store recipe and derive symKeyTypes */
             theRecipe = pRecipe;
             int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
-            theDigests = myManager.deriveHMacDigestTypesFromSeed(mySeed, NUM_DIGESTS);
+            theDigests = myManager.deriveKeyHashDigestTypesFromSeed(mySeed, NUM_DIGESTS);
 
             /* Derive random adjustment value */
             theAdjust = (mySeed >> (Short.SIZE + Byte.SIZE)) & TethysDataConverter.NYBBLE_MASK;

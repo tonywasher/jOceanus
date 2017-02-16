@@ -372,8 +372,7 @@ public final class BouncySignature {
             theSigner = new SPHINCS256Signer(pTreeDigest.getDigest(), pMsgDigest.getDigest());
 
             /* Initialise and set the signer */
-            ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
-            theSigner.init(true, myParms);
+            theSigner.init(true, pPrivateKey.getPrivateKey());
         }
 
         @Override

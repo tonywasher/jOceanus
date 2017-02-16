@@ -34,7 +34,11 @@ import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.crypto.params.DHPublicKeyParameters;
 import org.bouncycastle.crypto.params.KDFParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.pqc.crypto.ExchangePair;
 import org.bouncycastle.pqc.crypto.newhope.NHAgreement;
+import org.bouncycastle.pqc.crypto.newhope.NHExchangePairGenerator;
+import org.bouncycastle.pqc.crypto.newhope.NHPublicKeyParameters;
+import org.bouncycastle.pqc.jcajce.provider.newhope.BCNHPublicKey;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
@@ -149,11 +153,6 @@ public abstract class BouncyKeyEncapsulation {
     public static class BouncyECIESSender
             extends GordianKEMSender {
         /**
-         * CipherLength.
-         */
-        private static final int CIPHERLEN = 128;
-
-        /**
          * Constructor.
          * @param pFactory the security factory
          * @param pPublicKey the target publicKey
@@ -166,7 +165,7 @@ public abstract class BouncyKeyEncapsulation {
 
             /* Create Key Encapsulation */
             BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDefaultDigest());
-            ECIESKeyEncapsulation myKEMS = new ECIESKeyEncapsulation(myKDF, getRandom(), true, false, false);
+            ECIESKeyEncapsulation myKEMS = new ECIESKeyEncapsulation(myKDF, getRandom());
 
             /* Initialise the encapsulation */
             myKEMS.init(pPublicKey.getPublicKey());
@@ -175,8 +174,12 @@ public abstract class BouncyKeyEncapsulation {
             byte[] myInitVector = new byte[INITLEN];
             getRandom().nextBytes(myInitVector);
 
+            /* Determine cipher text length */
+            int myFieldSize = pPublicKey.getPublicKey().getParameters().getCurve().getFieldSize();
+            myFieldSize = (myFieldSize + Byte.SIZE - 1) / Byte.SIZE;
+            int myLen = (2 * myFieldSize) + 1;
+
             /* Create cipherText */
-            int myLen = CIPHERLEN;
             byte[] myCipherText = new byte[myLen + INITLEN];
             KeyParameter myParms = (KeyParameter) myKEMS.encrypt(myCipherText, INITLEN, myKDF.getKeyLen());
             System.arraycopy(myInitVector, 0, myCipherText, 0, INITLEN);
@@ -207,7 +210,7 @@ public abstract class BouncyKeyEncapsulation {
 
             /* Create Key Encapsulation */
             BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDefaultDigest());
-            ECIESKeyEncapsulation myKEMS = new ECIESKeyEncapsulation(myKDF, null, true, false, false);
+            ECIESKeyEncapsulation myKEMS = new ECIESKeyEncapsulation(myKDF, null);
 
             /* Initialise the encapsulation */
             myKEMS.init(pPrivateKey.getPrivateKey());
@@ -330,18 +333,16 @@ public abstract class BouncyKeyEncapsulation {
             byte[] myInitVector = new byte[INITLEN];
             getRandom().nextBytes(myInitVector);
 
-            /* Create an ephemeral New Hope key */
-            BouncyKeyPairGenerator myGenerator = pFactory.getKeyPairGenerator(pPublicKey.getKeySpec());
-            GordianKeyPair myPair = myGenerator.generateKeyPair();
-            BouncyNewHopePrivateKey myPrivate = BouncyNewHopePrivateKey.class.cast(getPrivateKey(myPair));
+            /* Generate an Exchange KeyPair */
+            NHExchangePairGenerator myGenerator = new NHExchangePairGenerator(getRandom());
+            ExchangePair myPair = myGenerator.GenerateExchange(pPublicKey.getPublicKey());
 
             /* Derive the secret */
-            NHAgreement myAgreement = new NHAgreement();
-            myAgreement.init(myPrivate.getPrivateKey());
-            byte[] mySecret = myAgreement.calculateAgreement(pPublicKey.getPublicKey());
+            byte[] mySecret = myPair.getSharedValue();
 
             /* Obtain the encoded keySpec of the public key */
-            X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
+            BCNHPublicKey myPublic = new BCNHPublicKey((NHPublicKeyParameters) myPair.getPublicKey());
+            X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myPublic.getEncoded());
             byte[] myKeySpecBytes = myKeySpec.getEncoded();
 
             /* Create cipherText */

@@ -402,7 +402,7 @@ public class DataKeySet
         /* Access the symKeyPredicate */
         DataSet<?, ?> myData = getDataSet();
         GordianFactory myFactory = myData.getSecurity().getSecurityFactory();
-        Predicate<GordianSymKeyType> myPredicate = myFactory.standardSymKeys();
+        Predicate<GordianSymKeyType> myPredicate = myFactory.standardSymKeyTypes();
 
         /* Loop through the SymKeyType values */
         for (GordianSymKeyType myType : GordianSymKeyType.values()) {
@@ -606,7 +606,7 @@ public class DataKeySet
 
             /* Access the symKeyPredicate */
             GordianFactory myFactory = myData.getSecurity().getSecurityFactory();
-            Predicate<GordianSymKeyType> myPredicate = myFactory.standardSymKeys();
+            Predicate<GordianSymKeyType> myPredicate = myFactory.standardSymKeyTypes();
 
             /* Loop through the SymKeyType values */
             for (GordianSymKeyType myType : GordianSymKeyType.values()) {

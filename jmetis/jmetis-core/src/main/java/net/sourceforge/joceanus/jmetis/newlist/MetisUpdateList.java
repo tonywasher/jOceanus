@@ -65,6 +65,9 @@ public class MetisUpdateList<T extends MetisIndexedItem>
         /* Initialise underlying class */
         super(MetisListType.UPDATE, pBase.getTheClass(), pBase.getItemFields());
 
+        /* Copy the comparator from the base list */
+        setComparator(pBase.getComparator());
+
         /* Store source and initialise the update list */
         theBase = pBase;
         doDeriveUpdates();
@@ -85,9 +88,9 @@ public class MetisUpdateList<T extends MetisIndexedItem>
     @Override
     public Object getFieldValue(final MetisField pField) {
         if (FIELD_BASE.equals(pField)) {
-            return theBase == null || theBase.isEmpty()
-                                                        ? MetisFieldValue.SKIP
-                                                        : theBase;
+            return theBase.isEmpty()
+                                     ? MetisFieldValue.SKIP
+                                     : theBase;
         }
         return super.getFieldValue(pField);
     }
@@ -109,9 +112,15 @@ public class MetisUpdateList<T extends MetisIndexedItem>
         }
 
         /* Make sure that the version is correct */
-        setVersion(isEmpty()
-                             ? 0
-                             : 1);
+        boolean isEmpty = isEmpty();
+        setVersion(isEmpty
+                           ? 0
+                           : 1);
+
+        /* Sort the list if necessary */
+        if (!isEmpty) {
+            sortList();
+        }
     }
 
     /**
@@ -272,10 +281,12 @@ public class MetisUpdateList<T extends MetisIndexedItem>
         MetisListChange<T> myChange = (MetisListChange<T>) pEvent.getDetails(MetisListChange.class);
 
         /* Process added entries (can only happen from a commit) */
+        boolean doSort = false;
         Iterator<T> myIterator = myChange.addedIterator();
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
             handleNewUpdate(myCurr);
+            doSort = true;
         }
 
         /* Obtain changed entries */
@@ -284,6 +295,7 @@ public class MetisUpdateList<T extends MetisIndexedItem>
             T myBase = myIterator.next();
             int myId = myBase.getIndexedId();
             T myCurr = getItemById(myId);
+            doSort = true;
 
             /* If we do not currently have the item */
             if (myCurr == null) {
@@ -307,6 +319,11 @@ public class MetisUpdateList<T extends MetisIndexedItem>
         setVersion(isEmpty()
                              ? 0
                              : 1);
+
+        /* Sort the list if necessary */
+        if (doSort) {
+            sortList();
+        }
     }
 
     /**

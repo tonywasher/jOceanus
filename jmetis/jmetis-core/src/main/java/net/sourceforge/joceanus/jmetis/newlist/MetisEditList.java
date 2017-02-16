@@ -103,6 +103,9 @@ public class MetisEditList<T extends MetisIndexedItem>
         /* Initialise underlying class */
         super(MetisListType.EDIT, pBase.getTheClass(), pBase.getItemFields());
 
+        /* Copy the comparator from the base list */
+        setComparator(pBase.getComparator());
+
         /* Store base and initialise the edit list */
         theBase = pBase;
         deriveEdit();

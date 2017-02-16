@@ -30,10 +30,10 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public interface GordianDigest
         extends GordianConsumer {
     /**
-     * Obtain DigestType.
-     * @return the digest type
+     * Obtain DigestSpec.
+     * @return the digestSpec
      */
-    GordianDigestType getDigestType();
+    GordianDigestSpec getDigestSpec();
 
     /**
      * Obtain the digest size.

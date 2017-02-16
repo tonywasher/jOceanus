@@ -58,22 +58,22 @@ public final class GordianKeySetHash {
     /**
      * The Hash.
      */
-    private byte[] theHash = null;
+    private byte[] theHash;
 
     /**
      * The Secret.
      */
-    private byte[] theSecret = null;
+    private byte[] theSecret;
 
     /**
      * Encrypted password.
      */
-    private byte[] thePassword = null;
+    private byte[] thePassword;
 
     /**
      * CipherSet.
      */
-    private GordianKeySet theKeySet = null;
+    private GordianKeySet theKeySet;
 
     /**
      * Constructor for a completely new keySetHash.
@@ -270,17 +270,17 @@ public final class GordianKeySetHash {
             myPassBytes = TethysDataConverter.charsToByteArray(pPassword);
 
             /* Create the primeMac */
-            GordianMacSpec mySpec = new GordianMacSpec(GordianMacType.HMAC, theRecipe.getPrimeDigest());
+            GordianMacSpec mySpec = GordianMacSpec.hMac(theRecipe.getPrimeDigest());
             GordianMac myPrimeMac = theFactory.createMac(mySpec);
             myPrimeMac.initMac(myPassBytes);
 
             /* Create the alternateMac */
-            mySpec = new GordianMacSpec(GordianMacType.HMAC, theRecipe.getAlternateDigest());
+            mySpec = GordianMacSpec.hMac(theRecipe.getAlternateDigest());
             GordianMac myAlternateMac = theFactory.createMac(mySpec);
             myAlternateMac.initMac(myPassBytes);
 
             /* Create the secretMac */
-            mySpec = new GordianMacSpec(GordianMacType.HMAC, theRecipe.getSecretDigest());
+            mySpec = GordianMacSpec.hMac(theRecipe.getSecretDigest());
             GordianMac mySecretMac = theFactory.createMac(mySpec);
             mySecretMac.initMac(myPassBytes);
 

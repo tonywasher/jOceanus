@@ -109,6 +109,11 @@ public enum GordianCryptoResource implements TethysResourceId {
     MAC_GMAC("mac.GMAC"),
 
     /**
+     * MAC CMAC.
+     */
+    MAC_CMAC("mac.CMAC"),
+
+    /**
      * MAC POLY1305.
      */
     MAC_POLY("mac.POLY1305"),
@@ -343,6 +348,7 @@ public enum GordianCryptoResource implements TethysResourceId {
         Map<GordianMacType, TethysResourceId> myMap = new EnumMap<>(GordianMacType.class);
         myMap.put(GordianMacType.HMAC, MAC_HMAC);
         myMap.put(GordianMacType.GMAC, MAC_GMAC);
+        myMap.put(GordianMacType.CMAC, MAC_CMAC);
         myMap.put(GordianMacType.POLY1305, MAC_POLY);
         myMap.put(GordianMacType.SKEIN, MAC_SKEIN);
         myMap.put(GordianMacType.VMPC, MAC_VMPC);
@@ -371,7 +377,7 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianSymKeyType.CAMELLIA, SYMKEY_CAMELLIA);
         myMap.put(GordianSymKeyType.RC6, SYMKEY_RC6);
         myMap.put(GordianSymKeyType.CAST6, SYMKEY_CAST6);
-        myMap.put(GordianSymKeyType.THREEFISH, SYMKEY_AES);
+        myMap.put(GordianSymKeyType.THREEFISH, SYMKEY_THREEFISH);
         myMap.put(GordianSymKeyType.NOEKEON, SYMKEY_NOEKEON);
         myMap.put(GordianSymKeyType.SEED, SYMKEY_SEED);
         myMap.put(GordianSymKeyType.SM4, SYMKEY_SM4);

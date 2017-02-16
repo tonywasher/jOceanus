@@ -28,6 +28,7 @@ import java.security.MessageDigest;
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -38,9 +39,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public final class JcaDigest
         implements GordianDigest {
     /**
-     * The DigestType.
+     * The DigestSpec.
      */
-    private final GordianDigestType theDigestType;
+    private final GordianDigestSpec theDigestSpec;
 
     /**
      * The MessageDigest.
@@ -49,19 +50,19 @@ public final class JcaDigest
 
     /**
      * Constructor.
-     * @param pDigestType the digest type
+     * @param pDigestSpec the digestSpec
      * @param pDigest the digest
      * @throws OceanusException on error
      */
-    protected JcaDigest(final GordianDigestType pDigestType,
+    protected JcaDigest(final GordianDigestSpec pDigestSpec,
                         final MessageDigest pDigest) throws OceanusException {
-        theDigestType = pDigestType;
+        theDigestSpec = pDigestSpec;
         theDigest = pDigest;
     }
 
     @Override
-    public GordianDigestType getDigestType() {
-        return theDigestType;
+    public GordianDigestSpec getDigestSpec() {
+        return theDigestSpec;
     }
 
     @Override
@@ -112,60 +113,38 @@ public final class JcaDigest
     }
 
     /**
-     * Return the associated algorithm.
-     * @param pDigestType the digest type
-     * @return the algorithm
+     * Create the BouncyCastle digest.
+     * @param pDigestSpec the digestSpec
+     * @return the digest
      * @throws OceanusException on error
      */
-    protected static String getAlgorithm(final GordianDigestType pDigestType) throws OceanusException {
-        switch (pDigestType) {
-            case SKEIN:
-                return getSkeinAlgorithm(GordianDigestType.SKEIN.getDefaultLength());
-            case SHA3:
-                return getSHA3Algorithm(GordianDigestType.SHA3.getDefaultLength());
+    protected static String getAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+        /* Access digest details */
+        GordianDigestType myType = pDigestSpec.getDigestType();
+        GordianLength myLen = pDigestSpec.getDigestLength();
+
+        /* Switch on digestType */
+        switch (myType) {
             case SHA2:
-                return getSHA2Algorithm(GordianDigestType.SHA2.getDefaultLength());
-            case RIPEMD:
-                return getRIPEMDAlgorithm(GordianDigestType.RIPEMD.getDefaultLength());
+                return getSHA2Algorithm(myLen);
             case GOST:
-                return getGOSTAlgorithm(GordianDigestType.GOST.getDefaultLength());
+                return getGOSTAlgorithm(myLen);
+            case RIPEMD:
+                return getRIPEMDAlgorithm(myLen);
+            case SKEIN:
+                return getSkeinAlgorithm(myLen);
+            case SHA3:
+                return getSHA3Algorithm(myLen);
             case BLAKE:
-                return getBlake2bAlgorithm(GordianDigestType.BLAKE.getDefaultLength());
+                return getBlake2bAlgorithm(myLen);
             case WHIRLPOOL:
             case TIGER:
             case SHA1:
             case MD5:
             case SM3:
-                return pDigestType.name();
+                return myType.name();
             default:
-                throw new GordianDataException("Invalid DigestType :- " + pDigestType);
-        }
-    }
-
-    /**
-     * Create the BouncyCastle digest.
-     * @param pDigestType the digest type
-     * @param pLength the digest length
-     * @return the digest
-     * @throws OceanusException on error
-     */
-    protected static String getAlgorithm(final GordianDigestType pDigestType,
-                                         final GordianLength pLength) throws OceanusException {
-        switch (pDigestType) {
-            case SHA2:
-                return getSHA2Algorithm(pLength);
-            case GOST:
-                return getGOSTAlgorithm(pLength);
-            case RIPEMD:
-                return getRIPEMDAlgorithm(pLength);
-            case SKEIN:
-                return getSkeinAlgorithm(pLength);
-            case SHA3:
-                return getSHA3Algorithm(pLength);
-            case BLAKE:
-                return getBlake2bAlgorithm(pLength);
-            default:
-                return getAlgorithm(pDigestType);
+                throw new GordianDataException("Invalid DigestSpec :- " + pDigestSpec);
         }
     }
 

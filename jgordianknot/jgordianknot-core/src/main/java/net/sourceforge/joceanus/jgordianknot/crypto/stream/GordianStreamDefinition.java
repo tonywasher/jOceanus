@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
@@ -105,7 +105,7 @@ public final class GordianStreamDefinition {
                                       final GordianDigestOutputStream pStream) throws OceanusException {
         theType = StreamType.DIGEST;
         GordianDigest myDigest = pStream.getDigest();
-        theTypeId = pKeySet.deriveExternalIdForType(myDigest.getDigestType());
+        theTypeId = pKeySet.deriveExternalIdForType(myDigest.getDigestSpec());
         theTypeDefinition = null;
         theInitVector = null;
         theValue = pStream.getResult();
@@ -256,11 +256,11 @@ public final class GordianStreamDefinition {
     private InputStream buildDigestInputStream(final GordianKeySet pKeySet,
                                                final InputStream pCurrent) throws OceanusException {
         /* Parse the TypeId */
-        GordianDigestType myType = pKeySet.deriveTypeFromExternalId(theTypeId, GordianDigestType.class);
+        GordianDigestSpec mySpec = pKeySet.deriveTypeFromExternalId(theTypeId, GordianDigestSpec.class);
 
         /* Generate the Digest */
         GordianFactory myFactory = pKeySet.getFactory();
-        GordianDigest myDigest = myFactory.createDigest(myType);
+        GordianDigest myDigest = myFactory.createDigest(mySpec);
 
         /* Create the stream */
         return new GordianDigestInputStream(myDigest, theValue, pCurrent);

@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import java.io.File;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Group;
@@ -90,12 +88,10 @@ public class GordianFXTester
 
                 /* handle zip file creation */
             } else if ("zip".equals(pArg)) {
-                File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
-                theTests.createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
-                theTests.extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
+                theTests.testZipFile();
             }
         } else {
-            GordianTestSuite.listAlgorithms();
+            GordianTestAlgorithms.listAlgorithms();
         }
     }
 

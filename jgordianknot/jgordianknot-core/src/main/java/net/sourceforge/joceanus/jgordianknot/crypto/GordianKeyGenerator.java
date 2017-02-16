@@ -140,7 +140,7 @@ public abstract class GordianKeyGenerator<T> {
         int myBuilt = 0;
 
         /* Create the MAC and initialise it */
-        GordianMacSpec myMacSpec = new GordianMacSpec(GordianMacType.HMAC, theFactory.getDefaultDigest());
+        GordianMacSpec myMacSpec = GordianMacSpec.hMac(theFactory.getDefaultDigest());
         GordianMac myMac = theFactory.createMac(myMacSpec);
         myMac.initMac(pSecret);
 

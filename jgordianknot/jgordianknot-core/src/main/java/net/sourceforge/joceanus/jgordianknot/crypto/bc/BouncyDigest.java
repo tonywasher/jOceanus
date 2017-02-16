@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 import org.bouncycastle.crypto.Digest;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 
 /**
  * Wrapper for BouncyCastle Digest.
@@ -33,9 +33,9 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 public final class BouncyDigest
         implements GordianDigest {
     /**
-     * Digest Type.
+     * DigestSpec.
      */
-    private final GordianDigestType theDigestType;
+    private final GordianDigestSpec theDigestSpec;
 
     /**
      * Digest.
@@ -44,18 +44,18 @@ public final class BouncyDigest
 
     /**
      * Constructor.
-     * @param pDigestType the digest type
+     * @param pDigestSpec the digestSpec
      * @param pDigest the digest
      */
-    protected BouncyDigest(final GordianDigestType pDigestType,
+    protected BouncyDigest(final GordianDigestSpec pDigestSpec,
                            final Digest pDigest) {
-        theDigestType = pDigestType;
+        theDigestSpec = pDigestSpec;
         theDigest = pDigest;
     }
 
     @Override
-    public GordianDigestType getDigestType() {
-        return theDigestType;
+    public GordianDigestSpec getDigestSpec() {
+        return theDigestSpec;
     }
 
     /**

@@ -140,6 +140,14 @@ public class MetisIndexedList<T extends MetisIndexedItem>
     }
 
     /**
+     * Obtain the comparator.
+     * @return the comparator
+     */
+    public Comparator<T> getComparator() {
+        return theComparator;
+    }
+
+    /**
      * Obtain the next Id.
      * @return the next Id
      */
@@ -307,7 +315,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
      * @param pId the id
      */
     private void checkId(final Integer pId) {
-        /* Check that the id is nonon-zero and positive */
+        /* Check that the id is non-zero and positive */
         if (pId <= 0) {
             throw new IllegalArgumentException("Invalid Id");
         }

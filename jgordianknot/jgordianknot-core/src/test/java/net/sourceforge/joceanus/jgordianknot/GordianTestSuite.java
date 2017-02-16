@@ -22,59 +22,39 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.Provider;
-import java.security.Security;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.EnumMap;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianAADCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianElliptic;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyFactory;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -103,11 +83,6 @@ public class GordianTestSuite {
     }
 
     /**
-     * Buffer length.
-     */
-    private static final int BUFFER_LEN = 1024;
-
-    /**
      * The Security Manager creator.
      */
     private final SecurityManagerCreator theCreator;
@@ -121,147 +96,32 @@ public class GordianTestSuite {
     }
 
     /**
-     * Create a Zip File of files in a directory.
-     * @param pZipFile the name of the zip file to create
-     * @param pDirectory the directory to archive
-     * @param bSecure encrypt the zip file (true/false)
-     * @return the contents of the zip file
+     * Test Zip File.
      * @throws OceanusException on error
      */
-    public GordianZipFileContents createZipFile(final File pZipFile,
-                                                final File pDirectory,
-                                                final boolean bSecure) throws OceanusException {
-        GordianZipWriteFile myZipFile;
+    public void testZipFile() throws OceanusException {
+        /* Create the Zip Tester */
+        GordianTestZip myZipTest = new GordianTestZip(theCreator);
 
-        try {
-            /* If we are creating a secure zip file */
-            if (bSecure) {
-                /* Create new Password Hash */
-                GordianHashManager myManager = theCreator.newSecureManager();
-                GordianKeySetHash myHash = myManager.resolveKeySetHash(null, "New");
+        /* Obtain the home directory */
+        String myHome = System.getProperty("user.home");
 
-                /* Initialise the Zip file */
-                myZipFile = new GordianZipWriteFile(myHash, pZipFile);
-
-                /* else */
-            } else {
-                /* Just create a standard zip file */
-                myZipFile = new GordianZipWriteFile(pZipFile);
-            }
-
-            /* Create a read buffer */
-            int myBufLen = BUFFER_LEN;
-            byte[] myBuffer = new byte[myBufLen];
-            int myRead;
-
-            /* Make sure that we have a directory */
-            if (!pDirectory.isDirectory()) {
-                myZipFile.close();
-                throw new GordianDataException("Invalid source directory");
-            }
-
-            /* Loop through the files in the directory */
-            for (File myFile : pDirectory.listFiles()) {
-                /* Skip directories */
-                if (myFile.isDirectory()) {
-                    continue;
-                }
-
-                /* Open the file for reading */
-                InputStream myInFile = new FileInputStream(myFile);
-                InputStream myInBuffer = new BufferedInputStream(myInFile);
-
-                /* Open the output stream */
-                OutputStream myOutput = myZipFile.getOutputStream(new File(myFile.getName()));
-
-                /* Read the header entry */
-                while ((myRead = myInBuffer.read(myBuffer, 0, myBufLen)) != -1) {
-                    /* Write the data to the zip file */
-                    myOutput.write(myBuffer, 0, myRead);
-                }
-
-                /* Close the streams */
-                myOutput.close();
-                myInBuffer.close();
-            }
-
-            /* Close the Zip File */
-            myZipFile.close();
-
-            /* Return the zip file entries */
-            return myZipFile.getContents();
-
-        } catch (OceanusException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new GordianIOException("Failed to create Zip File", e);
-        }
+        /* Run the tests */
+        File myZipFile = new File(myHome, "TestStdZip.zip");
+        myZipTest.createZipFile(myZipFile, new File(myHome, "tester"), true);
+        myZipTest.extractZipFile(myZipFile, new File(myHome, "testcomp"));
     }
 
     /**
-     * Extract a Zip File to a directory.
-     * @param pZipFile the name of the zip file to extract from
-     * @param pDirectory the directory to extract to
+     * Check the supported algorithms.
      * @throws OceanusException on error
      */
-    public void extractZipFile(final File pZipFile,
-                               final File pDirectory) throws OceanusException {
-        /* Protect against exceptions */
-        try {
-            /* Access the file */
-            GordianZipReadFile myZipFile = new GordianZipReadFile(pZipFile);
+    protected void checkAlgorithms() throws OceanusException {
+        /* Create the Algorithm Tester */
+        GordianTestAlgorithms myAlgTest = new GordianTestAlgorithms(theCreator);
 
-            /* Check for security */
-            byte[] myHashBytes = myZipFile.getHashBytes();
-            if (myHashBytes != null) {
-                /* Resolve security and unlock file */
-                GordianHashManager myManager = theCreator.newSecureManager();
-                GordianKeySetHash myHash = myManager.resolveKeySetHash(myHashBytes, pZipFile.getName());
-                myZipFile.setKeySetHash(myHash);
-            }
-
-            /* Access the contents */
-            GordianZipFileContents myContents = myZipFile.getContents();
-
-            /* Create a read buffer */
-            int myBufLen = BUFFER_LEN;
-            byte[] myBuffer = new byte[myBufLen];
-            int myRead;
-
-            /* Make sure that we have a directory */
-            if (!pDirectory.isDirectory()) {
-                throw new GordianDataException("Invalid target directory");
-            }
-
-            /* Loop through the entries */
-            Iterator<GordianZipFileEntry> myIterator = myContents.iterator();
-            while (myIterator.hasNext()) {
-                /* Access next entry */
-                GordianZipFileEntry myEntry = myIterator.next();
-
-                /* Open the input stream */
-                InputStream myInput = myZipFile.getInputStream(myEntry);
-
-                /* Open the output file for writing */
-                OutputStream myOutFile = new FileOutputStream(new File(pDirectory, myEntry.getFileName()));
-                OutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
-
-                /* Read the entry */
-                while ((myRead = myInput.read(myBuffer, 0, myBufLen)) != -1) {
-                    /* Write the data to the new file */
-                    myOutBuffer.write(myBuffer, 0, myRead);
-                }
-
-                /* Close the streams */
-                myInput.close();
-                myOutBuffer.close();
-            }
-
-        } catch (OceanusException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new GordianIOException("Failed to extract Zip File", e);
-        }
+        /* Check Algorithms */
+        myAlgTest.checkAlgorithms();
     }
 
     /**
@@ -291,29 +151,19 @@ public class GordianTestSuite {
         GordianKeySet myKeySet = myHash.getKeySet();
         GordianFactory myFactory = myKeySet.getFactory();
 
-        /* Create new RSA KeyPair */
-        GordianKeyPairGenerator myRSAGenerator = myFactory.getKeyPairGenerator(new GordianAsymKeySpec(GordianAsymKeyType.RSA, GordianModulus.MOD2048));
-        GordianKeyPair myRSAPair = myRSAGenerator.generateKeyPair();
+        /* Create AsymKeyPairs */
+        AsymPairStatus myRSAStatus = new AsymPairStatus(myFactory, myKeySet, GordianAsymKeySpec.rsa(GordianModulus.MOD2048));
+        AsymPairStatus myECStatus = new AsymPairStatus(myFactory, myKeySet, GordianAsymKeySpec.ec(GordianElliptic.SECT571K1));
+        AsymPairStatus myDHStatus = new AsymPairStatus(myFactory, myKeySet, GordianAsymKeySpec.dh(GordianModulus.MOD4096));
+        AsymPairStatus mySPHINCSStatus = new AsymPairStatus(myFactory, myKeySet, GordianAsymKeySpec.sphincs());
+        AsymPairStatus myRainbowStatus = new AsymPairStatus(myFactory, myKeySet, GordianAsymKeySpec.rainbow());
+        AsymPairStatus myNHStatus = new AsymPairStatus(myFactory, myKeySet, GordianAsymKeySpec.newHope());
 
-        /* Create new EC KeyPair */
-        GordianKeyPairGenerator myECGenerator = myFactory.getKeyPairGenerator(new GordianAsymKeySpec(GordianElliptic.SECT571K1));
-        GordianKeyPair myECPair = myECGenerator.generateKeyPair();
-
-        /* Create new DH KeyPair */
-        GordianKeyPairGenerator myDHGenerator = myFactory.getKeyPairGenerator(new GordianAsymKeySpec(GordianAsymKeyType.DIFFIEHELLMAN, GordianModulus.MOD4096));
-        GordianKeyPair myDHPair = myDHGenerator.generateKeyPair();
-
-        /* Create new SPHINCS KeyPair */
-        GordianKeyPairGenerator mySPHINCSGenerator = myFactory.getKeyPairGenerator(new GordianAsymKeySpec(GordianAsymKeyType.SPHINCS));
-        GordianKeyPair mySPHINCSPair = mySPHINCSGenerator.generateKeyPair();
-
-        /* Create new Rainbow KeyPair */
-        GordianKeyPairGenerator myRainbowGenerator = myFactory.getKeyPairGenerator(new GordianAsymKeySpec(GordianAsymKeyType.RAINBOW));
-        GordianKeyPair myRainbowPair = myRainbowGenerator.generateKeyPair();
-
-        /* Create new NewHope KeyPair */
-        GordianKeyPairGenerator myNHGenerator = myFactory.getKeyPairGenerator(new GordianAsymKeySpec(GordianAsymKeyType.NEWHOPE));
-        GordianKeyPair myNHPair = myNHGenerator.generateKeyPair();
+        /* Check Key Exchange */
+        myRSAStatus.checkKEMS();
+        myECStatus.checkKEMS();
+        myDHStatus.checkKEMS();
+        myNHStatus.checkKEMS();
 
         /* Create new symmetric key and stream Key */
         GordianKey<GordianSymKeyType> mySym = myFactory.generateRandomSymKey();
@@ -322,18 +172,6 @@ public class GordianTestSuite {
         /* Secure the keys */
         byte[] mySymSafe = myKeySet.secureKey(mySym);
         byte[] myStreamSafe = myKeySet.secureKey(myStream);
-        byte[] myRSASafe = myRSAGenerator.securePrivateKey(myRSAPair, myKeySet);
-        byte[] myECSafe = myECGenerator.securePrivateKey(myECPair, myKeySet);
-        byte[] myDHSafe = myDHGenerator.securePrivateKey(myDHPair, myKeySet);
-        byte[] mySPHINCSSafe = mySPHINCSGenerator.securePrivateKey(mySPHINCSPair, myKeySet);
-        byte[] myRainbowSafe = myRainbowGenerator.securePrivateKey(myRainbowPair, myKeySet);
-        byte[] myNHSafe = myNHGenerator.securePrivateKey(myNHPair, myKeySet);
-        X509EncodedKeySpec myRSAPublicSpec = myRSAGenerator.getX509Encoding(myRSAPair);
-        X509EncodedKeySpec myECPublicSpec = myECGenerator.getX509Encoding(myECPair);
-        X509EncodedKeySpec myDHPublicSpec = myDHGenerator.getX509Encoding(myDHPair);
-        X509EncodedKeySpec mySPHINCSPublicSpec = mySPHINCSGenerator.getX509Encoding(mySPHINCSPair);
-        X509EncodedKeySpec myRainbowPublicSpec = myRainbowGenerator.getX509Encoding(myRainbowPair);
-        X509EncodedKeySpec myNHPublicSpec = myNHGenerator.getX509Encoding(myNHPair);
 
         /* Encrypt some bytes */
         String myTest = "TestString";
@@ -357,28 +195,11 @@ public class GordianTestSuite {
         byte[] myIV = myMac.getInitVector();
         int myMacId = myKeySet.deriveExternalIdForType(myMac.getMacSpec());
 
-        /* Create signature maps */
-        Map<GordianDigestType, byte[]> myRSAMap = new EnumMap<>(GordianDigestType.class);
-        Map<GordianDigestType, byte[]> myECMap = new EnumMap<>(GordianDigestType.class);
-        Predicate<GordianDigestType> mySignPredicate = myFactory.signatureDigests();
-
         /* Create signatures */
-        for (GordianDigestType myType : GordianDigestType.values()) {
-            /* Ignore if not a signature digest */
-            if (!mySignPredicate.test(myType)) {
-                continue;
-            }
-
-            GordianSigner mySigner = myFactory.createSigner(myRSAPair, myType);
-            mySigner.update(mySymSafe);
-            mySigner.update(myStreamSafe);
-            myRSAMap.put(myType, mySigner.sign());
-
-            mySigner = myFactory.createSigner(myECPair, myType);
-            mySigner.update(mySymSafe);
-            mySigner.update(myStreamSafe);
-            myECMap.put(myType, mySigner.sign());
-        }
+        myRSAStatus.createSignatures(mySymSafe, myStreamSafe);
+        myECStatus.createSignatures(mySymSafe, myStreamSafe);
+        mySPHINCSStatus.createSignatures(mySymSafe, myStreamSafe);
+        myRainbowStatus.createSignatures(mySymSafe, myStreamSafe);
 
         /* Start a new session */
         myManager = theCreator.newSecureManager(myParams);
@@ -401,7 +222,7 @@ public class GordianTestSuite {
         byte[] myMac1Bytes = myMac.finish();
 
         /* Create a message digest */
-        myDigest = myFactory.createDigest(myDigest.getDigestType());
+        myDigest = myFactory.createDigest(myDigest.getDigestSpec());
         myDigest.update(mySymSafe);
         myDigest.update(myStreamSafe);
         byte[] myNewBytes = myDigest.finish();
@@ -417,18 +238,14 @@ public class GordianTestSuite {
         /* Derive the keys */
         GordianKey<GordianSymKeyType> mySym1 = myKeySet1.deriveKey(mySymSafe, mySym.getKeyType());
         GordianKey<GordianStreamKeyType> myStm1 = myKeySet1.deriveKey(myStreamSafe, myStream.getKeyType());
-        myRSAGenerator = myFactory.getKeyPairGenerator(myRSAPair.getKeySpec());
-        GordianKeyPair myNewRSAPair = myRSAGenerator.deriveKeyPair(myRSAPublicSpec, myRSASafe, myKeySet1);
-        myECGenerator = myFactory.getKeyPairGenerator(myECPair.getKeySpec());
-        GordianKeyPair myNewECPair = myECGenerator.deriveKeyPair(myECPublicSpec, myECSafe, myKeySet1);
-        myDHGenerator = myFactory.getKeyPairGenerator(myDHPair.getKeySpec());
-        GordianKeyPair myNewDHPair = myDHGenerator.deriveKeyPair(myDHPublicSpec, myDHSafe, myKeySet1);
-        mySPHINCSGenerator = myFactory.getKeyPairGenerator(mySPHINCSPair.getKeySpec());
-        GordianKeyPair myNewSPHINCSPair = mySPHINCSGenerator.deriveKeyPair(mySPHINCSPublicSpec, mySPHINCSSafe, myKeySet1);
-        myRainbowGenerator = myFactory.getKeyPairGenerator(myRainbowPair.getKeySpec());
-        GordianKeyPair myNewRainbowPair = myRainbowGenerator.deriveKeyPair(myRainbowPublicSpec, myRainbowSafe, myKeySet1);
-        myNHGenerator = myFactory.getKeyPairGenerator(myNHPair.getKeySpec());
-        GordianKeyPair myNewNHPair = myNHGenerator.deriveKeyPair(myNHPublicSpec, myDHSafe, myKeySet1);
+
+        /* Derive the new AsymStatii */
+        myRSAStatus = new AsymPairStatus(myFactory, myKeySet1, myRSAStatus);
+        myECStatus = new AsymPairStatus(myFactory, myKeySet1, myECStatus);
+        myDHStatus = new AsymPairStatus(myFactory, myKeySet1, myDHStatus);
+        mySPHINCSStatus = new AsymPairStatus(myFactory, myKeySet1, mySPHINCSStatus);
+        myRainbowStatus = new AsymPairStatus(myFactory, myKeySet1, myRainbowStatus);
+        myNHStatus = new AsymPairStatus(myFactory, myKeySet1, myNHStatus);
 
         /* Check the keys are the same */
         if (!mySym1.equals(mySym)) {
@@ -437,46 +254,12 @@ public class GordianTestSuite {
         if (!myStm1.equals(myStream)) {
             System.out.println("Failed to decrypt StreamKey");
         }
-        if (!myNewRSAPair.equals(myRSAPair)) {
-            System.out.println("Failed to decrypt RSAKeyPair");
-        }
-        if (!myNewECPair.equals(myECPair)) {
-            System.out.println("Failed to decrypt ECKeyPair");
-        }
-        if (!myNewDHPair.equals(myDHPair)) {
-            System.out.println("Failed to decrypt DHKeyPair");
-        }
-        if (!myNewSPHINCSPair.equals(mySPHINCSPair)) {
-            System.out.println("Failed to decrypt SPHINCSKeyPair");
-        }
-        if (!myNewRainbowPair.equals(myRainbowPair)) {
-            System.out.println("Failed to decrypt RainbowKeyPair");
-        }
-        if (!myNewNHPair.equals(myNHPair)) {
-            System.out.println("Failed to decrypt NewHopeKeyPair");
-        }
 
-        /* Verify signatures */
-        for (GordianDigestType myType : GordianDigestType.values()) {
-            /* Ignore if not a signature digest */
-            if (!mySignPredicate.test(myType)) {
-                continue;
-            }
-
-            GordianValidator myValidator = myFactory.createValidator(myRSAPair, myType);
-            myValidator.update(mySymSafe);
-            myValidator.update(myStreamSafe);
-            if (!myValidator.verify(myRSAMap.get(myType))) {
-                System.out.println("Failed to validate RSA signature " + myType);
-            }
-
-            myValidator = myFactory.createValidator(myECPair, myType);
-            myValidator.update(mySymSafe);
-            myValidator.update(myStreamSafe);
-            if (!myValidator.verify(myECMap.get(myType))) {
-                System.out.println("Failed to validate EC signature " + myType);
-            }
-        }
+        /* Validate the signatures */
+        myRSAStatus.validateSignatures(mySymSafe, myStreamSafe);
+        myECStatus.validateSignatures(mySymSafe, myStreamSafe);
+        mySPHINCSStatus.validateSignatures(mySymSafe, myStreamSafe);
+        myRainbowStatus.validateSignatures(mySymSafe, myStreamSafe);
 
         /* Decrypt the bytes */
         byte[] myResult = myKeySet1.decryptBytes(myEncrypt);
@@ -487,266 +270,190 @@ public class GordianTestSuite {
     }
 
     /**
-     * List the supported algorithms.
+     * Asymmetric Status.
      */
-    protected static void listAlgorithms() {
-        Set<String> ciphers = new HashSet<String>();
-        Set<String> secretKeyFactories = new HashSet<String>();
-        Set<String> keyFactories = new HashSet<String>();
-        Set<String> keyAgreements = new HashSet<String>();
-        Set<String> keyGenerators = new HashSet<String>();
-        Set<String> keyPairGenerators = new HashSet<String>();
-        Set<String> messageDigests = new HashSet<String>();
-        Set<String> macs = new HashSet<String>();
-        Set<String> signatures = new HashSet<String>();
-        Set<String> randoms = new HashSet<String>();
-        Set<String> remaining = new HashSet<String>();
+    private static class AsymPairStatus {
+        /**
+         * The Factory.
+         */
+        private final GordianFactory theFactory;
 
-        Security.addProvider(new BouncyCastleProvider());
-        Security.addProvider(new BouncyCastlePQCProvider());
-        Provider[] providers = Security.getProviders();
+        /**
+         * The KeyPair.
+         */
+        private final GordianKeyPair thePair;
 
-        for (int i = 0; i != providers.length; i++) {
-            if (!providers[i].getName().equals("BC")
-                && !providers[i].getName().equals("BCPQC")) {
-                continue;
-            }
-            Iterator<Object> it = providers[i].keySet().iterator();
-            while (it.hasNext()) {
-                String entry = (String) it.next();
-                if (entry.startsWith("Alg.Alias.")) {
-                    entry = entry.substring("Alg.Alias.".length());
-                }
-                if (entry.contains(".OID.")
-                    || entry.contains(".1.")) {
-                    continue;
-                }
-                if (entry.startsWith("Cipher.")) {
-                    ciphers.add(entry.substring("Cipher.".length()));
-                } else if (entry.startsWith("SecretKeyFactory.")) {
-                    secretKeyFactories.add(entry.substring("SecretKeyFactory.".length()));
-                } else if (entry.startsWith("KeyFactory.")) {
-                    keyFactories.add(entry.substring("KeyFactory.".length()));
-                } else if (entry.startsWith("KeyAgreement.")) {
-                    keyAgreements.add(entry.substring("KeyAgreement.".length()));
-                } else if (entry.startsWith("KeyGenerator.")) {
-                    keyGenerators.add(entry.substring("KeyGenerator.".length()));
-                } else if (entry.startsWith("KeyPairGenerator.")) {
-                    keyPairGenerators.add(entry.substring("KeyPairGenerator.".length()));
-                } else if (entry.startsWith("MessageDigest.")) {
-                    messageDigests.add(entry.substring("MessageDigest.".length()));
-                } else if (entry.startsWith("Mac.")) {
-                    macs.add(entry.substring("Mac.".length()));
-                } else if (entry.startsWith("Signature.")) {
-                    signatures.add(entry.substring("Signature.".length()));
-                } else if (entry.startsWith("SecureRandom.")) {
-                    randoms.add(entry.substring("SecureRandom.".length()));
-                } else {
-                    remaining.add(entry);
-                }
+        /**
+         * The Public KeySpec.
+         */
+        private final X509EncodedKeySpec thePublic;
+
+        /**
+         * The Private KeySpec.
+         */
+        private final byte[] thePrivate;
+
+        /**
+         * Signature Map.
+         */
+        private final Map<GordianSignatureSpec, byte[]> theSignatures;
+
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pKeySet the keySet
+         * @param pKeySpec the Asymmetric KeyType.
+         * @throws OceanusException on error
+         */
+        private AsymPairStatus(final GordianFactory pFactory,
+                               final GordianKeySet pKeySet,
+                               final GordianAsymKeySpec pKeySpec) throws OceanusException {
+            /* Store the factory */
+            theFactory = pFactory;
+
+            /* Create new KeyPair */
+            GordianKeyPairGenerator myGenerator = pFactory.getKeyPairGenerator(pKeySpec);
+            thePair = myGenerator.generateKeyPair();
+
+            /* Secure the keys */
+            thePrivate = myGenerator.securePrivateKey(thePair, pKeySet);
+            thePublic = myGenerator.getX509Encoding(thePair);
+
+            /* Create the signature map */
+            theSignatures = new HashMap<>();
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pKeySet the keySet
+         * @param pStatus the Base Status.
+         * @throws OceanusException on error
+         */
+        private AsymPairStatus(final GordianFactory pFactory,
+                               final GordianKeySet pKeySet,
+                               final AsymPairStatus pStatus) throws OceanusException {
+            /* Store the factory */
+            theFactory = pFactory;
+
+            /* Create new KeyPair */
+            GordianKeyPairGenerator myGenerator = pFactory.getKeyPairGenerator(pStatus.getKeySpec());
+            thePair = myGenerator.deriveKeyPair(pStatus.thePublic, pStatus.thePrivate, pKeySet);
+
+            /* Don't worry about the keySpes */
+            thePrivate = null;
+            thePublic = null;
+
+            /* Record the signature map */
+            theSignatures = pStatus.theSignatures;
+
+            if (!thePair.equals(pStatus.thePair)) {
+                System.out.println("Failed to decrypt KeyPair for: " + getKeySpec());
             }
         }
 
-        printSet("Ciphers", ciphers);
-        printSet("SecretKeyFactories", secretKeyFactories);
-        printSet("KeyFactories", keyFactories);
-        printSet("KeyAgreements", keyAgreements);
-        printSet("KeyGenerators", keyGenerators);
-        printSet("KeyPairGenerators", keyPairGenerators);
-        printSet("MessageDigests", messageDigests);
-        printSet("Macs", macs);
-        printSet("Signatures", signatures);
-        printSet("Randoms", randoms);
-        printSet("Remaining", remaining);
-    }
-
-    /**
-     * Print out a set of algorithms.
-     * @param setName the name of the set
-     * @param algorithms the set of algorithms
-     */
-    private static void printSet(final String setName,
-                                 final Set<String> algorithms) {
-        System.out.println(setName
-                           + ":");
-        if (algorithms.isEmpty()) {
-            System.out.println("            None available.");
-        } else {
-            Iterator<String> it = algorithms.iterator();
-            while (it.hasNext()) {
-                String name = it.next();
-                System.out.println("            "
-                                   + name);
-            }
+        /**
+         * Obtain the keySpec.
+         * @return the keySpec
+         */
+        private GordianAsymKeySpec getKeySpec() {
+            return thePair.getKeySpec();
         }
-    }
 
-    /**
-     * Check the supported algorithms.
-     * @throws OceanusException on error
-     */
-    protected void checkAlgorithms() throws OceanusException {
-        checkAlgorithms(true, GordianFactoryType.BC);
-        checkAlgorithms(false, GordianFactoryType.BC);
-        checkAlgorithms(true, GordianFactoryType.JCA);
-        checkAlgorithms(false, GordianFactoryType.JCA);
-    }
+        /**
+         * Create the signatures.
+         * @param pSymSafe the encrypted SymKey
+         * @param pStreamSafe the encrypted StreamKey
+         * @throws OceanusException on error
+         */
+        public void createSignatures(final byte[] pSymSafe,
+                                     final byte[] pStreamSafe) throws OceanusException {
+            /* Access the signature predicate */
+            Predicate<GordianSignatureSpec> mySignPredicate = theFactory.supportedSignatures();
 
-    /**
-     * Check the supported algorithms.
-     * @param pRestricted is the factory restricted
-     * @param pType the type of factory
-     * @throws OceanusException on error
-     */
-    private void checkAlgorithms(final boolean pRestricted,
-                                 final GordianFactoryType pType) throws OceanusException {
-        /* Create new Security Generator */
-        GordianParameters myParams = new GordianParameters(pRestricted);
-        myParams.setFactoryType(pType);
-        GordianHashManager myManager = theCreator.newSecureManager(myParams);
-        GordianFactory myFactory = myManager.getSecurityFactory();
+            /* For each possible digestSpec */
+            for (GordianDigestSpec mySpec : GordianDigestSpec.listAll()) {
+                /* Create the corresponding signatureSpec */
+                GordianSignatureSpec mySign = new GordianSignatureSpec(getKeySpec().getKeyType(), mySpec);
 
-        /* Access predicates */
-        Predicate<GordianDigestType> myDigestPredicate = myFactory.supportedDigests();
-        Predicate<GordianDigestType> myHMacPredicate = myFactory.supportedHMacDigests();
-        Predicate<GordianSymKeyType> mySymKeyPredicate = myFactory.supportedSymKeys();
-        Predicate<GordianSymKeyType> myMacSymKeyPredicate = myFactory.standardSymKeys();
-        Predicate<GordianStreamKeyType> myStreamKeyPredicate = myFactory.supportedStreamKeys();
-
-        /* Loop through the digests */
-        for (GordianDigestType myDigest : GordianDigestType.values()) {
-            /* If the digest is supported */
-            if (myDigestPredicate.test(myDigest)) {
-                /* Create the digest */
-                myFactory.createDigest(myDigest);
-
-                /* Loop through the possible lengths */
-                for (GordianLength myLen : myDigest.getSupportedLengths()) {
-                    /* Create the digest at the explicit length */
-                    myFactory.createDigest(myDigest, myLen);
-                }
-
-                /* If the digest is supported for HMacs */
-                if (myHMacPredicate.test(myDigest)) {
-                    /* Generate a digest */
-                    GordianMacSpec myMacSpec = new GordianMacSpec(GordianMacType.HMAC, myDigest);
-                    GordianMac myMac = myFactory.createMac(myMacSpec);
-                    GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(myMacSpec);
-                    GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
-                    myMac.initMac(myKey);
+                /* If the signature is supported */
+                if (mySignPredicate.test(mySign)) {
+                    createSignature(mySign, pSymSafe, pStreamSafe);
                 }
             }
         }
 
-        /* Create instance of each cipher Mac */
-        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
-            if (myMacSymKeyPredicate.test(myType)) {
-                GordianMacSpec myMacSpec = new GordianMacSpec(GordianMacType.GMAC, myType);
-                GordianMac myMac = myFactory.createMac(myMacSpec);
-                GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(myMacSpec);
-                GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
-                myMac.initMac(myKey);
-                myMacSpec = new GordianMacSpec(GordianMacType.POLY1305, myType);
-                myMac = myFactory.createMac(new GordianMacSpec(GordianMacType.POLY1305, myType));
-                myGenerator = myFactory.getKeyGenerator(myMacSpec);
-                myKey = myGenerator.generateKey();
-                myMac.initMac(myKey);
+        /**
+         * Create the signature.
+         * @param pSignatureSpec the signatureSpec
+         * @param pSymSafe the encrypted SymKey
+         * @param pStreamSafe the encrypted StreamKey
+         * @throws OceanusException on error
+         */
+        private void createSignature(final GordianSignatureSpec pSignatureSpec,
+                                     final byte[] pSymSafe,
+                                     final byte[] pStreamSafe) throws OceanusException {
+            GordianSigner mySigner = theFactory.createSigner(thePair, pSignatureSpec);
+            mySigner.update(pSymSafe);
+            mySigner.update(pStreamSafe);
+            theSignatures.put(pSignatureSpec, mySigner.sign());
+        }
+
+        /**
+         * Validate the signatures.
+         * @param pSymSafe the encrypted SymKey
+         * @param pStreamSafe the encrypted StreamKey
+         * @throws OceanusException on error
+         */
+        public void validateSignatures(final byte[] pSymSafe,
+                                       final byte[] pStreamSafe) throws OceanusException {
+            /* For each signature that has been created */
+            Iterator<GordianSignatureSpec> myIterator = theSignatures.keySet().iterator();
+            while (myIterator.hasNext()) {
+                GordianSignatureSpec mySpec = myIterator.next();
+                validateSignature(mySpec, pSymSafe, pStreamSafe);
             }
         }
 
-        /* Create remaining MACs */
-        GordianMacSpec myMacSpec = new GordianMacSpec(GordianMacType.SKEIN);
-        GordianMac myMac = myFactory.createMac(myMacSpec);
-        GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(myMacSpec);
-        GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
-        myMac.initMac(myKey);
-        myMacSpec = new GordianMacSpec(GordianMacType.VMPC);
-        myMac = myFactory.createMac(myMacSpec);
-        myGenerator = myFactory.getKeyGenerator(myMacSpec);
-        myKey = myGenerator.generateKey();
-        myMac.initMac(myKey);
-
-        /* Create instance of each symmetric key */
-        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
-            if (mySymKeyPredicate.test(myType)) {
-                GordianKeyGenerator<GordianSymKeyType> mySymGenerator = myFactory.getKeyGenerator(myType);
-                GordianKey<GordianSymKeyType> mySymKey = mySymGenerator.generateKey();
-                checkCipherModes(myFactory, mySymKey);
+        /**
+         * Validate the signature.
+         * @param pSignatureSpec the signatureSpec
+         * @param pSymSafe the encrypted SymKey
+         * @param pStreamSafe the encrypted StreamKey
+         * @throws OceanusException on error
+         */
+        private void validateSignature(final GordianSignatureSpec pSignatureSpec,
+                                       final byte[] pSymSafe,
+                                       final byte[] pStreamSafe) throws OceanusException {
+            GordianValidator myValidator = theFactory.createValidator(thePair, pSignatureSpec);
+            myValidator.update(pSymSafe);
+            myValidator.update(pStreamSafe);
+            if (!myValidator.verify(theSignatures.get(pSignatureSpec))) {
+                System.out.println("Failed to validate signature: " + pSignatureSpec);
             }
         }
 
-        /* Create instance of each stream key */
-        for (GordianStreamKeyType myType : GordianStreamKeyType.values()) {
-            if (myStreamKeyPredicate.test(myType)) {
-                GordianKeyGenerator<GordianStreamKeyType> myStreamGenerator = myFactory.getKeyGenerator(myType);
-                GordianKey<GordianStreamKeyType> myStreamKey = myStreamGenerator.generateKey();
-                GordianCipher<GordianStreamKeyType> myCipher = myFactory.createStreamKeyCipher(myType);
-                myCipher.initCipher(myStreamKey);
+        /**
+         * Check KEMS.
+         * @param pDigestType the digestType
+         * @param pSymSafe the encrypted SymKey
+         * @param pStreamSafe the encrypted StreamKey
+         * @throws OceanusException on error
+         */
+        private void checkKEMS() throws OceanusException {
+            /* If the factory is a Bouncy Factory */
+            if (theFactory instanceof BouncyFactory) {
+                BouncyFactory myFactory = (BouncyFactory) theFactory;
+                /* Perform the key exchange */
+                GordianKEMSender mySender = myFactory.createKEMessage(thePair);
+                GordianKeyEncapsulation myReceiver = myFactory.parseKEMessage(thePair, mySender.getCipherText());
+
+                /* Check agreement */
+                GordianKeySet myKeySet = mySender.deriveKeySet();
+                if (!myKeySet.equals(myReceiver.deriveKeySet())) {
+                    System.out.println("Failed to agree keys: " + getKeySpec());
+                }
             }
         }
-    }
-
-    /**
-     * Check cipher modes. final GordianFactory pFactory,
-     * @param pFactory the factory
-     * @param pKey the key
-     * @throws OceanusException on error
-     */
-    private void checkCipherModes(final GordianFactory pFactory,
-                                  final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
-        for (GordianCipherMode myMode : GordianCipherMode.values()) {
-            checkCipherPadding(pFactory, pKey, myMode);
-        }
-    }
-
-    /**
-     * Check cipher modes.
-     * @param pFactory the factory
-     * @param pKey the key
-     * @param pMode the mode
-     * @throws OceanusException on error
-     */
-    private void checkCipherPadding(final GordianFactory pFactory,
-                                    final GordianKey<GordianSymKeyType> pKey,
-                                    final GordianCipherMode pMode) throws OceanusException {
-        if (pMode.allowsPadding()) {
-            for (GordianPadding myPadding : GordianPadding.values()) {
-                checkCipher(pFactory, pKey, pMode, myPadding);
-            }
-        } else if (!pMode.isAAD()) {
-            checkCipher(pFactory, pKey, pMode, GordianPadding.NONE);
-        } else if (pKey.getKeyType().isStdBlock()) {
-            checkAADCipher(pFactory, pKey, pMode);
-        }
-    }
-
-    /**
-     * Check cipher mode/padding.
-     * @param pFactory the factory
-     * @param pKey the key
-     * @param pMode the mode
-     * @param pPadding the padding
-     * @throws OceanusException on error
-     */
-    private void checkCipher(final GordianFactory pFactory,
-                             final GordianKey<GordianSymKeyType> pKey,
-                             final GordianCipherMode pMode,
-                             final GordianPadding pPadding) throws OceanusException {
-        GordianCipher<GordianSymKeyType> myCipher = pFactory.createSymKeyCipher(pKey.getKeyType(), pMode, pPadding);
-        myCipher.initCipher(pKey);
-    }
-
-    /**
-     * Check AAD cipher mode.
-     * @param pFactory the factory
-     * @param pKey the key
-     * @param pMode the mode
-     * @throws OceanusException on error
-     */
-    private void checkAADCipher(final GordianFactory pFactory,
-                                final GordianKey<GordianSymKeyType> pKey,
-                                final GordianCipherMode pMode) throws OceanusException {
-        GordianAADCipher myCipher = pFactory.createAADCipher(pKey.getKeyType(), pMode);
-        myCipher.initCipher(pKey);
     }
 }

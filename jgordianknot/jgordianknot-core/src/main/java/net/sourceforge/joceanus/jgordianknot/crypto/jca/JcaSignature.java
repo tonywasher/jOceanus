@@ -30,8 +30,7 @@ import java.security.SignatureException;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianConsumer;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPrivateKey;
@@ -127,16 +126,16 @@ public abstract class JcaSignature
         /**
          * Constructor.
          * @param pPrivateKey the private key
-         * @param pDigestType the digest type
+         * @param pDigestSpec the digestSpec
          * @param pRandom the secure random
          * @throws OceanusException on error
          */
         protected JcaRSASigner(final JcaPrivateKey pPrivateKey,
-                               final GordianDigestType pDigestType,
+                               final GordianDigestSpec pDigestSpec,
                                final SecureRandom pRandom) throws OceanusException {
             /* Create the PSSParameterSpec */
             try {
-                String myDigest = JcaDigest.getAlgorithm(pDigestType, GordianLength.LEN_512);
+                String myDigest = JcaDigest.getAlgorithm(pDigestSpec);
                 setSigner(Signature.getInstance(myDigest + RSA_ALGOBASE));
 
                 /* Initialise and set the signer */
@@ -169,14 +168,14 @@ public abstract class JcaSignature
         /**
          * Constructor.
          * @param pPublicKey the public key
-         * @param pDigestType the digest type
+         * @param pDigestSpec the digestSpec
          * @throws OceanusException on error
          */
         protected JcaRSAValidator(final JcaPublicKey pPublicKey,
-                                  final GordianDigestType pDigestType) throws OceanusException {
+                                  final GordianDigestSpec pDigestSpec) throws OceanusException {
             /* Create the PSSParameterSpec */
             try {
-                String myDigest = JcaDigest.getAlgorithm(pDigestType, GordianLength.LEN_512);
+                String myDigest = JcaDigest.getAlgorithm(pDigestSpec);
                 setSigner(Signature.getInstance(myDigest + RSA_ALGOBASE));
 
                 /* Initialise and set the signer */
@@ -209,16 +208,16 @@ public abstract class JcaSignature
         /**
          * Constructor.
          * @param pPrivateKey the private key
-         * @param pDigestType the digest type
+         * @param pDigestSpec the digestSpec
          * @param pRandom the secure random
          * @throws OceanusException on error
          */
         protected JcaECDSASigner(final JcaPrivateKey pPrivateKey,
-                                 final GordianDigestType pDigestType,
+                                 final GordianDigestSpec pDigestSpec,
                                  final SecureRandom pRandom) throws OceanusException {
             /* Create the Signer */
             try {
-                String myDigest = JcaDigest.getAlgorithm(pDigestType, GordianLength.LEN_512);
+                String myDigest = JcaDigest.getAlgorithm(pDigestSpec);
                 setSigner(Signature.getInstance(myDigest + ECDSA_ALGOBASE));
 
                 /* Initialise and set the signer */
@@ -251,14 +250,14 @@ public abstract class JcaSignature
         /**
          * Constructor.
          * @param pPublicKey the public key
-         * @param pDigestType the digest type
+         * @param pDigestSpec the digestSpec
          * @throws OceanusException on error
          */
         protected JcaECDSAValidator(final JcaPublicKey pPublicKey,
-                                    final GordianDigestType pDigestType) throws OceanusException {
+                                    final GordianDigestSpec pDigestSpec) throws OceanusException {
             /* Create the PSSParameterSpec */
             try {
-                String myDigest = JcaDigest.getAlgorithm(pDigestType, GordianLength.LEN_512);
+                String myDigest = JcaDigest.getAlgorithm(pDigestSpec);
                 setSigner(Signature.getInstance(myDigest + ECDSA_ALGOBASE));
 
                 /* Initialise and set the signer */
@@ -291,20 +290,20 @@ public abstract class JcaSignature
         /**
          * Constructor.
          * @param pPrivateKey the private key
-         * @param pDigestType the digest type
+         * @param pDigestSpec the digestSpec
          * @param pRandom the secure random
          * @throws OceanusException on error
          */
         protected JcaSPHINCSSigner(final JcaPrivateKey pPrivateKey,
-                                   final GordianDigestType pDigestType,
+                                   final GordianDigestSpec pDigestSpec,
                                    final SecureRandom pRandom) throws OceanusException {
             /* Create the Signer */
             try {
-                String myDigest = JcaDigest.getAlgorithm(pDigestType);
+                String myDigest = JcaDigest.getAlgorithm(pDigestSpec);
                 setSigner(Signature.getInstance(myDigest + SPHINCS_ALGOBASE));
 
                 /* Initialise and set the signer */
-                getSigner().initSign(pPrivateKey.getPrivateKey(), pRandom);
+                getSigner().initSign(pPrivateKey.getPrivateKey());
 
                 /* Catch exceptions */
             } catch (NoSuchAlgorithmException
@@ -333,14 +332,14 @@ public abstract class JcaSignature
         /**
          * Constructor.
          * @param pPublicKey the public key
-         * @param pDigestType the digest type
+         * @param pDigestSpec the digestSpec
          * @throws OceanusException on error
          */
         protected JcaSPHINCSValidator(final JcaPublicKey pPublicKey,
-                                      final GordianDigestType pDigestType) throws OceanusException {
+                                      final GordianDigestSpec pDigestSpec) throws OceanusException {
             /* Create the PSSParameterSpec */
             try {
-                String myDigest = JcaDigest.getAlgorithm(pDigestType);
+                String myDigest = JcaDigest.getAlgorithm(pDigestSpec);
                 setSigner(Signature.getInstance(myDigest + SPHINCS_ALGOBASE));
 
                 /* Initialise and set the signer */
@@ -373,16 +372,16 @@ public abstract class JcaSignature
         /**
          * Constructor.
          * @param pPrivateKey the private key
-         * @param pDigestType the digest type
+         * @param pDigestSpec the digestSpec
          * @param pRandom the secure random
          * @throws OceanusException on error
          */
         protected JcaRainbowSigner(final JcaPrivateKey pPrivateKey,
-                                   final GordianDigestType pDigestType,
+                                   final GordianDigestSpec pDigestSpec,
                                    final SecureRandom pRandom) throws OceanusException {
             /* Create the Signer */
             try {
-                String myDigest = JcaDigest.getAlgorithm(pDigestType);
+                String myDigest = JcaDigest.getAlgorithm(pDigestSpec);
                 setSigner(Signature.getInstance(myDigest + RAINBOW_ALGOBASE));
 
                 /* Initialise and set the signer */
@@ -415,14 +414,14 @@ public abstract class JcaSignature
         /**
          * Constructor.
          * @param pPublicKey the public key
-         * @param pDigestType the digest type
+         * @param pDigestSpec the digestSpec
          * @throws OceanusException on error
          */
         protected JcaRainbowValidator(final JcaPublicKey pPublicKey,
-                                      final GordianDigestType pDigestType) throws OceanusException {
+                                      final GordianDigestSpec pDigestSpec) throws OceanusException {
             /* Create the PSSParameterSpec */
             try {
-                String myDigest = JcaDigest.getAlgorithm(pDigestType);
+                String myDigest = JcaDigest.getAlgorithm(pDigestSpec);
                 setSigner(Signature.getInstance(myDigest + RAINBOW_ALGOBASE));
 
                 /* Initialise and set the signer */

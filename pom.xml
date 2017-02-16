@@ -87,7 +87,7 @@
     <PostGreSQLVersion>9.4.1212.jre7</PostGreSQLVersion>
     <ApachePOIVersion>3.15</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
-    <SLF4JVersion>1.7.22</SLF4JVersion>
+    <SLF4JVersion>1.7.23</SLF4JVersion>
     <LOG4JVersion>2.8</LOG4JVersion>
     <JFreeChartVersion>1.0.19</JFreeChartVersion>
     <JSoupVersion>1.10.2</JSoupVersion>

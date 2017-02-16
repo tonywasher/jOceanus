@@ -37,6 +37,11 @@ public enum GordianMacType {
     GMAC,
 
     /**
+     * CMAC.
+     */
+    CMAC,
+
+    /**
      * Poly1305.
      */
     POLY1305,

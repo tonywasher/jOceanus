@@ -268,7 +268,7 @@ public final class GordianKeySet {
         GordianSymKeyType myKeyType = pKey.getKeyType();
 
         /* Check that the key is supported */
-        Predicate<GordianSymKeyType> myPredicate = theFactory.standardSymKeys();
+        Predicate<GordianSymKeyType> myPredicate = theFactory.standardSymKeyTypes();
         if (!myPredicate.test(myKeyType)) {
             throw new GordianDataException("invalid keyType");
         }
@@ -297,7 +297,7 @@ public final class GordianKeySet {
     protected void buildFromSecret(final byte[] pSecret,
                                    final byte[] pInitVector) throws OceanusException {
         /* Loop through the Cipher values */
-        Predicate<GordianSymKeyType> myPredicate = theFactory.standardSymKeys();
+        Predicate<GordianSymKeyType> myPredicate = theFactory.standardSymKeyTypes();
         for (GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* If this is supported for a keySet */
             if (myPredicate.test(myType)) {

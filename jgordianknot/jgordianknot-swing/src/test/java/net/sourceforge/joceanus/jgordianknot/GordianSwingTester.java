@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import java.io.File;
-
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jgordianknot.GordianTestSuite.SecurityManagerCreator;
@@ -76,12 +74,10 @@ public class GordianSwingTester
 
                 /* handle zip file creation */
             } else if ("zip".equals(args[0])) {
-                File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
-                theTests.createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
-                theTests.extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
+                theTests.testZipFile();
             }
         } else {
-            GordianTestSuite.listAlgorithms();
+            GordianTestAlgorithms.listAlgorithms();
         }
     }
 

@@ -304,7 +304,7 @@ public abstract class GordianWrapCipher {
      */
     private byte[] getWrapIV(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
         /* Create the MAC and standard data */
-        GordianMacSpec myMacSpec = new GordianMacSpec(GordianMacType.HMAC, theFactory.getDefaultDigest());
+        GordianMacSpec myMacSpec = GordianMacSpec.hMac(theFactory.getDefaultDigest());
         GordianMac myMac = theFactory.createMac(myMacSpec);
         myMac.initMac(pKey.convertToKeyType(myMacSpec));
 

@@ -30,14 +30,17 @@ import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.newlist.MetisListChange.MetisListEvent;
 import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Set of EditLists.
  * @param <E> the list type identifier
  */
 public class MetisEditListSet<E extends Enum<E>>
-        extends MetisVersionedListSet<E, MetisEditList<MetisIndexedItem>> {
+        extends MetisVersionedListSet<E, MetisEditList<MetisIndexedItem>>
+        implements TethysEventProvider<MetisListEvent> {
     /**
      * Report fields.
      */
@@ -47,6 +50,11 @@ public class MetisEditListSet<E extends Enum<E>>
      * EditVersion Field Id.
      */
     private static final MetisField FIELD_EDITVERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_EDITVERSION.getValue());
+
+    /**
+     * The Event Manager.
+     */
+    private final TethysEventManager<MetisListEvent> theEventManager;
 
     /**
      * The base list.
@@ -65,6 +73,7 @@ public class MetisEditListSet<E extends Enum<E>>
     protected MetisEditListSet(final MetisBaseListSet<E> pBase) {
         super(MetisListType.EDIT, pBase.getEnumClass(), FIELD_DEFS);
         theBaseSet = pBase;
+        theEventManager = new TethysEventManager<>();
     }
 
     @Override
@@ -78,6 +87,11 @@ public class MetisEditListSet<E extends Enum<E>>
 
         /* Pass call on */
         return super.getFieldValue(pField);
+    }
+
+    @Override
+    public TethysEventRegistrar<MetisListEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**

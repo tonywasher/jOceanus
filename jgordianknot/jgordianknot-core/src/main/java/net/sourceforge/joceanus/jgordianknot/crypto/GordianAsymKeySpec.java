@@ -57,7 +57,7 @@ public class GordianAsymKeySpec {
      * Constructor.
      * @param pKeyType the keyType
      */
-    public GordianAsymKeySpec(final GordianAsymKeyType pKeyType) {
+    protected GordianAsymKeySpec(final GordianAsymKeyType pKeyType) {
         this(pKeyType, null);
     }
 
@@ -66,8 +66,8 @@ public class GordianAsymKeySpec {
      * @param pKeyType the keyType
      * @param pLength the length
      */
-    public GordianAsymKeySpec(final GordianAsymKeyType pKeyType,
-                              final GordianModulus pLength) {
+    protected GordianAsymKeySpec(final GordianAsymKeyType pKeyType,
+                                 final GordianModulus pLength) {
         theKeyType = pKeyType;
         theLength = pLength;
         theCurve = null;
@@ -77,10 +77,61 @@ public class GordianAsymKeySpec {
      * Constructor.
      * @param pCurve the curve
      */
-    public GordianAsymKeySpec(final GordianElliptic pCurve) {
+    protected GordianAsymKeySpec(final GordianElliptic pCurve) {
         theKeyType = GordianAsymKeyType.EC;
         theLength = null;
         theCurve = pCurve;
+    }
+
+    /**
+     * Create RSAKey.
+     * @param pModulus the modulus
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec rsa(final GordianModulus pModulus) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.RSA, pModulus);
+    }
+
+    /**
+     * Create ECKey.
+     * @param pCurve the curve
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec ec(final GordianElliptic pCurve) {
+        return new GordianAsymKeySpec(pCurve);
+    }
+
+    /**
+     * Create DHKey.
+     * @param pModulus the modulus
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec dh(final GordianModulus pModulus) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.DIFFIEHELLMAN, pModulus);
+    }
+
+    /**
+     * Create SPHINCSKey.
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec sphincs() {
+        return new GordianAsymKeySpec(GordianAsymKeyType.SPHINCS);
+    }
+
+    /**
+     * Create RainbowKey.
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec rainbow() {
+        return new GordianAsymKeySpec(GordianAsymKeyType.RAINBOW);
+    }
+
+    /**
+     * Create NewHopeKey.
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec newHope() {
+        return new GordianAsymKeySpec(GordianAsymKeyType.NEWHOPE);
     }
 
     /**

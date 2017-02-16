@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
@@ -52,6 +53,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSP800Type;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
@@ -113,11 +115,6 @@ public final class JcaFactory
     private static final Predicate<GordianMacType> PREDICATE_MACS;
 
     /**
-     * Predicate for all signature digests.
-     */
-    private static final Predicate<GordianDigestType> PREDICATE_SIGNDIGESTS;
-
-    /**
      * Array for Max Cipher Steps.
      */
     private static final int[] MAX_CIPHER_STEPS;
@@ -158,8 +155,7 @@ public final class JcaFactory
         /* Create the Predicates */
         PREDICATE_DIGESTS = generateDigestPredicate();
         PREDICATE_HMACDIGESTS = generateHMacDigestPredicate();
-        PREDICATE_SIGNDIGESTS = GordianDigestType::isSignatureDigest;
-        PREDICATE_MACS = p -> true;
+        PREDICATE_MACS = p -> p != GordianMacType.CMAC;
 
         /* Calculate max cipher Steps */
         MAX_CIPHER_STEPS = new int[2];
@@ -209,40 +205,24 @@ public final class JcaFactory
     }
 
     @Override
-    public JcaDigest createDigest(final GordianDigestType pDigestType) throws OceanusException {
-        /* Check validity of Digests */
-        if (!supportedDigests().test(pDigestType)) {
-            throw new GordianDataException(getInvalidText(pDigestType));
+    public JcaDigest createDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
+        /* Check validity of DigestType */
+        if (!supportedDigestSpecs().test(pDigestSpec)) {
+            throw new GordianDataException(getInvalidText(pDigestSpec));
         }
 
         /* Create digest */
-        MessageDigest myJavaDigest = getJavaDigest(pDigestType);
-        return new JcaDigest(pDigestType, myJavaDigest);
+        MessageDigest myJavaDigest = getJavaDigest(pDigestSpec);
+        return new JcaDigest(pDigestSpec, myJavaDigest);
     }
 
     @Override
-    public JcaDigest createDigest(final GordianDigestType pDigestType,
-                                  final GordianLength pLength) throws OceanusException {
-        /* Check validity of Digests */
-        if (!supportedDigests().test(pDigestType)) {
-            throw new GordianDataException(getInvalidText(pDigestType));
-        }
-
-        /* Adjust the length to ensure support */
-        GordianLength myLength = pDigestType.adjustLength(pLength);
-
-        /* Create digest */
-        MessageDigest myJavaDigest = getJavaDigest(pDigestType, myLength);
-        return new JcaDigest(pDigestType, myJavaDigest);
-    }
-
-    @Override
-    public Predicate<GordianDigestType> supportedDigests() {
+    public Predicate<GordianDigestType> supportedDigestTypes() {
         return PREDICATE_DIGESTS;
     }
 
     @Override
-    public Predicate<GordianDigestType> supportedHMacDigests() {
+    public Predicate<GordianDigestType> supportedHMacDigestTypes() {
         return PREDICATE_HMACDIGESTS;
     }
 
@@ -253,8 +233,23 @@ public final class JcaFactory
     }
 
     @Override
-    public Predicate<GordianMacType> supportedMacs() {
+    public Predicate<GordianMacType> supportedMacTypes() {
         return PREDICATE_MACS;
+    }
+
+    @Override
+    public Predicate<GordianSymKeyType> supportedGMacSymKeyTypes() {
+        return theStdSymPredicate;
+    }
+
+    @Override
+    public Predicate<GordianSymKeyType> supportedCMacSymKeyTypes() {
+        return theSymPredicate.and(JcaFactory::isSupportedCMAC);
+    }
+
+    @Override
+    public Predicate<GordianSymKeyType> supportedPoly1305SymKeyTypes() {
+        return theStdSymPredicate;
     }
 
     @Override
@@ -274,12 +269,12 @@ public final class JcaFactory
     }
 
     @Override
-    public Predicate<GordianSymKeyType> supportedSymKeys() {
+    public Predicate<GordianSymKeyType> supportedSymKeyTypes() {
         return theSymPredicate;
     }
 
     @Override
-    public Predicate<GordianSymKeyType> standardSymKeys() {
+    public Predicate<GordianSymKeyType> standardSymKeyTypes() {
         return theStdSymPredicate;
     }
 
@@ -302,12 +297,13 @@ public final class JcaFactory
                                                            final GordianCipherMode pMode,
                                                            final GordianPadding pPadding) throws OceanusException {
         /* Check validity of SymKey */
-        if (!supportedSymKeys().test(pKeyType)) {
+        if (!supportedSymKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
         }
 
         /* Check validity of Mode */
-        if ((pMode == null) || pMode.isAAD()) {
+        if (pMode == null
+            || pMode.isAAD()) {
             throw new GordianDataException(getInvalidText(pMode));
         }
 
@@ -327,12 +323,13 @@ public final class JcaFactory
     public JcaAADCipher createAADCipher(final GordianSymKeyType pKeyType,
                                         final GordianCipherMode pMode) throws OceanusException {
         /* Check validity of SymKey */
-        if (!standardSymKeys().test(pKeyType)) {
+        if (!standardSymKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
         }
 
         /* Check validity of Mode */
-        if ((pMode == null) || !pMode.isAAD()) {
+        if (pMode == null
+            || !pMode.isAAD()) {
             throw new GordianDataException(getInvalidText(pMode));
         }
 
@@ -344,7 +341,7 @@ public final class JcaFactory
     @Override
     public JcaCipher<GordianStreamKeyType> createStreamKeyCipher(final GordianStreamKeyType pKeyType) throws OceanusException {
         /* Check validity of StreamKey */
-        if (!supportedStreamKeys().test(pKeyType)) {
+        if (!supportedStreamKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
         }
 
@@ -354,14 +351,14 @@ public final class JcaFactory
     }
 
     @Override
-    public Predicate<GordianStreamKeyType> supportedStreamKeys() {
+    public Predicate<GordianStreamKeyType> supportedStreamKeyTypes() {
         return theStreamPredicate;
     }
 
     @Override
     public JcaWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
-        if (!supportedSymKeys().test(pKeyType)) {
+        if (!supportedSymKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
         }
 
@@ -371,32 +368,42 @@ public final class JcaFactory
     }
 
     @Override
-    public Predicate<GordianDigestType> signatureDigests() {
-        return PREDICATE_SIGNDIGESTS;
+    public Predicate<GordianSignatureSpec> supportedSignatures() {
+        return this::validSignature;
     }
 
     @Override
     public GordianSigner createSigner(final GordianKeyPair pKeyPair,
-                                      final GordianDigestType pDigestType) throws OceanusException {
-        /* Check validity of Digest */
-        if (!signatureDigests().test(pDigestType)) {
-            throw new GordianDataException(getInvalidText(pDigestType));
+                                      final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        /* Check signature matches keyPair */
+        if (pSignatureSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
+            throw new GordianDataException("Invalid keyPair for signature");
+        }
+
+        /* Check validity of Signature */
+        if (!supportedSignatures().test(pSignatureSpec)) {
+            throw new GordianDataException(getInvalidText(pSignatureSpec));
         }
 
         /* Create the signer */
-        return getJcaSigner((JcaKeyPair) pKeyPair, pDigestType);
+        return getJcaSigner((JcaKeyPair) pKeyPair, pSignatureSpec);
     }
 
     @Override
     public GordianValidator createValidator(final GordianKeyPair pKeyPair,
-                                            final GordianDigestType pDigestType) throws OceanusException {
-        /* Check validity of Digest */
-        if (!signatureDigests().test(pDigestType)) {
-            throw new GordianDataException(getInvalidText(pDigestType));
+                                            final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        /* Check signature matches keyPair */
+        if (pSignatureSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
+            throw new GordianDataException("Invalid keyPair for signature");
+        }
+
+        /* Check validity of Signature */
+        if (!supportedSignatures().test(pSignatureSpec)) {
+            throw new GordianDataException(getInvalidText(pSignatureSpec));
         }
 
         /* Create the validator */
-        return getJcaValidator((JcaKeyPair) pKeyPair, pDigestType);
+        return getJcaValidator((JcaKeyPair) pKeyPair, pSignatureSpec);
     }
 
     /**
@@ -410,7 +417,7 @@ public final class JcaFactory
             case HASH:
                 return theSP800Factory.buildHash(createDigest(getDefaultDigest()), null, false);
             case HMAC:
-                GordianMacSpec mySpec = new GordianMacSpec(GordianMacType.HMAC, getDefaultDigest());
+                GordianMacSpec mySpec = GordianMacSpec.hMac(getDefaultDigest());
                 return theSP800Factory.buildHMAC(createMac(mySpec), null, false);
             default:
                 throw new GordianDataException(getInvalidText(pRandomType));
@@ -419,36 +426,15 @@ public final class JcaFactory
 
     /**
      * Create the BouncyCastle digest via JCA.
-     * @param pDigestType the digest type
+     * @param pDigestSpec the digestSpec
      * @return the digest
      * @throws OceanusException on error
      */
-    private static MessageDigest getJavaDigest(final GordianDigestType pDigestType) throws OceanusException {
+    private static MessageDigest getJavaDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */
-            return MessageDigest.getInstance(JcaDigest.getAlgorithm(pDigestType), BCPROV);
-
-            /* Catch exceptions */
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new GordianCryptoException("Failed to create Digest", e);
-        }
-    }
-
-    /**
-     * Create the BouncyCastle digest via JCA.
-     * @param pDigestType the digest type
-     * @param pLength the length
-     * @return the digest
-     * @throws OceanusException on error
-     */
-    private static MessageDigest getJavaDigest(final GordianDigestType pDigestType,
-                                               final GordianLength pLength) throws OceanusException {
-        /* Protect against exceptions */
-        try {
-            /* Return a digest for the algorithm */
-            return MessageDigest.getInstance(JcaDigest.getAlgorithm(pDigestType, pLength), BCPROV);
+            return MessageDigest.getInstance(JcaDigest.getAlgorithm(pDigestSpec), BCPROV);
 
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException e) {
@@ -467,6 +453,7 @@ public final class JcaFactory
         switch (pMacSpec.getMacType()) {
             case HMAC:
             case GMAC:
+            case CMAC:
             case POLY1305:
             case SKEIN:
                 return getJavaMac(getMacSpecAlgorithm(pMacSpec));
@@ -549,9 +536,11 @@ public final class JcaFactory
     private String getMacSpecAlgorithm(final GordianMacSpec pMacSpec) throws OceanusException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
-                return getHMacAlgorithm(pMacSpec.getDigestType(), pMacSpec.getDigestLength());
+                return getHMacAlgorithm(pMacSpec.getDigestSpec());
             case GMAC:
                 return getGMacAlgorithm(pMacSpec.getKeyType());
+            case CMAC:
+                return getCMacAlgorithm(pMacSpec.getKeyType());
             case POLY1305:
                 return getPoly1305Algorithm(pMacSpec.getKeyType());
             case SKEIN:
@@ -650,14 +639,12 @@ public final class JcaFactory
 
     /**
      * Return the associated HMac algorithm.
-     * @param pDigestType the digest type
-     * @param pLength the length
+     * @param pDigestSpec the digestSpec
      * @return the algorithm
      * @throws OceanusException on error
      */
-    private static String getHMacAlgorithm(final GordianDigestType pDigestType,
-                                           final GordianLength pLength) throws OceanusException {
-        return "HMac" + JcaDigest.getAlgorithm(pDigestType, pLength);
+    private static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+        return "HMac" + JcaDigest.getAlgorithm(pDigestSpec);
     }
 
     /**
@@ -668,12 +655,28 @@ public final class JcaFactory
      */
     private String getGMacAlgorithm(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
-        if (!standardSymKeys().test(pKeyType)) {
+        if (!standardSymKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
         }
 
         /* Return algorithm name */
         return pKeyType.name() + "-GMAC";
+    }
+
+    /**
+     * Obtain the GMAC algorithm.
+     * @param pKeyType the symmetric key type
+     * @return the algorithm
+     * @throws OceanusException on error
+     */
+    private String getCMacAlgorithm(final GordianSymKeyType pKeyType) throws OceanusException {
+        /* Check validity of SymKey */
+        if (!supportedCMacSymKeyTypes().test(pKeyType)) {
+            throw new GordianDataException(getInvalidText(pKeyType));
+        }
+
+        /* Return algorithm name */
+        return getSymKeyAlgorithm(pKeyType) + "CMAC";
     }
 
     /**
@@ -684,7 +687,7 @@ public final class JcaFactory
      */
     private String getPoly1305Algorithm(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
-        if (!standardSymKeys().test(pKeyType)) {
+        if (!standardSymKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
         }
 
@@ -842,21 +845,24 @@ public final class JcaFactory
     /**
      * Create the BouncyCastle Signer.
      * @param pKeyPair the keyPair
-     * @param pDigestType the digest type
+     * @param pSignatureSpec the digestSpec
      * @return the Signer
      * @throws OceanusException on error
      */
     private GordianSigner getJcaSigner(final JcaKeyPair pKeyPair,
-                                       final GordianDigestType pDigestType) throws OceanusException {
+                                       final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        /* Access the digestSpec */
+        GordianDigestSpec mySpec = pSignatureSpec.getDigestSpec();
+
         switch (pKeyPair.getKeySpec().getKeyType()) {
             case RSA:
-                return new JcaRSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pDigestType, getRandom());
+                return new JcaRSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), mySpec, getRandom());
             case EC:
-                return new JcaECDSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pDigestType, getRandom());
+                return new JcaECDSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), mySpec, getRandom());
             case SPHINCS:
-                return new JcaSPHINCSSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pDigestType, getRandom());
+                return new JcaSPHINCSSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), mySpec, getRandom());
             case RAINBOW:
-                return new JcaRainbowSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pDigestType, getRandom());
+                return new JcaRainbowSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), mySpec, getRandom());
             default:
                 throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }
@@ -865,21 +871,24 @@ public final class JcaFactory
     /**
      * Create the BouncyCastle KEM Sender.
      * @param pKeyPair the keyPair
-     * @param pDigestType the digest type
+     * @param pSignatureSpec the signatureSpec
      * @return the Validator
      * @throws OceanusException on error
      */
     private static GordianValidator getJcaValidator(final JcaKeyPair pKeyPair,
-                                                    final GordianDigestType pDigestType) throws OceanusException {
+                                                    final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        /* Access the digestSpec */
+        GordianDigestSpec mySpec = pSignatureSpec.getDigestSpec();
+
         switch (pKeyPair.getKeySpec().getKeyType()) {
             case RSA:
-                return new JcaRSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), pDigestType);
+                return new JcaRSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), mySpec);
             case EC:
-                return new JcaECDSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), pDigestType);
+                return new JcaECDSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), mySpec);
             case SPHINCS:
-                return new JcaSPHINCSValidator((JcaPublicKey) pKeyPair.getPublicKey(), pDigestType);
+                return new JcaSPHINCSValidator((JcaPublicKey) pKeyPair.getPublicKey(), mySpec);
             case RAINBOW:
-                return new JcaRainbowValidator((JcaPublicKey) pKeyPair.getPublicKey(), pDigestType);
+                return new JcaRainbowValidator((JcaPublicKey) pKeyPair.getPublicKey(), mySpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }
@@ -958,5 +967,102 @@ public final class JcaFactory
 
         /* Maximum is 1 less than the count */
         return myCount - 1;
+    }
+
+    /**
+     * Determine supported CMAC algorithms.
+     * @param pKeyType the keyType
+     * @return true/false
+     */
+    private static boolean isSupportedCMAC(final GordianSymKeyType pKeyType) {
+        switch (pKeyType) {
+            case SEED:
+            case SM4:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check Signature.
+     * @param pSpec the signatureSpec
+     * @return true/false
+     */
+    private boolean validSignature(final GordianSignatureSpec pSpec) {
+        /* Access and validate the digestSpec */
+        GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        if (!supportedDigestSpecs().test(myDigest)) {
+            return false;
+        }
+
+        /* Switch on KeyType */
+        switch (pSpec.getAsymKeyType()) {
+            case RSA:
+                return validRSASignature(pSpec.getDigestSpec());
+            case EC:
+                return validECSignature(pSpec.getDigestSpec());
+            case SPHINCS:
+                return validSPHINCSSignature(pSpec.getDigestSpec());
+            case RAINBOW:
+                return validRainbowSignature(pSpec.getDigestSpec());
+            case DIFFIEHELLMAN:
+            case NEWHOPE:
+            case ELGAMAL:
+            case MCELIECE:
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check RSASignature.
+     * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validRSASignature(final GordianDigestSpec pSpec) {
+        /* Switch on DigestType */
+        switch (pSpec.getDigestType()) {
+            case SHA2:
+            case SHA3:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check ECSignature.
+     * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validECSignature(final GordianDigestSpec pSpec) {
+        /* Switch on DigestType */
+        switch (pSpec.getDigestType()) {
+            case SHA2:
+            case SHA3:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check SPHINCSSignature.
+     * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validSPHINCSSignature(final GordianDigestSpec pSpec) {
+        return pSpec.getDigestType() == GordianDigestType.SHA3
+               && pSpec.getDigestLength() == GordianLength.LEN_512;
+    }
+
+    /**
+     * Check RainbowSignature.
+     * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validRainbowSignature(final GordianDigestSpec pSpec) {
+        return pSpec.getDigestType() == GordianDigestType.SHA2;
     }
 }

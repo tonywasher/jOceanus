@@ -60,14 +60,19 @@ public class GordianIdManager {
     private static final int LOC_MAC = 17;
 
     /**
+     * The KeyHash personalisation location.
+     */
+    private static final int LOC_KEYHASH = 19;
+
+    /**
      * The HMac personalisation location.
      */
-    private static final int LOC_HMAC = 19;
+    private static final int LOC_HMAC = 23;
 
     /**
      * The Cipher personalisation location.
      */
-    private static final int LOC_CIPHER = 23;
+    private static final int LOC_CIPHER = 27;
 
     /**
      * The SecureRandom.
@@ -110,6 +115,11 @@ public class GordianIdManager {
     private final GordianDigestType[] theDigests;
 
     /**
+     * The list of keyHashDigests.
+     */
+    private final GordianDigestType[] theKeyHashDigests;
+
+    /**
      * The list of hMacDigests.
      */
     private final GordianDigestType[] theHMacDigests;
@@ -129,12 +139,13 @@ public class GordianIdManager {
         thePersonalLen = thePersonalisation.length;
 
         /* Create shuffled and filtered lists */
-        theSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_SYM, pFactory.supportedSymKeys());
-        theStdSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_STDSYM, pFactory.standardSymKeys());
-        theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), LOC_STREAM, pFactory.supportedStreamKeys());
-        theDigests = shuffleTypes(GordianDigestType.values(), LOC_DIGEST, pFactory.supportedDigests());
-        theHMacDigests = shuffleTypes(GordianDigestType.values(), LOC_HMAC, pFactory.supportedHMacDigests().and(GordianDigestType::isCombinedHashDigest));
-        theMacs = shuffleTypes(GordianMacType.values(), LOC_MAC, pFactory.supportedMacs());
+        theSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_SYM, pFactory.supportedSymKeyTypes());
+        theStdSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_STDSYM, pFactory.standardSymKeyTypes());
+        theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), LOC_STREAM, pFactory.supportedStreamKeyTypes());
+        theDigests = shuffleTypes(GordianDigestType.values(), LOC_DIGEST, pFactory.supportedDigestTypes());
+        theKeyHashDigests = shuffleTypes(GordianDigestType.values(), LOC_KEYHASH, pFactory.supportedKeyHashDigestTypes());
+        theHMacDigests = shuffleTypes(GordianDigestType.values(), LOC_HMAC, pFactory.supportedHMacDigestTypes());
+        theMacs = shuffleTypes(GordianMacType.values(), LOC_MAC, pFactory.supportedMacTypes());
 
         /* Determine the cipher indentation */
         theCipherIndent = getPersonalisedByte(LOC_CIPHER) & TethysDataConverter.NYBBLE_MASK;
@@ -313,36 +324,79 @@ public class GordianIdManager {
     }
 
     /**
-     * Derive set of standard hMacDigestTypes from seed.
+     * Obtain random keyHashDigestType.
+     * @return the random digestType
+     */
+    protected GordianDigestType generateRandomKeyHashDigestType() {
+        /* Determine a random digestType */
+        GordianDigestType[] myDigest = getRandomTypes(theKeyHashDigests, 1);
+
+        /* Return the single digestType */
+        return myDigest[0];
+    }
+
+    /**
+     * Derive set of standard keyHashDigestTypes from seed.
      * @param pSeed the seed
      * @param pCount the count
      * @return the digestTypes
      */
-    protected GordianDigestType[] deriveHMacDigestTypesFromSeed(final int pSeed,
-                                                                final int pCount) {
-        GordianDigestType[] myResult = Arrays.copyOf(theHMacDigests, pCount);
-        getSeededTypes(theHMacDigests, myResult, pSeed);
+    protected GordianDigestType[] deriveKeyHashDigestTypesFromSeed(final int pSeed,
+                                                                   final int pCount) {
+        GordianDigestType[] myResult = Arrays.copyOf(theKeyHashDigests, pCount);
+        getSeededTypes(theKeyHashDigests, myResult, pSeed);
         return myResult;
     }
 
     /**
-     * Obtain digestType from external DigestId.
+     * Obtain digestSpec from external DigestSpecId.
      * @param pId the external id
-     * @return the digestType
+     * @return the digestSpec
      * @throws OceanusException on error
      */
-    protected GordianDigestType deriveDigestTypeFromExternalId(final int pId) throws OceanusException {
-        return deriveTypeFromExternalId(pId, theDigests);
+    protected GordianDigestSpec deriveDigestSpecFromExternalId(final int pId) throws OceanusException {
+        /* Isolate id Components */
+        int myId = pId & TethysDataConverter.NYBBLE_MASK;
+        int myCode = pId >> TethysDataConverter.NYBBLE_SHIFT;
+
+        /* Translate components */
+        GordianDigestType myType = deriveTypeFromExternalId(myId, theDigests);
+        GordianLength myLength = deriveLengthFromExternalId(myCode);
+
+        /* Create DigestSpec */
+        return new GordianDigestSpec(myType, myLength);
     }
 
     /**
-     * Obtain external DigestId.
+     * Obtain external DigestSpecId.
+     * @param pDigestSpec the digestSpec
+     * @return the external id
+     * @throws OceanusException on error
+     */
+    protected int deriveExternalIdFromDigestSpec(final GordianDigestSpec pDigestSpec) throws OceanusException {
+        int myCode = deriveExternalIdFromDigestType(pDigestSpec.getDigestType());
+        myCode += deriveExternalIdFromLength(pDigestSpec.getDigestLength()) << TethysDataConverter.NYBBLE_SHIFT;
+        return myCode;
+    }
+
+    /**
+     * Obtain external DigestTypeId.
      * @param pDigest the digestType
      * @return the external id
      * @throws OceanusException on error
      */
-    protected int deriveExternalIdFromDigestType(final GordianDigestType pDigest) throws OceanusException {
+    private int deriveExternalIdFromDigestType(final GordianDigestType pDigest) throws OceanusException {
         return deriveExternalIdFromType(pDigest, theDigests);
+    }
+
+    /**
+     * Obtain digestType from external digestId.
+     * @param pId the external id
+     * @return the digestType
+     * @throws OceanusException on error
+     */
+    private GordianDigestType deriveDigestTypeFromExternalId(final int pId) throws OceanusException {
+        return deriveTypeFromExternalId(pId, theDigests);
     }
 
     /**
@@ -354,11 +408,14 @@ public class GordianIdManager {
         switch (myMacType) {
             case HMAC:
                 GordianDigestType myDigestType = generateRandomHMacDigestType();
-                return new GordianMacSpec(myMacType, myDigestType);
+                return GordianMacSpec.hMac(myDigestType);
             case POLY1305:
             case GMAC:
+            case CMAC:
                 GordianSymKeyType mySymType = generateRandomStdSymKeyType();
                 return new GordianMacSpec(myMacType, mySymType);
+            case SKEIN:
+                return new GordianMacSpec(GordianLength.LEN_512);
             default:
                 return new GordianMacSpec(myMacType);
         }
@@ -393,10 +450,13 @@ public class GordianIdManager {
         /* Switch on the MacType */
         switch (myMacType) {
             case HMAC:
-                return new GordianMacSpec(myMacType, deriveDigestTypeFromExternalId(myCode));
+                return GordianMacSpec.hMac(deriveDigestSpecFromExternalId(myCode));
             case GMAC:
+            case CMAC:
             case POLY1305:
                 return new GordianMacSpec(myMacType, deriveStdSymKeyTypeFromExternalId(myCode));
+            case SKEIN:
+                return GordianMacSpec.skeinMac(deriveLengthFromExternalId(myCode));
             default:
                 return new GordianMacSpec(myMacType);
         }
@@ -426,11 +486,15 @@ public class GordianIdManager {
         /* Switch on MacType */
         switch (myMacType) {
             case HMAC:
-                myCode += deriveExternalIdFromDigestType(pMacSpec.getDigestType()) << TethysDataConverter.NYBBLE_SHIFT;
+                myCode += deriveExternalIdFromDigestSpec(pMacSpec.getDigestSpec()) << TethysDataConverter.NYBBLE_SHIFT;
                 break;
             case GMAC:
+            case CMAC:
             case POLY1305:
                 myCode += deriveExternalIdFromStdSymKeyType(pMacSpec.getKeyType()) << TethysDataConverter.NYBBLE_SHIFT;
+                break;
+            case SKEIN:
+                myCode += deriveExternalIdFromLength(pMacSpec.getDigestLength()) << TethysDataConverter.NYBBLE_SHIFT;
                 break;
             default:
                 break;
@@ -454,9 +518,8 @@ public class GordianIdManager {
      * Obtain external CipherMode.
      * @param pMode the cipherMode
      * @return the external id
-     * @throws OceanusException on error
      */
-    protected int deriveExternalIdFromCipherMode(final GordianCipherMode pMode) throws OceanusException {
+    protected int deriveExternalIdFromCipherMode(final GordianCipherMode pMode) {
         return pMode.ordinal();
     }
 
@@ -479,9 +542,8 @@ public class GordianIdManager {
      * Obtain external Padding.
      * @param pPadding the padding
      * @return the external id
-     * @throws OceanusException on error
      */
-    protected int deriveExternalIdFromPadding(final GordianPadding pPadding) throws OceanusException {
+    protected int deriveExternalIdFromPadding(final GordianPadding pPadding) {
         return pPadding.ordinal();
     }
 
@@ -501,6 +563,30 @@ public class GordianIdManager {
     }
 
     /**
+     * Obtain external Length.
+     * @param pLength the length
+     * @return the external id
+     */
+    protected int deriveExternalIdFromLength(final GordianLength pLength) {
+        return pLength.ordinal();
+    }
+
+    /**
+     * Obtain cipherMode from external ModeId.
+     * @param pId the external id
+     * @return the mode
+     * @throws OceanusException on error
+     */
+    private static GordianLength deriveLengthFromExternalId(final int pId) throws OceanusException {
+        for (GordianLength myLength : GordianLength.values()) {
+            if (myLength.ordinal() == pId) {
+                return myLength;
+            }
+        }
+        throw new GordianDataException("Invalid lengthId: " + pId);
+    }
+
+    /**
      * Obtain Type from external Id.
      * @param <T> the type class
      * @param pId the external id
@@ -510,6 +596,9 @@ public class GordianIdManager {
      */
     protected <T> T deriveTypeFromExternalId(final int pId,
                                              final Class<T> pTypeClass) throws OceanusException {
+        if (GordianDigestSpec.class.equals(pTypeClass)) {
+            return pTypeClass.cast(deriveDigestSpecFromExternalId(pId));
+        }
         if (GordianDigestType.class.equals(pTypeClass)) {
             return pTypeClass.cast(deriveDigestTypeFromExternalId(pId));
         }
@@ -522,11 +611,17 @@ public class GordianIdManager {
         if (GordianMacSpec.class.equals(pTypeClass)) {
             return pTypeClass.cast(deriveMacSpecFromExternalId(pId));
         }
+        if (GordianMacType.class.equals(pTypeClass)) {
+            return pTypeClass.cast(deriveMacTypeFromExternalId(pId));
+        }
         if (GordianCipherMode.class.equals(pTypeClass)) {
             return pTypeClass.cast(deriveCipherModeFromExternalId(pId));
         }
         if (GordianPadding.class.equals(pTypeClass)) {
             return pTypeClass.cast(derivePaddingFromExternalId(pId));
+        }
+        if (GordianLength.class.equals(pTypeClass)) {
+            return pTypeClass.cast(deriveLengthFromExternalId(pId));
         }
         throw new GordianDataException("Invalid class: " + pTypeClass.getCanonicalName());
     }
@@ -539,6 +634,9 @@ public class GordianIdManager {
      * @throws OceanusException on error
      */
     protected <T> int deriveExternalIdFromType(final T pType) throws OceanusException {
+        if (GordianDigestSpec.class.isInstance(pType)) {
+            return deriveExternalIdFromDigestSpec((GordianDigestSpec) pType);
+        }
         if (GordianDigestType.class.isInstance(pType)) {
             return deriveExternalIdFromDigestType((GordianDigestType) pType);
         }
@@ -551,13 +649,19 @@ public class GordianIdManager {
         if (GordianMacSpec.class.isInstance(pType)) {
             return deriveExternalIdFromMacSpec((GordianMacSpec) pType);
         }
+        if (GordianMacType.class.isInstance(pType)) {
+            return deriveExternalIdFromMacType((GordianMacType) pType);
+        }
         if (GordianCipherMode.class.isInstance(pType)) {
             return deriveExternalIdFromCipherMode((GordianCipherMode) pType);
         }
         if (GordianPadding.class.isInstance(pType)) {
             return deriveExternalIdFromPadding((GordianPadding) pType);
         }
-        throw new GordianDataException("Invalid type: " + pType);
+        if (GordianLength.class.isInstance(pType)) {
+            return deriveExternalIdFromLength((GordianLength) pType);
+        }
+        throw new GordianDataException("Invalid type: " + pType.getClass().getCanonicalName());
     }
 
     /**

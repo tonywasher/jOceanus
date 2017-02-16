@@ -621,7 +621,7 @@ public class BouncyKeyPair
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyECPublicKey)) {
+            if (!(pThat instanceof BouncyDiffieHellmanPublicKey)) {
                 return false;
             }
 

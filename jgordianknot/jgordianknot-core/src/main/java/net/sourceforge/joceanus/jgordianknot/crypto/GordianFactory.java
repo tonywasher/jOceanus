@@ -121,8 +121,8 @@ public abstract class GordianFactory {
      * Obtain Default Digest.
      * @return the default digest
      */
-    protected GordianDigestType getDefaultDigest() {
-        return theParameters.getBaseHashAlgorithm();
+    protected GordianDigestSpec getDefaultDigest() {
+        return new GordianDigestSpec(theParameters.getBaseHashAlgorithm());
     }
 
     /**
@@ -261,38 +261,30 @@ public abstract class GordianFactory {
      */
     public GordianDigest generateRandomDigest() throws OceanusException {
         GordianDigestType myType = getIdManager().generateRandomDigestType();
-        return createDigest(myType);
+        return createDigest(new GordianDigestSpec(myType));
     }
 
     /**
      * create GordianDigest.
-     * @param pDigestType the DigestType
+     * @param pDigestSpec the DigestSpec
      * @return the new Digest
      * @throws OceanusException on error
      */
-    public abstract GordianDigest createDigest(GordianDigestType pDigestType) throws OceanusException;
+    public abstract GordianDigest createDigest(GordianDigestSpec pDigestSpec) throws OceanusException;
 
     /**
-     * create GordianDigest.
-     * @param pDigestType the DigestType
-     * @param pLength the DigestLength
-     * @return the new Digest
-     * @throws OceanusException on error
+     * Obtain predicate for supported digestSpecs.
+     * @return the predicate
      */
-    public abstract GordianDigest createDigest(GordianDigestType pDigestType,
-                                               GordianLength pLength) throws OceanusException;
+    public Predicate<GordianDigestSpec> supportedDigestSpecs() {
+        return this::validDigestSpec;
+    }
 
     /**
      * Obtain predicate for supported digestTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianDigestType> supportedDigests();
-
-    /**
-     * Obtain predicate for supported hMac digestTypes.
-     * @return the predicate
-     */
-    public abstract Predicate<GordianDigestType> supportedHMacDigests();
+    public abstract Predicate<GordianDigestType> supportedDigestTypes();
 
     /**
      * generate random GordianMac.
@@ -324,10 +316,74 @@ public abstract class GordianFactory {
     public abstract GordianMac createMac(GordianMacSpec pMacSpec) throws OceanusException;
 
     /**
+     * Obtain predicate for supported macSpecs.
+     * @return the predicate
+     */
+    public Predicate<GordianMacSpec> supportedMacSpecs() {
+        return this::validMacSpec;
+    }
+
+    /**
      * Obtain predicate for supported macTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianMacType> supportedMacs();
+    public abstract Predicate<GordianMacType> supportedMacTypes();
+
+    /**
+     * Obtain predicate for supported hMac digestSpecs.
+     * @return the predicate
+     */
+    public Predicate<GordianDigestSpec> supportedHMacDigestSpecs() {
+        return this::validHMacSpec;
+    }
+
+    /**
+     * Obtain predicate for supported hMac digestTypes.
+     * @return the predicate
+     */
+    public abstract Predicate<GordianDigestType> supportedHMacDigestTypes();
+
+    /**
+     * Obtain predicate for supported poly1305 symKeyTypes.
+     * @return the predicate
+     */
+    public abstract Predicate<GordianSymKeyType> supportedPoly1305SymKeyTypes();
+
+    /**
+     * Obtain predicate for supported gMac symKeyTypes.
+     * @return the predicate
+     */
+    public abstract Predicate<GordianSymKeyType> supportedGMacSymKeyTypes();
+
+    /**
+     * Obtain predicate for supported cMac symKeyTypes.
+     * @return the predicate
+     */
+    public abstract Predicate<GordianSymKeyType> supportedCMacSymKeyTypes();
+
+    /**
+     * Obtain predicate for supported SkeinMac lengths.
+     * @return the predicate
+     */
+    public Predicate<GordianLength> supportedSkeinLengths() {
+        return GordianDigestType.SKEIN::isLengthAvailable;
+    }
+
+    /**
+     * Obtain predicate for supported KeyHash digests.
+     * @return the predicate
+     */
+    public Predicate<GordianDigestType> supportedKeyHashDigestTypes() {
+        return supportedHMacDigestTypes().and(GordianDigestType::isCombinedHashDigest);
+    }
+
+    /**
+     * Obtain predicate for supported external digests.
+     * @return the predicate
+     */
+    public Predicate<GordianDigestType> supportedExternalDigestTypes() {
+        return supportedHMacDigestTypes().and(GordianDigestType::isExternalHashDigest);
+    }
 
     /**
      * obtain GordianKeyGenerator.
@@ -399,13 +455,13 @@ public abstract class GordianFactory {
      * Obtain predicate for supported SymKeyTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianSymKeyType> supportedSymKeys();
+    public abstract Predicate<GordianSymKeyType> supportedSymKeyTypes();
 
     /**
      * Obtain predicate for standard SymKeyTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianSymKeyType> standardSymKeys();
+    public abstract Predicate<GordianSymKeyType> standardSymKeyTypes();
 
     /**
      * create GordianAADCipher.
@@ -451,7 +507,7 @@ public abstract class GordianFactory {
      * Obtain predicate for supported StreamKeyTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianStreamKeyType> supportedStreamKeys();
+    public abstract Predicate<GordianStreamKeyType> supportedStreamKeyTypes();
 
     /**
      * create GordianWrapCipher.
@@ -462,30 +518,30 @@ public abstract class GordianFactory {
     public abstract GordianWrapCipher createWrapCipher(GordianSymKeyType pKeyType) throws OceanusException;
 
     /**
-     * Obtain predicate for signature DigestTypes.
+     * Obtain predicate for signatures.
      * @return the predicate
      */
-    public abstract Predicate<GordianDigestType> signatureDigests();
+    public abstract Predicate<GordianSignatureSpec> supportedSignatures();
 
     /**
      * Create signer.
      * @param pKeyPair the keyPair
-     * @param pDigestType the digest type
+     * @param pSignatureSpec the signatureSpec
      * @return the signer
      * @throws OceanusException on error
      */
     public abstract GordianSigner createSigner(GordianKeyPair pKeyPair,
-                                               GordianDigestType pDigestType) throws OceanusException;
+                                               GordianSignatureSpec pSignatureSpec) throws OceanusException;
 
     /**
      * Create validator.
      * @param pKeyPair the keyPair
-     * @param pDigestType the digest type
+     * @param pSignatureSpec the signatureSpec
      * @return the validator
      * @throws OceanusException on error
      */
     public abstract GordianValidator createValidator(GordianKeyPair pKeyPair,
-                                                     GordianDigestType pDigestType) throws OceanusException;
+                                                     GordianSignatureSpec pSignatureSpec) throws OceanusException;
 
     /**
      * Build Invalid text string.
@@ -535,5 +591,70 @@ public abstract class GordianFactory {
     @Override
     public int hashCode() {
         return theParameters.hashCode();
+    }
+
+    /**
+     * Check DigestSpec.
+     * @param pDigestSpec the digestSpec
+     * @return true/false
+     */
+    private boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
+        /* Access details */
+        GordianDigestType myType = pDigestSpec.getDigestType();
+        GordianLength myLen = pDigestSpec.getDigestLength();
+
+        /* Check validity */
+        return supportedDigestTypes().test(myType)
+               && myType.isLengthAvailable(myLen);
+    }
+
+    /**
+     * Check HMacSpec.
+     * @param pDigestSpec the digestSpec
+     * @return true/false
+     */
+    private boolean validHMacSpec(final GordianDigestSpec pDigestSpec) {
+        /* Access details */
+        GordianDigestType myType = pDigestSpec.getDigestType();
+
+        /* Check validity */
+        return supportedHMacDigestTypes().test(myType)
+               && supportedDigestSpecs().test(pDigestSpec);
+    }
+
+    /**
+     * Check MacSpec.
+     * @param pMacSpec the macSpec
+     * @return true/false
+     */
+    private boolean validMacSpec(final GordianMacSpec pMacSpec) {
+        /* Access details */
+        GordianMacType myType = pMacSpec.getMacType();
+        GordianDigestSpec mySpec = pMacSpec.getDigestSpec();
+        GordianSymKeyType mySymKey = pMacSpec.getKeyType();
+        GordianLength myLen = pMacSpec.getDigestLength();
+
+        /* Check that the macType is supported */
+        if (!supportedMacTypes().test(myType)) {
+            return false;
+        }
+
+        /* Switch on MacType */
+        switch (myType) {
+            case HMAC:
+                return supportedHMacDigestSpecs().test(mySpec);
+            case GMAC:
+                return supportedGMacSymKeyTypes().test(mySymKey);
+            case CMAC:
+                return supportedCMacSymKeyTypes().test(mySymKey);
+            case POLY1305:
+                return supportedPoly1305SymKeyTypes().test(mySymKey);
+            case SKEIN:
+                return supportedSkeinLengths().test(myLen);
+            case VMPC:
+                return true;
+            default:
+                return false;
+        }
     }
 }
