@@ -64,6 +64,11 @@ public enum GordianCryptoResource implements TethysResourceId {
     DIGEST_RIPEMD("digest.RIPEMD"),
 
     /**
+     * Digest Streebog.
+     */
+    DIGEST_STREEBOG("digest.STREEBOG"),
+
+    /**
      * Digest GOST.
      */
     DIGEST_GOST("digest.GOST"),
@@ -320,6 +325,7 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianDigestType.TIGER, DIGEST_TIGER);
         myMap.put(GordianDigestType.WHIRLPOOL, DIGEST_WHIRLPOOL);
         myMap.put(GordianDigestType.RIPEMD, DIGEST_RIPEMD);
+        myMap.put(GordianDigestType.STREEBOG, DIGEST_STREEBOG);
         myMap.put(GordianDigestType.GOST, DIGEST_GOST);
         myMap.put(GordianDigestType.SHA3, DIGEST_SHA3);
         myMap.put(GordianDigestType.SKEIN, DIGEST_SKEIN);

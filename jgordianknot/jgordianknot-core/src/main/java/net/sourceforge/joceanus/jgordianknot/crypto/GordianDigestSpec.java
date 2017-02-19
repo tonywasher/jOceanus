@@ -42,6 +42,11 @@ public class GordianDigestSpec {
     private final GordianDigestType theDigestType;
 
     /**
+     * The Digest State Length.
+     */
+    private final GordianLength theStateLength;
+
+    /**
      * The Digest Length.
      */
     private final GordianLength theLength;
@@ -67,7 +72,21 @@ public class GordianDigestSpec {
     protected GordianDigestSpec(final GordianDigestType pDigestType,
                                 final GordianLength pLength) {
         /* Store parameters */
+        this(pDigestType, pDigestType.getStateForLength(pLength), pLength);
+    }
+
+    /**
+     * Constructor.
+     * @param pDigestType the digestType
+     * @param pStateLength the stateLength
+     * @param pLength the length
+     */
+    protected GordianDigestSpec(final GordianDigestType pDigestType,
+                                final GordianLength pStateLength,
+                                final GordianLength pLength) {
+        /* Store parameters */
         theDigestType = pDigestType;
+        theStateLength = pStateLength;
         theLength = pLength;
     }
 
@@ -117,7 +136,20 @@ public class GordianDigestSpec {
      * @return the MacSpec
      */
     public static GordianDigestSpec sha2(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.SHA2, pLength);
+        return sha2(pLength, false);
+    }
+
+    /**
+     * Create sha2DigestSpec.
+     * @param pLength the length
+     * @param useExtended use extended state
+     * @return the MacSpec
+     */
+    public static GordianDigestSpec sha2(final GordianLength pLength,
+                                         final boolean useExtended) {
+        return useExtended
+                           ? new GordianDigestSpec(GordianDigestType.SHA2, pLength.getSha2ExtendedState(), pLength)
+                           : new GordianDigestSpec(GordianDigestType.SHA2, pLength);
     }
 
     /**
@@ -153,7 +185,31 @@ public class GordianDigestSpec {
      * @return the MacSpec
      */
     public static GordianDigestSpec skein(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.SKEIN, pLength);
+        return skein(pLength, false);
+    }
+
+    /**
+     * Create skeinDigestSpec.
+     * @param pLength the length
+     * @param useExtended use extended state
+     * @return the MacSpec
+     */
+    public static GordianDigestSpec skein(final GordianLength pLength,
+                                          final boolean useExtended) {
+        return useExtended
+                           ? new GordianDigestSpec(GordianDigestType.SKEIN, pLength.getSkeinExtendedState(), pLength)
+                           : new GordianDigestSpec(GordianDigestType.SKEIN, pLength.getSkeinState(), pLength);
+    }
+
+    /**
+     * Create skeinDigestSpec.
+     * @param pStateLength the state length
+     * @param pLength the length
+     * @return the MacSpec
+     */
+    protected static GordianDigestSpec skein(final GordianLength pStateLength,
+                                             final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.SKEIN, pStateLength, pLength);
     }
 
     /**
@@ -174,6 +230,14 @@ public class GordianDigestSpec {
     }
 
     /**
+     * Obtain State Length.
+     * @return the Length
+     */
+    public GordianLength getStateLength() {
+        return theStateLength;
+    }
+
+    /**
      * Obtain Digest Length.
      * @return the Length
      */
@@ -187,7 +251,10 @@ public class GordianDigestSpec {
         if (theName == null) {
             /* Load the name */
             theName = theDigestType.toString();
-            theName += SEP + theLength.toString();
+            if (theStateLength != null) {
+                theName += SEP + Integer.toString(theStateLength.getLength());
+            }
+            theName += SEP + Integer.toString(theLength.getLength());
         }
 
         /* return the name */
@@ -212,6 +279,11 @@ public class GordianDigestSpec {
         /* Access the target DigestSpec */
         GordianDigestSpec myThat = (GordianDigestSpec) pThat;
 
+        /* Check stateLength */
+        if (theStateLength != myThat.getStateLength()) {
+            return false;
+        }
+
         /* Check DigestType and length */
         return theDigestType.equals(myThat.getDigestType())
                && theLength.equals(myThat.getDigestLength());
@@ -220,6 +292,10 @@ public class GordianDigestSpec {
     @Override
     public int hashCode() {
         int hashCode = theDigestType.ordinal() << TethysDataConverter.BYTE_SHIFT;
+        if (theStateLength != null) {
+            hashCode <<= TethysDataConverter.BYTE_SHIFT;
+            hashCode += theStateLength.ordinal();
+        }
         hashCode += theLength.ordinal();
         return hashCode;
     }
@@ -237,6 +313,10 @@ public class GordianDigestSpec {
             /* For each length */
             for (GordianLength myLength : myType.getSupportedLengths()) {
                 myList.add(new GordianDigestSpec(myType, myLength));
+                GordianLength myState = myType.getExtendedStateForLength(myLength);
+                if (myState != null) {
+                    myList.add(new GordianDigestSpec(myType, myState, myLength));
+                }
             }
         }
 

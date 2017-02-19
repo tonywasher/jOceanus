@@ -235,26 +235,6 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain symKeyType from external standard SymKeyId.
-     * @param pId the external id
-     * @return the symKeyType
-     * @throws OceanusException on error
-     */
-    private GordianSymKeyType deriveStdSymKeyTypeFromExternalId(final int pId) throws OceanusException {
-        return deriveTypeFromExternalId(pId, theStdSymKeys);
-    }
-
-    /**
-     * Obtain external SymKeyId.
-     * @param pKey the symKeyType
-     * @return the external id
-     * @throws OceanusException on error
-     */
-    private int deriveExternalIdFromStdSymKeyType(final GordianSymKeyType pKey) throws OceanusException {
-        return deriveExternalIdFromType(pKey, theStdSymKeys);
-    }
-
-    /**
      * Obtain random StreamKeyType.
      * @return the random streamKeyType
      */
@@ -357,14 +337,19 @@ public class GordianIdManager {
     protected GordianDigestSpec deriveDigestSpecFromExternalId(final int pId) throws OceanusException {
         /* Isolate id Components */
         int myId = pId & TethysDataConverter.NYBBLE_MASK;
-        int myCode = pId >> TethysDataConverter.NYBBLE_SHIFT;
+        int myLenCode = pId >> TethysDataConverter.NYBBLE_SHIFT;
+        int myStateCode = myLenCode >> TethysDataConverter.NYBBLE_SHIFT;
+        myLenCode &= TethysDataConverter.NYBBLE_MASK;
 
         /* Translate components */
         GordianDigestType myType = deriveTypeFromExternalId(myId, theDigests);
-        GordianLength myLength = deriveLengthFromExternalId(myCode);
+        GordianLength myLength = deriveLengthFromExternalId(myLenCode);
+        GordianLength myState = myStateCode == 0
+                                                 ? null
+                                                 : deriveLengthFromExternalId(myStateCode);
 
         /* Create DigestSpec */
-        return new GordianDigestSpec(myType, myLength);
+        return new GordianDigestSpec(myType, myState, myLength);
     }
 
     /**
@@ -375,7 +360,13 @@ public class GordianIdManager {
      */
     protected int deriveExternalIdFromDigestSpec(final GordianDigestSpec pDigestSpec) throws OceanusException {
         int myCode = deriveExternalIdFromDigestType(pDigestSpec.getDigestType());
-        myCode += deriveExternalIdFromLength(pDigestSpec.getDigestLength()) << TethysDataConverter.NYBBLE_SHIFT;
+        GordianLength myState = pDigestSpec.getStateLength();
+        int myLenCode = myState == null
+                                        ? 0
+                                        : deriveExternalIdFromLength(myState);
+        myLenCode <<= TethysDataConverter.NYBBLE_SHIFT;
+        myLenCode += deriveExternalIdFromLength(pDigestSpec.getDigestLength());
+        myCode += myLenCode << TethysDataConverter.NYBBLE_SHIFT;
         return myCode;
     }
 
@@ -415,7 +406,7 @@ public class GordianIdManager {
                 GordianSymKeyType mySymType = generateRandomStdSymKeyType();
                 return new GordianMacSpec(myMacType, mySymType);
             case SKEIN:
-                return new GordianMacSpec(GordianLength.LEN_512);
+                return GordianMacSpec.skeinMac(GordianLength.LEN_512);
             default:
                 return new GordianMacSpec(myMacType);
         }
@@ -454,9 +445,10 @@ public class GordianIdManager {
             case GMAC:
             case CMAC:
             case POLY1305:
-                return new GordianMacSpec(myMacType, deriveStdSymKeyTypeFromExternalId(myCode));
+                return new GordianMacSpec(myMacType, deriveSymKeyTypeFromExternalId(myCode));
             case SKEIN:
-                return GordianMacSpec.skeinMac(deriveLengthFromExternalId(myCode));
+                GordianDigestSpec mySpec = deriveDigestSpecFromExternalId(myCode);
+                return GordianMacSpec.skeinMac(mySpec.getStateLength(), mySpec.getDigestLength());
             default:
                 return new GordianMacSpec(myMacType);
         }
@@ -486,15 +478,13 @@ public class GordianIdManager {
         /* Switch on MacType */
         switch (myMacType) {
             case HMAC:
+            case SKEIN:
                 myCode += deriveExternalIdFromDigestSpec(pMacSpec.getDigestSpec()) << TethysDataConverter.NYBBLE_SHIFT;
                 break;
             case GMAC:
             case CMAC:
             case POLY1305:
-                myCode += deriveExternalIdFromStdSymKeyType(pMacSpec.getKeyType()) << TethysDataConverter.NYBBLE_SHIFT;
-                break;
-            case SKEIN:
-                myCode += deriveExternalIdFromLength(pMacSpec.getDigestLength()) << TethysDataConverter.NYBBLE_SHIFT;
+                myCode += deriveExternalIdFromSymKeyType(pMacSpec.getKeyType()) << TethysDataConverter.NYBBLE_SHIFT;
                 break;
             default:
                 break;
@@ -520,7 +510,7 @@ public class GordianIdManager {
      * @return the external id
      */
     protected int deriveExternalIdFromCipherMode(final GordianCipherMode pMode) {
-        return pMode.ordinal();
+        return pMode.ordinal() + 1;
     }
 
     /**
@@ -530,8 +520,9 @@ public class GordianIdManager {
      * @throws OceanusException on error
      */
     private static GordianCipherMode deriveCipherModeFromExternalId(final int pId) throws OceanusException {
+        int myId = pId - 1;
         for (GordianCipherMode myMode : GordianCipherMode.values()) {
-            if (myMode.ordinal() == pId) {
+            if (myMode.ordinal() == myId) {
                 return myMode;
             }
         }
@@ -544,7 +535,7 @@ public class GordianIdManager {
      * @return the external id
      */
     protected int deriveExternalIdFromPadding(final GordianPadding pPadding) {
-        return pPadding.ordinal();
+        return pPadding.ordinal() + 1;
     }
 
     /**
@@ -554,8 +545,9 @@ public class GordianIdManager {
      * @throws OceanusException on error
      */
     private static GordianPadding derivePaddingFromExternalId(final int pId) throws OceanusException {
+        int myId = pId - 1;
         for (GordianPadding myPadding : GordianPadding.values()) {
-            if (myPadding.ordinal() == pId) {
+            if (myPadding.ordinal() == myId) {
                 return myPadding;
             }
         }
@@ -568,7 +560,7 @@ public class GordianIdManager {
      * @return the external id
      */
     protected int deriveExternalIdFromLength(final GordianLength pLength) {
-        return pLength.ordinal();
+        return pLength.ordinal() + 1;
     }
 
     /**
@@ -578,8 +570,9 @@ public class GordianIdManager {
      * @throws OceanusException on error
      */
     private static GordianLength deriveLengthFromExternalId(final int pId) throws OceanusException {
+        int myId = pId - 1;
         for (GordianLength myLength : GordianLength.values()) {
-            if (myLength.ordinal() == pId) {
+            if (myLength.ordinal() == myId) {
                 return myLength;
             }
         }

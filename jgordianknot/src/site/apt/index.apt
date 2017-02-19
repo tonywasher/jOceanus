@@ -10,7 +10,7 @@ the keys is selected at random (using a SecureRandom instance) from the KeySet, 
 by each key in turn. The types of the keys used are encoded into output ciphertext along with the randomly chosen
 initialisation vector (which is shifted differently for each key). 
 
-  The last cipher mode is set to SIC mode. All prior modes are set to CBC mode. The first CBC mode is set to use ISO7816-4 padding,
+  The last cipher mode is set to SIC mode. All prior modes are set to ECB mode. The first ECB mode is set to use ISO7816-4 padding,
 all others use no padding. The number of encryption steps is configurable.
 
   A KeySet may be defined by a <<KeySetHash>>. This KeySetHash is built from a password and a randomly selected set of three
@@ -102,8 +102,10 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * WHIRLPOOL (512)
 
-    * GOST1411-2012 (256, 512)
+    * Streebog (GOST1411-2012) (256, 512)
 
+    * GOST (GOST1411-94) (256)
+   
     * RIPEMD (128, 160, 256, 320)
 
     * SHA3 (224, 256, 384, 512)
@@ -124,6 +126,8 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * GMac (for each symmetric algorithm except for ThreeFish)
 
+    * CMac (for each symmetric algorithm)
+   
     * Poly1305 (for each symmetric algorithm except for ThreeFish)
 
     * SkeinMAC (for each supported Skein digest length)

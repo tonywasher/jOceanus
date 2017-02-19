@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot;
+package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.Provider;
 import java.security.Security;
@@ -32,21 +32,7 @@ import java.util.function.Predicate;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
-import net.sourceforge.joceanus.jgordianknot.GordianTestSuite.SecurityManagerCreator;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianAADCipher;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -141,7 +127,7 @@ public class GordianTestAlgorithms {
     }
 
     /**
-     * Check cipher modes. final GordianFactory pFactory,
+     * Check cipher modes.
      * @param pFactory the factory
      * @param pKey the key
      * @throws OceanusException on error

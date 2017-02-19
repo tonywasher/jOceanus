@@ -49,7 +49,12 @@ public enum GordianDigestType {
     /**
      * GOST.
      */
-    GOST(GordianLength.LEN_512, GordianLength.LEN_256),
+    STREEBOG(GordianLength.LEN_512, GordianLength.LEN_256),
+
+    /**
+     * GOST.
+     */
+    GOST(GordianLength.LEN_256),
 
     /**
      * SHA3.
@@ -128,22 +133,11 @@ public enum GordianDigestType {
     }
 
     /**
-     * Adjust length to ensure support.
-     * @param pLength the requested length
-     * @return the valid length
-     */
-    public GordianLength adjustLength(final GordianLength pLength) {
-        return isLengthAvailable(pLength)
-                                          ? pLength
-                                          : getDefaultLength();
-    }
-
-    /**
-     * is length available?
+     * is length valid?
      * @param pLength the length
      * @return true/false
      */
-    public boolean isLengthAvailable(final GordianLength pLength) {
+    public boolean isLengthValid(final GordianLength pLength) {
         for (GordianLength myLength : theLengths) {
             if (myLength.equals(pLength)) {
                 return true;
@@ -153,16 +147,53 @@ public enum GordianDigestType {
     }
 
     /**
-     * is this available as a signature Digest?
+     * is length available?
+     * @param pStateLength the length
+     * @param pLength the length
      * @return true/false
      */
-    public boolean isSignatureDigest() {
+    public boolean isStateValidForLength(final GordianLength pStateLength,
+                                         final GordianLength pLength) {
         switch (this) {
             case SHA2:
-            case SHA3:
-                return true;
+                return pStateLength == null
+                       || pStateLength.equals(pLength.getSha2ExtendedState());
+            case SKEIN:
+                return pStateLength != null
+                       && (pStateLength.equals(pLength.getSkeinState())
+                           || pStateLength.equals(pLength.getSkeinExtendedState()));
             default:
-                return false;
+                return pStateLength == null;
+        }
+    }
+
+    /**
+     * Does this digest have an extended state for this length?
+     * @param pLength the length
+     * @return true/false
+     */
+    public GordianLength getStateForLength(final GordianLength pLength) {
+        return GordianDigestType.SKEIN.equals(this)
+                                                    ? pLength.getSkeinState()
+                                                    : null;
+    }
+
+    /**
+     * Does this digest have an extended state for this length?
+     * @param pLength the length
+     * @return true/false
+     */
+    public GordianLength getExtendedStateForLength(final GordianLength pLength) {
+        switch (this) {
+            case SHA2:
+                return pLength.getSha2ExtendedState();
+            case SKEIN:
+                GordianLength myState = pLength.getSkeinExtendedState();
+                return myState != pLength
+                                          ? myState
+                                          : null;
+            default:
+                return null;
         }
     }
 
@@ -171,7 +202,7 @@ public enum GordianDigestType {
      * @return true/false
      */
     public boolean isExternalHashDigest() {
-        return isLengthAvailable(GordianLength.LEN_512);
+        return isLengthValid(GordianLength.LEN_512);
     }
 
     /**

@@ -25,8 +25,10 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -177,6 +179,14 @@ public abstract class GordianFactory {
     }
 
     /**
+     * Obtain the default randomSpec.
+     * @return the default randomSpec
+     */
+    protected GordianRandomSpec defaultRandomSpec() {
+        return new GordianRandomSpec(getDefaultSP800(), getDefaultDigest());
+    }
+
+    /**
      * Set the secureRandom instance.
      * @param pRandom the secureRandom instance
      */
@@ -248,11 +258,19 @@ public abstract class GordianFactory {
 
     /**
      * create SecureRandom.
-     * @param pRandomType the SP800 RandomType
+     * @param pRandomSpec the randomSpec
      * @return the new SecureRandom
      * @throws OceanusException on error
      */
-    public abstract SecureRandom createRandom(GordianSP800Type pRandomType) throws OceanusException;
+    public abstract SecureRandom createRandom(GordianRandomSpec pRandomSpec) throws OceanusException;
+
+    /**
+     * Obtain predicate for supported randomSpecs.
+     * @return the predicate
+     */
+    public Predicate<GordianRandomSpec> supportedRandomSpecs() {
+        return this::validRandomSpec;
+    }
 
     /**
      * generate random GordianDigest.
@@ -360,14 +378,6 @@ public abstract class GordianFactory {
      * @return the predicate
      */
     public abstract Predicate<GordianSymKeyType> supportedCMacSymKeyTypes();
-
-    /**
-     * Obtain predicate for supported SkeinMac lengths.
-     * @return the predicate
-     */
-    public Predicate<GordianLength> supportedSkeinLengths() {
-        return GordianDigestType.SKEIN::isLengthAvailable;
-    }
 
     /**
      * Obtain predicate for supported KeyHash digests.
@@ -521,7 +531,7 @@ public abstract class GordianFactory {
      * Obtain predicate for signatures.
      * @return the predicate
      */
-    public abstract Predicate<GordianSignatureSpec> supportedSignatures();
+    public abstract BiPredicate<GordianKeyPair, GordianSignatureSpec> supportedSignatures();
 
     /**
      * Create signer.
@@ -542,6 +552,36 @@ public abstract class GordianFactory {
      */
     public abstract GordianValidator createValidator(GordianKeyPair pKeyPair,
                                                      GordianSignatureSpec pSignatureSpec) throws OceanusException;
+
+    /**
+     * Obtain predicate for keyExchange.
+     * @return the predicate
+     */
+    public BiPredicate<GordianKeyPair, GordianDigestSpec> supportedKeyExchanges() {
+        return this::validExchangeSpec;
+    }
+
+    /**
+     * Create KEMessage.
+     * @param pKeyPair the keyPair
+     * @param pDigestSpec the digestSpec
+     * @return the KEMSender
+     * @throws OceanusException on error
+     */
+    public abstract GordianKEMSender createKEMessage(GordianKeyPair pKeyPair,
+                                                     GordianDigestSpec pDigestSpec) throws OceanusException;
+
+    /**
+     * Parse KEMessage.
+     * @param pKeyPair the keyPair
+     * @param pDigestSpec the digestSpec
+     * @param pMessage the cipherText
+     * @return the parsed KEMessage
+     * @throws OceanusException on error
+     */
+    public abstract GordianKeyEncapsulation parseKEMessage(GordianKeyPair pKeyPair,
+                                                           GordianDigestSpec pDigestSpec,
+                                                           byte[] pMessage) throws OceanusException;
 
     /**
      * Build Invalid text string.
@@ -594,6 +634,22 @@ public abstract class GordianFactory {
     }
 
     /**
+     * Check RandomSpec.
+     * @param pRandomSpec the randomSpec
+     * @return true/false
+     */
+    private boolean validRandomSpec(final GordianRandomSpec pRandomSpec) {
+        /* Access details */
+        GordianSP800Type myType = pRandomSpec.getRandomType();
+        GordianDigestSpec mySpec = pRandomSpec.getDigestSpec();
+
+        /* Check that the randomType is supported */
+        return GordianSP800Type.HASH.equals(myType)
+                                                    ? validDigestSpec(mySpec)
+                                                    : validHMacSpec(mySpec);
+    }
+
+    /**
      * Check DigestSpec.
      * @param pDigestSpec the digestSpec
      * @return true/false
@@ -601,11 +657,13 @@ public abstract class GordianFactory {
     private boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
         /* Access details */
         GordianDigestType myType = pDigestSpec.getDigestType();
+        GordianLength myStateLen = pDigestSpec.getStateLength();
         GordianLength myLen = pDigestSpec.getDigestLength();
 
         /* Check validity */
         return supportedDigestTypes().test(myType)
-               && myType.isLengthAvailable(myLen);
+               && myType.isLengthValid(myLen)
+               && myType.isStateValidForLength(myStateLen, myLen);
     }
 
     /**
@@ -632,7 +690,6 @@ public abstract class GordianFactory {
         GordianMacType myType = pMacSpec.getMacType();
         GordianDigestSpec mySpec = pMacSpec.getDigestSpec();
         GordianSymKeyType mySymKey = pMacSpec.getKeyType();
-        GordianLength myLen = pMacSpec.getDigestLength();
 
         /* Check that the macType is supported */
         if (!supportedMacTypes().test(myType)) {
@@ -650,9 +707,64 @@ public abstract class GordianFactory {
             case POLY1305:
                 return supportedPoly1305SymKeyTypes().test(mySymKey);
             case SKEIN:
-                return supportedSkeinLengths().test(myLen);
+                return supportedDigestSpecs().test(mySpec)
+                       && GordianDigestType.SKEIN.equals(mySpec.getDigestType());
             case VMPC:
                 return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check SignatureSpec.
+     * @param pKeyPair the keyPair
+     * @param pSignSpec the macSpec
+     * @return true/false
+     */
+    protected boolean validSignatureSpec(final GordianKeyPair pKeyPair,
+                                         final GordianSignatureSpec pSignSpec) {
+        /* Access details */
+        GordianAsymKeyType myType = pSignSpec.getAsymKeyType();
+        GordianSignatureType mySignType = pSignSpec.getSignatureType();
+        GordianDigestSpec mySpec = pSignSpec.getDigestSpec();
+
+        /* Check signature matches keyPair */
+        if (pSignSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
+            return false;
+        }
+
+        /* Check that the signatureType is supported */
+        if (!myType.isSignatureAvailable(mySignType)) {
+            return false;
+        }
+
+        /* Check that the digestSpec is supported */
+        if (!validDigestSpec(mySpec)) {
+            return false;
+        }
+
+        /* Disallow ECNR if keySize is smaller than digestSize */
+        GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
+        return !GordianSignatureType.NR.equals(mySignType)
+               || myKeySpec.getCurve().getKeySize() >= mySpec.getDigestLength().getLength();
+    }
+
+    /**
+     * Check ExchangeSpec.
+     * @param pKeyPair the keyPair
+     * @param pDigestSpec the digestSpec
+     * @return true/false
+     */
+    protected boolean validExchangeSpec(final GordianKeyPair pKeyPair,
+                                        final GordianDigestSpec pDigestSpec) {
+        /* Switch on KeyType */
+        switch (pKeyPair.getKeySpec().getKeyType()) {
+            case RSA:
+            case EC:
+            case DIFFIEHELLMAN:
+            case NEWHOPE:
+                return supportedDigestSpecs().test(pDigestSpec);
             default:
                 return false;
         }

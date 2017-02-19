@@ -32,17 +32,29 @@ import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.Signer;
+import org.bouncycastle.crypto.engines.RSABlindedEngine;
 import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.signers.ECDSASigner;
+import org.bouncycastle.crypto.signers.ECNRSigner;
+import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
+import org.bouncycastle.crypto.signers.ISO9796d2Signer;
 import org.bouncycastle.crypto.signers.PSSSigner;
+import org.bouncycastle.crypto.signers.X931Signer;
 import org.bouncycastle.pqc.crypto.rainbow.RainbowSigner;
 import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256Signer;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianConsumer;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyECPrivateKey;
@@ -78,21 +90,24 @@ public final class BouncySignature {
         /**
          * The RSA Signer.
          */
-        private PSSSigner theSigner;
+        private final Signer theSigner;
 
         /**
-         * Set the signer.
-         * @param pSigner the signer.
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSpec the signatureSpec.
+         * @throws OceanusException on error
          */
-        protected void setSigner(final PSSSigner pSigner) {
-            theSigner = pSigner;
+        protected BouncyPSSSignature(final BouncyFactory pFactory,
+                                     final GordianSignatureSpec pSpec) throws OceanusException {
+            theSigner = getRSASigner(pFactory, pSpec);
         }
 
         /**
          * Obtain the signer.
          * @return the signer.
          */
-        protected PSSSigner getSigner() {
+        protected Signer getSigner() {
             return theSigner;
         }
 
@@ -112,6 +127,30 @@ public final class BouncySignature {
         public void update(final byte[] pBytes) {
             theSigner.update(pBytes, 0, pBytes.length);
         }
+
+        /**
+         * Obtain RSASigner.
+         * @param pFactory the factory
+         * @param pSpec the signatureSpec
+         * @return the RSASigner
+         * @throws OceanusException on error
+         */
+        private static Signer getRSASigner(final BouncyFactory pFactory,
+                                           final GordianSignatureSpec pSpec) throws OceanusException {
+            /* Create the digest */
+            BouncyDigest myDigest = pFactory.createDigest(pSpec.getDigestSpec());
+
+            /* Access the signature type */
+            switch (pSpec.getSignatureType()) {
+                case ISO9796D2:
+                    return new ISO9796d2Signer(new RSABlindedEngine(), myDigest.getDigest(), true);
+                case X931:
+                    return new X931Signer(new RSABlindedEngine(), myDigest.getDigest(), true);
+                case PSS:
+                default:
+                    return new PSSSigner(new RSAEngine(), myDigest.getDigest(), MGF1_SALTLEN);
+            }
+        }
     }
 
     /**
@@ -126,10 +165,13 @@ public final class BouncySignature {
 
         /**
          * Constructor.
-         * @param pDigest the digest.
+         * @param pFactory the factory
+         * @param pSpec the signatureSpec.
+         * @throws OceanusException on error
          */
-        protected BouncyDigestSignature(final BouncyDigest pDigest) {
-            theDigest = pDigest;
+        protected BouncyDigestSignature(final BouncyFactory pFactory,
+                                        final GordianSignatureSpec pSpec) throws OceanusException {
+            theDigest = pFactory.createDigest(pSpec.getDigestSpec());
         }
 
         @Override
@@ -166,19 +208,23 @@ public final class BouncySignature {
             implements GordianSigner {
         /**
          * Constructor.
+         * @param pFactory the factory
          * @param pPrivateKey the private key
-         * @param pDigest the digest.
+         * @param pSpec the signatureSpec
          * @param pRandom the secure Random
+         * @throws OceanusException on error
          */
-        protected BouncyRSASigner(final BouncyRSAPrivateKey pPrivateKey,
-                                  final BouncyDigest pDigest,
-                                  final SecureRandom pRandom) {
-            /* Create the RSAEngine and the signer */
-            RSAEngine myEngine = new RSAEngine();
-            setSigner(new PSSSigner(myEngine, pDigest.getDigest(), MGF1_SALTLEN));
+        protected BouncyRSASigner(final BouncyFactory pFactory,
+                                  final BouncyRSAPrivateKey pPrivateKey,
+                                  final GordianSignatureSpec pSpec,
+                                  final SecureRandom pRandom) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
 
             /* Initialise and set the signer */
-            ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
+            CipherParameters myParms = GordianSignatureType.PSS.equals(pSpec.getSignatureType())
+                                                                                                 ? new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom)
+                                                                                                 : pPrivateKey.getPrivateKey();
             getSigner().init(true, myParms);
         }
 
@@ -202,14 +248,16 @@ public final class BouncySignature {
             implements GordianValidator {
         /**
          * Constructor.
+         * @param pFactory the factory
          * @param pPublicKey the public key
-         * @param pDigest the digest.
+         * @param pSpec the signatureSpec
+         * @throws OceanusException on error
          */
-        protected BouncyRSAValidator(final BouncyRSAPublicKey pPublicKey,
-                                     final BouncyDigest pDigest) {
-            /* Create the RSAEngine and the signer */
-            RSAEngine myEngine = new RSAEngine();
-            setSigner(new PSSSigner(myEngine, pDigest.getDigest(), MGF1_SALTLEN));
+        protected BouncyRSAValidator(final BouncyFactory pFactory,
+                                     final BouncyRSAPublicKey pPublicKey,
+                                     final GordianSignatureSpec pSpec) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
 
             /* Initialise and set the Validator */
             getSigner().init(false, pPublicKey.getPublicKey());
@@ -222,30 +270,33 @@ public final class BouncySignature {
     }
 
     /**
-     * ECDSA signer.
+     * EC signer.
      */
-    public static class BouncyECDSASigner
+    public static class BouncyECSigner
             extends BouncyDigestSignature
             implements GordianSigner {
         /**
-         * The ECDSA Signer.
+         * The Signer.
          */
-        private final ECDSASigner theSigner;
+        private final DSA theSigner;
 
         /**
          * Constructor.
+         * @param pFactory the factory
          * @param pPrivateKey the private key
-         * @param pDigest the digest.
-         * @param pRandom the secure Random
+         * @param pSpec the signatureSpec.
+         * @param pRandom the random generator
+         * @throws OceanusException on error
          */
-        protected BouncyECDSASigner(final BouncyECPrivateKey pPrivateKey,
-                                    final BouncyDigest pDigest,
-                                    final SecureRandom pRandom) {
+        protected BouncyECSigner(final BouncyFactory pFactory,
+                                 final BouncyECPrivateKey pPrivateKey,
+                                 final GordianSignatureSpec pSpec,
+                                 final SecureRandom pRandom) throws OceanusException {
             /* Initialise underlying class */
-            super(pDigest);
+            super(pFactory, pSpec);
 
             /* Create the signer */
-            theSigner = new ECDSASigner();
+            theSigner = getECSigner(pFactory, pSpec);
 
             /* Initialise and set the signer */
             ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
@@ -284,28 +335,31 @@ public final class BouncySignature {
     }
 
     /**
-     * ECDSA validator.
+     * EC validator.
      */
-    public static class BouncyECDSAValidator
+    public static class BouncyECValidator
             extends BouncyDigestSignature
             implements GordianValidator {
         /**
-         * The ECDSA Signer.
+         * The EC Signer.
          */
-        private final ECDSASigner theSigner;
+        private final DSA theSigner;
 
         /**
          * Constructor.
+         * @param pFactory the factory
          * @param pPublicKey the public key
-         * @param pDigest the digest.
+         * @param pSpec the signatureSpec.
+         * @throws OceanusException on error-
          */
-        protected BouncyECDSAValidator(final BouncyECPublicKey pPublicKey,
-                                       final BouncyDigest pDigest) {
+        protected BouncyECValidator(final BouncyFactory pFactory,
+                                    final BouncyECPublicKey pPublicKey,
+                                    final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
-            super(pDigest);
+            super(pFactory, pSpec);
 
             /* Create the signer */
-            theSigner = new ECDSASigner();
+            theSigner = getECSigner(pFactory, pSpec);
 
             /* Initialise and set the signer */
             theSigner.init(false, pPublicKey.getPublicKey());
@@ -342,6 +396,26 @@ public final class BouncySignature {
     }
 
     /**
+     * Obtain ECSigner.
+     * @param pFactory the factory
+     * @param pSpec the signatureSpec
+     * @return the ECSigner
+     * @throws OceanusException on error
+     */
+    private static DSA getECSigner(final BouncyFactory pFactory,
+                                   final GordianSignatureSpec pSpec) throws OceanusException {
+        /* Access the signature type */
+        GordianSignatureType myType = pSpec.getSignatureType();
+        if (GordianSignatureType.DDSA.equals(myType)) {
+            BouncyDigest myDigest = pFactory.createDigest(pSpec.getDigestSpec());
+            return new ECDSASigner(new HMacDSAKCalculator(myDigest.getDigest()));
+        }
+        return GordianSignatureType.DSA.equals(myType)
+                                                       ? new ECDSASigner()
+                                                       : new ECNRSigner();
+    }
+
+    /**
      * SPHINCS signer.
      */
     public static class BouncySPHINCSSigner
@@ -354,22 +428,25 @@ public final class BouncySignature {
 
         /**
          * Constructor.
+         * @param pFactory the factory
          * @param pPrivateKey the private key
-         * @param pBaseDigest the tree digest.
-         * @param pTreeDigest the tree digest.
-         * @param pMsgDigest the message digest.
+         * @param pSpec the signatureSpec.
          * @param pRandom the secure Random
+         * @throws OceanusException on error
          */
-        protected BouncySPHINCSSigner(final BouncySPHINCSPrivateKey pPrivateKey,
-                                      final BouncyDigest pBaseDigest,
-                                      final BouncyDigest pTreeDigest,
-                                      final BouncyDigest pMsgDigest,
-                                      final SecureRandom pRandom) {
+        protected BouncySPHINCSSigner(final BouncyFactory pFactory,
+                                      final BouncySPHINCSPrivateKey pPrivateKey,
+                                      final GordianSignatureSpec pSpec,
+                                      final SecureRandom pRandom) throws OceanusException {
             /* Initialise underlying class */
-            super(pBaseDigest);
+            super(pFactory, pSpec);
+
+            /* Create the internal digests */
+            BouncyDigest myTreeDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_256));
+            BouncyDigest myMsgDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_512));
 
             /* Create the signer */
-            theSigner = new SPHINCS256Signer(pTreeDigest.getDigest(), pMsgDigest.getDigest());
+            theSigner = new SPHINCS256Signer(myTreeDigest.getDigest(), myMsgDigest.getDigest());
 
             /* Initialise and set the signer */
             theSigner.init(true, pPrivateKey.getPrivateKey());
@@ -395,20 +472,23 @@ public final class BouncySignature {
 
         /**
          * Constructor.
+         * @param pFactory the factory
          * @param pPublicKey the public key
-         * @param pBaseDigest the base digest.
-         * @param pTreeDigest the tree digest.
-         * @param pMsgDigest the message digest.
+         * @param pSpec the signatureSpec.
+         * @throws OceanusException on error
          */
-        protected BouncySPHINCSValidator(final BouncySPHINCSPublicKey pPublicKey,
-                                         final BouncyDigest pBaseDigest,
-                                         final BouncyDigest pTreeDigest,
-                                         final BouncyDigest pMsgDigest) {
+        protected BouncySPHINCSValidator(final BouncyFactory pFactory,
+                                         final BouncySPHINCSPublicKey pPublicKey,
+                                         final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
-            super(pBaseDigest);
+            super(pFactory, pSpec);
+
+            /* Create the internal digests */
+            BouncyDigest myTreeDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_256));
+            BouncyDigest myMsgDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_512));
 
             /* Create the signer */
-            theSigner = new SPHINCS256Signer(pTreeDigest.getDigest(), pMsgDigest.getDigest());
+            theSigner = new SPHINCS256Signer(myTreeDigest.getDigest(), myMsgDigest.getDigest());
 
             /* Initialise and set the signer */
             theSigner.init(false, pPublicKey.getPublicKey());
@@ -433,15 +513,18 @@ public final class BouncySignature {
 
         /**
          * Constructor.
+         * @param pFactory the factory
          * @param pPrivateKey the private key
-         * @param pDigest the digest.
+         * @param pSpec the signatureSpec.
          * @param pRandom the secure Random
+         * @throws OceanusException on error
          */
-        protected BouncyRainbowSigner(final BouncyRainbowPrivateKey pPrivateKey,
-                                      final BouncyDigest pDigest,
-                                      final SecureRandom pRandom) {
+        protected BouncyRainbowSigner(final BouncyFactory pFactory,
+                                      final BouncyRainbowPrivateKey pPrivateKey,
+                                      final GordianSignatureSpec pSpec,
+                                      final SecureRandom pRandom) throws OceanusException {
             /* Initialise underlying class */
-            super(pDigest);
+            super(pFactory, pSpec);
 
             /* Create the signer */
             theSigner = new RainbowSigner();
@@ -471,13 +554,16 @@ public final class BouncySignature {
 
         /**
          * Constructor.
+         * @param pFactory the factory
          * @param pPublicKey the public key
-         * @param pDigest the digest.
+         * @param pSpec the signatureSpec.
+         * @throws OceanusException on error
          */
-        protected BouncyRainbowValidator(final BouncyRainbowPublicKey pPublicKey,
-                                         final BouncyDigest pDigest) {
+        protected BouncyRainbowValidator(final BouncyFactory pFactory,
+                                         final BouncyRainbowPublicKey pPublicKey,
+                                         final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
-            super(pDigest);
+            super(pFactory, pSpec);
 
             /* Create the signer */
             theSigner = new RainbowSigner();

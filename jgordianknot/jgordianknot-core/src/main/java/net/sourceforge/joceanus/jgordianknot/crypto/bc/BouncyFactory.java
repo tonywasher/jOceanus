@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
 import java.security.SecureRandom;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import org.bouncycastle.crypto.BlockCipher;
@@ -32,6 +33,7 @@ import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.digests.Blake2bDigest;
+import org.bouncycastle.crypto.digests.GOST3411Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_256Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_512Digest;
 import org.bouncycastle.crypto.digests.MD5Digest;
@@ -45,6 +47,7 @@ import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA384Digest;
 import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
+import org.bouncycastle.crypto.digests.SHA512tDigest;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.digests.SkeinDigest;
 import org.bouncycastle.crypto.digests.TigerDigest;
@@ -105,7 +108,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSP800Type;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
@@ -139,8 +142,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.Bo
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyRSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncySPHINCSKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyECDSASigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyECDSAValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyECSigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyECValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyRSASigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyRSAValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyRainbowSigner;
@@ -245,14 +248,19 @@ public final class BouncyFactory
         theSP800Factory.setSecurityBytes(getPersonalisation());
 
         /* Create the SecureRandom instance */
-        SecureRandom myRandom = createRandom(getDefaultSP800());
+        SecureRandom myRandom = createRandom(defaultRandomSpec());
         setSecureRandom(myRandom);
     }
 
     @Override
-    public SecureRandom createRandom(final GordianSP800Type pRandomType) throws OceanusException {
-        /* Create random instance */
-        return getSP800SecureRandom(pRandomType);
+    public SecureRandom createRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
+        /* Check validity of randomSpec */
+        if (!supportedRandomSpecs().test(pRandomSpec)) {
+            throw new GordianDataException(getInvalidText(pRandomSpec));
+        }
+
+        /* Create the secureRandom */
+        return getSP800SecureRandom(pRandomSpec);
     }
 
     @Override
@@ -418,20 +426,15 @@ public final class BouncyFactory
     }
 
     @Override
-    public Predicate<GordianSignatureSpec> supportedSignatures() {
-        return p -> true;
+    public BiPredicate<GordianKeyPair, GordianSignatureSpec> supportedSignatures() {
+        return this::validSignatureSpec;
     }
 
     @Override
     public GordianSigner createSigner(final GordianKeyPair pKeyPair,
                                       final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        /* Check signature matches keyPair */
-        if (pSignatureSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
-            throw new GordianDataException("Invalid keyPair for signature");
-        }
-
         /* Check validity of Signature */
-        if (!supportedSignatures().test(pSignatureSpec)) {
+        if (!supportedSignatures().test(pKeyPair, pSignatureSpec)) {
             throw new GordianDataException(getInvalidText(pSignatureSpec));
         }
 
@@ -442,13 +445,8 @@ public final class BouncyFactory
     @Override
     public GordianValidator createValidator(final GordianKeyPair pKeyPair,
                                             final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        /* Check signature matches keyPair */
-        if (pSignatureSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
-            throw new GordianDataException("Invalid keyPair for signature");
-        }
-
         /* Check validity of Signature */
-        if (!supportedSignatures().test(pSignatureSpec)) {
+        if (!supportedSignatures().test(pKeyPair, pSignatureSpec)) {
             throw new GordianDataException(getInvalidText(pSignatureSpec));
         }
 
@@ -456,45 +454,47 @@ public final class BouncyFactory
         return getBCValidator((BouncyKeyPair) pKeyPair, pSignatureSpec);
     }
 
-    /**
-     * Create KEMessage.
-     * @param pKeyPair the keyPair
-     * @return the KEMSender
-     * @throws OceanusException on error
-     */
-    public GordianKEMSender createKEMessage(final GordianKeyPair pKeyPair) throws OceanusException {
+    @Override
+    public GordianKEMSender createKEMessage(final GordianKeyPair pKeyPair,
+                                            final GordianDigestSpec pDigestSpec) throws OceanusException {
+        /* Check validity of Exchange */
+        if (!supportedKeyExchanges().test(pKeyPair, pDigestSpec)) {
+            throw new GordianDataException(getInvalidText(pDigestSpec));
+        }
+
         /* Create the sender */
-        return getBCKEMSender((BouncyKeyPair) pKeyPair);
+        return getBCKEMSender((BouncyKeyPair) pKeyPair, pDigestSpec);
     }
 
-    /**
-     * Parse KEMessage.
-     * @param pKeyPair the keyPair
-     * @param pMessage the cipherText
-     * @return the parsed KEMessage
-     * @throws OceanusException on error
-     */
+    @Override
     public GordianKeyEncapsulation parseKEMessage(final GordianKeyPair pKeyPair,
+                                                  final GordianDigestSpec pDigestSpec,
                                                   final byte[] pMessage) throws OceanusException {
+        /* Check validity of Exchange */
+        if (!supportedKeyExchanges().test(pKeyPair, pDigestSpec)) {
+            throw new GordianDataException(getInvalidText(pDigestSpec));
+        }
+
         /* Create the parser */
-        return getBCKEMParser((BouncyKeyPair) pKeyPair, pMessage);
+        return getBCKEMParser((BouncyKeyPair) pKeyPair, pDigestSpec, pMessage);
     }
 
     /**
      * Create the SP800 SecureRandom instance.
-     * @param pRandomType the SP800 type
-     * @return the MAC
+     * @param pRandomSpec the randomSpec
+     * @return the secureRandom
      * @throws OceanusException on error
      */
-    private SecureRandom getSP800SecureRandom(final GordianSP800Type pRandomType) throws OceanusException {
-        switch (pRandomType) {
+    private SecureRandom getSP800SecureRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
+        GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
+        switch (pRandomSpec.getRandomType()) {
             case HASH:
-                return theSP800Factory.buildHash(createDigest(getDefaultDigest()), null, false);
+                return theSP800Factory.buildHash(createDigest(myDigest), true);
             case HMAC:
-                GordianMacSpec mySpec = GordianMacSpec.hMac(getDefaultDigest());
-                return theSP800Factory.buildHMAC(createMac(mySpec), null, false);
+                GordianMacSpec mySpec = GordianMacSpec.hMac(myDigest);
+                return theSP800Factory.buildHMAC(createMac(mySpec), true);
             default:
-                throw new GordianDataException(getInvalidText(pRandomType));
+                throw new GordianDataException(getInvalidText(pRandomSpec));
         }
     }
 
@@ -504,7 +504,7 @@ public final class BouncyFactory
      * @return the digest
      * @throws OceanusException on error
      */
-    private static Digest getBCDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    protected static Digest getBCDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
         /* Access digest details */
         GordianDigestType myType = pDigestSpec.getDigestType();
         GordianLength myLen = pDigestSpec.getDigestLength();
@@ -512,17 +512,19 @@ public final class BouncyFactory
         /* Switch on digest type */
         switch (myType) {
             case SHA2:
-                return getSHA2Digest(myLen);
-            case GOST:
-                return getGOSTDigest(myLen);
+                return getSHA2Digest(pDigestSpec);
             case RIPEMD:
                 return getRIPEMDDigest(myLen);
             case SKEIN:
-                return getSkeinDigest(myLen);
+                return getSkeinDigest(pDigestSpec.getStateLength(), myLen);
             case SHA3:
                 return getSHA3Digest(myLen);
             case BLAKE:
                 return getBlake2bDigest(myLen);
+            case STREEBOG:
+                return getStreebogDigest(myLen);
+            case GOST:
+                return new GOST3411Digest();
             case TIGER:
                 return new TigerDigest();
             case WHIRLPOOL:
@@ -568,15 +570,21 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle SHA2 digest.
-     * @param pLength the digest length
+     * @param pSpec the digestSpec
      * @return the digest
      */
-    private static Digest getSHA2Digest(final GordianLength pLength) {
-        switch (pLength) {
+    private static Digest getSHA2Digest(final GordianDigestSpec pSpec) {
+        GordianLength myLen = pSpec.getDigestLength();
+        GordianLength myState = pSpec.getStateLength();
+        switch (myLen) {
             case LEN_224:
-                return new SHA224Digest();
+                return myState == null
+                                       ? new SHA224Digest()
+                                       : new SHA512tDigest(myLen.getLength());
             case LEN_256:
-                return new SHA256Digest();
+                return myState == null
+                                       ? new SHA256Digest()
+                                       : new SHA512tDigest(myLen.getLength());
             case LEN_384:
                 return new SHA384Digest();
             case LEN_512:
@@ -595,20 +603,22 @@ public final class BouncyFactory
     }
 
     /**
-     * Create the BouncyCastle Skein digest.
+     * Create the BouncyCastle skeinDigest.
+     * @param pStateLength the state length
      * @param pLength the digest length
      * @return the digest
      */
-    private static Digest getSkeinDigest(final GordianLength pLength) {
-        return new SkeinDigest(pLength.getSkeinState().getLength(), pLength.getLength());
+    private static Digest getSkeinDigest(final GordianLength pStateLength,
+                                         final GordianLength pLength) {
+        return new SkeinDigest(pStateLength.getLength(), pLength.getLength());
     }
 
     /**
-     * Create the BouncyCastle GOST digest.
+     * Create the BouncyCastle Streebog digest.
      * @param pLength the digest length
      * @return the digest
      */
-    private static Digest getGOSTDigest(final GordianLength pLength) {
+    private static Digest getStreebogDigest(final GordianLength pLength) {
         return GordianLength.LEN_256.equals(pLength)
                                                      ? new GOST3411_2012_256Digest()
                                                      : new GOST3411_2012_512Digest();
@@ -631,7 +641,7 @@ public final class BouncyFactory
             case POLY1305:
                 return getBCPoly1305Mac(pMacSpec.getKeyType());
             case SKEIN:
-                return getBCSkeinMac(pMacSpec.getDigestLength());
+                return getBCSkeinMac(pMacSpec.getDigestSpec());
             case VMPC:
                 return getBCVMPCMac();
             default:
@@ -682,14 +692,11 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle SkeinMac.
-     * @param pLength the length
+     * @param pSpec the digestSpec
      * @return the MAC
      */
-    private static Mac getBCSkeinMac(final GordianLength pLength) {
-        GordianLength myLength = pLength == null
-                                                 ? GordianDigestType.SKEIN.getDefaultLength()
-                                                 : pLength;
-        return new SkeinMac(myLength.getSkeinState().getLength(), myLength.getLength());
+    private static Mac getBCSkeinMac(final GordianDigestSpec pSpec) {
+        return new SkeinMac(pSpec.getStateLength().getLength(), pSpec.getDigestLength().getLength());
     }
 
     /**
@@ -919,20 +926,15 @@ public final class BouncyFactory
      */
     private GordianSigner getBCSigner(final BouncyKeyPair pKeyPair,
                                       final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        /* Access the digestSpec */
-        GordianDigestSpec mySpec = pSignatureSpec.getDigestSpec();
-
-        switch (pKeyPair.getKeySpec().getKeyType()) {
+        switch (pSignatureSpec.getAsymKeyType()) {
             case RSA:
-                return new BouncyRSASigner((BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), createDigest(mySpec), getRandom());
+                return new BouncyRSASigner(this, (BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case EC:
-                return new BouncyECDSASigner((BouncyECPrivateKey) pKeyPair.getPrivateKey(), createDigest(mySpec), getRandom());
+                return new BouncyECSigner(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case SPHINCS:
-                return new BouncySPHINCSSigner((BouncySPHINCSPrivateKey) pKeyPair.getPrivateKey(), createDigest(mySpec),
-                        createDigest(GordianDigestSpec.sha3(GordianLength.LEN_256)),
-                        createDigest(GordianDigestSpec.sha3(GordianLength.LEN_512)), getRandom());
+                return new BouncySPHINCSSigner(this, (BouncySPHINCSPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case RAINBOW:
-                return new BouncyRainbowSigner((BouncyRainbowPrivateKey) pKeyPair.getPrivateKey(), createDigest(mySpec), getRandom());
+                return new BouncyRainbowSigner(this, (BouncyRainbowPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             default:
                 throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }
@@ -947,20 +949,15 @@ public final class BouncyFactory
      */
     private GordianValidator getBCValidator(final BouncyKeyPair pKeyPair,
                                             final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        /* Access the digestSpec */
-        GordianDigestSpec mySpec = pSignatureSpec.getDigestSpec();
-
-        switch (pKeyPair.getKeySpec().getKeyType()) {
+        switch (pSignatureSpec.getAsymKeyType()) {
             case RSA:
-                return new BouncyRSAValidator((BouncyRSAPublicKey) pKeyPair.getPublicKey(), createDigest(mySpec));
+                return new BouncyRSAValidator(this, (BouncyRSAPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case EC:
-                return new BouncyECDSAValidator((BouncyECPublicKey) pKeyPair.getPublicKey(), createDigest(mySpec));
+                return new BouncyECValidator(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case SPHINCS:
-                return new BouncySPHINCSValidator((BouncySPHINCSPublicKey) pKeyPair.getPublicKey(), createDigest(mySpec),
-                        createDigest(GordianDigestSpec.sha3(GordianLength.LEN_256)),
-                        createDigest(GordianDigestSpec.sha3(GordianLength.LEN_512)));
+                return new BouncySPHINCSValidator(this, (BouncySPHINCSPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case RAINBOW:
-                return new BouncyRainbowValidator((BouncyRainbowPublicKey) pKeyPair.getPublicKey(), createDigest(mySpec));
+                return new BouncyRainbowValidator(this, (BouncyRainbowPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }
@@ -969,19 +966,21 @@ public final class BouncyFactory
     /**
      * Create the BouncyCastle KEM Sender.
      * @param pKeyPair the keyPair
+     * @param pDigestSpec the digestSpec
      * @return the KEMSender
      * @throws OceanusException on error
      */
-    private GordianKEMSender getBCKEMSender(final BouncyKeyPair pKeyPair) throws OceanusException {
+    private GordianKEMSender getBCKEMSender(final BouncyKeyPair pKeyPair,
+                                            final GordianDigestSpec pDigestSpec) throws OceanusException {
         switch (pKeyPair.getKeySpec().getKeyType()) {
             case RSA:
-                return new BouncyRSAKEMSender(this, (BouncyRSAPublicKey) pKeyPair.getPublicKey());
+                return new BouncyRSAKEMSender(this, (BouncyRSAPublicKey) pKeyPair.getPublicKey(), pDigestSpec);
             case EC:
-                return new BouncyECIESSender(this, (BouncyECPublicKey) pKeyPair.getPublicKey());
+                return new BouncyECIESSender(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pDigestSpec);
             case DIFFIEHELLMAN:
-                return new BouncyDiffieHellmanSender(this, (BouncyDiffieHellmanPublicKey) pKeyPair.getPublicKey());
+                return new BouncyDiffieHellmanSender(this, (BouncyDiffieHellmanPublicKey) pKeyPair.getPublicKey(), pDigestSpec);
             case NEWHOPE:
-                return new BouncyNewHopeSender(this, (BouncyNewHopePublicKey) pKeyPair.getPublicKey());
+                return new BouncyNewHopeSender(this, (BouncyNewHopePublicKey) pKeyPair.getPublicKey(), pDigestSpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }
@@ -990,21 +989,23 @@ public final class BouncyFactory
     /**
      * Create the BouncyCastle KEM Receiver.
      * @param pKeyPair the keyPair
+     * @param pDigestSpec the digestSpec
      * @param pCipherText the cipherText
      * @return the KEMParser
      * @throws OceanusException on error
      */
     private GordianKeyEncapsulation getBCKEMParser(final BouncyKeyPair pKeyPair,
+                                                   final GordianDigestSpec pDigestSpec,
                                                    final byte[] pCipherText) throws OceanusException {
         switch (pKeyPair.getKeySpec().getKeyType()) {
             case RSA:
-                return new BouncyRSAKEMReceiver(this, (BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), pCipherText);
+                return new BouncyRSAKEMReceiver(this, (BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), pDigestSpec, pCipherText);
             case EC:
-                return new BouncyECIESReceiver(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pCipherText);
+                return new BouncyECIESReceiver(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pDigestSpec, pCipherText);
             case DIFFIEHELLMAN:
-                return new BouncyDiffieHellmanReceiver(this, (BouncyDiffieHellmanPrivateKey) pKeyPair.getPrivateKey(), pCipherText);
+                return new BouncyDiffieHellmanReceiver(this, (BouncyDiffieHellmanPrivateKey) pKeyPair.getPrivateKey(), pDigestSpec, pCipherText);
             case NEWHOPE:
-                return new BouncyNewHopeReceiver(this, (BouncyNewHopePrivateKey) pKeyPair.getPrivateKey(), pCipherText);
+                return new BouncyNewHopeReceiver(this, (BouncyNewHopePrivateKey) pKeyPair.getPrivateKey(), pDigestSpec, pCipherText);
             default:
                 throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }

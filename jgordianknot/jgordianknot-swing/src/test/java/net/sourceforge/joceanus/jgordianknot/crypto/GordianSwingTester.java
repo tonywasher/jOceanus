@@ -20,12 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot;
+package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jgordianknot.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianTestAlgorithms;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianTestSuite;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;

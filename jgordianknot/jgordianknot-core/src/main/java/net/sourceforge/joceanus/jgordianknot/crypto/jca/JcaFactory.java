@@ -29,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import javax.crypto.Cipher;
@@ -46,14 +47,17 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSP800Type;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
@@ -68,8 +72,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaN
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaSPHINCSKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaECDSASigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaECDSAValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaECSigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaECValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRSASigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRSAValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRainbowSigner;
@@ -194,14 +198,19 @@ public final class JcaFactory
         theSP800Factory.setSecurityBytes(getPersonalisation());
 
         /* Create the SecureRandom instance */
-        SecureRandom myRandom = createRandom(getDefaultSP800());
+        SecureRandom myRandom = createRandom(defaultRandomSpec());
         setSecureRandom(myRandom);
     }
 
     @Override
-    public SecureRandom createRandom(final GordianSP800Type pRandomType) throws OceanusException {
-        /* Create random instance */
-        return getSP800SecureRandom(pRandomType);
+    public SecureRandom createRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
+        /* Check validity of randomSpec */
+        if (!supportedRandomSpecs().test(pRandomSpec)) {
+            throw new GordianDataException(getInvalidText(pRandomSpec));
+        }
+
+        /* Create the secureRandom */
+        return getSP800SecureRandom(pRandomSpec);
     }
 
     @Override
@@ -368,20 +377,15 @@ public final class JcaFactory
     }
 
     @Override
-    public Predicate<GordianSignatureSpec> supportedSignatures() {
+    public BiPredicate<GordianKeyPair, GordianSignatureSpec> supportedSignatures() {
         return this::validSignature;
     }
 
     @Override
     public GordianSigner createSigner(final GordianKeyPair pKeyPair,
                                       final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        /* Check signature matches keyPair */
-        if (pSignatureSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
-            throw new GordianDataException("Invalid keyPair for signature");
-        }
-
         /* Check validity of Signature */
-        if (!supportedSignatures().test(pSignatureSpec)) {
+        if (!supportedSignatures().test(pKeyPair, pSignatureSpec)) {
             throw new GordianDataException(getInvalidText(pSignatureSpec));
         }
 
@@ -392,13 +396,8 @@ public final class JcaFactory
     @Override
     public GordianValidator createValidator(final GordianKeyPair pKeyPair,
                                             final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        /* Check signature matches keyPair */
-        if (pSignatureSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
-            throw new GordianDataException("Invalid keyPair for signature");
-        }
-
         /* Check validity of Signature */
-        if (!supportedSignatures().test(pSignatureSpec)) {
+        if (!supportedSignatures().test(pKeyPair, pSignatureSpec)) {
             throw new GordianDataException(getInvalidText(pSignatureSpec));
         }
 
@@ -408,19 +407,20 @@ public final class JcaFactory
 
     /**
      * Create the SP800 SecureRandom instance.
-     * @param pRandomType the SP800 type
-     * @return the MAC
+     * @param pRandomSpec the randomSpec
+     * @return the secureRandom
      * @throws OceanusException on error
      */
-    private SecureRandom getSP800SecureRandom(final GordianSP800Type pRandomType) throws OceanusException {
-        switch (pRandomType) {
+    private SecureRandom getSP800SecureRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
+        GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
+        switch (pRandomSpec.getRandomType()) {
             case HASH:
-                return theSP800Factory.buildHash(createDigest(getDefaultDigest()), null, false);
+                return theSP800Factory.buildHash(createDigest(myDigest), true);
             case HMAC:
-                GordianMacSpec mySpec = GordianMacSpec.hMac(getDefaultDigest());
-                return theSP800Factory.buildHMAC(createMac(mySpec), null, false);
+                GordianMacSpec mySpec = GordianMacSpec.hMac(myDigest);
+                return theSP800Factory.buildHMAC(createMac(mySpec), true);
             default:
-                throw new GordianDataException(getInvalidText(pRandomType));
+                throw new GordianDataException(getInvalidText(pRandomSpec));
         }
     }
 
@@ -544,7 +544,7 @@ public final class JcaFactory
             case POLY1305:
                 return getPoly1305Algorithm(pMacSpec.getKeyType());
             case SKEIN:
-                return getSkeinMacAlgorithm(pMacSpec.getDigestLength());
+                return getSkeinMacAlgorithm(pMacSpec.getDigestSpec());
             case VMPC:
                 return getStreamKeyAlgorithm(GordianStreamKeyType.VMPC);
             default:
@@ -644,7 +644,7 @@ public final class JcaFactory
      * @throws OceanusException on error
      */
     private static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
-        return "HMac" + JcaDigest.getAlgorithm(pDigestSpec);
+        return "HMac" + JcaDigest.getHMacAlgorithm(pDigestSpec);
     }
 
     /**
@@ -697,15 +697,12 @@ public final class JcaFactory
 
     /**
      * Obtain the Skein MAC algorithm.
-     * @param pLength the length
+     * @param pSpec the digestSpec
      * @return the algorithm
      */
-    private static String getSkeinMacAlgorithm(final GordianLength pLength) {
-        GordianLength myLength = pLength == null
-                                                 ? GordianDigestType.SKEIN.getDefaultLength()
-                                                 : pLength;
-        String myLen = Integer.toString(myLength.getLength());
-        String myState = Integer.toString(myLength.getSkeinState().getLength());
+    private static String getSkeinMacAlgorithm(final GordianDigestSpec pSpec) {
+        String myLen = Integer.toString(pSpec.getDigestLength().getLength());
+        String myState = Integer.toString(pSpec.getStateLength().getLength());
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append("Skein-MAC-");
         myBuilder.append(myState);
@@ -851,20 +848,17 @@ public final class JcaFactory
      */
     private GordianSigner getJcaSigner(final JcaKeyPair pKeyPair,
                                        final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        /* Access the digestSpec */
-        GordianDigestSpec mySpec = pSignatureSpec.getDigestSpec();
-
-        switch (pKeyPair.getKeySpec().getKeyType()) {
+        switch (pSignatureSpec.getAsymKeyType()) {
             case RSA:
-                return new JcaRSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), mySpec, getRandom());
+                return new JcaRSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case EC:
-                return new JcaECDSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), mySpec, getRandom());
+                return new JcaECSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case SPHINCS:
-                return new JcaSPHINCSSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), mySpec, getRandom());
+                return new JcaSPHINCSSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case RAINBOW:
-                return new JcaRainbowSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), mySpec, getRandom());
+                return new JcaRainbowSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             default:
-                throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
+                throw new GordianDataException(getInvalidText(pSignatureSpec.getAsymKeyType()));
         }
     }
 
@@ -877,21 +871,36 @@ public final class JcaFactory
      */
     private static GordianValidator getJcaValidator(final JcaKeyPair pKeyPair,
                                                     final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        /* Access the digestSpec */
-        GordianDigestSpec mySpec = pSignatureSpec.getDigestSpec();
-
-        switch (pKeyPair.getKeySpec().getKeyType()) {
+        switch (pSignatureSpec.getAsymKeyType()) {
             case RSA:
-                return new JcaRSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), mySpec);
+                return new JcaRSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case EC:
-                return new JcaECDSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), mySpec);
+                return new JcaECValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case SPHINCS:
-                return new JcaSPHINCSValidator((JcaPublicKey) pKeyPair.getPublicKey(), mySpec);
+                return new JcaSPHINCSValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case RAINBOW:
-                return new JcaRainbowValidator((JcaPublicKey) pKeyPair.getPublicKey(), mySpec);
+                return new JcaRainbowValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             default:
-                throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
+                throw new GordianDataException(getInvalidText(pSignatureSpec.getAsymKeyType()));
         }
+    }
+
+    @Override
+    public BiPredicate<GordianKeyPair, GordianDigestSpec> supportedKeyExchanges() {
+        return (p, d) -> false;
+    }
+
+    @Override
+    public GordianKEMSender createKEMessage(final GordianKeyPair pKeyPair,
+                                            final GordianDigestSpec pDigestSpec) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public GordianKeyEncapsulation parseKEMessage(final GordianKeyPair pKeyPair,
+                                                  final GordianDigestSpec pDigestSpec,
+                                                  final byte[] pMessage) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -986,26 +995,28 @@ public final class JcaFactory
 
     /**
      * Check Signature.
+     * @param pKeyPair the keyPair
      * @param pSpec the signatureSpec
      * @return true/false
      */
-    private boolean validSignature(final GordianSignatureSpec pSpec) {
-        /* Access and validate the digestSpec */
-        GordianDigestSpec myDigest = pSpec.getDigestSpec();
-        if (!supportedDigestSpecs().test(myDigest)) {
+    private boolean validSignature(final GordianKeyPair pKeyPair,
+                                   final GordianSignatureSpec pSpec) {
+        /* validate the signatureSpec */
+        if (!validSignatureSpec(pKeyPair, pSpec)) {
             return false;
         }
 
         /* Switch on KeyType */
+        GordianDigestSpec myDigest = pSpec.getDigestSpec();
         switch (pSpec.getAsymKeyType()) {
             case RSA:
-                return validRSASignature(pSpec.getDigestSpec());
+                return validRSASignature(pSpec);
             case EC:
-                return validECSignature(pSpec.getDigestSpec());
+                return validECSignature(pSpec);
             case SPHINCS:
-                return validSPHINCSSignature(pSpec.getDigestSpec());
+                return validSPHINCSSignature(myDigest);
             case RAINBOW:
-                return validRainbowSignature(pSpec.getDigestSpec());
+                return validRainbowSignature(myDigest);
             case DIFFIEHELLMAN:
             case NEWHOPE:
             case ELGAMAL:
@@ -1017,15 +1028,20 @@ public final class JcaFactory
 
     /**
      * Check RSASignature.
-     * @param pSpec the digestSpec
+     * @param pSpec the signatureSpec
      * @return true/false
      */
-    private static boolean validRSASignature(final GordianDigestSpec pSpec) {
+    private static boolean validRSASignature(final GordianSignatureSpec pSpec) {
         /* Switch on DigestType */
-        switch (pSpec.getDigestType()) {
+        GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        switch (myDigest.getDigestType()) {
+            case SHA1:
             case SHA2:
-            case SHA3:
                 return true;
+            case SHA3:
+                return GordianSignatureType.PSS.equals(pSpec.getSignatureType());
+            case WHIRLPOOL:
+                return !GordianSignatureType.PSS.equals(pSpec.getSignatureType());
             default:
                 return false;
         }
@@ -1036,12 +1052,14 @@ public final class JcaFactory
      * @param pSpec the digestSpec
      * @return true/false
      */
-    private static boolean validECSignature(final GordianDigestSpec pSpec) {
+    private static boolean validECSignature(final GordianSignatureSpec pSpec) {
         /* Switch on DigestType */
-        switch (pSpec.getDigestType()) {
+        GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        switch (myDigest.getDigestType()) {
             case SHA2:
+                return myDigest.getStateLength() == null;
             case SHA3:
-                return true;
+                return !GordianSignatureType.NR.equals(pSpec.getSignatureType());
             default:
                 return false;
         }
@@ -1063,6 +1081,7 @@ public final class JcaFactory
      * @return true/false
      */
     private static boolean validRainbowSignature(final GordianDigestSpec pSpec) {
-        return pSpec.getDigestType() == GordianDigestType.SHA2;
+        return pSpec.getDigestType() == GordianDigestType.SHA2
+               && pSpec.getStateLength() == null;
     }
 }

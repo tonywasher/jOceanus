@@ -39,6 +39,11 @@ public class GordianSignatureSpec {
     private final GordianAsymKeyType theAsymKeyType;
 
     /**
+     * SignatureType.
+     */
+    private final GordianSignatureType theSignatureType;
+
+    /**
      * DigestSpec.
      */
     private final GordianDigestSpec theDigestSpec;
@@ -53,29 +58,47 @@ public class GordianSignatureSpec {
      * @param pAsymKeyType the asymKeyType
      * @param pDigestSpec the digestSpec
      */
-    public GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
-                                final GordianDigestSpec pDigestSpec) {
+    protected GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
+                                   final GordianDigestSpec pDigestSpec) {
+        /* Store parameters */
+        this(pAsymKeyType, GordianSignatureType.NATIVE, pDigestSpec);
+    }
+
+    /**
+     * Constructor.
+     * @param pAsymKeyType the asymKeyType
+     * @param pSignatureType the signatureType
+     * @param pDigestSpec the digestSpec
+     */
+    protected GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
+                                   final GordianSignatureType pSignatureType,
+                                   final GordianDigestSpec pDigestSpec) {
         /* Store parameters */
         theAsymKeyType = pAsymKeyType;
+        theSignatureType = pSignatureType;
         theDigestSpec = pDigestSpec;
     }
 
     /**
      * Create RSASpec.
+     * @param pSignatureType the signatureType
      * @param pDigestSpec the digestSpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec rsa(final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianAsymKeyType.RSA, pDigestSpec);
+    public static GordianSignatureSpec rsa(final GordianSignatureType pSignatureType,
+                                           final GordianDigestSpec pDigestSpec) {
+        return new GordianSignatureSpec(GordianAsymKeyType.RSA, pSignatureType, pDigestSpec);
     }
 
     /**
      * Create ECSpec.
+     * @param pSignatureType the signatureType
      * @param pDigestSpec the digestSpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec ec(final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianAsymKeyType.EC, pDigestSpec);
+    public static GordianSignatureSpec ec(final GordianSignatureType pSignatureType,
+                                          final GordianDigestSpec pDigestSpec) {
+        return new GordianSignatureSpec(GordianAsymKeyType.EC, pSignatureType, pDigestSpec);
     }
 
     /**
@@ -105,6 +128,14 @@ public class GordianSignatureSpec {
     }
 
     /**
+     * Obtain the SignatureType.
+     * @return the signatureType.
+     */
+    public GordianSignatureType getSignatureType() {
+        return theSignatureType;
+    }
+
+    /**
      * Obtain the DigestSpec.
      * @return the digestSpec.
      */
@@ -118,6 +149,9 @@ public class GordianSignatureSpec {
         if (theName == null) {
             /* Load the name */
             theName = theAsymKeyType.toString();
+            if (theSignatureType != GordianSignatureType.NATIVE) {
+                theName += SEP + theSignatureType.toString();
+            }
             if (theDigestSpec != null) {
                 theName += SEP + theDigestSpec.toString();
             }
@@ -151,6 +185,9 @@ public class GordianSignatureSpec {
         }
 
         /* Match subfields */
+        if (!theSignatureType.equals(myThat.getSignatureType())) {
+            return false;
+        }
         if (theDigestSpec != null) {
             return theDigestSpec.equals(myThat.getDigestSpec());
         }
@@ -160,6 +197,8 @@ public class GordianSignatureSpec {
     @Override
     public int hashCode() {
         int hashCode = theAsymKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
+        hashCode += theSignatureType.hashCode();
+        hashCode <<= TethysDataConverter.BYTE_SHIFT;
         if (theDigestSpec != null) {
             hashCode += theDigestSpec.hashCode();
         }

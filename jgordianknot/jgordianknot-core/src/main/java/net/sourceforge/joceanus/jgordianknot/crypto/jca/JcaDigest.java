@@ -118,6 +118,44 @@ public final class JcaDigest
      * @return the digest
      * @throws OceanusException on error
      */
+    protected static String getSignAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+        /* If this is a sha2 extended algorithm */
+        if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())
+            && pDigestSpec.getStateLength() != null) {
+            return GordianLength.LEN_256.equals(pDigestSpec.getDigestLength())
+                                                                               ? "SHA512(256)"
+                                                                               : "SHA512(224)";
+        }
+
+        /* Access digest details */
+        return getAlgorithm(pDigestSpec);
+    }
+
+    /**
+     * Create the BouncyCastle digest.
+     * @param pDigestSpec the digestSpec
+     * @return the digest
+     * @throws OceanusException on error
+     */
+    protected static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+        /* If this is a sha2 extended algorithm */
+        if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())
+            && pDigestSpec.getStateLength() != null) {
+            return GordianLength.LEN_256.equals(pDigestSpec.getDigestLength())
+                                                                               ? "SHA512/256"
+                                                                               : "SHA512/224";
+        }
+
+        /* Access digest details */
+        return getAlgorithm(pDigestSpec);
+    }
+
+    /**
+     * Obtain the algorithm name.
+     * @param pDigestSpec the digestSpec
+     * @return the name
+     * @throws OceanusException on error
+     */
     protected static String getAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
         /* Access digest details */
         GordianDigestType myType = pDigestSpec.getDigestType();
@@ -126,17 +164,19 @@ public final class JcaDigest
         /* Switch on digestType */
         switch (myType) {
             case SHA2:
-                return getSHA2Algorithm(myLen);
-            case GOST:
-                return getGOSTAlgorithm(myLen);
+                return getSHA2Algorithm(pDigestSpec);
+            case STREEBOG:
+                return getStreebogAlgorithm(myLen);
             case RIPEMD:
                 return getRIPEMDAlgorithm(myLen);
             case SKEIN:
-                return getSkeinAlgorithm(myLen);
+                return getSkeinAlgorithm(pDigestSpec);
             case SHA3:
                 return getSHA3Algorithm(myLen);
             case BLAKE:
                 return getBlake2bAlgorithm(myLen);
+            case GOST:
+                return "GOST3411";
             case WHIRLPOOL:
             case TIGER:
             case SHA1:
@@ -151,7 +191,7 @@ public final class JcaDigest
     /**
      * Determine the RIPEMD algorithm.
      * @param pLength the digest length
-     * @return the digest
+     * @return the name
      */
     private static String getRIPEMDAlgorithm(final GordianLength pLength) {
         switch (pLength) {
@@ -170,7 +210,7 @@ public final class JcaDigest
     /**
      * Determine the Blake2b algorithm.
      * @param pLength the digest length
-     * @return the digest
+     * @return the name
      */
     private static String getBlake2bAlgorithm(final GordianLength pLength) {
         switch (pLength) {
@@ -188,15 +228,24 @@ public final class JcaDigest
 
     /**
      * Determine the SHA2 algorithm.
-     * @param pLength the digest length
-     * @return the digest
+     * @param pSpec the digestSpec
+     * @return the name
      */
-    private static String getSHA2Algorithm(final GordianLength pLength) {
-        switch (pLength) {
+    private static String getSHA2Algorithm(final GordianDigestSpec pSpec) {
+        /* Access lengths */
+        GordianLength myState = pSpec.getStateLength();
+        GordianLength myLen = pSpec.getDigestLength();
+
+        /* Switch on length */
+        switch (myLen) {
             case LEN_224:
-                return "SHA224";
+                return myState == null
+                                       ? "SHA224"
+                                       : "SHA-512/224";
             case LEN_256:
-                return "SHA256";
+                return myState == null
+                                       ? "SHA256"
+                                       : "SHA-512/256";
             case LEN_384:
                 return "SHA384";
             case LEN_512:
@@ -208,7 +257,7 @@ public final class JcaDigest
     /**
      * Determine the SHA3 algorithm.
      * @param pLength the digest length
-     * @return the digest
+     * @return the name
      */
     private static String getSHA3Algorithm(final GordianLength pLength) {
         switch (pLength) {
@@ -226,12 +275,12 @@ public final class JcaDigest
 
     /**
      * Determine the Skein algorithm.
-     * @param pLength the digest length
-     * @return the digest
+     * @param pSpec the digestSpec
+     * @return the namet
      */
-    private static String getSkeinAlgorithm(final GordianLength pLength) {
-        String myLen = Integer.toString(pLength.getLength());
-        String myState = Integer.toString(pLength.getSkeinState().getLength());
+    private static String getSkeinAlgorithm(final GordianDigestSpec pSpec) {
+        String myLen = Integer.toString(pSpec.getDigestLength().getLength());
+        String myState = Integer.toString(pSpec.getStateLength().getLength());
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append("Skein-");
         myBuilder.append(myState);
@@ -241,11 +290,11 @@ public final class JcaDigest
     }
 
     /**
-     * Determine the GOST algorithm.
+     * Determine the Streebog algorithm.
      * @param pLength the digest length
-     * @return the digest
+     * @return the name
      */
-    private static String getGOSTAlgorithm(final GordianLength pLength) {
+    private static String getStreebogAlgorithm(final GordianLength pLength) {
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append("GOST3411-2012-");
         myBuilder.append(pLength.getLength());

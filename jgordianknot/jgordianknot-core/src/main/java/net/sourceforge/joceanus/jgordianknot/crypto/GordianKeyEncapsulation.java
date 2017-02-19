@@ -63,12 +63,13 @@ public abstract class GordianKeyEncapsulation {
     }
 
     /**
-     * Obtain Default Digest.
+     * Obtain Digest.
+     * @param pDigestSpec the digestSpec
      * @return the default digest
      * @throws OceanusException on error
      */
-    protected GordianDigest getDefaultDigest() throws OceanusException {
-        return theFactory.createDigest(theFactory.getDefaultDigest());
+    protected GordianDigest getDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
+        return theFactory.createDigest(pDigestSpec);
     }
 
     /**

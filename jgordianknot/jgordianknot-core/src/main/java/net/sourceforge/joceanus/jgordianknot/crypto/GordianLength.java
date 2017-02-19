@@ -93,24 +93,57 @@ public enum GordianLength {
     }
 
     /**
-     * Obtain the appropriate Skein State length.
-     * @return the length
+     * Obtain the standard skeinState length.
+     * @return the length (null if not supported)
      */
     public GordianLength getSkeinState() {
         switch (this) {
             case LEN_1024:
                 return LEN_1024;
-            case LEN_320:
             case LEN_384:
             case LEN_512:
                 return LEN_512;
             case LEN_128:
             case LEN_160:
-            case LEN_192:
             case LEN_224:
             case LEN_256:
-            default:
                 return LEN_256;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain the extended skeinState length.
+     * @return the length (null if not supported)
+     */
+    public GordianLength getSkeinExtendedState() {
+        switch (this) {
+            case LEN_384:
+            case LEN_512:
+            case LEN_1024:
+                return LEN_1024;
+            case LEN_128:
+            case LEN_160:
+            case LEN_224:
+            case LEN_256:
+                return LEN_512;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain the extended sha2State length.
+     * @return the length
+     */
+    public GordianLength getSha2ExtendedState() {
+        switch (this) {
+            case LEN_224:
+            case LEN_256:
+                return LEN_512;
+            default:
+                return null;
         }
     }
 }

@@ -41,6 +41,7 @@ import org.bouncycastle.pqc.crypto.newhope.NHPublicKeyParameters;
 import org.bouncycastle.pqc.jcajce.provider.newhope.BCNHPublicKey;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
@@ -79,15 +80,17 @@ public abstract class BouncyKeyEncapsulation {
          * Constructor.
          * @param pFactory the security factory
          * @param pPublicKey the target publicKey
+         * @param pDigestSpec the digestSpec
          * @throws OceanusException on error
          */
         protected BouncyRSAKEMSender(final BouncyFactory pFactory,
-                                     final BouncyRSAPublicKey pPublicKey) throws OceanusException {
+                                     final BouncyRSAPublicKey pPublicKey,
+                                     final GordianDigestSpec pDigestSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory);
 
             /* Create Key Encapsulation */
-            BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDefaultDigest());
+            BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
             RSAKeyEncapsulation myKEMS = new RSAKeyEncapsulation(myKDF, getRandom());
 
             /* Initialise the encapsulation */
@@ -119,17 +122,19 @@ public abstract class BouncyKeyEncapsulation {
          * Constructor.
          * @param pFactory the security factory
          * @param pPrivateKey the target privateKey
+         * @param pDigestSpec the digestSpec
          * @param pCipherText the cipherText
          * @throws OceanusException on error
          */
         protected BouncyRSAKEMReceiver(final BouncyFactory pFactory,
                                        final BouncyRSAPrivateKey pPrivateKey,
+                                       final GordianDigestSpec pDigestSpec,
                                        final byte[] pCipherText) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory);
 
             /* Create Key Encapsulation */
-            BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDefaultDigest());
+            BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
             RSAKeyEncapsulation myKEMS = new RSAKeyEncapsulation(myKDF, null);
 
             /* Initialise the encapsulation */
@@ -156,15 +161,17 @@ public abstract class BouncyKeyEncapsulation {
          * Constructor.
          * @param pFactory the security factory
          * @param pPublicKey the target publicKey
+         * @param pDigestSpec the digestSpec
          * @throws OceanusException on error
          */
         protected BouncyECIESSender(final BouncyFactory pFactory,
-                                    final BouncyECPublicKey pPublicKey) throws OceanusException {
+                                    final BouncyECPublicKey pPublicKey,
+                                    final GordianDigestSpec pDigestSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory);
 
             /* Create Key Encapsulation */
-            BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDefaultDigest());
+            BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
             ECIESKeyEncapsulation myKEMS = new ECIESKeyEncapsulation(myKDF, getRandom());
 
             /* Initialise the encapsulation */
@@ -199,17 +206,19 @@ public abstract class BouncyKeyEncapsulation {
          * Constructor.
          * @param pFactory the security factory
          * @param pPrivateKey the target privateKey
+         * @param pDigestSpec the digestSpec
          * @param pCipherText the cipherText
          * @throws OceanusException on error
          */
         protected BouncyECIESReceiver(final BouncyFactory pFactory,
                                       final BouncyECPrivateKey pPrivateKey,
+                                      final GordianDigestSpec pDigestSpec,
                                       final byte[] pCipherText) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory);
 
             /* Create Key Encapsulation */
-            BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDefaultDigest());
+            BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
             ECIESKeyEncapsulation myKEMS = new ECIESKeyEncapsulation(myKDF, null);
 
             /* Initialise the encapsulation */
@@ -236,10 +245,12 @@ public abstract class BouncyKeyEncapsulation {
          * Constructor.
          * @param pFactory the security factory
          * @param pPublicKey the target publicKey
+         * @param pDigestSpec the digestSpec
          * @throws OceanusException on error
          */
         protected BouncyDiffieHellmanSender(final BouncyFactory pFactory,
-                                            final BouncyDiffieHellmanPublicKey pPublicKey) throws OceanusException {
+                                            final BouncyDiffieHellmanPublicKey pPublicKey,
+                                            final GordianDigestSpec pDigestSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory);
 
@@ -268,7 +279,7 @@ public abstract class BouncyKeyEncapsulation {
             System.arraycopy(myY, 0, myCipherText, INITLEN, myLen);
 
             /* Store secret and cipherText */
-            storeSecret(mySecret.toByteArray(), myInitVector);
+            storeSecret(hashSecret(mySecret.toByteArray(), getDigest(pDigestSpec)), myInitVector);
             storeCipherText(myCipherText);
         }
     }
@@ -282,11 +293,13 @@ public abstract class BouncyKeyEncapsulation {
          * Constructor.
          * @param pFactory the security factory
          * @param pPrivateKey the target privateKey
+         * @param pDigestSpec the digestSpec
          * @param pCipherText the cipherText
          * @throws OceanusException on error
          */
         protected BouncyDiffieHellmanReceiver(final BouncyFactory pFactory,
                                               final BouncyDiffieHellmanPrivateKey pPrivateKey,
+                                              final GordianDigestSpec pDigestSpec,
                                               final byte[] pCipherText) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory);
@@ -309,7 +322,7 @@ public abstract class BouncyKeyEncapsulation {
             BigInteger mySecret = myAgreement.calculateAgreement(myPublicKey);
 
             /* Store secret */
-            storeSecret(mySecret.toByteArray(), myInitVector);
+            storeSecret(hashSecret(mySecret.toByteArray(), getDigest(pDigestSpec)), myInitVector);
         }
     }
 
@@ -322,10 +335,12 @@ public abstract class BouncyKeyEncapsulation {
          * Constructor.
          * @param pFactory the security factory
          * @param pPublicKey the target publicKey
+         * @param pDigestSpec the digestSpec
          * @throws OceanusException on error
          */
         protected BouncyNewHopeSender(final BouncyFactory pFactory,
-                                      final BouncyNewHopePublicKey pPublicKey) throws OceanusException {
+                                      final BouncyNewHopePublicKey pPublicKey,
+                                      final GordianDigestSpec pDigestSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory);
 
@@ -352,7 +367,7 @@ public abstract class BouncyKeyEncapsulation {
             System.arraycopy(myKeySpecBytes, 0, myCipherText, INITLEN, myLen);
 
             /* Store secret and cipherText */
-            storeSecret(mySecret, myInitVector);
+            storeSecret(hashSecret(mySecret, getDigest(pDigestSpec)), myInitVector);
             storeCipherText(myCipherText);
         }
     }
@@ -366,11 +381,13 @@ public abstract class BouncyKeyEncapsulation {
          * Constructor.
          * @param pFactory the security factory
          * @param pPrivateKey the target privateKey
+         * @param pDigestSpec the digestSpec
          * @param pCipherText the cipherText
          * @throws OceanusException on error
          */
         protected BouncyNewHopeReceiver(final BouncyFactory pFactory,
                                         final BouncyNewHopePrivateKey pPrivateKey,
+                                        final GordianDigestSpec pDigestSpec,
                                         final byte[] pCipherText) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory);
@@ -396,8 +413,20 @@ public abstract class BouncyKeyEncapsulation {
             byte[] mySecret = myAgreement.calculateAgreement(myPublic.getPublicKey());
 
             /* Store secret */
-            storeSecret(mySecret, myInitVector);
+            storeSecret(hashSecret(mySecret, getDigest(pDigestSpec)), myInitVector);
         }
+    }
+
+    /**
+     * Hash secret.
+     * @param pSecret the sharedSecret
+     * @param pDigest the digest
+     * @return the hashed secret
+     */
+    private static byte[] hashSecret(final byte[] pSecret,
+                                     final GordianDigest pDigest) {
+        pDigest.update(pSecret);
+        return pDigest.finish();
     }
 
     /**

@@ -57,6 +57,7 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Builder class for SP800 DRBG SecureRandom instances, based on the BouncyCastle Code.
@@ -105,7 +106,7 @@ public final class SP800Factory {
     /**
      * The Security Bytes.
      */
-    private byte[] theSecurityBytes = null;
+    private byte[] theSecurityBytes;
 
     /**
      * Basic constructor, creates a builder using an EntropySourceProvider based on the default
@@ -170,6 +171,7 @@ public final class SP800Factory {
             /* Protect against exceptions */
             try {
                 theStrongEntropy = SecureRandom.getInstanceStrong();
+                theStrongEntropy.nextBoolean();
             } catch (NoSuchAlgorithmException e) {
                 throw new GordianCryptoException("No strong random", e);
             }
@@ -188,6 +190,26 @@ public final class SP800Factory {
     }
 
     /**
+     * Create a default initVector.
+     * @return initVector.
+     */
+    private byte[] defaultInitVector() {
+        return TethysDataConverter.longToByteArray(System.currentTimeMillis());
+    }
+
+    /**
+     * Build a SecureRandom based on a SP 800-90A Hash DRBG.
+     * @param pDigest digest to use in the DRBG underneath the SecureRandom.
+     * @param isPredictionResistant specify whether the underlying DRBG in the resulting
+     * SecureRandom should re-seed on each request for bytes.
+     * @return a SecureRandom supported by a Hash DRBG.
+     */
+    public SP800SecureRandom buildHash(final GordianDigest pDigest,
+                                       final boolean isPredictionResistant) {
+        return buildHash(pDigest, defaultInitVector(), isPredictionResistant);
+    }
+
+    /**
      * Build a SecureRandom based on a SP 800-90A Hash DRBG.
      * @param pDigest digest to use in the DRBG underneath the SecureRandom.
      * @param pInitVector nonce value to use in DRBG construction.
@@ -198,9 +220,22 @@ public final class SP800Factory {
     public SP800SecureRandom buildHash(final GordianDigest pDigest,
                                        final byte[] pInitVector,
                                        final boolean isPredictionResistant) {
+        /* Build DRBG */
         EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
         SP800HashDRBG myProvider = new SP800HashDRBG(pDigest, myEntropy, theSecurityBytes, pInitVector);
         return new SP800SecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
+    }
+
+    /**
+     * Build a SecureRandom based on a SP 800-90A HMAC DRBG.
+     * @param hMac HMAC algorithm to use in the DRBG underneath the SecureRandom.
+     * @param isPredictionResistant specify whether the underlying DRBG in the resulting
+     * SecureRandom should re-seed on each request for bytes.
+     * @return a SecureRandom supported by a HMAC DRBG.
+     */
+    public SP800SecureRandom buildHMAC(final GordianMac hMac,
+                                       final boolean isPredictionResistant) {
+        return buildHMAC(hMac, defaultInitVector(), isPredictionResistant);
     }
 
     /**
@@ -214,8 +249,14 @@ public final class SP800Factory {
     public SP800SecureRandom buildHMAC(final GordianMac hMac,
                                        final byte[] pInitVector,
                                        final boolean isPredictionResistant) {
+        /* Create initVector if required */
+        byte[] myInit = pInitVector == null
+                                            ? TethysDataConverter.longToByteArray(System.currentTimeMillis())
+                                            : pInitVector;
+
+        /* Build DRBG */
         EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
-        SP800HMacDRBG myProvider = new SP800HMacDRBG(hMac, myEntropy, theSecurityBytes, pInitVector);
+        SP800HMacDRBG myProvider = new SP800HMacDRBG(hMac, myEntropy, theSecurityBytes, myInit);
         return new SP800SecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
     }
 

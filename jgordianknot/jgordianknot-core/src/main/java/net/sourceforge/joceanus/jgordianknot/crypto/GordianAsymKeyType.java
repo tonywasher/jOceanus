@@ -29,40 +29,75 @@ public enum GordianAsymKeyType {
     /**
      * RSA.
      */
-    RSA,
+    RSA(GordianSignatureType.PSS, GordianSignatureType.ISO9796D2, GordianSignatureType.X931),
 
     /**
      * EllipticCurve.
      */
-    EC,
+    EC(GordianSignatureType.DSA, GordianSignatureType.DDSA, GordianSignatureType.NR),
 
     /**
      * ElGamal.
      */
-    ELGAMAL,
+    ELGAMAL(),
 
     /**
      * DiffieHellman.
      */
-    DIFFIEHELLMAN,
+    DIFFIEHELLMAN(),
 
     /**
      * SPHINCS.
      */
-    SPHINCS,
+    SPHINCS(GordianSignatureType.NATIVE),
 
     /**
      * McEliece.
      */
-    MCELIECE,
+    MCELIECE(),
 
     /**
      * Rainbow.
      */
-    RAINBOW,
+    RAINBOW(GordianSignatureType.NATIVE),
 
     /**
      * NewHope.
      */
-    NEWHOPE;
+    NEWHOPE();
+
+    /**
+     * The Supported SignatureTypes.
+     */
+    private final GordianSignatureType[] theSignatures;
+
+    /**
+     * Constructor.
+     * @param pSignatures the supported signatures
+     */
+    GordianAsymKeyType(final GordianSignatureType... pSignatures) {
+        theSignatures = pSignatures;
+    }
+
+    /**
+     * Obtain supported signatures.
+     * @return the supported signatures
+     */
+    public GordianSignatureType[] getSupportedSignatures() {
+        return theSignatures;
+    }
+
+    /**
+     * is signature available?
+     * @param pSignature the signatureType
+     * @return true/false
+     */
+    public boolean isSignatureAvailable(final GordianSignatureType pSignature) {
+        for (GordianSignatureType myType : theSignatures) {
+            if (myType.equals(pSignature)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

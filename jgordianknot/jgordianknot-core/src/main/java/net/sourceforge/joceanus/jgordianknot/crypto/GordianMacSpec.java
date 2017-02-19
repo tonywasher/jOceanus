@@ -52,24 +52,20 @@ public final class GordianMacSpec {
     private final GordianSymKeyType theKeyType;
 
     /**
-     * The Digest Length.
-     */
-    private final GordianLength theLength;
-
-    /**
      * The String name.
      */
     private String theName;
 
     /**
-     * hMac Constructor.
+     * hMac/skeinMac Constructor.
+     * @param pMacType the macType
      * @param pDigestSpec the digestSpec
      */
-    protected GordianMacSpec(final GordianDigestSpec pDigestSpec) {
+    protected GordianMacSpec(final GordianMacType pMacType,
+                             final GordianDigestSpec pDigestSpec) {
         /* Store parameters */
-        theMacType = GordianMacType.HMAC;
+        theMacType = pMacType;
         theDigestSpec = pDigestSpec;
-        theLength = null;
         theKeyType = null;
     }
 
@@ -83,52 +79,39 @@ public final class GordianMacSpec {
         /* Store parameters */
         theMacType = pMacType;
         theDigestSpec = null;
-        theLength = null;
         theKeyType = pKeyType;
     }
 
     /**
-     * Skein Constructor.
-     * @param pLength the length
-     */
-    protected GordianMacSpec(final GordianLength pLength) {
-        theMacType = GordianMacType.SKEIN;
-        theDigestSpec = null;
-        theLength = pLength;
-        theKeyType = null;
-    }
-
-    /**
-     * Generic Constructor.
+     * vmpcMac Constructor.
      * @param pMacType the macType
      */
     protected GordianMacSpec(final GordianMacType pMacType) {
         theMacType = pMacType;
         theDigestSpec = null;
-        theLength = null;
         theKeyType = null;
     }
 
     /**
-     * Create HMacSpec.
+     * Create hMacSpec.
      * @param pDigestType the digestType
      * @return the MacSpec
      */
     public static GordianMacSpec hMac(final GordianDigestType pDigestType) {
-        return new GordianMacSpec(new GordianDigestSpec(pDigestType));
+        return hMac(new GordianDigestSpec(pDigestType));
     }
 
     /**
-     * Create HMacSpec.
+     * Create hMacSpec.
      * @param pDigestSpec the digestSpec
      * @return the MacSpec
      */
     public static GordianMacSpec hMac(final GordianDigestSpec pDigestSpec) {
-        return new GordianMacSpec(pDigestSpec);
+        return new GordianMacSpec(GordianMacType.HMAC, pDigestSpec);
     }
 
     /**
-     * Create GMacSpec.
+     * Create gMacSpec.
      * @param pSymKeyType the symKeyType
      * @return the MacSpec
      */
@@ -137,7 +120,7 @@ public final class GordianMacSpec {
     }
 
     /**
-     * Create CMacSpec.
+     * Create cMacSpec.
      * @param pSymKeyType the symKeyType
      * @return the MacSpec
      */
@@ -146,7 +129,7 @@ public final class GordianMacSpec {
     }
 
     /**
-     * Create Poly1305MacSpec.
+     * Create poly1305MacSpec.
      * @param pSymKeyType the symKeyType
      * @return the MacSpec
      */
@@ -155,12 +138,36 @@ public final class GordianMacSpec {
     }
 
     /**
-     * Create SkeinMacSpec.
+     * Create skeinMacSpec.
      * @param pLength the length
      * @return the MacSpec
      */
     public static GordianMacSpec skeinMac(final GordianLength pLength) {
-        return new GordianMacSpec(pLength);
+        return skeinMac(pLength, false);
+    }
+
+    /**
+     * Create skeinMacSpec.
+     * @param pLength the length
+     * @param useExtended use extended state
+     * @return the MacSpec
+     */
+    public static GordianMacSpec skeinMac(final GordianLength pLength,
+                                          final boolean useExtended) {
+        GordianDigestSpec mySpec = GordianDigestSpec.skein(pLength, useExtended);
+        return new GordianMacSpec(GordianMacType.SKEIN, mySpec);
+    }
+
+    /**
+     * Create skeinMacSpec.
+     * @param pState the state length
+     * @param pLength the length
+     * @return the MacSpec
+     */
+    protected static GordianMacSpec skeinMac(final GordianLength pState,
+                                             final GordianLength pLength) {
+        GordianDigestSpec mySpec = GordianDigestSpec.skein(pState, pLength);
+        return new GordianMacSpec(GordianMacType.SKEIN, mySpec);
     }
 
     /**
@@ -188,14 +195,6 @@ public final class GordianMacSpec {
     }
 
     /**
-     * Obtain Digest Length.
-     * @return the Length
-     */
-    public GordianLength getDigestLength() {
-        return theLength;
-    }
-
-    /**
      * Obtain SymKey Type.
      * @return the KeyType
      */
@@ -210,11 +209,12 @@ public final class GordianMacSpec {
             /* Load the name */
             theName = theMacType.toString();
             if (theDigestSpec != null) {
-                theName += SEP + theDigestSpec.toString();
+                theName += SEP + (GordianMacType.SKEIN.equals(theMacType)
+                                                                          ? theDigestSpec.getStateLength().getLength()
+                                                                            + SEP + theDigestSpec.getDigestLength().getLength()
+                                                                          : theDigestSpec.toString());
             } else if (theKeyType != null) {
                 theName += SEP + theKeyType.toString();
-            } else if (theLength != null) {
-                theName += SEP + theLength.toString();
             }
         }
 
@@ -252,9 +252,6 @@ public final class GordianMacSpec {
         if (theKeyType != null) {
             return theKeyType.equals(myThat.getKeyType());
         }
-        if (theLength != null) {
-            return theLength.equals(myThat.getDigestLength());
-        }
         return true;
     }
 
@@ -266,9 +263,6 @@ public final class GordianMacSpec {
         }
         if (theKeyType != null) {
             hashCode += theKeyType.ordinal();
-        }
-        if (theLength != null) {
-            hashCode += theLength.ordinal();
         }
         return hashCode;
     }
@@ -296,6 +290,9 @@ public final class GordianMacSpec {
         /* For each length */
         for (GordianLength myLength : GordianLength.values()) {
             myList.add(GordianMacSpec.skeinMac(myLength));
+            if (GordianDigestType.SKEIN.getExtendedStateForLength(myLength) != null) {
+                myList.add(GordianMacSpec.skeinMac(myLength, true));
+            }
         }
 
         /* Add vmpcMac */
