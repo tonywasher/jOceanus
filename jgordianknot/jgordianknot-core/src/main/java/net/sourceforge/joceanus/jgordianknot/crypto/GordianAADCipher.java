@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -37,13 +38,11 @@ public abstract class GordianAADCipher
     /**
      * Constructor.
      * @param pFactory the Security Factory
-     * @param pKeyType the keyType
-     * @param pMode the cipher mode
+     * @param pCipherSpec the cipherSpec
      */
     protected GordianAADCipher(final GordianFactory pFactory,
-                               final GordianSymKeyType pKeyType,
-                               final GordianCipherMode pMode) {
-        super(pFactory, pKeyType, pMode, GordianPadding.NONE);
+                               final GordianSymCipherSpec pCipherSpec) {
+        super(pFactory, pCipherSpec);
     }
 
     /**

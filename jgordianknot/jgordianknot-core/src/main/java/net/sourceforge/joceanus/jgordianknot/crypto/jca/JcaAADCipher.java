@@ -35,7 +35,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAADCipher;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -53,15 +53,13 @@ public class JcaAADCipher
     /**
      * Constructor.
      * @param pFactory the Security Factory
-     * @param pKeyType the keyType
-     * @param pMode the cipher mode
+     * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
     protected JcaAADCipher(final JcaFactory pFactory,
-                           final GordianSymKeyType pKeyType,
-                           final GordianCipherMode pMode,
+                           final GordianSymCipherSpec pCipherSpec,
                            final Cipher pCipher) {
-        super(pFactory, pKeyType, pMode);
+        super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
 

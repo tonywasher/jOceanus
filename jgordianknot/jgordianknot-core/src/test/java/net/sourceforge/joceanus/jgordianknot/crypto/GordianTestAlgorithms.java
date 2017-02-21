@@ -32,6 +32,8 @@ import java.util.function.Predicate;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -99,7 +101,6 @@ public class GordianTestAlgorithms {
             if (myMacPredicate.test(mySpec)) {
                 /* Create the mac */
                 GordianMac myMac = myFactory.createMac(mySpec);
-
                 GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(mySpec);
                 GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
                 myMac.initMac(myKey);
@@ -120,7 +121,7 @@ public class GordianTestAlgorithms {
             if (myStreamKeyPredicate.test(myType)) {
                 GordianKeyGenerator<GordianStreamKeyType> myStreamGenerator = myFactory.getKeyGenerator(myType);
                 GordianKey<GordianStreamKeyType> myStreamKey = myStreamGenerator.generateKey();
-                GordianCipher<GordianStreamKeyType> myCipher = myFactory.createStreamKeyCipher(myType);
+                GordianCipher<GordianStreamKeyType> myCipher = myFactory.createStreamKeyCipher(GordianStreamCipherSpec.stream(myType));
                 myCipher.initCipher(myStreamKey);
             }
         }
@@ -149,7 +150,7 @@ public class GordianTestAlgorithms {
     private void checkCipherPadding(final GordianFactory pFactory,
                                     final GordianKey<GordianSymKeyType> pKey,
                                     final GordianCipherMode pMode) throws OceanusException {
-        if (pMode.allowsPadding()) {
+        if (pMode.hasPadding()) {
             for (GordianPadding myPadding : GordianPadding.values()) {
                 checkCipher(pFactory, pKey, pMode, myPadding);
             }
@@ -172,7 +173,7 @@ public class GordianTestAlgorithms {
                              final GordianKey<GordianSymKeyType> pKey,
                              final GordianCipherMode pMode,
                              final GordianPadding pPadding) throws OceanusException {
-        GordianCipher<GordianSymKeyType> myCipher = pFactory.createSymKeyCipher(pKey.getKeyType(), pMode, pPadding);
+        GordianCipher<GordianSymKeyType> myCipher = pFactory.createSymKeyCipher(new GordianSymCipherSpec(pKey.getKeyType(), pMode, pPadding));
         myCipher.initCipher(pKey);
     }
 
@@ -186,7 +187,7 @@ public class GordianTestAlgorithms {
     private void checkAADCipher(final GordianFactory pFactory,
                                 final GordianKey<GordianSymKeyType> pKey,
                                 final GordianCipherMode pMode) throws OceanusException {
-        GordianAADCipher myCipher = pFactory.createAADCipher(pKey.getKeyType(), pMode);
+        GordianAADCipher myCipher = pFactory.createAADCipher(new GordianSymCipherSpec(pKey.getKeyType(), pMode, GordianPadding.NONE));
         myCipher.initCipher(pKey);
     }
 

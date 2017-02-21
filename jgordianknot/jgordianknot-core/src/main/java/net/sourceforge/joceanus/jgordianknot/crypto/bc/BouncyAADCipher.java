@@ -31,7 +31,7 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAADCipher;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -49,15 +49,13 @@ public class BouncyAADCipher
     /**
      * Constructor.
      * @param pFactory the Security Factory
-     * @param pKeyType the keyType
-     * @param pMode the cipher mode
+     * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
     protected BouncyAADCipher(final BouncyFactory pFactory,
-                              final GordianSymKeyType pKeyType,
-                              final GordianCipherMode pMode,
+                              final GordianSymCipherSpec pCipherSpec,
                               final AEADBlockCipher pCipher) {
-        super(pFactory, pKeyType, pMode);
+        super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
 

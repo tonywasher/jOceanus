@@ -28,12 +28,14 @@ import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * GordianKnot base for WrapCipher.
  * <p>
- * This class uses a variant of AESKW to wrap keyData. In particular it uses the cipher in CBC/CTR
- * mode with no padding, and hence use an initVector that is derive via the key.
+ * This class uses a variant of RFC5649 to wrap keyData. In particular it uses the cipher in CBC
+ * mode with no padding, and hence use an initVector that is derived via the key. It has also been
+ * modified so that it does not require a 128-block cipher.
  */
 public abstract class GordianWrapCipher {
     /**
@@ -44,7 +46,17 @@ public abstract class GordianWrapCipher {
     /**
      * Integrity value.
      */
-    private static final byte INTEGRITY_VALUE = (byte) 0xA6;
+    private static final byte INTEGRITY_VALUE1 = (byte) 0xA6;
+
+    /**
+     * Integrity value.
+     */
+    private static final byte INTEGRITY_VALUE2 = (byte) 0x59;
+
+    /**
+     * Integrity modulo.
+     */
+    private static final int INTEGRITY_MODULO = 4;
 
     /**
      * The Security Factory.
@@ -77,7 +89,7 @@ public abstract class GordianWrapCipher {
      * Obtain the keyType.
      * @return the keyType
      */
-    public GordianSymKeyType getKeyType() {
+    protected GordianSymKeyType getKeyType() {
         return theCipher.getKeyType();
     }
 
@@ -90,71 +102,71 @@ public abstract class GordianWrapCipher {
     }
 
     /**
-     * Wrap key.
-     * @param pKey the key to use to wrap the key
-     * @param pKeyToWrap the key to wrap
+     * Secure key.
+     * @param pKey the key to use to secure the key
+     * @param pKeyToSecure the key to secure
+     * @return the securedKey
+     * @throws OceanusException on error
+     */
+    protected abstract byte[] secureKey(GordianKey<GordianSymKeyType> pKey,
+                                        GordianKey<?> pKeyToSecure) throws OceanusException;
+
+    /**
+     * Derive key.
+     * @param <T> type of key to be derived
+     * @param pKey the key to use to derive the key
+     * @param pSecuredKey the securedKey
+     * @param pKeyType the type of key to be derived
+     * @return the derived key
+     * @throws OceanusException on error
+     */
+    protected abstract <T> GordianKey<T> deriveKey(GordianKey<GordianSymKeyType> pKey,
+                                                   byte[] pSecuredKey,
+                                                   T pKeyType) throws OceanusException;
+
+    /**
+     * Secure private key.
+     * @param pKey the key to use to secure the key
+     * @param pKeyPairToSecure the key to secure
      * @return the wrapped bytes
      * @throws OceanusException on error
      */
-    public abstract byte[] wrapKey(GordianKey<GordianSymKeyType> pKey,
-                                   GordianKey<?> pKeyToWrap) throws OceanusException;
-
-    /**
-     * unWrap key.
-     * @param <T> type of key to be unwrapped
-     * @param pKey the key to use to unwrap the key
-     * @param pBytes the bytes to unwrap
-     * @param pKeyType the type of key to be unwrapped
-     * @return the unwrapped key
-     * @throws OceanusException on error
-     */
-    public abstract <T> GordianKey<T> unwrapKey(GordianKey<GordianSymKeyType> pKey,
-                                                byte[] pBytes,
-                                                T pKeyType) throws OceanusException;
-
-    /**
-     * Wrap private key.
-     * @param pKey the key to use to wrap the key
-     * @param pKeyToWrap the key to wrap
-     * @return the wrapped bytes
-     * @throws OceanusException on error
-     */
-    public byte[] wrapKey(final GordianKey<GordianSymKeyType> pKey,
-                          final GordianKeyPair pKeyToWrap) throws OceanusException {
+    protected byte[] securePrivateKey(final GordianKey<GordianSymKeyType> pKey,
+                                      final GordianKeyPair pKeyPairToSecure) throws OceanusException {
         /* Access the KeyPair Generator */
-        GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyToWrap.getKeySpec());
-        PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyToWrap);
-        return wrapBytes(pKey, myPKCS8Key.getEncoded());
+        GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyPairToSecure.getKeySpec());
+        PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
+        return secureBytes(pKey, myPKCS8Key.getEncoded());
     }
 
     /**
-     * unWrap private key.
-     * @param pKey the key to use to unwrap the key
-     * @param pBytes the bytes to unwrap
-     * @return the unwrapped key
+     * derive private key.
+     * @param pKey the key to use to derive the key
+     * @param pSecuredPrivateKey the secured privateKey
+     * @return the derived key
      * @throws OceanusException on error
      */
-    public PKCS8EncodedKeySpec unwrapKey(final GordianKey<GordianSymKeyType> pKey,
-                                         final byte[] pBytes) throws OceanusException {
+    protected PKCS8EncodedKeySpec deriveKeySpec(final GordianKey<GordianSymKeyType> pKey,
+                                                final byte[] pSecuredPrivateKey) throws OceanusException {
         /* Access the KeyPair Generator */
-        byte[] myBytes = unwrapBytes(pKey, pBytes);
+        byte[] myBytes = deriveBytes(pKey, pSecuredPrivateKey);
         return new PKCS8EncodedKeySpec(myBytes);
     }
 
     /**
-     * Wrap bytes (based on AESKW).
-     * @param pKey the key to use to wrap the bytes
-     * @param pBytes the bytes to wrap
-     * @return the wrapped bytes
+     * secure bytes (based on RFC 5649).
+     * @param pKey the key to use to secure the bytes
+     * @param pBytesToSecure the bytes to secure
+     * @return the secured bytes
      * @throws OceanusException on error
      */
-    public byte[] wrapBytes(final GordianKey<GordianSymKeyType> pKey,
-                            final byte[] pBytes) throws OceanusException {
+    protected byte[] secureBytes(final GordianKey<GordianSymKeyType> pKey,
+                                 final byte[] pBytesToSecure) throws OceanusException {
         /* Check validity of key */
         theCipher.checkValidKey(pKey);
 
         /* Determine number of blocks */
-        int myDataLen = pBytes.length;
+        int myDataLen = pBytesToSecure.length;
         int myNumBlocks = myDataLen
                           / theBlockLen;
 
@@ -167,8 +179,6 @@ public abstract class GordianWrapCipher {
             myTrueLen = myNumBlocks
                         * theBlockLen;
         }
-        int myZeroLen = myTrueLen
-                        - myDataLen;
 
         /* Allocate buffer for data and encryption */
         int myBufferLen = theBlockLen << 1;
@@ -180,19 +190,23 @@ public abstract class GordianWrapCipher {
         /* Access the IV */
         byte[] myIV = getWrapIV(pKey);
 
-        /* Build the basic block */
-        int myCheckLen = theBlockLen - 1;
+        /* Determine semantics of the initial block */
+        byte[] myByteLen = TethysDataConverter.integerToByteArray(myDataLen);
+        int myCheckLen = theBlockLen - Integer.BYTES;
+
+        /* Build the initial block */
         for (int i = 0; i < myCheckLen; i++) {
-            myData[i] = INTEGRITY_VALUE;
+            myData[i] = getIntegrityValue(i);
         }
-        myData[myCheckLen] = (byte) myZeroLen;
-        System.arraycopy(pBytes, 0, myData, theBlockLen, myDataLen);
+        System.arraycopy(myByteLen, 0, myData, myCheckLen, Integer.BYTES);
+        System.arraycopy(pBytesToSecure, 0, myData, theBlockLen, myDataLen);
 
         /* Initialise the cipher */
         theCipher.initCipher(pKey, myIV, true);
 
         /* Loop WRAP_COUNT times */
-        for (long myCycle = 0; myCycle < WRAP_COUNT; myCycle++) {
+        int myCount = 1;
+        for (int myCycle = 0; myCycle < WRAP_COUNT; myCycle++) {
             /* Loop through the data blocks */
             for (int myBlock = 1, myOffset = theBlockLen; myBlock <= myNumBlocks; myBlock++, myOffset += theBlockLen) {
                 /* Build the data to be encrypted */
@@ -201,6 +215,11 @@ public abstract class GordianWrapCipher {
 
                 /* Encrypt the byte array */
                 theCipher.finish(myBuffer, 0, myBufferLen, myResult, 0);
+
+                /* Adjust the result using the count as a mask */
+                for (int myMask = myCount++, myIndex = myBufferLen - 1; myMask != 0; myMask >>>= Byte.SIZE, myIndex--) {
+                    myResult[myIndex] ^= (byte) myMask;
+                }
 
                 /* Restore encrypted data */
                 System.arraycopy(myResult, 0, myData, 0, theBlockLen);
@@ -213,19 +232,19 @@ public abstract class GordianWrapCipher {
     }
 
     /**
-     * unWrap bytes (based on AESKW).
-     * @param pKey the key to use to unwrap the bytes
-     * @param pBytes the bytes to unwrap
-     * @return the unwrapped bytes
+     * derive bytes (based on RFC 5649).
+     * @param pKey the key to use to derive the bytes
+     * @param pSecuredBytes the bytes to derive
+     * @return the derived bytes
      * @throws OceanusException on error
      */
-    public byte[] unwrapBytes(final GordianKey<GordianSymKeyType> pKey,
-                              final byte[] pBytes) throws OceanusException {
+    protected byte[] deriveBytes(final GordianKey<GordianSymKeyType> pKey,
+                                 final byte[] pSecuredBytes) throws OceanusException {
         /* Check validity of key */
         theCipher.checkValidKey(pKey);
 
         /* Determine number of blocks */
-        int myDataLen = pBytes.length
+        int myDataLen = pSecuredBytes.length
                         - theBlockLen;
         int myNumBlocks = myDataLen
                           / theBlockLen;
@@ -240,7 +259,7 @@ public abstract class GordianWrapCipher {
 
         /* Allocate buffers for data and encryption */
         int myBufferLen = theBlockLen << 1;
-        byte[] myData = Arrays.copyOf(pBytes, pBytes.length);
+        byte[] myData = Arrays.copyOf(pSecuredBytes, pSecuredBytes.length);
         byte[] myBuffer = new byte[myBufferLen];
         byte[] myResult = new byte[myBufferLen];
 
@@ -248,13 +267,19 @@ public abstract class GordianWrapCipher {
         theCipher.initCipher(pKey, myIV, false);
 
         /* Loop WRAP_COUNT times */
-        for (long myCycle = WRAP_COUNT; myCycle > 0; myCycle--) {
+        int myCount = myNumBlocks * WRAP_COUNT;
+        for (int myCycle = WRAP_COUNT; myCycle > 0; myCycle--) {
             /* Loop through the data blocks */
             for (int myBlock = myNumBlocks, myOffset = theBlockLen
                                                        * myBlock; myBlock >= 1; myBlock--, myOffset -= theBlockLen) {
                 /* Build the data to be decrypted */
                 System.arraycopy(myData, 0, myBuffer, 0, theBlockLen);
                 System.arraycopy(myData, myOffset, myBuffer, theBlockLen, theBlockLen);
+
+                /* Adjust the buffer using the count as a mask */
+                for (int myMask = myCount--, myIndex = myBufferLen - 1; myMask != 0; myMask >>>= Byte.SIZE, myIndex--) {
+                    myBuffer[myIndex] ^= (byte) myMask;
+                }
 
                 /* Decrypt the byte array */
                 theCipher.finish(myBuffer, 0, myBufferLen, myResult, 0);
@@ -265,35 +290,50 @@ public abstract class GordianWrapCipher {
             }
         }
 
-        /* Determine check values */
-        int myCheckLen = theBlockLen - 1;
-        int myZeroLen = myData[myCheckLen];
-
         /* Check initialisation value */
+        int myCheckLen = theBlockLen - Integer.BYTES;
         boolean isCheckOK = true;
         for (int myInit = 0; isCheckOK && myInit < myCheckLen; myInit++) {
-            isCheckOK = myData[myInit] == INTEGRITY_VALUE;
+            isCheckOK = myData[myInit] == getIntegrityValue(myInit);
         }
 
-        /* Check valid ZeroLen */
-        isCheckOK &= (myZeroLen >= 0)
-                     && (myZeroLen < theBlockLen);
+        /* If we are OK */
+        if (isCheckOK) {
+            /* Obtain encoded length */
+            byte[] myByteLen = Arrays.copyOfRange(myData, myCheckLen, myCheckLen + Integer.BYTES);
+            int myEncodedLen = TethysDataConverter.byteArrayToInteger(myByteLen);
 
-        /* Check trailing bytes */
-        for (int myZeros = myZeroLen, myLoc = myData.length - 1; isCheckOK
-                                                                 && myZeros > 0; myZeros--, myLoc--) {
-            /* Check that byte is zero */
-            isCheckOK = myData[myLoc] == 0;
+            /* Obtain zeroLen and check that it is valid */
+            int myZeroLen = myDataLen - myEncodedLen;
+            isCheckOK = myZeroLen >= 0 && myZeroLen < theBlockLen;
+
+            /* Check trailing bytes */
+            for (int myZeros = myZeroLen, myLoc = myData.length - 1; isCheckOK
+                                                                     && myZeros > 0; myZeros--, myLoc--) {
+                /* Check that byte is zero */
+                isCheckOK = myData[myLoc] == 0;
+            }
+
+            /* Return unwrapped data */
+            if (isCheckOK) {
+                return Arrays.copyOfRange(myData, theBlockLen, myData.length
+                                                               - myZeroLen);
+            }
         }
 
         /* Reject if checks fail */
-        if (!isCheckOK) {
-            throw new GordianDataException("Integrity checks failed");
-        }
+        throw new GordianDataException("Integrity checks failed");
+    }
 
-        /* Return unwrapped data */
-        return Arrays.copyOfRange(myData, theBlockLen, myData.length
-                                                       - myZeroLen);
+    /**
+     * Determine integrity value for position.
+     * @param pIndex the index
+     * @return the integrity value
+     */
+    private static byte getIntegrityValue(final int pIndex) {
+        return (pIndex + 1) % INTEGRITY_MODULO < 2
+                                                   ? INTEGRITY_VALUE1
+                                                   : INTEGRITY_VALUE2;
     }
 
     /**

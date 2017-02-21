@@ -134,6 +134,22 @@ public class MetisExcelCell
     }
 
     @Override
+    public Long getLongValue() {
+        switch (theExcelCell.getCellTypeEnum()) {
+            case NUMERIC:
+                Double myValue = theExcelCell.getNumericCellValue();
+                return myValue.longValue();
+            case FORMULA:
+                CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
+                return CellType.NUMERIC == myCellValue.getCellTypeEnum()
+                                                                         ? ((Double) myCellValue.getNumberValue()).longValue()
+                                                                         : null;
+            default:
+                return null;
+        }
+    }
+
+    @Override
     public String getStringValue() {
         switch (theExcelCell.getCellTypeEnum()) {
             case NUMERIC:
@@ -227,6 +243,17 @@ public class MetisExcelCell
 
     @Override
     protected void setInteger(final Integer pValue) throws OceanusException {
+        if (!isReadOnly) {
+            /* Set the value */
+            theExcelCell.setCellValue(pValue.doubleValue());
+
+            /* Set the style for the cell */
+            theExcelRow.setCellStyle(this, pValue);
+        }
+    }
+
+    @Override
+    protected void setLong(final Long pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue.doubleValue());

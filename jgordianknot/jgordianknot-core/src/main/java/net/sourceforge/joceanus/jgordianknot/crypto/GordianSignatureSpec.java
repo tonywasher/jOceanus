@@ -152,9 +152,7 @@ public class GordianSignatureSpec {
             if (theSignatureType != GordianSignatureType.NATIVE) {
                 theName += SEP + theSignatureType.toString();
             }
-            if (theDigestSpec != null) {
-                theName += SEP + theDigestSpec.toString();
-            }
+            theName += SEP + theDigestSpec.toString();
         }
 
         /* return the name */
@@ -179,19 +177,14 @@ public class GordianSignatureSpec {
         /* Access the target SignatureSpec */
         GordianSignatureSpec myThat = (GordianSignatureSpec) pThat;
 
-        /* Check AsymKeyType */
-        if (!theAsymKeyType.equals(myThat.getAsymKeyType())) {
+        /* Check AsymKeyType and signatureType */
+        if (theAsymKeyType != myThat.getAsymKeyType()
+            || theSignatureType != myThat.getSignatureType()) {
             return false;
         }
 
-        /* Match subfields */
-        if (!theSignatureType.equals(myThat.getSignatureType())) {
-            return false;
-        }
-        if (theDigestSpec != null) {
-            return theDigestSpec.equals(myThat.getDigestSpec());
-        }
-        return true;
+        /* Match digestSpec */
+        return theDigestSpec.equals(myThat.getDigestSpec());
     }
 
     @Override
@@ -199,9 +192,7 @@ public class GordianSignatureSpec {
         int hashCode = theAsymKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
         hashCode += theSignatureType.hashCode();
         hashCode <<= TethysDataConverter.BYTE_SHIFT;
-        if (theDigestSpec != null) {
-            hashCode += theDigestSpec.hashCode();
-        }
+        hashCode += theDigestSpec.hashCode();
         return hashCode;
     }
 }

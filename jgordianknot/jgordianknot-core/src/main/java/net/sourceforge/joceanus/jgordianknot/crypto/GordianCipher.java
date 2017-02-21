@@ -39,19 +39,14 @@ public abstract class GordianCipher<T> {
     private final T theKeyType;
 
     /**
-     * Cipher Mode.
+     * CipherSpec.
      */
-    private final GordianCipherMode theMode;
+    private final GordianCipherSpec<T> theCipherSpec;
 
     /**
      * The Random Generator.
      */
     private final SecureRandom theRandom;
-
-    /**
-     * IsPadded?
-     */
-    private final GordianPadding thePadding;
 
     /**
      * Key.
@@ -66,17 +61,12 @@ public abstract class GordianCipher<T> {
     /**
      * Constructor.
      * @param pFactory the Security Factory
-     * @param pKeyType the keyType
-     * @param pMode the cipher mode
-     * @param pPadding the padding
+     * @param pCipherSpec the cipherSpec
      */
     protected GordianCipher(final GordianFactory pFactory,
-                            final T pKeyType,
-                            final GordianCipherMode pMode,
-                            final GordianPadding pPadding) {
-        theKeyType = pKeyType;
-        theMode = pMode;
-        thePadding = pPadding;
+                            final GordianCipherSpec<T> pCipherSpec) {
+        theCipherSpec = pCipherSpec;
+        theKeyType = theCipherSpec.getKeyType();
         theRandom = pFactory.getRandom();
     }
 
@@ -89,19 +79,11 @@ public abstract class GordianCipher<T> {
     }
 
     /**
-     * Obtain the Mode.
+     * Obtain the cipherSpec.
      * @return the mode
      */
-    public GordianCipherMode getMode() {
-        return theMode;
-    }
-
-    /**
-     * is the cipher padded?
-     * @return true/false
-     */
-    public GordianPadding getPadding() {
-        return thePadding;
+    public GordianCipherSpec<T> getCipherSpec() {
+        return theCipherSpec;
     }
 
     /**

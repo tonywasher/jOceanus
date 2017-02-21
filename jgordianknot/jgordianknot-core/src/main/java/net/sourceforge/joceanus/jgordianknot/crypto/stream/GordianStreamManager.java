@@ -29,7 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
@@ -159,9 +160,6 @@ public final class GordianStreamManager {
             boolean bLast = !myIterator.hasNext();
 
             /* Determine mode and padding */
-            GordianCipherMode myMode = bFirst
-                                              ? GordianCipherMode.SIC
-                                              : GordianCipherMode.ECB;
             GordianPadding myPadding = bFirst
                                               ? GordianPadding.NONE
                                               : bLast
@@ -169,9 +167,12 @@ public final class GordianStreamManager {
                                                       : myKey.getKeyType().isStdBlock()
                                                                                         ? GordianPadding.NONE
                                                                                         : GordianPadding.CTS;
+            GordianSymCipherSpec mySpec = bFirst
+                                                 ? GordianSymCipherSpec.sic(myKey.getKeyType())
+                                                 : GordianSymCipherSpec.ecb(myKey.getKeyType(), myPadding);
 
             /* Build the cipher stream */
-            GordianCipher<GordianSymKeyType> mySymCipher = myFactory.createSymKeyCipher(myKey.getKeyType(), myMode, myPadding);
+            GordianCipher<GordianSymKeyType> mySymCipher = myFactory.createSymKeyCipher(mySpec);
             mySymCipher.initCipher(myKey);
             myCurrent = new GordianCipherOutputStream<GordianSymKeyType>(mySymCipher, myCurrent);
 
@@ -181,7 +182,7 @@ public final class GordianStreamManager {
 
         /* Create the encryption stream for a stream key */
         GordianKey<GordianStreamKeyType> myStreamKey = myFactory.generateRandomStreamKey();
-        GordianCipher<GordianStreamKeyType> myStreamCipher = myFactory.createStreamKeyCipher(myStreamKey.getKeyType());
+        GordianCipher<GordianStreamKeyType> myStreamCipher = myFactory.createStreamKeyCipher(GordianStreamCipherSpec.stream(myStreamKey.getKeyType()));
         myStreamCipher.initCipher(myStreamKey);
         myCurrent = new GordianCipherOutputStream<GordianStreamKeyType>(myStreamCipher, myCurrent);
 

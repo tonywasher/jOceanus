@@ -279,24 +279,20 @@ public class GordianDigestSpec {
         /* Access the target DigestSpec */
         GordianDigestSpec myThat = (GordianDigestSpec) pThat;
 
-        /* Check stateLength */
-        if (theStateLength != myThat.getStateLength()) {
-            return false;
-        }
-
-        /* Check DigestType and length */
-        return theDigestType.equals(myThat.getDigestType())
-               && theLength.equals(myThat.getDigestLength());
+        /* Check subFields */
+        return theDigestType == myThat.getDigestType()
+               && theStateLength == myThat.getStateLength()
+               && theLength == myThat.getDigestLength();
     }
 
     @Override
     public int hashCode() {
-        int hashCode = theDigestType.ordinal() << TethysDataConverter.BYTE_SHIFT;
+        int hashCode = theDigestType.ordinal() + 1 << TethysDataConverter.BYTE_SHIFT;
         if (theStateLength != null) {
+            hashCode += theStateLength.ordinal() + 1;
             hashCode <<= TethysDataConverter.BYTE_SHIFT;
-            hashCode += theStateLength.ordinal();
         }
-        hashCode += theLength.ordinal();
+        hashCode += theLength.ordinal() + 1;
         return hashCode;
     }
 

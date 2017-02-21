@@ -23,7 +23,8 @@ keys for the KeySet via another variant of the PBKDF2 algorithm.
 compared with the expected hash. If it matches, the password is assumed correct and the keySet will be generated. In the unlikely
 event of a collision on the hash, it is virtually impossible for the same keySet to be generated.  
 
-  KeyWrapping is also supported using a variant of the AES-KW algorithm that uses CBC mode rather than ECB mode.
+  KeyWrapping is also supported using a variant of the RFC 5649 algorithm that uses CBC mode rather than ECB mode, and caters for
+blocksizes other than 128.
 
 * Supported Algorithms
 

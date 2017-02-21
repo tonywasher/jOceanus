@@ -29,83 +29,60 @@ public enum GordianCipherMode {
     /**
      * ECB Mode.
      */
-    ECB(true),
+    ECB,
 
     /**
      * CBC Mode.
      */
-    CBC(true),
+    CBC,
 
     /**
      * SIC(CTR) Mode.
      */
-    SIC(false),
+    SIC,
 
     /**
      * CFB Mode.
      */
-    CFB(false),
+    CFB,
 
     /**
      * OFB Mode.
      */
-    OFB(false),
+    OFB,
 
     /**
      * EAX Mode.
      */
-    EAX(false, true),
+    EAX,
 
     /**
      * CCM Mode.
      */
-    CCM(false, true),
+    CCM,
 
     /**
      * GCM Mode.
      */
-    GCM(false, true),
+    GCM,
 
     /**
      * OCB Mode.
      */
-    OCB(false, true);
+    OCB;
 
     /**
-     * Allows padding.
-     */
-    private final boolean allowsPadding;
-
-    /**
-     * is AAD.
-     */
-    private final boolean isAAD;
-
-    /**
-     * Constructor.
-     * @param pPadding is padding allowed?
-     */
-    GordianCipherMode(final boolean pPadding) {
-        this(pPadding, false);
-    }
-
-    /**
-     * Constructor.
-     * @param pPadding is padding allowed?
-     * @param pAAD is this an AAD mode?
-     */
-    GordianCipherMode(final boolean pPadding,
-                      final boolean pAAD) {
-        allowsPadding = pPadding;
-        isAAD = pAAD;
-    }
-
-    /**
-     * Does the mode allow padding?
+     * Does the mode require padding?
      * @return true/false
      */
-    public boolean allowsPadding() {
-        return allowsPadding;
+    public boolean hasPadding() {
+        switch (this) {
+            case ECB:
+            case CBC:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -113,7 +90,15 @@ public enum GordianCipherMode {
      * @return true/false
      */
     public boolean isAAD() {
-        return isAAD;
+        switch (this) {
+            case CCM:
+            case GCM:
+            case EAX:
+            case OCB:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

@@ -147,9 +147,9 @@ public class DataKey
 
         /* Store the KeyType */
         myValue = pValues.getValue(FIELD_KEYTYPE);
-        if (myValue instanceof Integer) {
+        if (myValue instanceof Long) {
             /* Store the integer */
-            setValueKeyTypeId((Integer) myValue);
+            setValueKeyTypeId((Long) myValue);
 
             /* Resolve the KeyType */
             setValueKeyType(myKeySet.deriveTypeFromExternalId(getKeyTypeId(), GordianSymKeyType.class));
@@ -159,9 +159,9 @@ public class DataKey
 
             /* Look for passed id */
             myValue = pValues.getValue(FIELD_KEYTYPEID);
-            if (myValue instanceof Integer) {
+            if (myValue instanceof Long) {
                 /* Store the id */
-                setValueKeyTypeId((Integer) myValue);
+                setValueKeyTypeId((Long) myValue);
             }
         }
 
@@ -178,7 +178,10 @@ public class DataKey
                 setValueDataKey((GordianKey<GordianSymKeyType>) myValue);
             } else {
                 /* Create the Symmetric Key from the wrapped data */
-                GordianKey<GordianSymKeyType> myKey = myKeySet.deriveKey(myBytes, getKeyType());
+                GordianFactory myFactory = myKeySet.getFactory();
+                GordianSymKeyType myType = getKeyType();
+                GordianKeyGenerator<GordianSymKeyType> myGenerator = myFactory.getKeyGenerator(myType);
+                GordianKey<GordianSymKeyType> myKey = myGenerator.deriveKey(myBytes, myType, myKeySet);
                 setValueDataKey(myKey);
             }
 
@@ -222,7 +225,7 @@ public class DataKey
             setValueDataKey(myKey);
 
             /* Store its secured keyDef */
-            setValueSecuredKeyDef(myKeySet.secureKey(myKey));
+            setValueSecuredKeyDef(myGenerator.secureKey(myKey, myKeySet));
 
             /* Register the DataKey */
             pKeySet.registerDataKey(this);
@@ -294,7 +297,7 @@ public class DataKey
      * Get the Key Type Id.
      * @return the key type id
      */
-    public Integer getKeyTypeId() {
+    public Long getKeyTypeId() {
         return getKeyTypeId(getValueSet());
     }
 
@@ -345,8 +348,8 @@ public class DataKey
      * @param pValueSet the valueSet
      * @return the Key type Id
      */
-    public static Integer getKeyTypeId(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_KEYTYPEID, Integer.class);
+    public static Long getKeyTypeId(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_KEYTYPEID, Long.class);
     }
 
     /**
@@ -405,7 +408,7 @@ public class DataKey
      * Set the KeyType id.
      * @param pId the KeyType id
      */
-    private void setValueKeyTypeId(final Integer pId) {
+    private void setValueKeyTypeId(final Long pId) {
         getValueSet().setValue(FIELD_KEYTYPEID, pId);
     }
 
@@ -485,7 +488,9 @@ public class DataKey
             /* Update the Security Control Key and obtain the new secured KeyDef */
             GordianKeySet myKeySet = pHash.getKeySet();
             setValueHashPrime(pPrimeHash);
-            setValueSecuredKeyDef(myKeySet.secureKey(getDataKey()));
+            GordianFactory myFactory = myKeySet.getFactory();
+            GordianKeyGenerator<?> myGenerator = myFactory.getKeyGenerator(getKeyType());
+            setValueSecuredKeyDef(myGenerator.secureKey(getDataKey(), myKeySet));
 
             /* Check for changes */
             if (checkForHistory()) {

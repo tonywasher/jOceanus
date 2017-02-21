@@ -36,6 +36,16 @@ import java.util.Arrays;
  */
 public final class TethysDataConverter {
     /**
+     * Knuth Prime (from Optimus).
+     */
+    private static final int KNUTH_PRIME = 2123809381;
+
+    /**
+     * Knuth Inverse (from Optimus) (KNUTH_PRIME * KNUTH_INVERSE) Mod UnsignedIntegerMax == 1.
+     */
+    private static final int KNUTH_INVERSE = 1885413229;
+
+    /**
      * Invalid hexadecimal length string.
      */
     private static final String ERROR_HEXLEN = "Invalid HexString Length: ";
@@ -658,5 +668,36 @@ public final class TethysDataConverter {
             }
         }
         return myOutput;
+    }
+
+    /**
+     * Encode a value via Knuth Multiplication.
+     * @param pInput the input
+     * @return the output hash
+     */
+    public static long knuthEncode(final int pInput) {
+        return pInput * (long) KNUTH_PRIME;
+    }
+
+    /**
+     * Decode a Knuth Encoded value.
+     * @param pEncoded the encoded value
+     * @return the original input
+     */
+    public static int knuthDecode(final long pEncoded) {
+        return (int) (pEncoded * KNUTH_INVERSE);
+    }
+
+    /**
+     * Create a Knuth hash.
+     * @param pInput the input
+     * @return the output hash
+     */
+    public static int knuthHash(final int pInput) {
+        long myHash = knuthEncode(pInput);
+        int myBitLength = Integer.SIZE - pInput >= 0
+                                                     ? Integer.numberOfLeadingZeros(pInput)
+                                                     : Integer.numberOfLeadingZeros(-pInput);
+        return (int) (myHash >> myBitLength);
     }
 }

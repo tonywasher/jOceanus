@@ -49,19 +49,19 @@ public class BouncyWrapCipher
     }
 
     @Override
-    public byte[] wrapKey(final GordianKey<GordianSymKeyType> pKey,
-                          final GordianKey<?> pKeyToWrap) throws OceanusException {
+    protected byte[] secureKey(final GordianKey<GordianSymKeyType> pKey,
+                               final GordianKey<?> pKeyToWrap) throws OceanusException {
         /* Access the keyToWrap */
         BouncyKey<?> myKeyToWrap = BouncyKey.accessKey(pKeyToWrap);
-        return wrapBytes(pKey, myKeyToWrap.getKey());
+        return secureBytes(pKey, myKeyToWrap.getKey());
     }
 
     @Override
-    public <T> BouncyKey<T> unwrapKey(final GordianKey<GordianSymKeyType> pKey,
-                                      final byte[] pBytes,
-                                      final T pKeyType) throws OceanusException {
+    protected <T> BouncyKey<T> deriveKey(final GordianKey<GordianSymKeyType> pKey,
+                                         final byte[] pBytes,
+                                         final T pKeyType) throws OceanusException {
         /* Unwrap the bytes */
-        byte[] myBytes = unwrapBytes(pKey, pBytes);
+        byte[] myBytes = deriveBytes(pKey, pBytes);
 
         /* Generate the key */
         BouncyKeyGenerator<T> myGenerator = getFactory().getKeyGenerator(pKeyType);

@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -216,12 +218,23 @@ public class GordianIdManager {
 
     /**
      * Obtain symKeyType from external SymKeyId.
-     * @param pId the external id
+     * @param pExternalId the external id
      * @return the symKeyType
      * @throws OceanusException on error
      */
-    protected GordianSymKeyType deriveSymKeyTypeFromExternalId(final int pId) throws OceanusException {
-        return deriveTypeFromExternalId(pId, theSymKeys);
+    private GordianSymKeyType deriveSymKeyTypeFromExternalId(final long pExternalId) throws OceanusException {
+        int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
+        return deriveSymKeyTypeFromEncodedId(myEncoded);
+    }
+
+    /**
+     * Obtain symKeyType from encoded SymKeyId.
+     * @param pEncodedId the encoded id
+     * @return the symKeyType
+     * @throws OceanusException on error
+     */
+    private GordianSymKeyType deriveSymKeyTypeFromEncodedId(final int pEncodedId) throws OceanusException {
+        return deriveTypeFromEncodedId(pEncodedId, theSymKeys);
     }
 
     /**
@@ -230,8 +243,19 @@ public class GordianIdManager {
      * @return the external id
      * @throws OceanusException on error
      */
-    protected int deriveExternalIdFromSymKeyType(final GordianSymKeyType pKey) throws OceanusException {
-        return deriveExternalIdFromType(pKey, theSymKeys);
+    private long deriveExternalIdFromSymKeyType(final GordianSymKeyType pKey) throws OceanusException {
+        int myEncoded = deriveEncodedIdFromSymKeyType(pKey);
+        return TethysDataConverter.knuthEncode(myEncoded);
+    }
+
+    /**
+     * Obtain encoded SymKeyId.
+     * @param pKey the symKeyType
+     * @return the encoded id
+     * @throws OceanusException on error
+     */
+    private int deriveEncodedIdFromSymKeyType(final GordianSymKeyType pKey) throws OceanusException {
+        return deriveEncodedIdFromType(pKey, theSymKeys);
     }
 
     /**
@@ -248,12 +272,23 @@ public class GordianIdManager {
 
     /**
      * Obtain streamKeyType from external StreamKeyId.
-     * @param pId the external id
+     * @param pExternalId the external id
      * @return the streamKeyType
      * @throws OceanusException on error
      */
-    private GordianStreamKeyType deriveStreamKeyTypeFromExternalId(final int pId) throws OceanusException {
-        return deriveTypeFromExternalId(pId, theStreamKeys);
+    private GordianStreamKeyType deriveStreamKeyTypeFromExternalId(final long pExternalId) throws OceanusException {
+        int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
+        return deriveStreamKeyTypeFromEncodedId(myEncoded);
+    }
+
+    /**
+     * Obtain streamKeyType from encoded StreamKeyId.
+     * @param pEncodedId the encoded id
+     * @return the streamKeyType
+     * @throws OceanusException on error
+     */
+    private GordianStreamKeyType deriveStreamKeyTypeFromEncodedId(final int pEncodedId) throws OceanusException {
+        return deriveTypeFromEncodedId(pEncodedId, theStreamKeys);
     }
 
     /**
@@ -262,8 +297,19 @@ public class GordianIdManager {
      * @return the external id
      * @throws OceanusException on error
      */
-    private int deriveExternalIdFromStreamKeyType(final GordianStreamKeyType pKey) throws OceanusException {
-        return deriveExternalIdFromType(pKey, theStreamKeys);
+    private long deriveExternalIdFromStreamKeyType(final GordianStreamKeyType pKey) throws OceanusException {
+        int myEncoded = deriveEncodedIdFromStreamKeyType(pKey);
+        return TethysDataConverter.knuthEncode(myEncoded);
+    }
+
+    /**
+     * Obtain encoded StreamKeyId.
+     * @param pKey the streamKeyType
+     * @return the encoded id
+     * @throws OceanusException on error
+     */
+    private int deriveEncodedIdFromStreamKeyType(final GordianStreamKeyType pKey) throws OceanusException {
+        return deriveEncodedIdFromType(pKey, theStreamKeys);
     }
 
     /**
@@ -330,23 +376,34 @@ public class GordianIdManager {
 
     /**
      * Obtain digestSpec from external DigestSpecId.
-     * @param pId the external id
+     * @param pExternalId the external id
      * @return the digestSpec
      * @throws OceanusException on error
      */
-    protected GordianDigestSpec deriveDigestSpecFromExternalId(final int pId) throws OceanusException {
+    private GordianDigestSpec deriveDigestSpecFromExternalId(final long pExternalId) throws OceanusException {
+        int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
+        return deriveDigestSpecFromEncodedId(myEncoded);
+    }
+
+    /**
+     * Obtain digestSpec from encodedId.
+     * @param pEncodedId the encoded id
+     * @return the digestSpec
+     * @throws OceanusException on error
+     */
+    private GordianDigestSpec deriveDigestSpecFromEncodedId(final int pEncodedId) throws OceanusException {
         /* Isolate id Components */
-        int myId = pId & TethysDataConverter.NYBBLE_MASK;
-        int myLenCode = pId >> TethysDataConverter.NYBBLE_SHIFT;
+        int myId = pEncodedId & TethysDataConverter.NYBBLE_MASK;
+        int myLenCode = pEncodedId >> TethysDataConverter.NYBBLE_SHIFT;
         int myStateCode = myLenCode >> TethysDataConverter.NYBBLE_SHIFT;
         myLenCode &= TethysDataConverter.NYBBLE_MASK;
 
         /* Translate components */
-        GordianDigestType myType = deriveTypeFromExternalId(myId, theDigests);
-        GordianLength myLength = deriveLengthFromExternalId(myLenCode);
+        GordianDigestType myType = deriveDigestTypeFromEncodedId(myId);
+        GordianLength myLength = deriveLengthFromEncodedId(myLenCode);
         GordianLength myState = myStateCode == 0
                                                  ? null
-                                                 : deriveLengthFromExternalId(myStateCode);
+                                                 : deriveLengthFromEncodedId(myStateCode);
 
         /* Create DigestSpec */
         return new GordianDigestSpec(myType, myState, myLength);
@@ -358,36 +415,47 @@ public class GordianIdManager {
      * @return the external id
      * @throws OceanusException on error
      */
-    protected int deriveExternalIdFromDigestSpec(final GordianDigestSpec pDigestSpec) throws OceanusException {
-        int myCode = deriveExternalIdFromDigestType(pDigestSpec.getDigestType());
+    private long deriveExternalIdFromDigestSpec(final GordianDigestSpec pDigestSpec) throws OceanusException {
+        int myCode = deriveEncodedIdFromDigestSpec(pDigestSpec);
+        return TethysDataConverter.knuthEncode(myCode);
+    }
+
+    /**
+     * Obtain encoded DigestSpecId.
+     * @param pDigestSpec the digestSpec
+     * @return the encoded id
+     * @throws OceanusException on error
+     */
+    private int deriveEncodedIdFromDigestSpec(final GordianDigestSpec pDigestSpec) throws OceanusException {
+        int myCode = deriveEncodedIdFromDigestType(pDigestSpec.getDigestType());
         GordianLength myState = pDigestSpec.getStateLength();
         int myLenCode = myState == null
                                         ? 0
-                                        : deriveExternalIdFromLength(myState);
+                                        : deriveEncodedIdFromLength(myState);
         myLenCode <<= TethysDataConverter.NYBBLE_SHIFT;
-        myLenCode += deriveExternalIdFromLength(pDigestSpec.getDigestLength());
+        myLenCode += deriveEncodedIdFromLength(pDigestSpec.getDigestLength());
         myCode += myLenCode << TethysDataConverter.NYBBLE_SHIFT;
         return myCode;
     }
 
     /**
-     * Obtain external DigestTypeId.
+     * Obtain encoded DigestTypeId.
      * @param pDigest the digestType
-     * @return the external id
+     * @return the encoded id
      * @throws OceanusException on error
      */
-    private int deriveExternalIdFromDigestType(final GordianDigestType pDigest) throws OceanusException {
-        return deriveExternalIdFromType(pDigest, theDigests);
+    private int deriveEncodedIdFromDigestType(final GordianDigestType pDigest) throws OceanusException {
+        return deriveEncodedIdFromType(pDigest, theDigests);
     }
 
     /**
-     * Obtain digestType from external digestId.
-     * @param pId the external id
+     * Obtain digestType from encoded Id.
+     * @param pEncodedId the encoded id
      * @return the digestType
      * @throws OceanusException on error
      */
-    private GordianDigestType deriveDigestTypeFromExternalId(final int pId) throws OceanusException {
-        return deriveTypeFromExternalId(pId, theDigests);
+    private GordianDigestType deriveDigestTypeFromEncodedId(final int pEncodedId) throws OceanusException {
+        return deriveTypeFromEncodedId(pEncodedId, theDigests);
     }
 
     /**
@@ -425,29 +493,32 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain macSpec from external MacSpecId.
-     * @param pId the external id
+     * Obtain macSpec from external macSpecId.
+     * @param pExternalId the external id
      * @return the macSpec
      * @throws OceanusException on error
      */
-    private GordianMacSpec deriveMacSpecFromExternalId(final int pId) throws OceanusException {
+    private GordianMacSpec deriveMacSpecFromExternalId(final long pExternalId) throws OceanusException {
+        /* Decode the id */
+        int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
+
         /* Isolate id Components */
-        int myId = pId & TethysDataConverter.NYBBLE_MASK;
-        int myCode = pId >> TethysDataConverter.NYBBLE_SHIFT;
+        int myId = myEncoded & TethysDataConverter.NYBBLE_MASK;
+        int myCode = myEncoded >> TethysDataConverter.NYBBLE_SHIFT;
 
         /* Determine MacType */
-        GordianMacType myMacType = deriveMacTypeFromExternalId(myId);
+        GordianMacType myMacType = deriveMacTypeFromEncodedId(myId);
 
         /* Switch on the MacType */
         switch (myMacType) {
             case HMAC:
-                return GordianMacSpec.hMac(deriveDigestSpecFromExternalId(myCode));
+                return GordianMacSpec.hMac(deriveDigestSpecFromEncodedId(myCode));
             case GMAC:
             case CMAC:
             case POLY1305:
-                return new GordianMacSpec(myMacType, deriveSymKeyTypeFromExternalId(myCode));
+                return new GordianMacSpec(myMacType, deriveSymKeyTypeFromEncodedId(myCode));
             case SKEIN:
-                GordianDigestSpec mySpec = deriveDigestSpecFromExternalId(myCode);
+                GordianDigestSpec mySpec = deriveDigestSpecFromEncodedId(myCode);
                 return GordianMacSpec.skeinMac(mySpec.getStateLength(), mySpec.getDigestLength());
             default:
                 return new GordianMacSpec(myMacType);
@@ -455,128 +526,200 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain macType from external MacId.
-     * @param pId the external id
-     * @return the macType
-     * @throws OceanusException on error
-     */
-    private GordianMacType deriveMacTypeFromExternalId(final int pId) throws OceanusException {
-        return deriveTypeFromExternalId(pId, theMacs);
-    }
-
-    /**
-     * Obtain external MacSpecId.
+     * Obtain external macSpecId.
      * @param pMacSpec the macSpec
      * @return the external id
      * @throws OceanusException on error
      */
-    private int deriveExternalIdFromMacSpec(final GordianMacSpec pMacSpec) throws OceanusException {
+    private long deriveExternalIdFromMacSpec(final GordianMacSpec pMacSpec) throws OceanusException {
         /* Determine base code */
         GordianMacType myMacType = pMacSpec.getMacType();
-        int myCode = deriveExternalIdFromMacType(myMacType);
+        int myCode = deriveEncodedIdFromMacType(myMacType);
 
         /* Switch on MacType */
         switch (myMacType) {
             case HMAC:
             case SKEIN:
-                myCode += deriveExternalIdFromDigestSpec(pMacSpec.getDigestSpec()) << TethysDataConverter.NYBBLE_SHIFT;
+                myCode += deriveEncodedIdFromDigestSpec(pMacSpec.getDigestSpec()) << TethysDataConverter.NYBBLE_SHIFT;
                 break;
             case GMAC:
             case CMAC:
             case POLY1305:
-                myCode += deriveExternalIdFromSymKeyType(pMacSpec.getKeyType()) << TethysDataConverter.NYBBLE_SHIFT;
+                myCode += deriveEncodedIdFromSymKeyType(pMacSpec.getKeyType()) << TethysDataConverter.NYBBLE_SHIFT;
                 break;
             default:
                 break;
         }
 
         /* Return the code */
-        return myCode;
+        return TethysDataConverter.knuthEncode(myCode);
     }
 
     /**
-     * Obtain external MacId.
+     * Obtain macType from encoded Id.
+     * @param pEncodedId the encoded id
+     * @return the macType
+     * @throws OceanusException on error
+     */
+    private GordianMacType deriveMacTypeFromEncodedId(final int pEncodedId) throws OceanusException {
+        return deriveTypeFromEncodedId(pEncodedId, theMacs);
+    }
+
+    /**
+     * Obtain encoded MacId.
      * @param pMac the macType
+     * @return the encoded id
+     * @throws OceanusException on error
+     */
+    private int deriveEncodedIdFromMacType(final GordianMacType pMac) throws OceanusException {
+        return deriveEncodedIdFromType(pMac, theMacs);
+    }
+
+    /**
+     * Obtain cipherSpec from external cipherSpecId.
+     * @param pExternalId the external id
+     * @return the cipherSpec
+     * @throws OceanusException on error
+     */
+    private GordianSymCipherSpec deriveSymCipherSpecFromExternalId(final long pExternalId) throws OceanusException {
+        /* Decode the id */
+        int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
+
+        /* Isolate id Components */
+        int myId = myEncoded & TethysDataConverter.NYBBLE_MASK;
+        int myModeCode = myEncoded >> TethysDataConverter.NYBBLE_SHIFT;
+        int myPaddingCode = myModeCode >> TethysDataConverter.NYBBLE_SHIFT;
+        myModeCode &= TethysDataConverter.NYBBLE_MASK;
+
+        /* Determine KeyType */
+        GordianSymKeyType myType = deriveSymKeyTypeFromEncodedId(myId);
+        GordianCipherMode myMode = deriveCipherModeFromEncodedId(myModeCode);
+        GordianPadding myPadding = derivePaddingFromEncodedId(myPaddingCode);
+
+        /* Switch on the MacType */
+        return new GordianSymCipherSpec(myType, myMode, myPadding);
+    }
+
+    /**
+     * Obtain cipherSpec from external cipherSpecId.
+     * @param pExternalId the external id
+     * @return the cipherSpec
+     * @throws OceanusException on error
+     */
+    private GordianStreamCipherSpec deriveStreamCipherSpecFromExternalId(final long pExternalId) throws OceanusException {
+        /* Decode the id */
+        int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
+
+        /* Derive StreamCipherSpec */
+        GordianStreamKeyType myType = deriveStreamKeyTypeFromEncodedId(myEncoded);
+        return GordianStreamCipherSpec.stream(myType);
+    }
+
+    /**
+     * Obtain external cipherSpecId.
+     * @param pCipherSpec the cipherSpec
      * @return the external id
      * @throws OceanusException on error
      */
-    private int deriveExternalIdFromMacType(final GordianMacType pMac) throws OceanusException {
-        return deriveExternalIdFromType(pMac, theMacs);
+    private long deriveExternalIdFromCipherSpec(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+        /* Derive the encoded id */
+        int myCode = deriveEncodedIdFromPadding(pCipherSpec.getPadding());
+        myCode <<= TethysDataConverter.NYBBLE_SHIFT;
+        myCode += deriveEncodedIdFromCipherMode(pCipherSpec.getCipherMode());
+        myCode <<= TethysDataConverter.NYBBLE_SHIFT;
+        myCode += deriveEncodedIdFromSymKeyType(pCipherSpec.getKeyType());
+
+        /* Return the code */
+        return TethysDataConverter.knuthEncode(myCode);
     }
 
     /**
-     * Obtain external CipherMode.
-     * @param pMode the cipherMode
+     * Obtain external cipherSpecId.
+     * @param pCipherSpec the cipherSpec
      * @return the external id
+     * @throws OceanusException on error
      */
-    protected int deriveExternalIdFromCipherMode(final GordianCipherMode pMode) {
+    private long deriveExternalIdFromCipherSpec(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+        /* Derive the encoded id */
+        int myCode = deriveEncodedIdFromStreamKeyType(pCipherSpec.getKeyType());
+
+        /* Return the code */
+        return TethysDataConverter.knuthEncode(myCode);
+    }
+
+    /**
+     * Obtain encoded CipherMode.
+     * @param pMode the cipherMode
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromCipherMode(final GordianCipherMode pMode) {
         return pMode.ordinal() + 1;
     }
 
     /**
-     * Obtain cipherMode from external ModeId.
-     * @param pId the external id
+     * Obtain cipherMode from encoded id.
+     * @param pEncodedId the encoded id
      * @return the mode
      * @throws OceanusException on error
      */
-    private static GordianCipherMode deriveCipherModeFromExternalId(final int pId) throws OceanusException {
-        int myId = pId - 1;
+    private static GordianCipherMode deriveCipherModeFromEncodedId(final int pEncodedId) throws OceanusException {
+        int myId = pEncodedId - 1;
         for (GordianCipherMode myMode : GordianCipherMode.values()) {
             if (myMode.ordinal() == myId) {
                 return myMode;
             }
         }
-        throw new GordianDataException("Invalid modeId: " + pId);
+        throw new GordianDataException("Invalid modeId: " + pEncodedId);
     }
 
     /**
-     * Obtain external Padding.
+     * Obtain encoded Padding.
      * @param pPadding the padding
-     * @return the external id
+     * @return the encodedId
      */
-    protected int deriveExternalIdFromPadding(final GordianPadding pPadding) {
+    private static int deriveEncodedIdFromPadding(final GordianPadding pPadding) {
         return pPadding.ordinal() + 1;
     }
 
     /**
-     * Obtain padding from external PaddingId.
-     * @param pId the external id
+     * Obtain padding from encoded id.
+     * @param pEncodedId the encoded id
      * @return the padding
      * @throws OceanusException on error
      */
-    private static GordianPadding derivePaddingFromExternalId(final int pId) throws OceanusException {
-        int myId = pId - 1;
+    private static GordianPadding derivePaddingFromEncodedId(final int pEncodedId) throws OceanusException {
+        int myId = pEncodedId - 1;
         for (GordianPadding myPadding : GordianPadding.values()) {
             if (myPadding.ordinal() == myId) {
                 return myPadding;
             }
         }
-        throw new GordianDataException("Invalid paddingId: " + pId);
+        throw new GordianDataException("Invalid paddingId: " + pEncodedId);
     }
 
     /**
-     * Obtain external Length.
+     * Obtain encoded Length.
      * @param pLength the length
-     * @return the external id
+     * @return the encoded id
      */
-    protected int deriveExternalIdFromLength(final GordianLength pLength) {
+    private static int deriveEncodedIdFromLength(final GordianLength pLength) {
         return pLength.ordinal() + 1;
     }
 
     /**
-     * Obtain cipherMode from external ModeId.
-     * @param pId the external id
-     * @return the mode
+     * Obtain length from encoded id.
+     * @param pEncodedId the encoded id
+     * @return the length
      * @throws OceanusException on error
      */
-    private static GordianLength deriveLengthFromExternalId(final int pId) throws OceanusException {
-        int myId = pId - 1;
+    private static GordianLength deriveLengthFromEncodedId(final int pEncodedId) throws OceanusException {
+        int myId = pEncodedId - 1;
         for (GordianLength myLength : GordianLength.values()) {
             if (myLength.ordinal() == myId) {
                 return myLength;
             }
         }
-        throw new GordianDataException("Invalid lengthId: " + pId);
+        throw new GordianDataException("Invalid lengthId: " + pEncodedId);
     }
 
     /**
@@ -587,34 +730,25 @@ public class GordianIdManager {
      * @return the Type
      * @throws OceanusException on error
      */
-    protected <T> T deriveTypeFromExternalId(final int pId,
+    protected <T> T deriveTypeFromExternalId(final long pId,
                                              final Class<T> pTypeClass) throws OceanusException {
         if (GordianDigestSpec.class.equals(pTypeClass)) {
             return pTypeClass.cast(deriveDigestSpecFromExternalId(pId));
         }
-        if (GordianDigestType.class.equals(pTypeClass)) {
-            return pTypeClass.cast(deriveDigestTypeFromExternalId(pId));
+        if (GordianSymCipherSpec.class.equals(pTypeClass)) {
+            return pTypeClass.cast(deriveSymCipherSpecFromExternalId(pId));
+        }
+        if (GordianStreamCipherSpec.class.equals(pTypeClass)) {
+            return pTypeClass.cast(deriveStreamCipherSpecFromExternalId(pId));
+        }
+        if (GordianMacSpec.class.equals(pTypeClass)) {
+            return pTypeClass.cast(deriveMacSpecFromExternalId(pId));
         }
         if (GordianSymKeyType.class.equals(pTypeClass)) {
             return pTypeClass.cast(deriveSymKeyTypeFromExternalId(pId));
         }
         if (GordianStreamKeyType.class.equals(pTypeClass)) {
             return pTypeClass.cast(deriveStreamKeyTypeFromExternalId(pId));
-        }
-        if (GordianMacSpec.class.equals(pTypeClass)) {
-            return pTypeClass.cast(deriveMacSpecFromExternalId(pId));
-        }
-        if (GordianMacType.class.equals(pTypeClass)) {
-            return pTypeClass.cast(deriveMacTypeFromExternalId(pId));
-        }
-        if (GordianCipherMode.class.equals(pTypeClass)) {
-            return pTypeClass.cast(deriveCipherModeFromExternalId(pId));
-        }
-        if (GordianPadding.class.equals(pTypeClass)) {
-            return pTypeClass.cast(derivePaddingFromExternalId(pId));
-        }
-        if (GordianLength.class.equals(pTypeClass)) {
-            return pTypeClass.cast(deriveLengthFromExternalId(pId));
         }
         throw new GordianDataException("Invalid class: " + pTypeClass.getCanonicalName());
     }
@@ -626,33 +760,24 @@ public class GordianIdManager {
      * @return the externalId
      * @throws OceanusException on error
      */
-    protected <T> int deriveExternalIdFromType(final T pType) throws OceanusException {
+    protected <T> long deriveExternalIdFromType(final T pType) throws OceanusException {
         if (GordianDigestSpec.class.isInstance(pType)) {
             return deriveExternalIdFromDigestSpec((GordianDigestSpec) pType);
         }
-        if (GordianDigestType.class.isInstance(pType)) {
-            return deriveExternalIdFromDigestType((GordianDigestType) pType);
+        if (GordianSymCipherSpec.class.isInstance(pType)) {
+            return deriveExternalIdFromCipherSpec((GordianSymCipherSpec) pType);
+        }
+        if (GordianStreamCipherSpec.class.isInstance(pType)) {
+            return deriveExternalIdFromCipherSpec((GordianStreamCipherSpec) pType);
+        }
+        if (GordianMacSpec.class.isInstance(pType)) {
+            return deriveExternalIdFromMacSpec((GordianMacSpec) pType);
         }
         if (GordianSymKeyType.class.isInstance(pType)) {
             return deriveExternalIdFromSymKeyType((GordianSymKeyType) pType);
         }
         if (GordianStreamKeyType.class.isInstance(pType)) {
             return deriveExternalIdFromStreamKeyType((GordianStreamKeyType) pType);
-        }
-        if (GordianMacSpec.class.isInstance(pType)) {
-            return deriveExternalIdFromMacSpec((GordianMacSpec) pType);
-        }
-        if (GordianMacType.class.isInstance(pType)) {
-            return deriveExternalIdFromMacType((GordianMacType) pType);
-        }
-        if (GordianCipherMode.class.isInstance(pType)) {
-            return deriveExternalIdFromCipherMode((GordianCipherMode) pType);
-        }
-        if (GordianPadding.class.isInstance(pType)) {
-            return deriveExternalIdFromPadding((GordianPadding) pType);
-        }
-        if (GordianLength.class.isInstance(pType)) {
-            return deriveExternalIdFromLength((GordianLength) pType);
         }
         throw new GordianDataException("Invalid type: " + pType.getClass().getCanonicalName());
     }
@@ -666,8 +791,8 @@ public class GordianIdManager {
      * @throws OceanusException on error
      */
 
-    private static <E extends Enum<E>> int deriveExternalIdFromType(final E pType,
-                                                                    final E[] pTypes) throws OceanusException {
+    private static <E extends Enum<E>> int deriveEncodedIdFromType(final E pType,
+                                                                   final E[] pTypes) throws OceanusException {
         /* Loop through the types */
         int myNumTypes = pTypes.length;
         for (int i = 0; i < myNumTypes; i++) {
@@ -682,15 +807,15 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain type by Id.
+     * Obtain type from encoded Id.
      * @param <E> the data type
      * @param pId the Id.
      * @param pTypes the type list
      * @return the type
      * @throws OceanusException on error
      */
-    private static <E extends Enum<E>> E deriveTypeFromExternalId(final int pId,
-                                                                  final E[] pTypes) throws OceanusException {
+    private static <E extends Enum<E>> E deriveTypeFromEncodedId(final int pId,
+                                                                 final E[] pTypes) throws OceanusException {
         /* If the item is in range */
         int myNumTypes = pTypes.length;
         if ((pId >= 0)

@@ -49,7 +49,7 @@ public class PrometheusTableDataKeys
 
         /* Define the columns */
         myTableDef.addReferenceColumn(DataKey.FIELD_KEYSET, PrometheusTableDataKeySet.TABLE_NAME);
-        myTableDef.addIntegerColumn(DataKey.FIELD_KEYTYPE);
+        myTableDef.addLongColumn(DataKey.FIELD_KEYTYPE);
         myTableDef.addBinaryColumn(DataKey.FIELD_KEYDEF, DataKey.KEYLEN);
     }
 
@@ -66,7 +66,7 @@ public class PrometheusTableDataKeys
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
         myValues.addValue(DataKey.FIELD_KEYSET, myTableDef.getIntegerValue(DataKey.FIELD_KEYSET));
-        myValues.addValue(DataKey.FIELD_KEYTYPE, myTableDef.getIntegerValue(DataKey.FIELD_KEYTYPE));
+        myValues.addValue(DataKey.FIELD_KEYTYPE, myTableDef.getLongValue(DataKey.FIELD_KEYTYPE));
         myValues.addValue(DataKey.FIELD_KEYDEF, myTableDef.getBinaryValue(DataKey.FIELD_KEYDEF));
 
         /* Return the values */
@@ -81,7 +81,7 @@ public class PrometheusTableDataKeys
         if (DataKey.FIELD_KEYSET.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getDataKeySetId());
         } else if (DataKey.FIELD_KEYTYPE.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getKeyTypeId());
+            myTableDef.setLongValue(iField, pItem.getKeyTypeId());
         } else if (DataKey.FIELD_KEYDEF.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getSecuredKeyDef());
         } else {

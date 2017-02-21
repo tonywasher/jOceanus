@@ -30,8 +30,8 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -48,13 +48,13 @@ public final class BouncyStreamKeyCipher
     /**
      * Constructor.
      * @param pFactory the Security Factory
-     * @param pKeyType the keyType
+     * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
     protected BouncyStreamKeyCipher(final BouncyFactory pFactory,
-                                    final GordianStreamKeyType pKeyType,
+                                    final GordianStreamCipherSpec pCipherSpec,
                                     final StreamCipher pCipher) {
-        super(pFactory, pKeyType, null, GordianPadding.NONE);
+        super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
 

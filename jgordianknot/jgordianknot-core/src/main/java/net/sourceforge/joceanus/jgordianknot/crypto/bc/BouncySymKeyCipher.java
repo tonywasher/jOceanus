@@ -31,9 +31,8 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -50,17 +49,13 @@ public final class BouncySymKeyCipher
     /**
      * Constructor.
      * @param pFactory the Security Factory
-     * @param pKeyType the keyType
-     * @param pMode the cipher mode
-     * @param pPadding the padding
+     * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
     protected BouncySymKeyCipher(final BouncyFactory pFactory,
-                                 final GordianSymKeyType pKeyType,
-                                 final GordianCipherMode pMode,
-                                 final GordianPadding pPadding,
+                                 final GordianSymCipherSpec pCipherSpec,
                                  final BufferedBlockCipher pCipher) {
-        super(pFactory, pKeyType, pMode, pPadding);
+        super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
 
@@ -70,12 +65,25 @@ public final class BouncySymKeyCipher
     }
 
     @Override
+    public GordianSymCipherSpec getCipherSpec() {
+        return (GordianSymCipherSpec) super.getCipherSpec();
+    }
+
+    /**
+     * Do we need an initVector.
+     * @return true/false
+     */
+    private boolean needsIV() {
+        return getCipherSpec().needsIV();
+    }
+
+    @Override
     public void initCipher(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
         /* IV bytes */
         byte[] myIV = null;
 
         /* If we need an IV */
-        if (getMode().needsIV()) {
+        if (needsIV()) {
             /* Create a random IV */
             int myLen = theCipher.getBlockSize();
             myIV = new byte[myLen];
@@ -93,7 +101,7 @@ public final class BouncySymKeyCipher
         /* Access and validate the key */
         BouncyKey<GordianSymKeyType> myKey = BouncyKey.accessKey(pKey);
         checkValidKey(pKey);
-        boolean useIV = getMode().needsIV();
+        boolean useIV = needsIV();
 
         /* Initialise the cipher */
         CipherParameters myParms = new KeyParameter(myKey.getKey());

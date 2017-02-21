@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -451,15 +453,11 @@ public abstract class GordianFactory {
 
     /**
      * create GordianSymCipher.
-     * @param pKeyType the KeyType
-     * @param pMode the cipher mode
-     * @param pPadding the padding mode
+     * @param pCipherSpec the cipherSpec
      * @return the new Cipher
      * @throws OceanusException on error
      */
-    public abstract GordianCipher<GordianSymKeyType> createSymKeyCipher(GordianSymKeyType pKeyType,
-                                                                        GordianCipherMode pMode,
-                                                                        GordianPadding pPadding) throws OceanusException;
+    public abstract GordianCipher<GordianSymKeyType> createSymKeyCipher(GordianSymCipherSpec pCipherSpec) throws OceanusException;
 
     /**
      * Obtain predicate for supported SymKeyTypes.
@@ -475,13 +473,11 @@ public abstract class GordianFactory {
 
     /**
      * create GordianAADCipher.
-     * @param pKeyType the KeyType
-     * @param pMode the cipher mode
+     * @param pCipherSpec the cipherSpec
      * @return the new Cipher
      * @throws OceanusException on error
      */
-    public abstract GordianAADCipher createAADCipher(GordianSymKeyType pKeyType,
-                                                     GordianCipherMode pMode) throws OceanusException;
+    public abstract GordianAADCipher createAADCipher(GordianSymCipherSpec pCipherSpec) throws OceanusException;
 
     /**
      * generate random GordianStreamKeyType.
@@ -507,11 +503,11 @@ public abstract class GordianFactory {
 
     /**
      * create GordianStreamCipher.
-     * @param pKeyType the KeyType
+     * @param pCipherSpec the cipherSpec
      * @return the new Cipher
      * @throws OceanusException on error
      */
-    public abstract GordianCipher<GordianStreamKeyType> createStreamKeyCipher(GordianStreamKeyType pKeyType) throws OceanusException;
+    public abstract GordianCipher<GordianStreamKeyType> createStreamKeyCipher(GordianStreamCipherSpec pCipherSpec) throws OceanusException;
 
     /**
      * Obtain predicate for supported StreamKeyTypes.
@@ -525,7 +521,7 @@ public abstract class GordianFactory {
      * @return the new Cipher
      * @throws OceanusException on error
      */
-    public abstract GordianWrapCipher createWrapCipher(GordianSymKeyType pKeyType) throws OceanusException;
+    protected abstract GordianWrapCipher createWrapCipher(GordianSymKeyType pKeyType) throws OceanusException;
 
     /**
      * Obtain predicate for signatures.

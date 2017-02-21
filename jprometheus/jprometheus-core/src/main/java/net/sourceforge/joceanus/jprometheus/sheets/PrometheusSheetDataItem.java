@@ -483,6 +483,22 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
     }
 
     /**
+     * Access a long from the WorkSheet.
+     * @param pOffset the column offset
+     * @return the long
+     * @throws OceanusException on error
+     */
+    protected Long loadLong(final int pOffset) throws OceanusException {
+        /* Access the cells by reference */
+        MetisDataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+
+        /* Return the value */
+        return (myCell != null)
+                                ? myCell.getLongValue()
+                                : null;
+    }
+
+    /**
      * Access a boolean from the WorkSheet.
      * @param pOffset the column offset
      * @return the date
@@ -669,6 +685,22 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
             /* Create the cell and set its value */
             MetisDataCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setIntegerValue(pValue);
+        }
+    }
+
+    /**
+     * Write an integer to the WorkSheet.
+     * @param pOffset the column offset
+     * @param pValue the integer
+     * @throws OceanusException on error
+     */
+    protected void writeLong(final int pOffset,
+                             final Long pValue) throws OceanusException {
+        /* If we have non-null value */
+        if (pValue != null) {
+            /* Create the cell and set its value */
+            MetisDataCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
+            myCell.setLongValue(pValue);
         }
     }
 

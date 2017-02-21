@@ -236,6 +236,13 @@ public class MetisOasisCell
     }
 
     @Override
+    public Long getLongValue() throws OceanusException {
+        return Value.FLOAT.equals(getValueType())
+                                                  ? theOasisCell.getOfficeValueAttribute().longValue()
+                                                  : null;
+    }
+
+    @Override
     public TethysMoney getMoneyValue() throws OceanusException {
         switch (getValueType()) {
             case CURRENCY:
@@ -384,6 +391,20 @@ public class MetisOasisCell
 
     @Override
     protected void setInteger(final Integer pValue) throws OceanusException {
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Remove existing content */
+            removeCellContent();
+
+            /* Set value type and value */
+            theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.FLOAT.toString());
+            theOasisCell.setOfficeValueAttribute(pValue.doubleValue());
+            theCellMap.getRow().setCellStyle(theOasisCell, pValue);
+        }
+    }
+
+    @Override
+    protected void setLong(final Long pValue) throws OceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */

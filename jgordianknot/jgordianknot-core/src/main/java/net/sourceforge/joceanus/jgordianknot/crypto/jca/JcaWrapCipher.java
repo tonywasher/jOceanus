@@ -49,19 +49,19 @@ public class JcaWrapCipher
     }
 
     @Override
-    public byte[] wrapKey(final GordianKey<GordianSymKeyType> pKey,
-                          final GordianKey<?> pKeyToWrap) throws OceanusException {
+    protected byte[] secureKey(final GordianKey<GordianSymKeyType> pKey,
+                               final GordianKey<?> pKeyToWrap) throws OceanusException {
         /* Access the keyToWrap */
         JcaKey<?> myKeyToWrap = JcaKey.accessKey(pKeyToWrap);
-        return wrapBytes(pKey, myKeyToWrap.getKey().getEncoded());
+        return secureBytes(pKey, myKeyToWrap.getKey().getEncoded());
     }
 
     @Override
-    public <T> JcaKey<T> unwrapKey(final GordianKey<GordianSymKeyType> pKey,
-                                   final byte[] pBytes,
-                                   final T pKeyType) throws OceanusException {
+    protected <T> JcaKey<T> deriveKey(final GordianKey<GordianSymKeyType> pKey,
+                                      final byte[] pBytes,
+                                      final T pKeyType) throws OceanusException {
         /* Unwrap the bytes */
-        byte[] myBytes = unwrapBytes(pKey, pBytes);
+        byte[] myBytes = deriveBytes(pKey, pBytes);
 
         /* Generate the key */
         JcaKeyGenerator<T> myGenerator = getFactory().getKeyGenerator(pKeyType);

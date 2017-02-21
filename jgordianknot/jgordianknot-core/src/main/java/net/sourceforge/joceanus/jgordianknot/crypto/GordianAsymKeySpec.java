@@ -190,7 +190,7 @@ public class GordianAsymKeySpec {
             return false;
         }
 
-        /* Access the target Key */
+        /* Access the target KeySpec */
         GordianAsymKeySpec myThat = (GordianAsymKeySpec) pThat;
 
         /* Check KeyType */
@@ -199,23 +199,17 @@ public class GordianAsymKeySpec {
         }
 
         /* Match subfields */
-        if (theLength != null) {
-            return theLength.equals(myThat.getModulus());
-        }
-        if (theCurve != null) {
-            return theCurve.equals(myThat.getCurve());
-        }
-        return true;
+        return theLength == myThat.getModulus()
+               && theCurve == myThat.getCurve();
     }
 
     @Override
     public int hashCode() {
-        int hashCode = theKeyType.ordinal() << TethysDataConverter.BYTE_SHIFT;
+        int hashCode = theKeyType.ordinal() + 1 << TethysDataConverter.BYTE_SHIFT;
         if (theLength != null) {
-            hashCode += theLength.ordinal();
-        }
-        if (theCurve != null) {
-            hashCode += theCurve.ordinal();
+            hashCode += theLength.ordinal() + 1;
+        } else if (theCurve != null) {
+            hashCode += theCurve.ordinal() + 1;
         }
         return hashCode;
     }

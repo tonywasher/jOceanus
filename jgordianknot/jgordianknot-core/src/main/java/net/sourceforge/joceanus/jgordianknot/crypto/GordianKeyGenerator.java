@@ -123,6 +123,62 @@ public abstract class GordianKeyGenerator<T> {
     protected abstract GordianKey<T> buildKeyFromBytes(byte[] pBytes);
 
     /**
+     * Secure key.
+     * @param pKeyToSecure the Key to secure
+     * @param pKeySet the keySet to use to secure Key
+     * @return the securedKey
+     * @throws OceanusException on error
+     */
+    public byte[] secureKey(final GordianKey<?> pKeyToSecure,
+                            final GordianKeySet pKeySet) throws OceanusException {
+        return pKeySet.secureKey(pKeyToSecure);
+    }
+
+    /**
+     * Secure Key.
+     * @param pKeyToSecure the Key to secure
+     * @param pKey the key to use to secure Key
+     * @return the securedKey
+     * @throws OceanusException on error
+     */
+    public byte[] secureKey(final GordianKey<?> pKeyToSecure,
+                            final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
+        GordianWrapCipher myCipher = theFactory.createWrapCipher(pKey.getKeyType());
+        return myCipher.secureKey(pKey, pKeyToSecure);
+    }
+
+    /**
+     * Derive the key.
+     * @param <K> type of key to be derived
+     * @param pSecuredKey the secured key
+     * @param pKeyType the type of key to be derived
+     * @param pKeySet the keySet to use to derive privateKey
+     * @return the derived key
+     * @throws OceanusException on error
+     */
+    public <K> GordianKey<K> deriveKey(final byte[] pSecuredKey,
+                                       final K pKeyType,
+                                       final GordianKeySet pKeySet) throws OceanusException {
+        return pKeySet.deriveKey(pSecuredKey, pKeyType);
+    }
+
+    /**
+     * Create the keyPair from the PKCS8/X509 encodings.
+     * @param <K> type of key to be derived
+     * @param pSecuredKey the secured key
+     * @param pKeyType the type of key to be derived
+     * @param pKey the key to use to derive Key
+     * @return the derived key
+     * @throws OceanusException on error
+     */
+    public <K> GordianKey<K> deriveKey(final byte[] pSecuredKey,
+                                       final K pKeyType,
+                                       final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
+        GordianWrapCipher myCipher = theFactory.createWrapCipher(pKey.getKeyType());
+        return myCipher.deriveKey(pKey, pSecuredKey, pKeyType);
+    }
+
+    /**
      * Generate a Key from a Secret.
      * @param pSecret the derived Secret
      * @param pInitVector the initialisation vector

@@ -44,6 +44,8 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
@@ -302,61 +304,52 @@ public final class JcaFactory
     }
 
     @Override
-    public JcaCipher<GordianSymKeyType> createSymKeyCipher(final GordianSymKeyType pKeyType,
-                                                           final GordianCipherMode pMode,
-                                                           final GordianPadding pPadding) throws OceanusException {
+    public JcaCipher<GordianSymKeyType> createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
-        if (!supportedSymKeyTypes().test(pKeyType)) {
-            throw new GordianDataException(getInvalidText(pKeyType));
+        GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
+        if (!supportedSymKeyTypes().test(myKeyType)) {
+            throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
         /* Check validity of Mode */
-        if (pMode == null
-            || pMode.isAAD()) {
-            throw new GordianDataException(getInvalidText(pMode));
-        }
-
-        /* Check validity of Padding */
-        if (pPadding == null
-            || (!GordianPadding.NONE.equals(pPadding)
-                && !pMode.allowsPadding())) {
-            throw new GordianDataException(getInvalidText(pPadding));
+        if (!pCipherSpec.validate(false)) {
+            throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
         /* Create the cipher */
-        Cipher myBCCipher = getJavaCipher(pKeyType, pMode, pPadding);
-        return new JcaCipher<>(this, pKeyType, pMode, pPadding, myBCCipher);
+        Cipher myBCCipher = getJavaCipher(pCipherSpec);
+        return new JcaCipher<>(this, pCipherSpec, myBCCipher);
     }
 
     @Override
-    public JcaAADCipher createAADCipher(final GordianSymKeyType pKeyType,
-                                        final GordianCipherMode pMode) throws OceanusException {
+    public JcaAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
-        if (!standardSymKeyTypes().test(pKeyType)) {
-            throw new GordianDataException(getInvalidText(pKeyType));
+        GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
+        if (!standardSymKeyTypes().test(myKeyType)) {
+            throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
         /* Check validity of Mode */
-        if (pMode == null
-            || !pMode.isAAD()) {
-            throw new GordianDataException(getInvalidText(pMode));
+        if (!pCipherSpec.validate(true)) {
+            throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
         /* Create the cipher */
-        Cipher myBCCipher = getJavaCipher(pKeyType, pMode, GordianPadding.NONE);
-        return new JcaAADCipher(this, pKeyType, pMode, myBCCipher);
+        Cipher myBCCipher = getJavaCipher(pCipherSpec);
+        return new JcaAADCipher(this, pCipherSpec, myBCCipher);
     }
 
     @Override
-    public JcaCipher<GordianStreamKeyType> createStreamKeyCipher(final GordianStreamKeyType pKeyType) throws OceanusException {
+    public JcaCipher<GordianStreamKeyType> createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of StreamKey */
-        if (!supportedStreamKeyTypes().test(pKeyType)) {
-            throw new GordianDataException(getInvalidText(pKeyType));
+        GordianStreamKeyType myKeyType = pCipherSpec.getKeyType();
+        if (!supportedStreamKeyTypes().test(myKeyType)) {
+            throw new GordianDataException(getInvalidText(myKeyType));
         }
 
         /* Create the cipher */
-        Cipher myJavaCipher = getJavaCipher(pKeyType);
-        return new JcaCipher<>(this, pKeyType, null, GordianPadding.NONE, myJavaCipher);
+        Cipher myJavaCipher = getJavaCipher(myKeyType);
+        return new JcaCipher<>(this, pCipherSpec, myJavaCipher);
     }
 
     @Override
@@ -365,14 +358,15 @@ public final class JcaFactory
     }
 
     @Override
-    public JcaWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException {
+    protected JcaWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
         if (!supportedSymKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
         }
 
         /* Create the cipher */
-        JcaCipher<GordianSymKeyType> myJcaCipher = createSymKeyCipher(pKeyType, GordianCipherMode.CBC, GordianPadding.NONE);
+        GordianSymCipherSpec mySpec = GordianSymCipherSpec.cbc(pKeyType, GordianPadding.NONE);
+        JcaCipher<GordianSymKeyType> myJcaCipher = createSymKeyCipher(mySpec);
         return new JcaWrapCipher(this, myJcaCipher);
     }
 
@@ -499,21 +493,17 @@ public final class JcaFactory
 
     /**
      * Create the BouncyCastle SymKey Cipher via JCA.
-     * @param pKeyType the SymKeyType
-     * @param pMode the cipher mode
-     * @param pPadding use padding true/false
+     * @param pCipherSpec the cipherSpec
      * @return the Cipher
      * @throws OceanusException on error
      */
-    private static Cipher getJavaCipher(final GordianSymKeyType pKeyType,
-                                        final GordianCipherMode pMode,
-                                        final GordianPadding pPadding) throws OceanusException {
+    private static Cipher getJavaCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(getSymKeyAlgorithm(pKeyType));
+        myBuilder.append(getSymKeyAlgorithm(pCipherSpec.getKeyType()));
         myBuilder.append(ALGO_SEP);
-        myBuilder.append(getCipherModeAlgorithm(pMode));
+        myBuilder.append(getCipherModeAlgorithm(pCipherSpec.getCipherMode()));
         myBuilder.append(ALGO_SEP);
-        myBuilder.append(getPaddingAlgorithm(pPadding));
+        myBuilder.append(getPaddingAlgorithm(pCipherSpec.getPadding()));
         return getJavaCipher(myBuilder.toString());
     }
 

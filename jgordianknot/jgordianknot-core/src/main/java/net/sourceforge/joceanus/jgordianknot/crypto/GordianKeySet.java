@@ -97,14 +97,6 @@ public final class GordianKeySet {
     }
 
     /**
-     * Obtain a multiCipher.
-     * @return a new MultiCipher
-     */
-    public GordianMultiCipher getNewCipher() {
-        return new GordianMultiCipher(this);
-    }
-
-    /**
      * Encryption length.
      * @param pDataLength the length of data to be encrypted
      * @return the length of encrypted data
@@ -163,17 +155,17 @@ public final class GordianKeySet {
 
     /**
      * secure Key.
-     * @param pKey the key to wrap
-     * @return the wrapped key
+     * @param pKeyToSecure the key to wrap
+     * @return the securedKey
      * @throws OceanusException on error
      */
-    public byte[] secureKey(final GordianKey<?> pKey) throws OceanusException {
+    protected byte[] secureKey(final GordianKey<?> pKeyToSecure) throws OceanusException {
         /* Generate set of keys */
         GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, false);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
 
         /* Wrap the key */
-        byte[] myBytes = theCipher.wrapKey(myKeyTypes, pKey);
+        byte[] myBytes = theCipher.secureKey(myKeyTypes, pKeyToSecure);
 
         /* Package and return the encrypted bytes */
         return myRecipe.buildExternal(theFactory, myBytes);
@@ -182,35 +174,35 @@ public final class GordianKeySet {
     /**
      * derive Key.
      * @param <T> the keyType class
-     * @param pKeySpec the wrapped key
+     * @param pSecuredKey the secured key
      * @param pKeyType the key type
-     * @return the key
+     * @return the derived key
      * @throws OceanusException on error
      */
-    public <T> GordianKey<T> deriveKey(final byte[] pKeySpec,
-                                       final T pKeyType) throws OceanusException {
+    protected <T> GordianKey<T> deriveKey(final byte[] pSecuredKey,
+                                          final T pKeyType) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pKeySpec, false);
+        GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pSecuredKey, false);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
         byte[] myBytes = myRecipe.getBytes();
 
         /* Unwrap the key and return it */
-        return theCipher.unwrapKey(myKeyTypes, myBytes, pKeyType);
+        return theCipher.deriveKey(myKeyTypes, myBytes, pKeyType);
     }
 
     /**
-     * secure Key.
-     * @param pKeyPair the keyPair to wrap
-     * @return the wrapped key
+     * secure privateKey.
+     * @param pKeyPair the keyPair to secure
+     * @return the securedPrivateKey
      * @throws OceanusException on error
      */
-    protected byte[] secureKey(final GordianKeyPair pKeyPair) throws OceanusException {
+    protected byte[] securePrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Generate set of keys */
         GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, false);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
 
         /* Wrap the key */
-        byte[] myBytes = theCipher.wrapKey(myKeyTypes, pKeyPair);
+        byte[] myBytes = theCipher.securePrivateKey(myKeyTypes, pKeyPair);
 
         /* Package and return the encrypted bytes */
         return myRecipe.buildExternal(theFactory, myBytes);
@@ -218,18 +210,18 @@ public final class GordianKeySet {
 
     /**
      * derive Key.
-     * @param pKeySpec the wrapped key
+     * @param pSecuredPrivateKey the secured privateKey
      * @return the key
      * @throws OceanusException on error
      */
-    protected PKCS8EncodedKeySpec deriveKeySpec(final byte[] pKeySpec) throws OceanusException {
+    protected PKCS8EncodedKeySpec derivePrivateKeySpec(final byte[] pSecuredPrivateKey) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pKeySpec, false);
+        GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pSecuredPrivateKey, false);
         GordianSymKeyType[] myKeyTypes = myRecipe.getSymKeyTypes();
         byte[] myBytes = myRecipe.getBytes();
 
         /* Unwrap the key and return it */
-        return theCipher.unwrapKey(myKeyTypes, myBytes);
+        return theCipher.derivePrivateKeySpec(myKeyTypes, myBytes);
     }
 
     /**
@@ -239,7 +231,7 @@ public final class GordianKeySet {
      * @return the externalId
      * @throws OceanusException on error
      */
-    public <T> int deriveExternalIdForType(final T pType) throws OceanusException {
+    public <T> long deriveExternalIdForType(final T pType) throws OceanusException {
         GordianIdManager myManager = theFactory.getIdManager();
         return myManager.deriveExternalIdFromType(pType);
     }
@@ -247,15 +239,15 @@ public final class GordianKeySet {
     /**
      * derive Type from externalId.
      * @param <T> the Type class
-     * @param pId the externalId
+     * @param pExternalId the externalId
      * @param pTypeClass the class
      * @return the type
      * @throws OceanusException on error
      */
-    public <T> T deriveTypeFromExternalId(final int pId,
+    public <T> T deriveTypeFromExternalId(final long pExternalId,
                                           final Class<T> pTypeClass) throws OceanusException {
         GordianIdManager myManager = theFactory.getIdManager();
-        return myManager.deriveTypeFromExternalId(pId, pTypeClass);
+        return myManager.deriveTypeFromExternalId(pExternalId, pTypeClass);
     }
 
     /**

@@ -35,9 +35,8 @@ import javax.crypto.spec.IvParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -55,23 +54,27 @@ public final class JcaCipher<T>
     /**
      * Constructor.
      * @param pFactory the Security Factory
-     * @param pKeyType the keyType
-     * @param pMode the cipher mode
-     * @param pPadding is the cipher padded true/false?
+     * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
     protected JcaCipher(final JcaFactory pFactory,
-                        final T pKeyType,
-                        final GordianCipherMode pMode,
-                        final GordianPadding pPadding,
+                        final GordianCipherSpec<T> pCipherSpec,
                         final Cipher pCipher) {
-        super(pFactory, pKeyType, pMode, pPadding);
+        super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
 
     @Override
     public JcaKey<T> getKey() {
         return (JcaKey<T>) super.getKey();
+    }
+
+    /**
+     * Do we need an IV?
+     * @return true/false
+     */
+    private boolean needsIV() {
+        return getCipherSpec().needsIV();
     }
 
     @Override
@@ -99,9 +102,9 @@ public final class JcaCipher<T>
         T myType = getKeyType();
         return myType instanceof GordianStreamKeyType
                                                       ? ((GordianStreamKeyType) myType).getIVLength()
-                                                      : getMode().needsIV()
-                                                                            ? theCipher.getBlockSize()
-                                                                            : 0;
+                                                      : needsIV()
+                                                                  ? theCipher.getBlockSize()
+                                                                  : 0;
     }
 
     @Override

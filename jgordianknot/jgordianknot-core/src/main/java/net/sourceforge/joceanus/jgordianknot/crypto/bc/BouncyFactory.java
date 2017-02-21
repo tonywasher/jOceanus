@@ -97,6 +97,8 @@ import org.bouncycastle.crypto.paddings.X923Padding;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
@@ -341,49 +343,39 @@ public final class BouncyFactory
     }
 
     @Override
-    public BouncySymKeyCipher createSymKeyCipher(final GordianSymKeyType pKeyType,
-                                                 final GordianCipherMode pMode,
-                                                 final GordianPadding pPadding) throws OceanusException {
+    public BouncySymKeyCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
-        if (!supportedSymKeyTypes().test(pKeyType)) {
-            throw new GordianDataException(getInvalidText(pKeyType));
+        GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
+        if (!supportedSymKeyTypes().test(myKeyType)) {
+            throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
         /* Check validity of Mode */
-        if (pMode == null
-            || pMode.isAAD()) {
-            throw new GordianDataException(getInvalidText(pMode));
-        }
-
-        /* Check validity of Padding */
-        if (pPadding == null
-            || (!GordianPadding.NONE.equals(pPadding)
-                && !pMode.allowsPadding())) {
-            throw new GordianDataException(getInvalidText(pPadding));
+        if (!pCipherSpec.validate(false)) {
+            throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
         /* Create the cipher */
-        BufferedBlockCipher myBCCipher = getBCBlockCipher(pKeyType, pMode, pPadding);
-        return new BouncySymKeyCipher(this, pKeyType, pMode, pPadding, myBCCipher);
+        BufferedBlockCipher myBCCipher = getBCBlockCipher(pCipherSpec);
+        return new BouncySymKeyCipher(this, pCipherSpec, myBCCipher);
     }
 
     @Override
-    public BouncyAADCipher createAADCipher(final GordianSymKeyType pKeyType,
-                                           final GordianCipherMode pMode) throws OceanusException {
+    public BouncyAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
-        if (!standardSymKeyTypes().test(pKeyType)) {
-            throw new GordianDataException(getInvalidText(pKeyType));
+        GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
+        if (!standardSymKeyTypes().test(myKeyType)) {
+            throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
         /* Check validity of Mode */
-        if (pMode == null
-            || !pMode.isAAD()) {
-            throw new GordianDataException(getInvalidText(pMode));
+        if (!pCipherSpec.validate(true)) {
+            throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
         /* Create the cipher */
-        AEADBlockCipher myBCCipher = getBCAADCipher(pKeyType, pMode);
-        return new BouncyAADCipher(this, pKeyType, pMode, myBCCipher);
+        AEADBlockCipher myBCCipher = getBCAADCipher(pCipherSpec);
+        return new BouncyAADCipher(this, pCipherSpec, myBCCipher);
     }
 
     @Override
@@ -397,15 +389,16 @@ public final class BouncyFactory
     }
 
     @Override
-    public BouncyStreamKeyCipher createStreamKeyCipher(final GordianStreamKeyType pKeyType) throws OceanusException {
+    public BouncyStreamKeyCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of StreamKey */
-        if (!supportedStreamKeyTypes().test(pKeyType)) {
-            throw new GordianDataException(getInvalidText(pKeyType));
+        GordianStreamKeyType myKeyType = pCipherSpec.getKeyType();
+        if (!supportedStreamKeyTypes().test(myKeyType)) {
+            throw new GordianDataException(getInvalidText(myKeyType));
         }
 
         /* Create the cipher */
-        StreamCipher myBCCipher = getBCStreamCipher(pKeyType);
-        return new BouncyStreamKeyCipher(this, pKeyType, myBCCipher);
+        StreamCipher myBCCipher = getBCStreamCipher(myKeyType);
+        return new BouncyStreamKeyCipher(this, pCipherSpec, myBCCipher);
     }
 
     @Override
@@ -414,14 +407,15 @@ public final class BouncyFactory
     }
 
     @Override
-    public BouncyWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException {
+    protected BouncyWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
         if (!supportedSymKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
         }
 
         /* Create the cipher */
-        BouncySymKeyCipher myBCCipher = createSymKeyCipher(pKeyType, GordianCipherMode.CBC, GordianPadding.NONE);
+        GordianSymCipherSpec mySpec = GordianSymCipherSpec.cbc(pKeyType, GordianPadding.NONE);
+        BouncySymKeyCipher myBCCipher = createSymKeyCipher(mySpec);
         return new BouncyWrapCipher(this, myBCCipher);
     }
 
@@ -709,19 +703,15 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Block Cipher.
-     * @param pKeyType the keyType
-     * @param pMode the cipher mode
-     * @param pPadding use padding true/false
+     * @param pCipherSpec the cipherSpec
      * @return the Cipher
      * @throws OceanusException on error
      */
-    private static BufferedBlockCipher getBCBlockCipher(final GordianSymKeyType pKeyType,
-                                                        final GordianCipherMode pMode,
-                                                        final GordianPadding pPadding) throws OceanusException {
+    private static BufferedBlockCipher getBCBlockCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Build the cipher */
-        BlockCipher myEngine = getBCSymEngine(pKeyType);
-        BlockCipher myMode = getBCSymModeCipher(myEngine, pMode);
-        return getBCSymBufferedCipher(myMode, pPadding);
+        BlockCipher myEngine = getBCSymEngine(pCipherSpec.getKeyType());
+        BlockCipher myMode = getBCSymModeCipher(myEngine, pCipherSpec.getCipherMode());
+        return getBCSymBufferedCipher(myMode, pCipherSpec.getPadding());
     }
 
     /**
@@ -832,24 +822,23 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Buffered Cipher.
-     * @param pKeyType the keyType
-     * @param pMode the cipher mode
+     * @param pCipherSpec the cipherSpec
      * @return the Cipher
      * @throws OceanusException on error
      */
-    private static AEADBlockCipher getBCAADCipher(final GordianSymKeyType pKeyType,
-                                                  final GordianCipherMode pMode) throws OceanusException {
-        switch (pMode) {
+    private static AEADBlockCipher getBCAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+        GordianSymKeyType myType = pCipherSpec.getKeyType();
+        switch (pCipherSpec.getCipherMode()) {
             case EAX:
-                return new EAXBlockCipher(getBCSymEngine(pKeyType));
+                return new EAXBlockCipher(getBCSymEngine(myType));
             case CCM:
-                return new CCMBlockCipher(getBCSymEngine(pKeyType));
+                return new CCMBlockCipher(getBCSymEngine(myType));
             case GCM:
-                return new GCMBlockCipher(getBCSymEngine(pKeyType));
+                return new GCMBlockCipher(getBCSymEngine(myType));
             case OCB:
-                return new OCBBlockCipher(getBCSymEngine(pKeyType), getBCSymEngine(pKeyType));
+                return new OCBBlockCipher(getBCSymEngine(myType), getBCSymEngine(myType));
             default:
-                throw new GordianDataException(getInvalidText(pMode));
+                throw new GordianDataException(getInvalidText(pCipherSpec));
         }
     }
 

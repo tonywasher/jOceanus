@@ -85,7 +85,7 @@ public class PrometheusSheetDataKey
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
         myValues.addValue(DataKey.FIELD_KEYSET, loadInteger(COL_KEYSETID));
-        myValues.addValue(DataKey.FIELD_KEYTYPE, loadInteger(COL_KEYTYPE));
+        myValues.addValue(DataKey.FIELD_KEYTYPE, loadLong(COL_KEYTYPE));
         myValues.addValue(DataKey.FIELD_KEYDEF, loadBytes(COL_KEYDATA));
 
         /* Return the values */
@@ -97,7 +97,7 @@ public class PrometheusSheetDataKey
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_KEYSETID, pItem.getDataKeySetId());
-        writeInteger(COL_KEYTYPE, pItem.getKeyTypeId());
+        writeLong(COL_KEYTYPE, pItem.getKeyTypeId());
         writeBytes(COL_KEYDATA, pItem.getSecuredKeyDef());
     }
 

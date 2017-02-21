@@ -126,6 +126,13 @@ public abstract class MetisDataCell {
     public abstract Integer getIntegerValue() throws OceanusException;
 
     /**
+     * Obtain long value of the cell.
+     * @return the long value
+     * @throws OceanusException on error
+     */
+    public abstract Long getLongValue() throws OceanusException;
+
+    /**
      * Obtain money value of the cell.
      * @return the money value
      * @throws OceanusException on error
@@ -268,6 +275,28 @@ public abstract class MetisDataCell {
      * @throws OceanusException on error
      */
     protected abstract void setInteger(Integer pValue) throws OceanusException;
+
+    /**
+     * Set long value of the cell.
+     * @param pValue the integer value
+     * @throws OceanusException on error
+     */
+    public void setLongValue(final Long pValue) throws OceanusException {
+        /* Handle null values */
+        if (pValue == null) {
+            setNullValue();
+        } else {
+            /* Set value */
+            setLong(pValue);
+        }
+    }
+
+    /**
+     * Set non-null long value of the cell.
+     * @param pValue the long value
+     * @throws OceanusException on error
+     */
+    protected abstract void setLong(Long pValue) throws OceanusException;
 
     /**
      * Set string value of the cell.

@@ -143,7 +143,7 @@ public class GordianTestSuite {
             /* If the digest is supported */
             if (myDigestPredicate.test(mySpec)) {
                 /* Check the externalId */
-                int myId = myKeySet.deriveExternalIdForType(mySpec);
+                long myId = myKeySet.deriveExternalIdForType(mySpec);
                 GordianDigestSpec myResult = myKeySet.deriveTypeFromExternalId(myId, GordianDigestSpec.class);
                 if (!mySpec.equals(myResult)) {
                     System.out.println("Failed to resolve externalId for digest: " + mySpec);
@@ -157,7 +157,7 @@ public class GordianTestSuite {
             /* If the mac is supported */
             if (myMacPredicate.test(mySpec)) {
                 /* Check the externalId */
-                int myId = myKeySet.deriveExternalIdForType(mySpec);
+                long myId = myKeySet.deriveExternalIdForType(mySpec);
                 GordianMacSpec myResult = myKeySet.deriveTypeFromExternalId(myId, GordianMacSpec.class);
                 if (!mySpec.equals(myResult)) {
                     System.out.println("Failed to resolve externalId for mac: " + mySpec);
@@ -180,7 +180,7 @@ public class GordianTestSuite {
         /* Secure the keys */
         byte[] myMacSafe = myKeySet.secureKey(myMac.getKey());
         byte[] myIV = myMac.getInitVector();
-        int myMacId = myKeySet.deriveExternalIdForType(myMac.getMacSpec());
+        long myMacId = myKeySet.deriveExternalIdForType(myMac.getMacSpec());
 
         /* Create AsymTest Control */
         GordianTestAsymmetric myAsymTest = new GordianTestAsymmetric(mySymSafe, myStreamSafe);
