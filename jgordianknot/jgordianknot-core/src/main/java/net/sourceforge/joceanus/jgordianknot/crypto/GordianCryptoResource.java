@@ -204,6 +204,11 @@ public enum GordianCryptoResource implements TethysResourceId {
     STREAMKEY_CHACHA("streamKey.CHACHA"),
 
     /**
+     * StreamKey CHACHA7539.
+     */
+    STREAMKEY_CHACHA7539("streamKey.CHACHA7539"),
+
+    /**
      * StreamKey VMPC.
      */
     STREAMKEY_VMPC("streamKey.VMPC"),
@@ -410,6 +415,7 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianStreamKeyType.SALSA20, STREAMKEY_SALSA20);
         myMap.put(GordianStreamKeyType.HC, STREAMKEY_HC);
         myMap.put(GordianStreamKeyType.CHACHA, STREAMKEY_CHACHA);
+        myMap.put(GordianStreamKeyType.CHACHA7539, STREAMKEY_CHACHA7539);
         myMap.put(GordianStreamKeyType.VMPC, STREAMKEY_VMPC);
         myMap.put(GordianStreamKeyType.ISAAC, STREAMKEY_ISAAC);
         myMap.put(GordianStreamKeyType.GRAIN, STREAMKEY_GRAIN);

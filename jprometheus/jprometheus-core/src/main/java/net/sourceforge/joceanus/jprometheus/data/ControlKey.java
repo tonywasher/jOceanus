@@ -164,7 +164,7 @@ public final class ControlKey
             GordianHashManager mySecure = myData.getSecurity();
 
             /* Create a new keySetHash with new password */
-            GordianKeySetHash myHash = mySecure.resolveKeySetHash(null, NAME_DATABASE);
+            GordianKeySetHash myHash = mySecure.newKeySetHash(NAME_DATABASE);
 
             /* Store the password hash */
             setValueHashPrime(Boolean.TRUE);

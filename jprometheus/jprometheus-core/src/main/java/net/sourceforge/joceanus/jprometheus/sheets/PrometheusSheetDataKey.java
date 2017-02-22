@@ -45,9 +45,19 @@ public class PrometheusSheetDataKey
     private static final int COL_KEYSETID = COL_ID + 1;
 
     /**
+     * isHashPrime column.
+     */
+    private static final int COL_HASHPRIME = COL_KEYSETID + 1;
+
+    /**
+     * isSymKey column.
+     */
+    private static final int COL_ISSYMKEY = COL_HASHPRIME + 1;
+
+    /**
      * KeyType column.
      */
-    private static final int COL_KEYTYPE = COL_KEYSETID + 1;
+    private static final int COL_KEYTYPE = COL_ISSYMKEY + 1;
 
     /**
      * KeyData column.
@@ -85,6 +95,8 @@ public class PrometheusSheetDataKey
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
         myValues.addValue(DataKey.FIELD_KEYSET, loadInteger(COL_KEYSETID));
+        myValues.addValue(DataKey.FIELD_HASHPRIME, loadBoolean(COL_HASHPRIME));
+        myValues.addValue(DataKey.FIELD_ISSYMKEY, loadBoolean(COL_ISSYMKEY));
         myValues.addValue(DataKey.FIELD_KEYTYPE, loadLong(COL_KEYTYPE));
         myValues.addValue(DataKey.FIELD_KEYDEF, loadBytes(COL_KEYDATA));
 
@@ -97,6 +109,8 @@ public class PrometheusSheetDataKey
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_KEYSETID, pItem.getDataKeySetId());
+        writeBoolean(COL_HASHPRIME, pItem.isHashPrime());
+        writeBoolean(COL_ISSYMKEY, pItem.isSymKey());
         writeLong(COL_KEYTYPE, pItem.getKeyTypeId());
         writeBytes(COL_KEYDATA, pItem.getSecuredKeyDef());
     }

@@ -103,10 +103,20 @@ public abstract class GordianHashManager {
     }
 
     /**
+     * Create a new keySet Hash.
+     * @param pSource the description of the secured resource
+     * @return the keySetHash
+     * @throws OceanusException on error
+     */
+    public GordianKeySetHash newKeySetHash(final String pSource) throws OceanusException {
+        return resolveKeySetHash(null, pSource);
+    }
+
+    /**
      * Resolve the keySet Hash.
      * @param pHashBytes the hash bytes to resolve
      * @param pSource the description of the secured resource
-     * @return the password Hash
+     * @return the keySetHash
      * @throws OceanusException on error
      */
     public GordianKeySetHash resolveKeySetHash(final byte[] pHashBytes,

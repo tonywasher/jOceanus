@@ -116,11 +116,14 @@ public class GordianTestSuite {
      */
     private void testSecurity(final boolean pRestricted,
                               final GordianFactoryType pType) throws OceanusException {
+        /* Determine test name */
+        String myTestName = pType.toString() + "-" + pRestricted;
+
         /* Create new Password Hash */
         GordianParameters myParams = new GordianParameters(pRestricted);
         myParams.setFactoryType(pType);
         GordianHashManager myManager = theCreator.newSecureManager(myParams);
-        GordianKeySetHash myHash = myManager.resolveKeySetHash(null, "New");
+        GordianKeySetHash myHash = myManager.newKeySetHash(myTestName);
         GordianKeySet myKeySet = myHash.getKeySet();
         GordianFactory myFactory = myKeySet.getFactory();
 
@@ -188,7 +191,7 @@ public class GordianTestSuite {
 
         /* Start a new session */
         myManager = theCreator.newSecureManager(myParams);
-        GordianKeySetHash myNewHash = myManager.resolveKeySetHash(myHash.getHash(), "Test");
+        GordianKeySetHash myNewHash = myManager.resolveKeySetHash(myHash.getHash(), myTestName);
         GordianKeySet myKeySet1 = myNewHash.getKeySet();
         myFactory = myKeySet.getFactory();
 

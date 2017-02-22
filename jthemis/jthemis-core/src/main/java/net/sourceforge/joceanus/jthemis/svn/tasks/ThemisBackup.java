@@ -272,7 +272,7 @@ public class ThemisBackup {
         boolean doDelete = true;
 
         /* Create a new password hash */
-        GordianKeySetHash myHash = pManager.resolveKeySetHash(null, myName);
+        GordianKeySetHash myHash = pManager.newKeySetHash(myName);
 
         /* Protect against exceptions */
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, myZipName);

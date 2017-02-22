@@ -434,9 +434,14 @@ public enum PrometheusDataResource implements TethysResourceId {
     DATAKEYSET_CREATION("DataKeySet.CreationDate"),
 
     /**
-     * DataKeySet KeyMap.
+     * DataKeySet SymKeyMap.
      */
-    DATAKEYSET_KEYMAP("DataKeySet.KeyMap"),
+    DATAKEYSET_SYMKEYMAP("DataKeySet.SymKeyMap"),
+
+    /**
+     * DataKeySet StreamKeyMap.
+     */
+    DATAKEYSET_STREAMKEYMAP("DataKeySet.StreamKeyMap"),
 
     /**
      * DataKeySet KeySet.
@@ -452,6 +457,11 @@ public enum PrometheusDataResource implements TethysResourceId {
      * DataKey List.
      */
     DATAKEY_LIST("DataKey.List"),
+
+    /**
+     * DataKey isSymKey.
+     */
+    DATAKEY_ISSYMKEY("DataKey.isSymKey"),
 
     /**
      * DataKey Type.

@@ -29,6 +29,7 @@ import java.util.function.Predicate;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
@@ -76,9 +77,14 @@ public class DataKeySet
     public static final MetisField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_CREATION.getValue());
 
     /**
-     * Field ID for DataKeyMap.
+     * Field ID for SymKeyMap.
      */
-    public static final MetisField FIELD_MAP = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYMAP.getValue());
+    public static final MetisField FIELD_SYMMAP = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_SYMKEYMAP.getValue());
+
+    /**
+     * Field ID for StreamKeyMap.
+     */
+    public static final MetisField FIELD_STREAMMAP = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_STREAMKEYMAP.getValue());
 
     /**
      * Field ID for KeySet.
@@ -86,24 +92,29 @@ public class DataKeySet
     public static final MetisField FIELD_KEYSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYSET.getValue());
 
     /**
-     * The DataKey Map.
+     * The SymDataKey Map.
      */
-    private Map<GordianSymKeyType, DataKey> theMap = null;
+    private Map<GordianSymKeyType, DataKey> theSymMap;
+
+    /**
+     * The StreamDataKey Map.
+     */
+    private Map<GordianStreamKeyType, DataKey> theStreamMap;
 
     /**
      * The Encryption KeySet.
      */
-    private GordianKeySet theKeySet = null;
+    private GordianKeySet theKeySet;
 
     /**
      * The Security Factory.
      */
-    private GordianFactory theSecurityFactory = null;
+    private GordianFactory theSecurityFactory;
 
     /**
      * The Encryption Field Generator.
      */
-    private MetisEncryptionGenerator theFieldGenerator = null;
+    private MetisEncryptionGenerator theFieldGenerator;
 
     /**
      * Copy Constructor.
@@ -119,7 +130,8 @@ public class DataKeySet
         switch (getStyle()) {
             case CLONE:
                 theSecurityFactory = pSource.theSecurityFactory;
-                theMap = new EnumMap<>(GordianSymKeyType.class);
+                theSymMap = new EnumMap<>(GordianSymKeyType.class);
+                theStreamMap = new EnumMap<>(GordianStreamKeyType.class);
                 theKeySet = theSecurityFactory.createKeySet();
                 theFieldGenerator = new MetisEncryptionGenerator(theKeySet, getDataSet().getDataFormatter());
                 break;
@@ -147,8 +159,9 @@ public class DataKeySet
         /* Record the security factory */
         theSecurityFactory = mySecure.getSecurityFactory();
 
-        /* Create the DataKey Map */
-        theMap = new EnumMap<>(GordianSymKeyType.class);
+        /* Create the DataKey Maps */
+        theSymMap = new EnumMap<>(GordianSymKeyType.class);
+        theStreamMap = new EnumMap<>(GordianStreamKeyType.class);
 
         /* Store the ControlKey */
         Object myValue = pValues.getValue(FIELD_CONTROLKEY);
@@ -207,7 +220,8 @@ public class DataKeySet
             theSecurityFactory = mySecure.getSecurityFactory();
 
             /* Create the DataKey Map */
-            theMap = new EnumMap<>(GordianSymKeyType.class);
+            theSymMap = new EnumMap<>(GordianSymKeyType.class);
+            theStreamMap = new EnumMap<>(GordianStreamKeyType.class);
 
             /* Create the KeySet */
             theKeySet = theSecurityFactory.createKeySet();
@@ -233,8 +247,11 @@ public class DataKeySet
 
     @Override
     public Object getFieldValue(final MetisField pField) {
-        if (FIELD_MAP.equals(pField)) {
-            return theMap;
+        if (FIELD_SYMMAP.equals(pField)) {
+            return theSymMap;
+        }
+        if (FIELD_STREAMMAP.equals(pField)) {
+            return theStreamMap;
         }
         if (FIELD_KEYSET.equals(pField)) {
             return theKeySet;
@@ -399,15 +416,25 @@ public class DataKeySet
         DataKeyList myKeys = pData.getDataKeys();
         setNewVersion();
 
-        /* Access the symKeyPredicate */
+        /* Access the KeyPredicates */
         DataSet<?, ?> myData = getDataSet();
         GordianFactory myFactory = myData.getSecurity().getSecurityFactory();
-        Predicate<GordianSymKeyType> myPredicate = myFactory.standardSymKeyTypes();
+        Predicate<GordianSymKeyType> mySymPredicate = myFactory.supportedKeySetSymKeyTypes();
+        Predicate<GordianStreamKeyType> myStreamPredicate = myFactory.supportedKeySetStreamKeyTypes();
 
         /* Loop through the SymKeyType values */
         for (GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* If this is valid for this keyLength */
-            if (myPredicate.test(myType)) {
+            if (mySymPredicate.test(myType)) {
+                /* Create a new DataKey for this DataKeySet */
+                DataKey myKey = myKeys.createNewKey(this, myType);
+                myKey.setNewVersion();
+            }
+        }
+        /* Loop through the StreamKeyType values */
+        for (GordianStreamKeyType myType : GordianStreamKeyType.values()) {
+            /* If this is valid for this keyLength */
+            if (myStreamPredicate.test(myType)) {
                 /* Create a new DataKey for this DataKeySet */
                 DataKey myKey = myKeys.createNewKey(this, myType);
                 myKey.setNewVersion();
@@ -422,7 +449,18 @@ public class DataKeySet
         /* Loop through the SymKeyType values */
         for (GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* Access the Data Key */
-            DataKey myKey = theMap.get(myType);
+            DataKey myKey = theSymMap.get(myType);
+
+            /* Mark as deleted */
+            if (myKey != null) {
+                myKey.setDeleted(true);
+            }
+        }
+
+        /* Loop through the StreamKeyType values */
+        for (GordianStreamKeyType myType : GordianStreamKeyType.values()) {
+            /* Access the Data Key */
+            DataKey myKey = theStreamMap.get(myType);
 
             /* Mark as deleted */
             if (myKey != null) {
@@ -447,7 +485,7 @@ public class DataKeySet
         boolean bChanges = false;
         for (GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* Access the Data Key */
-            DataKey myKey = theMap.get(myType);
+            DataKey myKey = theSymMap.get(myType);
 
             /* Update the password hash */
             if (myKey != null) {
@@ -455,6 +493,16 @@ public class DataKeySet
             }
         }
 
+        /* Loop through the StreamKeyType values */
+        for (GordianStreamKeyType myType : GordianStreamKeyType.values()) {
+            /* Access the Data Key */
+            DataKey myKey = theStreamMap.get(myType);
+
+            /* Update the password hash */
+            if (myKey != null) {
+                bChanges |= myKey.updateKeySetHash(pPrimeHash, pHash);
+            }
+        }
         /* return the flag */
         return bChanges;
     }
@@ -465,11 +513,19 @@ public class DataKeySet
      * @throws OceanusException on error
      */
     protected void registerDataKey(final DataKey pKey) throws OceanusException {
-        /* Store the DataKey into the map */
-        theMap.put(pKey.getKeyType(), pKey);
+        if (pKey.isSymKey()) {
+            /* Store the DataKey into the map */
+            theSymMap.put(pKey.getSymKeyType(), pKey);
 
-        /* Declare the Key */
-        theKeySet.declareKey(pKey.getDataKey());
+            /* Declare the Key */
+            theKeySet.declareSymKey(pKey.getSymKey());
+        } else {
+            /* Store the DataKey into the map */
+            theStreamMap.put(pKey.getStreamKeyType(), pKey);
+
+            /* Declare the Key */
+            theKeySet.declareStreamKey(pKey.getStreamKey());
+        }
     }
 
     /**
@@ -606,23 +662,42 @@ public class DataKeySet
 
             /* Access the symKeyPredicate */
             GordianFactory myFactory = myData.getSecurity().getSecurityFactory();
-            Predicate<GordianSymKeyType> myPredicate = myFactory.standardSymKeyTypes();
+            Predicate<GordianSymKeyType> mySymPredicate = myFactory.supportedKeySetSymKeyTypes();
+            Predicate<GordianStreamKeyType> myStreamPredicate = myFactory.supportedKeySetStreamKeyTypes();
 
             /* Loop through the SymKeyType values */
             for (GordianSymKeyType myType : GordianSymKeyType.values()) {
                 /* If this is valid for this keyLength */
-                if (myPredicate.test(myType)) {
+                if (mySymPredicate.test(myType)) {
                     /* Access the source Data key */
-                    DataKey mySrcKey = pKeySet.theMap.get(myType);
+                    DataKey mySrcKey = pKeySet.theSymMap.get(myType);
 
                     /* Clone the DataKey for this DataKeySet */
                     DataKey myKey = myKeys.cloneDataKey(myKeySet, mySrcKey);
 
                     /* Store the DataKey into the map */
-                    myKeySet.theMap.put(myType, myKey);
+                    myKeySet.theSymMap.put(myType, myKey);
 
                     /* Declare the Key */
-                    myKeySet.theKeySet.declareKey(myKey.getDataKey());
+                    myKeySet.theKeySet.declareSymKey(myKey.getSymKey());
+                }
+            }
+
+            /* Loop through the StreamKeyType values */
+            for (GordianStreamKeyType myType : GordianStreamKeyType.values()) {
+                /* If this is valid for this keyLength */
+                if (myStreamPredicate.test(myType)) {
+                    /* Access the source Data key */
+                    DataKey mySrcKey = pKeySet.theStreamMap.get(myType);
+
+                    /* Clone the DataKey for this DataKeySet */
+                    DataKey myKey = myKeys.cloneDataKey(myKeySet, mySrcKey);
+
+                    /* Store the DataKey into the map */
+                    myKeySet.theStreamMap.put(myType, myKey);
+
+                    /* Declare the Key */
+                    myKeySet.theKeySet.declareStreamKey(myKey.getStreamKey());
                 }
             }
 

@@ -55,4 +55,10 @@ public abstract class GordianKey<T> {
      * @return the new key
      */
     public abstract <X> GordianKey<X> convertToKeyType(X pKeyType);
+
+    /**
+     * Obtain the underlying keyBytes.
+     * @return the keyBytes
+     */
+    protected abstract byte[] getKeyBytes();
 }

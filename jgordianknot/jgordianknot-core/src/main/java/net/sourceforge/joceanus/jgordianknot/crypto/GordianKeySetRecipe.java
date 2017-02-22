@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -53,11 +52,6 @@ public final class GordianKeySetRecipe {
     private final byte[] theRecipe;
 
     /**
-     * The Initialisation Vector.
-     */
-    private final byte[] theInitVector;
-
-    /**
      * The Data bytes.
      */
     private final byte[] theBytes;
@@ -70,55 +64,33 @@ public final class GordianKeySetRecipe {
     /**
      * Constructor for random choices.
      * @param pFactory the factory
-     * @param pCreateIV create an IV
      * @throws OceanusException on error
      */
-    protected GordianKeySetRecipe(final GordianFactory pFactory,
-                                  final boolean pCreateIV) throws OceanusException {
+    protected GordianKeySetRecipe(final GordianFactory pFactory) throws OceanusException {
         /* Allocate new set of parameters */
         theParams = new GordianKeySetParameters(pFactory);
         theRecipe = theParams.getRecipe();
         theBytes = null;
-
-        /* Create the Initialisation vector if required */
-        if (pCreateIV) {
-            /* Obtain the secureRandom and the cipher steps */
-            SecureRandom myRandom = pFactory.getRandom();
-
-            theInitVector = new byte[IVSIZE];
-            myRandom.nextBytes(theInitVector);
-        } else {
-            theInitVector = null;
-        }
     }
 
     /**
      * Constructor for external form parse.
      * @param pFactory the factory
      * @param pExternal the external form
-     * @param pHasIV derive an IV
      * @throws OceanusException on error
      */
     protected GordianKeySetRecipe(final GordianFactory pFactory,
-                                  final byte[] pExternal,
-                                  final boolean pHasIV) throws OceanusException {
+                                  final byte[] pExternal) throws OceanusException {
         /* Determine data length */
         int myRecipeLen = RECIPELEN;
         int myLen = pExternal.length;
         int myDataLen = myLen
-                        - myRecipeLen;
-
-        /* If we are using an IV */
-        if (pHasIV) {
-            /* Adjust DataLen */
-            myDataLen -= IVSIZE;
-        }
+                        - myRecipeLen
+                        - IVSIZE;
 
         /* Allocate buffers */
         theRecipe = new byte[myRecipeLen];
-        theInitVector = pHasIV
-                               ? new byte[IVSIZE]
-                               : null;
+        byte[] myInitVector = new byte[IVSIZE];
         theBytes = new byte[myDataLen];
 
         /* Determine offset position */
@@ -127,17 +99,15 @@ public final class GordianKeySetRecipe {
         /* Copy Data into buffers */
         System.arraycopy(pExternal, 0, theBytes, 0, myOffSet);
         System.arraycopy(pExternal, myOffSet, theRecipe, 0, myRecipeLen);
-        if (pHasIV) {
-            System.arraycopy(pExternal, myOffSet
-                                        + myRecipeLen, theInitVector, 0, IVSIZE);
-            myRecipeLen += IVSIZE;
-        }
+        System.arraycopy(pExternal, myOffSet
+                                    + myRecipeLen, myInitVector, 0, IVSIZE);
+        myRecipeLen += IVSIZE;
         System.arraycopy(pExternal, myOffSet
                                     + myRecipeLen, theBytes, myOffSet, myDataLen
                                                                        - myOffSet);
 
         /* Allocate new set of parameters */
-        theParams = new GordianKeySetParameters(pFactory, theRecipe);
+        theParams = new GordianKeySetParameters(pFactory, theRecipe, myInitVector);
     }
 
     /**
@@ -156,21 +126,11 @@ public final class GordianKeySetRecipe {
     }
 
     /**
-     * Obtain the SymKey Types.
-     * @return the symKeyTypes
+     * Obtain the keySet parameters.
+     * @return the parameters
      */
-    protected GordianSymKeyType[] getSymKeyTypes() {
-        return theParams.getSymKeyTypes();
-    }
-
-    /**
-     * Obtain the Initialisation vector.
-     * @return the initialisation vector
-     */
-    protected byte[] getInitVector() {
-        return (theInitVector == null)
-                                       ? null
-                                       : Arrays.copyOf(theInitVector, theInitVector.length);
+    protected GordianKeySetParameters getParameters() {
+        return theParams;
     }
 
     /**
@@ -178,9 +138,7 @@ public final class GordianKeySetRecipe {
      * @return the bytes
      */
     protected byte[] getBytes() {
-        return (theBytes == null)
-                                  ? null
-                                  : Arrays.copyOf(theBytes, theBytes.length);
+        return theBytes;
     }
 
     /**
@@ -192,17 +150,10 @@ public final class GordianKeySetRecipe {
     protected byte[] buildExternal(final GordianFactory pFactory,
                                    final byte[] pData) {
         /* Determine lengths */
-        boolean useIV = theInitVector != null;
         int myRecipeLen = RECIPELEN;
         int myDataLen = pData.length;
         int myLen = myRecipeLen
-                    + myDataLen;
-
-        /* If we have an IV */
-        if (useIV) {
-            /* Increase the buffer size */
-            myLen += IVSIZE;
-        }
+                    + myDataLen + IVSIZE;
 
         /* Allocate the buffer */
         byte[] myBuffer = new byte[myLen];
@@ -213,11 +164,9 @@ public final class GordianKeySetRecipe {
         /* Copy Data into buffer */
         System.arraycopy(pData, 0, myBuffer, 0, myOffSet);
         System.arraycopy(theRecipe, 0, myBuffer, myOffSet, myRecipeLen);
-        if (useIV) {
-            System.arraycopy(theInitVector, 0, myBuffer, myOffSet
-                                                         + myRecipeLen, IVSIZE);
-            myRecipeLen += IVSIZE;
-        }
+        System.arraycopy(theParams.getInitVector(), 0, myBuffer, myOffSet
+                                                                 + myRecipeLen, IVSIZE);
+        myRecipeLen += IVSIZE;
         System.arraycopy(pData, myOffSet, myBuffer, myOffSet
                                                     + myRecipeLen, myDataLen
                                                                    - myOffSet);
@@ -236,9 +185,24 @@ public final class GordianKeySetRecipe {
         private final byte[] theRecipe;
 
         /**
-         * The CipherSet.
+         * The hMac.
+         */
+        private final GordianDigestType[] theHMacType;
+
+        /**
+         * The StreamKey.
+         */
+        private final GordianStreamKeyType[] theStreamKeyType;
+
+        /**
+         * The SymKeySet.
          */
         private final GordianSymKeyType[] theSymKeyTypes;
+
+        /**
+         * The Initialisation Vector.
+         */
+        private final byte[] theInitVector;
 
         /**
          * Construct the parameters from random.
@@ -250,35 +214,82 @@ public final class GordianKeySetRecipe {
             GordianIdManager myManager = pFactory.getIdManager();
             SecureRandom myRandom = pFactory.getRandom();
 
-            /* Generate recipe and derive symKeyTypes */
+            /* Allocate the initVector */
+            theInitVector = new byte[IVSIZE];
+            myRandom.nextBytes(theInitVector);
+
+            /* Allocate the arrays */
+            theHMacType = new GordianDigestType[1];
+            theStreamKeyType = new GordianStreamKeyType[1];
+            theSymKeyTypes = new GordianSymKeyType[pFactory.getNumCipherSteps()];
+
+            /* Generate recipe and derive parameters */
             int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
-            theSymKeyTypes = myManager.deriveSymKeyTypesFromSeed(mySeed, pFactory.getNumCipherSteps());
+            mySeed = myManager.deriveSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
+            mySeed = myManager.deriveStreamKeyTypesFromSeed(mySeed, theStreamKeyType);
+            myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theHMacType);
         }
 
         /**
          * Construct the parameters from recipe.
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
+         * @param pInitVector the initVector
          * @throws OceanusException on error
          */
         private GordianKeySetParameters(final GordianFactory pFactory,
-                                        final byte[] pRecipe) throws OceanusException {
+                                        final byte[] pRecipe,
+                                        final byte[] pInitVector) throws OceanusException {
             /* Obtain Id manager */
             GordianIdManager myManager = pFactory.getIdManager();
 
-            /* Store recipe and derive symKeyTypes */
+            /* Store recipe and initVector */
             theRecipe = pRecipe;
+            theInitVector = pInitVector;
+
+            /* Allocate the arrays */
+            theHMacType = new GordianDigestType[1];
+            theStreamKeyType = new GordianStreamKeyType[1];
+            theSymKeyTypes = new GordianSymKeyType[pFactory.getNumCipherSteps()];
+
+            /* derive parameters */
             int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
-            theSymKeyTypes = myManager.deriveSymKeyTypesFromSeed(mySeed, pFactory.getNumCipherSteps());
+            mySeed = myManager.deriveSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
+            mySeed = myManager.deriveStreamKeyTypesFromSeed(mySeed, theStreamKeyType);
+            myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theHMacType);
+        }
+
+        /**
+         * Obtain the hMac Type.
+         * @return the hMacType
+         */
+        protected GordianDigestType getHMacType() {
+            return theHMacType[0];
+        }
+
+        /**
+         * Obtain the streamKey Type.
+         * @return the streamKeyType
+         */
+        protected GordianStreamKeyType getStreamKeyType() {
+            return theStreamKeyType[0];
         }
 
         /**
          * Obtain the SymKey Types.
          * @return the symKeyTypes
          */
-        private GordianSymKeyType[] getSymKeyTypes() {
+        protected GordianSymKeyType[] getSymKeyTypes() {
             return theSymKeyTypes;
+        }
+
+        /**
+         * Obtain the Initialisation vector.
+         * @return the initialisation vector
+         */
+        protected byte[] getInitVector() {
+            return theInitVector;
         }
 
         /**

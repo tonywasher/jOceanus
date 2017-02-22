@@ -42,9 +42,9 @@ public class GordianIdManager {
     private static final int LOC_SYM = 5;
 
     /**
-     * The Standard Symmetric personalisation location.
+     * The KeySet Symmetric personalisation location.
      */
-    private static final int LOC_STDSYM = 7;
+    private static final int LOC_KEYSETSYM = 7;
 
     /**
      * The Stream personalisation location.
@@ -52,19 +52,19 @@ public class GordianIdManager {
     private static final int LOC_STREAM = 11;
 
     /**
+     * The KeySet Stream personalisation location.
+     */
+    private static final int LOC_KEYSETSTREAM = 13;
+
+    /**
      * The Digest personalisation location.
      */
-    private static final int LOC_DIGEST = 13;
+    private static final int LOC_DIGEST = 17;
 
     /**
-     * The Mac personalisation location.
+     * The KeySet Digest personalisation location.
      */
-    private static final int LOC_MAC = 17;
-
-    /**
-     * The KeyHash personalisation location.
-     */
-    private static final int LOC_KEYHASH = 19;
+    private static final int LOC_KEYSETDIGEST = 19;
 
     /**
      * The HMac personalisation location.
@@ -72,9 +72,14 @@ public class GordianIdManager {
     private static final int LOC_HMAC = 23;
 
     /**
+     * The Mac personalisation location.
+     */
+    private static final int LOC_MAC = 27;
+
+    /**
      * The Cipher personalisation location.
      */
-    private static final int LOC_CIPHER = 27;
+    private static final int LOC_CIPHER = 29;
 
     /**
      * The SecureRandom.
@@ -102,9 +107,9 @@ public class GordianIdManager {
     private final GordianSymKeyType[] theSymKeys;
 
     /**
-     * The list of Standard Symmetric Keys.
+     * The list of keySet Symmetric Keys.
      */
-    private final GordianSymKeyType[] theStdSymKeys;
+    private final GordianSymKeyType[] theKeySetSymKeys;
 
     /**
      * The list of Stream Keys.
@@ -112,14 +117,19 @@ public class GordianIdManager {
     private final GordianStreamKeyType[] theStreamKeys;
 
     /**
+     * The list of keySet Stream Keys.
+     */
+    private final GordianStreamKeyType[] theKeySetStreamKeys;
+
+    /**
      * The list of Digests.
      */
     private final GordianDigestType[] theDigests;
 
     /**
-     * The list of keyHashDigests.
+     * The list of keySetDigests.
      */
-    private final GordianDigestType[] theKeyHashDigests;
+    private final GordianDigestType[] theKeySetDigests;
 
     /**
      * The list of hMacDigests.
@@ -142,10 +152,11 @@ public class GordianIdManager {
 
         /* Create shuffled and filtered lists */
         theSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_SYM, pFactory.supportedSymKeyTypes());
-        theStdSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_STDSYM, pFactory.standardSymKeyTypes());
+        theKeySetSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_KEYSETSYM, pFactory.supportedKeySetSymKeyTypes());
         theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), LOC_STREAM, pFactory.supportedStreamKeyTypes());
+        theKeySetStreamKeys = shuffleTypes(GordianStreamKeyType.values(), LOC_KEYSETSTREAM, pFactory.supportedKeySetStreamKeyTypes());
         theDigests = shuffleTypes(GordianDigestType.values(), LOC_DIGEST, pFactory.supportedDigestTypes());
-        theKeyHashDigests = shuffleTypes(GordianDigestType.values(), LOC_KEYHASH, pFactory.supportedKeyHashDigestTypes());
+        theKeySetDigests = shuffleTypes(GordianDigestType.values(), LOC_KEYSETDIGEST, pFactory.supportedKeySetDigestTypes());
         theHMacDigests = shuffleTypes(GordianDigestType.values(), LOC_HMAC, pFactory.supportedHMacDigestTypes());
         theMacs = shuffleTypes(GordianMacType.values(), LOC_MAC, pFactory.supportedMacTypes());
 
@@ -187,7 +198,7 @@ public class GordianIdManager {
      */
     private GordianSymKeyType generateRandomStdSymKeyType() {
         /* Determine a random symKey */
-        GordianSymKeyType[] mySymKey = getRandomTypes(theStdSymKeys, 1);
+        GordianSymKeyType[] mySymKey = getRandomTypes(theKeySetSymKeys, 1);
 
         /* Return the single SymKeyType */
         return mySymKey[0];
@@ -206,14 +217,12 @@ public class GordianIdManager {
     /**
      * Derive set of standard SymKeyTypes from seed.
      * @param pSeed the seed
-     * @param pCount the count
-     * @return the symKeyTypes
+     * @param pKeyTypes the array of symKeyTypes to be filled in
+     * @return the remaining seed
      */
-    protected GordianSymKeyType[] deriveSymKeyTypesFromSeed(final int pSeed,
-                                                            final int pCount) {
-        GordianSymKeyType[] myResult = Arrays.copyOf(theStdSymKeys, pCount);
-        getSeededTypes(theStdSymKeys, myResult, pSeed);
-        return myResult;
+    protected int deriveSymKeyTypesFromSeed(final int pSeed,
+                                            final GordianSymKeyType[] pKeyTypes) {
+        return getSeededTypes(theKeySetSymKeys, pKeyTypes, pSeed);
     }
 
     /**
@@ -268,6 +277,17 @@ public class GordianIdManager {
 
         /* Return the single StreamKeyType */
         return myStreamKey[0];
+    }
+
+    /**
+     * Derive set of standard StreamKeyTypes from seed.
+     * @param pSeed the seed
+     * @param pKeyTypes the array of streamKeyTypes to be filled in
+     * @return the remaining seed
+     */
+    protected int deriveStreamKeyTypesFromSeed(final int pSeed,
+                                               final GordianStreamKeyType[] pKeyTypes) {
+        return getSeededTypes(theKeySetStreamKeys, pKeyTypes, pSeed);
     }
 
     /**
@@ -355,7 +375,7 @@ public class GordianIdManager {
      */
     protected GordianDigestType generateRandomKeyHashDigestType() {
         /* Determine a random digestType */
-        GordianDigestType[] myDigest = getRandomTypes(theKeyHashDigests, 1);
+        GordianDigestType[] myDigest = getRandomTypes(theKeySetDigests, 1);
 
         /* Return the single digestType */
         return myDigest[0];
@@ -364,14 +384,12 @@ public class GordianIdManager {
     /**
      * Derive set of standard keyHashDigestTypes from seed.
      * @param pSeed the seed
-     * @param pCount the count
-     * @return the digestTypes
+     * @param pDigestTypes the array of digestTypes to be filled in
+     * @return the remaining seed
      */
-    protected GordianDigestType[] deriveKeyHashDigestTypesFromSeed(final int pSeed,
-                                                                   final int pCount) {
-        GordianDigestType[] myResult = Arrays.copyOf(theKeyHashDigests, pCount);
-        getSeededTypes(theKeyHashDigests, myResult, pSeed);
-        return myResult;
+    protected int deriveKeyHashDigestTypesFromSeed(final int pSeed,
+                                                   final GordianDigestType[] pDigestTypes) {
+        return getSeededTypes(theKeySetDigests, pDigestTypes, pSeed);
     }
 
     /**

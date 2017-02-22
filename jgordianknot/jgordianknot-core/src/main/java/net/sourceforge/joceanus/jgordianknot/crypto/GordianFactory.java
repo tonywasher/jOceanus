@@ -385,7 +385,7 @@ public abstract class GordianFactory {
      * Obtain predicate for supported KeyHash digests.
      * @return the predicate
      */
-    public Predicate<GordianDigestType> supportedKeyHashDigestTypes() {
+    public Predicate<GordianDigestType> supportedKeySetDigestTypes() {
         return supportedHMacDigestTypes().and(GordianDigestType::isCombinedHashDigest);
     }
 
@@ -466,10 +466,10 @@ public abstract class GordianFactory {
     public abstract Predicate<GordianSymKeyType> supportedSymKeyTypes();
 
     /**
-     * Obtain predicate for standard SymKeyTypes.
+     * Obtain predicate for keySet SymKeyTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianSymKeyType> standardSymKeyTypes();
+    public abstract Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes();
 
     /**
      * create GordianAADCipher.
@@ -516,12 +516,30 @@ public abstract class GordianFactory {
     public abstract Predicate<GordianStreamKeyType> supportedStreamKeyTypes();
 
     /**
+     * Obtain predicate for keySet SymKeyTypes.
+     * @return the predicate
+     */
+    public Predicate<GordianStreamKeyType> supportedKeySetStreamKeyTypes() {
+        return p -> supportedStreamKeyTypes().test(p) && p.getIVLength() > 0;
+    }
+
+    /**
      * create GordianWrapCipher.
      * @param pKeyType the KeyType
      * @return the new Cipher
      * @throws OceanusException on error
      */
     protected abstract GordianWrapCipher createWrapCipher(GordianSymKeyType pKeyType) throws OceanusException;
+
+    /**
+     * Create a wrapCipher.
+     * @param pBlockCipher the underlying block cipher
+     * @return the wrapCipher
+     * @throws OceanusException on error
+     */
+    protected GordianWrapCipher createWrapCipher(final GordianCipher<GordianSymKeyType> pBlockCipher) throws OceanusException {
+        return new GordianWrapCipher(this, pBlockCipher);
+    }
 
     /**
      * Obtain predicate for signatures.

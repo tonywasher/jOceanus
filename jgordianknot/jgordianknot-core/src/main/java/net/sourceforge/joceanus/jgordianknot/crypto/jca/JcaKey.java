@@ -65,6 +65,11 @@ public final class JcaKey<T>
     }
 
     @Override
+    protected byte[] getKeyBytes() {
+        return theKey.getEncoded();
+    }
+
+    @Override
     public <X> JcaKey<X> convertToKeyType(final X pKeyType) {
         return new JcaKey<>(pKeyType, theKey);
     }

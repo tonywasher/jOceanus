@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  * mode with no padding, and hence use an initVector that is derived via the key. It has also been
  * modified so that it does not require a 128-block cipher.
  */
-public abstract class GordianWrapCipher {
+public class GordianWrapCipher {
     /**
      * Wrap repeat count.
      */
@@ -108,11 +108,15 @@ public abstract class GordianWrapCipher {
      * @return the securedKey
      * @throws OceanusException on error
      */
-    protected abstract byte[] secureKey(GordianKey<GordianSymKeyType> pKey,
-                                        GordianKey<?> pKeyToSecure) throws OceanusException;
+    protected byte[] secureKey(final GordianKey<GordianSymKeyType> pKey,
+                               final GordianKey<?> pKeyToSecure) throws OceanusException {
+        /* Secure the bytes */
+        byte[] myInitVector = getDefaultInitVector(pKey);
+        return secureBytes(pKey, myInitVector, pKey.getKeyBytes());
+    }
 
     /**
-     * Derive key.
+     * Derive key from bytes.
      * @param <T> type of key to be derived
      * @param pKey the key to use to derive the key
      * @param pSecuredKey the securedKey
@@ -120,9 +124,17 @@ public abstract class GordianWrapCipher {
      * @return the derived key
      * @throws OceanusException on error
      */
-    protected abstract <T> GordianKey<T> deriveKey(GordianKey<GordianSymKeyType> pKey,
-                                                   byte[] pSecuredKey,
-                                                   T pKeyType) throws OceanusException;
+    protected <T> GordianKey<T> deriveKey(final GordianKey<GordianSymKeyType> pKey,
+                                          final byte[] pSecuredKey,
+                                          final T pKeyType) throws OceanusException {
+        /* Unwrap the bytes */
+        byte[] myInitVector = getDefaultInitVector(pKey);
+        byte[] myBytes = deriveBytes(pKey, myInitVector, pSecuredKey);
+
+        /* Generate the key */
+        GordianKeyGenerator<T> myGenerator = theFactory.getKeyGenerator(pKeyType);
+        return myGenerator.buildKeyFromBytes(myBytes);
+    }
 
     /**
      * Secure private key.
@@ -136,7 +148,8 @@ public abstract class GordianWrapCipher {
         /* Access the KeyPair Generator */
         GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyPairToSecure.getKeySpec());
         PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
-        return secureBytes(pKey, myPKCS8Key.getEncoded());
+        byte[] myInitVector = getDefaultInitVector(pKey);
+        return secureBytes(pKey, myInitVector, myPKCS8Key.getEncoded());
     }
 
     /**
@@ -148,19 +161,22 @@ public abstract class GordianWrapCipher {
      */
     protected PKCS8EncodedKeySpec deriveKeySpec(final GordianKey<GordianSymKeyType> pKey,
                                                 final byte[] pSecuredPrivateKey) throws OceanusException {
-        /* Access the KeyPair Generator */
-        byte[] myBytes = deriveBytes(pKey, pSecuredPrivateKey);
+        /* Derive the keySpec */
+        byte[] myInitVector = getDefaultInitVector(pKey);
+        byte[] myBytes = deriveBytes(pKey, myInitVector, pSecuredPrivateKey);
         return new PKCS8EncodedKeySpec(myBytes);
     }
 
     /**
      * secure bytes (based on RFC 5649).
      * @param pKey the key to use to secure the bytes
+     * @param pInitVector the initVector
      * @param pBytesToSecure the bytes to secure
      * @return the secured bytes
      * @throws OceanusException on error
      */
     protected byte[] secureBytes(final GordianKey<GordianSymKeyType> pKey,
+                                 final byte[] pInitVector,
                                  final byte[] pBytesToSecure) throws OceanusException {
         /* Check validity of key */
         theCipher.checkValidKey(pKey);
@@ -187,9 +203,6 @@ public abstract class GordianWrapCipher {
         byte[] myBuffer = new byte[myBufferLen];
         byte[] myResult = new byte[myBufferLen];
 
-        /* Access the IV */
-        byte[] myIV = getWrapIV(pKey);
-
         /* Determine semantics of the initial block */
         byte[] myByteLen = TethysDataConverter.integerToByteArray(myDataLen);
         int myCheckLen = theBlockLen - Integer.BYTES;
@@ -202,7 +215,7 @@ public abstract class GordianWrapCipher {
         System.arraycopy(pBytesToSecure, 0, myData, theBlockLen, myDataLen);
 
         /* Initialise the cipher */
-        theCipher.initCipher(pKey, myIV, true);
+        theCipher.initCipher(pKey, pInitVector, true);
 
         /* Loop WRAP_COUNT times */
         int myCount = 1;
@@ -234,11 +247,13 @@ public abstract class GordianWrapCipher {
     /**
      * derive bytes (based on RFC 5649).
      * @param pKey the key to use to derive the bytes
+     * @param pInitVector the initVector
      * @param pSecuredBytes the bytes to derive
      * @return the derived bytes
      * @throws OceanusException on error
      */
     protected byte[] deriveBytes(final GordianKey<GordianSymKeyType> pKey,
+                                 final byte[] pInitVector,
                                  final byte[] pSecuredBytes) throws OceanusException {
         /* Check validity of key */
         theCipher.checkValidKey(pKey);
@@ -254,9 +269,6 @@ public abstract class GordianWrapCipher {
             throw new GordianDataException("Invalid data length");
         }
 
-        /* Access the IV */
-        byte[] myIV = getWrapIV(pKey);
-
         /* Allocate buffers for data and encryption */
         int myBufferLen = theBlockLen << 1;
         byte[] myData = Arrays.copyOf(pSecuredBytes, pSecuredBytes.length);
@@ -264,7 +276,7 @@ public abstract class GordianWrapCipher {
         byte[] myResult = new byte[myBufferLen];
 
         /* Initialise the cipher */
-        theCipher.initCipher(pKey, myIV, false);
+        theCipher.initCipher(pKey, pInitVector, false);
 
         /* Loop WRAP_COUNT times */
         int myCount = myNumBlocks * WRAP_COUNT;
@@ -337,12 +349,12 @@ public abstract class GordianWrapCipher {
     }
 
     /**
-     * Determine the IV for a key.
+     * Determine the default initVector for a key.
      * @param pKey the key
-     * @return the IV
+     * @return the initVector
      * @throws OceanusException on error
      */
-    private byte[] getWrapIV(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
+    protected byte[] getDefaultInitVector(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
         /* Create the MAC and standard data */
         GordianMacSpec myMacSpec = GordianMacSpec.hMac(theFactory.getDefaultDigest());
         GordianMac myMac = theFactory.createMac(myMacSpec);

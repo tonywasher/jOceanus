@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -149,33 +150,27 @@ public abstract class GordianKeyGenerator<T> {
 
     /**
      * Derive the key.
-     * @param <K> type of key to be derived
      * @param pSecuredKey the secured key
-     * @param pKeyType the type of key to be derived
      * @param pKeySet the keySet to use to derive privateKey
      * @return the derived key
      * @throws OceanusException on error
      */
-    public <K> GordianKey<K> deriveKey(final byte[] pSecuredKey,
-                                       final K pKeyType,
-                                       final GordianKeySet pKeySet) throws OceanusException {
-        return pKeySet.deriveKey(pSecuredKey, pKeyType);
+    public GordianKey<T> deriveKey(final byte[] pSecuredKey,
+                                   final GordianKeySet pKeySet) throws OceanusException {
+        return pKeySet.deriveKey(pSecuredKey, theKeyType);
     }
 
     /**
      * Create the keyPair from the PKCS8/X509 encodings.
-     * @param <K> type of key to be derived
      * @param pSecuredKey the secured key
-     * @param pKeyType the type of key to be derived
      * @param pKey the key to use to derive Key
      * @return the derived key
      * @throws OceanusException on error
      */
-    public <K> GordianKey<K> deriveKey(final byte[] pSecuredKey,
-                                       final K pKeyType,
-                                       final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
+    public GordianKey<T> deriveKey(final byte[] pSecuredKey,
+                                   final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
         GordianWrapCipher myCipher = theFactory.createWrapCipher(pKey.getKeyType());
-        return myCipher.deriveKey(pKey, pSecuredKey, pKeyType);
+        return myCipher.deriveKey(pKey, pSecuredKey, theKeyType);
     }
 
     /**
@@ -195,8 +190,14 @@ public abstract class GordianKeyGenerator<T> {
         byte[] myKeyBytes = new byte[myKeyLen];
         int myBuilt = 0;
 
+        /* Determine a digestType to use based on the first four bytes of the initVector */
+        int mySeed = TethysDataConverter.byteArrayToInteger(Arrays.copyOf(pInitVector, Integer.SIZE));
+        mySeed += theKeyType.hashCode();
+        GordianDigestType[] myDigestType = new GordianDigestType[1];
+        theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(mySeed, myDigestType);
+
         /* Create the MAC and initialise it */
-        GordianMacSpec myMacSpec = GordianMacSpec.hMac(theFactory.getDefaultDigest());
+        GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigestType[0]);
         GordianMac myMac = theFactory.createMac(myMacSpec);
         myMac.initMac(pSecret);
 
@@ -248,7 +249,7 @@ public abstract class GordianKeyGenerator<T> {
         pMac.update(pSection);
 
         /* Loop through the iterations */
-        int myNumIterations = theFactory.getNumIterations() << 1;
+        int myNumIterations = theFactory.getNumIterations();
         for (int i = 0; i < myNumIterations; i++) {
             /* Add the existing result to hash */
             pMac.update(myInput);

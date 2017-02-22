@@ -1052,7 +1052,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public void updatePasswordHash(final MetisThreadStatusReport pReport,
                                    final String pSource) throws OceanusException {
         /* Obtain a new keySet hash */
-        GordianKeySetHash myHash = theSecurity.resolveKeySetHash(null, pSource);
+        GordianKeySetHash myHash = theSecurity.newKeySetHash(pSource);
 
         /* Update the control details */
         getControlKey().updatePasswordHash(myHash);

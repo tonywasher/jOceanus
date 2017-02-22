@@ -116,6 +116,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianWrapCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.BouncyDiffieHellmanReceiver;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.BouncyDiffieHellmanSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.BouncyECIESReceiver;
@@ -364,7 +365,7 @@ public final class BouncyFactory
     public BouncyAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
         GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
-        if (!standardSymKeyTypes().test(myKeyType)) {
+        if (!supportedSymKeyTypes().test(myKeyType)) {
             throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
@@ -384,7 +385,7 @@ public final class BouncyFactory
     }
 
     @Override
-    public Predicate<GordianSymKeyType> standardSymKeyTypes() {
+    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes() {
         return theStdSymPredicate;
     }
 
@@ -407,7 +408,7 @@ public final class BouncyFactory
     }
 
     @Override
-    protected BouncyWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException {
+    protected GordianWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
         if (!supportedSymKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
@@ -416,7 +417,7 @@ public final class BouncyFactory
         /* Create the cipher */
         GordianSymCipherSpec mySpec = GordianSymCipherSpec.cbc(pKeyType, GordianPadding.NONE);
         BouncySymKeyCipher myBCCipher = createSymKeyCipher(mySpec);
-        return new BouncyWrapCipher(this, myBCCipher);
+        return createWrapCipher(myBCCipher);
     }
 
     @Override
@@ -755,7 +756,7 @@ public final class BouncyFactory
      */
     private BlockCipher getBCStdSymEngine(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
-        if (!standardSymKeyTypes().test(pKeyType)) {
+        if (!supportedKeySetSymKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
         }
 

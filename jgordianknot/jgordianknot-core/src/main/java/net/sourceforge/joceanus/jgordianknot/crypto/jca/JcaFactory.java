@@ -64,6 +64,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianWrapCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDiffieHellmanKeyPairGenerator;
@@ -285,7 +286,7 @@ public final class JcaFactory
     }
 
     @Override
-    public Predicate<GordianSymKeyType> standardSymKeyTypes() {
+    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes() {
         return theStdSymPredicate;
     }
 
@@ -325,7 +326,7 @@ public final class JcaFactory
     public JcaAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
         GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
-        if (!standardSymKeyTypes().test(myKeyType)) {
+        if (!supportedSymKeyTypes().test(myKeyType)) {
             throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
@@ -358,7 +359,7 @@ public final class JcaFactory
     }
 
     @Override
-    protected JcaWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException {
+    protected GordianWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
         if (!supportedSymKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
@@ -367,7 +368,7 @@ public final class JcaFactory
         /* Create the cipher */
         GordianSymCipherSpec mySpec = GordianSymCipherSpec.cbc(pKeyType, GordianPadding.NONE);
         JcaCipher<GordianSymKeyType> myJcaCipher = createSymKeyCipher(mySpec);
-        return new JcaWrapCipher(this, myJcaCipher);
+        return createWrapCipher(myJcaCipher);
     }
 
     @Override
@@ -645,7 +646,7 @@ public final class JcaFactory
      */
     private String getGMacAlgorithm(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
-        if (!standardSymKeyTypes().test(pKeyType)) {
+        if (!supportedKeySetSymKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
         }
 
@@ -677,7 +678,7 @@ public final class JcaFactory
      */
     private String getPoly1305Algorithm(final GordianSymKeyType pKeyType) throws OceanusException {
         /* Check validity of SymKey */
-        if (!standardSymKeyTypes().test(pKeyType)) {
+        if (!supportedKeySetSymKeyTypes().test(pKeyType)) {
             throw new GordianDataException(getInvalidText(pKeyType));
         }
 

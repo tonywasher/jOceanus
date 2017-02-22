@@ -63,6 +63,11 @@ public final class BouncyKey<T>
     }
 
     @Override
+    protected byte[] getKeyBytes() {
+        return theKey;
+    }
+
+    @Override
     public <X> BouncyKey<X> convertToKeyType(final X pKeyType) {
         return new BouncyKey<>(pKeyType, theKey);
     }

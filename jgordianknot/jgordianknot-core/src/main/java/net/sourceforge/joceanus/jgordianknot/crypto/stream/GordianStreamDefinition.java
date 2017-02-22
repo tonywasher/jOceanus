@@ -141,14 +141,11 @@ public final class GordianStreamDefinition {
     protected GordianStreamDefinition(final GordianKeySet pKeySet,
                                       final GordianCipherOutputStream<?> pStream) throws OceanusException {
         GordianCipher<?> myCipher = pStream.getCipher();
-        if (pStream.isSymKeyStream()) {
-            theType = StreamType.SYMMETRIC;
-            theTypeId = pKeySet.deriveExternalIdForType(myCipher.getCipherSpec());
-        } else {
-            theType = StreamType.STREAM;
-            theTypeId = pKeySet.deriveExternalIdForType(myCipher.getCipherSpec());
-        }
         GordianFactory myFactory = pKeySet.getFactory();
+        theType = pStream.isSymKeyStream()
+                                           ? StreamType.SYMMETRIC
+                                           : StreamType.STREAM;
+        theTypeId = pKeySet.deriveExternalIdForType(myCipher.getCipherSpec());
         GordianKeyGenerator<?> myGenerator = myFactory.getKeyGenerator(myCipher.getKeyType());
         theTypeDefinition = myGenerator.secureKey(myCipher.getKey(), pKeySet);
         theInitVector = myCipher.getInitVector();
@@ -286,8 +283,8 @@ public final class GordianStreamDefinition {
         /* Generate the MAC */
         GordianFactory myFactory = pKeySet.getFactory();
         GordianMac myMac = myFactory.createMac(mySpec);
-        GordianKeyGenerator<?> myGenerator = myFactory.getKeyGenerator(mySpec);
-        GordianKey<GordianMacSpec> myKey = myGenerator.deriveKey(theTypeDefinition, mySpec, pKeySet);
+        GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(mySpec);
+        GordianKey<GordianMacSpec> myKey = myGenerator.deriveKey(theTypeDefinition, pKeySet);
         myMac.initMac(myKey, theInitVector);
 
         /* Create the stream */
@@ -311,7 +308,7 @@ public final class GordianStreamDefinition {
         GordianFactory myFactory = pKeySet.getFactory();
         GordianCipher<GordianSymKeyType> myCipher = myFactory.createSymKeyCipher(mySpec);
         GordianKeyGenerator<GordianSymKeyType> myGenerator = myFactory.getKeyGenerator(myType);
-        GordianKey<GordianSymKeyType> myKey = myGenerator.deriveKey(theTypeDefinition, myType, pKeySet);
+        GordianKey<GordianSymKeyType> myKey = myGenerator.deriveKey(theTypeDefinition, pKeySet);
         myCipher.initCipher(myKey, theInitVector, false);
 
         /* Create the stream */
@@ -335,7 +332,7 @@ public final class GordianStreamDefinition {
         GordianFactory myFactory = pKeySet.getFactory();
         GordianCipher<GordianStreamKeyType> myCipher = myFactory.createStreamKeyCipher(mySpec);
         GordianKeyGenerator<GordianStreamKeyType> myGenerator = myFactory.getKeyGenerator(myType);
-        GordianKey<GordianStreamKeyType> myKey = myGenerator.deriveKey(theTypeDefinition, myType, pKeySet);
+        GordianKey<GordianStreamKeyType> myKey = myGenerator.deriveKey(theTypeDefinition, pKeySet);
         myCipher.initCipher(myKey, theInitVector, false);
 
         /* Create the stream */
