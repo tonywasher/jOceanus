@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
@@ -98,7 +99,7 @@ public class DataKey
     /**
      * Encrypted Symmetric Key Length.
      */
-    public static final int KEYLEN = GordianKeySet.WRAPPED_KEYSIZE;
+    public static final int KEYLEN = GordianHashManager.getMaximumKeyWrapSize();
 
     /**
      * Copy Constructor.
@@ -117,7 +118,6 @@ public class DataKey
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
-    @SuppressWarnings("unchecked")
     private DataKey(final DataKeyList pList,
                     final DataValues<CryptographyDataType> pValues) throws OceanusException {
         /* Initialise the item */

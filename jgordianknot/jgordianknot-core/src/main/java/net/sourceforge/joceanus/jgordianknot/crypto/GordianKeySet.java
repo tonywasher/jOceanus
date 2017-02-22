@@ -27,6 +27,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.bouncycastle.util.Arrays;
+
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetRecipe.GordianKeySetParameters;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -39,17 +41,6 @@ public final class GordianKeySet {
      * Initialisation Vector size.
      */
     private static final int IVSIZE = GordianFactory.IVSIZE;
-
-    /**
-     * Maximum number of encryption steps.
-     */
-    public static final int MAXSTEPS = GordianSymKeyType.values().length - 1;
-
-    /**
-     * Maximum wrapped KeySize.
-     */
-    public static final int WRAPPED_KEYSIZE = GordianFactory.BIG_KEYLEN
-                                              + GordianKeySetRecipe.RECIPELEN;
 
     /**
      * The factory.
@@ -131,6 +122,16 @@ public final class GordianKeySet {
     }
 
     /**
+     * Obtain keyWrapExpansion for # of steps.
+     * @param pNumSteps the number of wrap steps
+     * @return the keyWrap expansion
+     */
+    public static int getKeyWrapExpansion(final int pNumSteps) {
+        int myExpansion = (IVSIZE * pNumSteps) >> 1;
+        return myExpansion + getEncryptionOverhead();
+    }
+
+    /**
      * Encrypt bytes.
      * @param pBytes the bytes to encrypt
      * @return the encrypted bytes
@@ -146,7 +147,13 @@ public final class GordianKeySet {
         byte[] myBytes = theCipher.finish(pBytes);
 
         /* Package and return the encrypted bytes */
-        return myRecipe.buildExternal(theFactory, myBytes);
+        byte[] myCloud = myRecipe.buildExternal(theFactory, myBytes);
+        byte[] myClear = decryptBytes(myCloud);
+        if (!Arrays.areEqual(pBytes, myClear)) {
+            throw new GordianDataException("Help");
+        }
+
+        return myCloud;
     }
 
     /**

@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianBadCredentialsExcepti
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyFactory;
@@ -302,5 +303,15 @@ public abstract class GordianHashManager {
         return GordianFactoryType.BC.equals(pFactory)
                                                       ? BouncyFactory.getMaximumCipherSteps(pRestricted)
                                                       : JcaFactory.getMaximumCipherSteps(pRestricted);
+    }
+
+    /**
+     * Obtain KeyWrapSize.
+     * @return the maximum keyWrap size
+     */
+    public static int getMaximumKeyWrapSize() {
+        int myMaxCipherSteps = getMaximumCipherSteps(GordianFactoryType.BC, false);
+        return GordianKeySet.getKeyWrapExpansion(myMaxCipherSteps)
+               + GordianFactory.getKeyLength(false) / Byte.SIZE;
     }
 }

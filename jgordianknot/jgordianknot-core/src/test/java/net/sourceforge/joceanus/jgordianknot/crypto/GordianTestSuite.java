@@ -117,7 +117,9 @@ public class GordianTestSuite {
     private void testSecurity(final boolean pRestricted,
                               final GordianFactoryType pType) throws OceanusException {
         /* Determine test name */
-        String myTestName = pType.toString() + "-" + pRestricted;
+        String myTestName = pType.toString() + "-" + (pRestricted
+                                                                  ? "Restricted"
+                                                                  : "Unlimited");
 
         /* Create new Password Hash */
         GordianParameters myParams = new GordianParameters(pRestricted);
@@ -136,9 +138,19 @@ public class GordianTestSuite {
         byte[] myStreamSafe = myKeySet.secureKey(myStream);
 
         /* Encrypt some bytes */
-        String myTest = "TestString";
-        byte[] myBytes = TethysDataConverter.stringToByteArray(myTest);
-        byte[] myEncrypt = myKeySet.encryptBytes(myBytes);
+        String myTest1 = "TestString";
+        byte[] myBytes = TethysDataConverter.stringToByteArray(myTest1);
+        byte[] myEncrypt1 = myKeySet.encryptBytes(myBytes);
+
+        /* Encrypt some more bytes */
+        String myTest2 = "TestString123456";
+        myBytes = TethysDataConverter.stringToByteArray(myTest2);
+        byte[] myEncrypt2 = myKeySet.encryptBytes(myBytes);
+
+        /* Encrypt some more bytes */
+        String myTest3 = "TestString1234567";
+        myBytes = TethysDataConverter.stringToByteArray(myTest3);
+        byte[] myEncrypt3 = myKeySet.encryptBytes(myBytes);
 
         /* Loop through the digests */
         Predicate<GordianDigestSpec> myDigestPredicate = myFactory.supportedDigestSpecs();
@@ -239,10 +251,20 @@ public class GordianTestSuite {
         myAsymTest.validateKeyPairs(myFactory, myKeySet1);
 
         /* Decrypt the bytes */
-        byte[] myResult = myKeySet1.decryptBytes(myEncrypt);
+        byte[] myResult = myKeySet1.decryptBytes(myEncrypt1);
         String myAnswer = TethysDataConverter.byteArrayToString(myResult);
-        if (!myAnswer.equals(myTest)) {
-            System.out.println("Failed to decrypt test string");
+        if (!myAnswer.equals(myTest1)) {
+            System.out.println("Failed to decrypt test1 string");
+        }
+        myResult = myKeySet1.decryptBytes(myEncrypt2);
+        myAnswer = TethysDataConverter.byteArrayToString(myResult);
+        if (!myAnswer.equals(myTest2)) {
+            System.out.println("Failed to decrypt test2 string");
+        }
+        myResult = myKeySet1.decryptBytes(myEncrypt3);
+        myAnswer = TethysDataConverter.byteArrayToString(myResult);
+        if (!myAnswer.equals(myTest3)) {
+            System.out.println("Failed to decrypt test3 string");
         }
     }
 }

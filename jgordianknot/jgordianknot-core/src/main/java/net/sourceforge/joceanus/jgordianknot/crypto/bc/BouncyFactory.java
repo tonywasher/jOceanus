@@ -1012,7 +1012,7 @@ public final class BouncyFactory
     /**
      * Generate symKey predicate.
      * @param pRestricted are keys restricted?
-     * @return the maximum
+     * @return the predicate
      */
     private static Predicate<GordianSymKeyType> generateSymKeyPredicate(final boolean pRestricted) {
         return p -> p.validForRestriction(pRestricted);
@@ -1021,7 +1021,7 @@ public final class BouncyFactory
     /**
      * Generate standard symKey predicate.
      * @param pRestricted are keys restricted?
-     * @return the maximum
+     * @return the predicate
      */
     private static Predicate<GordianSymKeyType> generateStdSymKeyPredicate(final boolean pRestricted) {
         return p -> p.validForRestriction(pRestricted) && p.isStdBlock();
@@ -1030,7 +1030,7 @@ public final class BouncyFactory
     /**
      * Generate streamKey predicate.
      * @param pRestricted are keys restricted?
-     * @return the maximum
+     * @return the predicate
      */
     private static Predicate<GordianStreamKeyType> generateStreamKeyPredicate(final boolean pRestricted) {
         return p -> p.validForRestriction(pRestricted);

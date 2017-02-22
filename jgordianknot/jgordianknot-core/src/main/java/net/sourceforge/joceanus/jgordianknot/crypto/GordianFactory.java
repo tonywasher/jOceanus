@@ -208,12 +208,21 @@ public abstract class GordianFactory {
 
     /**
      * Obtain keyLength.
+     * @param isRestricted is the factory restricted?
      * @return the keyLength
      */
-    public int getKeyLength() {
+    public static int getKeyLength(final boolean isRestricted) {
         return isRestricted
                             ? SMALL_KEYLEN
                             : BIG_KEYLEN;
+    }
+
+    /**
+     * Obtain keyLength.
+     * @return the keyLength
+     */
+    public int getKeyLength() {
+        return getKeyLength(isRestricted);
     }
 
     /**
