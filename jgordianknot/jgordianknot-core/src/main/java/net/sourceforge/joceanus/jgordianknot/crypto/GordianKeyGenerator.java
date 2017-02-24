@@ -44,6 +44,11 @@ public abstract class GordianKeyGenerator<T> {
     private final int theKeyLength;
 
     /**
+     * The Key Adjust.
+     */
+    private final int theKeyAdjust;
+
+    /**
      * The Security Factory.
      */
     private final GordianFactory theFactory;
@@ -67,6 +72,11 @@ public abstract class GordianKeyGenerator<T> {
         /* Cache some values */
         theKeyLength = pFactory.getKeyLength();
         theRandom = pFactory.getRandom();
+
+        /* Calculate an adjustment for enum keyTypes */
+        theKeyAdjust = theKeyType instanceof Enum
+                                                  ? ((Enum<?>) theKeyType).ordinal() * GordianFactory.HASH_PRIME
+                                                  : 0;
     }
 
     /**
@@ -192,7 +202,7 @@ public abstract class GordianKeyGenerator<T> {
 
         /* Determine a digestType to use based on the first four bytes of the initVector */
         int mySeed = TethysDataConverter.byteArrayToInteger(Arrays.copyOf(pInitVector, Integer.SIZE));
-        mySeed += theKeyType.hashCode();
+        mySeed += theKeyAdjust;
         GordianDigestType[] myDigestType = new GordianDigestType[1];
         theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(mySeed, myDigestType);
 
@@ -220,7 +230,8 @@ public abstract class GordianKeyGenerator<T> {
         }
 
         /* Return the new key */
-        return buildKeyFromBytes(myKeyBytes);
+        GordianKey<T> myKey = buildKeyFromBytes(myKeyBytes);
+        return myKey;
     }
 
     /**

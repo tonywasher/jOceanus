@@ -111,8 +111,7 @@ public class GordianWrapCipher {
     protected byte[] secureKey(final GordianKey<GordianSymKeyType> pKey,
                                final GordianKey<?> pKeyToSecure) throws OceanusException {
         /* Secure the bytes */
-        byte[] myInitVector = getDefaultInitVector(pKey);
-        return secureBytes(pKey, myInitVector, pKey.getKeyBytes());
+        return secureBytes(pKey, pKeyToSecure.getKeyBytes());
     }
 
     /**
@@ -128,8 +127,7 @@ public class GordianWrapCipher {
                                           final byte[] pSecuredKey,
                                           final T pKeyType) throws OceanusException {
         /* Unwrap the bytes */
-        byte[] myInitVector = getDefaultInitVector(pKey);
-        byte[] myBytes = deriveBytes(pKey, myInitVector, pSecuredKey);
+        byte[] myBytes = deriveBytes(pKey, pSecuredKey);
 
         /* Generate the key */
         GordianKeyGenerator<T> myGenerator = theFactory.getKeyGenerator(pKeyType);
@@ -148,8 +146,7 @@ public class GordianWrapCipher {
         /* Access the KeyPair Generator */
         GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyPairToSecure.getKeySpec());
         PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
-        byte[] myInitVector = getDefaultInitVector(pKey);
-        return secureBytes(pKey, myInitVector, myPKCS8Key.getEncoded());
+        return secureBytes(pKey, myPKCS8Key.getEncoded());
     }
 
     /**
@@ -162,21 +159,18 @@ public class GordianWrapCipher {
     protected PKCS8EncodedKeySpec deriveKeySpec(final GordianKey<GordianSymKeyType> pKey,
                                                 final byte[] pSecuredPrivateKey) throws OceanusException {
         /* Derive the keySpec */
-        byte[] myInitVector = getDefaultInitVector(pKey);
-        byte[] myBytes = deriveBytes(pKey, myInitVector, pSecuredPrivateKey);
+        byte[] myBytes = deriveBytes(pKey, pSecuredPrivateKey);
         return new PKCS8EncodedKeySpec(myBytes);
     }
 
     /**
      * secure bytes (based on RFC 5649).
      * @param pKey the key to use to secure the bytes
-     * @param pInitVector the initVector
      * @param pBytesToSecure the bytes to secure
      * @return the secured bytes
      * @throws OceanusException on error
      */
     protected byte[] secureBytes(final GordianKey<GordianSymKeyType> pKey,
-                                 final byte[] pInitVector,
                                  final byte[] pBytesToSecure) throws OceanusException {
         /* Check validity of key */
         theCipher.checkValidKey(pKey);
@@ -215,7 +209,7 @@ public class GordianWrapCipher {
         System.arraycopy(pBytesToSecure, 0, myData, theBlockLen, myDataLen);
 
         /* Initialise the cipher */
-        theCipher.initCipher(pKey, pInitVector, true);
+        theCipher.initCipher(pKey, null, true);
 
         /* Loop WRAP_COUNT times */
         int myCount = 1;
@@ -247,13 +241,11 @@ public class GordianWrapCipher {
     /**
      * derive bytes (based on RFC 5649).
      * @param pKey the key to use to derive the bytes
-     * @param pInitVector the initVector
      * @param pSecuredBytes the bytes to derive
      * @return the derived bytes
      * @throws OceanusException on error
      */
     protected byte[] deriveBytes(final GordianKey<GordianSymKeyType> pKey,
-                                 final byte[] pInitVector,
                                  final byte[] pSecuredBytes) throws OceanusException {
         /* Check validity of key */
         theCipher.checkValidKey(pKey);
@@ -276,7 +268,7 @@ public class GordianWrapCipher {
         byte[] myResult = new byte[myBufferLen];
 
         /* Initialise the cipher */
-        theCipher.initCipher(pKey, pInitVector, false);
+        theCipher.initCipher(pKey, null, false);
 
         /* Loop WRAP_COUNT times */
         int myCount = myNumBlocks * WRAP_COUNT;

@@ -415,7 +415,7 @@ public final class BouncyFactory
         }
 
         /* Create the cipher */
-        GordianSymCipherSpec mySpec = GordianSymCipherSpec.cbc(pKeyType, GordianPadding.NONE);
+        GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeyType, GordianPadding.NONE);
         BouncySymKeyCipher myBCCipher = createSymKeyCipher(mySpec);
         return createWrapCipher(myBCCipher);
     }

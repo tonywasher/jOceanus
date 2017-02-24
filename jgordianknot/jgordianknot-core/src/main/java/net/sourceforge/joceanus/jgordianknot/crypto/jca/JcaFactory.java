@@ -366,7 +366,7 @@ public final class JcaFactory
         }
 
         /* Create the cipher */
-        GordianSymCipherSpec mySpec = GordianSymCipherSpec.cbc(pKeyType, GordianPadding.NONE);
+        GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeyType, GordianPadding.NONE);
         JcaCipher<GordianSymKeyType> myJcaCipher = createSymKeyCipher(mySpec);
         return createWrapCipher(myJcaCipher);
     }

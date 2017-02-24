@@ -558,7 +558,8 @@ public final class GordianMultiCipher {
         }
 
         /* Initialise the hMac using the key */
-        myMac.initMac(pKey.convertToKeyType(myMac.getMacSpec()));
+        GordianKey<GordianMacSpec> myMacKey = pKey.convertToKeyType(myMac.getMacSpec());
+        myMac.initMac(myMacKey);
 
         /* Update using IV and then personalisation */
         myMac.update(TethysDataConverter.stringToByteArray(pKey.getKeyType().toString()));
@@ -674,9 +675,7 @@ public final class GordianMultiCipher {
             GordianSymKeyType myKeyType = mySymKeyTypes[i];
             SymKeyCiphers myCiphers = getKeyCiphers(myKeyType);
             GordianWrapCipher myCipher = myCiphers.getWrapCipher();
-            GordianKey<GordianSymKeyType> mySymKey = theSymKeyMap.get(myKeyType);
-            myIV = calculateInitVector(myMacType, mySymKey, myInitVector, myKeyType.getIVLength());
-            myBytes = myCipher.secureBytes(myCiphers.getKey(), myIV, myBytes);
+            myBytes = myCipher.secureBytes(myCiphers.getKey(), myBytes);
         }
 
         /* return the secured bytes */
@@ -707,9 +706,7 @@ public final class GordianMultiCipher {
             GordianSymKeyType myKeyType = mySymKeyTypes[i];
             SymKeyCiphers myCiphers = getKeyCiphers(myKeyType);
             GordianWrapCipher myCipher = myCiphers.getWrapCipher();
-            GordianKey<GordianSymKeyType> mySymKey = theSymKeyMap.get(myKeyType);
-            byte[] myIV = calculateInitVector(myMacType, mySymKey, myInitVector, myKeyType.getIVLength());
-            myBytes = myCipher.deriveBytes(myCiphers.getKey(), myIV, myBytes);
+            myBytes = myCipher.deriveBytes(myCiphers.getKey(), myBytes);
         }
 
         /* Access and initialise the streamCipher */
