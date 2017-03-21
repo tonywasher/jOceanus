@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.data;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -40,6 +41,11 @@ public final class MetisFields {
      * Hash Prime.
      */
     public static final int HASH_PRIME = 19;
+
+    /**
+     * No Maximum Length.
+     */
+    public static final Integer FIELD_NO_MAXLENGTH = -1;
 
     /**
      * The Next anchorId.
@@ -199,7 +205,7 @@ public final class MetisFields {
      * @return the field
      */
     public MetisField declareLocalField(final String pName) {
-        return declareDataField(pName, MetisFieldEquality.DERIVED, MetisFieldStorage.LOCAL);
+        return declareDataField(pName);
     }
 
     /**
@@ -208,7 +214,7 @@ public final class MetisFields {
      * @return the field
      */
     public MetisField declareEqualityField(final String pName) {
-        return declareDataField(pName, MetisFieldEquality.EQUALITY, MetisFieldStorage.LOCAL);
+        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.EQUALITY, MetisFieldStorage.LOCAL);
     }
 
     /**
@@ -217,7 +223,7 @@ public final class MetisFields {
      * @return the field
      */
     public MetisField declareComparisonField(final String pName) {
-        return declareDataField(pName, MetisFieldEquality.COMPARISON, MetisFieldStorage.LOCAL);
+        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.COMPARISON, MetisFieldStorage.LOCAL);
     }
 
     /**
@@ -226,43 +232,103 @@ public final class MetisFields {
      * @return the field
      */
     public MetisField declareDerivedValueField(final String pName) {
-        return declareDataField(pName, MetisFieldEquality.DERIVED, MetisFieldStorage.VALUESET);
+        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.DERIVED, MetisFieldStorage.VALUESET);
     }
 
     /**
      * Declare valueSet field used for equality test.
      * @param pName the name of the field
+     * @param pDataType the dataType of the field
      * @return the field
      */
-    public MetisField declareEqualityValueField(final String pName) {
-        return declareDataField(pName, MetisFieldEquality.EQUALITY, MetisFieldStorage.VALUESET);
+    public MetisField declareEqualityValueField(final String pName,
+                                                final MetisDataType pDataType) {
+        return declareEqualityValueField(pName, pDataType, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare valueSet field used for equality test.
+     * @param pName the name of the field
+     * @param pDataType the dataType of the field
+     * @param pMaxLength the maximum length of the field
+     * @return the field
+     */
+    public MetisField declareEqualityValueField(final String pName,
+                                                final MetisDataType pDataType,
+                                                final Integer pMaxLength) {
+        return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.EQUALITY, MetisFieldStorage.VALUESET);
     }
 
     /**
      * Declare valueSet field used for equality and comparison test.
      * @param pName the name of the field
+     * @param pDataType the dataType of the field
      * @return the field
      */
-    public MetisField declareComparisonValueField(final String pName) {
-        return declareDataField(pName, MetisFieldEquality.COMPARISON, MetisFieldStorage.VALUESET);
+    public MetisField declareComparisonValueField(final String pName,
+                                                  final MetisDataType pDataType) {
+        return declareComparisonValueField(pName, pDataType, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare valueSet field used for equality and comparison test.
+     * @param pName the name of the field
+     * @param pDataType the dataType of the field
+     * @param pMaxLength the maximum length of the field
+     * @return the field
+     */
+    public MetisField declareComparisonValueField(final String pName,
+                                                  final MetisDataType pDataType,
+                                                  final Integer pMaxLength) {
+        return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.COMPARISON, MetisFieldStorage.VALUESET);
     }
 
     /**
      * Declare encrypted valueSet field used for equality test.
      * @param pName the name of the field
+     * @param pDataType the dataType of the field
      * @return the field
      */
-    public MetisField declareEqualityEncryptedField(final String pName) {
-        return declareDataField(pName, MetisFieldEquality.EQUALITY, MetisFieldStorage.ENCRYPTED);
+    public MetisField declareEqualityEncryptedField(final String pName,
+                                                    final MetisDataType pDataType) {
+        return declareEqualityEncryptedField(pName, pDataType, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted valueSet field used for equality test.
+     * @param pName the name of the field
+     * @param pDataType the dataType of the field
+     * @param pMaxLength the maximum length of the field
+     * @return the field
+     */
+    public MetisField declareEqualityEncryptedField(final String pName,
+                                                    final MetisDataType pDataType,
+                                                    final Integer pMaxLength) {
+        return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.EQUALITY, MetisFieldStorage.ENCRYPTED);
     }
 
     /**
      * Declare encrypted valueSet field used for equality and comparison test.
      * @param pName the name of the field
+     * @param pDataType the dataType of the field
      * @return the field
      */
-    public MetisField declareComparisonEncryptedField(final String pName) {
-        return declareDataField(pName, MetisFieldEquality.COMPARISON, MetisFieldStorage.ENCRYPTED);
+    public MetisField declareComparisonEncryptedField(final String pName,
+                                                      final MetisDataType pDataType) {
+        return declareComparisonEncryptedField(pName, pDataType, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted valueSet field used for equality and comparison test.
+     * @param pName the name of the field
+     * @param pDataType the dataType of the field
+     * @param pMaxLength the maximum length of the field
+     * @return the field
+     */
+    public MetisField declareComparisonEncryptedField(final String pName,
+                                                      final MetisDataType pDataType,
+                                                      final Integer pMaxLength) {
+        return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.COMPARISON, MetisFieldStorage.ENCRYPTED);
     }
 
     /**
@@ -271,7 +337,7 @@ public final class MetisFields {
      * @return the field
      */
     public MetisField declareCalculatedField(final String pName) {
-        return declareDataField(pName, MetisFieldEquality.DERIVED, MetisFieldStorage.CALCULATED);
+        return declareDataField(pName, MetisDataType.CONTEXT, FIELD_NO_MAXLENGTH, MetisFieldEquality.DERIVED, MetisFieldStorage.CALCULATED);
     }
 
     /**
@@ -286,19 +352,23 @@ public final class MetisFields {
     /**
      * Declare field.
      * @param pName the name of the field
+     * @param pDataType the dataType of the field
+     * @param pMaxLength the maximum length of the field
      * @param pEquality the equality class
      * @param pStorage the storage class
      * @return the field
      */
 
     private synchronized MetisField declareDataField(final String pName,
+                                                     final MetisDataType pDataType,
+                                                     final Integer pMaxLength,
                                                      final MetisFieldEquality pEquality,
                                                      final MetisFieldStorage pStorage) {
         /* Check the name */
         checkUniqueName(pName);
 
         /* Create the field */
-        MetisField myField = new MetisField(this, pName, pEquality, pStorage);
+        MetisField myField = new MetisField(this, pName, pDataType, pMaxLength, pEquality, pStorage);
 
         /* Add it to the list */
         theFields.add(myField);
@@ -463,6 +533,16 @@ public final class MetisFields {
         private final String theName;
 
         /**
+         * DataType of field.
+         */
+        private final MetisDataType theDataType;
+
+        /**
+         * Maximum Length of field.
+         */
+        private final Integer theMaxLength;
+
+        /**
          * The field equality type.
          */
         private final MetisFieldEquality theEquality;
@@ -476,18 +556,27 @@ public final class MetisFields {
          * Constructor.
          * @param pAnchor the anchor
          * @param pName the name of the field
+         * @param pDataType the dataType of the field
+         * @param pMaxLength the maximum length of the field
          * @param pEquality the field equality type
          * @param pStorage the field storage type
          */
-        public MetisField(final MetisFields pAnchor,
-                          final String pName,
-                          final MetisFieldEquality pEquality,
-                          final MetisFieldStorage pStorage) {
+        protected MetisField(final MetisFields pAnchor,
+                             final String pName,
+                             final MetisDataType pDataType,
+                             final Integer pMaxLength,
+                             final MetisFieldEquality pEquality,
+                             final MetisFieldStorage pStorage) {
             /* Store parameters */
             theAnchor = pAnchor;
             theName = pName;
+            theDataType = pDataType;
+            theMaxLength = pMaxLength;
             theEquality = pEquality;
             theStorage = pStorage;
+
+            /* Check Validity */
+            checkValidity();
 
             /* Allocate value index if required */
             theIndex = theStorage.isValueSet()
@@ -499,17 +588,24 @@ public final class MetisFields {
          * Constructor.
          * @param pAnchor the anchor
          * @param pName the name of the field
+         * @param pEquality the field equality type
+         * @param pStorage the field storage type
          */
-        public MetisField(final MetisFields pAnchor,
-                          final String pName) {
-            /* Store parameters */
-            theAnchor = pAnchor;
-            theName = pName;
-            theEquality = MetisFieldEquality.DERIVED;
-            theStorage = MetisFieldStorage.LOCAL;
+        protected MetisField(final MetisFields pAnchor,
+                             final String pName,
+                             final MetisFieldEquality pEquality,
+                             final MetisFieldStorage pStorage) {
+            this(pAnchor, pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, pEquality, pStorage);
+        }
 
-            /* Allocate value index */
-            theIndex = theAnchor.getNextValue();
+        /**
+         * Constructor.
+         * @param pAnchor the anchor
+         * @param pName the name of the field
+         */
+        protected MetisField(final MetisFields pAnchor,
+                             final String pName) {
+            this(pAnchor, pName, MetisFieldEquality.DERIVED, MetisFieldStorage.LOCAL);
         }
 
         /**
@@ -526,6 +622,22 @@ public final class MetisFields {
          */
         public String getName() {
             return theName;
+        }
+
+        /**
+         * Get the dataType.
+         * @return the dataType
+         */
+        public MetisDataType getDataType() {
+            return theDataType;
+        }
+
+        /**
+         * Get the maximum length.
+         * @return the maxLength
+         */
+        public Integer getMaxLength() {
+            return theMaxLength;
         }
 
         /**
@@ -550,6 +662,35 @@ public final class MetisFields {
          */
         public MetisFields getAnchor() {
             return theAnchor;
+        }
+
+        /**
+         * Check validity of Field Definition.
+         */
+        private void checkValidity() {
+            /* Check whether length is valid */
+            switch (theDataType) {
+                case STRING:
+                case BYTEARRAY:
+                case CHARARRAY:
+                    if (theMaxLength < 0) {
+                        throw new InvalidParameterException("Length required for String/Array");
+                    }
+                    break;
+                default:
+                    if (theMaxLength != FIELD_NO_MAXLENGTH) {
+                        throw new InvalidParameterException("Length allowed only for String/Array");
+                    }
+                    break;
+
+            }
+
+            /* Disallow object on Storage */
+            if (theStorage.isValueSet()
+                && theEquality.isEquality()
+                && MetisDataType.OBJECT.equals(theDataType)) {
+                throw new InvalidParameterException("Object DataType not allowed on equality/valueSet");
+            }
         }
 
         @Override

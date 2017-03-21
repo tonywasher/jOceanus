@@ -151,7 +151,7 @@ public class TethysDateFormatter
         }
 
         /* Format the date */
-        return formatDate(pDate.getTime());
+        return formatJavaDate(pDate.getTime());
     }
 
     @Override
@@ -166,11 +166,11 @@ public class TethysDateFormatter
     }
 
     /**
-     * Format a Date.
+     * Format a java Date.
      * @param pDate the date to format
      * @return the formatted date
      */
-    public String formatDate(final Date pDate) {
+    public String formatJavaDate(final Date pDate) {
         /* Handle null */
         if (pDate == null) {
             return null;
@@ -181,11 +181,11 @@ public class TethysDateFormatter
     }
 
     /**
-     * Format a DateDay.
+     * Format a Date.
      * @param pDate the date to format
      * @return the formatted date
      */
-    public String formatDateDay(final TethysDate pDate) {
+    public String formatDate(final TethysDate pDate) {
         /* Handle null */
         if (pDate == null) {
             return null;
@@ -214,13 +214,13 @@ public class TethysDateFormatter
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append((myStart == null)
                                            ? TethysDateRange.DESC_UNBOUNDED
-                                           : formatDateDay(myStart));
+                                           : formatDate(myStart));
         myBuilder.append(TethysDateRange.CHAR_BLANK);
         myBuilder.append(TethysDateRange.DESC_LINK);
         myBuilder.append(TethysDateRange.CHAR_BLANK);
         myBuilder.append((myEnd == null)
                                          ? TethysDateRange.DESC_UNBOUNDED
-                                         : formatDateDay(myEnd));
+                                         : formatDate(myEnd));
 
         /* return the format */
         return myBuilder.toString();

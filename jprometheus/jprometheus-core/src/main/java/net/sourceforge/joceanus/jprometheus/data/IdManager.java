@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdIndex;
+import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdIndex;
 
 /**
  * Id Manager for data list. Allocates new IDs and checks for uniqueness.

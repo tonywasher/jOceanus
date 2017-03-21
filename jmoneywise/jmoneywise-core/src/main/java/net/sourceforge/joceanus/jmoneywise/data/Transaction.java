@@ -26,6 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
@@ -84,7 +85,7 @@ public class Transaction
     /**
      * Date Field Id.
      */
-    public static final MetisField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    public static final MetisField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue(), MetisDataType.DATE);
 
     /**
      * TaxYear Field Id.

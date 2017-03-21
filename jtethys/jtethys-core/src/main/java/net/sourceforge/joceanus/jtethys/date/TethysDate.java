@@ -752,16 +752,9 @@ public class TethysDate
         TethysDate myThat = (TethysDate) pThat;
 
         /* Check components */
-        if (theYear != myThat.theYear) {
-            return false;
-        }
-        if (theMonth != myThat.theMonth) {
-            return false;
-        }
-        if (theDay != myThat.theDay) {
-            return false;
-        }
-        return true;
+        return theYear == myThat.theYear
+               && theMonth == myThat.theMonth
+               && theDay == myThat.theDay;
     }
 
     @Override

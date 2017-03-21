@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedString;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
@@ -61,17 +62,17 @@ public abstract class AssetBase<T extends AssetBase<T>>
     /**
      * Name Field Id.
      */
-    public static final MetisField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
+    public static final MetisField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue(), MetisDataType.STRING, NAMELEN);
 
     /**
      * Description Field Id.
      */
-    public static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
+    public static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue(), MetisDataType.STRING, DESCLEN);
 
     /**
      * isClosed Field Id.
      */
-    public static final MetisField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_CLOSED.getValue());
+    public static final MetisField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_CLOSED.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * CloseDate Field Id.

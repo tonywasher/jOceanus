@@ -205,11 +205,14 @@ public class CoeusZopaLoanBookItem
         myIterator.next();
         myIterator.next();
 
+        /* Skip the default date */
+        myIterator.next();
+
         /* Skip Monthly rePayment and Purpose */
         myIterator.next();
         myIterator.next();
 
-        /* Parse the rate */
+        /* Parse the portion repaid */
         thePortionRepaid = pParser.parseRate(myIterator.next());
     }
 

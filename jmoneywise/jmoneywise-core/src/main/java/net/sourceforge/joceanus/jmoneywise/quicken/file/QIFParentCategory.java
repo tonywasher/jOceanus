@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
+import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 
 /**

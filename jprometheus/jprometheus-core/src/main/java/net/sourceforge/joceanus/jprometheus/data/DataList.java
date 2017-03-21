@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisErrorList;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
-import net.sourceforge.joceanus.jmetis.list.MetisOrderedListIterator;
+import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
+import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedListIterator;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -93,7 +93,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * MapData Field Id.
      */
-    private static final MetisField FIELD_MAPS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATALIST_MAPS.getValue());
+    private static final MetisField FIELD_MAPS = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATALIST_MAPS.getValue());
 
     /**
      * Generation Field Id.

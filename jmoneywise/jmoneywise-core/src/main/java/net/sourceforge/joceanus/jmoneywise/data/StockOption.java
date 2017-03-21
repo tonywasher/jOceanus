@@ -27,6 +27,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedPrice;
@@ -84,22 +85,22 @@ public class StockOption
     /**
      * StockHolding Field Id.
      */
-    public static final MetisField FIELD_STOCKHOLDING = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.STOCKOPTION_STOCKHOLDING.getValue());
+    public static final MetisField FIELD_STOCKHOLDING = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.STOCKOPTION_STOCKHOLDING.getValue(), MetisDataType.LINK);
 
     /**
      * GrantDate Field Id.
      */
-    public static final MetisField FIELD_GRANTDATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.STOCKOPTION_GRANTDATE.getValue());
+    public static final MetisField FIELD_GRANTDATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.STOCKOPTION_GRANTDATE.getValue(), MetisDataType.DATE);
 
     /**
      * ExpiryDate Field Id.
      */
-    public static final MetisField FIELD_EXPIREDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_EXPIRYDATE.getValue());
+    public static final MetisField FIELD_EXPIREDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.STOCKOPTION_EXPIRYDATE.getValue(), MetisDataType.DATE);
 
     /**
      * Price Field Id.
      */
-    public static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue());
+    public static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue(), MetisDataType.PRICE);
 
     /**
      * StockOptionInfoSet field Id.

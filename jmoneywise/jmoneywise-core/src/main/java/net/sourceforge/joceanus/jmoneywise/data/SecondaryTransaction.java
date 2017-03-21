@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
@@ -46,7 +47,7 @@ public abstract class SecondaryTransaction<S extends SecondaryTransaction<S, O>,
     /**
      * Owner Field Id.
      */
-    public static final MetisField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ASSETPAIR.getValue());
+    public static final MetisField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ASSETPAIR.getValue(), MetisDataType.INTEGER);
 
     /**
      * Copy Constructor.

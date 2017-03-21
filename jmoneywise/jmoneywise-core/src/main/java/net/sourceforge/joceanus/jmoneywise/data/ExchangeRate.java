@@ -32,6 +32,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
@@ -78,22 +79,22 @@ public class ExchangeRate
     /**
      * Date Field Id.
      */
-    public static final MetisField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    public static final MetisField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue(), MetisDataType.DATE);
 
     /**
      * From Currency Field Id.
      */
-    public static final MetisField FIELD_FROM = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.XCHGRATE_FROM.getValue());
+    public static final MetisField FIELD_FROM = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.XCHGRATE_FROM.getValue(), MetisDataType.LINK);
 
     /**
      * To Currency Field Id.
      */
-    public static final MetisField FIELD_TO = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.XCHGRATE_TO.getValue());
+    public static final MetisField FIELD_TO = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.XCHGRATE_TO.getValue(), MetisDataType.LINK);
 
     /**
-     * Rate Type Field Id.
+     * Rate Field Id.
      */
-    public static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_RATE.getValue());
+    public static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_RATE.getValue(), MetisDataType.RATIO);
 
     /**
      * Circular Rate Error.
@@ -934,12 +935,12 @@ public class ExchangeRate
         /**
          * CategoryMap Field Id.
          */
-        public static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+        public static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
 
         /**
          * RateMap Field Id.
          */
-        private static final MetisField FIELD_MAPOFRATES = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_MAP_MAPOFRATES.getValue());
+        private static final MetisField FIELD_MAPOFRATES = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.XCHGRATE_MAP_MAPOFRATES.getValue());
 
         /**
          * Map of Maps.

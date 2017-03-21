@@ -391,7 +391,7 @@ public class ThemisBuildGit {
                 SvnExtractView myView = pIterator.next();
 
                 /* Report plan step */
-                String myFormat = myFormatter.formatDate(myView.getDate());
+                String myFormat = myFormatter.formatJavaDate(myView.getDate());
                 pReport.setNextStep(myFormat);
 
                 /* Extract the details to the directory, preserving the GitDir */

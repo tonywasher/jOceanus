@@ -30,9 +30,9 @@ import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;

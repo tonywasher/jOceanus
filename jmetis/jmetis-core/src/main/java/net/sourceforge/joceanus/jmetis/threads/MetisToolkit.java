@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jmetis.threads;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisBaseList;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisEditList;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldColours.MetisColorPreferences;
-import net.sourceforge.joceanus.jmetis.newlist.MetisBaseList;
-import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
-import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;

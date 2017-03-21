@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
@@ -46,6 +47,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class DataKey
         extends DataItem<CryptographyDataType>
         implements Comparable<DataKey> {
+    /**
+     * Encrypted Symmetric Key Length.
+     */
+    public static final int KEYLEN = GordianHashManager.getMaximumKeyWrapSize();
+
     /**
      * Object name.
      */
@@ -64,17 +70,17 @@ public class DataKey
     /**
      * DataKeySet Field Id.
      */
-    public static final MetisField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME);
+    public static final MetisField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME, MetisDataType.LINK);
 
     /**
      * isSymKey Field Id.
      */
-    public static final MetisField FIELD_ISSYMKEY = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_ISSYMKEY.getValue());
+    public static final MetisField FIELD_ISSYMKEY = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_ISSYMKEY.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * KeyType Field Id.
      */
-    public static final MetisField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_TYPE.getValue());
+    public static final MetisField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_TYPE.getValue(), MetisDataType.ENUM);
 
     /**
      * KeyTypeId Field Id.
@@ -84,22 +90,17 @@ public class DataKey
     /**
      * HashPrime Field Id.
      */
-    public static final MetisField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue());
+    public static final MetisField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * KeyDefinition Field Id.
      */
-    public static final MetisField FIELD_KEYDEF = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_DEF.getValue());
+    public static final MetisField FIELD_KEYDEF = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_DEF.getValue(), MetisDataType.BYTEARRAY, KEYLEN);
 
     /**
      * DataKey Field Id.
      */
     public static final MetisField FIELD_KEY = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAKEY_KEY.getValue());
-
-    /**
-     * Encrypted Symmetric Key Length.
-     */
-    public static final int KEYLEN = GordianHashManager.getMaximumKeyWrapSize();
 
     /**
      * Copy Constructor.

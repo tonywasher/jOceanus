@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
@@ -76,7 +77,7 @@ public class Payee
     /**
      * PayeeType Field Id.
      */
-    public static final MetisField FIELD_PAYEETYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.PAYEETYPE.getItemName());
+    public static final MetisField FIELD_PAYEETYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.PAYEETYPE.getItemName(), MetisDataType.LINK);
 
     /**
      * PayeeInfoSet field Id.
@@ -1000,12 +1001,12 @@ public class Payee
         /**
          * CategoryMap Field Id.
          */
-        public static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
+        public static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
 
         /**
          * CategoryCountMap Field Id.
          */
-        public static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
+        public static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
 
         /**
          * Map of category counts.

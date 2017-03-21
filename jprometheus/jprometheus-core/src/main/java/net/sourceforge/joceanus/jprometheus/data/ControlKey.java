@@ -29,11 +29,12 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmetis.list.MetisOrderedIdList;
+import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
@@ -58,34 +59,39 @@ public final class ControlKey
     public static final String LIST_NAME = CryptographyDataType.CONTROLKEY.getListName();
 
     /**
+     * KeySetHash Length.
+     */
+    public static final int HASHLEN = GordianKeySetHash.HASHSIZE;
+
+    /**
      * Report fields.
      */
     private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
     /**
-     * Field ID for Prime keySetHash.
-     */
-    public static final MetisField FIELD_PRIMEHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIMEHASH.getValue());
-
-    /**
-     * Field ID for Alternate keySetHash.
-     */
-    public static final MetisField FIELD_ALTHASH = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_ALTHASH.getValue());
-
-    /**
      * HashPrime Field Id.
      */
-    public static final MetisField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue());
+    public static final MetisField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * Field ID for PrimeHashBytes.
      */
-    public static final MetisField FIELD_PRIMEBYTES = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_PRIMEBYTES.getValue());
+    public static final MetisField FIELD_PRIMEBYTES = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIMEBYTES.getValue(), MetisDataType.BYTEARRAY, HASHLEN);
 
     /**
      * Field ID for AltHashBytes.
      */
-    public static final MetisField FIELD_ALTBYTES = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_ALTBYTES.getValue());
+    public static final MetisField FIELD_ALTBYTES = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_ALTBYTES.getValue(), MetisDataType.BYTEARRAY, HASHLEN);
+
+    /**
+     * Field ID for Prime keySetHash.
+     */
+    public static final MetisField FIELD_PRIMEHASH = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_PRIMEHASH.getValue());
+
+    /**
+     * Field ID for Alternate keySetHash.
+     */
+    public static final MetisField FIELD_ALTHASH = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_ALTHASH.getValue());
 
     /**
      * Field ID for DataKeySet.
@@ -96,11 +102,6 @@ public final class ControlKey
      * Name of Database.
      */
     public static final String NAME_DATABASE = PrometheusDataResource.CONTROLKEY_DATABASE.getValue();
-
-    /**
-     * KeySetHash Length.
-     */
-    public static final int HASHLEN = GordianKeySetHash.HASHSIZE;
 
     /**
      * The DataKeySet.

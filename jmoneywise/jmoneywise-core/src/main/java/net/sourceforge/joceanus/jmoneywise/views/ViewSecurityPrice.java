@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -69,12 +70,12 @@ public class ViewSecurityPrice
     /**
      * Dilution Field Id.
      */
-    public static final MetisField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DILUTION.getValue());
+    public static final MetisField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DILUTION.getValue(), MetisDataType.DILUTION);
 
     /**
      * Diluted Price Field Id.
      */
-    public static final MetisField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseViewResource.VIEWPRICE_DILUTEDPRICE.getValue());
+    public static final MetisField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField(MoneyWiseViewResource.VIEWPRICE_DILUTEDPRICE.getValue(), MetisDataType.DILUTION);
 
     /**
      * Dilution state.

@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
@@ -62,12 +63,12 @@ public class ControlData
     /**
      * Field ID for Data Version.
      */
-    public static final MetisField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLDATA_VERSION.getValue());
+    public static final MetisField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLDATA_VERSION.getValue(), MetisDataType.INTEGER);
 
     /**
      * Field ID for Control Key.
      */
-    public static final MetisField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName());
+    public static final MetisField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName(), MetisDataType.LINK);
 
     /**
      * Error message for already exists.

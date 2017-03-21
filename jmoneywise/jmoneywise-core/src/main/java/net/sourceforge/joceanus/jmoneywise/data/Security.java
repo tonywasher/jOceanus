@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedString;
@@ -90,27 +91,27 @@ public class Security
     /**
      * SecurityType Field Id.
      */
-    public static final MetisField FIELD_SECTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.SECURITYTYPE.getItemName());
+    public static final MetisField FIELD_SECTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.SECURITYTYPE.getItemName(), MetisDataType.LINK);
 
     /**
      * Parent Field Id.
      */
-    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
+    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue(), MetisDataType.LINK);
 
     /**
      * Symbol Field Id.
      */
-    public static final MetisField FIELD_SYMBOL = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.SECURITY_SYMBOL.getValue());
+    public static final MetisField FIELD_SYMBOL = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.SECURITY_SYMBOL.getValue(), MetisDataType.STRING, SYMBOLLEN);
 
     /**
      * Region Field Id.
      */
-    public static final MetisField FIELD_REGION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.REGION.getItemName());
+    public static final MetisField FIELD_REGION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.REGION.getItemName(), MetisDataType.LINK);
 
     /**
      * Currency Field Id.
      */
-    public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
+    public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
 
     /**
      * SecurityInfoSet field Id.
@@ -1423,12 +1424,12 @@ public class Security
         /**
          * SymbolMap Field Id.
          */
-        private static final MetisField FIELD_SYMMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOLMAP.getValue());
+        private static final MetisField FIELD_SYMMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.SECURITY_SYMBOLMAP.getValue());
 
         /**
          * SymbolCountMap Field Id.
          */
-        private static final MetisField FIELD_SYMCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SECURITY_SYMBOLCOUNTMAP.getValue());
+        private static final MetisField FIELD_SYMCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.SECURITY_SYMBOLCOUNTMAP.getValue());
 
         /**
          * Map of symbol counts.

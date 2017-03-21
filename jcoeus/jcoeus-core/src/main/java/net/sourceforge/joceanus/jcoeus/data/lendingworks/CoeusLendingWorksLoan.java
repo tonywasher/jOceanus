@@ -39,6 +39,11 @@ public class CoeusLendingWorksLoan
     private static final MetisFields FIELD_DEFS = new MetisFields(CoeusLendingWorksLoan.class.getSimpleName(), CoeusLoan.getBaseFields());
 
     /**
+     * The loanId.
+     */
+    private final Integer theLoanIdNo;
+
+    /**
      * Constructor.
      * @param pMarket the market
      * @param pLoanId the loan id
@@ -46,6 +51,7 @@ public class CoeusLendingWorksLoan
     protected CoeusLendingWorksLoan(final CoeusLendingWorksMarket pMarket,
                                     final String pLoanId) {
         super(pMarket, pLoanId);
+        theLoanIdNo = Integer.parseInt(pLoanId);
     }
 
     @Override
@@ -64,6 +70,11 @@ public class CoeusLendingWorksLoan
     }
 
     @Override
+    public int compareTo(final CoeusLoan pThat) {
+        return theLoanIdNo.compareTo(((CoeusLendingWorksLoan) pThat).theLoanIdNo);
+    }
+
+    @Override
     protected void checkLoan() throws CoeusDataException {
         /* NoOp */
     }
@@ -77,5 +88,4 @@ public class CoeusLendingWorksLoan
     public MetisFields getDataFields() {
         return FIELD_DEFS;
     }
-
 }

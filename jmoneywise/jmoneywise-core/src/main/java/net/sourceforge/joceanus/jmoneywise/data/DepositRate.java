@@ -31,6 +31,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedRate;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
@@ -78,22 +79,22 @@ public class DepositRate
     /**
      * Deposit Field Id.
      */
-    public static final MetisField FIELD_DEPOSIT = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.DEPOSIT.getItemName());
+    public static final MetisField FIELD_DEPOSIT = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.DEPOSIT.getItemName(), MetisDataType.LINK);
 
     /**
      * Rate Field Id.
      */
-    public static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE.getValue());
+    public static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE.getValue(), MetisDataType.RATE);
 
     /**
      * Bonus Field Id.
      */
-    public static final MetisField FIELD_BONUS = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.DEPOSITRATE_BONUS.getValue());
+    public static final MetisField FIELD_BONUS = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.DEPOSITRATE_BONUS.getValue(), MetisDataType.RATE);
 
     /**
      * EndDate Field Id.
      */
-    public static final MetisField FIELD_ENDDATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.DEPOSITRATE_ENDDATE.getValue());
+    public static final MetisField FIELD_ENDDATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.DEPOSITRATE_ENDDATE.getValue(), MetisDataType.DATE);
 
     /**
      * Null Date Error.
@@ -865,12 +866,12 @@ public class DepositRate
         /**
          * MapOfMaps Field Id.
          */
-        private static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+        private static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
 
         /**
          * RateMap Field Id.
          */
-        private static final MetisField FIELD_MAPOFRATES = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSITRATE_MAP_MAPOFRATES.getValue());
+        private static final MetisField FIELD_MAPOFRATES = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.DEPOSITRATE_MAP_MAPOFRATES.getValue());
 
         /**
          * Map of Maps.

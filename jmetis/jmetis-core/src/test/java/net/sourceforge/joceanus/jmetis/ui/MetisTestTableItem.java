@@ -25,12 +25,13 @@ package net.sourceforge.joceanus.jmetis.ui;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
-import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -67,92 +68,92 @@ public class MetisTestTableItem
     /**
      * Name Field Id.
      */
-    private static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(TethysDataId.NAME.toString());
+    private static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(TethysDataId.NAME.toString(), MetisDataType.STRING, 20);
 
     /**
      * Password Field Id.
      */
-    private static final MetisField FIELD_PASSWORD = FIELD_DEFS.declareEqualityValueField(TethysDataId.PASSWORD.toString());
+    private static final MetisField FIELD_PASSWORD = FIELD_DEFS.declareEqualityValueField(TethysDataId.PASSWORD.toString(), MetisDataType.STRING, 30);
 
     /**
      * Date Field Id.
      */
-    private static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(TethysDataId.DATE.toString());
+    private static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(TethysDataId.DATE.toString(), MetisDataType.DATE);
 
     /**
      * Boolean Field Id.
      */
-    private static final MetisField FIELD_BOOL = FIELD_DEFS.declareEqualityValueField(TethysDataId.BOOLEAN.toString());
+    private static final MetisField FIELD_BOOL = FIELD_DEFS.declareEqualityValueField(TethysDataId.BOOLEAN.toString(), MetisDataType.BOOLEAN);
 
     /**
      * XtraBoolean Field Id.
      */
-    private static final MetisField FIELD_XTRABOOL = FIELD_DEFS.declareEqualityValueField(TethysDataId.XTRABOOL.toString());
+    private static final MetisField FIELD_XTRABOOL = FIELD_DEFS.declareEqualityValueField(TethysDataId.XTRABOOL.toString(), MetisDataType.BOOLEAN);
 
     /**
      * Short Field Id.
      */
-    private static final MetisField FIELD_SHORT = FIELD_DEFS.declareEqualityValueField(TethysDataId.SHORT.toString());
+    private static final MetisField FIELD_SHORT = FIELD_DEFS.declareEqualityValueField(TethysDataId.SHORT.toString(), MetisDataType.SHORT);
 
     /**
      * Integer Field Id.
      */
-    private static final MetisField FIELD_INT = FIELD_DEFS.declareEqualityValueField(TethysDataId.INTEGER.toString());
+    private static final MetisField FIELD_INT = FIELD_DEFS.declareEqualityValueField(TethysDataId.INTEGER.toString(), MetisDataType.INTEGER);
 
     /**
      * Long Field Id.
      */
-    private static final MetisField FIELD_LONG = FIELD_DEFS.declareEqualityValueField(TethysDataId.LONG.toString());
+    private static final MetisField FIELD_LONG = FIELD_DEFS.declareEqualityValueField(TethysDataId.LONG.toString(), MetisDataType.LONG);
 
     /**
      * Money Field Id.
      */
-    private static final MetisField FIELD_MONEY = FIELD_DEFS.declareEqualityValueField(TethysDataId.MONEY.toString());
+    private static final MetisField FIELD_MONEY = FIELD_DEFS.declareEqualityValueField(TethysDataId.MONEY.toString(), MetisDataType.MONEY);
 
     /**
      * Price Field Id.
      */
-    private static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(TethysDataId.PRICE.toString());
+    private static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(TethysDataId.PRICE.toString(), MetisDataType.PRICE);
 
     /**
      * Units Field Id.
      */
-    private static final MetisField FIELD_UNITS = FIELD_DEFS.declareEqualityValueField(TethysDataId.UNITS.toString());
+    private static final MetisField FIELD_UNITS = FIELD_DEFS.declareEqualityValueField(TethysDataId.UNITS.toString(), MetisDataType.UNITS);
 
     /**
      * Rate Field Id.
      */
-    private static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(TethysDataId.RATE.toString());
+    private static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(TethysDataId.RATE.toString(), MetisDataType.RATE);
 
     /**
      * Dilution Field Id.
      */
-    private static final MetisField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField(TethysDataId.DILUTION.toString());
+    private static final MetisField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField(TethysDataId.DILUTION.toString(), MetisDataType.DILUTION);
 
     /**
      * Ratio Field Id.
      */
-    private static final MetisField FIELD_RATIO = FIELD_DEFS.declareEqualityValueField(TethysDataId.RATIO.toString());
+    private static final MetisField FIELD_RATIO = FIELD_DEFS.declareEqualityValueField(TethysDataId.RATIO.toString(), MetisDataType.RATIO);
 
     /**
      * DilutedPrice Field Id.
      */
-    private static final MetisField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField(TethysDataId.DILUTEDPRICE.toString());
+    private static final MetisField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField(TethysDataId.DILUTEDPRICE.toString(), MetisDataType.PRICE);
 
     /**
      * Scroll Field Id.
      */
-    private static final MetisField FIELD_SCROLL = FIELD_DEFS.declareEqualityValueField(TethysDataId.SCROLL.toString());
+    private static final MetisField FIELD_SCROLL = FIELD_DEFS.declareEqualityValueField(TethysDataId.SCROLL.toString(), MetisDataType.LINK);
 
     /**
      * List Field Id.
      */
-    private static final MetisField FIELD_LIST = FIELD_DEFS.declareEqualityValueField(TethysDataId.LIST.toString());
+    private static final MetisField FIELD_LIST = FIELD_DEFS.declareEqualityValueField(TethysDataId.LIST.toString(), MetisDataType.LINKSET);
 
     /**
      * Updates Field Id.
      */
-    private static final MetisField FIELD_UPDATES = FIELD_DEFS.declareEqualityValueField(TethysDataId.UPDATES.toString());
+    private static final MetisField FIELD_UPDATES = FIELD_DEFS.declareEqualityValueField(TethysDataId.UPDATES.toString(), MetisDataType.INTEGER);
 
     /**
      * The id number of the item.

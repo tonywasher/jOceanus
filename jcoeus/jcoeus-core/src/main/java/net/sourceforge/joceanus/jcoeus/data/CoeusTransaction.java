@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 

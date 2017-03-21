@@ -51,6 +51,11 @@ public class CoeusFundingCircleLoan
     private final CoeusFundingCircleLoanBookItem theBookItem;
 
     /**
+     * The loanId.
+     */
+    private final Integer theLoanIdNo;
+
+    /**
      * Constructor.
      * @param pMarket the market
      * @param pBookItem the loan book item
@@ -59,6 +64,7 @@ public class CoeusFundingCircleLoan
                                      final CoeusFundingCircleLoanBookItem pBookItem) {
         super(pMarket, pBookItem.getLoanId());
         theBookItem = pBookItem;
+        theLoanIdNo = Integer.parseInt(getLoanId());
     }
 
     /**
@@ -70,6 +76,7 @@ public class CoeusFundingCircleLoan
                                      final String pId) {
         super(pMarket, pId);
         theBookItem = null;
+        theLoanIdNo = Integer.parseInt(pId);
     }
 
     @Override
@@ -103,6 +110,11 @@ public class CoeusFundingCircleLoan
     @Override
     protected CoeusFundingCircleHistory newHistory(final TethysDate pDate) {
         return new CoeusFundingCircleHistory(this, pDate);
+    }
+
+    @Override
+    public int compareTo(final CoeusLoan pThat) {
+        return theLoanIdNo.compareTo(((CoeusFundingCircleLoan) pThat).theLoanIdNo);
     }
 
     @Override

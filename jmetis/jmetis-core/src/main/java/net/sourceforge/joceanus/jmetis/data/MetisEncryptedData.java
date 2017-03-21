@@ -798,7 +798,7 @@ public final class MetisEncryptedData {
         @Override
         protected byte[] getBytesForEncryption() {
             /* Convert the date to a string and then a byte array */
-            String myInput = getDateFormatter().formatDate(getValue());
+            String myInput = getDateFormatter().formatJavaDate(getValue());
             return TethysDataConverter.stringToByteArray(myInput);
         }
     }
@@ -867,7 +867,7 @@ public final class MetisEncryptedData {
         @Override
         protected byte[] getBytesForEncryption() {
             /* Convert the date to a string and then a byte array */
-            String myInput = getDateFormatter().formatDateDay(getValue());
+            String myInput = getDateFormatter().formatDate(getValue());
             return TethysDataConverter.stringToByteArray(myInput);
         }
     }

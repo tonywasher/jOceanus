@@ -31,11 +31,11 @@ import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedField;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldStorage;
-import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.ui.MetisTableCalculator;
 
 /**

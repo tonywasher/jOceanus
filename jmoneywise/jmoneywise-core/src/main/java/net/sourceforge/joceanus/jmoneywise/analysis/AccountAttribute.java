@@ -128,7 +128,7 @@ public enum AccountAttribute implements BucketAttribute {
             case EXCHANGERATE:
                 return MetisDataType.RATIO;
             case MATURITY:
-                return MetisDataType.DATEDAY;
+                return MetisDataType.DATE;
             case VALUATION:
             case FOREIGNVALUE:
             case LOCALVALUE:

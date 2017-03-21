@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedString;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
@@ -56,27 +57,27 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Name Field Id.
      */
-    public static final MetisField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
+    public static final MetisField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue(), MetisDataType.STRING, NAMELEN);
 
     /**
      * Description Field Id.
      */
-    public static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
+    public static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue(), MetisDataType.STRING, DESCLEN);
 
     /**
      * Enabled Field Id.
      */
-    public static final MetisField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATA_ENABLED.getValue());
+    public static final MetisField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATA_ENABLED.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * Order Field Id.
      */
-    public static final MetisField FIELD_ORDER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.STATICDATA_SORT.getValue());
+    public static final MetisField FIELD_ORDER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.STATICDATA_SORT.getValue(), MetisDataType.INTEGER);
 
     /**
      * Class Field Id.
      */
-    public static final MetisField FIELD_CLASS = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.STATICDATA_CLASS.getValue());
+    public static final MetisField FIELD_CLASS = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.STATICDATA_CLASS.getValue(), MetisDataType.ENUM);
 
     /**
      * BadId error.
@@ -919,7 +920,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         /**
          * OrderCountMap Field Id.
          */
-        public static final MetisField FIELD_ORDERCOUNTS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATAMAP_ORDERCOUNTS.getValue());
+        public static final MetisField FIELD_ORDERCOUNTS = FIELD_DEFS.declareLocalField(PrometheusDataResource.STATICDATAMAP_ORDERCOUNTS.getValue());
 
         /**
          * Map of order counts.

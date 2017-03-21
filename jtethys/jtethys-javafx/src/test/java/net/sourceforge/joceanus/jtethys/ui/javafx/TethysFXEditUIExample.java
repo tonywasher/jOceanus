@@ -669,7 +669,7 @@ public class TethysFXEditUIExample
         } else if (pResults instanceof TethysItemList) {
             theValue.setText(((TethysItemList<?>) pResults).toString());
         } else if (pResults instanceof TethysDate) {
-            theValue.setText(theDateFormatter.formatDateDay((TethysDate) pResults));
+            theValue.setText(theDateFormatter.formatDate((TethysDate) pResults));
         } else {
             theValue.setText(null);
         }

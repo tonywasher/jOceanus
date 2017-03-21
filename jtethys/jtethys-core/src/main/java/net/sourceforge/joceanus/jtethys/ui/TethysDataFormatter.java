@@ -222,7 +222,7 @@ public class TethysDataFormatter {
 
         /* Handle date classes */
         if (Date.class.equals(myClass)) {
-            return theDateFormatter.formatDate((Date) pValue);
+            return theDateFormatter.formatJavaDate((Date) pValue);
         }
         if (Calendar.class.equals(myClass)) {
             return theDateFormatter.formatCalendarDay((Calendar) pValue);
@@ -231,7 +231,7 @@ public class TethysDataFormatter {
             return theDateFormatter.formatLocalDate((LocalDate) pValue);
         }
         if (TethysDate.class.equals(myClass)) {
-            return theDateFormatter.formatDateDay((TethysDate) pValue);
+            return theDateFormatter.formatDate((TethysDate) pValue);
         }
         if (TethysDateRange.class.equals(myClass)) {
             return theDateFormatter.formatDateDayRange((TethysDateRange) pValue);

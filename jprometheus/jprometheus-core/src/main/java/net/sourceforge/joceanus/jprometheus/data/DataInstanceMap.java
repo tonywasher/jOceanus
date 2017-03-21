@@ -47,12 +47,12 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
     /**
      * NameMap Field Id.
      */
-    private static final MetisField FIELD_KEYS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAMAP_KEYS.getValue());
+    private static final MetisField FIELD_KEYS = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATAMAP_KEYS.getValue());
 
     /**
      * NameCountMap Field Id.
      */
-    private static final MetisField FIELD_KEYCOUNTS = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAMAP_KEYCOUNTS.getValue());
+    private static final MetisField FIELD_KEYCOUNTS = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATAMAP_KEYCOUNTS.getValue());
 
     /**
      * Standard integer ONE.

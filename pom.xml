@@ -50,8 +50,8 @@
   </scm>
   <repositories>
     <repository>
-      <id>jenkins</id>
-      <url>http://repo.jenkins-ci.org/releases/</url>
+      <id>svnKit</id>
+      <url>https://maven.tmatesoft.com/content/repositories/releases/</url>
     </repository>
   </repositories>
   <distributionManagement>
@@ -78,17 +78,17 @@
     <appLibDir/>
     <JDateButtonVersion>v2.1.0-SNAPSHOT</JDateButtonVersion>
     <BouncyCastleVersion>1.56</BouncyCastleVersion>
-    <SvnKitVersion>1.8.14</SvnKitVersion>
-    <JGitVersion>4.6.0.201612231935-r</JGitVersion>
+    <SvnKitVersion>1.8.15</SvnKitVersion>
+    <JGitVersion>4.6.1.201703071140-r</JGitVersion>
     <HttpClientVersion>4.5.3</HttpClientVersion>
     <JSONVersion>20160810</JSONVersion>
     <ApacheMavenVersion>3.3.9</ApacheMavenVersion>
-    <MySQLVersion>6.0.5</MySQLVersion>
+    <MySQLVersion>6.0.6</MySQLVersion>
     <PostGreSQLVersion>9.4.1212.jre7</PostGreSQLVersion>
     <ApachePOIVersion>3.15</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
-    <SLF4JVersion>1.7.23</SLF4JVersion>
-    <LOG4JVersion>2.8</LOG4JVersion>
+    <SLF4JVersion>1.7.25</SLF4JVersion>
+    <LOG4JVersion>2.8.1</LOG4JVersion>
     <JFreeChartVersion>1.0.19</JFreeChartVersion>
     <JSoupVersion>1.10.2</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>

@@ -275,9 +275,6 @@ public class GordianTestAsymmetric {
 
         /**
          * Check KEMS.
-         * @param pDigestType the digestType
-         * @param pSymSafe the encrypted SymKey
-         * @param pStreamSafe the encrypted StreamKey
          * @throws OceanusException on error
          */
         private void checkKEMS() throws OceanusException {

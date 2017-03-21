@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedMoney;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
@@ -68,17 +69,17 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * AssetPair Field Id.
      */
-    public static final MetisField FIELD_PAIR = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ASSETPAIR.getValue());
+    public static final MetisField FIELD_PAIR = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ASSETPAIR.getValue(), MetisDataType.INTEGER);
 
     /**
      * Account Field Id.
      */
-    public static final MetisField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ACCOUNT.getValue());
+    public static final MetisField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ACCOUNT.getValue(), MetisDataType.LINK);
 
     /**
      * Partner Field Id.
      */
-    public static final MetisField FIELD_PARTNER = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_PARTNER.getValue());
+    public static final MetisField FIELD_PARTNER = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_PARTNER.getValue(), MetisDataType.LINK);
 
     /**
      * Direction Field Id.
@@ -88,17 +89,17 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * Amount Field Id.
      */
-    public static final MetisField FIELD_AMOUNT = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.TRANSACTION_AMOUNT.getValue());
+    public static final MetisField FIELD_AMOUNT = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.TRANSACTION_AMOUNT.getValue(), MetisDataType.MONEY);
 
     /**
      * Category Field Id.
      */
-    public static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.TRANSCATEGORY.getItemName());
+    public static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.TRANSCATEGORY.getItemName(), MetisDataType.LINK);
 
     /**
      * Reconciled Field Id.
      */
-    public static final MetisField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_RECONCILED.getValue());
+    public static final MetisField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_RECONCILED.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * Invalid Debit/Credit/Category Combination Error Text.

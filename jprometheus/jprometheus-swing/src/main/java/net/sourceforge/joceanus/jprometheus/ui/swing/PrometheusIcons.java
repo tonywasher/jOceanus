@@ -30,8 +30,8 @@ import javax.swing.JButton;
 
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jtethys.ui.swing.JIconButton.DefaultIconButtonState;
-import net.sourceforge.joceanus.jtethys.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.DefaultIconButtonState;
 
 /**
  * Utility class to manage status icon buttons.

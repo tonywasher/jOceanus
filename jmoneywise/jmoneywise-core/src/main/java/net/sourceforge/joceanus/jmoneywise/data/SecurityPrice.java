@@ -31,6 +31,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedPrice;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
@@ -80,17 +81,17 @@ public class SecurityPrice
     /**
      * Security Field Id.
      */
-    public static final MetisField FIELD_SECURITY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.SECURITY.getItemName());
+    public static final MetisField FIELD_SECURITY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.SECURITY.getItemName(), MetisDataType.LINK);
 
     /**
      * Date Field Id.
      */
-    public static final MetisField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    public static final MetisField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue(), MetisDataType.DATE);
 
     /**
      * Price Field Id.
      */
-    public static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue());
+    public static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue(), MetisDataType.PRICE);
 
     /**
      * Invalid currency error.
@@ -743,13 +744,12 @@ public class SecurityPrice
         /**
          * InstanceMap Field Id.
          */
-        private static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+        private static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
 
         /**
          * PriceMap Field Id.
          */
-        private static final MetisField FIELD_MAPOFPRICES = FIELD_DEFS
-                .declareEqualityValueField(MoneyWiseDataResource.SECURITYPRICE_MAP_MAPOFPRICES.getValue());
+        private static final MetisField FIELD_MAPOFPRICES = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.SECURITYPRICE_MAP_MAPOFPRICES.getValue());
 
         /**
          * Map of Maps.

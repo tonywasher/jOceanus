@@ -22,8 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
@@ -73,7 +75,12 @@ public class CoeusMarketSnapShot
     private final TethysDate theDate;
 
     /**
-     * Loans.
+     * LoanList.
+     */
+    private final List<CoeusLoan> theLoanList;
+
+    /**
+     * LoanMap.
      */
     private final Map<String, CoeusLoan> theLoanMap;
 
@@ -98,11 +105,15 @@ public class CoeusMarketSnapShot
         theMarket = pMarket;
         theDate = pDate;
 
-        /* Create loan map */
-        theLoanMap = new LinkedHashMap<>();
+        /* Create loan map/list */
+        theLoanMap = new HashMap<>();
+        theLoanList = new ArrayList<>();
 
         /* Create the history */
         theHistory = determineHistory();
+
+        /* Sort the loans */
+        sortLoans();
     }
 
     /**
@@ -138,11 +149,18 @@ public class CoeusMarketSnapShot
     }
 
     /**
-     * Obtain the loan iterator.
+     * Sort the loans.
+     */
+    private void sortLoans() {
+        theLoanList.sort((l, r) -> l.compareTo(r));
+    }
+
+    /**
+     * Obtain an iterator for the sorted loans.
      * @return the iterator
      */
     public Iterator<CoeusLoan> loanIterator() {
-        return theLoanMap.values().iterator();
+        return theLoanList.iterator();
     }
 
     /**
@@ -219,6 +237,7 @@ public class CoeusMarketSnapShot
             /* Create and record it */
             myLoan = theMarket.newLoan(myId);
             theLoanMap.put(myId, myLoan);
+            theLoanList.add(myLoan);
 
             /* Ensure that the badDebt date is copied */
             myLoan.setBadDebtDate(pLoan.getBadDebtDate());

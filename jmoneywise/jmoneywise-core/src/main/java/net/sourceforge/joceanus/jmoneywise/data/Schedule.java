@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -66,32 +67,32 @@ public class Schedule
     /**
      * StartDate Field Id.
      */
-    public static final MetisField FIELD_STARTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_STARTDATE.getValue());
+    public static final MetisField FIELD_STARTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_STARTDATE.getValue(), MetisDataType.DATE);
 
     /**
      * EndDate Field Id.
      */
-    public static final MetisField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_ENDDATE.getValue());
+    public static final MetisField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_ENDDATE.getValue(), MetisDataType.DATE);
 
     /**
      * Frequency Field Id.
      */
-    public static final MetisField FIELD_FREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.FREQUENCY.getItemName());
+    public static final MetisField FIELD_FREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.FREQUENCY.getItemName(), MetisDataType.LINK);
 
     /**
      * RepeatFrequency Field Id.
      */
-    public static final MetisField FIELD_REPFREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_REPEATFREQ.getValue());
+    public static final MetisField FIELD_REPFREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_REPEATFREQ.getValue(), MetisDataType.LINK);
 
     /**
      * Pattern Field Id.
      */
-    public static final MetisField FIELD_PATTERN = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_PATTERN.getValue());
+    public static final MetisField FIELD_PATTERN = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_PATTERN.getValue(), MetisDataType.INTEGER);
 
     /**
      * NextDate Field Id.
      */
-    public static final MetisField FIELD_NEXTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_NEXTDATE.getValue());
+    public static final MetisField FIELD_NEXTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_NEXTDATE.getValue(), MetisDataType.DATE);
 
     /**
      * Bad Frequency error.

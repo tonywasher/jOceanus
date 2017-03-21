@@ -27,6 +27,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
@@ -82,27 +83,27 @@ public class Deposit
     /**
      * AccountCategory Field Id.
      */
-    public static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.DEPOSITCATEGORY.getItemName());
+    public static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.DEPOSITCATEGORY.getItemName(), MetisDataType.LINK);
 
     /**
      * Parent Field Id.
      */
-    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue());
+    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue(), MetisDataType.LINK);
 
     /**
      * Currency Field Id.
      */
-    public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
+    public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
 
     /**
      * isGross Field Id.
      */
-    public static final MetisField FIELD_GROSS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSIT_GROSS.getValue());
+    public static final MetisField FIELD_GROSS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSIT_GROSS.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * isTaxFree Field Id.
      */
-    public static final MetisField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_TAXFREE.getValue());
+    public static final MetisField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_TAXFREE.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * DepositInfoSet field Id.
@@ -1412,7 +1413,7 @@ public class Deposit
         /**
          * UnderlyingMap Field Id.
          */
-        public static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
+        public static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
                 .getValue());
 
         /**

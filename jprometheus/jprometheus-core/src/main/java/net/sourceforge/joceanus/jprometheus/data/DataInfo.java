@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.Date;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
@@ -72,17 +73,17 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
     /**
      * InfoType Field Id.
      */
-    public static final MetisField FIELD_INFOTYPE = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_TYPE.getValue());
+    public static final MetisField FIELD_INFOTYPE = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_TYPE.getValue(), MetisDataType.LINK);
 
     /**
      * Owner Field Id.
      */
-    public static final MetisField FIELD_OWNER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_OWNER.getValue());
+    public static final MetisField FIELD_OWNER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_OWNER.getValue(), MetisDataType.LINK);
 
     /**
      * Value Field Id.
      */
-    public static final MetisField FIELD_VALUE = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAINFO_VALUE.getValue());
+    public static final MetisField FIELD_VALUE = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAINFO_VALUE.getValue(), MetisDataType.CONTEXT);
 
     /**
      * Link Field Id.
@@ -585,7 +586,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
         /* Switch on Info Class */
         boolean bValueOK = false;
         switch (myClass.getDataType()) {
-            case DATEDAY:
+            case DATE:
                 bValueOK = setDateValue(myFormatter.getDateFormatter(), pValue);
                 break;
             case INTEGER:

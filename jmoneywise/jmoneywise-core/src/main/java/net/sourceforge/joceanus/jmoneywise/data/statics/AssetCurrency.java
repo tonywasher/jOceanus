@@ -27,6 +27,7 @@ import java.util.Currency;
 import java.util.Locale;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
@@ -63,7 +64,7 @@ public class AssetCurrency
     /**
      * Default Field Id.
      */
-    public static final MetisField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField(StaticDataResource.CURRENCY_DEFAULT.getValue());
+    public static final MetisField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField(StaticDataResource.CURRENCY_DEFAULT.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * Copy Constructor.
@@ -525,7 +526,7 @@ public class AssetCurrency
         /**
          * Default Field Id.
          */
-        public static final MetisField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField(StaticDataResource.CURRENCY_DEFAULT.getValue());
+        public static final MetisField FIELD_DEFAULT = FIELD_DEFS.declareEqualityField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
         /**
          * Default value.

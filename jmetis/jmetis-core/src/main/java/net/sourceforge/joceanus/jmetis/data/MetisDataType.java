@@ -22,6 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.data;
 
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
+
 /**
  * Enumeration of data types.
  * @author Tony Washer
@@ -53,16 +62,6 @@ public enum MetisDataType {
     BOOLEAN,
 
     /**
-     * Float.
-     */
-    FLOAT,
-
-    /**
-     * Double.
-     */
-    DOUBLE,
-
-    /**
      * Enum.
      */
     ENUM,
@@ -73,24 +72,14 @@ public enum MetisDataType {
     DATE,
 
     /**
-     * Date.
+     * ByteArray.
      */
-    DATEDAY,
+    BYTEARRAY,
 
     /**
      * CharArray.
      */
     CHARARRAY,
-
-    /**
-     * BigInteger.
-     */
-    BIGINTEGER,
-
-    /**
-     * BigDecimal.
-     */
-    BIGDECIMAL,
 
     /**
      * Money.
@@ -130,7 +119,17 @@ public enum MetisDataType {
     /**
      * LinkSet.
      */
-    LINKSET;
+    LINKSET,
+
+    /**
+     * Object (not relevant/none-of-the-above).
+     */
+    OBJECT,
+
+    /**
+     * Context (varies on context).
+     */
+    CONTEXT;
 
     /**
      * is the dataType numeric?
@@ -143,11 +142,53 @@ public enum MetisDataType {
             case LINK:
             case LINKSET:
             case DATE:
-            case DATEDAY:
             case ENUM:
                 return false;
             default:
                 return true;
+        }
+    }
+
+    /**
+     * Obtain class for item.
+     * @return the class (or null if indeterminate)
+     */
+    public Class<?> getDataTypeClass() {
+        switch (this) {
+            case STRING:
+                return String.class;
+            case BYTEARRAY:
+                return byte[].class;
+            case CHARARRAY:
+                return char[].class;
+            case ENUM:
+                return Enum.class;
+            case BOOLEAN:
+                return Boolean.class;
+            case SHORT:
+                return Short.class;
+            case INTEGER:
+                return Integer.class;
+            case LONG:
+                return Long.class;
+            case DATE:
+                return TethysDate.class;
+            case MONEY:
+                return TethysMoney.class;
+            case PRICE:
+                return TethysPrice.class;
+            case UNITS:
+                return TethysUnits.class;
+            case RATE:
+                return TethysRate.class;
+            case RATIO:
+                return TethysRatio.class;
+            case DILUTION:
+                return TethysDilution.class;
+            case LINKSET:
+                return TethysItemList.class;
+            default:
+                return null;
         }
     }
 }

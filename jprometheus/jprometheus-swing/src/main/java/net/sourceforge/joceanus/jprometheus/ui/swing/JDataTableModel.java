@@ -29,9 +29,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldData;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisFieldManager.PopulateFieldData;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldData;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;

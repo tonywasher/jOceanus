@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedString;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
@@ -63,17 +64,17 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     /**
      * Name Field Id.
      */
-    public static final MetisField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
+    public static final MetisField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue(), MetisDataType.STRING, NAMELEN);
 
     /**
      * Description Field Id.
      */
-    public static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue());
+    public static final MetisField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue(), MetisDataType.STRING, DESCLEN);
 
     /**
      * Parent Category Field Id.
      */
-    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
+    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAGROUP_PARENT.getValue(), MetisDataType.LINK);
 
     /**
      * SubCategory Field Id.

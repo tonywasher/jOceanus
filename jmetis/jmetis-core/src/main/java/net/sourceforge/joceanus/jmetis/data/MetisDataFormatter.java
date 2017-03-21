@@ -35,6 +35,19 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 public class MetisDataFormatter
         extends TethysDataFormatter {
     /**
+     * Format object interface.
+     */
+    @FunctionalInterface
+    public interface MetisDataObjectFormat {
+        /**
+         * Obtain Object summary.
+         * @param pFormatter the data formatter
+         * @return the display summary of the object
+         */
+        String formatObject(MetisDataFormatter pFormatter);
+    }
+
+    /**
      * Constructor.
      */
     public MetisDataFormatter() {
@@ -59,6 +72,9 @@ public class MetisDataFormatter
         /* Handle ones that we can directly format */
         if (MetisDataFormat.class.isInstance(pValue)) {
             return ((MetisDataFormat) pValue).formatObject();
+        }
+        if (MetisDataObjectFormat.class.isInstance(pValue)) {
+            return ((MetisDataObjectFormat) pValue).formatObject(this);
         }
 
         /* Handle difference class */

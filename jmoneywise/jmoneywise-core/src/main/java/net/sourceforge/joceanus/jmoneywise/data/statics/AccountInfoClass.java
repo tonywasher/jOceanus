@@ -35,7 +35,7 @@ public enum AccountInfoClass implements DataInfoClass {
     /**
      * Maturity Date.
      */
-    MATURITY(1, 0, MetisDataType.DATEDAY),
+    MATURITY(1, 0, MetisDataType.DATE),
 
     /**
      * Opening Balance.

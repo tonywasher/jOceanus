@@ -61,6 +61,11 @@ public class CoeusLendingWorksTransaction
     private static final String PFIX_LOAN2 = "Loan chunk acquired via Quick Withdraw";
 
     /**
+     * Loan3 prefix.
+     */
+    private static final String PFIX_LOAN3 = "Right to withdraw: Chunk created";
+
+    /**
      * Interest prefix.
      */
     private static final String PFIX_INTEREST = "Interest payment received";
@@ -290,7 +295,8 @@ public class CoeusLendingWorksTransaction
     private CoeusTransactionType determineTransactionType() throws OceanusException {
         /* If the description is Lend Order */
         if (PFIX_LOAN.equals(theDesc)
-            || PFIX_LOAN2.equals(theDesc)) {
+            || PFIX_LOAN2.equals(theDesc)
+            || PFIX_LOAN3.equals(theDesc)) {
             return CoeusTransactionType.CAPITALLOAN;
         }
 

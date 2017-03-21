@@ -28,10 +28,10 @@ import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisDisableItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisValidateItem;
 import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
-import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisDisableItem;
-import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisValidateItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;

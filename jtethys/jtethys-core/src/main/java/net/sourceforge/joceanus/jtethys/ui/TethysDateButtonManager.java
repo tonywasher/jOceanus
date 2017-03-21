@@ -237,7 +237,7 @@ public abstract class TethysDateButtonManager<N, I>
      * Set button text.
      */
     private void setButtonText() {
-        theButton.setText(theFormatter.formatDateDay(theValue));
+        theButton.setText(theFormatter.formatDate(theValue));
     }
 
     /**
@@ -245,7 +245,7 @@ public abstract class TethysDateButtonManager<N, I>
      * @return the text
      */
     public String getText() {
-        return theFormatter.formatDateDay(theValue);
+        return theFormatter.formatDate(theValue);
     }
 
     /**

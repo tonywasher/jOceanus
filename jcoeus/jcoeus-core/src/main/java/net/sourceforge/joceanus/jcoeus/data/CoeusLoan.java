@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
  * Coeus Loan.
  */
 public abstract class CoeusLoan
-        implements MetisDataContents {
+        implements MetisDataContents, Comparable<CoeusLoan> {
     /**
      * Report fields.
      */
@@ -248,14 +248,21 @@ public abstract class CoeusLoan
         /* Record dates */
         theLastDate = pTrans.getDate();
         if (theStartDate == null) {
-            /* record date and initial loan */
-            theStartDate = theLastDate;
-            theInitialLoan = pTrans.getLoanBook();
+            /* Access the loanBook delta */
+            TethysDecimal myInitLoan = pTrans.getLoanBook();
+
+            /* If we have an initialLoan */
+            if (myInitLoan.isNonZero()) {
+                /* record date and initial loan */
+                theStartDate = theLastDate;
+                theInitialLoan = pTrans.getLoanBook();
+            }
         }
 
         /* If the loan has zero Capital outstanding */
         CoeusTotals myTotals = theHistory.getTotals();
-        if (myTotals.getLoanBook().isZero()) {
+        if (theStartDate != null
+            && myTotals.getLoanBook().isZero()) {
             /* Determine outstanding badDebt */
             TethysDecimal myBadDebt = myTotals.getBadDebt();
             TethysDecimal myRecovered = myTotals.getRecovered();
@@ -289,6 +296,11 @@ public abstract class CoeusLoan
      * @throws OceanusException on error
      */
     protected abstract void checkLoan() throws OceanusException;
+
+    @Override
+    public int compareTo(final CoeusLoan pThat) {
+        return theLoanId.compareTo(pThat.getLoanId());
+    }
 
     /**
      * Obtain the data fields.

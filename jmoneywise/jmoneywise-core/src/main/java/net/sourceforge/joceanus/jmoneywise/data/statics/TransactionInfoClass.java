@@ -60,7 +60,7 @@ public enum TransactionInfoClass implements DataInfoClass {
     /**
      * CreditDate.
      */
-    CREDITDATE(6, 5, MetisDataType.DATEDAY),
+    CREDITDATE(6, 5, MetisDataType.DATE),
 
     /**
      * Credit Units.

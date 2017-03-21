@@ -26,12 +26,12 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedField;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisBaseList;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisEditList;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisVersionedList;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.newlist.MetisBaseList;
-import net.sourceforge.joceanus.jmetis.newlist.MetisEditList;
-import net.sourceforge.joceanus.jmetis.newlist.MetisListItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.newlist.MetisVersionedList;
 import net.sourceforge.joceanus.jmetis.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.ui.MetisTableManager;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;

@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
@@ -49,7 +50,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Data Key Set Field Id.
      */
-    public static final MetisField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME);
+    public static final MetisField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME, MetisDataType.LINK);
 
     /**
      * Error message for bad usage.

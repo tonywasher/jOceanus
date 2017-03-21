@@ -31,8 +31,8 @@ import java.util.Map;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jmetis.list.MetisNestedHashMap;
-import net.sourceforge.joceanus.jmetis.list.MetisOrderedList;
+import net.sourceforge.joceanus.jmetis.lethe.list.MetisNestedHashMap;
+import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
 
 /**
  * Test suite for jSortedList.

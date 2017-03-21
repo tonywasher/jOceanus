@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
@@ -60,7 +61,7 @@ public class LoanCategory
     /**
      * Category Type Field Id.
      */
-    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.LOANTYPE.getItemName());
+    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.LOANTYPE.getItemName(), MetisDataType.LINK);
 
     /**
      * Copy Constructor.

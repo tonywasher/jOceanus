@@ -40,7 +40,7 @@ public class CoeusZopaLoanBookParser
     private static final String[] HEADERS =
     { "Borrower", "Product", "Acquired", "Market", "Term", "Loan size", "Status", "Rate", "Lent", "Outstanding", "Repaid",
             "Capital repaid", "Interest repaid", "Arrears", "Repayment day", "Safeguard", "Comment", "Loan start date",
-            "Scheduled end date", "Expected Repayment", "Loan purpose", "Repaid %" };
+            "Scheduled end date", "Default date", "Expected Repayment", "Loan purpose", "Repaid %" };
 
     /**
      * The market.

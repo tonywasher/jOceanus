@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.data;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
+import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
 
 /**
@@ -190,8 +191,11 @@ public class MetisValueSet {
                          final Object pValue) {
         /* Ignore if not in valueSet */
         if (!pField.getStorage().isValueSet()) {
-            return;
+            throw new IllegalStateException("Field is not in valueSet");
         }
+
+        /* Check value type */
+        checkValueType(pField, pValue);
 
         /* Store the value */
         theValues[pField.getIndex()] = pValue;
@@ -376,5 +380,41 @@ public class MetisValueSet {
         /* Determine the difference */
         int iIndex = pField.getIndex();
         return MetisDifference.getDifference(theValues[iIndex], pOriginal.theValues[iIndex]);
+    }
+
+    /**
+     * Check the value.
+     * @param pField the field
+     * @param pValue the value
+     */
+    private void checkValueType(final MetisField pField,
+                                final Object pValue) {
+        /* Null/String is always allowed */
+        if (pValue == null
+            || pValue instanceof String) {
+            return;
+        }
+
+        /* If the item is encrypted, allow byteArray */
+        if (pField.getStorage().isEncrypted()
+            && pValue instanceof MetisEncryptedField) {
+            return;
+        }
+
+        /* Integer is allowed for Link type */
+        MetisDataType myDataType = pField.getDataType();
+        if (MetisDataType.LINK.equals(myDataType)
+            && pValue instanceof Integer) {
+            return;
+        }
+
+        /* Check expected dataType */
+        Class<?> myClass = myDataType.getDataTypeClass();
+        boolean bAllowed = myClass == null || myClass.isInstance(pValue);
+
+        /* If we are not allowed */
+        // if (!bAllowed) {
+        // System.out.println("Invalid Set");
+        // }
     }
 }

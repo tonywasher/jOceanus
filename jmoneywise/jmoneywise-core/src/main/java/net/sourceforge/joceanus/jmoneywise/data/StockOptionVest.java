@@ -28,6 +28,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedData.MetisEncryptedUnits;
 import net.sourceforge.joceanus.jmetis.data.MetisEncryptedValueSet;
@@ -74,17 +75,17 @@ public class StockOptionVest
     /**
      * Option Field Id.
      */
-    public static final MetisField FIELD_OPTION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.STOCKOPTION.getItemName());
+    public static final MetisField FIELD_OPTION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.STOCKOPTION.getItemName(), MetisDataType.LINK);
 
     /**
      * Date Field Id.
      */
-    public static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    public static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue(), MetisDataType.DATE);
 
     /**
      * Units Field Id.
      */
-    public static final MetisField FIELD_UNITS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_UNITS.getValue());
+    public static final MetisField FIELD_UNITS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_UNITS.getValue(), MetisDataType.UNITS);
 
     /**
      * Copy Constructor.
@@ -745,7 +746,7 @@ public class StockOptionVest
         /**
          * CategoryMap Field Id.
          */
-        public static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
+        public static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
 
         /**
          * Map of Maps.

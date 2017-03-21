@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSnapShot;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
+import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
@@ -245,6 +246,7 @@ public class CoeusReportLoanBook
             CoeusLoan myLoan = (CoeusLoan) pSource;
             CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(theMarket);
             myFilter.setLoan(myLoan);
+            myFilter.setTotalSet(CoeusTotalSet.LOANBOOK);
             return myFilter;
         }
         return null;

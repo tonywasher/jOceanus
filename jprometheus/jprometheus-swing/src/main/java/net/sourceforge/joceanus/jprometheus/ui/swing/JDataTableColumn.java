@@ -31,7 +31,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.field.swing.MetisSwingFieldCellRenderer.RowCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.RowCellRenderer;
 
 /**
  * TableColumn extension class.
