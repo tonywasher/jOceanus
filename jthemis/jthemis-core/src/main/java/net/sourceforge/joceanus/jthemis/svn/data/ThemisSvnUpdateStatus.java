@@ -28,10 +28,10 @@ import java.util.ArrayList;
 import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusType;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 
 /**
  * Status record in Working Copy.

@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

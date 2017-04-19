@@ -26,8 +26,8 @@ import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer;
 

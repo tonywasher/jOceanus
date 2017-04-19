@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter.MetisDataObjectFormat;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 
 /**
  * Metis Data FieldSet.
@@ -564,35 +564,5 @@ public class MetisDataFieldSet {
                 pAction.accept(next());
             }
         }
-    }
-
-    /**
-     * Indexed Item definition.
-     */
-    private static class MetisIndexedItemFieldSet {
-        /**
-         * Report fields.
-         */
-        private static final MetisDataFieldSet INDEXED_DEFS = new MetisDataFieldSet("MetisIndexedItemFieldSet");
-
-        /**
-         * Id Field Id.
-         */
-        private static final MetisDataField FIELD_ID = INDEXED_DEFS.declareComparisonField("Id");
-
-        /**
-         * Report fields.
-         */
-        private static final MetisDataFieldSet VERSIONED_DEFS = new MetisDataFieldSet("MetisVersionedItemFieldSet", INDEXED_DEFS);
-
-        /**
-         * Version Field Id.
-         */
-        private static final MetisDataField FIELD_VERSION = VERSIONED_DEFS.declareLocalField("Version");
-
-        /**
-         * Deletion Field Id.
-         */
-        private static final MetisDataField FIELD_DELETION = INDEXED_DEFS.declareLocalField("isDeleted");
     }
 }

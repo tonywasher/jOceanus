@@ -23,11 +23,11 @@
 package net.sourceforge.joceanus.jmetis.ui.javafx;
 
 import javafx.scene.Node;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisBaseList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisEditList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisVersionedList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisBaseList;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisEditList;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisVersionedList;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.ui.MetisTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;

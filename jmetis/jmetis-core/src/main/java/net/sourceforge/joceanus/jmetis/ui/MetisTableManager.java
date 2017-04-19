@@ -26,12 +26,12 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisDisableItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisValidateItem;
-import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSetHistory;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisListItem.MetisDisableItem;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisListItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisListItem.MetisValidateItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;

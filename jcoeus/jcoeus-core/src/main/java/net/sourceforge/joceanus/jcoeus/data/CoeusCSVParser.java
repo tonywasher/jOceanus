@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;

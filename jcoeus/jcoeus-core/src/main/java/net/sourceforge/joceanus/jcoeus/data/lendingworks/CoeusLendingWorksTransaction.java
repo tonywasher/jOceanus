@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.jcoeus.data.ratesetter.CoeusRateSetterTransaction;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -61,9 +61,9 @@ public class CoeusLendingWorksTransaction
     private static final String PFIX_LOAN2 = "Loan chunk acquired via Quick Withdraw";
 
     /**
-     * Loan3 prefix.
+     * CancelLoan prefix.
      */
-    private static final String PFIX_LOAN3 = "Right to withdraw: Chunk created";
+    private static final String PFIX_CANCELLOAN = "Right to withdraw: Chunk created";
 
     /**
      * Interest prefix.
@@ -295,8 +295,7 @@ public class CoeusLendingWorksTransaction
     private CoeusTransactionType determineTransactionType() throws OceanusException {
         /* If the description is Lend Order */
         if (PFIX_LOAN.equals(theDesc)
-            || PFIX_LOAN2.equals(theDesc)
-            || PFIX_LOAN3.equals(theDesc)) {
+            || PFIX_LOAN2.equals(theDesc)) {
             return CoeusTransactionType.CAPITALLOAN;
         }
 
@@ -306,7 +305,8 @@ public class CoeusLendingWorksTransaction
         }
 
         /* If the description is Monthly Re-payment */
-        if (PFIX_CAPITAL.equals(theDesc)) {
+        if (PFIX_CAPITAL.equals(theDesc)
+            || PFIX_CANCELLOAN.equals(theDesc)) {
             return CoeusTransactionType.CAPITALREPAYMENT;
         }
 

@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.EnumMap;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jprometheus.data.DataTouch.TouchCounter;
 
 /**

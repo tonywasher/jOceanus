@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmetis.lethe.field.swing;
 
 import java.awt.Color;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFieldState;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldColours.MetisColorPreferenceKey;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldColours.MetisColorPreferences;
 

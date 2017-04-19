@@ -27,40 +27,42 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionHistory;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 
 /**
  * Set of VersionedLists.
  * @param <E> the list type identifier
  * @param <L> the list type class
  */
-public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVersionedList<MetisIndexedItem>>
-        implements MetisDataContents {
+public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVersionedList<MetisDataVersionedItem>>
+        implements MetisDataFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MetisVersionedListSet.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisVersionedListSet.class.getSimpleName());
 
     /**
      * ListType Field Id.
      */
-    private static final MetisField FIELD_TYPE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_TYPE.getValue());
+    private static final MetisDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_TYPE.getValue());
 
     /**
      * Version Field Id.
      */
-    private static final MetisField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION.getValue());
+    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION.getValue());
 
     /**
      * The Local fields.
      */
-    private final MetisFields theFields;
+    private final MetisDataFieldSet theFields;
 
     /**
      * The list type.
@@ -95,15 +97,15 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      */
     protected MetisVersionedListSet(final MetisListType pType,
                                     final Class<E> pClass,
-                                    final MetisFields pBaseFields) {
+                                    final MetisDataFieldSet pBaseFields) {
         theListType = pType;
         theClass = pClass;
         theListMap = new EnumMap<>(theClass);
-        theFields = new MetisFields(pBaseFields.getName(), pBaseFields);
+        theFields = new MetisDataFieldSet(pBaseFields.getName(), pBaseFields);
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return theFields;
     }
 
@@ -111,12 +113,12 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      * Obtain the data fields.
      * @return the data fields
      */
-    protected static MetisFields getBaseFields() {
+    protected static MetisDataFieldSet getBaseFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_TYPE.equals(pField)) {
             return theListType;
@@ -124,7 +126,7 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
         if (FIELD_VERSION.equals(pField)) {
             return !isReadOnly && theVersion != 0
                                                   ? theVersion
-                                                  : MetisFieldValue.SKIP;
+                                                  : MetisDataFieldValue.SKIP;
         }
 
         /* Look for an enum of this type */
@@ -135,23 +137,23 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
                 /* Return the list */
                 MetisVersionedList<?> myList = theListMap.get(myEnum);
                 return myList.isEmpty()
-                                        ? MetisFieldValue.SKIP
+                                        ? MetisDataFieldValue.SKIP
                                         : myList;
             }
         }
 
         /* Not found */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
-    public String formatObject() {
-        return getDataFields().getName();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
     public String toString() {
-        return formatObject();
+        return getDataFieldSet().getName();
     }
 
     /**
@@ -304,10 +306,10 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      * reLink Items.
      * @param pIterator the iterator
      */
-    protected void reLinkItems(final Iterator<MetisIndexedItem> pIterator) {
+    protected void reLinkItems(final Iterator<MetisDataVersionedItem> pIterator) {
         /* Iterate through the items, reLinking */
         while (pIterator.hasNext()) {
-            MetisIndexedItem myItem = pIterator.next();
+            MetisDataVersionedItem myItem = pIterator.next();
             reLinkItem(myItem);
         }
     }
@@ -316,20 +318,20 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      * reLink values.
      * @param pItem the item
      */
-    private void reLinkItem(final MetisIndexedItem pItem) {
+    private void reLinkItem(final MetisDataVersionedItem pItem) {
         /* Access details */
-        MetisDataValues myItem = (MetisDataValues) pItem;
-        MetisValueSet myValues = myItem.getValueSet();
-        MetisFields myFields = pItem.getDataFields();
+        MetisDataVersionHistory myHistory = pItem.getVersionHistory();
+        MetisDataVersionValues myValues = myHistory.getValueSet();
+        MetisDataFieldSet myFields = pItem.getDataFieldSet();
 
         /* Loop through the fields */
-        Iterator<MetisField> myIterator = myFields.fieldIterator();
+        Iterator<MetisDataField> myIterator = myFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field and value */
-            MetisField myField = myIterator.next();
-            Object myValue = myField.getStorage().isValueSet()
-                                                               ? myValues.getValue(myField)
-                                                               : null;
+            MetisDataField myField = myIterator.next();
+            Object myValue = myField.getStorage().isVersioned()
+                                                                ? myValues.getValue(myField)
+                                                                : null;
 
             /* If the value is a VersionedItem */
             if (myValue instanceof MetisIndexedItem) {

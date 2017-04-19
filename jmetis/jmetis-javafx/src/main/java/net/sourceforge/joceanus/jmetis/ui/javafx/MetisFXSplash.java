@@ -38,8 +38,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram.MetisApplication;
+import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProgram;
+import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProgram.MetisApplication;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
 

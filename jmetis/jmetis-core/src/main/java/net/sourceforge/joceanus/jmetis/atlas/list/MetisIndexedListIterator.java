@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmetis.atlas.list;
 
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
 
 /**
  * Indexed List Iterator.

@@ -38,7 +38,7 @@ public class CoeusFundingCircleBadDebtParser
      * Header fields.
      */
     private static final String[] HEADERS =
-    { "Loan Part ID", "Loan title", "Risk", "Repayments left", "Principal", "Rate", "Date", "Seller", "Status", "DefaultDate" };
+    { "Loan Part ID", "Loan title", "Sector", "Auction ID", "Risk", "Repayments left", "Principal", "Rate", "Date", "Status", "DefaultDate" };
 
     /**
      * The market.

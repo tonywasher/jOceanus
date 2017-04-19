@@ -30,28 +30,29 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
 
 /**
  * Java Indexed List.
  * @param <T> the item type
  */
 public class MetisIndexedList<T extends MetisIndexedItem>
-        implements MetisDataList<T>, MetisDataContents {
+        implements MetisDataList<T>, MetisDataFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MetisIndexedList.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisIndexedList.class.getSimpleName());
 
     /**
      * Size Field Id.
      */
-    private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_SIZE.getValue());
+    private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_SIZE.getValue());
 
     /**
      * The First Id.
@@ -88,33 +89,33 @@ public class MetisIndexedList<T extends MetisIndexedItem>
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_SIZE.equals(pField)) {
             return size();
         }
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
-    public String formatObject() {
-        return getDataFields().getName() + "(" + size() + ")";
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
     public String toString() {
-        return formatObject();
+        return getDataFieldSet().getName() + "(" + size() + ")";
     }
 
     /**
      * Obtain the data fields.
      * @return the data fields
      */
-    protected static MetisFields getBaseFields() {
+    protected static MetisDataFieldSet getBaseFields() {
         return FIELD_DEFS;
     }
 

@@ -22,8 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.list;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisItemValidation;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisItemValidation;
 
 /**
  * Item interfaces.
@@ -33,30 +32,6 @@ public final class MetisListItem {
      * Private constructor.
      */
     private MetisListItem() {
-    }
-
-    /**
-     * Interface for items that wish to belong to a MetisIndexedList.
-     */
-    public interface MetisIndexedItem
-            extends MetisDataContents {
-        /**
-         * Get the Id to index the list.
-         * @return the Id
-         */
-        Integer getIndexedId();
-    }
-
-    /**
-     * Interface for items that wish to control disabled items.
-     */
-    @FunctionalInterface
-    public interface MetisDisableItem {
-        /**
-         * Determine whether the item is disabled.
-         * @return true/false
-         */
-        boolean isDisabled();
     }
 
     /**

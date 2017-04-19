@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.tax.uk;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataFormat;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataMap;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYearCache;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;

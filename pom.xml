@@ -8,9 +8,6 @@
   <inceptionYear>2012</inceptionYear>
   <url>http://joceanus.sourceforge.net/staging/</url>
   <packaging>pom</packaging>
-  <prerequisites>
-    <maven>${ApacheMavenVersion}</maven>
-  </prerequisites>
   <modules>
     <module>jmoneywise</module>
     <module>jthemis</module>
@@ -79,16 +76,16 @@
     <JDateButtonVersion>v2.1.0-SNAPSHOT</JDateButtonVersion>
     <BouncyCastleVersion>1.56</BouncyCastleVersion>
     <SvnKitVersion>1.8.15</SvnKitVersion>
-    <JGitVersion>4.6.1.201703071140-r</JGitVersion>
+    <JGitVersion>4.7.0.201704051617-r</JGitVersion>
     <HttpClientVersion>4.5.3</HttpClientVersion>
     <JSONVersion>20160810</JSONVersion>
-    <ApacheMavenVersion>3.3.9</ApacheMavenVersion>
+    <ApacheMavenVersion>3.5.0</ApacheMavenVersion>
     <MySQLVersion>6.0.6</MySQLVersion>
-    <PostGreSQLVersion>9.4.1212.jre7</PostGreSQLVersion>
-    <ApachePOIVersion>3.15</ApachePOIVersion>
+    <PostGreSQLVersion>42.0.0.jre7</PostGreSQLVersion>
+    <ApachePOIVersion>3.16</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.25</SLF4JVersion>
-    <LOG4JVersion>2.8.1</LOG4JVersion>
+    <LOG4JVersion>2.8.2</LOG4JVersion>
     <JFreeChartVersion>1.0.19</JFreeChartVersion>
     <JSoupVersion>1.10.2</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
@@ -144,7 +141,7 @@
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
-          <version>3.2</version>
+          <version>3.3.0.603</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

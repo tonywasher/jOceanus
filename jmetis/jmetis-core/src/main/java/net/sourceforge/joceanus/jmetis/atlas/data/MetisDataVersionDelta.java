@@ -25,8 +25,7 @@ package net.sourceforge.joceanus.jmetis.atlas.data;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 
 /**
  * Data Version Delta.

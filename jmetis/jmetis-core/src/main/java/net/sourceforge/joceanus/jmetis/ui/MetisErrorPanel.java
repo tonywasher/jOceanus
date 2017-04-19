@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.ui;
 
-import net.sourceforge.joceanus.jmetis.data.MetisErrorList;
-import net.sourceforge.joceanus.jmetis.data.MetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisErrorList;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;

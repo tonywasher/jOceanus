@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusCSVParser;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -39,7 +39,7 @@ public class CoeusFundingCircleLoanBookParser
      * Header fields.
      */
     private static final String[] HEADERS =
-    { "Loan Part ID", "Loan title", "Auction ID", "Risk", "Repayments left", "Principal", "Rate", "Date", "Status" };
+    { "Loan part ID", "Loan title", "Sector", "Loan ID", "Risk", "Repayments left", "Principal remaining", "Rate", "Next payment date", "Status" };
 
     /**
      * Parsed fields.

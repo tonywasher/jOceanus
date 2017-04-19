@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
+import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

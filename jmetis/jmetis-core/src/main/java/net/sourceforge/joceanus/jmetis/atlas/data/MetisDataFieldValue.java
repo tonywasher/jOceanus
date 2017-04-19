@@ -52,5 +52,4 @@ public enum MetisDataFieldValue {
         /* return the name */
         return theName;
     }
-
 }

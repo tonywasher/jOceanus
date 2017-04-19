@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.views;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
+import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;

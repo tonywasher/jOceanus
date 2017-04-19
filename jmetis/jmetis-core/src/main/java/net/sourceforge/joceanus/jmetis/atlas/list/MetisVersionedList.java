@@ -30,14 +30,13 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionHistory;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -46,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Versioned List implementation.
  * @param <T> the item type
  */
-public abstract class MetisVersionedList<T extends MetisIndexedItem>
+public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
         extends MetisIndexedList<T>
         implements TethysEventProvider<MetisListEvent> {
     /**
@@ -57,22 +56,22 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MetisVersionedList.class.getSimpleName(), MetisIndexedList.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisVersionedList.class.getSimpleName(), MetisIndexedList.getBaseFields());
 
     /**
      * ListType Field Id.
      */
-    private static final MetisField FIELD_TYPE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_TYPE.getValue());
+    private static final MetisDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_TYPE.getValue());
 
     /**
      * Class Field Id.
      */
-    private static final MetisField FIELD_CLASS = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_CLASS.getValue());
+    private static final MetisDataField FIELD_CLASS = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_CLASS.getValue());
 
     /**
      * Version Field Id.
      */
-    private static final MetisField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION.getValue());
+    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION.getValue());
 
     /**
      * The Event Manager.
@@ -97,7 +96,7 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
     /**
      * The fields.
      */
-    private final MetisFields theItemFields;
+    private final MetisDataFieldSet theItemFields;
 
     /**
      * Is this a readOnly list.
@@ -128,13 +127,13 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
      */
     protected MetisVersionedList(final MetisListType pListType,
                                  final Class<T> pClass,
-                                 final MetisFields pFields) {
+                                 final MetisDataFieldSet pFields) {
         /* Store parameters */
         theListType = pListType;
         theClass = pClass;
 
         /* Determine whether this is a readOnly list */
-        isReadOnly = !MetisDataValues.class.isAssignableFrom(theClass);
+        isReadOnly = !MetisDataVersionedItem.class.isAssignableFrom(theClass);
 
         /* Obtain the constructor and event manager */
         theConstructor = getConstructor();
@@ -144,7 +143,7 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
         if (pFields == null) {
             /* Create a new instance and obtain fields */
             T myItem = newListItem(0);
-            theItemFields = myItem.getDataFields();
+            theItemFields = myItem.getDataFieldSet();
 
             /* else record the passed fields */
         } else {
@@ -153,12 +152,12 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_TYPE.equals(pField)) {
             return theListType;
         }
@@ -168,7 +167,7 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
         if (FIELD_VERSION.equals(pField)) {
             return !isReadOnly && theVersion != 0
                                                   ? theVersion
-                                                  : MetisFieldValue.SKIP;
+                                                  : MetisDataFieldValue.SKIP;
         }
         return super.getFieldValue(pField);
     }
@@ -177,7 +176,7 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
      * Obtain the data fields.
      * @return the data fields
      */
-    protected static MetisFields getBaseFields() {
+    protected static MetisDataFieldSet getBaseFields() {
         return FIELD_DEFS;
     }
 
@@ -190,7 +189,7 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
      * Obtain the dataFields for an item.
      * @return the dataFields
      */
-    public MetisFields getItemFields() {
+    public MetisDataFieldSet getItemFieldSet() {
         return theItemFields;
     }
 
@@ -299,8 +298,7 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
         Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
-            MetisDataValues myVersioned = (MetisDataValues) myCurr;
-            MetisValueSetHistory myHistory = myVersioned.getValueSetHistory();
+            MetisDataVersionHistory myHistory = myCurr.getVersionHistory();
 
             /* If the version is later than the required version */
             int myVersion = myHistory.getValueSet().getVersion();
@@ -319,6 +317,9 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
                     myHistory.popTheHistory();
                     myVersion = myHistory.getValueSet().getVersion();
                 }
+
+                /* Adjust the state */
+                myHistory.adjustState();
 
                 /* Note maximum version */
                 myMaxVersion = Math.max(myMaxVersion, myVersion);
@@ -356,13 +357,10 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
         /* Obtain a new item */
         T myNew = newListItem(pBase.getIndexedId());
 
-        /* Access versioned controls */
-        MetisDataValues myBase = (MetisDataValues) pBase;
-        MetisDataValues myItem = (MetisDataValues) myNew;
-
         /* Obtain a deleted values set as the current value */
-        MetisValueSet myBaseSet = myBase.getValueSet();
-        MetisValueSet mySet = myBaseSet.cloneIt();
+        MetisDataVersionHistory myHistory = pBase.getVersionHistory();
+        MetisDataVersionValues myBaseSet = myHistory.getValueSet();
+        MetisDataVersionValues mySet = myBaseSet.cloneIt();
         mySet.setDeletion(true);
 
         /* Obtain an undeleted set as the base value */
@@ -370,7 +368,7 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
         myBaseSet.setDeletion(false);
 
         /* Record as the history of the item */
-        MetisValueSetHistory myHistory = myItem.getValueSetHistory();
+        myHistory = myNew.getVersionHistory();
         myHistory.setValues(mySet);
         myHistory.setHistory(myBaseSet);
 
@@ -389,21 +387,18 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
         /* Obtain a new item */
         T myNew = newListItem(pCurr.getIndexedId());
 
-        /* Access versioned controls */
-        MetisDataValues myCurr = (MetisDataValues) pCurr;
-        MetisDataValues myBase = (MetisDataValues) pBase;
-        MetisDataValues myItem = (MetisDataValues) myNew;
-
         /* Obtain a clone of the value set as the current value */
-        MetisValueSet mySet = myCurr.getValueSet();
+        MetisDataVersionHistory myHistory = pCurr.getVersionHistory();
+        MetisDataVersionValues mySet = myHistory.getValueSet();
         mySet = mySet.cloneIt();
 
         /* Obtain a clone of the value set as the base value */
-        MetisValueSet myBaseSet = myBase.getValueSet();
+        myHistory = pBase.getVersionHistory();
+        MetisDataVersionValues myBaseSet = myHistory.getValueSet();
         myBaseSet = myBaseSet.cloneIt();
 
         /* Record as the history of the item */
-        MetisValueSetHistory myHistory = myItem.getValueSetHistory();
+        myHistory = myNew.getVersionHistory();
         myHistory.setValues(mySet);
         myHistory.setHistory(myBaseSet);
 
@@ -420,17 +415,14 @@ public abstract class MetisVersionedList<T extends MetisIndexedItem>
         /* Obtain a new item */
         T myNew = newListItem(pCurr.getIndexedId());
 
-        /* Access versioned controls */
-        MetisDataValues myCurr = (MetisDataValues) pCurr;
-        MetisDataValues myItem = (MetisDataValues) myNew;
-
         /* Obtain a clone of the value set as the current value */
-        MetisValueSet mySet = myCurr.getValueSet();
+        MetisDataVersionHistory myHistory = pCurr.getVersionHistory();
+        MetisDataVersionValues mySet = myHistory.getValueSet();
         mySet = mySet.cloneIt();
         mySet.setVersion(1);
 
         /* Record as the history of the item */
-        MetisValueSetHistory myHistory = myItem.getValueSetHistory();
+        myHistory = myNew.getVersionHistory();
         myHistory.setValues(mySet);
 
         /* Return the new item */

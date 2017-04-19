@@ -28,7 +28,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -257,7 +257,9 @@ public class CoeusFundingCircleTransaction
         /* Access loan id */
         String myLoanId = myIterator.next();
 
-        /* Skip description/risk/Payments left */
+        /* Skip description/sector/auctionID/risk/Payments left */
+        myIterator.next();
+        myIterator.next();
         myIterator.next();
         myIterator.next();
         myIterator.next();
@@ -266,8 +268,7 @@ public class CoeusFundingCircleTransaction
         TethysMoney myDebt = pParser.parseMoney(myIterator.next());
         myDebt.negate();
 
-        /* Ignore the rate/date of next payment/status/seller */
-        myIterator.next();
+        /* Ignore the rate/date of next payment/status */
         myIterator.next();
         myIterator.next();
         myIterator.next();

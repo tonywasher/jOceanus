@@ -26,12 +26,12 @@ import java.util.Iterator;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisEditList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisVersionedList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataList;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisEditList;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisListChange;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisVersionedList;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisListChange.MetisListEvent;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 

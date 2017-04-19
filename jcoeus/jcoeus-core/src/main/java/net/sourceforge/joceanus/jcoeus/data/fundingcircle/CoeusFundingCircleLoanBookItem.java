@@ -29,10 +29,10 @@ import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanRisk;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -133,9 +133,14 @@ public class CoeusFundingCircleLoanBookItem
         /* Iterate through the fields */
         Iterator<String> myIterator = pFields.iterator();
 
-        /* Obtain IDs */
+        /* Obtain part ID and description */
         theLoanId = myIterator.next();
         theDesc = myIterator.next();
+
+        /* Skip the sector */
+        myIterator.next();
+
+        /* Obtain auction ID */
         theAuctionId = myIterator.next();
 
         /* Derive the risk */
@@ -259,7 +264,8 @@ public class CoeusFundingCircleLoanBookItem
      */
     private static CoeusLoanRisk determineRisk(final String pRisk) throws OceanusException {
         /* If the risk is empty, return unclassified */
-        if (pRisk.length() == 0) {
+        if ((pRisk.length() == 0) ||
+            "-".equals(pRisk)) {
             return CoeusLoanRisk.UNCLASSIFIED;
         }
 

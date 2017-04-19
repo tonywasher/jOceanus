@@ -26,23 +26,22 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataObject.MetisDataValues;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionHistory;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
-import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
 
 /**
  * Base List implementation.
  * @param <T> the item type
  */
-public class MetisBaseList<T extends MetisIndexedItem>
+public class MetisBaseList<T extends MetisDataVersionedItem>
         extends MetisVersionedList<T> {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MetisBaseList.class.getSimpleName(), MetisVersionedList.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisBaseList.class.getSimpleName(), MetisVersionedList.getBaseFields());
 
     /**
      * Constructor.
@@ -58,12 +57,12 @@ public class MetisBaseList<T extends MetisIndexedItem>
      * @param pFields the fields
      */
     public MetisBaseList(final Class<T> pClass,
-                         final MetisFields pFields) {
+                         final MetisDataFieldSet pFields) {
         super(MetisListType.BASE, pClass, pFields);
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -150,8 +149,7 @@ public class MetisBaseList<T extends MetisIndexedItem>
             T myItem = myOld.get(myId);
 
             /* Access history */
-            MetisDataValues myVersioned = (MetisDataValues) myCurr;
-            MetisValueSetHistory myHistory = myVersioned.getValueSetHistory();
+            MetisDataVersionHistory myHistory = myCurr.getVersionHistory();
 
             /* If the item does not exist in the old list */
             if (myItem == null) {
@@ -164,8 +162,8 @@ public class MetisBaseList<T extends MetisIndexedItem>
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* ReBase the history */
-                    myVersioned = (MetisDataValues) myItem;
-                    MetisValueSet myBase = myVersioned.getValueSet().cloneIt();
+                    MetisDataVersionHistory myBaseHistory = myItem.getVersionHistory();
+                    MetisDataVersionValues myBase = myBaseHistory.getValueSet().cloneIt();
                     myHistory.setHistory(myBase);
                     hasChanges = true;
                 }
@@ -212,7 +210,7 @@ public class MetisBaseList<T extends MetisIndexedItem>
         }
 
         /* Create the difference list */
-        MetisDifferenceList<T> myDifferences = new MetisDifferenceList<>(getTheClass(), getItemFields());
+        MetisDifferenceList<T> myDifferences = new MetisDifferenceList<>(getTheClass());
         myDifferences.deriveTheDifferences(this, pCompare);
         return myDifferences;
     }

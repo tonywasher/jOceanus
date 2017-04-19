@@ -26,22 +26,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 
 /**
  * Difference List.
  * @param <T> the item type
  */
-public class MetisDifferenceList<T extends MetisIndexedItem>
+public class MetisDifferenceList<T extends MetisDataVersionedItem>
         extends MetisVersionedList<T> {
     /**
      * Constructor.
      * @param pClass the item type
-     * @param pFields the fields
      */
-    protected MetisDifferenceList(final Class<T> pClass,
-                                  final MetisFields pFields) {
+    protected MetisDifferenceList(final Class<T> pClass) {
         /* Initialise underlying class */
         super(MetisListType.DIFFERENCE, pClass);
     }

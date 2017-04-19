@@ -26,7 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jmetis.MetisLogicException;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

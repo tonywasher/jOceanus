@@ -26,19 +26,19 @@ import java.security.InvalidParameterException;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 
 /**
  * Set of BaseLists.
  * @param <E> the list type identifier
  */
 public class MetisBaseListSet<E extends Enum<E>>
-        extends MetisVersionedListSet<E, MetisBaseList<MetisIndexedItem>> {
+        extends MetisVersionedListSet<E, MetisBaseList<MetisDataVersionedItem>> {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MetisBaseListSet.class.getSimpleName(), MetisVersionedListSet.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisBaseListSet.class.getSimpleName(), MetisVersionedListSet.getBaseFieldSet());
 
     /**
      * Constructor.
@@ -57,13 +57,13 @@ public class MetisBaseListSet<E extends Enum<E>>
         checkValidBasePartner(pSource);
 
         /* Loop through the lists */
-        Iterator<Map.Entry<E, MetisBaseList<MetisIndexedItem>>> myIterator = entrySetIterator();
+        Iterator<Map.Entry<E, MetisBaseList<MetisDataVersionedItem>>> myIterator = entrySetIterator();
         while (myIterator.hasNext()) {
-            Map.Entry<E, MetisBaseList<MetisIndexedItem>> myEntry = myIterator.next();
+            Map.Entry<E, MetisBaseList<MetisDataVersionedItem>> myEntry = myIterator.next();
 
             /* Obtain the source list */
-            MetisBaseList<MetisIndexedItem> mySource = pSource.getList(myEntry.getKey());
-            MetisBaseList<MetisIndexedItem> myTarget = myEntry.getValue();
+            MetisBaseList<?> mySource = pSource.getList(myEntry.getKey());
+            MetisBaseList<?> myTarget = myEntry.getValue();
 
             /* Reset the content */
             myTarget.doResetContent(mySource);
@@ -96,13 +96,13 @@ public class MetisBaseListSet<E extends Enum<E>>
         int myNewVersion = 0;
 
         /* Loop through the lists */
-        Iterator<Map.Entry<E, MetisBaseList<MetisIndexedItem>>> myIterator = entrySetIterator();
+        Iterator<Map.Entry<E, MetisBaseList<MetisDataVersionedItem>>> myIterator = entrySetIterator();
         while (myIterator.hasNext()) {
-            Map.Entry<E, MetisBaseList<MetisIndexedItem>> myEntry = myIterator.next();
+            Map.Entry<E, MetisBaseList<MetisDataVersionedItem>> myEntry = myIterator.next();
 
             /* Obtain the source list */
-            MetisBaseList<MetisIndexedItem> myBase = pBase.getList(myEntry.getKey());
-            MetisBaseList<MetisIndexedItem> myTarget = myEntry.getValue();
+            MetisBaseList<MetisDataVersionedItem> myBase = pBase.getList(myEntry.getKey());
+            MetisBaseList<MetisDataVersionedItem> myTarget = myEntry.getValue();
 
             /* reBase the list */
             myTarget.doReBaseList(myBase);
@@ -136,17 +136,17 @@ public class MetisBaseListSet<E extends Enum<E>>
         int myNewVersion = 0;
 
         /* Loop through the lists */
-        Iterator<Map.Entry<E, MetisBaseList<MetisIndexedItem>>> myIterator = entrySetIterator();
+        Iterator<Map.Entry<E, MetisBaseList<MetisDataVersionedItem>>> myIterator = entrySetIterator();
         while (myIterator.hasNext()) {
-            Map.Entry<E, MetisBaseList<MetisIndexedItem>> myEntry = myIterator.next();
+            Map.Entry<E, MetisBaseList<MetisDataVersionedItem>> myEntry = myIterator.next();
 
             /* Obtain the source list */
             E myType = myEntry.getKey();
-            MetisBaseList<MetisIndexedItem> myOld = pOld.getList(myType);
-            MetisBaseList<MetisIndexedItem> myNew = myEntry.getValue();
+            MetisBaseList<MetisDataVersionedItem> myOld = pOld.getList(myType);
+            MetisBaseList<MetisDataVersionedItem> myNew = myEntry.getValue();
 
             /* Obtain the difference list and add if non-empty */
-            MetisDifferenceList<MetisIndexedItem> myDifference = myNew.doDeriveDifferences(myOld);
+            MetisDifferenceList<MetisDataVersionedItem> myDifference = myNew.doDeriveDifferences(myOld);
             if (!myDifference.isEmpty()) {
                 myDifferences.declareList(myType, myDifference);
                 myNewVersion = 1;
@@ -175,16 +175,16 @@ public class MetisBaseListSet<E extends Enum<E>>
         int myNewVersion = 0;
 
         /* Loop through the lists */
-        Iterator<Map.Entry<E, MetisBaseList<MetisIndexedItem>>> myIterator = entrySetIterator();
+        Iterator<Map.Entry<E, MetisBaseList<MetisDataVersionedItem>>> myIterator = entrySetIterator();
         while (myIterator.hasNext()) {
-            Map.Entry<E, MetisBaseList<MetisIndexedItem>> myEntry = myIterator.next();
+            Map.Entry<E, MetisBaseList<MetisDataVersionedItem>> myEntry = myIterator.next();
 
             /* Obtain the list */
             E myType = myEntry.getKey();
-            MetisBaseList<MetisIndexedItem> myList = myEntry.getValue();
+            MetisBaseList<MetisDataVersionedItem> myList = myEntry.getValue();
 
             /* Obtain the update list and add */
-            MetisUpdateList<MetisIndexedItem> myUpdate = myList.deriveUpdates();
+            MetisUpdateList<MetisDataVersionedItem> myUpdate = myList.deriveUpdates();
             myUpdates.declareList(myType, myUpdate);
 
             /* Note maximum version */
@@ -210,16 +210,16 @@ public class MetisBaseListSet<E extends Enum<E>>
         MetisEditListSet<E> myEdits = new MetisEditListSet<>(this);
 
         /* Loop through the lists */
-        Iterator<Map.Entry<E, MetisBaseList<MetisIndexedItem>>> myIterator = entrySetIterator();
+        Iterator<Map.Entry<E, MetisBaseList<MetisDataVersionedItem>>> myIterator = entrySetIterator();
         while (myIterator.hasNext()) {
-            Map.Entry<E, MetisBaseList<MetisIndexedItem>> myEntry = myIterator.next();
+            Map.Entry<E, MetisBaseList<MetisDataVersionedItem>> myEntry = myIterator.next();
 
             /* Obtain the list */
             E myType = myEntry.getKey();
-            MetisBaseList<MetisIndexedItem> myList = myEntry.getValue();
+            MetisBaseList<MetisDataVersionedItem> myList = myEntry.getValue();
 
             /* Obtain the edit list and add */
-            MetisEditList<MetisIndexedItem> myEdit = myList.deriveEditList();
+            MetisEditList<MetisDataVersionedItem> myEdit = myList.deriveEditList();
             myEdits.declareList(myType, myEdit);
         }
 

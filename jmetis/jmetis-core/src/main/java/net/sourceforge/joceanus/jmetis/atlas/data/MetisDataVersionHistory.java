@@ -27,14 +27,19 @@ import java.util.Deque;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 
 /**
  * Data Version History.
  */
 public class MetisDataVersionHistory
-        implements MetisDataFieldItem {
+        implements MetisIndexedItem, MetisDataFieldItem {
+    /**
+     * The id.
+     */
+    private Integer theId;
+
     /**
      * The current set of values for this object.
      */
@@ -44,6 +49,11 @@ public class MetisDataVersionHistory
      * The original set of values if any changes have been made.
      */
     private MetisDataVersionValues theOriginal;
+
+    /**
+     * The dataState.
+     */
+    private MetisDataState theState;
 
     /**
      * The stack of valueSet changes.
@@ -56,12 +66,41 @@ public class MetisDataVersionHistory
     private final Deque<MetisDataVersionDelta> theDeltas;
 
     /**
+     * The Data Item Validation.
+     */
+    private final MetisDataItemValidation theValidation;
+
+    /**
      * Constructor.
      */
     public MetisDataVersionHistory() {
         /* Allocate the stack */
         theStack = new ArrayDeque<>();
         theDeltas = new ArrayDeque<>();
+
+        /* Allocate the validation */
+        theValidation = new MetisDataItemValidation();
+    }
+
+    @Override
+    public Integer getIndexedId() {
+        return theId;
+    }
+
+    /**
+     * Set Id.
+     * @param pId the Id
+     */
+    public void setIndexedId(final Integer pId) {
+        theId = pId;
+    }
+
+    /**
+     * Obtain the DataItemValidation.
+     * @return the validation
+     */
+    public MetisDataItemValidation getValidation() {
+        return theValidation;
     }
 
     @Override
@@ -121,6 +160,15 @@ public class MetisDataVersionHistory
         theOriginal = theCurr;
         theStack.clear();
         theDeltas.clear();
+        adjustState();
+    }
+
+    /**
+     * Obtain the State of item.
+     * @return the state
+     */
+    public MetisDataState getState() {
+        return theState;
     }
 
     /**
@@ -201,6 +249,7 @@ public class MetisDataVersionHistory
         theDeltas.clear();
         theOriginal = theCurr;
         theOriginal.setVersion(0);
+        adjustState();
     }
 
     /**
@@ -211,6 +260,7 @@ public class MetisDataVersionHistory
         theStack.clear();
         theDeltas.clear();
         theCurr = theOriginal;
+        adjustState();
     }
 
     /**
@@ -227,6 +277,7 @@ public class MetisDataVersionHistory
 
         /* Add the delta to the stack */
         theDeltas.push(new MetisDataVersionDelta(theCurr, theOriginal));
+        adjustState();
     }
 
     /**
@@ -276,5 +327,41 @@ public class MetisDataVersionHistory
 
         /* Call the function from the interface */
         return theCurr.fieldChanged(pField, theOriginal);
+    }
+
+    /**
+     * Adjust State of item.
+     */
+    public void adjustState() {
+        theState = determineState();
+    }
+
+    /**
+     * Determine State of item.
+     * @return the state of the item
+     */
+    private MetisDataState determineState() {
+        /* If we are a new element */
+        if (theOriginal.getVersion() > 0) {
+            /* Return status */
+            return theCurr.isDeletion()
+                                        ? MetisDataState.DELNEW
+                                        : MetisDataState.NEW;
+        }
+
+        /* If we have no changes we are CLEAN */
+        if (theCurr.getVersion() == 0) {
+            return MetisDataState.CLEAN;
+        }
+
+        /* If we are deleted return so */
+        if (theCurr.isDeletion()) {
+            return MetisDataState.DELETED;
+        }
+
+        /* Return RECOVERED or CHANGED depending on whether we started as deleted */
+        return theOriginal.isDeletion()
+                                        ? MetisDataState.RECOVERED
+                                        : MetisDataState.CHANGED;
     }
 }

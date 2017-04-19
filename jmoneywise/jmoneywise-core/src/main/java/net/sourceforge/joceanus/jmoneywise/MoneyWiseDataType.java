@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisFieldEnum;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldEnum;
 
 /**
  * MoneyWise Item Types.

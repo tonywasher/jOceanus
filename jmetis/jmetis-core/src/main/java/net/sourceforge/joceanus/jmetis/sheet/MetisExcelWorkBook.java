@@ -51,7 +51,7 @@ import org.apache.poi.ss.util.CellReference;
 
 import net.sourceforge.joceanus.jmetis.MetisIOException;
 import net.sourceforge.joceanus.jmetis.MetisLogicException;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

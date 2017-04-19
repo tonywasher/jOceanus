@@ -28,7 +28,7 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldData;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager.PopulateFieldData;

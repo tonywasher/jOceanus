@@ -31,10 +31,10 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
+import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerResource;
+import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;

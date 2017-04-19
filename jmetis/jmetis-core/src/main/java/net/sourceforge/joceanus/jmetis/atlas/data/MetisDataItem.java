@@ -36,15 +36,39 @@ public final class MetisDataItem {
     }
 
     /**
-     * Interface for items that are looked up via an integer index id.
+     * Format object interface.
      */
     @FunctionalInterface
+    public interface MetisDataObjectFormat {
+        /**
+         * Obtain Object summary.
+         * @param pFormatter the data formatter
+         * @return the display summary of the object
+         */
+        String formatObject(MetisDataFormatter pFormatter);
+    }
+
+    /**
+     * Interface for items that are looked up via an integer index id.
+     */
     public interface MetisIndexedItem {
         /**
          * Get the Id to index the list.
          * @return the Id
          */
         Integer getIndexedId();
+    }
+
+    /**
+     * Interface for items that wish to control disabled items.
+     */
+    @FunctionalInterface
+    public interface MetisDisableItem {
+        /**
+         * Determine whether the item is disabled.
+         * @return true/false
+         */
+        boolean isDisabled();
     }
 
     /**

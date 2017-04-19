@@ -22,19 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.list;
 
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.data.MetisFields;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 
 /**
  * Set of DifferenceLists.
  * @param <E> the list type identifier
  */
 public class MetisDifferenceListSet<E extends Enum<E>>
-        extends MetisVersionedListSet<E, MetisDifferenceList<MetisIndexedItem>> {
+        extends MetisVersionedListSet<E, MetisDifferenceList<MetisDataVersionedItem>> {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MetisDifferenceListSet.class.getSimpleName(), MetisVersionedListSet.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisDifferenceListSet.class.getSimpleName(), MetisVersionedListSet.getBaseFieldSet());
 
     /**
      * Constructor.

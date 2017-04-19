@@ -30,9 +30,9 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;

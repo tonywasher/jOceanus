@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmetis.atlas.data;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
-import net.sourceforge.joceanus.jmetis.data.MetisValueSetHistory;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
 
 /**
  * Metis Set of versioned Values.
@@ -35,18 +35,22 @@ public class MetisDataVersionValues {
      * ValueSet object interface.
      */
     public interface MetisDataVersionedItem
-            extends MetisDataFieldItem {
+            extends MetisDataFieldItem, MetisIndexedItem {
         /**
-         * Obtain Object ValueSet.
-         * @return the ValueSet of the object
+         * Does the object support versions?
+         * @return true/false
          */
-        MetisDataVersionValues getValueSet();
+        default boolean isVersioned() {
+            return false;
+        }
 
         /**
-         * Obtain Object ValueSet History.
-         * @return the ValueSet of the object
+         * Obtain Object Version History.
+         * @return the history of the object
          */
-        MetisValueSetHistory getValueSetHistory();
+        default MetisDataVersionHistory getVersionHistory() {
+            return null;
+        }
     }
 
     /**
@@ -98,7 +102,7 @@ public class MetisDataVersionValues {
      * Constructor.
      * @param pItem the associated item
      */
-    public MetisDataVersionValues(final MetisDataVersionedItem pItem) {
+    protected MetisDataVersionValues(final MetisDataVersionedItem pItem) {
         /* Create the values array and initialise to null */
         theItem = pItem;
         theFields = pItem.getDataFieldSet();

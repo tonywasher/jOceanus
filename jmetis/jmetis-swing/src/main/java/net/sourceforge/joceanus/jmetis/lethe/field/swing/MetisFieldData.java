@@ -28,9 +28,9 @@ import java.awt.Font;
 import javax.swing.border.Border;
 import javax.swing.table.JTableHeader;
 
-import net.sourceforge.joceanus.jmetis.data.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.data.MetisFieldState;
-import net.sourceforge.joceanus.jmetis.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 
 /**
  * The Render Data class.

@@ -26,11 +26,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisEditList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisVersionedList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisEditList;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisListChange;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisVersionedList;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisListChange.MetisListEvent;
+import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisListItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 
