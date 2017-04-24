@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmetis.sheet;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 
@@ -120,7 +120,7 @@ public class MetisExcelRow
         }
 
         /* Access the cell */
-        HSSFCell myExcelCell = theExcelRow.getCell(pIndex, Row.RETURN_BLANK_AS_NULL);
+        HSSFCell myExcelCell = theExcelRow.getCell(pIndex, MissingCellPolicy.RETURN_BLANK_AS_NULL);
         return (myExcelCell != null)
                                      ? new MetisExcelCell(this, myExcelCell, pIndex, true)
                                      : null;

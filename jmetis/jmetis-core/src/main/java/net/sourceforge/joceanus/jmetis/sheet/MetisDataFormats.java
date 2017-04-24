@@ -276,8 +276,8 @@ public final class MetisDataFormats {
         if (pValue instanceof Boolean) {
             return FORMAT_BOOLEAN;
         }
-        if ((pValue instanceof Integer) ||
-            (pValue instanceof Long)) {
+        if ((pValue instanceof Integer)
+            || (pValue instanceof Long)) {
             return getIntegerFormat();
         }
         if (pValue instanceof TethysMoney) {
@@ -366,8 +366,8 @@ public final class MetisDataFormats {
         if (pValue instanceof TethysDate) {
             return getStyleName(TethysDate.class.getSimpleName());
         }
-        if ((pValue instanceof Integer) ||
-            (pValue instanceof Long)) {
+        if ((pValue instanceof Integer)
+            || (pValue instanceof Long)) {
             return getStyleName(Integer.class.getSimpleName());
         }
         if (pValue instanceof TethysPrice) {
