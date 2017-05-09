@@ -43,7 +43,7 @@ public class MetisViewerErrorList<T extends Throwable & MetisDataFieldItem>
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisDataResource.ERRORLIST_NAME.getValue());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisViewerErrorList.class);
 
     /**
      * Size Field Id.

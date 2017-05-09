@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionHistory;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
@@ -56,7 +56,7 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisVersionedList.class.getSimpleName(), MetisIndexedList.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisVersionedList.class, MetisIndexedList.getBaseFields());
 
     /**
      * ListType Field Id.
@@ -298,13 +298,13 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
         Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
-            MetisDataVersionHistory myHistory = myCurr.getVersionHistory();
+            MetisDataVersionControl myControl = myCurr.getVersionControl();
 
             /* If the version is later than the required version */
-            int myVersion = myHistory.getValueSet().getVersion();
+            int myVersion = myControl.getVersion();
             if (myVersion > pVersion) {
                 /* If the item was created after the required version */
-                if (myHistory.getOriginalValues().getVersion() > pVersion) {
+                if (myControl.getOriginalVersion() > pVersion) {
                     /* Remove from list */
                     myIterator.remove();
                     myChange.registerDeleted(myCurr);
@@ -314,12 +314,12 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
                 /* Loop while version is too high */
                 while (myVersion > pVersion) {
                     /* Pop history */
-                    myHistory.popTheHistory();
-                    myVersion = myHistory.getValueSet().getVersion();
+                    myControl.popTheHistory();
+                    myVersion = myControl.getVersion();
                 }
 
                 /* Adjust the state */
-                myHistory.adjustState();
+                myControl.adjustState();
 
                 /* Note maximum version */
                 myMaxVersion = Math.max(myMaxVersion, myVersion);
@@ -358,8 +358,8 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
         T myNew = newListItem(pBase.getIndexedId());
 
         /* Obtain a deleted values set as the current value */
-        MetisDataVersionHistory myHistory = pBase.getVersionHistory();
-        MetisDataVersionValues myBaseSet = myHistory.getValueSet();
+        MetisDataVersionControl myControl = pBase.getVersionControl();
+        MetisDataVersionValues myBaseSet = myControl.getValueSet();
         MetisDataVersionValues mySet = myBaseSet.cloneIt();
         mySet.setDeletion(true);
 
@@ -368,9 +368,9 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
         myBaseSet.setDeletion(false);
 
         /* Record as the history of the item */
-        myHistory = myNew.getVersionHistory();
-        myHistory.setValues(mySet);
-        myHistory.setHistory(myBaseSet);
+        myControl = myNew.getVersionControl();
+        myControl.setValues(mySet);
+        myControl.setHistory(myBaseSet);
 
         /* Return the new item */
         return myNew;
@@ -388,19 +388,19 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
         T myNew = newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
-        MetisDataVersionHistory myHistory = pCurr.getVersionHistory();
-        MetisDataVersionValues mySet = myHistory.getValueSet();
+        MetisDataVersionControl myControl = pCurr.getVersionControl();
+        MetisDataVersionValues mySet = myControl.getValueSet();
         mySet = mySet.cloneIt();
 
         /* Obtain a clone of the value set as the base value */
-        myHistory = pBase.getVersionHistory();
-        MetisDataVersionValues myBaseSet = myHistory.getValueSet();
+        myControl = pBase.getVersionControl();
+        MetisDataVersionValues myBaseSet = myControl.getValueSet();
         myBaseSet = myBaseSet.cloneIt();
 
         /* Record as the history of the item */
-        myHistory = myNew.getVersionHistory();
-        myHistory.setValues(mySet);
-        myHistory.setHistory(myBaseSet);
+        myControl = myNew.getVersionControl();
+        myControl.setValues(mySet);
+        myControl.setHistory(myBaseSet);
 
         /* Return the new item */
         return myNew;
@@ -416,14 +416,14 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
         T myNew = newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
-        MetisDataVersionHistory myHistory = pCurr.getVersionHistory();
-        MetisDataVersionValues mySet = myHistory.getValueSet();
+        MetisDataVersionControl myControl = pCurr.getVersionControl();
+        MetisDataVersionValues mySet = myControl.getValueSet();
         mySet = mySet.cloneIt();
         mySet.setVersion(1);
 
         /* Record as the history of the item */
-        myHistory = myNew.getVersionHistory();
-        myHistory.setValues(mySet);
+        myControl = myNew.getVersionControl();
+        myControl.setValues(mySet);
 
         /* Return the new item */
         return myNew;

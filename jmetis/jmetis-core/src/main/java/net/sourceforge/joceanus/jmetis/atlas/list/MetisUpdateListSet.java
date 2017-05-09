@@ -37,7 +37,7 @@ public class MetisUpdateListSet<E extends Enum<E>>
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisUpdateListSet.class.getSimpleName(), MetisVersionedListSet.getBaseFieldSet());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisUpdateListSet.class, MetisVersionedListSet.getBaseFieldSet());
 
     /**
      * Constructor.

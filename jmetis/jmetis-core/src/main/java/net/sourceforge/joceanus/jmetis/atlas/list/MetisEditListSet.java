@@ -44,7 +44,7 @@ public class MetisEditListSet<E extends Enum<E>>
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisEditListSet.class.getSimpleName(), MetisVersionedListSet.getBaseFieldSet());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisEditListSet.class, MetisVersionedListSet.getBaseFieldSet());
 
     /**
      * EditVersion Field Id.

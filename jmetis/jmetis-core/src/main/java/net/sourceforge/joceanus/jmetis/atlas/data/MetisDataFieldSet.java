@@ -105,29 +105,21 @@ public class MetisDataFieldSet {
 
     /**
      * Constructor.
-     * @param pName the name of the item
+     * @param pClazz the class of the item
      */
-    public MetisDataFieldSet(final String pName) {
-        this(pName, null);
+    public MetisDataFieldSet(final Class<?> pClazz) {
+        this(pClazz, null);
     }
 
     /**
      * Constructor.
+     * @param pClazz the class of the item
      * @param pParent the parent fields
      */
-    public MetisDataFieldSet(final MetisDataFieldSet pParent) {
-        this(pParent.getName(), pParent);
-    }
-
-    /**
-     * Constructor.
-     * @param pName the name of the item
-     * @param pParent the parent fields
-     */
-    public MetisDataFieldSet(final String pName,
+    public MetisDataFieldSet(final Class<?> pClazz,
                              final MetisDataFieldSet pParent) {
         /* Initialise the list */
-        theName = pName;
+        theName = pClazz.getSimpleName();
         theParent = pParent;
         theFields = new ArrayList<>();
         if (theParent != null) {

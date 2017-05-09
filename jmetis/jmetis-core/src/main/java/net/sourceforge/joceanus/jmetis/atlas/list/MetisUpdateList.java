@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionHistory;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
@@ -44,7 +44,7 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisUpdateList.class.getSimpleName(), MetisVersionedList.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisUpdateList.class, MetisVersionedList.getBaseFields());
 
     /**
      * Base Field Id.
@@ -128,8 +128,8 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
      */
     private void processUpdate(final T pBase) {
         /* Obtain the valueSet history */
-        MetisDataVersionHistory myHistory = pBase.getVersionHistory();
-        MetisDataState myState = myHistory.getState();
+        MetisDataVersionControl myControl = pBase.getVersionControl();
+        MetisDataState myState = myControl.getState();
 
         /* Switch on the state */
         switch (myState) {
@@ -207,13 +207,13 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
             T myCurr = myIterator.next();
 
             /* Obtain the state */
-            MetisDataVersionHistory myHistory = myCurr.getVersionHistory();
-            MetisDataState myState = myHistory.getState();
+            MetisDataVersionControl myControl = myCurr.getVersionControl();
+            MetisDataState myState = myControl.getState();
 
             /* If this is to be handled in this phase */
             if (checkStateInPhase(pPhase, myState)) {
                 /* Access further details */
-                MetisDataVersionValues myValues = myHistory.getValueSet();
+                MetisDataVersionValues myValues = myControl.getValueSet();
                 int myId = myCurr.getIndexedId();
                 T myBase = theBase.getItemById(myId);
 
@@ -222,7 +222,7 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
                     theBase.removeFromList(myBase);
                     myChange.registerDeleted(myBase);
                 } else {
-                    myBase.getVersionHistory().clearHistory();
+                    myBase.getVersionControl().clearHistory();
                 }
 
                 /* Adjust update list */
@@ -330,8 +330,8 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
     private void processChangedUpdate(final T pCurr,
                                       final T pBase) {
         /* Obtain the valueSet history */
-        MetisDataVersionHistory myHistory = pBase.getVersionHistory();
-        MetisDataState myState = myHistory.getState();
+        MetisDataVersionControl myControl = pBase.getVersionControl();
+        MetisDataState myState = myControl.getState();
 
         /* If we are now clean */
         if (MetisDataState.CLEAN.equals(myState)) {
@@ -339,9 +339,9 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
             removeFromList(pCurr);
         } else {
             /* Replace the current values */
-            MetisDataVersionValues myBase = myHistory.getValueSet();
-            myHistory = pCurr.getVersionHistory();
-            MetisDataVersionValues mySet = myHistory.getValueSet();
+            MetisDataVersionValues myBase = myControl.getValueSet();
+            myControl = pCurr.getVersionControl();
+            MetisDataVersionValues mySet = myControl.getValueSet();
             mySet.copyFrom(myBase);
         }
     }
@@ -356,18 +356,18 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
         T myNew = newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
-        MetisDataVersionHistory myHistory = pCurr.getVersionHistory();
-        MetisDataVersionValues mySet = myHistory.getValueSet();
+        MetisDataVersionControl myControl = pCurr.getVersionControl();
+        MetisDataVersionValues mySet = myControl.getValueSet();
         mySet = mySet.cloneIt();
 
         /* Obtain a clone of the original value set as the base value */
-        MetisDataVersionValues myBase = myHistory.getOriginalValues();
+        MetisDataVersionValues myBase = myControl.getOriginalValues();
         myBase = myBase.cloneIt();
 
         /* Record as the history of the item */
-        myHistory = myNew.getVersionHistory();
-        myHistory.setValues(mySet);
-        myHistory.setHistory(myBase);
+        myControl = myNew.getVersionControl();
+        myControl.setValues(mySet);
+        myControl.setHistory(myBase);
 
         /* Return the new item */
         return myNew;
@@ -383,15 +383,15 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
         T myNew = newListItem(pBase.getIndexedId());
 
         /* Obtain a deleted values set as the current value */
-        MetisDataVersionHistory myHistory = pBase.getVersionHistory();
-        MetisDataVersionValues myBaseSet = myHistory.getValueSet();
+        MetisDataVersionControl myControl = pBase.getVersionControl();
+        MetisDataVersionValues myBaseSet = myControl.getValueSet();
         MetisDataVersionValues mySet = myBaseSet.cloneIt();
         mySet.setDeletion(true);
         mySet.setVersion(1);
 
         /* Record as the history of the item */
-        myHistory = myNew.getVersionHistory();
-        myHistory.setValues(mySet);
+        myControl = myNew.getVersionControl();
+        myControl.setValues(mySet);
 
         /* Return the new item */
         return myNew;

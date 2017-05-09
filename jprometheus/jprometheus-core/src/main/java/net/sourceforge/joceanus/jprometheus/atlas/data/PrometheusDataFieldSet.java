@@ -32,29 +32,21 @@ public class PrometheusDataFieldSet
         extends MetisDataFieldSet {
     /**
      * Constructor.
-     * @param pName the name of the item
+     * @param pClazz the class of the item
      */
-    public PrometheusDataFieldSet(final String pName) {
-        this(pName, null);
+    public PrometheusDataFieldSet(final Class<?> pClazz) {
+        this(pClazz, null);
     }
 
     /**
      * Constructor.
+     * @param pClazz the class of the item
      * @param pParent the parent fields
      */
-    public PrometheusDataFieldSet(final PrometheusDataFieldSet pParent) {
-        this(pParent.getName(), pParent);
-    }
-
-    /**
-     * Constructor.
-     * @param pName the name of the item
-     * @param pParent the parent fields
-     */
-    public PrometheusDataFieldSet(final String pName,
+    public PrometheusDataFieldSet(final Class<?> pClazz,
                                   final PrometheusDataFieldSet pParent) {
         /* Initialise underlying class */
-        super(pName, pParent);
+        super(pClazz, pParent);
     }
 
     /**

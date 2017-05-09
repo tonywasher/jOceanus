@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisFieldSt
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionHistory;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -254,8 +254,8 @@ public class MetisViewerFormatter {
     private void formatHTMLVersionedItem(final MetisDataVersionedItem pItem) {
         /* Access details */
         MetisDataFieldSet myFields = pItem.getDataFieldSet();
-        MetisDataVersionHistory myHistory = pItem.getVersionHistory();
-        MetisDataVersionValues myValues = myHistory.getValueSet();
+        MetisDataVersionControl myControl = pItem.getVersionControl();
+        MetisDataVersionValues myValues = myControl.getValueSet();
 
         /* Initialise the document */
         theBuilder.newTitle(myFields.getName());
@@ -286,7 +286,7 @@ public class MetisViewerFormatter {
             /* Start the field */
             theBuilder.newTableRow();
             theBuilder.newDataCell(myField.getName());
-            if (myHistory.fieldChanged(myField).isDifferent()) {
+            if (myControl.fieldChanged(myField).isDifferent()) {
                 theBuilder.newDataCell(myValue, true);
             } else {
                 theBuilder.newDataCell(myValue);

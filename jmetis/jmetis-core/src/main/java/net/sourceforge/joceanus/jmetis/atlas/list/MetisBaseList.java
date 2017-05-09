@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionHistory;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
@@ -41,7 +41,7 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisBaseList.class.getSimpleName(), MetisVersionedList.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisBaseList.class, MetisVersionedList.getBaseFields());
 
     /**
      * Constructor.
@@ -149,12 +149,12 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
             T myItem = myOld.get(myId);
 
             /* Access history */
-            MetisDataVersionHistory myHistory = myCurr.getVersionHistory();
+            MetisDataVersionControl myControl = myCurr.getVersionControl();
 
             /* If the item does not exist in the old list */
             if (myItem == null) {
                 /* Set the version to 1 */
-                myHistory.getValueSet().setVersion(1);
+                myControl.getValueSet().setVersion(1);
                 hasChanges = true;
 
                 /* else the item exists in the old list */
@@ -162,9 +162,9 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* ReBase the history */
-                    MetisDataVersionHistory myBaseHistory = myItem.getVersionHistory();
-                    MetisDataVersionValues myBase = myBaseHistory.getValueSet().cloneIt();
-                    myHistory.setHistory(myBase);
+                    MetisDataVersionControl myBaseControl = myItem.getVersionControl();
+                    MetisDataVersionValues myBase = myBaseControl.getValueSet().cloneIt();
+                    myControl.setHistory(myBase);
                     hasChanges = true;
                 }
 

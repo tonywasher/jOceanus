@@ -57,7 +57,7 @@ public class MetisDataItemValidation
      * Allocate new DataFields.
      */
     private void allocateNewFields() {
-        theLocalFields = new MetisDataFieldSet(MetisDataItemValidation.class.getSimpleName());
+        theLocalFields = new MetisDataFieldSet(MetisDataItemValidation.class);
     }
 
     @Override
@@ -88,6 +88,14 @@ public class MetisDataItemValidation
         /* Access the element */
         MetisErrorElement myError = theErrors.get(iIndex);
         return myError.getError();
+    }
+
+    /**
+     * Do we have any errors?
+     * @return true/false
+     */
+    public boolean hasErrors() {
+        return !theErrors.isEmpty();
     }
 
     /**

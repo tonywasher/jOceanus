@@ -104,7 +104,7 @@ public class PrometheusDataValueSet
         /**
          * Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(PrometheusEncryptedField.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(PrometheusEncryptedField.class);
 
         /**
          * Value Field Id.

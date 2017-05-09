@@ -95,7 +95,7 @@ public class MetisDataVersionDelta
         MetisDataFieldSet myFields = myItem.getDataFieldSet();
 
         /* Allocate new local fields */
-        MetisDataFieldSet myLocal = new MetisDataFieldSet(MetisDataVersionDelta.class.getSimpleName());
+        MetisDataFieldSet myLocal = new MetisDataFieldSet(MetisDataVersionDelta.class);
 
         /* Declare the version field */
         myLocal.declareIndexField(MetisValueSet.FIELD_VERSION);

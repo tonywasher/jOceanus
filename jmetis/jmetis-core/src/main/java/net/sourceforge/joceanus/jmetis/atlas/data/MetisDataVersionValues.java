@@ -45,10 +45,10 @@ public class MetisDataVersionValues {
         }
 
         /**
-         * Obtain Object Version History.
-         * @return the history of the object
+         * Obtain Object Version Control.
+         * @return the versionControl of the object
          */
-        default MetisDataVersionHistory getVersionHistory() {
+        default MetisDataVersionControl getVersionControl() {
             return null;
         }
     }

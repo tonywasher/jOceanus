@@ -37,37 +37,37 @@ public class MetisViewerExceptionWrapper
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisViewerExceptionWrapper.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisViewerExceptionWrapper.class);
 
     /**
      * Class Field Id.
      */
-    public static final MetisDataField FIELD_CLASS = FIELD_DEFS.declareLocalField("ExceptionClass");
+    private static final MetisDataField FIELD_CLASS = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_CLASS.getValue());
 
     /**
      * Message Field Id.
      */
-    public static final MetisDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField("Message");
+    private static final MetisDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_MESSAGE.getValue());
 
     /**
      * Origin Field Id.
      */
-    public static final MetisDataField FIELD_ORIGIN = FIELD_DEFS.declareLocalField("Origin");
+    private static final MetisDataField FIELD_ORIGIN = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_ORIGIN.getValue());
 
     /**
      * Cause Field Id.
      */
-    public static final MetisDataField FIELD_CAUSE = FIELD_DEFS.declareLocalField("CausedBy");
+    private static final MetisDataField FIELD_CAUSE = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_CAUSE.getValue());
 
     /**
      * Object Field Id.
      */
-    public static final MetisDataField FIELD_OBJECT = FIELD_DEFS.declareLocalField("Object");
+    private static final MetisDataField FIELD_OBJECT = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_OBJECT.getValue());
 
     /**
      * Stack Field Id.
      */
-    public static final MetisDataField FIELD_STACK = FIELD_DEFS.declareLocalField("ProgramStack");
+    private static final MetisDataField FIELD_STACK = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_STACK.getValue());
 
     /**
      * The wrapped exception.

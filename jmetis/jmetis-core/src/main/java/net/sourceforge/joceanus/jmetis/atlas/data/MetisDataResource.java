@@ -91,7 +91,42 @@ public enum MetisDataResource implements TethysResourceId {
     /**
      * ErrorList Name.
      */
-    ERRORLIST_NAME("ErrorList.Name");
+    ERRORLIST_NAME("ErrorList.Name"),
+
+    /**
+     * DataItem Id.
+     */
+    DATA_ID("item.Id"),
+
+    /**
+     * DataItem Version.
+     */
+    DATA_VERSION("item.Version"),
+
+    /**
+     * DataItem Deleted.
+     */
+    DATA_DELETED("item.Deleted"),
+
+    /**
+     * DataItem State.
+     */
+    DATA_STATE("item.State"),
+
+    /**
+     * DataItem EditState.
+     */
+    DATA_EDITSTATE("item.EditState"),
+
+    /**
+     * DataItem Errors.
+     */
+    DATA_ERRORS("item.Errors"),
+
+    /**
+     * DataItem History.
+     */
+    DATA_HISTORY("item.History");
 
     /**
      * The Difference Map.

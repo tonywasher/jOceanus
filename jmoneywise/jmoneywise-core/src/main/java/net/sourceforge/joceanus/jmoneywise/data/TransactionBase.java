@@ -27,11 +27,11 @@ import java.util.Currency;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedMoney;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedMoney;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
@@ -273,7 +273,9 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(myFormatter.formatObject(myCategory));
         myBuilder.append(CHAR_BLANK);
-        myBuilder.append(myFormatter.formatObject(myAmount));
+        myBuilder.append(myAmount == null
+                                          ? ""
+                                          : myFormatter.formatObject(myAmount));
         myBuilder.append(CHAR_BLANK);
         myBuilder.append(myFormatter.formatObject(myAccount));
         myBuilder.append(myDir == null

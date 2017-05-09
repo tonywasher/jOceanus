@@ -47,7 +47,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisIndexedList.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisIndexedList.class);
 
     /**
      * Size Field Id.

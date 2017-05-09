@@ -45,14 +45,9 @@ public class MetisProfile
     private static final int NUM_DECIMALS = 6;
 
     /**
-     * Task Field Id.
-     */
-    private static final String NAME_CLASS = MetisDataResource.PROFILE_NAME.getValue();
-
-    /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(NAME_CLASS);
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisProfile.class);
 
     /**
      * Task Field Id.
@@ -77,7 +72,7 @@ public class MetisProfile
     /**
      * Report fields.
      */
-    private final MetisDataFieldSet theFields = new MetisDataFieldSet(NAME_CLASS, FIELD_DEFS);
+    private final MetisDataFieldSet theFields = new MetisDataFieldSet(MetisProfile.class, FIELD_DEFS);
 
     /**
      * Step name.

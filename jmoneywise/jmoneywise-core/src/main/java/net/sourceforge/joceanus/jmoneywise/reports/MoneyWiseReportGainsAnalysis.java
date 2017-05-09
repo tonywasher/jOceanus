@@ -663,26 +663,33 @@ public class MoneyWiseReportGainsAnalysis {
         TethysMoney myXferredCost = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
         TethysUnits myDeltaUnits = theBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
 
+        /* Check whether the units have changed */
+        boolean isDeltaUnits = myDeltaUnits.isNonZero();
+
         /* Obtain the original cost */
         SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
         TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
 
-        /* Record the details */
-        formatValue(SecurityAttribute.COSTDILUTION, myCostDilution);
-        formatMultiplication(SecurityAttribute.RESIDUALCOST, myResidualCost, myOriginalCost, myCostDilution);
-        formatSubtraction(SecurityAttribute.XFERREDCOST, myXferredCost, myOriginalCost, myResidualCost);
-
         /* If we have changed the number of units */
-        if (myDeltaUnits.isNonZero()) {
+        if (isDeltaUnits) {
             /* Obtain the various values */
             TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
             TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
             myDeltaUnits = new TethysUnits(myDeltaUnits);
             myDeltaUnits.negate();
 
-            /* Format the units */
+            /* Format the units/dilution */
             formatSubtraction(SecurityAttribute.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
+            formatDivision(SecurityAttribute.COSTDILUTION, myCostDilution, myUnits, myOriginalUnits);
+
+            /* else just report the dilution */
+        } else {
+            formatValue(SecurityAttribute.COSTDILUTION, myCostDilution);
         }
+
+        /* Record the details */
+        formatMultiplication(SecurityAttribute.RESIDUALCOST, myResidualCost, myOriginalCost, myCostDilution);
+        formatSubtraction(SecurityAttribute.XFERREDCOST, myXferredCost, myOriginalCost, myResidualCost);
     }
 
     /**

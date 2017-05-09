@@ -89,6 +89,7 @@
     <JFreeChartVersion>1.0.19</JFreeChartVersion>
     <JSoupVersion>1.10.2</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
+    <JavaVersion>1.8</JavaVersion>
   </properties>
   <build>
     <resources>
@@ -100,11 +101,34 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.4.1</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>${ApacheMavenVersion}</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>${JavaVersion}</version>
+                </requireJavaVersion>
+              </rules>    
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.6.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>${JavaVersion}</source>
+          <target>${JavaVersion}</target>
           <compilerArgument>-Xlint:unchecked</compilerArgument>
         </configuration>
       </plugin>
@@ -242,12 +266,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.7</version>
+        <version>3.8</version>
         <configuration>
            <configLocation>src/main/pmd/pmd.xml</configLocation>
            <linkXref>true</linkXref>
            <aggregate>true</aggregate>
-           <targetJdk>1.8</targetJdk>
+           <targetJdk>${JavaVersion}</targetJdk>
            <excludes>
                <exclude>**/SevenZip/**/*.java</exclude>
            </excludes>

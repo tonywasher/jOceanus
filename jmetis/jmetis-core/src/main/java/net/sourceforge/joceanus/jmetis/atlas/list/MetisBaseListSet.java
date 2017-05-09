@@ -38,7 +38,7 @@ public class MetisBaseListSet<E extends Enum<E>>
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisBaseListSet.class.getSimpleName(), MetisVersionedListSet.getBaseFieldSet());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisBaseListSet.class, MetisVersionedListSet.getBaseFieldSet());
 
     /**
      * Constructor.

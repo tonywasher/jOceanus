@@ -218,7 +218,7 @@ public class MoneyWiseReportCapitalGains
      * @return the new document fragment
      */
     private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
-                                             final PortfolioBucket pSource) {
+                                                  final PortfolioBucket pSource) {
         /* Access the securities and portfolio */
         SecurityBucketList mySecurities = pSource.getSecurities();
 
@@ -260,7 +260,7 @@ public class MoneyWiseReportCapitalGains
      * @return the new document fragment
      */
     private MetisHTMLTable createDelayedGains(final MetisHTMLTable pParent,
-                                         final SecurityBucket pSource) {
+                                              final SecurityBucket pSource) {
         /* Create a gains analysis */
         MoneyWiseReportGainsAnalysis myGains = new MoneyWiseReportGainsAnalysis(this, pParent, pSource);
 

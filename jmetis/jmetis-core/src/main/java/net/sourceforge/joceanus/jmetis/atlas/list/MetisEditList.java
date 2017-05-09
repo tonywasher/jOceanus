@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionHistory;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
@@ -56,7 +56,7 @@ public class MetisEditList<T extends MetisDataVersionedItem>
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisEditList.class.getSimpleName(), MetisVersionedList.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisEditList.class, MetisVersionedList.getBaseFields());
 
     /**
      * Base Field Id.
@@ -235,16 +235,16 @@ public class MetisEditList<T extends MetisDataVersionedItem>
             T myCurr = myIterator.next();
 
             /* If the item is being edited */
-            MetisDataVersionHistory myHistory = myCurr.getVersionHistory();
-            if (myHistory.getValueSet().getVersion() == theEditVersion) {
+            MetisDataVersionControl myControl = myCurr.getVersionControl();
+            if (myControl.getVersion() == theEditVersion) {
                 /* If the item is newly created */
-                if (myHistory.getOriginalValues().getVersion() == theEditVersion) {
+                if (myControl.getOriginalVersion() == theEditVersion) {
                     /* Remove from list */
                     myIterator.remove();
 
                     /* else just pop the history */
                 } else {
-                    myHistory.popTheHistory();
+                    myControl.popTheHistory();
                 }
             }
         }
@@ -277,10 +277,10 @@ public class MetisEditList<T extends MetisDataVersionedItem>
             T myCurr = myIterator.next();
 
             /* If the item is being edited */
-            MetisDataVersionHistory myHistory = myCurr.getVersionHistory();
-            if (myHistory.getValueSet().getVersion() == theEditVersion) {
+            MetisDataVersionControl myControl = myCurr.getVersionControl();
+            if (myControl.getVersion() == theEditVersion) {
                 /* If the item is newly created */
-                if (myHistory.getOriginalValues().getVersion() == theEditVersion) {
+                if (myControl.getOriginalVersion() == theEditVersion) {
                     /* Register as a new item */
                     theChange.registerAdded(myCurr);
 
@@ -290,7 +290,7 @@ public class MetisEditList<T extends MetisDataVersionedItem>
                 }
 
                 /* adjust the state */
-                myHistory.adjustState();
+                myControl.adjustState();
             }
         }
 
@@ -326,9 +326,9 @@ public class MetisEditList<T extends MetisDataVersionedItem>
         startEditVersion();
 
         /* Start editing */
-        MetisDataVersionHistory myHistory = pItem.getVersionHistory();
-        if (myHistory.getValueSet().getVersion() != theEditVersion) {
-            myHistory.pushHistory(theEditVersion);
+        MetisDataVersionControl myControl = pItem.getVersionControl();
+        if (myControl.getVersion() != theEditVersion) {
+            myControl.pushHistory(theEditVersion);
         }
     }
 
@@ -352,10 +352,10 @@ public class MetisEditList<T extends MetisDataVersionedItem>
         T myNew = newListItem(getNextId());
 
         /* Start editing */
-        MetisDataVersionHistory myHistory = myNew.getVersionHistory();
-        MetisDataVersionValues myValues = myHistory.getValueSet();
+        MetisDataVersionControl myControl = myNew.getVersionControl();
+        MetisDataVersionValues myValues = myControl.getValueSet();
         myValues.setVersion(theEditVersion);
-        myHistory.adjustState();
+        myControl.adjustState();
 
         /* Return the item */
         return myNew;
@@ -402,10 +402,10 @@ public class MetisEditList<T extends MetisDataVersionedItem>
         Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
-            MetisDataVersionHistory myHistory = myCurr.getVersionHistory();
+            MetisDataVersionControl myControl = myCurr.getVersionControl();
 
             /* Switch on state */
-            switch (myHistory.getState()) {
+            switch (myControl.getState()) {
                 case NEW:
                     handleCommitOfNewItem(myCurr);
                     break;
@@ -448,13 +448,13 @@ public class MetisEditList<T extends MetisDataVersionedItem>
     private void handleCommitOfNewItem(final T pItem) {
         /* Commit the item */
         T myItem = newItemFromBase(pItem);
-        MetisDataVersionHistory myHistory = myItem.getVersionHistory();
-        myHistory.getValueSet().setVersion(theNewVersion);
+        MetisDataVersionControl myControl = myItem.getVersionControl();
+        myControl.getValueSet().setVersion(theNewVersion);
         theBase.addToList(myItem);
 
         /* Reset history on item */
-        myHistory = pItem.getVersionHistory();
-        myHistory.clearHistory();
+        myControl = pItem.getVersionControl();
+        myControl.clearHistory();
 
         /* Add to the changes */
         theChange.registerChanged(pItem);
@@ -480,14 +480,14 @@ public class MetisEditList<T extends MetisDataVersionedItem>
         T myBase = theBase.getItemById(pItem.getIndexedId());
 
         /* Clear history in item and obtain the valueSet */
-        MetisDataVersionHistory myHistory = pItem.getVersionHistory();
-        myHistory.clearHistory();
-        MetisDataVersionValues mySet = myHistory.getValueSet();
+        MetisDataVersionControl myControl = pItem.getVersionControl();
+        myControl.clearHistory();
+        MetisDataVersionValues mySet = myControl.getValueSet();
 
         /* Set values in changed item */
-        myHistory = myBase.getVersionHistory();
-        myHistory.pushHistory(theNewVersion);
-        MetisDataVersionValues myBaseSet = myHistory.getValueSet();
+        myControl = myBase.getVersionControl();
+        myControl.pushHistory(theNewVersion);
+        MetisDataVersionValues myBaseSet = myControl.getValueSet();
         myBaseSet.copyFrom(mySet);
 
         /* Add to the changes */
@@ -505,14 +505,14 @@ public class MetisEditList<T extends MetisDataVersionedItem>
         T myNew = newListItem(pBase.getIndexedId());
 
         /* Access the valueSet */
-        MetisDataVersionHistory myHistory = myNew.getVersionHistory();
-        MetisDataVersionValues mySet = myHistory.getValueSet();
+        MetisDataVersionControl myControl = myNew.getVersionControl();
+        MetisDataVersionValues mySet = myControl.getValueSet();
 
         /* Obtain a clone of the value set as the base value */
-        myHistory = pBase.getVersionHistory();
-        MetisDataVersionValues myBaseSet = myHistory.getValueSet();
+        myControl = pBase.getVersionControl();
+        MetisDataVersionValues myBaseSet = myControl.getValueSet();
         mySet.copyFrom(myBaseSet);
-        myHistory.adjustState();
+        myControl.adjustState();
 
         /* Return the new item */
         return myNew;
@@ -591,12 +591,12 @@ public class MetisEditList<T extends MetisDataVersionedItem>
             T myItem = getItemById(myId);
 
             /* Access set to be changed */
-            MetisDataVersionHistory myHistory = myItem.getVersionHistory();
-            MetisDataVersionValues mySet = myHistory.getValueSet();
+            MetisDataVersionControl myControl = myItem.getVersionControl();
+            MetisDataVersionValues mySet = myControl.getValueSet();
 
             /* Access base set */
-            myHistory = myCurr.getVersionHistory();
-            MetisDataVersionValues myBase = myHistory.getValueSet();
+            myControl = myCurr.getVersionControl();
+            MetisDataVersionValues myBase = myControl.getValueSet();
 
             /* Reset values in the item */
             mySet.copyFrom(myBase);

@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFie
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionHistory;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 
@@ -47,7 +47,7 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisVersionedListSet.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisVersionedListSet.class);
 
     /**
      * ListType Field Id.
@@ -101,7 +101,7 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
         theListType = pType;
         theClass = pClass;
         theListMap = new EnumMap<>(theClass);
-        theFields = new MetisDataFieldSet(pBaseFields.getName(), pBaseFields);
+        theFields = new MetisDataFieldSet(MetisVersionedListSet.class, pBaseFields);
     }
 
     @Override
@@ -320,8 +320,8 @@ public abstract class MetisVersionedListSet<E extends Enum<E>, L extends MetisVe
      */
     private void reLinkItem(final MetisDataVersionedItem pItem) {
         /* Access details */
-        MetisDataVersionHistory myHistory = pItem.getVersionHistory();
-        MetisDataVersionValues myValues = myHistory.getValueSet();
+        MetisDataVersionControl myControl = pItem.getVersionControl();
+        MetisDataVersionValues myValues = myControl.getValueSet();
         MetisDataFieldSet myFields = pItem.getDataFieldSet();
 
         /* Loop through the fields */

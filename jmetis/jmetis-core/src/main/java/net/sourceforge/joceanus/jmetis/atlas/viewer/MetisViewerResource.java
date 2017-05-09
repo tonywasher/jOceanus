@@ -136,7 +136,37 @@ public enum MetisViewerResource implements TethysResourceId {
     /**
      * Preferences Entry.
      */
-    VIEWER_ENTRY_PREF("stdEntry.pref");
+    VIEWER_ENTRY_PREF("stdEntry.pref"),
+
+    /**
+     * Exception Class.
+     */
+    VIEWER_ERROR_CLASS("exception.Class"),
+
+    /**
+     * Exception Message.
+     */
+    VIEWER_ERROR_MESSAGE("exception.Message"),
+
+    /**
+     * Exception Origin.
+     */
+    VIEWER_ERROR_ORIGIN("exception.Origin"),
+
+    /**
+     * Exception Cause.
+     */
+    VIEWER_ERROR_CAUSE("exception.Cause"),
+
+    /**
+     * Exception Object.
+     */
+    VIEWER_ERROR_OBJECT("exception.Object"),
+
+    /**
+     * Exception Stack.
+     */
+    VIEWER_ERROR_STACK("exception.Stack");
 
     /**
      * The stdEntry Map.
