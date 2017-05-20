@@ -29,11 +29,11 @@ import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
-import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
-import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
-import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
+import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
@@ -501,7 +501,7 @@ public class MoneyWiseReportBalanceSheet
      * @return the new document fragment
      */
     private MetisHTMLTable createDelayedDeposit(final MetisHTMLTable pParent,
-                                           final DepositCategoryBucket pSource) {
+                                                final DepositCategoryBucket pSource) {
         /* Access the category */
         DepositBucketList myDeposits = theAnalysis.getDeposits();
         DepositCategory myCategory = pSource.getAccountCategory();
@@ -563,7 +563,7 @@ public class MoneyWiseReportBalanceSheet
      * @return the new document fragment
      */
     private MetisHTMLTable createDelayedCash(final MetisHTMLTable pParent,
-                                        final CashCategoryBucket pSource) {
+                                             final CashCategoryBucket pSource) {
         /* Access the category */
         CashBucketList myCash = theAnalysis.getCash();
         CashCategory myCategory = pSource.getAccountCategory();
@@ -625,7 +625,7 @@ public class MoneyWiseReportBalanceSheet
      * @return the new document fragment
      */
     private MetisHTMLTable createDelayedLoan(final MetisHTMLTable pParent,
-                                        final LoanCategoryBucket pSource) {
+                                             final LoanCategoryBucket pSource) {
         /* Access the category */
         LoanBucketList myLoans = theAnalysis.getLoans();
         LoanCategory myCategory = pSource.getAccountCategory();
@@ -687,7 +687,7 @@ public class MoneyWiseReportBalanceSheet
      * @return the new document fragment
      */
     private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
-                                             final PortfolioBucket pSource) {
+                                                  final PortfolioBucket pSource) {
         /* Access the securities */
         PortfolioCashBucket myCash = pSource.getPortfolioCash();
         SecurityBucketList mySecurities = pSource.getSecurities();

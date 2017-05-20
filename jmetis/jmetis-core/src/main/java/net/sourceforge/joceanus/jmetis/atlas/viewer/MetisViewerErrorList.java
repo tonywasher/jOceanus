@@ -36,10 +36,9 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataResource;
 
 /**
  * Report-able object list.
- * @param <T> the object type
  */
-public class MetisViewerErrorList<T extends Throwable & MetisDataFieldItem>
-        implements MetisDataFieldItem, MetisDataList<T> {
+public class MetisViewerErrorList
+        implements MetisDataFieldItem, MetisDataList<MetisViewerExceptionWrapper> {
     /**
      * Local Report fields.
      */
@@ -53,7 +52,7 @@ public class MetisViewerErrorList<T extends Throwable & MetisDataFieldItem>
     /**
      * The list.
      */
-    private final List<T> theList;
+    private final List<MetisViewerExceptionWrapper> theList;
 
     /**
      * Constructor.
@@ -87,9 +86,9 @@ public class MetisViewerErrorList<T extends Throwable & MetisDataFieldItem>
      * Add elements.
      * @param pValues the list of values to add
      */
-    public void addList(final MetisViewerErrorList<T> pValues) {
+    public void addList(final MetisViewerErrorList pValues) {
         /* Loop through the new values */
-        Iterator<T> myIterator = pValues.iterator();
+        Iterator<MetisViewerExceptionWrapper> myIterator = pValues.iterator();
         while (myIterator.hasNext()) {
             /* Add the value */
             theList.add(myIterator.next());
@@ -97,15 +96,30 @@ public class MetisViewerErrorList<T extends Throwable & MetisDataFieldItem>
     }
 
     /**
+     * Add error.
+     * @param pError the list of error to add
+     */
+    public void add(final MetisViewerExceptionWrapper pError) {
+        theList.add(pError);
+    }
+
+    /**
      * Obtain an iterator.
      * @return the iterator
      */
-    public Iterator<T> iterator() {
+    public Iterator<MetisViewerExceptionWrapper> iterator() {
         return theList.iterator();
     }
 
+    /**
+     * Clear the list.
+     */
+    public void clear() {
+        theList.clear();
+    }
+
     @Override
-    public List<T> getUnderlyingList() {
+    public List<MetisViewerExceptionWrapper> getUnderlyingList() {
         return theList;
     }
 }

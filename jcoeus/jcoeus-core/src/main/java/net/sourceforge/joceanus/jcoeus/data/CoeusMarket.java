@@ -29,11 +29,11 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -41,31 +41,31 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * Loan Market.
  */
 public abstract class CoeusMarket
-        implements MetisDataContents {
+        implements MetisDataFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusMarket.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusMarket.class);
 
     /**
      * Provider Field Id.
      */
-    private static final MetisField FIELD_PROVIDER = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_PROVIDER.getValue());
+    private static final MetisDataField FIELD_PROVIDER = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_PROVIDER.getValue());
 
     /**
      * LoanMap Field Id.
      */
-    private static final MetisField FIELD_LOANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANMAP.getValue());
+    private static final MetisDataField FIELD_LOANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANMAP.getValue());
 
     /**
      * Transactions Field Id.
      */
-    private static final MetisField FIELD_TRANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TRANSACTIONS.getValue());
+    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TRANSACTIONS.getValue());
 
     /**
      * History Field Id.
      */
-    private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_HISTORY.getValue());
 
     /**
      * Loan Market Provider.
@@ -345,20 +345,20 @@ public abstract class CoeusMarket
     public abstract boolean hasBadDebt();
 
     @Override
-    public String toString() {
-        return formatObject();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     /**
      * Obtain the data fields.
      * @return the data fields
      */
-    protected static MetisFields getBaseFields() {
+    protected static MetisDataFieldSet getBaseFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_PROVIDER.equals(pField)) {
             return theProvider;
@@ -374,6 +374,6 @@ public abstract class CoeusMarket
         }
 
         /* Not recognised */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 }

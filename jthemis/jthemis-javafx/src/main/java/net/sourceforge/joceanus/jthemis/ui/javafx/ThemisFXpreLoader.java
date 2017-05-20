@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import javafx.application.Preloader;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProgram;
-import net.sourceforge.joceanus.jmetis.ui.javafx.MetisFXSplash;
+import net.sourceforge.joceanus.jmetis.lethe.ui.javafx.MetisFXSplash;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ui.ThemisApp;
 

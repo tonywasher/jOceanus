@@ -29,10 +29,10 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisBaseList;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.ui.MetisTableManager;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisBaseList;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -68,7 +68,7 @@ public class CoeusStatementTable<N, I>
     /**
      * The Loan Column.
      */
-    private final TethysTableColumn<MetisField, CoeusTotals, N, I> theLoanColumn;
+    private final TethysTableColumn<MetisDataField, CoeusTotals, N, I> theLoanColumn;
 
     /**
      * The Statement Calculator.
@@ -86,7 +86,7 @@ public class CoeusStatementTable<N, I>
         TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
 
         /* Create the list */
-        theList = new MetisBaseList<>(CoeusTotals.class, CoeusTotals.getBaseFields());
+        theList = new MetisBaseList<>(CoeusTotals.class, CoeusTotals.getBaseFieldSet());
 
         /* Create the table */
         theTable = pToolkit.newTableManager(theList);

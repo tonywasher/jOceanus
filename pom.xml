@@ -74,14 +74,14 @@
     <packageMain/>
     <appLibDir/>
     <JDateButtonVersion>v2.1.0-SNAPSHOT</JDateButtonVersion>
-    <BouncyCastleVersion>1.56</BouncyCastleVersion>
+    <BouncyCastleVersion>1.57</BouncyCastleVersion>
     <SvnKitVersion>1.8.15</SvnKitVersion>
     <JGitVersion>4.7.0.201704051617-r</JGitVersion>
     <HttpClientVersion>4.5.3</HttpClientVersion>
-    <JSONVersion>20160810</JSONVersion>
+    <JSONVersion>20170516</JSONVersion>
     <ApacheMavenVersion>3.5.0</ApacheMavenVersion>
     <MySQLVersion>6.0.6</MySQLVersion>
-    <PostGreSQLVersion>42.0.0.jre7</PostGreSQLVersion>
+    <PostGreSQLVersion>42.1.1.jre7</PostGreSQLVersion>
     <ApachePOIVersion>3.16</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.25</SLF4JVersion>
@@ -268,13 +268,13 @@
         <artifactId>maven-pmd-plugin</artifactId>
         <version>3.8</version>
         <configuration>
-           <configLocation>src/main/pmd/pmd.xml</configLocation>
-           <linkXref>true</linkXref>
-           <aggregate>true</aggregate>
-           <targetJdk>${JavaVersion}</targetJdk>
-           <excludes>
-               <exclude>**/SevenZip/**/*.java</exclude>
-           </excludes>
+          <configLocation>src/main/pmd/pmd.xml</configLocation>
+          <linkXref>true</linkXref>
+          <aggregate>true</aggregate>
+          <targetJdk>${JavaVersion}</targetJdk>
+          <excludes>
+            <exclude>**/SevenZip/**/*.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
@@ -282,11 +282,11 @@
         <artifactId>maven-jxr-plugin</artifactId>
         <version>2.5</version>
         <configuration>
-            <linkJavadoc>true</linkJavadoc>
-            <aggregate>true</aggregate>
-            <excludes>
-              <exclude>**/SevenZip/**/*.java</exclude>
-            </excludes>
+          <linkJavadoc>true</linkJavadoc>
+          <aggregate>true</aggregate>
+          <excludes>
+            <exclude>**/SevenZip/**/*.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>

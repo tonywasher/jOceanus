@@ -41,7 +41,7 @@ public class MetisDataVersionValues {
          * @return true/false
          */
         default boolean isVersioned() {
-            return false;
+            return getVersionControl() != null;
         }
 
         /**

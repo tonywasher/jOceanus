@@ -34,13 +34,13 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSnapShot;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferenceKey;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferences;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -50,26 +50,26 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Loan MarketCache.
  */
 public class CoeusMarketCache
-        implements TethysEventProvider<CoeusDataEvent>, MetisDataContents {
+        implements TethysEventProvider<CoeusDataEvent>, MetisDataFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusMarketCache.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusMarketCache.class);
 
     /**
      * MarketSet Field Id.
      */
-    private static final MetisField FIELD_MARKETSET = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MARKETSET.getValue());
+    private static final MetisDataField FIELD_MARKETSET = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MARKETSET.getValue());
 
     /**
      * SnapShot Field Id.
      */
-    private static final MetisField FIELD_SNAPSHOT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_SNAPSHOTMAP.getValue());
+    private static final MetisDataField FIELD_SNAPSHOT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_SNAPSHOTMAP.getValue());
 
     /**
      * Annual Field Id.
      */
-    private static final MetisField FIELD_ANNUAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ANNUALMAP.getValue());
+    private static final MetisDataField FIELD_ANNUAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ANNUALMAP.getValue());
 
     /**
      * The MarketSet.
@@ -235,7 +235,7 @@ public class CoeusMarketCache
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_MARKETSET.equals(pField)) {
             return theMarketSet;
@@ -248,16 +248,22 @@ public class CoeusMarketCache
         }
 
         /* Not recognised */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
-    public String formatObject() {
+    public String toString() {
         return FIELD_DEFS.getName();
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
+    }
+
+    @Override
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
+
 }

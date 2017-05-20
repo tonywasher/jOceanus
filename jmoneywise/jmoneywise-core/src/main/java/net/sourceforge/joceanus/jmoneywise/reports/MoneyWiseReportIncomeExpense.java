@@ -29,11 +29,11 @@ import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
-import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
-import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
-import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
+import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TransactionCategoryBucket;
@@ -164,7 +164,7 @@ public class MoneyWiseReportIncomeExpense
      * @return the new document fragment
      */
     protected MetisHTMLTable createDelayedCategory(final MetisHTMLTable pParent,
-                                              final TransactionCategoryBucket pSource) {
+                                                   final TransactionCategoryBucket pSource) {
         /* Access the category */
         TransactionCategoryBucketList myCategories = theAnalysis.getTransCategories();
         TransactionCategory myCategory = pSource.getTransactionCategory();

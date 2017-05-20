@@ -45,6 +45,7 @@ import org.bouncycastle.crypto.signers.ECNRSigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.bouncycastle.crypto.signers.ISO9796d2Signer;
 import org.bouncycastle.crypto.signers.PSSSigner;
+import org.bouncycastle.crypto.signers.SM2Signer;
 import org.bouncycastle.crypto.signers.X931Signer;
 import org.bouncycastle.pqc.crypto.rainbow.RainbowSigner;
 import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256Signer;
@@ -404,15 +405,19 @@ public final class BouncySignature {
      */
     private static DSA getECSigner(final BouncyFactory pFactory,
                                    final GordianSignatureSpec pSpec) throws OceanusException {
-        /* Access the signature type */
-        GordianSignatureType myType = pSpec.getSignatureType();
-        if (GordianSignatureType.DDSA.equals(myType)) {
-            BouncyDigest myDigest = pFactory.createDigest(pSpec.getDigestSpec());
-            return new ECDSASigner(new HMacDSAKCalculator(myDigest.getDigest()));
+        /* Switch on signature type */
+        switch (pSpec.getSignatureType()) {
+            case DDSA:
+                BouncyDigest myDigest = pFactory.createDigest(pSpec.getDigestSpec());
+                return new ECDSASigner(new HMacDSAKCalculator(myDigest.getDigest()));
+            case NR:
+                return new ECNRSigner();
+            case SM2:
+                return new SM2Signer();
+            case DSA:
+            default:
+                return new ECDSASigner();
         }
-        return GordianSignatureType.DSA.equals(myType)
-                                                       ? new ECDSASigner()
-                                                       : new ECNRSigner();
     }
 
     /**

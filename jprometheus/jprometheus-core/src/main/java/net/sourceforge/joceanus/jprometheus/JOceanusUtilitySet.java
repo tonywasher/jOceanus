@@ -25,9 +25,9 @@ package net.sourceforge.joceanus.jprometheus;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 
 /**
@@ -39,7 +39,7 @@ public abstract class JOceanusUtilitySet<N, I> {
     /**
      * Toolkit.
      */
-    private final MetisToolkit<N, I> theToolkit;
+    private final net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit<N, I> theToolkit;
 
     /**
      * Secure Manager.

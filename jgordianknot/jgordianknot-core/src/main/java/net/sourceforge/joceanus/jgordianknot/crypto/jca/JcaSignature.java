@@ -78,6 +78,11 @@ public abstract class JcaSignature
     private static final String EC_NR_ALGOBASE = "withECNR";
 
     /**
+     * The SM2 Signature.
+     */
+    private static final String EC_SM2_ALGOBASE = "WITHSM2";
+
+    /**
      * The SPHINCS Signature.
      */
     private static final String SPHINCS_ALGOBASE = "withSPHINCS256";
@@ -238,6 +243,8 @@ public abstract class JcaSignature
                 return EC_DDSA_ALGOBASE;
             case NR:
                 return EC_NR_ALGOBASE;
+            case SM2:
+                return EC_SM2_ALGOBASE;
             default:
                 return null;
         }

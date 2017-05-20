@@ -32,15 +32,15 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
  * @param <K> the Key type
  */
 public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
-        implements MetisFieldSetItem, TethysEventProvider<MetisPreferenceEvent> {
+        implements MetisDataFieldItem, TethysEventProvider<MetisPreferenceEvent> {
     /**
      * Unknown preference string.
      */
@@ -78,7 +78,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     /**
      * Report fields.
      */
-    private final MetisFields theFields = new MetisFields(MetisPreferenceSet.class.getSimpleName());
+    private final MetisDataFieldSet theFields = new MetisDataFieldSet(MetisPreferenceSet.class);
 
     /**
      * The Preference node for this set.
@@ -174,63 +174,26 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return theFields;
     }
 
     @Override
-    public String getFieldErrors(final MetisField pField) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getFieldErrors(final MetisField[] pFields) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public MetisFieldState getItemState() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public MetisFieldState getFieldState(final MetisField pField) {
-        /* Access preference */
-        MetisPreferenceItem<K> myPref = getPreference(pField.getName());
-
-        /* If it is found */
-        if (myPref != null) {
-            /* Return the relevant state */
-            return myPref.isChanged()
-                                      ? MetisFieldState.CHANGED
-                                      : MetisFieldState.NORMAL;
-        }
-
-        /* Not recognised */
-        return MetisFieldState.NORMAL;
-    }
-
-    @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return theFields.getName();
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Access preference */
         MetisPreferenceItem<K> myPref = getPreference(pField.getName());
 
         /* Return the value */
         return (myPref == null)
-                                ? MetisFieldValue.UNKNOWN
+                                ? MetisDataFieldValue.UNKNOWN
                                 : myPref.isHidden()
-                                                    ? MetisFieldValue.SKIP
+                                                    ? MetisDataFieldValue.SKIP
                                                     : myPref.getValue();
-    }
-
-    @Override
-    public boolean isDisabled() {
-        return false;
     }
 
     @Override
@@ -281,11 +244,6 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      */
     public Collection<MetisPreferenceItem<K>> getPreferences() {
         return theKeyMap.values();
-    }
-
-    @Override
-    public boolean isEditable() {
-        return true;
     }
 
     /**
@@ -900,7 +858,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         /**
          * DataField.
          */
-        private final MetisField theField;
+        private final MetisDataField theField;
 
         /**
          * Display Name.
@@ -1006,7 +964,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * Obtain the field for the preference.
          * @return the field for the preference
          */
-        protected MetisField getDataField() {
+        protected MetisDataField getDataField() {
             return theField;
         }
 

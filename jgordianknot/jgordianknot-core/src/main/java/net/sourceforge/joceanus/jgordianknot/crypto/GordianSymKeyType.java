@@ -62,6 +62,11 @@ public enum GordianSymKeyType {
     THREEFISH(256),
 
     /**
+     * ARIA.
+     */
+    ARIA(128),
+
+    /**
      * SM4.
      */
     SM4(128),

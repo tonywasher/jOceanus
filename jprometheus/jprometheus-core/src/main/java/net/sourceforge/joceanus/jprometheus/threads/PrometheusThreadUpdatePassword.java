@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.threads;
 
-import net.sourceforge.joceanus.jmetis.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;

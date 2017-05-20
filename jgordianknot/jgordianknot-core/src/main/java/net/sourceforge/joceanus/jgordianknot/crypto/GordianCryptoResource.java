@@ -169,6 +169,11 @@ public enum GordianCryptoResource implements TethysResourceId {
     SYMKEY_THREEFISH("symKey.THREEFISH"),
 
     /**
+     * SymKey ARIA.
+     */
+    SYMKEY_ARIA("symKey.ARIA"),
+
+    /**
      * SymKey NOEKEON.
      */
     SYMKEY_NOEKEON("symKey.NOEKEON"),
@@ -388,6 +393,7 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianSymKeyType.CAMELLIA, SYMKEY_CAMELLIA);
         myMap.put(GordianSymKeyType.RC6, SYMKEY_RC6);
         myMap.put(GordianSymKeyType.CAST6, SYMKEY_CAST6);
+        myMap.put(GordianSymKeyType.ARIA, SYMKEY_ARIA);
         myMap.put(GordianSymKeyType.THREEFISH, SYMKEY_THREEFISH);
         myMap.put(GordianSymKeyType.NOEKEON, SYMKEY_NOEKEON);
         myMap.put(GordianSymKeyType.SEED, SYMKEY_SEED);

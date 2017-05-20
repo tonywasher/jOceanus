@@ -23,9 +23,9 @@
 package net.sourceforge.joceanus.jmoneywise.threads;
 
 import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader;
 import net.sourceforge.joceanus.jmoneywise.views.View;

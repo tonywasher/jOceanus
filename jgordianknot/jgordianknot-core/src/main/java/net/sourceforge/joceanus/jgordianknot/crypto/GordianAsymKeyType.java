@@ -34,7 +34,7 @@ public enum GordianAsymKeyType {
     /**
      * EllipticCurve.
      */
-    EC(GordianSignatureType.DSA, GordianSignatureType.DDSA, GordianSignatureType.NR),
+    EC(GordianSignatureType.DSA, GordianSignatureType.DDSA, GordianSignatureType.NR, GordianSignatureType.SM2),
 
     /**
      * ElGamal.

@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProgram;
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProgram.MetisApplication;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProgram;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProgram.MetisApplication;
+import net.sourceforge.joceanus.jmetis.atlas.threads.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

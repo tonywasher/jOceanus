@@ -53,6 +53,7 @@ import org.bouncycastle.crypto.digests.SkeinDigest;
 import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
 import org.bouncycastle.crypto.engines.AESEngine;
+import org.bouncycastle.crypto.engines.ARIAEngine;
 import org.bouncycastle.crypto.engines.CAST6Engine;
 import org.bouncycastle.crypto.engines.CamelliaEngine;
 import org.bouncycastle.crypto.engines.ChaCha7539Engine;
@@ -671,7 +672,7 @@ public final class BouncyFactory
      * @return the MAC
      * @throws OceanusException on error
      */
-    private Mac getBCCMac(final GordianSymKeyType pSymKeyType) throws OceanusException {
+    private static Mac getBCCMac(final GordianSymKeyType pSymKeyType) throws OceanusException {
         return new CMac(getBCSymEngine(pSymKeyType));
     }
 
@@ -783,6 +784,8 @@ public final class BouncyFactory
                 return new RC6Engine();
             case CAST6:
                 return new CAST6Engine();
+            case ARIA:
+                return new ARIAEngine();
             case THREEFISH:
                 return new ThreefishEngine(THREEFISH_BLOCK);
             case SM4:

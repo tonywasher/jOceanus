@@ -43,6 +43,8 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * RC6
 
+    * ARIA
+
     * ThreeFish (unrestricted keys)
  
     * Noekeon (restricted keys)

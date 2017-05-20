@@ -30,8 +30,8 @@ import org.w3c.dom.Document;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketAnnual;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSnapShot;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
-import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
-import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

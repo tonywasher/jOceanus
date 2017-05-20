@@ -31,11 +31,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -46,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @author Tony Washer
  */
 public class MetisPreferenceManager
-        implements MetisDataContents, TethysEventProvider<MetisPreferenceEvent> {
+        implements MetisDataFieldItem, TethysEventProvider<MetisPreferenceEvent> {
     /**
      * Logger.
      */
@@ -55,7 +56,7 @@ public class MetisPreferenceManager
     /**
      * Report fields.
      */
-    private final MetisFields theFields = new MetisFields(MetisPreferenceManager.class.getSimpleName());
+    private final MetisDataFieldSet theFields = new MetisDataFieldSet(MetisPreferenceManager.class);
 
     /**
      * Load error text.
@@ -94,23 +95,23 @@ public class MetisPreferenceManager
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return theFields;
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return theFields.getName();
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Access preference set */
         MetisPreferenceSet<?> mySet = theMap.get(pField.getName());
 
         /* Return the value */
         return (mySet == null)
-                               ? MetisFieldValue.UNKNOWN
+                               ? MetisDataFieldValue.UNKNOWN
                                : mySet;
     }
 

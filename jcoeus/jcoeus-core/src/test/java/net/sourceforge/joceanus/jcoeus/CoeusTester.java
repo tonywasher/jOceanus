@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jcoeus.data.fundingcircle.CoeusFundingCircleLoad
 import net.sourceforge.joceanus.jcoeus.data.lendingworks.CoeusLendingWorksLoader;
 import net.sourceforge.joceanus.jcoeus.data.ratesetter.CoeusRateSetterLoader;
 import net.sourceforge.joceanus.jcoeus.data.zopa.CoeusZopaLoader;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

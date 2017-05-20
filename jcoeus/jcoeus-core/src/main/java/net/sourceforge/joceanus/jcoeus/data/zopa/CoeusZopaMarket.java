@@ -29,10 +29,10 @@ import java.util.ListIterator;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -45,17 +45,17 @@ public class CoeusZopaMarket
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusZopaMarket.class.getSimpleName(), CoeusMarket.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusZopaMarket.class, CoeusMarket.getBaseFieldSet());
 
     /**
      * Missing LoanBook Field Id.
      */
-    private static final MetisField FIELD_MISSINGBOOK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGBOOK.getValue());
+    private static final MetisDataField FIELD_MISSINGBOOK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGBOOK.getValue());
 
     /**
      * Missing Payments Field Id.
      */
-    private static final MetisField FIELD_MISSINGPAY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGPAY.getValue());
+    private static final MetisDataField FIELD_MISSINGPAY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGPAY.getValue());
 
     /**
      * The Decimal size.
@@ -233,26 +233,26 @@ public class CoeusZopaMarket
     }
 
     @Override
-    public String formatObject() {
+    public String toString() {
         return FIELD_DEFS.getName();
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_MISSINGBOOK.equals(pField)) {
             return theMissingLoanBook.isZero()
-                                               ? MetisFieldValue.SKIP
+                                               ? MetisDataFieldValue.SKIP
                                                : theMissingLoanBook;
         }
         if (FIELD_MISSINGPAY.equals(pField)) {
             return theMissingPayments.isZero()
-                                               ? MetisFieldValue.SKIP
+                                               ? MetisDataFieldValue.SKIP
                                                : theMissingPayments;
         }
 

@@ -264,8 +264,8 @@ public class CoeusFundingCircleLoanBookItem
      */
     private static CoeusLoanRisk determineRisk(final String pRisk) throws OceanusException {
         /* If the risk is empty, return unclassified */
-        if ((pRisk.length() == 0) ||
-            "-".equals(pRisk)) {
+        if ((pRisk.length() == 0)
+            || "-".equals(pRisk)) {
             return CoeusLoanRisk.UNCLASSIFIED;
         }
 

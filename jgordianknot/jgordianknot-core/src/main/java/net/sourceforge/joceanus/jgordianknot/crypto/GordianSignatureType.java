@@ -47,6 +47,11 @@ public enum GordianSignatureType {
     NR,
 
     /**
+     * SM2.
+     */
+    SM2,
+
+    /**
      * PSS.
      */
     PSS,

@@ -720,6 +720,7 @@ public final class JcaFactory
             case CAMELLIA:
             case CAST6:
             case RC6:
+            case ARIA:
             case NOEKEON:
             case SM4:
             case SEED:

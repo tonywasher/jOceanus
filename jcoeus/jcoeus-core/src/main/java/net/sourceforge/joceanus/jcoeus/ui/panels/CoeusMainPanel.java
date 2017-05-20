@@ -30,14 +30,13 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMenuItem;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusUIResource;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerWindow;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.ui.MetisPreferenceView;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerStandardEntry;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -127,9 +126,6 @@ public abstract class CoeusMainPanel<N, I> {
         /* Create the Preferences Tab */
         MetisPreferenceView<N, I> myPrefPanel = new MetisPreferenceView<>(myFactory, myPreferences);
         theTabs.addTabItem(CoeusUIResource.TAB_PREFERENCES.getValue(), myPrefPanel);
-
-        /* Add interesting preferences */
-        myPreferences.getPreferenceSet(PrometheusBackupPreferences.class);
 
         /* Create the menu bar */
         theMenuBar = myFactory.newMenuBar();

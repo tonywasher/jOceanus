@@ -26,9 +26,9 @@ import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.ui.MetisTableCalculator;
 
 /**
  * Statement calculator.
@@ -43,7 +43,7 @@ public class CoeusStatementCalculator
     /**
      * The current underlying field.
      */
-    private MetisField theField;
+    private MetisDataField theField;
 
     /**
      * The current filter.
@@ -70,7 +70,7 @@ public class CoeusStatementCalculator
 
     @Override
     public Object calculateValue(final CoeusTotals pTotals,
-                                 final MetisField pField) {
+                                 final MetisDataField pField) {
         if (CoeusTotals.FIELD_DELTA.equals(pField)) {
             return pTotals.getDeltaForField(theField);
         } else if (CoeusTotals.FIELD_BALANCE.equals(pField)) {

@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jcoeus.data.fundingcircle;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -37,7 +37,7 @@ public class CoeusFundingCircleTotals
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusFundingCircleTotals.class.getSimpleName(), CoeusTotals.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusFundingCircleTotals.class, CoeusTotals.getBaseFieldSet());
 
     /**
      * AssetValue.
@@ -298,7 +298,7 @@ public class CoeusFundingCircleTotals
     }
 
     @Override
-    public TethysMoney getDeltaForField(final MetisField pField) {
+    public TethysMoney getDeltaForField(final MetisDataField pField) {
         return (TethysMoney) super.getDeltaForField(pField);
     }
 
@@ -383,7 +383,7 @@ public class CoeusFundingCircleTotals
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 }
