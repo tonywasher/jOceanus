@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jprometheus</artifactId>
-    <version>v1.5.2-SNAPSHOT</version>   
+    <version>v1.5.2-b1</version>   
   </parent>
   <artifactId>jprometheus-core</artifactId>
   <name>jPrometheus Core Application Framework</name>
