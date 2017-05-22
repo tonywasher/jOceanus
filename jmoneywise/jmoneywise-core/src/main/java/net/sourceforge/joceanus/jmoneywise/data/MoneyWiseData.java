@@ -125,7 +125,7 @@ public class MoneyWiseData
     /**
      * Check Closed Accounts.
      */
-    private boolean doCheckClosedAccounts = true;
+    private boolean ignoreCheckClosedAccounts;
 
     /**
      * Standard constructor.
@@ -565,14 +565,14 @@ public class MoneyWiseData
      * @return true/false
      */
     public boolean checkClosedAccounts() {
-        return doCheckClosedAccounts;
+        return !ignoreCheckClosedAccounts;
     }
 
     /**
      * Note that we hit the last event limit.
      */
     public void hitEventLimit() {
-        doCheckClosedAccounts = false;
+        ignoreCheckClosedAccounts = true;
     }
 
     /**

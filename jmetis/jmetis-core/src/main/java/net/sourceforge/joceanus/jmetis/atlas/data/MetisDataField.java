@@ -87,13 +87,13 @@ public class MetisDataField {
         theEquality = pEquality;
         theStorage = pStorage;
 
-        /* Check Validity */
-        checkValidity();
-
         /* Allocate value index if required */
         theIndex = theStorage.isVersioned()
                                             ? theAnchor.getNextValue()
                                             : -1;
+
+        /* Check Validity */
+        checkValidity();
     }
 
     /**

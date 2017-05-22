@@ -133,22 +133,22 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
         theClass = pClass;
 
         /* Determine whether this is a readOnly list */
-        isReadOnly = !MetisDataVersionedItem.class.isAssignableFrom(theClass);
+        isReadOnly = !pFields.hasVersions();
 
         /* Obtain the constructor and event manager */
         theConstructor = getConstructor();
         theEventManager = new TethysEventManager<>();
 
         /* If we need to derive the fields */
-        if (pFields == null) {
-            /* Create a new instance and obtain fields */
-            T myItem = newListItem(0);
-            theItemFields = myItem.getDataFieldSet();
+        // if (pFields == null) {
+        // /* Create a new instance and obtain fields */
+        // T myItem = newListItem(0);
+        // theItemFields = myItem.getDataFieldSet();
 
-            /* else record the passed fields */
-        } else {
-            theItemFields = pFields;
-        }
+        /* else record the passed fields */
+        // } else {
+        theItemFields = pFields;
+        // }
     }
 
     @Override

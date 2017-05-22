@@ -26,11 +26,11 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
@@ -1175,7 +1175,8 @@ public final class SecurityBucket
                     mySecurity.adjustClosed();
 
                     /* If we are Relevant */
-                    if (mySecurity.isRelevant() && theAnalysis.getData().checkClosedAccounts()) {
+                    if (mySecurity.isRelevant()
+                        && theAnalysis.getData().checkClosedAccounts()) {
                         /* throw exception */
                         throw new MoneyWiseDataException(myCurr, "Illegally closed security");
                     }

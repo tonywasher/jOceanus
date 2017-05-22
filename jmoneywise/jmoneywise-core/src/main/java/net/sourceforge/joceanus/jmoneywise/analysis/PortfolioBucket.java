@@ -26,11 +26,11 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
@@ -1046,7 +1046,8 @@ public final class PortfolioBucket
                 if (mySecurities.markActiveSecurities()) {
                     /* Check closed state */
                     Portfolio myPortfolio = myCurr.getPortfolio();
-                    if (myPortfolio.isClosed() && theAnalysis.getData().checkClosedAccounts()) {
+                    if (myPortfolio.isClosed()
+                        && theAnalysis.getData().checkClosedAccounts()) {
                         /* throw exception */
                         throw new MoneyWiseDataException(myCurr, "Illegally closed portfolio");
                     }

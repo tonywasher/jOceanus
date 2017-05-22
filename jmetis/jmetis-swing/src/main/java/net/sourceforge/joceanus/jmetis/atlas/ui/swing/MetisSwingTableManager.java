@@ -26,14 +26,13 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisBaseList;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisEditList;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisVersionedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
@@ -162,12 +161,12 @@ public class MetisSwingTableManager<R extends MetisDataVersionedItem>
                                         final MetisDataField pId,
                                         final Class<T> pClass) {
         Object myValue = pItem.getFieldValue(pId);
-        if (myValue == MetisFieldValue.SKIP) {
+        if (myValue == MetisDataFieldValue.SKIP) {
             myValue = null;
         }
-        if (myValue instanceof MetisEncryptedField) {
-            myValue = ((MetisEncryptedField<?>) myValue).getValue();
-        }
+        // if (myValue instanceof MetisEncryptedField) {
+        // myValue = ((MetisEncryptedField<?>) myValue).getValue();
+        // }
         return pClass.cast(myValue);
     }
 
