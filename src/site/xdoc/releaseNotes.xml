@@ -32,6 +32,7 @@
         <dt>v1.5.1-b2</dt> <dd>Re-vamp of taxation</dd>
         <dt>v1.5.1-b3</dt> <dd>Peer2Peer GUI</dd>
         <dt>v1.5.1-b4</dt> <dd>Adjust security algorithms</dd>
+        <dt>v1.5.2-b1</dt> <dd>Split into new (atlas) and old (lethe) branches</dd>
       </dl>
     </section>
   </body>
