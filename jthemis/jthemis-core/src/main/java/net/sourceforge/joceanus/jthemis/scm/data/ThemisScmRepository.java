@@ -25,11 +25,13 @@ package net.sourceforge.joceanus.jthemis.scm.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent.ScmComponentList;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
@@ -40,7 +42,7 @@ import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
  * @param <R> the data type
  */
 public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
-        implements MetisDataContents, Comparable<R> {
+        implements MetisDataFieldItem, Comparable<R> {
     /**
      * The Hash Prime.
      */
@@ -49,27 +51,27 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(ThemisScmRepository.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisScmRepository.class);
 
     /**
      * Name field id.
      */
-    private static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
 
     /**
      * Components field id.
      */
-    private static final MetisField FIELD_COMP = FIELD_DEFS.declareLocalField("Components");
+    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Components");
 
     /**
      * BranchMap field id.
      */
-    private static final MetisField FIELD_BRNMAP = FIELD_DEFS.declareLocalField("BranchMap");
+    private static final MetisDataField FIELD_BRNMAP = FIELD_DEFS.declareLocalField("BranchMap");
 
     /**
      * TagMap field id.
      */
-    private static final MetisField FIELD_TAGMAP = FIELD_DEFS.declareLocalField("TagMap");
+    private static final MetisDataField FIELD_TAGMAP = FIELD_DEFS.declareLocalField("TagMap");
 
     /**
      * The Preference Manager.
@@ -89,12 +91,12 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     /**
      * Branch Map.
      */
-    private final Map<ThemisMvnProjectId, ThemisScmBranch<?, ?, R>> theBranchMap;
+    private final ThemisBranchMap theBranchMap;
 
     /**
      * Tag Map.
      */
-    private final Map<ThemisMvnProjectId, ThemisScmTag<?, ?, ?, R>> theTagMap;
+    private final ThemisTagMap theTagMap;
 
     /**
      * Constructor.
@@ -106,12 +108,12 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
         thePreferenceMgr = pPreferenceMgr;
 
         /* Allocate the maps */
-        theBranchMap = new HashMap<>();
-        theTagMap = new HashMap<>();
+        theBranchMap = new ThemisBranchMap();
+        theTagMap = new ThemisTagMap();
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_NAME.equals(pField)) {
             return theName;
@@ -127,7 +129,15 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
         }
 
         /* Unknown */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
+    }
+
+    /**
+     * Obtain the data fields.
+     * @return the data fields
+     */
+    protected static MetisDataFieldSet getBaseFieldSet() {
+        return FIELD_DEFS;
     }
 
     /**
@@ -285,5 +295,61 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
                             final ThemisScmTag<?, ?, ?, R> pTag) {
         /* Store mapping */
         theTagMap.put(pId, pTag);
+    }
+
+    /**
+     * Branch Map.
+     */
+    private class ThemisBranchMap
+            implements MetisDataObjectFormat, MetisDataMap<ThemisMvnProjectId, ThemisScmBranch<?, ?, R>> {
+        /**
+         * The map.
+         */
+        private final Map<ThemisMvnProjectId, ThemisScmBranch<?, ?, R>> theMap;
+
+        /**
+         * Constructor.
+         */
+        private ThemisBranchMap() {
+            theMap = new HashMap<>();
+        }
+
+        @Override
+        public Map<ThemisMvnProjectId, ThemisScmBranch<?, ?, R>> getUnderlyingMap() {
+            return theMap;
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName();
+        }
+    }
+
+    /**
+     * Tag Map.
+     */
+    private class ThemisTagMap
+            implements MetisDataObjectFormat, MetisDataMap<ThemisMvnProjectId, ThemisScmTag<?, ?, ?, R>> {
+        /**
+         * The map.
+         */
+        private final Map<ThemisMvnProjectId, ThemisScmTag<?, ?, ?, R>> theMap;
+
+        /**
+         * Constructor.
+         */
+        private ThemisTagMap() {
+            theMap = new HashMap<>();
+        }
+
+        @Override
+        public Map<ThemisMvnProjectId, ThemisScmTag<?, ?, ?, R>> getUnderlyingMap() {
+            return theMap;
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName();
+        }
     }
 }

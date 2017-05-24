@@ -26,12 +26,10 @@ import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 import net.sourceforge.joceanus.jthemis.ThemisCancelException;
@@ -55,17 +53,16 @@ public class ThemisSubversionRestore<N, I>
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access details from toolkit */
         MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
-        MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
+        MetisPreferenceManager myPreferenceMgr = pToolkit.getPreferenceManager();
         GordianHashManager mySecureMgr = pToolkit.getSecurityManager();
 
         /* Access the BackUp preferences */
-        ThemisSvnPreferences mySVNPreferences = myPreferences.getPreferenceSet(ThemisSvnPreferences.class);
-        PrometheusBackupPreferences myBUPreferences = myPreferences.getPreferenceSet(PrometheusBackupPreferences.class);
+        ThemisSvnPreferences myPreferences = myPreferenceMgr.getPreferenceSet(ThemisSvnPreferences.class);
 
         /* Access preferences */
-        File myRepo = new File(mySVNPreferences.getStringValue(ThemisSvnPreferenceKey.INSTALL));
-        File myBackupDir = new File(myBUPreferences.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR));
-        String myPrefix = mySVNPreferences.getStringValue(ThemisSvnPreferenceKey.PFIX);
+        File myRepo = new File(myPreferences.getStringValue(ThemisSvnPreferenceKey.INSTALL));
+        File myBackupDir = new File(myPreferences.getStringValue(ThemisSvnPreferenceKey.BACKUP));
+        String myPrefix = myPreferences.getStringValue(ThemisSvnPreferenceKey.PFIX);
 
         /* Determine the name of the file to load */
         TethysFileSelector myDialog = pToolkit.getGuiFactory().newFileSelector();
@@ -89,7 +86,7 @@ public class ThemisSubversionRestore<N, I>
         myRepo = new File(myRepo.getPath(), myName);
 
         /* restore the backup */
-        ThemisBackup myAccess = new ThemisBackup(myManager, myPreferences);
+        ThemisBackup myAccess = new ThemisBackup(myManager, myPreferenceMgr);
         myAccess.loadRepository(myRepo, mySecureMgr, myFile);
 
         /* Return nothing */

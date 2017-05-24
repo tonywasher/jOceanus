@@ -32,7 +32,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.joceanus.jmetis.lethe.threads.swing.MetisSwingToolkit;
+import net.sourceforge.joceanus.jmetis.atlas.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;

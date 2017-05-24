@@ -26,10 +26,10 @@ import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmRepository;
@@ -62,17 +62,17 @@ public class ThemisSvnRepository
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(ThemisSvnRepository.class.getSimpleName(), ThemisScmRepository.FIELD_DEFS);
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnRepository.class, ThemisScmRepository.getBaseFieldSet());
 
     /**
      * Base field id.
      */
-    private static final MetisField FIELD_BASE = FIELD_DEFS.declareEqualityField("Base");
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareEqualityField("Base");
 
     /**
      * HistoryMap field id.
      */
-    private static final MetisField FIELD_HISTMAP = FIELD_DEFS.declareLocalField("HistoryMap");
+    private static final MetisDataField FIELD_HISTMAP = FIELD_DEFS.declareLocalField("HistoryMap");
 
     /**
      * The Preferences.
@@ -130,17 +130,17 @@ public class ThemisSvnRepository
     }
 
     @Override
-    public String formatObject() {
+    public String toString() {
         return getPath();
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_BASE.equals(pField)) {
             return theBase;

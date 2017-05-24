@@ -36,12 +36,14 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
@@ -55,31 +57,31 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.Svn
  * @author Tony Washer
  */
 public class ThemisSvnExtract
-        implements MetisDataContents {
+        implements MetisDataFieldItem {
     /**
      * DataFields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(ThemisSvnExtract.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnExtract.class);
 
     /**
      * Component field.
      */
-    private static final MetisField FIELD_COMP = FIELD_DEFS.declareLocalField("Component");
+    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Component");
 
     /**
      * Trunk field.
      */
-    private static final MetisField FIELD_TRUNK = FIELD_DEFS.declareLocalField("Trunk");
+    private static final MetisDataField FIELD_TRUNK = FIELD_DEFS.declareLocalField("Trunk");
 
     /**
      * Branches field.
      */
-    private static final MetisField FIELD_BRANCHES = FIELD_DEFS.declareLocalField("Branches");
+    private static final MetisDataField FIELD_BRANCHES = FIELD_DEFS.declareLocalField("Branches");
 
     /**
      * Tags field.
      */
-    private static final MetisField FIELD_TAGS = FIELD_DEFS.declareLocalField("Tags");
+    private static final MetisDataField FIELD_TAGS = FIELD_DEFS.declareLocalField("Tags");
 
     /**
      * Component.
@@ -123,7 +125,7 @@ public class ThemisSvnExtract
         buildTags(myTrunk);
 
         /* Loop through the branches in reverse order */
-        ListIterator<ThemisSvnBranch> myIterator = theComponent.branchIterator();
+        ListIterator<ThemisSvnBranch> myIterator = theComponent.branchListIterator();
         while (myIterator.hasPrevious()) {
             ThemisSvnBranch myBranch = myIterator.previous();
 
@@ -162,17 +164,17 @@ public class ThemisSvnExtract
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return toString();
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_COMP.equals(pField)) {
             return theComponent;
         }
@@ -185,7 +187,7 @@ public class ThemisSvnExtract
         if (FIELD_TAGS.equals(pField)) {
             return theTags;
         }
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -290,7 +292,7 @@ public class ThemisSvnExtract
      * Extract List.
      */
     public static final class SvnExtractAnchor
-            implements MetisDataFormat {
+            implements MetisDataObjectFormat {
         /**
          * The owner.
          */
@@ -311,11 +313,6 @@ public class ThemisSvnExtract
             /* store parameters */
             theOwner = pOwner;
             theRevision = pRevision;
-        }
-
-        @Override
-        public String formatObject() {
-            return toString();
         }
 
         /**
@@ -343,40 +340,51 @@ public class ThemisSvnExtract
     /**
      * Branch Extract Plan list.
      */
-    public static class SvnBranchExtractPlanList
-            extends ArrayList<SvnBranchExtractPlan>
-            implements MetisDataContents {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -815070505489452279L;
-
+    public static final class SvnBranchExtractPlanList
+            implements MetisDataFieldItem, MetisDataList<SvnBranchExtractPlan> {
         /**
          * DataFields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnBranchExtractPlanList.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnBranchExtractPlanList.class);
 
         /**
          * Size field.
          */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        /**
+         * Plan List.
+         */
+        private final List<SvnBranchExtractPlan> thePlanList;
+
+        /**
+         * Constructor.
+         */
+        private SvnBranchExtractPlanList() {
+            thePlanList = new ArrayList<>();
+        }
 
         @Override
-        public String formatObject() {
+        public List<SvnBranchExtractPlan> getUnderlyingList() {
+            return thePlanList;
+        }
+
+        @Override
+        public String toString() {
             return FIELD_DEFS.getName();
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
     }
 
@@ -388,7 +396,7 @@ public class ThemisSvnExtract
         /**
          * DataFields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnBranchExtractPlan.class.getSimpleName(), SvnExtractPlan.FIELD_DEFS);
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnBranchExtractPlan.class, SvnExtractPlan.FIELD_DEFS);
 
         /**
          * Constructor.
@@ -400,7 +408,7 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -417,40 +425,46 @@ public class ThemisSvnExtract
     /**
      * Tag Extract Plan list.
      */
-    public static class SvnTagExtractPlanList
-            extends ArrayList<SvnTagExtractPlan>
-            implements MetisDataContents {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 9153708720874356472L;
-
+    public static final class SvnTagExtractPlanList
+            implements MetisDataFieldItem, MetisDataList<SvnTagExtractPlan> {
         /**
          * DataFields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnTagExtractPlanList.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnTagExtractPlanList.class);
 
         /**
          * Size field.
          */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
-        @Override
-        public String formatObject() {
-            return FIELD_DEFS.getName();
+        /**
+         * Plan List.
+         */
+        private final List<SvnTagExtractPlan> thePlanList;
+
+        /**
+         * Constructor.
+         */
+        private SvnTagExtractPlanList() {
+            thePlanList = new ArrayList<>();
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public List<SvnTagExtractPlan> getUnderlyingList() {
+            return thePlanList;
+        }
+
+        @Override
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
     }
 
@@ -462,7 +476,7 @@ public class ThemisSvnExtract
         /**
          * DataFields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnTagExtractPlan.class.getSimpleName(), SvnExtractPlan.FIELD_DEFS);
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnTagExtractPlan.class, SvnExtractPlan.FIELD_DEFS);
 
         /**
          * Constructor.
@@ -474,7 +488,12 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public String toString() {
+            return FIELD_DEFS.getName();
+        }
+
+        @Override
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -493,26 +512,26 @@ public class ThemisSvnExtract
      * @param <T> owner data type
      */
     private abstract static class SvnExtractPlan<T>
-            implements MetisDataContents {
+            implements MetisDataFieldItem {
         /**
          * DataFields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtractPlan.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnExtractPlan.class);
 
         /**
          * Owner field.
          */
-        private static final MetisField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
+        private static final MetisDataField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
 
         /**
          * Anchor field.
          */
-        private static final MetisField FIELD_ANCHOR = FIELD_DEFS.declareLocalField("Anchor");
+        private static final MetisDataField FIELD_ANCHOR = FIELD_DEFS.declareLocalField("Anchor");
 
         /**
          * Views field.
          */
-        private static final MetisField FIELD_VIEWS = FIELD_DEFS.declareLocalField("Views");
+        private static final MetisDataField FIELD_VIEWS = FIELD_DEFS.declareLocalField("Views");
 
         /**
          * Repository.
@@ -556,12 +575,7 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public String formatObject() {
-            return toString();
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_OWNER.equals(pField)) {
                 return theOwner;
             }
@@ -571,7 +585,7 @@ public class ThemisSvnExtract
             if (FIELD_VIEWS.equals(pField)) {
                 return theViews;
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -881,40 +895,51 @@ public class ThemisSvnExtract
     /**
      * Extract View list.
      */
-    public static class SvnExtractViewList
-            extends ArrayList<SvnExtractView>
-            implements MetisDataContents {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -3370006885632304998L;
-
+    public static final class SvnExtractViewList
+            implements MetisDataFieldItem, MetisDataList<SvnExtractView> {
         /**
          * DataFields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtractViewList.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnExtractViewList.class);
 
         /**
          * Size field.
          */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        /**
+         * View List.
+         */
+        private final List<SvnExtractView> theViewList;
+
+        /**
+         * Constructor.
+         */
+        private SvnExtractViewList() {
+            theViewList = new ArrayList<>();
+        }
 
         @Override
-        public String formatObject() {
+        public List<SvnExtractView> getUnderlyingList() {
+            return theViewList;
+        }
+
+        @Override
+        public String toString() {
             return FIELD_DEFS.getName();
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
     }
 
@@ -926,12 +951,12 @@ public class ThemisSvnExtract
         /**
          * DataFields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtractMigratedView.class.getSimpleName(), SvnExtractView.FIELD_DEFS);
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnExtractMigratedView.class, SvnExtractView.FIELD_DEFS);
 
         /**
          * Owner field.
          */
-        private static final MetisField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
+        private static final MetisDataField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
 
         /**
          * Original owner.
@@ -954,12 +979,12 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_OWNER.equals(pField)) {
                 return theOwner;
             }
@@ -979,31 +1004,31 @@ public class ThemisSvnExtract
      * Extract View.
      */
     public static class SvnExtractView
-            implements MetisDataContents {
+            implements MetisDataFieldItem {
         /**
          * DataFields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtractView.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnExtractView.class);
 
         /**
          * Revision field.
          */
-        private static final MetisField FIELD_REV = FIELD_DEFS.declareLocalField("Revision");
+        private static final MetisDataField FIELD_REV = FIELD_DEFS.declareLocalField("Revision");
 
         /**
          * Date field.
          */
-        private static final MetisField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+        private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
 
         /**
          * Message field.
          */
-        private static final MetisField FIELD_MESSAGE = FIELD_DEFS.declareLocalField("Message");
+        private static final MetisDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField("Message");
 
         /**
          * Items field.
          */
-        private static final MetisField FIELD_ITEMS = FIELD_DEFS.declareLocalField("Items");
+        private static final MetisDataField FIELD_ITEMS = FIELD_DEFS.declareLocalField("Items");
 
         /**
          * Repository.
@@ -1102,17 +1127,17 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return theRevision.toString();
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_REV.equals(pField)) {
                 return theRevision.toString();
             }
@@ -1125,7 +1150,7 @@ public class ThemisSvnExtract
             if (FIELD_ITEMS.equals(pField)) {
                 return theItems;
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -1249,21 +1274,21 @@ public class ThemisSvnExtract
      * Extract Item.
      */
     public static final class SvnExtractItem
-            implements MetisDataContents {
+            implements MetisDataFieldItem {
         /**
          * DataFields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtractItem.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnExtractItem.class);
 
         /**
          * Target field.
          */
-        private static final MetisField FIELD_TARGET = FIELD_DEFS.declareLocalField("Target");
+        private static final MetisDataField FIELD_TARGET = FIELD_DEFS.declareLocalField("Target");
 
         /**
          * Source field.
          */
-        private static final MetisField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
+        private static final MetisDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
 
         /**
          * Target path.
@@ -1296,24 +1321,19 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public String formatObject() {
-            return toString();
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_TARGET.equals(pField)) {
                 return theTarget;
             }
             if (FIELD_SOURCE.equals(pField)) {
                 return theSource.toString();
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -1363,31 +1383,47 @@ public class ThemisSvnExtract
     /**
      * Extract Item list.
      */
-    public static class SvnExtractItemList
-            extends ArrayList<SvnExtractItem>
-            implements MetisDataContents {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 6879688737974444297L;
-
+    public static final class SvnExtractItemList
+            implements MetisDataFieldItem, MetisDataList<SvnExtractItem> {
         /**
          * DataFields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnExtractItemList.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnExtractItemList.class);
 
         /**
          * Size field.
          */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        /**
+         * Item List.
+         */
+        private final List<SvnExtractItem> theItemList;
+
+        /**
+         * Constructor.
+         */
+        private SvnExtractItemList() {
+            theItemList = new ArrayList<>();
+        }
 
         @Override
-        public String formatObject() {
+        public List<SvnExtractItem> getUnderlyingList() {
+            return theItemList;
+        }
+
+        @Override
+        public String formatObject(final MetisDataFormatter pFormatter) {
+            return FIELD_DEFS.getName();
+        }
+
+        @Override
+        public String toString() {
             /* Create a stringBuilder */
             StringBuilder myBuilder = new StringBuilder();
 
             /* Add Branches */
-            Iterator<SvnExtractItem> myIterator = iterator();
+            Iterator<SvnExtractItem> myIterator = theItemList.iterator();
             while (myIterator.hasNext()) {
                 SvnExtractItem myItem = myIterator.next();
 
@@ -1401,16 +1437,16 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -1420,14 +1456,14 @@ public class ThemisSvnExtract
          */
         private void addItem(final SvnExtractItem pItem) throws OceanusException {
             /* Loop through the existing items */
-            Iterator<SvnExtractItem> myIterator = iterator();
+            Iterator<SvnExtractItem> myIterator = theItemList.iterator();
             while (myIterator.hasNext()) {
                 SvnExtractItem myEntry = myIterator.next();
 
                 /* If we have matching target */
-                if (MetisDifference.isEqual(myEntry.getTarget(), pItem.getTarget())) {
+                if (MetisDataDifference.isEqual(myEntry.getTarget(), pItem.getTarget())) {
                     /* Reject if different path */
-                    if (!MetisDifference.isEqual(myEntry.getSource(), pItem.getSource())) {
+                    if (!MetisDataDifference.isEqual(myEntry.getSource(), pItem.getSource())) {
                         throw new ThemisDataException(myEntry, "Conflicting sources");
                     }
 
@@ -1437,7 +1473,7 @@ public class ThemisSvnExtract
             }
 
             /* Add the unique entry */
-            add(pItem);
+            theItemList.add(pItem);
         }
     }
 }

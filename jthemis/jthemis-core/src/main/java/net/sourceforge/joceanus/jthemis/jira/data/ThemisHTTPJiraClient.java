@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMetis: Java Data Framework
+ * jThemis: Java Project Framework
  * Copyright 2012,2016 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.http;
+package net.sourceforge.joceanus.jthemis.jira.data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +28,14 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import net.sourceforge.joceanus.jmetis.http.MetisHTTPDataClient;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Jira REST Client.
  * @author Tony Washer
  */
-public class MetisHTTPJiraClient
+public class ThemisHTTPJiraClient
         extends MetisHTTPDataClient {
     /**
      * Server location.
@@ -82,8 +83,8 @@ public class MetisHTTPJiraClient
      * @param pAuth the authorisation string
      * @throws OceanusException on error
      */
-    public MetisHTTPJiraClient(final String pWebLoc,
-                               final String pAuth) throws OceanusException {
+    public ThemisHTTPJiraClient(final String pWebLoc,
+                                final String pAuth) throws OceanusException {
         /* Initialise underlying class */
         super(pWebLoc + JIRA_WEBLOC, pAuth);
     }

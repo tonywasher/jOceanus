@@ -32,6 +32,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
@@ -40,7 +41,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -1025,7 +1025,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          */
         protected void setNewValue(final Object pNewValue) {
             theNewValue = pNewValue;
-            isChanged = !MetisDifference.isEqual(theNewValue, theValue);
+            isChanged = !MetisDataDifference.isEqual(theNewValue, theValue);
         }
 
         /**

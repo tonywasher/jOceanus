@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jmetis.atlas.data;
 
 import java.util.Locale;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
@@ -56,6 +58,23 @@ public class MetisDataFormatter
             return null;
         }
 
+        /* Handle maps and lists */
+        if (MetisDataMap.class.isInstance(pValue)) {
+            return formatValue(pValue, ((MetisDataMap<?, ?>) pValue).size());
+        }
+        if (MetisDataList.class.isInstance(pValue)) {
+            return formatValue(pValue, ((MetisDataList<?>) pValue).size());
+        }
+
+        /* Format other values */
+        return formatValue(pValue);
+    }
+
+    /**
+     * Format the value.
+     * @param pValue the value
+     */
+    private String formatValue(final Object pValue) {
         /* Handle ones that we can directly format */
         if (MetisDataObjectFormat.class.isInstance(pValue)) {
             return ((MetisDataObjectFormat) pValue).formatObject(this);
@@ -68,5 +87,25 @@ public class MetisDataFormatter
 
         /* Pass call on */
         return super.formatObject(pValue);
+    }
+
+    /**
+     * Format the list/map.
+     * @param pValue the value
+     */
+    private String formatValue(final Object pValue,
+                               final int pSize) {
+        /* Format value normally */
+        String myValue = formatValue(pValue);
+
+        /* Build modified format */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(myValue);
+        myBuilder.append('(');
+        myBuilder.append(pSize);
+        myBuilder.append(')');
+
+        /* Pass call on */
+        return myBuilder.toString();
     }
 }

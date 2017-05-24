@@ -43,8 +43,8 @@ import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
@@ -86,7 +86,7 @@ public final class ThemisSvnComponent
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(ThemisSvnComponent.class.getSimpleName(), ThemisScmComponent.FIELD_DEFS);
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnComponent.class, ThemisScmComponent.getBaseFieldSet());
 
     /**
      * Logger.
@@ -109,7 +109,7 @@ public final class ThemisSvnComponent
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -122,8 +122,17 @@ public final class ThemisSvnComponent
      * Get the branch iterator for this component.
      * @return the iterator
      */
-    public ListIterator<ThemisSvnBranch> branchIterator() {
-        return getBranches().listIterator();
+    public Iterator<ThemisSvnBranch> branchIterator() {
+        return getBranches().iterator();
+    }
+
+    /**
+     * Get the branch listIterator for this component.
+     * @return the iterator
+     */
+    public ListIterator<ThemisSvnBranch> branchListIterator() {
+        SvnBranchList myBranches = getBranches();
+        return myBranches.listIterator(myBranches.size());
     }
 
     /**
@@ -335,7 +344,7 @@ public final class ThemisSvnComponent
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnComponentList.class.getSimpleName(), ScmComponentList.FIELD_DEFS);
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnComponentList.class, ScmComponentList.getBaseFieldSet());
 
         /**
          * Parent Repository.
@@ -347,15 +356,12 @@ public final class ThemisSvnComponent
          * @param pParent the parent repository
          */
         public SvnComponentList(final ThemisSvnRepository pParent) {
-            /* Call super constructor */
-            super(ThemisSvnComponent.class);
-
             /* Store parent/manager for use by entry handler */
             theRepository = pParent;
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -387,6 +393,9 @@ public final class ThemisSvnComponent
 
             /* Report number of stages */
             pReport.setNumStages(size() + 2);
+
+            /* Sort the list */
+            getUnderlyingList().sort(null);
 
             /* Loop through the components */
             Iterator<ThemisSvnComponent> myIterator = iterator();

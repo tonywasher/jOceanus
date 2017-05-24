@@ -28,7 +28,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
+//import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 
 /**
  * Data Version History.
@@ -73,6 +73,7 @@ public class MetisDataVersionHistory
     public MetisDataFieldSet getDataFieldSet() {
         /* Allocate new local fields */
         MetisDataFieldSet myFields = new MetisDataFieldSet(MetisDataVersionHistory.class);
+        String myVersion = MetisDataResource.DATA_VERSION.getValue();
 
         /* Loop through the fields */
         Iterator<MetisDataVersionDelta> myIterator = theDeltas.descendingIterator();
@@ -81,7 +82,7 @@ public class MetisDataVersionHistory
             MetisDataVersionDelta myDelta = myIterator.next();
 
             /* Declare the field */
-            myFields.declareIndexField(MetisValueSet.FIELD_VERSION + "(" + myDelta.getVersion() + ")");
+            myFields.declareIndexField(myVersion + "(" + myDelta.getVersion() + ")");
         }
 
         return myFields;

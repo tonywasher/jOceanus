@@ -50,10 +50,8 @@ import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferenceKey;
@@ -314,12 +312,9 @@ public class ThemisBackup {
         /* Install an event handler */
         theAdminClient.setEventHandler(new SubversionHandler());
 
-        /* Access the BackUp preferences */
-        PrometheusBackupPreferences myBUPreferences = thePreferenceMgr.getPreferenceSet(PrometheusBackupPreferences.class);
-
         /* Determine the repository and backup directories directory */
         File myRepo = new File(thePreferences.getStringValue(ThemisSvnPreferenceKey.INSTALL));
-        File myBackup = new File(myBUPreferences.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR));
+        File myBackup = new File(thePreferences.getStringValue(ThemisSvnPreferenceKey.BACKUP));
 
         /* Report start of backup */
         theStatus.initTask("Backing up subVersion");

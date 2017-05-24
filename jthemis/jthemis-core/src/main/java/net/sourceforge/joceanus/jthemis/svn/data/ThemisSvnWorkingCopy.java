@@ -23,8 +23,9 @@
 package net.sourceforge.joceanus.jthemis.svn.data;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.ListIterator;
+import java.util.List;
 
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNErrorCode;
@@ -36,12 +37,12 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusClient;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
@@ -54,41 +55,41 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnUpdateStatus.UpdateSta
  * @author Tony Washer
  */
 public final class ThemisSvnWorkingCopy
-        implements MetisDataContents, Comparable<ThemisSvnWorkingCopy> {
+        implements MetisDataFieldItem, Comparable<ThemisSvnWorkingCopy> {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(ThemisSvnWorkingCopy.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnWorkingCopy.class);
 
     /**
      * Component field id.
      */
-    private static final MetisField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
+    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
 
     /**
      * Branch field id.
      */
-    private static final MetisField FIELD_BRAN = FIELD_DEFS.declareEqualityField("Branch");
+    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareEqualityField("Branch");
 
     /**
      * Alias field id.
      */
-    private static final MetisField FIELD_ALIAS = FIELD_DEFS.declareLocalField("Alias");
+    private static final MetisDataField FIELD_ALIAS = FIELD_DEFS.declareLocalField("Alias");
 
     /**
      * Revision field id.
      */
-    private static final MetisField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
+    private static final MetisDataField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
 
     /**
      * Project field id.
      */
-    private static final MetisField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
+    private static final MetisDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
 
     /**
      * Update list field id.
      */
-    private static final MetisField FIELD_UPDATES = FIELD_DEFS.declareLocalField("Updates");
+    private static final MetisDataField FIELD_UPDATES = FIELD_DEFS.declareLocalField("Updates");
 
     /**
      * The branch associated with the working copy.
@@ -118,7 +119,7 @@ public final class ThemisSvnWorkingCopy
     /**
      * The project definition.
      */
-    private ThemisMvnProjectDefinition theProject = null;
+    private ThemisMvnProjectDefinition theProject;
 
     /**
      * Constructor.
@@ -145,21 +146,21 @@ public final class ThemisSvnWorkingCopy
     }
 
     @Override
-    public String formatObject() {
+    public String toString() {
         return getFullName();
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_ALIAS.equals(pField)) {
             return getComponentName().equals(theAlias)
-                                                       ? MetisFieldValue.SKIP
+                                                       ? MetisDataFieldValue.SKIP
                                                        : theAlias;
         }
         if (FIELD_BRAN.equals(pField)) {
@@ -176,12 +177,12 @@ public final class ThemisSvnWorkingCopy
         }
         if (FIELD_UPDATES.equals(pField)) {
             return theUpdates.isEmpty()
-                                        ? MetisFieldValue.SKIP
+                                        ? MetisDataFieldValue.SKIP
                                         : theUpdates;
         }
 
         /* Unknown */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -377,32 +378,36 @@ public final class ThemisSvnWorkingCopy
      * Working Copy Set.
      */
     public static final class SvnWorkingCopySet
-            extends MetisOrderedList<ThemisSvnWorkingCopy>
-            implements MetisDataContents {
+            implements MetisDataFieldItem, MetisDataList<ThemisSvnWorkingCopy> {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnWorkingCopySet.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnWorkingCopySet.class);
 
         /**
          * Size field id.
          */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
         /**
          * Repository field id.
          */
-        private static final MetisField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+        private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
 
         /**
          * Location field id.
          */
-        private static final MetisField FIELD_LOC = FIELD_DEFS.declareLocalField("Location");
+        private static final MetisDataField FIELD_LOC = FIELD_DEFS.declareLocalField("Location");
 
         /**
          * The repository for which these are working sets.
          */
         private final ThemisSvnRepository theRepository;
+
+        /**
+         * Status List.
+         */
+        private final List<ThemisSvnWorkingCopy> theCopyList;
 
         /**
          * The base location for the working sets.
@@ -419,12 +424,10 @@ public final class ThemisSvnWorkingCopy
         public SvnWorkingCopySet(final ThemisSvnRepository pRepository,
                                  final File pLocation,
                                  final MetisThreadStatusReport pReport) throws OceanusException {
-            /* Call super constructor */
-            super(ThemisSvnWorkingCopy.class);
-
             /* Store parameters */
             theRepository = pRepository;
             theLocation = pLocation;
+            theCopyList = new ArrayList<>();
 
             /* Analyse the WorkingCopySet */
             analyseWorkingCopySet(pReport);
@@ -438,9 +441,6 @@ public final class ThemisSvnWorkingCopy
          */
         public SvnWorkingCopySet(final ThemisSvnRepository pRepository,
                                  final MetisThreadStatusReport pReport) throws OceanusException {
-            /* Call super constructor */
-            super(ThemisSvnWorkingCopy.class);
-
             /* Store parameters */
             theRepository = pRepository;
 
@@ -448,23 +448,29 @@ public final class ThemisSvnWorkingCopy
             ThemisSvnPreferences myPrefs = theRepository.getPreferences();
             String myLocation = myPrefs.getStringValue(ThemisSvnPreferenceKey.WORK);
             theLocation = new File(myLocation);
+            theCopyList = new ArrayList<>();
 
             /* Analyse the WorkingCopySet */
             analyseWorkingCopySet(pReport);
         }
 
         @Override
-        public String formatObject() {
-            return "WorkingCopySet(" + size() + ")";
+        public List<ThemisSvnWorkingCopy> getUnderlyingList() {
+            return theCopyList;
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public String toString() {
+            return FIELD_DEFS.getName();
+        }
+
+        @Override
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             /* Handle standard fields */
             if (FIELD_SIZE.equals(pField)) {
                 return size();
@@ -477,7 +483,7 @@ public final class ThemisSvnWorkingCopy
             }
 
             /* Unknown */
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -584,7 +590,7 @@ public final class ThemisSvnWorkingCopy
                     ThemisSvnWorkingCopy myCopy = new ThemisSvnWorkingCopy(pFile, myBranch, myStatus.getRevision());
 
                     /* If the element is not already in the list */
-                    if (indexOf(myCopy) == -1) {
+                    if (theCopyList.indexOf(myCopy) == -1) {
                         /* Add to the list */
                         add(myCopy);
                     }
@@ -602,7 +608,7 @@ public final class ThemisSvnWorkingCopy
             int myFile = 0;
 
             /* Allocate the iterator */
-            ListIterator<ThemisSvnWorkingCopy> myIterator = listIterator();
+            Iterator<ThemisSvnWorkingCopy> myIterator = iterator();
 
             /* While there are entries */
             while (myIterator.hasNext()) {
@@ -622,7 +628,7 @@ public final class ThemisSvnWorkingCopy
          */
         public ThemisSvnBranch getActiveBranch(final String pComponent) {
             /* Allocate the iterator */
-            ListIterator<ThemisSvnWorkingCopy> myIterator = listIterator();
+            Iterator<ThemisSvnWorkingCopy> myIterator = iterator();
 
             /* While there are entries */
             while (myIterator.hasNext()) {

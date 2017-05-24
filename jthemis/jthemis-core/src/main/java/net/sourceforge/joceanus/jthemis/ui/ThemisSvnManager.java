@@ -25,17 +25,16 @@ package net.sourceforge.joceanus.jthemis.ui;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadEvent;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.lethe.ui.MetisPreferenceView;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerWindow;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadEvent;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerStandardEntry;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
@@ -123,16 +122,6 @@ public abstract class ThemisSvnManager<N, I> {
     private final TethysAbout<N, I> theAboutBox;
 
     /**
-     * The repository.
-     */
-    private ThemisSvnRepository theRepository;
-
-    /**
-     * The working copy set.
-     */
-    private SvnWorkingCopySet theWorkingSet;
-
-    /**
      * Constructor.
      * @param pToolkit the toolkit
      * @throws OceanusException on error
@@ -167,7 +156,6 @@ public abstract class ThemisSvnManager<N, I> {
         theTabs.addTabItem("Preferences", myPrefPanel);
 
         /* Add interesting preferences */
-        thePrefMgr.getPreferenceSet(PrometheusBackupPreferences.class);
         thePrefMgr.getPreferenceSet(ThemisJiraPreferences.class);
         thePrefMgr.getPreferenceSet(ThemisSvnPreferences.class);
         thePrefMgr.getPreferenceSet(ThemisGitPreferences.class);
@@ -245,14 +233,14 @@ public abstract class ThemisSvnManager<N, I> {
     protected void setSubversionData(final ThemisDiscoverData<?, ?> pData) {
         /* Declare repository to data manager */
         MetisViewerEntry myRepEntry = theViewerMgr.newEntry(theDataEntry, "SvnRepository");
-        theRepository = pData.getRepository();
-        myRepEntry.setObject(theRepository);
+        ThemisSvnRepository myRepository = pData.getRepository();
+        myRepEntry.setObject(myRepository);
         myRepEntry.setFocus();
 
         /* Declare WorkingCopySet to data manager */
         MetisViewerEntry mySetEntry = theViewerMgr.newEntry(theDataEntry, "WorkingSet");
-        theWorkingSet = pData.getWorkingCopySet();
-        mySetEntry.setObject(theWorkingSet);
+        SvnWorkingCopySet myWorkingSet = pData.getWorkingCopySet();
+        mySetEntry.setObject(myWorkingSet);
 
         /* Declare Extract Plans to data manager */
         MetisViewerEntry myPlanEntry = theViewerMgr.newEntry(theDataEntry, "ExtractPlans");
@@ -263,9 +251,9 @@ public abstract class ThemisSvnManager<N, I> {
         myMenu.clearItems();
 
         /* If we have a repository */
-        if (theRepository != null) {
+        if (myRepository != null) {
             /* Loop through the components */
-            Iterator<ThemisSvnComponent> myIterator = theRepository.getComponents().iterator();
+            Iterator<ThemisSvnComponent> myIterator = myRepository.getComponents().iterator();
             while (myIterator.hasNext()) {
                 ThemisSvnComponent myComp = myIterator.next();
 

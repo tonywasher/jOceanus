@@ -36,7 +36,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisFieldSt
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 
 /**
  * Table FieldSet.
@@ -210,9 +209,9 @@ public class MetisFXTableFieldSet<R extends MetisDataVersionedItem> {
         if (myValue == MetisDataFieldValue.SKIP) {
             myValue = null;
         }
-        if (myValue instanceof MetisEncryptedField) {
-            myValue = ((MetisEncryptedField<?>) myValue).getValue();
-        }
+        // if (myValue instanceof MetisEncryptedField) {
+        // myValue = ((MetisEncryptedField<?>) myValue).getValue();
+        // }
 
         /* Store into the property */
         pProperty.setValue(myValue);

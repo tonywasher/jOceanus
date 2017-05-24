@@ -344,11 +344,6 @@ public abstract class CoeusMarket
      */
     public abstract boolean hasBadDebt();
 
-    @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
-        return toString();
-    }
-
     /**
      * Obtain the data fields.
      * @return the data fields

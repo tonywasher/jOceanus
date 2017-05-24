@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
@@ -199,11 +198,6 @@ public abstract class CoeusHistory
     @Override
     public String toString() {
         return theTotals.toString();
-    }
-
-    @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
-        return toString();
     }
 
     @Override

@@ -22,13 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.scm.data;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 
 /**
@@ -39,7 +41,7 @@ import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
  * @param <R> the repository data type
  */
 public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends ThemisScmBranch<B, C, R>, C extends ThemisScmComponent<C, R>, R extends ThemisScmRepository<R>>
-        implements MetisDataContents, Comparable<T> {
+        implements MetisDataFieldItem, Comparable<T> {
     /**
      * The tag prefix.
      */
@@ -48,22 +50,22 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(ThemisScmTag.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisScmTag.class);
 
     /**
      * Branch field id.
      */
-    private static final MetisField FIELD_BRAN = FIELD_DEFS.declareEqualityField("Branch");
+    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareEqualityField("Branch");
 
     /**
      * Name field id.
      */
-    private static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
 
     /**
      * Project definition field id.
      */
-    private static final MetisField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
+    private static final MetisDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
 
     /**
      * The Branch to which this Tag belongs.
@@ -93,17 +95,12 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
     }
 
     @Override
-    public String formatObject() {
+    public String toString() {
         return getTagName();
     }
 
     @Override
-    public String toString() {
-        return formatObject();
-    }
-
-    @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_BRAN.equals(pField)) {
             return theBranch;
@@ -116,7 +113,15 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
         }
 
         /* Unknown */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
+    }
+
+    /**
+     * Obtain the data fields.
+     * @return the data fields
+     */
+    protected static MetisDataFieldSet getBaseFieldSet() {
+        return FIELD_DEFS;
     }
 
     /**
@@ -223,17 +228,21 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
      * @param <R> the repository data type
      */
     public abstract static class ScmTagList<T extends ThemisScmTag<T, B, C, R>, B extends ThemisScmBranch<B, C, R>, C extends ThemisScmComponent<C, R>, R extends ThemisScmRepository<R>>
-            extends MetisOrderedList<T>
-            implements MetisDataContents {
+            implements MetisDataFieldItem, MetisDataList<T> {
         /**
          * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(ScmTagList.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ScmTagList.class);
 
         /**
          * Size field id.
          */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        /**
+         * Tag List.
+         */
+        private final List<T> theList;
 
         /**
          * The parent branch.
@@ -247,16 +256,12 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
 
         /**
          * Constructor.
-         * @param pClazz the tag class
          * @param pParent the parent branch
          */
-        protected ScmTagList(final Class<T> pClazz,
-                             final B pParent) {
-            /* Call super constructor */
-            super(pClazz);
-
+        protected ScmTagList(final B pParent) {
             /* Store parent for use by entry handler */
             theBranch = pParent;
+            theList = new ArrayList<>();
 
             /* Build prefix */
             thePrefix = (pParent == null)
@@ -265,24 +270,37 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
         }
 
         @Override
-        public String formatObject() {
-            return "TagList(" + size() + ")";
+        public List<T> getUnderlyingList() {
+            return theList;
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public String toString() {
+            return getDataFieldSet().getName();
+        }
+
+        @Override
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             /* Handle standard fields */
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
 
             /* Unknown */
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain the data fields.
+         * @return the data fields
+         */
+        protected static MetisDataFieldSet getBaseFieldSet() {
+            return FIELD_DEFS;
         }
 
         /**

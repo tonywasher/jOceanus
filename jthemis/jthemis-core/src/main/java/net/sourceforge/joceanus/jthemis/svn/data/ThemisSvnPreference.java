@@ -24,26 +24,20 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceKey;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceSet;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Preferences for SubVersion.
  * @author Tony Washer
  */
-public abstract class ThemisSvnPreference {
-    /**
-     * Constructor.
-     */
-    private ThemisSvnPreference() {
-    }
-
+public interface ThemisSvnPreference {
     /**
      * svnPreferenceKeys.
      */
-    public enum ThemisSvnPreferenceKey implements MetisPreferenceKey {
+    enum ThemisSvnPreferenceKey implements MetisPreferenceKey {
         /**
          * SVN Repository Base.
          */
@@ -78,6 +72,11 @@ public abstract class ThemisSvnPreference {
          * SVN Install Directory.
          */
         INSTALL("SubVersionInstall", "Subversion Install Directory"),
+
+        /**
+         * BackUp Directory.
+         */
+        BACKUP("BackupDir", "Backup Directory"),
 
         /**
          * SVN Prefix.
@@ -119,7 +118,7 @@ public abstract class ThemisSvnPreference {
     /**
      * ThemisSvnPreferences.
      */
-    public static class ThemisSvnPreferences
+    class ThemisSvnPreferences
             extends MetisPreferenceSet<ThemisSvnPreferenceKey> {
         /**
          * Base value for directories.
@@ -144,6 +143,7 @@ public abstract class ThemisSvnPreference {
             defineDirectoryPreference(ThemisSvnPreferenceKey.WORK);
             defineDirectoryPreference(ThemisSvnPreferenceKey.BUILD);
             defineDirectoryPreference(ThemisSvnPreferenceKey.INSTALL);
+            defineDirectoryPreference(ThemisSvnPreferenceKey.BACKUP);
             defineStringPreference(ThemisSvnPreferenceKey.PFIX);
         }
 
@@ -189,6 +189,12 @@ public abstract class ThemisSvnPreference {
             myPref = getStringPreference(ThemisSvnPreferenceKey.BUILD);
             if (!myPref.isAvailable()) {
                 myPref.setValue(BASE_DIR + "Build");
+            }
+
+            /* Make sure that the backupDir is specified */
+            myPref = getStringPreference(ThemisSvnPreferenceKey.BACKUP);
+            if (!myPref.isAvailable()) {
+                myPref.setValue(BASE_DIR + "backup");
             }
 
             /* Make sure that the installDir is specified */

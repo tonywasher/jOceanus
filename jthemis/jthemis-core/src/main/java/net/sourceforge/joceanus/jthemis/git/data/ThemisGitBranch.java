@@ -33,9 +33,9 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitTag.GitTagList;
@@ -61,12 +61,12 @@ public final class ThemisGitBranch
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(ThemisGitBranch.class.getSimpleName(), ThemisScmBranch.FIELD_DEFS);
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisGitBranch.class, ThemisScmBranch.getBaseFieldSet());
 
     /**
      * Repository field id.
      */
-    private static final MetisField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
 
     /**
      * Parent Repository.
@@ -126,12 +126,12 @@ public final class ThemisGitBranch
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_REPO.equals(pField)) {
             return theRepository;
@@ -176,7 +176,7 @@ public final class ThemisGitBranch
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(GitBranchList.class.getSimpleName(), ScmBranchList.FIELD_DEFS);
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(GitBranchList.class, ScmBranchList.getBaseFieldSet());
 
         /**
          * The parent component.
@@ -189,14 +189,14 @@ public final class ThemisGitBranch
          */
         protected GitBranchList(final ThemisGitComponent pParent) {
             /* Call super constructor */
-            super(ThemisGitBranch.class, pParent);
+            super(pParent);
 
             /* Store parent for use by entry handler */
             theComponent = pParent;
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 

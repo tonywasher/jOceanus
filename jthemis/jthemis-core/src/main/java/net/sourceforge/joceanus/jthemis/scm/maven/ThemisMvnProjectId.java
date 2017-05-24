@@ -28,10 +28,11 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public final class ThemisMvnProjectId
-        implements MetisDataContents {
+        implements MetisDataFieldItem {
     /**
      * SnapShot indication.
      */
@@ -58,22 +59,22 @@ public final class ThemisMvnProjectId
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(ThemisMvnProjectId.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisMvnProjectId.class);
 
     /**
      * Group field id.
      */
-    private static final MetisField FIELD_GROUP = FIELD_DEFS.declareEqualityField("Group");
+    private static final MetisDataField FIELD_GROUP = FIELD_DEFS.declareEqualityField("Group");
 
     /**
      * Artifact field id.
      */
-    private static final MetisField FIELD_ARTIFACT = FIELD_DEFS.declareEqualityField("Artifact");
+    private static final MetisDataField FIELD_ARTIFACT = FIELD_DEFS.declareEqualityField("Artifact");
 
     /**
      * Version field id.
      */
-    private static final MetisField FIELD_VERSION = FIELD_DEFS.declareEqualityField("Version");
+    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField("Version");
 
     /**
      * The groupId.
@@ -163,7 +164,7 @@ public final class ThemisMvnProjectId
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return theGroupId
                + "_"
                + theArtifactId
@@ -172,12 +173,12 @@ public final class ThemisMvnProjectId
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_GROUP.equals(pField)) {
             return theGroupId;
@@ -190,7 +191,7 @@ public final class ThemisMvnProjectId
         }
 
         /* Unknown */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -348,7 +349,7 @@ public final class ThemisMvnProjectId
      */
     public static final class ProjectList
             extends ArrayList<ThemisMvnProjectId>
-            implements MetisDataContents {
+            implements MetisDataFieldItem {
         /**
          * The Serial Id.
          */
@@ -357,34 +358,34 @@ public final class ThemisMvnProjectId
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(ProjectList.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ProjectList.class);
 
         /**
          * Size field id.
          */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareEqualityField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareEqualityField("Size");
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return "ProjectList("
                    + size()
                    + ")";
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             /* Handle standard fields */
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
 
             /* Unknown */
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
     }
 

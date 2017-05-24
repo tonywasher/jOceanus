@@ -22,8 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.data;
 
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
 import org.tmatesoft.svn.core.SVNCancelException;
@@ -36,11 +37,13 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.SvnRevisionKey;
@@ -51,22 +54,21 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.SvnSou
  * @author Tony Washer
  */
 public class ThemisSvnRevisionHistoryMap
-        extends LinkedHashMap<SvnRevisionKey, ThemisSvnRevisionHistory>
-        implements MetisDataFormat {
-    /**
-     * Serial Id.
-     */
-    private static final long serialVersionUID = 6314367951380041536L;
-
+        implements MetisDataObjectFormat, MetisDataMap<SvnRevisionKey, ThemisSvnRevisionHistory> {
     /**
      * The repository.
      */
-    private final transient ThemisSvnRepository theRepository;
+    private final ThemisSvnRepository theRepository;
 
     /**
      * The current owner.
      */
-    private transient Object theOwner;
+    private Object theOwner;
+
+    /**
+     * HistoryMap.
+     */
+    private final Map<SvnRevisionKey, ThemisSvnRevisionHistory> theHistoryMap;
 
     /**
      * Constructor.
@@ -75,10 +77,16 @@ public class ThemisSvnRevisionHistoryMap
     protected ThemisSvnRevisionHistoryMap(final ThemisSvnRepository pRepository) {
         /* Access repository and log client */
         theRepository = pRepository;
+        theHistoryMap = new HashMap<>();
     }
 
     @Override
-    public String formatObject() {
+    public Map<SvnRevisionKey, ThemisSvnRevisionHistory> getUnderlyingMap() {
+        return theHistoryMap;
+    }
+
+    @Override
+    public String toString() {
         return getClass().getSimpleName();
     }
 
@@ -142,26 +150,26 @@ public class ThemisSvnRevisionHistoryMap
      * Details of a revision path for a directory in a SubVersion repository.
      */
     public static class SvnRevisionPath
-            implements MetisDataContents {
+            implements MetisDataFieldItem {
         /**
          * DataFields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnRevisionPath.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnRevisionPath.class);
 
         /**
          * Path field.
          */
-        private static final MetisField FIELD_PATH = FIELD_DEFS.declareLocalField("Path");
+        private static final MetisDataField FIELD_PATH = FIELD_DEFS.declareLocalField("Path");
 
         /**
          * Revision field.
          */
-        private static final MetisField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
+        private static final MetisDataField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
 
         /**
          * Initial History field.
          */
-        private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareLocalField("History");
+        private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField("History");
 
         /**
          * The HistoryMap.
@@ -261,17 +269,17 @@ public class ThemisSvnRevisionHistoryMap
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_PATH.equals(pField)) {
                 return thePath;
             }
@@ -281,7 +289,7 @@ public class ThemisSvnRevisionHistoryMap
             if (FIELD_HISTORY.equals(pField)) {
                 return theFirstHistory;
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**

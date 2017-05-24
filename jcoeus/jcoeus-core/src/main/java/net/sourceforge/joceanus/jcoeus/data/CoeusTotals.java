@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jcoeus.data;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -537,11 +536,6 @@ public abstract class CoeusTotals
 
         /* Return the formatted string */
         return myBuilder.toString();
-    }
-
-    @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
-        return toString();
     }
 
     @Override

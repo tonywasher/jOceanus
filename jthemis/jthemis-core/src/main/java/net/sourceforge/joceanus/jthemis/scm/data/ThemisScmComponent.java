@@ -22,13 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.scm.data;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch.ScmBranchList;
 
 /**
@@ -38,26 +40,26 @@ import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch.ScmBranchList;
  * @param <R> the repository data type
  */
 public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R extends ThemisScmRepository<R>>
-        implements MetisDataContents, Comparable<C> {
+        implements MetisDataFieldItem, Comparable<C> {
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(ThemisScmComponent.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisScmComponent.class);
 
     /**
      * Repository field id.
      */
-    private static final MetisField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
 
     /**
      * Name field id.
      */
-    private static final MetisField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
 
     /**
      * Branches field id.
      */
-    private static final MetisField FIELD_BRAN = FIELD_DEFS.declareLocalField("Branches");
+    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareLocalField("Branches");
 
     /**
      * Parent Repository.
@@ -87,17 +89,12 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
     }
 
     @Override
-    public String formatObject() {
+    public String toString() {
         return theName;
     }
 
     @Override
-    public String toString() {
-        return formatObject();
-    }
-
-    @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_REPO.equals(pField)) {
             return theRepository;
@@ -110,7 +107,15 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
         }
 
         /* Unknown */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
+    }
+
+    /**
+     * Obtain the data fields.
+     * @return the data fields
+     */
+    protected static MetisDataFieldSet getBaseFieldSet() {
+        return FIELD_DEFS;
     }
 
     /**
@@ -201,46 +206,56 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
      * @param <R> the repository data type
      */
     public abstract static class ScmComponentList<C extends ThemisScmComponent<C, R>, R extends ThemisScmRepository<R>>
-            extends MetisOrderedList<C>
-            implements MetisDataContents {
+            implements MetisDataFieldItem, MetisDataList<C> {
         /**
          * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(ScmComponentList.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ScmComponentList.class);
 
         /**
          * Size field id.
          */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        /**
+         * Component List.
+         */
+        private final List<C> theList;
 
         /**
          * Constructor.
-         * @param pClazz the class of the component
          */
-        public ScmComponentList(final Class<C> pClazz) {
-            /* Call super constructor */
-            super(pClazz);
+        public ScmComponentList() {
+            theList = new ArrayList<>();
         }
 
         @Override
-        public String formatObject() {
-            return "ComponentList(" + size() + ")";
+        public List<C> getUnderlyingList() {
+            return theList;
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public String toString() {
+            return getDataFieldSet().getName();
+        }
+
+        /**
+         * Obtain the base fieldSet.
+         * @return the fieldSet
+         */
+        protected static MetisDataFieldSet getBaseFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             /* Handle standard fields */
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
 
             /* Unknown */
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**

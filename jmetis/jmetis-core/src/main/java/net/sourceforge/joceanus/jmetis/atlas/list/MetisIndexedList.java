@@ -211,17 +211,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
         return getItemById(pItem.getIndexedId()) != null;
     }
 
-    /**
-     * Is the list empty?
-     * @return true/false
-     */
-    public boolean isEmpty() {
-        return theList.isEmpty();
-    }
-
-    /**
-     * Clear the list.
-     */
+    @Override
     public void clear() {
         theList.clear();
         theIdMap.clear();
@@ -277,10 +267,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
         theIdMap.put(myId, pItem);
     }
 
-    /**
-     * Obtain an iterator.
-     * @return the iterator
-     */
+    @Override
     public Iterator<T> iterator() {
         return new MetisIndexedListIterator<>(this);
     }
@@ -293,11 +280,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
         return new MetisIndexedListIterator<>(this);
     }
 
-    /**
-     * Obtain a list iterator.
-     * @param pIndex the index at which to start the iterator
-     * @return the iterator
-     */
+    @Override
     public ListIterator<T> listIterator(final int pIndex) {
         return new MetisIndexedListIterator<>(this, pIndex);
     }

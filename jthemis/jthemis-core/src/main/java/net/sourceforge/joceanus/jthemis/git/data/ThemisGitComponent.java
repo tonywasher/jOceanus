@@ -44,8 +44,8 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitBranch.GitBranchList;
@@ -73,7 +73,7 @@ public final class ThemisGitComponent
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(ThemisGitComponent.class.getSimpleName(), ThemisScmComponent.FIELD_DEFS);
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisGitComponent.class, ThemisScmComponent.getBaseFieldSet());
 
     /**
      * Logger.
@@ -105,7 +105,7 @@ public final class ThemisGitComponent
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -279,7 +279,7 @@ public final class ThemisGitComponent
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(GitComponentList.class.getSimpleName(), ScmComponentList.FIELD_DEFS);
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(GitComponentList.class, ScmComponentList.getBaseFieldSet());
 
         /**
          * Parent Repository.
@@ -291,15 +291,12 @@ public final class ThemisGitComponent
          * @param pParent the parent repository
          */
         public GitComponentList(final ThemisGitRepository pParent) {
-            /* Call super constructor */
-            super(ThemisGitComponent.class);
-
             /* Store parent/manager for use by entry handler */
             theRepository = pParent;
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 

@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmetis.atlas.data;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 
 /**
  * Data Version Delta.
@@ -98,10 +97,10 @@ public class MetisDataVersionDelta
         MetisDataFieldSet myLocal = new MetisDataFieldSet(MetisDataVersionDelta.class);
 
         /* Declare the version field */
-        myLocal.declareIndexField(MetisValueSet.FIELD_VERSION);
+        myLocal.declareIndexField(MetisDataResource.DATA_VERSION.getValue());
 
         /* Declare the deletion field */
-        myLocal.declareIndexField(MetisValueSet.FIELD_DELETION);
+        myLocal.declareIndexField(MetisDataResource.DATA_DELETED.getValue());
 
         /* Loop through the fields */
         Iterator<MetisDataField> myIterator = myFields.fieldIterator();

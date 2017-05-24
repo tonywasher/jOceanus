@@ -34,8 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import net.sourceforge.joceanus.jmetis.http.MetisHTTPJiraClient;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisLogicException;
@@ -57,7 +56,7 @@ public class ThemisJiraServer {
     /**
      * The Http Client.
      */
-    private final MetisHTTPJiraClient theClient;
+    private final ThemisHTTPJiraClient theClient;
 
     /**
      * The Security.
@@ -127,7 +126,7 @@ public class ThemisJiraServer {
 
         /* Access the Jira Client */
         String myAuth = myUser + ":" + new String(myPass);
-        theClient = new MetisHTTPJiraClient(myBaseUrl, myAuth);
+        theClient = new ThemisHTTPJiraClient(myBaseUrl, myAuth);
 
         /* Allocate the security class */
         theSecurity = new ThemisJiraSecurity(this);
@@ -149,7 +148,7 @@ public class ThemisJiraServer {
      * Obtain the client.
      * @return the client
      */
-    protected MetisHTTPJiraClient getClient() {
+    protected ThemisHTTPJiraClient getClient() {
         return theClient;
     }
 

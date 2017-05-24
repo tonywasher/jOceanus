@@ -95,29 +95,6 @@ public class MetisViewerErrorList
         }
     }
 
-    /**
-     * Add error.
-     * @param pError the list of error to add
-     */
-    public void add(final MetisViewerExceptionWrapper pError) {
-        theList.add(pError);
-    }
-
-    /**
-     * Obtain an iterator.
-     * @return the iterator
-     */
-    public Iterator<MetisViewerExceptionWrapper> iterator() {
-        return theList.iterator();
-    }
-
-    /**
-     * Clear the list.
-     */
-    public void clear() {
-        theList.clear();
-    }
-
     @Override
     public List<MetisViewerExceptionWrapper> getUnderlyingList() {
         return theList;

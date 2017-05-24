@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.data;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 /**
@@ -38,14 +40,15 @@ public final class MetisDataItem {
     /**
      * Format object interface.
      */
-    @FunctionalInterface
     public interface MetisDataObjectFormat {
         /**
          * Obtain Object summary.
          * @param pFormatter the data formatter
          * @return the display summary of the object
          */
-        String formatObject(MetisDataFormatter pFormatter);
+        default String formatObject(MetisDataFormatter pFormatter) {
+            return toString();
+        }
     }
 
     /**
@@ -84,7 +87,24 @@ public final class MetisDataItem {
         List<T> getUnderlyingList();
 
         /**
-         * Is the map empty?.
+         * Obtain the list iterator.
+         * @return the iterator
+         */
+        default Iterator<T> iterator() {
+            return getUnderlyingList().iterator();
+        }
+
+        /**
+         * Obtain the list iterator.
+         * @param pIndex the list position
+         * @return the iterator
+         */
+        default ListIterator<T> listIterator(final int pIndex) {
+            return getUnderlyingList().listIterator(pIndex);
+        }
+
+        /**
+         * Is the list empty?.
          * @return true/false
          */
         default boolean isEmpty() {
@@ -92,11 +112,46 @@ public final class MetisDataItem {
         }
 
         /**
-         * Obtain the size of the map.
+         * Obtain the size of the list.
          * @return the size
          */
         default int size() {
             return getUnderlyingList().size();
+        }
+
+        /**
+         * Clear the list.
+         */
+        default void clear() {
+            getUnderlyingList().clear();
+        }
+
+        /**
+         * Add the item.
+         * @param pItem the item
+         * @return true/false - was item added?
+         */
+        default boolean add(final T pItem) {
+            return getUnderlyingList().add(pItem);
+        }
+
+        /**
+         * Add the item at index.
+         * @param pIndex the index
+         * @param pItem the item
+         */
+        default void add(final int pIndex,
+                         final T pItem) {
+            getUnderlyingList().add(pIndex, pItem);
+        }
+
+        /**
+         * Remove the item.
+         * @param pItem the item
+         * @return true/false - was item in list?
+         */
+        default boolean remove(final T pItem) {
+            return getUnderlyingList().remove(pItem);
         }
     }
 
@@ -127,6 +182,26 @@ public final class MetisDataItem {
          */
         default int size() {
             return getUnderlyingMap().size();
+        }
+
+        /**
+         * Put the value into the map.
+         * @param pKey the key
+         * @param pValue the value
+         * @return the original value
+         */
+        default V put(final K pKey,
+                      final V pValue) {
+            return getUnderlyingMap().put(pKey, pValue);
+        }
+
+        /**
+         * Obtain the value for the key.
+         * @param pKey the key
+         * @return the associated value
+         */
+        default V get(final K pKey) {
+            return getUnderlyingMap().get(pKey);
         }
     }
 }

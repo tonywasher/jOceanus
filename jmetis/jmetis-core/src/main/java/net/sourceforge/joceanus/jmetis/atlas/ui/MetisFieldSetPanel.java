@@ -49,7 +49,6 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFiel
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetStateIconItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetStringItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetUnitsItem;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -265,7 +264,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @param pReadOnly the readOnly state
      */
-    public void setReadOnlyField(final MetisField pField,
+    public void setReadOnlyField(final MetisDataField pField,
                                  final boolean pReadOnly) {
         /* Look up the field */
         MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
@@ -280,7 +279,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @param pCurrency the currency
      */
-    public void setDeemedCurrency(final MetisField pField,
+    public void setDeemedCurrency(final MetisDataField pField,
                                   final Currency pCurrency) {
         /* Look up the field and check that it is a currency item */
         MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
@@ -296,7 +295,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @param pShow true/false
      */
-    public void showCmdButton(final MetisField pField,
+    public void showCmdButton(final MetisDataField pField,
                               final boolean pShow) {
         /* Look up the field */
         MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);

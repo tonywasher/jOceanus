@@ -24,55 +24,57 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusType;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 
 /**
  * Status record in Working Copy.
  * @author Tony Washer
  */
 public class ThemisSvnUpdateStatus
-        implements MetisDataContents {
+        implements MetisDataFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(ThemisSvnUpdateStatus.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnUpdateStatus.class);
 
     /**
      * Name field id.
      */
-    private static final MetisField FIELD_NAME = FIELD_DEFS.declareLocalField("Name");
+    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField("Name");
 
     /**
      * Status field id.
      */
-    private static final MetisField FIELD_STATUS = FIELD_DEFS.declareLocalField("Status");
+    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField("Status");
 
     /**
      * PropertyStatus field id.
      */
-    private static final MetisField FIELD_PSTATUS = FIELD_DEFS.declareLocalField("PropStatus");
+    private static final MetisDataField FIELD_PSTATUS = FIELD_DEFS.declareLocalField("PropStatus");
 
     /**
      * NodeKind field id.
      */
-    private static final MetisField FIELD_KIND = FIELD_DEFS.declareLocalField("NodeKind");
+    private static final MetisDataField FIELD_KIND = FIELD_DEFS.declareLocalField("NodeKind");
 
     /**
      * CopyFromNode field id.
      */
-    private static final MetisField FIELD_COPYFROM = FIELD_DEFS.declareLocalField("CopyFrom");
+    private static final MetisDataField FIELD_COPYFROM = FIELD_DEFS.declareLocalField("CopyFrom");
 
     /**
      * CopyFromRevision field id.
      */
-    private static final MetisField FIELD_COPYREV = FIELD_DEFS.declareLocalField("CopyRevision");
+    private static final MetisDataField FIELD_COPYREV = FIELD_DEFS.declareLocalField("CopyRevision");
 
     /**
      * Name of item.
@@ -106,17 +108,17 @@ public class ThemisSvnUpdateStatus
     }
 
     @Override
-    public String formatObject() {
+    public String toString() {
         return FIELD_DEFS.getName();
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle fields */
         if (FIELD_NAME.equals(pField)) {
             return theName;
@@ -127,7 +129,7 @@ public class ThemisSvnUpdateStatus
         if (FIELD_PSTATUS.equals(pField)) {
             SVNStatusType myStatus = theStatus.getPropertiesStatus();
             return myStatus.equals(SVNStatusType.STATUS_NORMAL)
-                                                                ? MetisFieldValue.SKIP
+                                                                ? MetisDataFieldValue.SKIP
                                                                 : myStatus.toString();
         }
         if (FIELD_KIND.equals(pField)) {
@@ -136,58 +138,69 @@ public class ThemisSvnUpdateStatus
         if (FIELD_COPYFROM.equals(pField)) {
             return theStatus.isCopied()
                                         ? theStatus.getCopyFromURL()
-                                        : MetisFieldValue.SKIP;
+                                        : MetisDataFieldValue.SKIP;
         }
         if (FIELD_COPYREV.equals(pField)) {
             return theStatus.isCopied()
                                         ? theStatus.getCopyFromRevision().getNumber()
-                                        : MetisFieldValue.SKIP;
+                                        : MetisDataFieldValue.SKIP;
         }
 
         /* Unknown */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**
      * List class.
      */
     public static class UpdateStatusList
-            extends ArrayList<ThemisSvnUpdateStatus>
-            implements MetisDataContents {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 2584865977496622102L;
-
+            implements MetisDataFieldItem, MetisDataList<ThemisSvnUpdateStatus> {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(UpdateStatusList.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(UpdateStatusList.class);
 
         /**
          * Size field id.
          */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        /**
+         * Status List.
+         */
+        private final List<ThemisSvnUpdateStatus> theStatusList;
+
+        /**
+         * Constructor.
+         */
+        protected UpdateStatusList() {
+            theStatusList = new ArrayList<>();
+        }
 
         @Override
-        public String formatObject() {
+        public List<ThemisSvnUpdateStatus> getUnderlyingList() {
+            return theStatusList;
+        }
+
+        @Override
+        public String toString() {
             return FIELD_DEFS.getName();
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             /* Handle standard fields */
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
 
             /* Unknown */
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
     }
 }

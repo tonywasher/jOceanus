@@ -36,10 +36,9 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
@@ -59,22 +58,22 @@ public final class ThemisSvnTag
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(ThemisSvnTag.class.getSimpleName(), ThemisScmTag.FIELD_DEFS);
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnTag.class);
 
     /**
      * Repository field id.
      */
-    private static final MetisField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
 
     /**
      * Component field id.
      */
-    private static final MetisField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
+    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
 
     /**
      * RevisionPath.
      */
-    private static final MetisField FIELD_REVPATH = FIELD_DEFS.declareLocalField("RevisionPath");
+    private static final MetisDataField FIELD_REVPATH = FIELD_DEFS.declareLocalField("RevisionPath");
 
     /**
      * Logger.
@@ -112,12 +111,12 @@ public final class ThemisSvnTag
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_REPO.equals(pField)) {
             return theRepository;
@@ -206,12 +205,11 @@ public final class ThemisSvnTag
      * List of tags.
      */
     public static class SvnTagList
-            extends ScmTagList<ThemisSvnTag, ThemisSvnBranch, ThemisSvnComponent, ThemisSvnRepository>
-            implements MetisDataContents {
+            extends ScmTagList<ThemisSvnTag, ThemisSvnBranch, ThemisSvnComponent, ThemisSvnRepository> {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(SvnTagList.class.getSimpleName(), ScmTagList.FIELD_DEFS);
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnTagList.class, ScmTagList.getBaseFieldSet());
 
         /**
          * Parent Component.
@@ -224,7 +222,7 @@ public final class ThemisSvnTag
          */
         protected SvnTagList(final ThemisSvnBranch pParent) {
             /* Call super constructor */
-            super(ThemisSvnTag.class, pParent);
+            super(pParent);
 
             /* Store parent for use by entry handler */
             theComponent = (pParent == null)
@@ -233,7 +231,7 @@ public final class ThemisSvnTag
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 

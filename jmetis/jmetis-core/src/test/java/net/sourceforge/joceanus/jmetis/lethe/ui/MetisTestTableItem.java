@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSetHistory;
-import net.sourceforge.joceanus.jmetis.lethe.newlist.MetisListItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
  * Metis Table item.
  */
 public class MetisTestTableItem
-        implements MetisIndexedItem, MetisDataValues {
+        implements MetisOrderedIdItem<Integer>, MetisDataValues {
     /**
      * The Next itemId.
      */
@@ -253,7 +253,7 @@ public class MetisTestTableItem
     }
 
     @Override
-    public Integer getIndexedId() {
+    public Integer getOrderedId() {
         return theId;
     }
 

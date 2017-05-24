@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.list;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisItemValidation;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItemValidation;
 
 /**
  * Item interfaces.
@@ -43,6 +43,6 @@ public final class MetisListItem {
          * Obtain the item validation.
          * @return the validation
          */
-        MetisItemValidation getValidation();
+        MetisDataItemValidation getValidation();
     }
 }

@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
@@ -279,11 +278,6 @@ public class CoeusMarketAnnual
      */
     public CoeusHistory getMonthlyHistory(final Month pDate) {
         return theMonthlyHistories.get(pDate);
-    }
-
-    @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
-        return toString();
     }
 
     @Override
