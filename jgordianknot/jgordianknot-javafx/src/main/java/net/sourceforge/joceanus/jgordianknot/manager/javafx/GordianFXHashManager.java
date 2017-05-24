@@ -85,7 +85,7 @@ public class GordianFXHashManager
     @Override
     protected void createTheDialog(final String pTitle,
                                    final boolean pNeedConfirm) {
-        theDialog = new GordianFXPasswordDialog(theFactory, pTitle, pNeedConfirm);
+        theDialog = GordianFXPasswordDialog.createTheDialog(theFactory, pTitle, pNeedConfirm);
     }
 
     @Override

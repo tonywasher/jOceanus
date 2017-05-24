@@ -127,6 +127,43 @@ public class GordianFXPasswordDialog
     }
 
     /**
+     * Create the dialog under an invokeAndWait clause.
+     * @param pFactory the GUI Factory
+     * @param pTitle the title
+     * @param pNeedConfirm true/false
+     * @return the new dialog
+     */
+    protected static GordianFXPasswordDialog createTheDialog(final TethysFXGuiFactory pFactory,
+                                                             final String pTitle,
+                                                             final boolean pNeedConfirm) {
+        /* If this is the event dispatcher thread */
+        if (Platform.isFxApplicationThread()) {
+            /* invoke the dialog directly */
+            return new GordianFXPasswordDialog(pFactory, pTitle, pNeedConfirm);
+
+            /* else we must use invokeAndWait */
+        } else {
+            /* Create a FutureTask so that we will wait */
+            FutureTask<GordianFXPasswordDialog> myTask = new FutureTask<>(() -> {
+                return new GordianFXPasswordDialog(pFactory, pTitle, pNeedConfirm);
+            });
+
+            /* Protect against exceptions */
+            try {
+                /* Run on Application thread and wait for completion */
+                Platform.runLater(myTask);
+                return myTask.get();
+            } catch (IllegalStateException
+                    | ExecutionException e) {
+                LOGGER.error("Failed to create dialog", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return null;
+        }
+    }
+
+    /**
      * Show the dialog under an invokeAndWait clause.
      * @param pDialog the dialog to show
      * @return successful dialog usage true/false
