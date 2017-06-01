@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2016 Tony Washer
+ * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 
 /**
  * PortfolioInfoSet class.
@@ -96,8 +96,8 @@ public class PortfolioInfoSet
         /* Return the value */
         Object myValue = getField(pInfoClass);
         return (myValue != null)
-                                ? myValue
-                                : MetisFieldValue.SKIP;
+                                 ? myValue
+                                 : MetisFieldValue.SKIP;
     }
 
     /**
@@ -137,15 +137,15 @@ public class PortfolioInfoSet
     public MetisFieldRequired isFieldRequired(final MetisField pField) {
         AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
-                              ? MetisFieldRequired.NOTALLOWED
-                              : isClassRequired(myClass);
+                               ? MetisFieldRequired.NOTALLOWED
+                               : isClassRequired(myClass);
     }
 
     @Override
     public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
         /* Switch on class */
         switch (pClass) {
-        /* Allowed set */
+            /* Allowed set */
             case NOTES:
             case SORTCODE:
             case ACCOUNT:
@@ -156,7 +156,7 @@ public class PortfolioInfoSet
             case PASSWORD:
                 return MetisFieldRequired.CANEXIST;
 
-                /* Old style */
+            /* Old style */
             case MATURITY:
             case OPENINGBALANCE:
             case AUTOEXPENSE:

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2016 Tony Washer
+ * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetDirection;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
 

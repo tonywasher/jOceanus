@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2016 Tony Washer
+ * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionC
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
+import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;

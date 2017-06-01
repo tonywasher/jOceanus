@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2016 Tony Washer
+ * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
@@ -103,8 +103,8 @@ public class DepositInfoSet
         /* Return the value */
         Object myValue = getField(pInfoClass);
         return (myValue != null)
-                                ? myValue
-                                : MetisFieldValue.SKIP;
+                                 ? myValue
+                                 : MetisFieldValue.SKIP;
     }
 
     /**
@@ -144,8 +144,8 @@ public class DepositInfoSet
     public MetisFieldRequired isFieldRequired(final MetisField pField) {
         AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
-                              ? MetisFieldRequired.NOTALLOWED
-                              : isClassRequired(myClass);
+                               ? MetisFieldRequired.NOTALLOWED
+                               : isClassRequired(myClass);
     }
 
     @Override
@@ -162,7 +162,7 @@ public class DepositInfoSet
 
         /* Switch on class */
         switch (pClass) {
-        /* Allowed set */
+            /* Allowed set */
             case NOTES:
             case SORTCODE:
             case ACCOUNT:
@@ -170,13 +170,13 @@ public class DepositInfoSet
             case OPENINGBALANCE:
                 return MetisFieldRequired.CANEXIST;
 
-                /* Handle Maturity */
+            /* Handle Maturity */
             case MATURITY:
                 return (myClass == DepositCategoryClass.BOND)
-                                                             ? MetisFieldRequired.MUSTEXIST
-                                                             : MetisFieldRequired.NOTALLOWED;
+                                                              ? MetisFieldRequired.MUSTEXIST
+                                                              : MetisFieldRequired.NOTALLOWED;
 
-                /* Old style */
+            /* Old style */
             case AUTOEXPENSE:
             case WEBSITE:
             case CUSTOMERNO:

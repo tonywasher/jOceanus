@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jPrometheus: Application Framework
- * Copyright 2012,2016 Tony Washer
+ * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDa
 public class PrometheusDataVersionControl
         extends MetisDataVersionControl {
     /**
-     * Constructor
+     * Constructor.
      * @param pItem the owning item
      */
     protected PrometheusDataVersionControl(final MetisDataVersionedItem pItem) {

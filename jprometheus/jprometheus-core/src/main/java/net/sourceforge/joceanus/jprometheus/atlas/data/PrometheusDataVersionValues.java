@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jPrometheus: Application Framework
- * Copyright 2012,2016 Tony Washer
+ * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jprometheus.atlas.data;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 
 /**
  * Prometheus Set of versioned Values.
@@ -73,8 +72,8 @@ public class PrometheusDataVersionValues
             return;
         }
 
-        /* Allow EncryptedField if we have a keySet */
-        if (pValue instanceof MetisEncryptedField
+        /* Allow EncryptedValue if we have a keySet */
+        if (pValue instanceof MetisEncryptedValue
             && theKeySet != null) {
             return;
         }

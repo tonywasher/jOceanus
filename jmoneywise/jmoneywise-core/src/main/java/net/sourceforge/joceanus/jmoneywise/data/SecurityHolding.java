@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2016 Tony Washer
+ * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 
 /**
  * Portfolio/Security combination.

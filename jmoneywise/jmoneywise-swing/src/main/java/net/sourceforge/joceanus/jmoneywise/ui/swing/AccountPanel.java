@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2016 Tony Washer
+ * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,12 +41,12 @@ import net.sourceforge.joceanus.jmoneywise.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusUIEvent;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;
+import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;

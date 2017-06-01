@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2016 Tony Washer
+ * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,17 +47,17 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagLis
 import net.sourceforge.joceanus.jmoneywise.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.swing.TransactionTagPanel;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTable;
-import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.swing.JDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.ui.swing.PrometheusIcons.ActionType;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTable;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableSelection;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
+import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;

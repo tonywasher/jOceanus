@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2016 Tony Washer
+ * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -111,7 +111,8 @@ public class CashCategoryType
     /**
      * Determine whether the CashCategoryType is the required class.
      * @param pClass the desired class
-     * @return <code>true</code> if the cash category type is the required class, <code>false</code> otherwise.
+     * @return <code>true</code> if the cash category type is the required class, <code>false</code>
+     * otherwise.
      */
     public boolean isCashCategory(final CashCategoryClass pClass) {
         return getCashClass().equals(pClass);

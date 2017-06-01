@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2016 Tony Washer
+ * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
-import net.sourceforge.joceanus.jprometheus.data.DataInfo;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -170,7 +170,8 @@ public class LoanInfo
     /**
      * Compare this data to another to establish sort order.
      * @param pThat The AccountInfo to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
+     * object in the sort order
      */
     @Override
     public int compareTo(final DataInfo<LoanInfo, Loan, AccountInfoType, AccountInfoClass, MoneyWiseDataType> pThat) {
