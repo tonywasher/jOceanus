@@ -38,6 +38,9 @@ Private Const colEvtRef As Integer = 13
 Private Const colEvtYears As Integer = 14
 Private Const colEvtCharity As Integer = 15
 Private Const colEvtThirdParty As Integer = 16
+Private Const colEvtThirdPartyAmount As Integer = 17
+Private Const colEvtPartnerAmount As Integer = 18
+Private Const colEvtTags As Integer = 19
 
 'Hidden categories
 Public Const catTransfer As String = "Transfer"
@@ -66,9 +69,12 @@ Public Type EventInfo
 	strCredit As String
 	strThirdParty As String
 	strCategory As String
+	strTags As String
 		
 	'Values
 	evtValue As Double
+	evtThirdPartyValue As Double
+	evtPartnerValue As Double
 	evtTaxCredit As Double
 	evtNatIns As Double
 	evtBenefit As Double
@@ -143,6 +149,7 @@ Public Function parseEventRow(ByRef Context As FinanceState, _
 	myCredit     = eventRow.getCellByPosition(colEvtCredit, 0).getString()
 	myThirdParty = eventRow.getCellByPosition(colEvtThirdParty, 0).getString()
 	myCategory   = eventRow.getCellByPosition(colEvtCategory, 0).getString()
+	myTags       = eventRow.getCellByPosition(colEvtTags, 0).getString()
 	
 	'If this is a split record
 	If (myDate = 0) And Not IsNull(lastEvent) Then 
@@ -166,6 +173,7 @@ Public Function parseEventRow(ByRef Context As FinanceState, _
 	myEvent.strCredit     = myCredit
 	myEvent.strThirdParty = myThirdParty
 	myEvent.strCategory   = myCategory
+	myEvent.strTags       = myTags
 	
 	'Look up the values
 	Set myEvent.acctDebit  = getCachedAccount(Context, myDebit)
@@ -178,14 +186,16 @@ Public Function parseEventRow(ByRef Context As FinanceState, _
 	adjustCategory(Context, myEvent)
 
 	'Access the Values in the row
-	myEvent.evtValue     = eventRow.getCellByPosition(colEvtAmount, 0).getValue()
-	myEvent.evtDebUnits  = eventRow.getCellByPosition(colEvtDebUnits, 0).getValue()
-	myEvent.evtCredUnits = eventRow.getCellByPosition(colEvtCredUnits, 0).getValue()
-	myEvent.evtTaxCredit = eventRow.getCellByPosition(colEvtTaxCred, 0).getValue()
-	myEvent.evtNatIns    = eventRow.getCellByPosition(colEvtNatIns, 0).getValue()
-	myEvent.evtBenefit   = eventRow.getCellByPosition(colEvtBenefit, 0).getValue()
-	myEvent.evtDilution  = eventRow.getCellByPosition(colEvtDilution, 0).getValue()
-	myEvent.evtCharity   = eventRow.getCellByPosition(colEvtCharity, 0).getValue()
+	myEvent.evtValue           = eventRow.getCellByPosition(colEvtAmount, 0).getValue()
+	myEvent.evtDebUnits        = eventRow.getCellByPosition(colEvtDebUnits, 0).getValue()
+	myEvent.evtCredUnits       = eventRow.getCellByPosition(colEvtCredUnits, 0).getValue()
+	myEvent.evtTaxCredit       = eventRow.getCellByPosition(colEvtTaxCred, 0).getValue()
+	myEvent.evtNatIns          = eventRow.getCellByPosition(colEvtNatIns, 0).getValue()
+	myEvent.evtBenefit         = eventRow.getCellByPosition(colEvtBenefit, 0).getValue()
+	myEvent.evtDilution        = eventRow.getCellByPosition(colEvtDilution, 0).getValue()
+	myEvent.evtCharity         = eventRow.getCellByPosition(colEvtCharity, 0).getValue()
+	myEvent.evtThirdPartyValue = eventRow.getCellByPosition(colEvtThirdPartyAmount, 0).getValue()
+	myEvent.evtPartnerValue    = eventRow.getCellByPosition(colEvtPartnerAmount, 0).getValue()
 	
 	'Return the event
 	Set parseEventRow = myEvent	

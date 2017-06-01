@@ -73,6 +73,7 @@ public class MetisDataFormatter
     /**
      * Format the value.
      * @param pValue the value
+     * @return the formatted value
      */
     private String formatValue(final Object pValue) {
         /* Handle ones that we can directly format */
@@ -92,6 +93,8 @@ public class MetisDataFormatter
     /**
      * Format the list/map.
      * @param pValue the value
+     * @param pSize the size
+     * @return the formatted value
      */
     private String formatValue(final Object pValue,
                                final int pSize) {

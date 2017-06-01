@@ -112,7 +112,7 @@ public class TethysRatio
      * @return the annualised ratio
      */
     public TethysRatio annualise(final int pDays) {
-        /* Should not annualise periods of less thn a year */
+        /* Should not annualise periods of less than a year */
         if (pDays < DAYS_IN_YEAR) {
             return this;
         }

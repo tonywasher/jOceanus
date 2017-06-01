@@ -47,8 +47,8 @@ import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusDataList.PrometheusDataListPreferenceKey;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusDataList.PrometheusDataListPreferences;
+import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusDataList.PrometheusDataListPreferenceKey;
+import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusDataList.PrometheusDataListPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

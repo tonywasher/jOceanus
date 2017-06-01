@@ -114,12 +114,12 @@ public class MetisSwingToolkit
     }
 
     @Override
-    public <R extends MetisDataVersionedItem> MetisSwingTableManager<R> newTableManager(MetisBaseList<R> pBaseList) {
+    public <R extends MetisDataVersionedItem> MetisSwingTableManager<R> newTableManager(final MetisBaseList<R> pBaseList) {
         return new MetisSwingTableManager<>(getGuiFactory(), pBaseList);
     }
 
     @Override
-    public <R extends MetisDataVersionedItem> MetisSwingTableManager<R> newTableManager(MetisEditList<R> pEditList) {
+    public <R extends MetisDataVersionedItem> MetisSwingTableManager<R> newTableManager(final MetisEditList<R> pEditList) {
         return new MetisSwingTableManager<>(getGuiFactory(), pEditList);
     }
 }

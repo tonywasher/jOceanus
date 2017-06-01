@@ -300,7 +300,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     /**
      * Branch Map.
      */
-    private class ThemisBranchMap
+    private final class ThemisBranchMap
             implements MetisDataObjectFormat, MetisDataMap<ThemisMvnProjectId, ThemisScmBranch<?, ?, R>> {
         /**
          * The map.
@@ -328,7 +328,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     /**
      * Tag Map.
      */
-    private class ThemisTagMap
+    private final class ThemisTagMap
             implements MetisDataObjectFormat, MetisDataMap<ThemisMvnProjectId, ThemisScmTag<?, ?, ?, R>> {
         /**
          * The map.

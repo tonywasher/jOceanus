@@ -22,9 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.data;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference.MetisDataDiffers;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
 
 /**
@@ -251,8 +254,20 @@ public class MetisDataVersionValues {
      */
     public <X> X getValue(final MetisDataField pField,
                           final Class<X> pClass) {
+        /* Access the value */
+        Object myValue = getValue(pField);
+
+        /* If this is an encrypted value */
+        if (myValue instanceof MetisEncryptedValue) {
+            /* Access correct part of pair */
+            MetisEncryptedValue myEncrypted = (MetisEncryptedValue) myValue;
+            myValue = byte[].class.equals(pClass)
+                                                  ? myEncrypted.getEncryption()
+                                                  : myEncrypted.getValue(pClass);
+        }
+
         /* Return the value */
-        return pClass.cast(getValue(pField));
+        return pClass.cast(myValue);
     }
 
     @Override
@@ -423,6 +438,134 @@ public class MetisDataVersionValues {
         /* If we are not allowed */
         if (!bAllowed) {
             throw new IllegalArgumentException(ERROR_VALUETYPE);
+        }
+    }
+
+    /**
+     * EncryptedValue.
+     */
+    public static final class MetisEncryptedValue
+            implements MetisDataObjectFormat, MetisDataDiffers {
+        /**
+         * The value.
+         */
+        private final Object theValue;
+
+        /**
+         * The encryption.
+         */
+        private final byte[] theEncryption;
+
+        /**
+         * Constructor.
+         * @param pValue the value
+         * @param pEncryption the encryption
+         */
+        protected MetisEncryptedValue(final Object pValue,
+                                      final byte[] pEncryption) {
+            theValue = pValue;
+            theEncryption = pEncryption;
+        }
+
+        /**
+         * Obtain the value.
+         * @return the value
+         */
+        public Object getValue() {
+            return theValue;
+        }
+
+        /**
+         * Get the value as an object type.
+         * @param <X> the required type
+         * @param pClass the class
+         * @return the value
+         */
+        public <X> X getValue(final Class<X> pClass) {
+            return pClass.cast(theValue);
+        }
+
+        /**
+         * Obtain the encryption.
+         * @return the encryption
+         */
+        public byte[] getEncryption() {
+            return theEncryption;
+        }
+
+        @Override
+        public String toString() {
+            return theValue.toString();
+        }
+
+        @Override
+        public String formatObject(final MetisDataFormatter pFormatter) {
+            return pFormatter.formatObject(theValue);
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is the same class */
+            if (!(pThat instanceof MetisEncryptedValue)) {
+                return false;
+            }
+
+            /* Access the target field */
+            MetisEncryptedValue myThat = (MetisEncryptedValue) pThat;
+
+            /* Check differences */
+            if (MetisDataDifference.difference(getValue(), myThat.getValue()).isDifferent()) {
+                return false;
+            }
+
+            /* Check encryption */
+            return Arrays.equals(getEncryption(), myThat.getEncryption());
+        }
+
+        @Override
+        public int hashCode() {
+            /* Calculate hash allowing for field that has not been encrypted yet */
+            int myHashCode = MetisDataFieldSet.HASH_PRIME
+                             * getValue().hashCode();
+            myHashCode += Arrays.hashCode(getEncryption());
+            return myHashCode;
+        }
+
+        @Override
+        public MetisDataDifference differs(final Object pThat) {
+            /* Reject if null */
+            if (pThat == null) {
+                return MetisDataDifference.DIFFERENT;
+            }
+
+            /* Reject if wrong class */
+            if (!(pThat instanceof MetisEncryptedValue)) {
+                return MetisDataDifference.DIFFERENT;
+            }
+
+            /* Access as correct class */
+            MetisEncryptedValue myThat = (MetisEncryptedValue) pThat;
+
+            /* Compare value */
+            if (MetisDataDifference.difference(getValue(), myThat.getValue()).isDifferent()) {
+                return MetisDataDifference.DIFFERENT;
+            }
+
+            /* Compare Encrypted value */
+            if (!Arrays.equals(getEncryption(), myThat.getEncryption())) {
+                return MetisDataDifference.SECURITY;
+            }
+
+            /* Item is the Same */
+            return MetisDataDifference.IDENTICAL;
         }
     }
 }

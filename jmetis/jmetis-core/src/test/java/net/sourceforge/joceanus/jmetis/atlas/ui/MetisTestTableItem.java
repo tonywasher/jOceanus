@@ -159,7 +159,7 @@ public class MetisTestTableItem
      */
     public MetisTestTableItem() {
         /* Create version control */
-        theControl = new MetisDataVersionControl(this);
+        theControl = FIELD_DEFS.newVersionControl(this);
         theControl.setIndexedId(NEXT_ID.getAndIncrement());
     }
 

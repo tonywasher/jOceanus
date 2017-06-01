@@ -33,17 +33,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 /**
  * Preferences for colours.
  */
-public final class MetisFieldColours {
-    /**
-     * Constructor.
-     */
-    private MetisFieldColours() {
-    }
-
+public interface MetisFieldColours {
     /**
      * colourPreferenceKeys.
      */
-    public enum MetisColorPreferenceKey implements MetisPreferenceKey {
+    enum MetisColorPreferenceKey implements MetisPreferenceKey {
         /**
          * Standard Colour.
          */
@@ -139,7 +133,7 @@ public final class MetisFieldColours {
     /**
      * MetisColorPreferences.
      */
-    public static class MetisColorPreferences
+    class MetisColorPreferences
             extends MetisPreferenceSet<MetisColorPreferenceKey> {
         /**
          * Constructor.

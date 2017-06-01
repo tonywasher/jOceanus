@@ -111,26 +111,27 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
     /**
      * Constructor.
      * @param pListType the list type
-     * @param pClass the class of the item
+     * @param pClazz the class of the item
      */
     protected MetisVersionedList(final MetisListType pListType,
-                                 final Class<T> pClass) {
+                                 final Class<T> pClazz) {
         /* Store parameters */
-        this(pListType, pClass, null);
+        this(pListType, pClazz, null);
     }
 
     /**
      * Constructor.
      * @param pListType the list type
-     * @param pClass the class of the item
+     * @param pClazz the class of the item
      * @param pFields the item fields
      */
     protected MetisVersionedList(final MetisListType pListType,
-                                 final Class<T> pClass,
+                                 final Class<T> pClazz,
                                  final MetisDataFieldSet pFields) {
         /* Store parameters */
         theListType = pListType;
-        theClass = pClass;
+        theClass = pClazz;
+        theItemFields = pFields;
 
         /* Determine whether this is a readOnly list */
         isReadOnly = !pFields.hasVersions();
@@ -138,17 +139,6 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
         /* Obtain the constructor and event manager */
         theConstructor = getConstructor();
         theEventManager = new TethysEventManager<>();
-
-        /* If we need to derive the fields */
-        // if (pFields == null) {
-        // /* Create a new instance and obtain fields */
-        // T myItem = newListItem(0);
-        // theItemFields = myItem.getDataFieldSet();
-
-        /* else record the passed fields */
-        // } else {
-        theItemFields = pFields;
-        // }
     }
 
     @Override
@@ -234,7 +224,7 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
         try {
             return isReadOnly
                               ? null
-                              : theClass.getConstructor(Integer.class);
+                              : theClass.getConstructor();
         } catch (NoSuchMethodException
                 | SecurityException e) {
             LOGGER.error("Unable to instantiate constructor", e);
@@ -437,7 +427,9 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
     protected T newListItem(final Integer pId) {
         /* Protect against exceptions */
         try {
-            return theConstructor.newInstance(pId);
+            T myItem = theConstructor.newInstance();
+            myItem.getVersionControl().setIndexedId(pId);
+            return myItem;
         } catch (InstantiationException
                 | IllegalAccessException
                 | IllegalArgumentException

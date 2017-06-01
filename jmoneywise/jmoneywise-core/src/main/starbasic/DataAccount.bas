@@ -37,7 +37,9 @@ Private Const colAcctPortfolio As Integer = 9
 Private Const colAcctMaturity As Integer = 10
 Private Const colAcctOpenBal As Integer = 11
 Private Const colAcctSymbol As Integer = 12
-Private Const colAcctAutoExp As Integer = 13
+Private Const colAcctRegion As Integer = 13
+Private Const colAcctCurrency As Integer = 14
+Private Const colAcctAutoExp As Integer = 15
 
 'Account Type Column locations
 Private Const colAcTpName As Integer = 0
@@ -84,6 +86,8 @@ Public Type AccountStats
 	strPortfolio As String
 	strAlias As String
 	strSymbol As String
+	strCurrency As String
+	strRegion As String
 	
 	'Account type
 	acctType As AccountType
@@ -115,6 +119,7 @@ Public Type AccountStats
 	idxExpense As Integer
 	idxUnits As Integer
 	idxPrice As Integer
+	idxCurrency As Integer
 	
 	'Counters
 	acctValue As Double
@@ -241,6 +246,7 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
 		    myOpenBal = myRow.getCellByPosition(colAcctOpenBal, 0).getValue()
 		    myAcct.acctValue = myOpenBal
 		    myAcct.acctOpenBalance = myOpenBal
+		    myAcct.strCurrency = myRow.getCellByPosition(colAcctCurrency, 0).getString()
 			myAutoExpense = myRow.getCellByPosition(colAcctAutoExp, 0).getString()
 			If (myAutoExpense <> "") Then
 				Set myAcct.catAutoExpense = getCategoryStats(Context, myAutoExpense)
@@ -250,8 +256,10 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
 		
 		'Handle asset accounts
 		If (myAcct.hasUnits) Then		
+		    myAcct.strCurrency = myRow.getCellByPosition(colAcctCurrency, 0).getString()
 	    	myAcct.strAlias = myRow.getCellByPosition(colAcctAlias, 0).getString()
 		    myAcct.strSymbol = myRow.getCellByPosition(colAcctSymbol, 0).getString()
+		    myAcct.strRegion = myRow.getCellByPosition(colAcctRegion, 0).getString()
 		End If 
 		
 		'Initialise indices
@@ -260,6 +268,7 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
 		myAcct.idxExpense = -1
 		myAcct.idxPrice = -1
 		myAcct.idxUnits = -1
+		myAcct.idxCurrency = -1
 		
 		'Reset the account
 		resetAccount(myAcct)

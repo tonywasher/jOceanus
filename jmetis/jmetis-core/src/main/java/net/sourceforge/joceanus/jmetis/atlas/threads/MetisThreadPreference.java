@@ -30,11 +30,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Thread Preferences.
  */
-public class MetisThreadPreference {
+public interface MetisThreadPreference {
     /**
      * ThreadPreferences.
      */
-    public enum MetisThreadPreferenceKey implements MetisPreferenceKey {
+    enum MetisThreadPreferenceKey implements MetisPreferenceKey {
         /**
          * Granularity.
          */
@@ -75,7 +75,7 @@ public class MetisThreadPreference {
     /**
      * MetisThreadPreferences.
      */
-    public static class MetisThreadPreferences
+    class MetisThreadPreferences
             extends MetisPreferenceSet<MetisThreadPreferenceKey> {
         /**
          * Default Reporting Steps.

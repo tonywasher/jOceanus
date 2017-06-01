@@ -23,5 +23,4 @@
 /**
  * Preference Set definitions.
  */
-package net.sourceforge.joceanus.jprometheus.preference;
-
+package net.sourceforge.joceanus.jprometheus.lethe.preference;

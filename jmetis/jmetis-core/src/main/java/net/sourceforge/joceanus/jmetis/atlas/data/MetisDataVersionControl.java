@@ -100,7 +100,7 @@ public class MetisDataVersionControl
      * Constructor.
      * @param pItem the owning item
      */
-    public MetisDataVersionControl(final MetisDataVersionedItem pItem) {
+    protected MetisDataVersionControl(final MetisDataVersionedItem pItem) {
         /* Allocate the history */
         theHistory = new MetisDataVersionHistory(pItem);
 

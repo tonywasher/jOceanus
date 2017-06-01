@@ -20,27 +20,21 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.preference;
+package net.sourceforge.joceanus.jprometheus.atlas.preference;
 
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceKey;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceSet;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Preferences for a database.
  */
-public final class PrometheusDatabase {
-    /**
-     * Constructor.
-     */
-    private PrometheusDatabase() {
-    }
-
+public interface PrometheusDatabase {
     /**
      * databasePreferenceKeys.
      */
-    public enum PrometheusDatabasePreferenceKey implements MetisPreferenceKey {
+    enum PrometheusDatabasePreferenceKey implements MetisPreferenceKey {
         /**
          * Database Driver.
          */
@@ -111,7 +105,7 @@ public final class PrometheusDatabase {
     /**
      * PrometheusDatabasePreferences.
      */
-    public static class PrometheusDatabasePreferences
+    class PrometheusDatabasePreferences
             extends MetisPreferenceSet<PrometheusDatabasePreferenceKey> {
         /**
          * Default Database batch size.

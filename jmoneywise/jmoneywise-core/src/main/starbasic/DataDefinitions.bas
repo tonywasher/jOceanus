@@ -31,10 +31,7 @@ Public Type FinanceState
 	'Account List
 	mapAccountTypes As Object
 	mapAccounts As Object
-	
-	'Tax List
-	mapTax As Object
-	
+		
 	'Cached accounts
 	mapCache As Object
 End Type
@@ -49,14 +46,12 @@ Private Function allocateState() As FinanceState
 	Set myState.mapCategories = allocateHashMap()
 	Set myState.mapAccountTypes = allocateHashMap()
 	Set myState.mapAccounts = allocateHashMap()
-	Set myState.mapTax = allocateHashMap()
 	Set myState.mapCache = allocateHashMap()
 	
 	'Load data
 	loadCategories(myState)
 	loadAccountTypes(myState)
 	loadAccounts(myState)
-	loadTax(myState)
 	
 	'Return the state
 	Set allocateState = myState

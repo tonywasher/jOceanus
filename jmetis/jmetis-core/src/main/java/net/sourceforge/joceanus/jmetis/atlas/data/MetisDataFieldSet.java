@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 
 /**
  * Metis Data FieldSet.
@@ -183,6 +184,24 @@ public class MetisDataFieldSet {
      */
     public Integer getNumValues() {
         return theNextValue;
+    }
+
+    /**
+     * Obtain a new version control.
+     * @param pItem the owning item
+     * @return the version control
+     */
+    public MetisDataVersionControl newVersionControl(final MetisDataVersionedItem pItem) {
+        return new MetisDataVersionControl(pItem);
+    }
+
+    /**
+     * Obtain a new version values.
+     * @param pItem the owning item
+     * @return the version values
+     */
+    protected MetisDataVersionValues newVersionValues(final MetisDataVersionedItem pItem) {
+        return new MetisDataVersionValues(pItem);
     }
 
     /**
@@ -526,7 +545,8 @@ public class MetisDataFieldSet {
         @Override
         public boolean hasNext() {
             /* Check for preceding entry */
-            if ((thePreceding != null) && (thePreceding.hasNext())) {
+            if ((thePreceding != null)
+                && (thePreceding.hasNext())) {
                 return true;
             }
 
@@ -537,7 +557,8 @@ public class MetisDataFieldSet {
         @Override
         public MetisDataField next() {
             /* Check for preceding entry */
-            if ((thePreceding != null) && (thePreceding.hasNext())) {
+            if ((thePreceding != null)
+                && (thePreceding.hasNext())) {
                 return thePreceding.next();
             }
 

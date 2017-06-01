@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition.
 import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition.ReferenceColumn;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition.StringColumn;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition.UnitsColumn;
-import net.sourceforge.joceanus.jprometheus.preference.PrometheusJDBCDriver;
+import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusJDBCDriver;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;

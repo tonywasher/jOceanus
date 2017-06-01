@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.preference;
+package net.sourceforge.joceanus.jprometheus.lethe.preference;
 
 import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;

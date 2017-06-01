@@ -33,17 +33,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Preferences for Git.
  * @author Tony Washer
  */
-public abstract class ThemisGitPreference {
-    /**
-     * Constructor.
-     */
-    private ThemisGitPreference() {
-    }
-
+public interface ThemisGitPreference {
     /**
      * gitPreferenceKeys.
      */
-    public enum ThemisGitPreferenceKey implements MetisPreferenceKey {
+    enum ThemisGitPreferenceKey implements MetisPreferenceKey {
         /**
          * GIT Repository Base.
          */
@@ -94,7 +88,7 @@ public abstract class ThemisGitPreference {
     /**
      * ThemisGitPreferences.
      */
-    public static class ThemisGitPreferences
+    class ThemisGitPreferences
             extends MetisPreferenceSet<ThemisGitPreferenceKey> {
         /**
          * Default value for SubversionRepository Base.

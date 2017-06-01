@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.preference;
+package net.sourceforge.joceanus.jprometheus.atlas.preference;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceKey;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceSet;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -34,17 +34,11 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 /**
  * Backup preferences.
  */
-public final class PrometheusBackup {
+public interface PrometheusBackup {
     /**
-     * Constructor.
+     * BackupPreferenceKeys.
      */
-    private PrometheusBackup() {
-    }
-
-    /**
-     * SecurityPreferenceKeys.
-     */
-    public enum PrometheusBackupPreferenceKey implements MetisPreferenceKey {
+    enum PrometheusBackupPreferenceKey implements MetisPreferenceKey {
         /**
          * BackUp Directory.
          */
@@ -108,9 +102,9 @@ public final class PrometheusBackup {
     }
 
     /**
-     * PrometheusSecurityPreferences.
+     * PrometheusBackupPreferences.
      */
-    public static class PrometheusBackupPreferences
+    class PrometheusBackupPreferences
             extends MetisPreferenceSet<PrometheusBackupPreferenceKey> {
         /**
          * Default Number of Active KeySets.

@@ -28,6 +28,7 @@ import javax.swing.JComponent;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisEncryptedValue;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisBaseList;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisEditList;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisVersionedList;
@@ -164,9 +165,9 @@ public class MetisSwingTableManager<R extends MetisDataVersionedItem>
         if (myValue == MetisDataFieldValue.SKIP) {
             myValue = null;
         }
-        // if (myValue instanceof MetisEncryptedField) {
-        // myValue = ((MetisEncryptedField<?>) myValue).getValue();
-        // }
+        if (myValue instanceof MetisEncryptedValue) {
+            myValue = ((MetisEncryptedValue) myValue).getValue();
+        }
         return pClass.cast(myValue);
     }
 

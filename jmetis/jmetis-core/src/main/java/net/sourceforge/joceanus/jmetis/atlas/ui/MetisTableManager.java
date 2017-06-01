@@ -77,9 +77,9 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
         myRegistrar.addEventListener(TethysUIEvent.CELLFORMAT, theEventManager::cascadeEvent);
 
         /* Set the changed, disabled and error tests */
-        theTable.setChanged(this::isFieldChanged);
-        theTable.setDisabled(this::isItemDisabled);
-        theTable.setError(this::isFieldInError);
+        theTable.setChanged(MetisTableManager::isFieldChanged);
+        theTable.setDisabled(MetisTableManager::isItemDisabled);
+        theTable.setError(MetisTableManager::isFieldInError);
     }
 
     @Override
@@ -362,8 +362,8 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
      * @param pItem the item
      * @return true/false
      */
-    private boolean isFieldInError(final MetisDataField pField,
-                                   final MetisDataVersionedItem pItem) {
+    private static boolean isFieldInError(final MetisDataField pField,
+                                          final MetisDataVersionedItem pItem) {
         if (pItem.isVersioned()) {
             MetisDataVersionControl myControl = pItem.getVersionControl();
             return myControl.getValidation().hasErrors(pField);
@@ -377,8 +377,8 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
      * @param pItem the item
      * @return true/false
      */
-    private boolean isFieldChanged(final MetisDataField pField,
-                                   final MetisDataVersionedItem pItem) {
+    private static boolean isFieldChanged(final MetisDataField pField,
+                                          final MetisDataVersionedItem pItem) {
         if (pItem.isVersioned()) {
             MetisDataVersionControl myControl = pItem.getVersionControl();
             return myControl.fieldChanged(pField).isDifferent();
@@ -391,7 +391,7 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
      * @param pItem the item
      * @return true/false
      */
-    private boolean isItemDisabled(final MetisDataVersionedItem pItem) {
+    private static boolean isItemDisabled(final MetisDataVersionedItem pItem) {
         if (pItem instanceof MetisDisableItem) {
             MetisDisableItem myItem = (MetisDisableItem) pItem;
             return myItem.isDisabled();

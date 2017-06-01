@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jprometheus.atlas.data;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 
 /**
  * Prometheus Data fieldSet.
@@ -47,6 +48,11 @@ public class PrometheusDataFieldSet
                                   final PrometheusDataFieldSet pParent) {
         /* Initialise underlying class */
         super(pClazz, pParent);
+    }
+
+    @Override
+    protected PrometheusDataVersionValues newVersionValues(final MetisDataVersionedItem pItem) {
+        return new PrometheusDataVersionValues(pItem);
     }
 
     /**

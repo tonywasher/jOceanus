@@ -31,17 +31,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Jira Preferences.
  * @author Tony Washer
  */
-public abstract class ThemisJiraPreference {
-    /**
-     * Constructor.
-     */
-    private ThemisJiraPreference() {
-    }
-
+public interface ThemisJiraPreference {
     /**
      * jiraPreferenceKeys.
      */
-    public enum ThemisJiraPreferenceKey implements MetisPreferenceKey {
+    enum ThemisJiraPreferenceKey implements MetisPreferenceKey {
         /**
          * JIRA Server.
          */
@@ -97,7 +91,7 @@ public abstract class ThemisJiraPreference {
     /**
      * ThemisJiraPreferences.
      */
-    public static class ThemisJiraPreferences
+    class ThemisJiraPreferences
             extends MetisPreferenceSet<ThemisJiraPreferenceKey> {
         /**
          * Constructor.

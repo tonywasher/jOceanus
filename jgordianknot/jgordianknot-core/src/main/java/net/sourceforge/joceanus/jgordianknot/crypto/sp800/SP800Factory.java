@@ -170,8 +170,15 @@ public final class SP800Factory {
         if (theStrongEntropy == null) {
             /* Protect against exceptions */
             try {
-                theStrongEntropy = SecureRandom.getInstanceStrong();
+                /* Handle differently for Windows and *nix */
+                boolean isWindows = System.getProperty("os.name").startsWith("Windows");
+                theStrongEntropy = isWindows
+                                             ? SecureRandom.getInstanceStrong()
+                                             : SecureRandom.getInstance("NativePRNGNonBlocking");
+
+                /* Seed the Entropy */
                 theStrongEntropy.nextBoolean();
+
             } catch (NoSuchAlgorithmException e) {
                 throw new GordianCryptoException("No strong random", e);
             }

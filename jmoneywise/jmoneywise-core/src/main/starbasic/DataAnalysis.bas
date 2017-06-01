@@ -38,7 +38,7 @@ Public Const catBenefit As String = "Taxes:DeemedBenefit"
 Public Const catCharityDonate As String = "Donations:Charity"
 Public Const catMktGrowth As String = "Market:Growth"
 Public Const catCapitalGain	As String = "Market:CapitalGain"
-Public Const catTaxableGain	As String = "Market:TaxableGain"
+Public Const catTaxableGain	As String = "Market:ChargeableGain"
 
 'Analyse data for the year
 Sub analyseYear(ByRef Context As FinanceState, _
@@ -81,7 +81,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
     myCharInfo = getCategoryStats(Context, catCharityDonate) 
 	
     'Build the new date
-    myFinalDate = DateSerial(2015, 04, 05)     
+    myFinalDate = DateSerial(2018, 04, 05)     
     
 	'Loop through the rows in the range    
     For Each myRow in myRange.getRows()
@@ -108,6 +108,13 @@ Sub analyseYear(ByRef Context As FinanceState, _
 			
     	'If we have a value in the Units cell
 		If ((myDebUnits <> 0) Or (myCredUnits <> 0)) Then
+			'If the debit account has units 
+			If (myDebInfo.hasUnits) Then
+				'Subtract from units
+				myDebInfo.acctUnits = myDebInfo.acctUnits - myDebUnits
+				myDebInfo.isActive = True()
+			End If
+
 			'If the credit account has units 
 			If (myCredInfo.hasUnits) Then
 				'Add to units
@@ -119,14 +126,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
 					'Set the debit units to zero
 					myDebInfo.acctUnits = 0
 				End If
-			End If
-			
-			'If the debit account has units 
-			If (myDebInfo.hasUnits) Then
-				'Subtract from units
-				myDebInfo.acctUnits = myDebInfo.acctUnits - myDebUnits
-				myDebInfo.isActive = True()
-			End If
+			End If			
         End If
         
     	'If we have a value in the Amount cell
@@ -235,7 +235,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
 						myReduction = myReduction / (myDebUnits + myDebInfo.acctUnits)
 						
 					'Else if this is a stocks rights that is waived
-					ElseIf (myCatInfo.isStockWaived) Then 
+					ElseIf (myCatInfo.isStockRights) Then 
 						'Calculate the existing value of the stock
 						myShares = getAssetValueForDate(Context, myDebInfo, myDate)
 						
@@ -353,7 +353,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
         If (myCatInfo.isStockTakeover) Then
 			'Access the Existing Cost and any cash element of takeover
 			myCost = myDebInfo.acctCost
-			myCash = myEvent.evtValue
+			myCash = myEvent.evtThirdPartyValue
 
 			'Access the value of shares used in the takeover on this date
 			myShares = getAssetValueForDate(Context, myCredInfo, myDate)						
@@ -437,7 +437,12 @@ Sub valuePricedAssets(ByRef Context As FinanceState, _
 			myAccount.acctPrice = myPrice
 			myAccount.acctValue = myAccount.acctPrice * myAccount.acctUnits
 			
- 			'If the value is nearly zero
+ 	        'If the asset is in a foreign currency
+	        if Not (myAccount.strCurrency = "") Then
+  	            myAccount.acctValue = getAdjustedValueForDateAndCurrency(Context, myAccount, myAccount.acctValue, myDate)
+        	End If
+	
+			'If the value is nearly zero
 			If ((myAccount.acctValue < 0.005) And (myAccount.acctValue > -0.005)) Then
 				'Set it to truly zero
 				myAccount.acctValue = 0
