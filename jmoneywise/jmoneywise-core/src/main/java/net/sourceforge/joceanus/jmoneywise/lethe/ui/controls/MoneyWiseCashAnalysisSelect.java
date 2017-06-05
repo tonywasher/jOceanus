@@ -179,15 +179,13 @@ public class MoneyWiseCashAnalysisSelect<N, I>
 
     @Override
     public CashFilter getFilter() {
-        CashBucket myCash = theState.getCash();
-        return myCash != null
-                              ? new CashFilter(myCash)
-                              : null;
+        return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
-        return (theCash != null) && !theCash.isEmpty();
+        return theCash != null
+               && !theCash.isEmpty();
     }
 
     /**
@@ -243,7 +241,8 @@ public class MoneyWiseCashAnalysisSelect<N, I>
         }
 
         /* If we do not have an active bucket and the list is non-empty */
-        if ((myCash == null) && (!theCash.isEmpty())) {
+        if (myCash == null
+            && !theCash.isEmpty()) {
             /* Check for an account in the same category */
             CashCategory myCategory = theState.getCategory();
             CashCategoryBucket myCatBucket = (myCategory == null)
@@ -251,9 +250,9 @@ public class MoneyWiseCashAnalysisSelect<N, I>
                                                                   : theCategories.findItemById(myCategory.getId());
 
             /* Determine the next cash */
-            myCash = (myCatBucket != null)
-                                           ? getFirstCash(myCategory)
-                                           : theCash.peekFirst();
+            myCash = myCatBucket != null
+                                         ? getFirstCash(myCategory)
+                                         : theCash.peekFirst();
         }
 
         /* Set the cash */
@@ -451,12 +450,14 @@ public class MoneyWiseCashAnalysisSelect<N, I>
         private CashBucket theCash;
 
         /**
+         * The active Filter.
+         */
+        private CashFilter theFilter;
+
+        /**
          * Constructor.
          */
         private CashState() {
-            /* Initialise the cash */
-            theCash = null;
-            theCategory = null;
         }
 
         /**
@@ -467,6 +468,7 @@ public class MoneyWiseCashAnalysisSelect<N, I>
             /* Initialise state */
             theCash = pState.getCash();
             theCategory = pState.getCategory();
+            theFilter = pState.getFilter();
         }
 
         /**
@@ -483,6 +485,14 @@ public class MoneyWiseCashAnalysisSelect<N, I>
          */
         private CashCategory getCategory() {
             return theCategory;
+        }
+
+        /**
+         * Obtain the Filter.
+         * @return the filter
+         */
+        private CashFilter getFilter() {
+            return theFilter;
         }
 
         /**
@@ -505,13 +515,28 @@ public class MoneyWiseCashAnalysisSelect<N, I>
          * @param pCash the Cash
          */
         private void setTheCash(final CashBucket pCash) {
+            /* Access category for account */
+            CashCategory myCategory = pCash == null
+                                                    ? null
+                                                    : pCash.getCategory();
+            setTheCash(myCategory, pCash);
+        }
+
+        /**
+         * Set the Cash.
+         * @param pCategory the category
+         * @param pCash the Cash
+         */
+        private void setTheCash(final CashCategory pCategory,
+                                final CashBucket pCash) {
             /* Store the cash */
             theCash = pCash;
+            theCategory = pCategory;
 
-            /* Access category for account */
-            theCategory = (theCash == null)
-                                            ? null
-                                            : theCash.getCategory();
+            /* Access filter */
+            theFilter = theCash != null
+                                        ? new CashFilter(theCash)
+                                        : null;
         }
 
         /**
@@ -522,8 +547,7 @@ public class MoneyWiseCashAnalysisSelect<N, I>
         private boolean setCategory(final CashCategory pCategory) {
             /* Adjust the selected category */
             if (!MetisDifference.isEqual(pCategory, theCategory)) {
-                theCategory = pCategory;
-                theCash = getFirstCash(theCategory);
+                setTheCash(pCategory, getFirstCash(pCategory));
                 return true;
             }
             return false;

@@ -257,7 +257,7 @@ public class TransactionInfo
         /* If this is a linkSet */
         if (myType.getInfoClass().isLinkSet()) {
             /* Compare names */
-            iDiff = getLinkName().compareTo(pThat.getLinkName());
+            iDiff = MetisDifference.compareObject(getLinkName(), pThat.getLinkName());
             if (iDiff != 0) {
                 return iDiff;
             }

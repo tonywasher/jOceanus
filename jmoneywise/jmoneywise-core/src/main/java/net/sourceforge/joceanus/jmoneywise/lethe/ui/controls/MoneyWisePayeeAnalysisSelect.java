@@ -141,15 +141,13 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
 
     @Override
     public PayeeFilter getFilter() {
-        PayeeBucket myPayee = theState.getPayee();
-        return myPayee != null
-                               ? new PayeeFilter(myPayee)
-                               : null;
+        return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
-        return (thePayees != null) && !thePayees.isEmpty();
+        return thePayees != null
+               && !thePayees.isEmpty();
     }
 
     /**
@@ -200,7 +198,8 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
         }
 
         /* If we do not have an active bucket and the list is non-empty */
-        if ((myPayee == null) && (!thePayees.isEmpty())) {
+        if (myPayee == null
+            && !thePayees.isEmpty()) {
             /* Use the first bucket */
             myPayee = thePayees.peekFirst();
         }
@@ -302,11 +301,14 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
         private PayeeBucket thePayee;
 
         /**
+         * The active filter.
+         */
+        private PayeeFilter theFilter;
+
+        /**
          * Constructor.
          */
         private PayeeState() {
-            /* Initialise the payee */
-            thePayee = null;
         }
 
         /**
@@ -316,6 +318,7 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
         private PayeeState(final PayeeState pState) {
             /* Initialise state */
             thePayee = pState.getPayee();
+            theFilter = pState.getFilter();
         }
 
         /**
@@ -324,6 +327,14 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
          */
         private PayeeBucket getPayee() {
             return thePayee;
+        }
+
+        /**
+         * Obtain the Filter.
+         * @return the Filter
+         */
+        private PayeeFilter getFilter() {
+            return theFilter;
         }
 
         /**
@@ -347,6 +358,9 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
         private void setThePayee(final PayeeBucket pPayee) {
             /* Store the payee */
             thePayee = pPayee;
+            theFilter = thePayee != null
+                                         ? new PayeeFilter(thePayee)
+                                         : null;
         }
 
         /**

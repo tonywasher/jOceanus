@@ -179,15 +179,13 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
 
     @Override
     public DepositFilter getFilter() {
-        DepositBucket myDeposit = theState.getDeposit();
-        return myDeposit != null
-                                 ? new DepositFilter(myDeposit)
-                                 : null;
+        return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
-        return (theDeposits != null) && !theDeposits.isEmpty();
+        return theDeposits != null
+               && !theDeposits.isEmpty();
     }
 
     /**
@@ -243,7 +241,8 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
         }
 
         /* If we do not have an active bucket and the list is non-empty */
-        if ((myDeposit == null) && (!theDeposits.isEmpty())) {
+        if (myDeposit == null
+            && !theDeposits.isEmpty()) {
             /* Check for an account in the same category */
             DepositCategory myCategory = theState.getCategory();
             DepositCategoryBucket myCatBucket = (myCategory == null)
@@ -251,9 +250,9 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
                                                                      : theCategories.findItemById(myCategory.getId());
 
             /* Determine the next deposit */
-            myDeposit = (myCatBucket != null)
-                                              ? getFirstDeposit(myCategory)
-                                              : theDeposits.peekFirst();
+            myDeposit = myCatBucket != null
+                                            ? getFirstDeposit(myCategory)
+                                            : theDeposits.peekFirst();
         }
 
         /* Set the account */
@@ -451,12 +450,14 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
         private DepositBucket theDeposit;
 
         /**
+         * The active Filter.
+         */
+        private DepositFilter theFilter;
+
+        /**
          * Constructor.
          */
         private DepositState() {
-            /* Initialise the deposit */
-            theDeposit = null;
-            theCategory = null;
         }
 
         /**
@@ -467,6 +468,7 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
             /* Initialise state */
             theDeposit = pState.getDeposit();
             theCategory = pState.getCategory();
+            theFilter = pState.getFilter();
         }
 
         /**
@@ -483,6 +485,14 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
          */
         private DepositCategory getCategory() {
             return theCategory;
+        }
+
+        /**
+         * Obtain the Filter.
+         * @return the filter
+         */
+        private DepositFilter getFilter() {
+            return theFilter;
         }
 
         /**
@@ -505,13 +515,28 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
          * @param pDeposit the Deposit
          */
         private void setTheDeposit(final DepositBucket pDeposit) {
+            /* Access category for account */
+            DepositCategory myCategory = pDeposit == null
+                                                          ? null
+                                                          : pDeposit.getCategory();
+            setTheDeposit(myCategory, pDeposit);
+        }
+
+        /**
+         * Set the Deposit.
+         * @param pCategory the category
+         * @param pDeposit the Deposit
+         */
+        private void setTheDeposit(final DepositCategory pCategory,
+                                   final DepositBucket pDeposit) {
             /* Store the deposit */
             theDeposit = pDeposit;
+            theCategory = pCategory;
 
-            /* Access category for account */
-            theCategory = (theDeposit == null)
-                                               ? null
-                                               : theDeposit.getCategory();
+            /* Access filter */
+            theFilter = theDeposit != null
+                                           ? new DepositFilter(theDeposit)
+                                           : null;
         }
 
         /**
@@ -522,8 +547,7 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
         private boolean setCategory(final DepositCategory pCategory) {
             /* Adjust the selected category */
             if (!MetisDifference.isEqual(pCategory, theCategory)) {
-                theCategory = pCategory;
-                theDeposit = getFirstDeposit(theCategory);
+                setTheDeposit(pCategory, getFirstDeposit(pCategory));
                 return true;
             }
             return false;

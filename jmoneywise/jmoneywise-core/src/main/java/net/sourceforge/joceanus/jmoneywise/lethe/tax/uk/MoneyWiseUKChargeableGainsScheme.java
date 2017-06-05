@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseChargeableGainSlic
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxDueBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxDueBucket.MoneyWiseTaxBandBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;

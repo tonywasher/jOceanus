@@ -179,15 +179,13 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
 
     @Override
     public LoanFilter getFilter() {
-        LoanBucket myLoan = theState.getLoan();
-        return myLoan != null
-                              ? new LoanFilter(myLoan)
-                              : null;
+        return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
-        return (theLoans != null) && !theLoans.isEmpty();
+        return theLoans != null
+               && !theLoans.isEmpty();
     }
 
     /**
@@ -243,7 +241,8 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
         }
 
         /* If we do not have an active bucket and the list is non-empty */
-        if ((myLoan == null) && (!theLoans.isEmpty())) {
+        if (myLoan == null
+            && !theLoans.isEmpty()) {
             /* Check for a loan in the same category */
             LoanCategory myCategory = theState.getCategory();
             LoanCategoryBucket myCatBucket = (myCategory == null)
@@ -251,9 +250,9 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
                                                                   : theCategories.findItemById(myCategory.getId());
 
             /* Determine the next loan */
-            myLoan = (myCatBucket != null)
-                                           ? getFirstLoan(myCategory)
-                                           : theLoans.peekFirst();
+            myLoan = myCatBucket != null
+                                         ? getFirstLoan(myCategory)
+                                         : theLoans.peekFirst();
         }
 
         /* Set the loan */
@@ -451,12 +450,14 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
         private LoanBucket theLoan;
 
         /**
+         * The active Filter.
+         */
+        private LoanFilter theFilter;
+
+        /**
          * Constructor.
          */
         private LoanState() {
-            /* Initialise the loan */
-            theLoan = null;
-            theCategory = null;
         }
 
         /**
@@ -467,6 +468,7 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
             /* Initialise state */
             theLoan = pState.getLoan();
             theCategory = pState.getCategory();
+            theFilter = pState.getFilter();
         }
 
         /**
@@ -483,6 +485,14 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
          */
         private LoanCategory getCategory() {
             return theCategory;
+        }
+
+        /**
+         * Obtain the Filter.
+         * @return the filter
+         */
+        private LoanFilter getFilter() {
+            return theFilter;
         }
 
         /**
@@ -505,13 +515,28 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
          * @param pLoan the Loan
          */
         private void setTheLoan(final LoanBucket pLoan) {
+            /* Access category for account */
+            LoanCategory myCategory = pLoan == null
+                                                    ? null
+                                                    : pLoan.getCategory();
+            setTheLoan(myCategory, pLoan);
+        }
+
+        /**
+         * Set the Loan.
+         * @param pCategory the category
+         * @param pLoan the Loan
+         */
+        private void setTheLoan(final LoanCategory pCategory,
+                                final LoanBucket pLoan) {
             /* Store the loan */
             theLoan = pLoan;
+            theCategory = pCategory;
 
-            /* Access category for account */
-            theCategory = (theLoan == null)
-                                            ? null
-                                            : theLoan.getCategory();
+            /* Access filter */
+            theFilter = theLoan != null
+                                        ? new LoanFilter(theLoan)
+                                        : null;
         }
 
         /**
@@ -522,8 +547,7 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
         private boolean setCategory(final LoanCategory pCategory) {
             /* Adjust the selected category */
             if (!MetisDifference.isEqual(pCategory, theCategory)) {
-                theCategory = pCategory;
-                theLoan = getFirstLoan(theCategory);
+                setTheLoan(pCategory, getFirstLoan(pCategory));
                 return true;
             }
             return false;

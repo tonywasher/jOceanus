@@ -173,19 +173,13 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
 
     @Override
     public TaxBasisFilter getFilter() {
-        TaxBasisAccountBucket myAccount = theState.getAccount();
-        if (myAccount != null) {
-            return new TaxBasisFilter(myAccount);
-        }
-        TaxBasisBucket myBasis = theState.getTaxBasis();
-        return myBasis != null
-                               ? new TaxBasisFilter(myBasis)
-                               : null;
+        return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
-        return (theTaxBases != null) && !theTaxBases.isEmpty();
+        return theTaxBases != null
+               && !theTaxBases.isEmpty();
     }
 
     /**
@@ -402,12 +396,14 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
         private TaxBasisAccountBucket theAccount;
 
         /**
+         * The active filter.
+         */
+        private TaxBasisFilter theFilter;
+
+        /**
          * Constructor.
          */
         private TaxBasisState() {
-            /* Initialise the basis */
-            theBasis = null;
-            theAccount = null;
         }
 
         /**
@@ -418,6 +414,7 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
             /* Initialise state */
             theBasis = pState.getTaxBasis();
             theAccount = pState.getAccount();
+            theFilter = pState.getFilter();
         }
 
         /**
@@ -434,6 +431,14 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
          */
         private TaxBasisAccountBucket getAccount() {
             return theAccount;
+        }
+
+        /**
+         * Obtain the Filter.
+         * @return the Filter
+         */
+        private TaxBasisFilter getFilter() {
+            return theFilter;
         }
 
         /**
@@ -459,11 +464,13 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
             if (pTaxBasis instanceof TaxBasisAccountBucket) {
                 theAccount = (TaxBasisAccountBucket) pTaxBasis;
                 theBasis = theAccount.getParent();
-            } else if (pTaxBasis == null) {
-                theAccount = null;
+                theFilter = new TaxBasisFilter(theAccount);
             } else {
-                theBasis = pTaxBasis;
                 theAccount = null;
+                theBasis = pTaxBasis;
+                theFilter = theBasis != null
+                                             ? new TaxBasisFilter(theBasis)
+                                             : null;
             }
         }
 

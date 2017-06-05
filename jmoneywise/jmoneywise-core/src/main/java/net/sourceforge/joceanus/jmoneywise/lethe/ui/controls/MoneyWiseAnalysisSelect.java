@@ -639,6 +639,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         /* Update filters */
         if (myPanel != null) {
             AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
+            myFilter.setCurrentAttribute(theState.getBucket());
             theState.setFilter(myFilter);
         }
 
@@ -812,7 +813,8 @@ public class MoneyWiseAnalysisSelect<N, I>
         AnalysisFilter<?, ?> myFilter = theState.getFilter();
         for (BucketAttribute myAttr : theState.getType().getValues()) {
             /* If the value is a counter */
-            if (myAttr.isCounter() && myFilter.isRelevantCounter(myAttr)) {
+            if (myAttr.isCounter()
+                && myFilter.isRelevantCounter(myAttr)) {
                 /* Create a new MenuItem and add it to the popUp */
                 theBucketMenu.addItem(myAttr);
             }
@@ -835,7 +837,8 @@ public class MoneyWiseAnalysisSelect<N, I>
         /* Loop through the sets */
         for (AnalysisColumnSet mySet : AnalysisColumnSet.values()) {
             /* if we have balances or this is not the balance set */
-            if (hasBalances || !mySet.isBalance()) {
+            if (hasBalances
+                || !mySet.isBalance()) {
                 /* Add the item */
                 theColumnMenu.addItem(mySet);
             }
@@ -912,7 +915,12 @@ public class MoneyWiseAnalysisSelect<N, I>
     private void applyFilter(final AnalysisFilter<?, ?> pFilter) {
         /* Ignore if we are refreshing */
         if (!isRefreshing) {
-            pFilter.setCurrentAttribute(theState.getBucket());
+            BucketAttribute myBucket = theState.getBucket();
+            if (pFilter.isRelevantCounter(myBucket)) {
+                pFilter.setCurrentAttribute(theState.getBucket());
+            } else {
+                theState.setBucket(pFilter.getCurrentAttribute());
+            }
             theState.setFilter(pFilter);
             theState.applyState();
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);

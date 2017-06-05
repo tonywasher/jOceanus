@@ -141,15 +141,13 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
 
     @Override
     public PortfolioCashFilter getFilter() {
-        PortfolioBucket myPortfolio = theState.getPortfolio();
-        return myPortfolio != null
-                                   ? new PortfolioCashFilter(myPortfolio)
-                                   : null;
+        return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
-        return (thePortfolios != null) && !thePortfolios.isEmpty();
+        return thePortfolios != null
+               && !thePortfolios.isEmpty();
     }
 
     /**
@@ -305,11 +303,14 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
         private PortfolioBucket thePortfolio;
 
         /**
+         * The active filter.
+         */
+        private PortfolioCashFilter theFilter;
+
+        /**
          * Constructor.
          */
         private PortfolioState() {
-            /* Initialise the portfolio */
-            thePortfolio = null;
         }
 
         /**
@@ -319,6 +320,7 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
         private PortfolioState(final PortfolioState pState) {
             /* Initialise state */
             thePortfolio = pState.getPortfolio();
+            theFilter = pState.getFilter();
         }
 
         /**
@@ -327,6 +329,14 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
          */
         private PortfolioBucket getPortfolio() {
             return thePortfolio;
+        }
+
+        /**
+         * Obtain the Filter.
+         * @return the filter
+         */
+        private PortfolioCashFilter getFilter() {
+            return theFilter;
         }
 
         /**
@@ -350,6 +360,9 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
         private void setThePortfolio(final PortfolioBucket pPortfolio) {
             /* Set the selected portfolio */
             thePortfolio = pPortfolio;
+            theFilter = thePortfolio != null
+                                             ? new PortfolioCashFilter(thePortfolio)
+                                             : null;
         }
 
         /**

@@ -169,15 +169,13 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
 
     @Override
     public SecurityFilter getFilter() {
-        SecurityBucket mySecurity = theState.getSecurity();
-        return mySecurity != null
-                                  ? new SecurityFilter(mySecurity)
-                                  : null;
+        return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
-        return (thePortfolios != null) && !thePortfolios.isEmpty();
+        return thePortfolios != null
+               && !thePortfolios.isEmpty();
     }
 
     /**
@@ -253,7 +251,7 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
         }
 
         /* Set the security */
-        theState.setSecurity(myPortfolio, mySecurity);
+        theState.setTheSecurity(myPortfolio, mySecurity);
         theState.applyState();
     }
 
@@ -272,7 +270,7 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
             mySecurity = getMatchingSecurityBucket(myPortfolio, mySecurity);
 
             /* Set the security */
-            theState.setSecurity(myPortfolio, mySecurity);
+            theState.setTheSecurity(myPortfolio, mySecurity);
             theState.applyState();
         }
     }
@@ -433,12 +431,14 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
         private SecurityBucket theSecurity;
 
         /**
+         * The filter.
+         */
+        private SecurityFilter theFilter;
+
+        /**
          * Constructor.
          */
         private SecurityState() {
-            /* Initialise the security */
-            theSecurity = null;
-            thePortfolio = null;
         }
 
         /**
@@ -449,6 +449,7 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
             /* Initialise state */
             theSecurity = pState.getSecurity();
             thePortfolio = pState.getPortfolio();
+            theFilter = pState.getFilter();
         }
 
         /**
@@ -468,6 +469,14 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
         }
 
         /**
+         * Obtain the Filter.
+         * @return the filter
+         */
+        private SecurityFilter getFilter() {
+            return theFilter;
+        }
+
+        /**
          * Set new Security.
          * @param pSecurity the Security
          * @return true/false did a change occur
@@ -476,7 +485,7 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
             /* Adjust the selected security */
             if (!MetisDifference.isEqual(pSecurity, theSecurity)) {
                 /* Store the security */
-                theSecurity = pSecurity;
+                setTheSecurity(thePortfolio, pSecurity);
                 return true;
             }
             return false;
@@ -487,11 +496,14 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
          * @param pPortfolio the Portfolio
          * @param pSecurity the Security
          */
-        private void setSecurity(final PortfolioBucket pPortfolio,
-                                 final SecurityBucket pSecurity) {
+        private void setTheSecurity(final PortfolioBucket pPortfolio,
+                                    final SecurityBucket pSecurity) {
             /* Store the portfolio and security */
             thePortfolio = pPortfolio;
             theSecurity = pSecurity;
+            theFilter = theSecurity != null
+                                            ? new SecurityFilter(theSecurity)
+                                            : null;
         }
 
         /**
@@ -502,8 +514,7 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
         private boolean setPortfolio(final PortfolioBucket pPortfolio) {
             /* Adjust the selected portfolio */
             if (!MetisDifference.isEqual(pPortfolio, thePortfolio)) {
-                thePortfolio = pPortfolio;
-                theSecurity = getFirstSecurity(thePortfolio);
+                setTheSecurity(pPortfolio, getFirstSecurity(pPortfolio));
                 return true;
             }
             return false;

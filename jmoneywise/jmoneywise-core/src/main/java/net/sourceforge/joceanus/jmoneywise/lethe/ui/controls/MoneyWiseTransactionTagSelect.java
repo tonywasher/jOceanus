@@ -139,15 +139,13 @@ public class MoneyWiseTransactionTagSelect<N, I>
 
     @Override
     public TagFilter getFilter() {
-        TransactionTagBucket myTag = theState.getTag();
-        return myTag != null
-                             ? new TagFilter(myTag)
-                             : null;
+        return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
-        return (theTags != null) && !theTags.isEmpty();
+        return theTags != null
+               && !theTags.isEmpty();
     }
 
     /**
@@ -303,11 +301,14 @@ public class MoneyWiseTransactionTagSelect<N, I>
         private TransactionTagBucket theTransTag;
 
         /**
+         * The active filter.
+         */
+        private TagFilter theFilter;
+
+        /**
          * Constructor.
          */
         private TagState() {
-            /* Initialise the tag */
-            theTransTag = null;
         }
 
         /**
@@ -317,6 +318,7 @@ public class MoneyWiseTransactionTagSelect<N, I>
         private TagState(final TagState pState) {
             /* Initialise state */
             theTransTag = pState.getTag();
+            theFilter = pState.getFilter();
         }
 
         /**
@@ -325,6 +327,14 @@ public class MoneyWiseTransactionTagSelect<N, I>
          */
         private TransactionTagBucket getTag() {
             return theTransTag;
+        }
+
+        /**
+         * Obtain the Filter.
+         * @return the Filter
+         */
+        private TagFilter getFilter() {
+            return theFilter;
         }
 
         /**
@@ -349,6 +359,9 @@ public class MoneyWiseTransactionTagSelect<N, I>
         private void setTheTag(final TransactionTagBucket pTag) {
             /* Store the tag */
             theTransTag = pTag;
+            theFilter = theTransTag != null
+                                            ? new TagFilter(theTransTag)
+                                            : null;
         }
 
         /**

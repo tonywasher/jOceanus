@@ -145,15 +145,13 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
 
     @Override
     public TransactionCategoryFilter getFilter() {
-        TransactionCategoryBucket myCategory = theState.getEventCategory();
-        return myCategory != null
-                                  ? new TransactionCategoryFilter(myCategory)
-                                  : null;
+        return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
-        return (theCategories != null) && !theCategories.isEmpty();
+        return theCategories != null
+               && !theCategories.isEmpty();
     }
 
     /**
@@ -204,7 +202,8 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
         }
 
         /* If we do not have an active bucket and the list is non-empty */
-        if ((myCategory == null) && (!theCategories.isEmpty())) {
+        if (myCategory == null
+            && !theCategories.isEmpty()) {
             /* Use the first non-parent bucket */
             myCategory = getFirstCategory();
         }
@@ -348,11 +347,14 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
         private TransactionCategoryBucket theCategory;
 
         /**
+         * The active Filter.
+         */
+        private TransactionCategoryFilter theFilter;
+
+        /**
          * Constructor.
          */
         private EventState() {
-            /* Initialise the category */
-            theCategory = null;
         }
 
         /**
@@ -362,6 +364,7 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
         private EventState(final EventState pState) {
             /* Initialise state */
             theCategory = pState.getEventCategory();
+            theFilter = pState.getFilter();
         }
 
         /**
@@ -370,6 +373,14 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
          */
         private TransactionCategoryBucket getEventCategory() {
             return theCategory;
+        }
+
+        /**
+         * Obtain the EventCategory Filter.
+         * @return the EventCategory
+         */
+        private TransactionCategoryFilter getFilter() {
+            return theFilter;
         }
 
         /**
@@ -393,6 +404,9 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
         private void setTheCategory(final TransactionCategoryBucket pCategory) {
             /* Store the selected category */
             theCategory = pCategory;
+            theFilter = theCategory != null
+                                            ? new TransactionCategoryFilter(theCategory)
+                                            : null;
         }
 
         /**

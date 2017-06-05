@@ -674,7 +674,10 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         public TransactionCategoryFilter(final TransactionCategoryBucket pCategory) {
             /* Store parameter */
             super(pCategory, TransactionAttribute.class);
-            setCurrentAttribute(getAnalysisType().getDefaultValue());
+            boolean isExpense = pCategory.getTransactionCategory().getCategoryTypeClass().isExpense();
+            setCurrentAttribute(isExpense
+                                          ? TransactionAttribute.EXPENSE
+                                          : TransactionAttribute.INCOME);
         }
 
         @Override
@@ -755,7 +758,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     }
 
     /**
-     * --== * TransactionTag filter class.
+     * TransactionTag filter class.
      */
     public static class TagFilter
             extends AnalysisFilter<TransactionTagBucket, AccountAttribute> {
