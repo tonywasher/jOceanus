@@ -94,6 +94,11 @@ public class MoneyWiseReportMarketGrowth
     private static final String TEXT_GROWTH = AnalysisResource.SECURITYATTR_MARKETGROWTH.getValue();
 
     /**
+     * The CurrenctFluctuation text.
+     */
+    private static final String TEXT_CURRENCY = AnalysisResource.ACCOUNTATTR_CURRENCYFLUCT.getValue();
+
+    /**
      * The Profit text.
      */
     private static final String TEXT_PROFIT = AnalysisResource.SECURITYATTR_PROFIT.getValue();
@@ -109,6 +114,11 @@ public class MoneyWiseReportMarketGrowth
     private final MetisDataFormatter theFormatter;
 
     /**
+     * Do we have foreign assets?
+     */
+    private boolean hasForeign;
+
+    /**
      * Constructor.
      * @param pManager the Report Manager
      */
@@ -122,6 +132,7 @@ public class MoneyWiseReportMarketGrowth
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
         PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
+        hasForeign = myPortfolios.haveForeignCurrency();
 
         /* Access the totals */
         PortfolioBucket myTotals = myPortfolios.getTotals();
@@ -141,6 +152,9 @@ public class MoneyWiseReportMarketGrowth
         theBuilder.makeTitleCell(myTable, TEXT_ADJUST);
         theBuilder.makeTitleCell(myTable, TEXT_GAINS);
         theBuilder.makeTitleCell(myTable, TEXT_GROWTH);
+        if (hasForeign) {
+            theBuilder.makeTitleCell(myTable, TEXT_CURRENCY);
+        }
         theBuilder.makeTitleCell(myTable, TEXT_PROFIT);
 
         /* Loop through the Portfolio Buckets */
@@ -165,6 +179,9 @@ public class MoneyWiseReportMarketGrowth
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH));
+                if (hasForeign) {
+                    theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT));
+                }
                 theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT));
                 checkPortfolioGrowth(myBucket);
 
@@ -185,6 +202,9 @@ public class MoneyWiseReportMarketGrowth
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH));
+        if (hasForeign) {
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT));
+        }
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT));
         checkPortfolioGrowth(myTotals);
 
@@ -240,6 +260,9 @@ public class MoneyWiseReportMarketGrowth
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH));
+            if (hasForeign) {
+                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT));
+            }
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT));
             checkSecurityGrowth(myBucket);
 
@@ -271,6 +294,7 @@ public class MoneyWiseReportMarketGrowth
         /* Check market growth */
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
         myCalcGrowth.subtractAmount(myAdjust);
+        myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT));
         TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for portfolio {} of {}", pBucket.getName(), myCalcGrowth);
@@ -298,6 +322,7 @@ public class MoneyWiseReportMarketGrowth
         /* Check market growth */
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
         myCalcGrowth.subtractAmount(myAdjust);
+        myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT));
         TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);

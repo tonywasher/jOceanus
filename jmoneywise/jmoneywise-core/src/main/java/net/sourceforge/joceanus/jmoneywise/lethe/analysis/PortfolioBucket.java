@@ -444,6 +444,7 @@ public final class PortfolioBucket
 
         /* Create market fields for the portfolio */
         theValues.setValue(SecurityAttribute.MARKETGROWTH, new TethysMoney(myCurrency));
+        theValues.setValue(SecurityAttribute.CURRENCYFLUCT, new TethysMoney(myCurrency));
         theValues.setValue(SecurityAttribute.MARKETPROFIT, new TethysMoney(myCurrency));
     }
 
@@ -610,6 +611,13 @@ public final class PortfolioBucket
         /* Add market values */
         myValue = pTotals.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         mySrcValue = pSource.getMoneyValue(SecurityAttribute.MARKETGROWTH);
+        if (mySrcValue != null) {
+            myValue.addAmount(mySrcValue);
+        }
+
+        /* Add currency values */
+        myValue = pTotals.getMoneyValue(SecurityAttribute.CURRENCYFLUCT);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.CURRENCYFLUCT);
         if (mySrcValue != null) {
             myValue.addAmount(mySrcValue);
         }

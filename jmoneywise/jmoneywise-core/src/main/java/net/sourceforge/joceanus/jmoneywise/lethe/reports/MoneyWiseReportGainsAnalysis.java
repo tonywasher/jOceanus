@@ -173,6 +173,9 @@ public class MoneyWiseReportGainsAnalysis {
             case DIVIDEND:
                 formatDividend(pTrans, pValues);
                 break;
+            case PORTFOLIOXFER:
+                formatPortfolioXfer(pTrans, pValues);
+                break;
             default:
                 break;
         }
@@ -565,9 +568,6 @@ public class MoneyWiseReportGainsAnalysis {
             formatValue(SecurityAttribute.ALLOWEDCOST, myAllowedCost);
             formatSubtraction(SecurityAttribute.RESIDUALCOST, myCost, myOriginalCost, myAllowedCost);
         }
-        if (myDeltaUnits.isNonZero()) {
-            formatSubtraction(SecurityAttribute.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
-        }
 
         /* Record the gains allocation */
         if (myGain != null) {
@@ -727,11 +727,9 @@ public class MoneyWiseReportGainsAnalysis {
         TethysMoney myCash = pValues.getMoneyValue(SecurityAttribute.RETURNEDCASH);
         if (myCash != null) {
             formatStockAndCashTakeOver(pTrans, pValues, myCash);
-            return;
-        }
 
-        /* Split workings for credit and debit */
-        if (isDebit(pTrans)) {
+            /* Split workings for credit and debit */
+        } else if (isDebit(pTrans)) {
             /* Record the transfer of cost for simple replacement takeOver */
             TethysMoney myCostXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
             formatValue(SecurityAttribute.XFERREDCOST, myCostXfer);
@@ -817,9 +815,42 @@ public class MoneyWiseReportGainsAnalysis {
         TethysMoney myResidualCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
         TethysRatio myXchangeRate = pValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
 
+        /* Detail the new units and cost */
+        SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
+        TethysUnits myNewUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
+        TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
+        formatAddition(SecurityAttribute.UNITS, myNewUnits, myOriginalUnits, myUnits);
+
         /* Record the transfer of value and cost */
         formatValuation(SecurityAttribute.XFERREDVALUE, myValueXfer, myUnits, myPrice, myXchangeRate);
         formatValue(SecurityAttribute.XFERREDCOST, myCostXfer);
         formatValue(SecurityAttribute.RESIDUALCOST, myResidualCost);
+    }
+
+    /**
+     * Format a Stock DeMerger.
+     * @param pTrans the transaction
+     * @param pValues the values for the transaction
+     */
+    private void formatPortfolioXfer(final Transaction pTrans,
+                                     final SecurityValues pValues) {
+        /* Format the basic transaction */
+        formatBasicTransaction(pTrans);
+
+        /* Determine the direction of transfer */
+        TethysMoney myCostXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
+        formatValue(SecurityAttribute.XFERREDCOST, myCostXfer);
+
+        TethysUnits myUnits = theBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
+        if (myUnits.isPositive()) {
+            /* Detail the new units and cost */
+            SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
+            TethysUnits myNewUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
+            TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
+            formatAddition(SecurityAttribute.UNITS, myNewUnits, myOriginalUnits, myUnits);
+            TethysMoney myCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+            TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+            formatAddition(SecurityAttribute.RESIDUALCOST, myCost, myOriginalCost, myCostXfer);
+        }
     }
 }

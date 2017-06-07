@@ -775,6 +775,7 @@ public class TransactionAnalyser
         SecurityValues myTargetValues = pTarget.registerTransaction(theHelper);
         myTargetValues.setValue(SecurityAttribute.PRICE, myPrice);
         myTargetValues.setValue(SecurityAttribute.VALUATION, myStockValue);
+        myTargetValues.setValue(SecurityAttribute.XFERREDCOST, myCost);
         if (isForeign) {
             myTargetValues.setValue(SecurityAttribute.FOREIGNVALUE, myForeignValue);
             myTargetValues.setValue(SecurityAttribute.EXCHANGERATE, myRate);
@@ -788,12 +789,14 @@ public class TransactionAnalyser
         myCost = new TethysMoney(myCost);
         myCost.negate();
         pSource.adjustCounter(SecurityAttribute.RESIDUALCOST, myCost);
+        myCost.negate();
         myInvested = new TethysMoney(myInvested);
         myInvested.negate();
         pSource.adjustCounter(SecurityAttribute.INVESTED, myInvested);
         mySourceValues = pSource.registerTransaction(theHelper);
         mySourceValues.setValue(SecurityAttribute.PRICE, myPrice);
         mySourceValues.setValue(SecurityAttribute.VALUATION, myStockValue);
+        mySourceValues.setValue(SecurityAttribute.XFERREDCOST, myCost);
         if (isForeign) {
             mySourceValues.setValue(SecurityAttribute.FOREIGNVALUE, myForeignValue);
             mySourceValues.setValue(SecurityAttribute.EXCHANGERATE, myRate);
@@ -1551,6 +1554,7 @@ public class TransactionAnalyser
         TethysMoney myDeltaCost = new TethysMoney(myDebitCost);
         myDeltaCost.negate();
         myDebitAsset.adjustCounter(SecurityAttribute.RESIDUALCOST, myDeltaCost);
+        myDeltaCost.negate();
 
         /* Drive debit units down to zero */
         myDebitUnits = new TethysUnits(myDebitUnits);
