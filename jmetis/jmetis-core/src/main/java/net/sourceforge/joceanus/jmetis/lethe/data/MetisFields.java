@@ -93,6 +93,11 @@ public final class MetisFields {
     private boolean hasVersions;
 
     /**
+     * has indices?
+     */
+    private boolean hasIndices;
+
+    /**
      * Constructor.
      * @param pName the name of the item
      */
@@ -124,6 +129,7 @@ public final class MetisFields {
             isEncrypted = theParent.isEncrypted();
             hasComparisons = theParent.hasComparisons();
             hasVersions = theParent.hasVersions();
+            hasIndices = theParent.hasIndices();
         } else {
             theNextValue = Integer.valueOf(0);
         }
@@ -184,6 +190,14 @@ public final class MetisFields {
     }
 
     /**
+     * Does the item have indexed values?
+     * @return true/false
+     */
+    public boolean hasIndices() {
+        return hasIndices;
+    }
+
+    /**
      * Obtain the number of values.
      * @return the number of values
      */
@@ -205,7 +219,7 @@ public final class MetisFields {
      * @return the field
      */
     public MetisField declareLocalField(final String pName) {
-        return declareDataField(pName);
+        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.DERIVED, MetisFieldStorage.LOCAL);
     }
 
     /**
@@ -364,6 +378,11 @@ public final class MetisFields {
                                                      final Integer pMaxLength,
                                                      final MetisFieldEquality pEquality,
                                                      final MetisFieldStorage pStorage) {
+        /* Reject if we have indices */
+        if (hasIndices) {
+            throw new IllegalStateException("Already indexed");
+        }
+
         /* Check the name */
         checkUniqueName(pName);
 
@@ -394,11 +413,19 @@ public final class MetisFields {
      * @return the field
      */
     private MetisField declareDataField(final String pName) {
+        /* Reject if we have versions */
+        if (hasVersions) {
+            throw new IllegalStateException("Already versioned");
+        }
+
         /* Create the field */
         MetisField myField = new MetisField(this, pName);
 
         /* Add it to the list */
         theFields.add(myField);
+
+        /* Note that we have indices */
+        hasIndices = true;
 
         /* Return the index */
         return myField;
@@ -605,7 +632,19 @@ public final class MetisFields {
          */
         protected MetisField(final MetisFields pAnchor,
                              final String pName) {
-            this(pAnchor, pName, MetisFieldEquality.DERIVED, MetisFieldStorage.LOCAL);
+            /* Store parameters */
+            theAnchor = pAnchor;
+            theName = pName;
+            theDataType = MetisDataType.OBJECT;
+            theMaxLength = FIELD_NO_MAXLENGTH;
+            theEquality = MetisFieldEquality.DERIVED;
+            theStorage = MetisFieldStorage.LOCAL;
+
+            /* Check Validity */
+            checkValidity();
+
+            /* Allocate index */
+            theIndex = theAnchor.getNextValue();
         }
 
         /**

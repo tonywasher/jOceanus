@@ -163,11 +163,8 @@ public class MetisProfile
             return MetisDataFieldValue.UNKNOWN;
         }
 
-        /* Access index of field and rebase to list */
-        int iIndex = pField.getIndex();
-        iIndex -= FIELD_ELAPSED.getIndex() + 1;
-
         /* return the value */
+        int iIndex = pField.getIndex();
         return ((iIndex < 0) || (iIndex >= theSubTasks.size()))
                                                                 ? MetisDataFieldValue.UNKNOWN
                                                                 : theSubTasks.get(iIndex);

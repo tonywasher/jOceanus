@@ -117,7 +117,19 @@ public class MetisDataField {
      */
     protected MetisDataField(final MetisDataFieldSet pAnchor,
                              final String pName) {
-        this(pAnchor, pName, MetisFieldEquality.DERIVED, MetisFieldStorage.LOCAL);
+        /* Store parameters */
+        theAnchor = pAnchor;
+        theName = pName;
+        theDataType = MetisDataType.OBJECT;
+        theMaxLength = MetisDataFieldSet.FIELD_NO_MAXLENGTH;
+        theEquality = MetisFieldEquality.DERIVED;
+        theStorage = MetisFieldStorage.LOCAL;
+
+        /* Check Validity */
+        checkValidity();
+
+        /* Allocate index */
+        theIndex = theAnchor.getNextValue();
     }
 
     /**

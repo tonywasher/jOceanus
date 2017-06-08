@@ -105,6 +105,11 @@ public class MetisDataFieldSet {
     private boolean hasVersions;
 
     /**
+     * has indices?
+     */
+    private boolean hasIndices;
+
+    /**
      * Constructor.
      * @param pClazz the class of the item
      */
@@ -127,6 +132,7 @@ public class MetisDataFieldSet {
             theNextValue = theParent.getNumValues();
             hasComparisons = theParent.hasComparisons();
             hasVersions = theParent.hasVersions();
+            hasIndices = theParent.hasIndices();
         } else {
             theNextValue = Integer.valueOf(0);
         }
@@ -179,6 +185,14 @@ public class MetisDataFieldSet {
     }
 
     /**
+     * Does the item have indexed values?
+     * @return true/false
+     */
+    public boolean hasIndices() {
+        return hasIndices;
+    }
+
+    /**
      * Obtain the number of values.
      * @return the number of values
      */
@@ -218,7 +232,7 @@ public class MetisDataFieldSet {
      * @return the field
      */
     public MetisDataField declareLocalField(final String pName) {
-        return declareDataField(pName);
+        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.DERIVED, MetisFieldStorage.LOCAL);
     }
 
     /**
@@ -329,11 +343,19 @@ public class MetisDataFieldSet {
                                                          final Integer pMaxLength,
                                                          final MetisFieldEquality pEquality,
                                                          final MetisFieldStorage pStorage) {
+        /* Reject if we have indices */
+        if (hasIndices) {
+            throw new IllegalStateException("Already indexed");
+        }
+
         /* Check the name */
         checkUniqueName(pName);
 
         /* Create the field */
         MetisDataField myField = new MetisDataField(this, pName, pDataType, pMaxLength, pEquality, pStorage);
+
+        /* Note that we have indices */
+        hasIndices = true;
 
         /* Register the field */
         registerField(myField);
@@ -366,6 +388,11 @@ public class MetisDataFieldSet {
      * @return the field
      */
     private MetisDataField declareDataField(final String pName) {
+        /* Reject if we have versions */
+        if (hasVersions) {
+            throw new IllegalStateException("Already versioned");
+        }
+
         /* Create the field */
         MetisDataField myField = new MetisDataField(this, pName);
 

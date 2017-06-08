@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
@@ -167,11 +167,8 @@ public class MetisProfile
             return MetisFieldValue.UNKNOWN;
         }
 
-        /* Access index of field and rebase to list */
-        int iIndex = pField.getIndex();
-        iIndex -= FIELD_ELAPSED.getIndex() + 1;
-
         /* return the value */
+        int iIndex = pField.getIndex();
         return ((iIndex < 0) || (iIndex >= theSubTasks.size()))
                                                                 ? MetisFieldValue.UNKNOWN
                                                                 : theSubTasks.get(iIndex);
