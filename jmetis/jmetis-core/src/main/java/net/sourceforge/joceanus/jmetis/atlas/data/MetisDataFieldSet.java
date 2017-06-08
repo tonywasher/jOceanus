@@ -354,9 +354,6 @@ public class MetisDataFieldSet {
         /* Create the field */
         MetisDataField myField = new MetisDataField(this, pName, pDataType, pMaxLength, pEquality, pStorage);
 
-        /* Note that we have indices */
-        hasIndices = true;
-
         /* Register the field */
         registerField(myField);
 
@@ -398,6 +395,9 @@ public class MetisDataFieldSet {
 
         /* Add it to the list */
         theFields.add(myField);
+
+        /* Note that we have indices */
+        hasIndices = true;
 
         /* Return the index */
         return myField;
