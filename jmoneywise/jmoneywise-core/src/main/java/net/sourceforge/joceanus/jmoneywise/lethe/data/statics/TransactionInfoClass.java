@@ -48,89 +48,64 @@ public enum TransactionInfoClass implements DataInfoClass {
     DEEMEDBENEFIT(3, 2, MetisDataType.MONEY),
 
     /**
-     * Pension.
-     */
-    PENSION(4, 3, MetisDataType.MONEY),
-
-    /**
      * QualifyingYears.
      */
-    QUALIFYYEARS(5, 4, MetisDataType.INTEGER),
-
-    /**
-     * CreditDate.
-     */
-    CREDITDATE(6, 5, MetisDataType.DATE),
+    QUALIFYYEARS(4, 3, MetisDataType.INTEGER),
 
     /**
      * Credit Units.
      */
-    CREDITUNITS(7, 6, MetisDataType.UNITS),
+    CREDITUNITS(5, 4, MetisDataType.UNITS),
 
     /**
      * Debit Units.
      */
-    DEBITUNITS(8, 7, MetisDataType.UNITS),
+    DEBITUNITS(6, 5, MetisDataType.UNITS),
 
     /**
      * Dilution.
      */
-    DILUTION(9, 8, MetisDataType.DILUTION),
+    DILUTION(7, 6, MetisDataType.DILUTION),
 
     /**
      * Reference.
      */
-    REFERENCE(10, 9, MetisDataType.STRING),
+    REFERENCE(8, 7, MetisDataType.STRING),
 
     /**
-     * Charity Donation.
+     * Withheld.
      */
-    CHARITYDONATION(11, 10, MetisDataType.MONEY),
+    WITHHELD(9, 8, MetisDataType.MONEY),
 
     /**
      * Partner Amount.
      */
-    PARTNERAMOUNT(12, 11, MetisDataType.MONEY),
+    PARTNERAMOUNT(10, 9, MetisDataType.MONEY),
 
     /**
      * ThirdParty Amount.
      */
-    THIRDPARTYAMOUNT(13, 12, MetisDataType.MONEY),
+    THIRDPARTYAMOUNT(11, 10, MetisDataType.MONEY),
 
     /**
      * ThirdParty.
      */
-    THIRDPARTY(14, 13, MetisDataType.LINK),
+    THIRDPARTY(12, 11, MetisDataType.LINK),
 
     /**
      * Comments.
      */
-    COMMENTS(15, 14, MetisDataType.STRING),
-
-    /**
-     * Price.
-     */
-    PRICE(16, 15, MetisDataType.PRICE),
-
-    /**
-     * Comments.
-     */
-    COMMISSION(17, 16, MetisDataType.MONEY),
+    COMMENTS(13, 12, MetisDataType.STRING),
 
     /**
      * Grant.
      */
-    OPTIONSGRANT(18, 17, MetisDataType.LINK),
+    OPTIONSGRANT(14, 13, MetisDataType.LINK),
 
     /**
      * TransactionTag.
      */
-    TRANSTAG(19, 18, MetisDataType.LINKSET),
-
-    /**
-     * ExchangeRate.
-     */
-    XCHANGERATE(20, 19, MetisDataType.RATIO);
+    TRANSTAG(15, 14, MetisDataType.LINKSET);
 
     /**
      * The String name.

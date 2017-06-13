@@ -224,9 +224,9 @@ public class TransactionTable
     private static final String TITLE_BENEFIT = TransactionInfoClass.DEEMEDBENEFIT.toString();
 
     /**
-     * CharityDonation Column Title.
+     * Withheld Column Title.
      */
-    private static final String TITLE_DONATION = TransactionInfoClass.CHARITYDONATION.toString();
+    private static final String TITLE_WITHHELD = TransactionInfoClass.WITHHELD.toString();
 
     /**
      * Action Column Title.
@@ -917,9 +917,9 @@ public class TransactionTable
         private static final int COLUMN_BENEFIT = 20;
 
         /**
-         * CharityDonation column id.
+         * Withheld column id.
          */
-        private static final int COLUMN_DONATION = 21;
+        private static final int COLUMN_WITHHELD = 21;
 
         /**
          * Action column id.
@@ -1102,9 +1102,9 @@ public class TransactionTable
         private final JDataTableColumn theBenefitColumn;
 
         /**
-         * Donation column.
+         * Withheld column.
          */
-        private final JDataTableColumn theDonationColumn;
+        private final JDataTableColumn theWithheldColumn;
 
         /**
          * Action column.
@@ -1188,8 +1188,8 @@ public class TransactionTable
             declareColumn(theNatInsColumn);
             theBenefitColumn = new JDataTableColumn(COLUMN_BENEFIT, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
             declareColumn(theBenefitColumn);
-            theDonationColumn = new JDataTableColumn(COLUMN_DONATION, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
-            declareColumn(theDonationColumn);
+            theWithheldColumn = new JDataTableColumn(COLUMN_WITHHELD, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            declareColumn(theWithheldColumn);
             theActionColumn = new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON << 1, theActionIconRenderer, theActionIconEditor);
             declareColumn(theActionColumn);
 
@@ -1260,8 +1260,8 @@ public class TransactionTable
                     return TITLE_NATINS;
                 case COLUMN_BENEFIT:
                     return TITLE_BENEFIT;
-                case COLUMN_DONATION:
-                    return TITLE_DONATION;
+                case COLUMN_WITHHELD:
+                    return TITLE_WITHHELD;
                 case COLUMN_ACTION:
                     return TITLE_ACTION;
                 default:
@@ -1315,8 +1315,8 @@ public class TransactionTable
                     return pTrans.getNatInsurance();
                 case COLUMN_BENEFIT:
                     return pTrans.getDeemedBenefit();
-                case COLUMN_DONATION:
-                    return pTrans.getCharityDonation();
+                case COLUMN_WITHHELD:
+                    return pTrans.getWithheld();
                 case COLUMN_DEBITED:
                     return theFilter.getDebitForTransaction(pTrans);
                 case COLUMN_CREDITED:
@@ -1419,8 +1419,8 @@ public class TransactionTable
                 case COLUMN_BENEFIT:
                     pItem.setBenefit((TethysMoney) pValue);
                     break;
-                case COLUMN_DONATION:
-                    pItem.setDonation((TethysMoney) pValue);
+                case COLUMN_WITHHELD:
+                    pItem.setWithheld((TethysMoney) pValue);
                     break;
                 case COLUMN_RECONCILED:
                     pItem.setReconciled((Boolean) pValue);
@@ -1467,8 +1467,8 @@ public class TransactionTable
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.NATINSURANCE);
                 case COLUMN_BENEFIT:
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DEEMEDBENEFIT);
-                case COLUMN_DONATION:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.CHARITYDONATION);
+                case COLUMN_WITHHELD:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.WITHHELD);
                 case COLUMN_CREDUNITS:
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.CREDITUNITS);
                 case COLUMN_DEBUNITS:
@@ -1526,8 +1526,8 @@ public class TransactionTable
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE);
                 case COLUMN_BENEFIT:
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT);
-                case COLUMN_DONATION:
-                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION);
+                case COLUMN_WITHHELD:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD);
                 case COLUMN_RECONCILED:
                     return Transaction.FIELD_RECONCILED;
                 default:
@@ -1549,7 +1549,7 @@ public class TransactionTable
             hideColumn(theTaxCreditColumn);
             hideColumn(theNatInsColumn);
             hideColumn(theBenefitColumn);
-            hideColumn(theDonationColumn);
+            hideColumn(theWithheldColumn);
             hideColumn(theCredUnitsColumn);
             hideColumn(theDebUnitsColumn);
             hideColumn(theDilutionColumn);
@@ -1590,11 +1590,12 @@ public class TransactionTable
                     revealColumn(theTaxCreditColumn);
                     revealColumn(theNatInsColumn);
                     revealColumn(theBenefitColumn);
+                    revealColumn(theWithheldColumn);
                     break;
                 case INTEREST:
                     revealColumn(theAmountColumn);
                     revealColumn(theTaxCreditColumn);
-                    revealColumn(theDonationColumn);
+                    revealColumn(theWithheldColumn);
                     break;
                 case DIVIDEND:
                     revealColumn(theAmountColumn);
@@ -1619,7 +1620,7 @@ public class TransactionTable
                     revealColumn(theTaxCreditColumn);
                     revealColumn(theNatInsColumn);
                     revealColumn(theBenefitColumn);
-                    revealColumn(theDonationColumn);
+                    revealColumn(theWithheldColumn);
                     revealColumn(theCredUnitsColumn);
                     revealColumn(theDebUnitsColumn);
                     revealColumn(theDilutionColumn);

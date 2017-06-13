@@ -378,7 +378,7 @@ public class TransactionPanel
         JTextField myTaxCredit = new JTextField();
         JTextField myNatIns = new JTextField();
         JTextField myBenefit = new JTextField();
-        JTextField myDonation = new JTextField();
+        JTextField myWithheld = new JTextField();
         JTextField myYears = new JTextField();
 
         /* Restrict the fields */
@@ -386,14 +386,14 @@ public class TransactionPanel
         restrictField(myTaxCredit, myWidth);
         restrictField(myNatIns, myWidth);
         restrictField(myBenefit, myWidth);
-        restrictField(myDonation, myWidth);
+        restrictField(myWithheld, myWidth);
         restrictField(myYears, myWidth);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), MetisDataType.MONEY, myTaxCredit);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE), MetisDataType.MONEY, myNatIns);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), MetisDataType.MONEY, myBenefit);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION), MetisDataType.MONEY, myDonation);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD), MetisDataType.MONEY, myWithheld);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), MetisDataType.INTEGER, myYears);
 
         /* Create the Tax panel */
@@ -405,7 +405,7 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION), myPanel);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
@@ -571,9 +571,9 @@ public class TransactionPanel
         theFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the donation field should be visible */
-        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.CHARITYDONATION);
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.CHARITYDONATION);
-        bShowField = bEditField || myTrans.getCharityDonation() != null;
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.WITHHELD);
+        bShowField = bEditField || myTrans.getWithheld() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
         theFieldSet.setAssumedCurrency(myField, myCurrency);
@@ -744,8 +744,8 @@ public class TransactionPanel
                 case DEEMEDBENEFIT:
                     myTrans.setBenefit(pUpdate.getMoney());
                     break;
-                case CHARITYDONATION:
-                    myTrans.setDonation(pUpdate.getMoney());
+                case WITHHELD:
+                    myTrans.setWithheld(pUpdate.getMoney());
                     break;
                 default:
                     break;

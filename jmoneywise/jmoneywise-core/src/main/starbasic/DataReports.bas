@@ -287,7 +287,7 @@ Sub reportCategoryYear(ByRef Context As FinanceData, _
 		'Determine whether we have any information on this category
 		hasInfo = Not(myCategory.isTransfer)  _
 			      And ((myCategory.catValue <> 0) Or (myCategory.catTaxCredit <> 0)) _
-			      Or  ((myCategory.catNatInsurance <> 0) Or (myCategory.catCharity <> 0))
+			      Or  ((myCategory.catNatInsurance <> 0) Or (myCategory.catWithheld <> 0))
 		    		 
 		'If the element has information
 		If hasInfo Then
@@ -302,7 +302,7 @@ Sub reportCategoryYear(ByRef Context As FinanceData, _
 			'Access the cell
 			myCell = myData.getCellByPosition(myCol, myRow)
 			myValue = myCategory.catValue + myCategory.catTaxCredit _
-						+ myCategory.catNatInsurance + myCategory.catCharity
+						+ myCategory.catNatInsurance + myCategory.catWithheld
 			myCell.setValue(myValue)
 		End If
 	Wend

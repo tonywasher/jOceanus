@@ -56,14 +56,14 @@ public enum TransactionCategoryClass implements CategoryInterface {
     DIVIDEND(5, 8),
 
     /**
-     * Grant Income.
+     * Virtual Income.
      */
-    GRANTINCOME(6, 9),
+    VIRTUALINCOME(6, 9),
 
     /**
-     * Benefit Income.
+     * PensionPayment.
      */
-    BENEFITINCOME(7, 10),
+    PENSIONPAYMENT(7, 10),
 
     /**
      * Gifted Income.
@@ -191,9 +191,9 @@ public enum TransactionCategoryClass implements CategoryInterface {
     TAXRELIEF(32, 35),
 
     /**
-     * Tax Settlement.
+     * IncomeTax.
      */
-    TAXSETTLEMENT(33, 36),
+    INCOMETAX(33, 36),
 
     /**
      * Taxed Interest.
@@ -276,39 +276,26 @@ public enum TransactionCategoryClass implements CategoryInterface {
     CURRENCYFLUCTUATION(49, 52),
 
     /**
-     * Tax Credit.
-     * <p>
-     * This is a singular category catching tax credits associated with an event.
-     */
-    TAXCREDIT(50, 53),
-
-    /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NATINSURANCE(51, 54),
+    NATINSURANCE(50, 53),
 
     /**
-     * Deemed Benefit.
+     * Withheld.
      * <p>
-     * This is a singular category catching deemed benefit payments associated with an event.
+     * This is a singular category catching withheld items such as charity donations associated with
+     * interest.
      */
-    DEEMEDBENEFIT(52, 55),
-
-    /**
-     * CharityDonation.
-     * <p>
-     * This is a singular category catching charity donations associated with an event.
-     */
-    CHARITYDONATION(53, 56),
+    WITHHELD(51, 54),
 
     /**
      * OpeningBalance.
      * <p>
      * This is a singular category catching opening balances.
      */
-    OPENINGBALANCE(54, 57),
+    OPENINGBALANCE(52, 55),
 
     /**
      * Income Totals.
@@ -316,7 +303,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of income sub-categories and is used
      * purely for reporting purposes.
      */
-    INCOMETOTALS(55, 1),
+    INCOMETOTALS(53, 1),
 
     /**
      * Expense Totals.
@@ -324,7 +311,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of expense sub-categories and is used
      * purely for reporting purposes.
      */
-    EXPENSETOTALS(56, 2),
+    EXPENSETOTALS(54, 2),
 
     /**
      * Security Parent.
@@ -332,7 +319,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of security transfer sub-categories and is
      * used purely for holding purposes.
      */
-    SECURITYPARENT(57, 3),
+    SECURITYPARENT(55, 3),
 
     /**
      * Totals.
@@ -340,7 +327,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for the total of all non-transfer categories and is used purely for reporting
      * purposes.
      */
-    TOTALS(58, 0);
+    TOTALS(56, 0);
 
     /**
      * The String name.
@@ -423,9 +410,8 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TAXFREELOYALTYBONUS:
             case MARKETGROWTH:
             case CURRENCYFLUCTUATION:
-            case TAXCREDIT:
             case NATINSURANCE:
-            case DEEMEDBENEFIT:
+            case WITHHELD:
             case TAXRELIEF:
             case CHARGEABLEGAIN:
             case RESIDENTIALGAIN:
@@ -500,15 +486,14 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TAXFREELOYALTYBONUS:
             case MARKETGROWTH:
             case CURRENCYFLUCTUATION:
-            case TAXCREDIT:
+            case INCOMETAX:
             case NATINSURANCE:
-            case DEEMEDBENEFIT:
-            case CHARITYDONATION:
+            case VIRTUALINCOME:
+            case WITHHELD:
             case RESIDENTIALGAIN:
             case CAPITALGAIN:
             case TAXFREEGAIN:
             case TAXRELIEF:
-            case TAXSETTLEMENT:
             case CHARGEABLEGAIN:
             case OPENINGBALANCE:
             case TOTALS:
@@ -526,7 +511,6 @@ public enum TransactionCategoryClass implements CategoryInterface {
     public boolean needsTaxCredit() {
         switch (this) {
             case TAXEDINCOME:
-            case BENEFITINCOME:
             case INTEREST:
             case TAXEDINTEREST:
             case TAXEDLOYALTYBONUS:
@@ -547,8 +531,8 @@ public enum TransactionCategoryClass implements CategoryInterface {
     public boolean isIncome() {
         switch (this) {
             case TAXEDINCOME:
-            case BENEFITINCOME:
-            case GRANTINCOME:
+            case VIRTUALINCOME:
+            case PENSIONPAYMENT:
             case LOYALTYBONUS:
             case CASHBACK:
             case OTHERINCOME:

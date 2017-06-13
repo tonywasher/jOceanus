@@ -540,13 +540,13 @@ public final class TransactionCategory
             /* Switch on info class */
             switch (pInfoClass) {
                 case TAXCREDIT:
-                    return getSingularClass(TransactionCategoryClass.TAXCREDIT);
+                    return getSingularClass(TransactionCategoryClass.INCOMETAX);
                 case NATINSURANCE:
                     return getSingularClass(TransactionCategoryClass.NATINSURANCE);
                 case DEEMEDBENEFIT:
-                    return getSingularClass(TransactionCategoryClass.DEEMEDBENEFIT);
-                case CHARITYDONATION:
-                    return getSingularClass(TransactionCategoryClass.CHARITYDONATION);
+                    return getSingularClass(TransactionCategoryClass.VIRTUALINCOME);
+                case WITHHELD:
+                    return getSingularClass(TransactionCategoryClass.WITHHELD);
                 default:
                     return null;
             }

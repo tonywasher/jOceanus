@@ -247,11 +247,11 @@ public class TransactionHelper {
     }
 
     /**
-     * Obtain donation.
-     * @return the donation.
+     * Obtain withheld.
+     * @return the withheld.
      */
-    public TethysMoney getCharityDonation() {
-        return theAccountDetail.getDonation();
+    public TethysMoney getWithheld() {
+        return theAccountDetail.getWithheld();
     }
 
     /**
@@ -392,9 +392,9 @@ public class TransactionHelper {
         private final TethysMoney theBenefit;
 
         /**
-         * The donation amount.
+         * The withheld amount.
          */
-        private final TethysMoney theDonation;
+        private final TethysMoney theWithheld;
 
         /**
          * The debit units.
@@ -448,7 +448,7 @@ public class TransactionHelper {
             theTaxCredit = theCurrent.getTaxCredit();
             theNatIns = theCurrent.getNatInsurance();
             theBenefit = theCurrent.getDeemedBenefit();
-            theDonation = theCurrent.getCharityDonation();
+            theWithheld = theCurrent.getWithheld();
             theThirdParty = theCurrent.getThirdParty();
             theDebitUnits = theCurrent.getDebitUnits();
             theCreditUnits = theCurrent.getCreditUnits();
@@ -725,10 +725,10 @@ public class TransactionHelper {
          * Obtain donation.
          * @return the donation
          */
-        private TethysMoney getDonation() {
+        private TethysMoney getWithheld() {
             return theForeignAccount != null
-                                             ? theForeignAccount.theDonation
-                                             : theDonation;
+                                             ? theForeignAccount.theWithheld
+                                             : theWithheld;
         }
 
         /**
@@ -791,9 +791,9 @@ public class TransactionHelper {
         private final TethysMoney theBenefit;
 
         /**
-         * The donation amount.
+         * The withheld amount.
          */
-        private final TethysMoney theDonation;
+        private final TethysMoney theWithheld;
 
         /**
          * Constructor.
@@ -832,9 +832,9 @@ public class TransactionHelper {
                                            ? myValue.convertCurrency(myCurrency, myRate)
                                            : null;
 
-            /* Obtain donation */
-            myValue = pTrans.theDonation;
-            theDonation = (myValue != null)
+            /* Obtain withheld */
+            myValue = pTrans.theWithheld;
+            theWithheld = (myValue != null)
                                             ? myValue.convertCurrency(myCurrency, myRate)
                                             : null;
         }

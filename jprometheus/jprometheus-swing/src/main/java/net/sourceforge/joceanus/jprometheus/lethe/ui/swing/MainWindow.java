@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -227,9 +227,9 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
         });
 
         /* Create the layout */
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(theThreadMgr.getStatusManager().getNode());
-        thePanel.add(myMainPanel);
+        thePanel.setLayout(new BorderLayout());
+        thePanel.add(theThreadMgr.getStatusManager().getNode(), BorderLayout.NORTH);
+        thePanel.add(myMainPanel, BorderLayout.CENTER);
 
         /* Attach the panel to the frame */
         thePanel.setOpaque(true);

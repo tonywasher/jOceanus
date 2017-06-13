@@ -264,16 +264,19 @@ public enum PayeeTypeClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountCategoryType can issue grant income.
-     * @return <code>true</code> if the account category type can grant income, <code>false</code>
+     * Determine whether the PayeeType can provide a taxedIncome
+     * @return <code>true</code> if the payee type can parent a portfolio, <code>false</code>
      * otherwise.
      */
-    public boolean canGrant() {
+    public boolean canProvideTaxedIncome() {
         switch (this) {
-            case INDIVIDUAL:
-            case INSTITUTION:
             case GOVERNMENT:
+            case EMPLOYER:
+            case INDIVIDUAL:
                 return true;
+            case MARKET:
+            case TAXMAN:
+            case PAYEE:
             default:
                 return false;
         }

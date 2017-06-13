@@ -32,10 +32,10 @@ Public Const acctMarket As String = "Market"
 Public Const acctTaxMan As String = "InlandRevenue"
 
 'Hidden Reporting Category Names
-Public Const catTaxCredit As String = "Taxes:TaxCredit"
+Public Const catTaxCredit As String = "Taxes:IncomeTax"
 Public Const catNatInsurance As String = "Taxes:NatInsurance"
-Public Const catBenefit As String = "Taxes:DeemedBenefit"
-Public Const catCharityDonate As String = "Donations:Charity"
+Public Const catBenefit As String = "Income:Benefit"
+Public Const catWithheld As String = "Expenses:Virtual"
 Public Const catMktGrowth As String = "Market:Growth"
 Public Const catCapitalGain	As String = "Market:CapitalGain"
 Public Const catTaxableGain	As String = "Market:ChargeableGain"
@@ -52,7 +52,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
     Dim myTaxCred As Double
     Dim myNatIns As Double
     Dim myBenefit As Double
-    Dim myCharity As Double
+    Dim myWithheld As Double
     Dim myDate As Date
 	Dim myEvent As Object
 	Dim myLastEvent As Object
@@ -78,7 +78,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
     myInsInfo = getCategoryStats(Context, catNatInsurance) 
     myBenInfo = getCategoryStats(Context, catBenefit) 
     myTaxGainInfo = getCategoryStats(Context, catTaxableGain) 
-    myCharInfo = getCategoryStats(Context, catCharityDonate) 
+    myWithInfo = getCategoryStats(Context, catWithheld) 
 	
     'Build the new date
     myFinalDate = DateSerial(2018, 04, 05)     
@@ -97,7 +97,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
 		myTaxCred = myEvent.evtTaxCredit
 		myNatIns = myEvent.evtNatIns
 		myBenefit = myEvent.evtBenefit
-		myCharity = myEvent.evtCharity
+		myWithheld = myEvent.evtWithheld
 		myDebUnits = myEvent.evtDebUnits
 		myCredUnits = myEvent.evtCredUnits
 		
@@ -179,8 +179,8 @@ Sub analyseYear(ByRef Context As FinanceState, _
 					myParInfo = myDebInfo.acctParent					
 					
 					'Adjust parent income
-					myParInfo.acctIncome = myParInfo.acctIncome + myValue + myTaxCred + myCharity
-					myParInfo.acctExpense = myParInfo.acctExpense + myCharity
+					myParInfo.acctIncome = myParInfo.acctIncome + myValue + myTaxCred + myWithheld
+					myParInfo.acctExpense = myParInfo.acctExpense + myWithheld
 				'If this is asset earnings
 				ElseIf (myCatInfo.isAssetEarn) Then
 					'Access the parent account
@@ -296,7 +296,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
 				'Else standard transaction
 				Else
 					'Add to income		
-					myDebInfo.acctIncome = myDebInfo.acctIncome + myValue + myTaxCred + myNatIns + myCharity
+					myDebInfo.acctIncome = myDebInfo.acctIncome + myValue + myTaxCred + myNatIns + myWithheld
 				End If		
 			End If
 			
@@ -317,8 +317,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
 				myCatInfo.catValue = myCatInfo.catValue + myValue
 				myCatInfo.catTaxCredit = myCatInfo.catTaxCredit + myTaxCred
 				myCatInfo.catNatInsurance = myCatInfo.catNatInsurance + myNatIns
-				myCatInfo.catBenefit = myCatInfo.catBenefit + myBenefit
-				myCatInfo.catCharity = myCatInfo.catCharity + myCharity
+				myCatInfo.catWithheld = myCatInfo.catWithheld + myWithheld
 				
 				'Add the tax credit and Nat Insurance
                 If (myCatInfo.isLoanPay) Then
@@ -328,7 +327,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
    				End If
 				myInsInfo.catValue = myInsInfo.catValue + myNatIns				
 				myBenInfo.catValue = myBenInfo.catValue + myBenefit
-				myCharInfo.catValue = myCharInfo.catValue + myCharity
+				myWithInfo.catValue = myWithInfo.catValue + myBenefit + myWithheld 
 			End If
 
         'If we have a Stock Demerger

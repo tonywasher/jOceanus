@@ -76,11 +76,6 @@ public final class TransactionValidator {
                 /* Taxed/Other income must be to deposit/cash/loan */
                 return myType.isValued();
 
-            case GRANTINCOME:
-            case BENEFITINCOME:
-                /* Grant/Benefit income must be to deposit account */
-                return myType.isDeposit();
-
             case GIFTEDINCOME:
             case INHERITED:
                 /* Inheritance/Gifted must be to asset */
@@ -131,9 +126,8 @@ public final class TransactionValidator {
             case TAXRELIEF:
                 return myType.isLoan();
 
-            case CHARITYDONATION:
             case LOCALTAXES:
-            case TAXSETTLEMENT:
+            case INCOMETAX:
                 return myType.isValued();
 
             case EXPENSE:
@@ -171,14 +165,6 @@ public final class TransactionValidator {
         switch (myCatClass) {
             case TAXEDINCOME:
                 /* Cannot refund Taxed Income yet */
-                return pDirection.isFrom();
-
-            case GRANTINCOME:
-                /* Cannot refund Grant Income yet */
-                return pDirection.isFrom();
-
-            case BENEFITINCOME:
-                /* Cannot refund Benefit Income yet */
                 return pDirection.isFrom();
 
             case GIFTEDINCOME:
@@ -277,23 +263,17 @@ public final class TransactionValidator {
         /* Switch on the CategoryClass */
         switch (myCatClass) {
             case TAXEDINCOME:
-                /* Taxed Income must have a Employer Payee partner */
+                /* Taxed Income must have a Payee that can provide income */
                 return (pPartner instanceof Payee)
-                       && ((Payee) pPartner).isPayeeClass(PayeeTypeClass.EMPLOYER);
+                       && ((Payee) pPartner).getPayeeTypeClass().canProvideTaxedIncome();
 
             case OTHERINCOME:
             case RECOVEREDEXPENSES:
                 /* Other Income must have a Payee partner */
                 return pPartner instanceof Payee;
 
-            case GRANTINCOME:
-                /* Grant Income must have a Payee partner that can grant */
-                return (pPartner instanceof Payee)
-                       && ((Payee) pPartner).getPayeeTypeClass().canGrant();
-
             case LOCALTAXES:
-            case BENEFITINCOME:
-                /* Benefit Income/LocalTaxes must have a Government Payee partner */
+                /* LocalTaxes must have a Government Payee partner */
                 return (pPartner instanceof Payee)
                        && ((Payee) pPartner).isPayeeClass(PayeeTypeClass.GOVERNMENT);
 
@@ -348,11 +328,10 @@ public final class TransactionValidator {
                 return checkTransfer(pAccount, pPartner);
 
             case EXPENSE:
-            case CHARITYDONATION:
                 /* Expense must have a Payee partner */
                 return pPartner instanceof Payee;
 
-            case TAXSETTLEMENT:
+            case INCOMETAX:
             case TAXRELIEF:
                 return (pPartner instanceof Payee)
                        && ((Payee) pPartner).isPayeeClass(PayeeTypeClass.TAXMAN);

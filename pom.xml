@@ -76,7 +76,7 @@
     <JDateButtonVersion>v2.1.0-SNAPSHOT</JDateButtonVersion>
     <BouncyCastleVersion>1.57</BouncyCastleVersion>
     <SvnKitVersion>1.8.15</SvnKitVersion>
-    <JGitVersion>4.7.0.201704051617-r</JGitVersion>
+    <JGitVersion>4.7.1.201706071930-r</JGitVersion>
     <HttpClientVersion>4.5.3</HttpClientVersion>
     <JSONVersion>20170516</JSONVersion>
     <ApacheMavenVersion>3.5.0</ApacheMavenVersion>
@@ -87,7 +87,7 @@
     <SLF4JVersion>1.7.25</SLF4JVersion>
     <LOG4JVersion>2.8.2</LOG4JVersion>
     <JFreeChartVersion>1.0.19</JFreeChartVersion>
-    <JSoupVersion>1.10.2</JSoupVersion>
+    <JSoupVersion>1.10.3</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>1.8</JavaVersion>
   </properties>

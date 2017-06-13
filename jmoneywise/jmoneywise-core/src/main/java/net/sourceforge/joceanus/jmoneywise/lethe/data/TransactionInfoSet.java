@@ -44,7 +44,6 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
@@ -69,11 +68,6 @@ public class TransactionInfoSet
      * Reverse FieldSet map.
      */
     private static final Map<TransactionInfoClass, MetisField> REVERSE_FIELDMAP = MetisFields.reverseFieldMap(FIELDSET_MAP, TransactionInfoClass.class);
-
-    /**
-     * Bad Credit Date Error Text.
-     */
-    private static final String ERROR_BADDATE = MoneyWiseDataResource.TRANSACTION_ERROR_BADCREDITDATE.getValue();
 
     /**
      * Constructor.
@@ -224,17 +218,9 @@ public class TransactionInfoSet
                                                                          ? MetisFieldRequired.CANEXIST
                                                                          : MetisFieldRequired.NOTALLOWED;
 
-            /* Credit amount and date are only available for transfer */
-            case CREDITDATE:
-                return (myClass == TransactionCategoryClass.TRANSFER)
-                                                                      ? MetisFieldRequired.CANEXIST
-                                                                      : MetisFieldRequired.NOTALLOWED;
-
-            /* Charity donation is only available for interest */
-            case CHARITYDONATION:
-                return (myClass == TransactionCategoryClass.INTEREST)
-                                                                      ? MetisFieldRequired.CANEXIST
-                                                                      : MetisFieldRequired.NOTALLOWED;
+            /* Handle Withheld separately */
+            case WITHHELD:
+                return isWithheldAmountRequired(myClass);
 
             /* Handle Tax Credit */
             case TAXCREDIT:
@@ -273,8 +259,6 @@ public class TransactionInfoSet
             case PARTNERAMOUNT:
                 return isPartnerAmountClassRequired(myClass, myAccount, myPartner);
 
-            case PENSION:
-            case XCHANGERATE:
             default:
                 return MetisFieldRequired.NOTALLOWED;
         }
@@ -313,9 +297,7 @@ public class TransactionInfoSet
         /* Switch on class */
         switch (pClass) {
             case TAXEDINCOME:
-            case BENEFITINCOME:
                 return MetisFieldRequired.MUSTEXIST;
-            case GRANTINCOME:
             case LOANINTERESTCHARGED:
                 return MetisFieldRequired.CANEXIST;
             case LOYALTYBONUS:
@@ -339,6 +321,22 @@ public class TransactionInfoSet
                        && (((SecurityHolding) pDebit).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND))
                                                                                                                  ? MetisFieldRequired.MUSTEXIST
                                                                                                                  : MetisFieldRequired.NOTALLOWED;
+            default:
+                return MetisFieldRequired.NOTALLOWED;
+        }
+    }
+
+    /**
+     * Determine if a Withheld amount is required.
+     * @param pClass the category class
+     * @return the status
+     */
+    protected static MetisFieldRequired isWithheldAmountRequired(final TransactionCategoryClass pClass) {
+        /* ThirdParty Amount is possible only if ThirdParty exists */
+        switch (pClass) {
+            case TAXEDINCOME:
+            case INTEREST:
+                return MetisFieldRequired.CANEXIST;
             default:
                 return MetisFieldRequired.NOTALLOWED;
         }
@@ -499,13 +497,6 @@ public class TransactionInfoSet
 
             /* Switch on class */
             switch (myClass) {
-                case CREDITDATE:
-                    /* Check value */
-                    TethysDate myDate = myInfo.getValue(TethysDate.class);
-                    if (myDate.compareTo(myTransaction.getDate()) <= 0) {
-                        myTransaction.addError(ERROR_BADDATE, getFieldForClass(myClass));
-                    }
-                    break;
                 case QUALIFYYEARS:
                     /* Check value */
                     Integer myYears = myInfo.getValue(Integer.class);
@@ -526,7 +517,7 @@ public class TransactionInfoSet
                     break;
                 case NATINSURANCE:
                 case DEEMEDBENEFIT:
-                case CHARITYDONATION:
+                case WITHHELD:
                     /* Check value */
                     myAmount = myInfo.getValue(TethysMoney.class);
                     if (myAmount.isZero()) {
@@ -589,9 +580,7 @@ public class TransactionInfoSet
                         myTransaction.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;
-                case PENSION:
                 case TRANSTAG:
-                case XCHANGERATE:
                 default:
                     break;
             }

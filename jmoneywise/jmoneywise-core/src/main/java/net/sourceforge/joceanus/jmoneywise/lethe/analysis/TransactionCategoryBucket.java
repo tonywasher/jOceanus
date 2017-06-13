@@ -599,16 +599,10 @@ public final class TransactionCategoryBucket
                 myAmount.addAmount(myNatIns);
             }
 
-            /* Adjust for DeemedBenefit */
-            TethysMoney myBenefit = pTrans.getDeemedBenefit();
-            if (myBenefit != null) {
-                myAmount.addAmount(myBenefit);
-            }
-
-            /* Adjust for CharityDonation */
-            TethysMoney myDonation = pTrans.getCharityDonation();
-            if (myDonation != null) {
-                myAmount.addAmount(myDonation);
+            /* Adjust for Withheld */
+            TethysMoney myWithheld = pTrans.getWithheld();
+            if (myWithheld != null) {
+                myAmount.addAmount(myWithheld);
             }
 
             /* If we need to switch direction */
@@ -840,9 +834,9 @@ public final class TransactionCategoryBucket
         private final TransactionCategoryBucket theDeemedBenefit;
 
         /**
-         * The CharityDonation.
+         * The Withheld.
          */
-        private final TransactionCategoryBucket theCharityDonation;
+        private final TransactionCategoryBucket theWithheld;
 
         /**
          * The CapitalGains.
@@ -878,7 +872,7 @@ public final class TransactionCategoryBucket
             theTaxCredit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.TAXCREDIT));
             theNatInsurance = getBucket(myList.getEventInfoCategory(TransactionInfoClass.NATINSURANCE));
             theDeemedBenefit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT));
-            theCharityDonation = getBucket(myList.getEventInfoCategory(TransactionInfoClass.CHARITYDONATION));
+            theWithheld = getBucket(myList.getEventInfoCategory(TransactionInfoClass.WITHHELD));
             theTaxRelief = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXRELIEF));
             theChargeableGains = getBucket(myList.getSingularClass(TransactionCategoryClass.CHARGEABLEGAIN));
             theTaxFreeGains = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXFREEGAIN));
@@ -905,7 +899,7 @@ public final class TransactionCategoryBucket
             theTaxCredit = null;
             theNatInsurance = null;
             theDeemedBenefit = null;
-            theCharityDonation = null;
+            theWithheld = null;
             theTaxRelief = null;
             theChargeableGains = null;
             theTaxFreeGains = null;
@@ -947,7 +941,7 @@ public final class TransactionCategoryBucket
             theTaxCredit = null;
             theNatInsurance = null;
             theDeemedBenefit = null;
-            theCharityDonation = null;
+            theWithheld = null;
             theTaxRelief = null;
             theChargeableGains = null;
             theTaxFreeGains = null;
@@ -1099,15 +1093,16 @@ public final class TransactionCategoryBucket
             /* Adjust for DeemedBenefit */
             TethysMoney myBenefit = pTrans.getDeemedBenefit();
             if (myBenefit != null) {
-                theDeemedBenefit.addExpense(pTrans, myBenefit);
+                theDeemedBenefit.addIncome(pTrans, myBenefit);
+                theWithheld.addExpense(pTrans, myBenefit);
                 theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myBenefit);
             }
 
-            /* Adjust for Charity Donation */
-            TethysMoney myDonation = pTrans.getCharityDonation();
-            if (myDonation != null) {
-                theCharityDonation.addExpense(pTrans, myDonation);
-                theTaxBasis.adjustValue(pTrans, TaxBasisClass.EXPENSE, myDonation);
+            /* Adjust for Withheld */
+            TethysMoney myWithheld = pTrans.getWithheld();
+            if (myWithheld != null) {
+                theWithheld.addExpense(pTrans, myWithheld);
+                theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myWithheld);
             }
         }
 

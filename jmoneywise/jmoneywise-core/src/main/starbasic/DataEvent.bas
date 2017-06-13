@@ -36,7 +36,7 @@ Private Const colEvtCredUnits As Integer = 11
 Private Const colEvtDilution As Integer = 12
 Private Const colEvtRef As Integer = 13
 Private Const colEvtYears As Integer = 14
-Private Const colEvtCharity As Integer = 15
+Private Const colEvtWithheld As Integer = 15
 Private Const colEvtThirdParty As Integer = 16
 Private Const colEvtThirdPartyAmount As Integer = 17
 Private Const colEvtPartnerAmount As Integer = 18
@@ -78,7 +78,7 @@ Public Type EventInfo
 	evtTaxCredit As Double
 	evtNatIns As Double
 	evtBenefit As Double
-	evtCharity As Double
+	evtWithheld As Double
 	evtDebUnits As Double
 	evtCredUnits As Double
 	evtDilution As Double
@@ -193,7 +193,7 @@ Public Function parseEventRow(ByRef Context As FinanceState, _
 	myEvent.evtNatIns          = eventRow.getCellByPosition(colEvtNatIns, 0).getValue()
 	myEvent.evtBenefit         = eventRow.getCellByPosition(colEvtBenefit, 0).getValue()
 	myEvent.evtDilution        = eventRow.getCellByPosition(colEvtDilution, 0).getValue()
-	myEvent.evtCharity         = eventRow.getCellByPosition(colEvtCharity, 0).getValue()
+	myEvent.evtWithheld        = eventRow.getCellByPosition(colEvtWithheld, 0).getValue()
 	myEvent.evtThirdPartyValue = eventRow.getCellByPosition(colEvtThirdPartyAmount, 0).getValue()
 	myEvent.evtPartnerValue    = eventRow.getCellByPosition(colEvtPartnerAmount, 0).getValue()
 	

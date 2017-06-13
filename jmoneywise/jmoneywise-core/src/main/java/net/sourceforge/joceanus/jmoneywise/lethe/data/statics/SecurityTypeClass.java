@@ -83,12 +83,29 @@ public enum SecurityTypeClass implements StaticInterface {
     VEHICLE(7, 6),
 
     /**
+     * Defined Contribution Pension Pot.
+     * <p>
+     * This is a defined contribution PensionPot. TaxFree contributions can be made to this Pot via
+     * an Income:Pension transaction. It should have a single unit valued at the size of the
+     * PensionPot.
+     */
+    PENSIONPOT(8, 7),
+
+    /**
+     * Annuity PensionPot.
+     * <p>
+     * This is defined Benefit Pension Pot. TaxFree contributions can be made to this Pot via an
+     * Income:Pension transaction. It should have a single unit valued at the annual income value.
+     */
+    ANNUITYPOT(9, 8),
+
+    /**
      * Generic Asset Account.
      * <p>
      * This is a generic asset account and represents items whose value is determined by the product
      * of the number units held and the most recent unit price.
      */
-    ASSET(8, 7);
+    ASSET(10, 9);
 
     /**
      * The String name.
@@ -151,6 +168,21 @@ public enum SecurityTypeClass implements StaticInterface {
             }
         }
         throw new MoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.SECURITYTYPE.toString() + ":" + id);
+    }
+
+    /**
+     * Determine whether the SecurityType is a pensionPot.
+     * @return <code>true</code> if the security type is a pension pot, <code>false</code>
+     * otherwise.
+     */
+    public boolean isPensionPot() {
+        switch (this) {
+            case PENSIONPOT:
+            case ANNUITYPOT:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

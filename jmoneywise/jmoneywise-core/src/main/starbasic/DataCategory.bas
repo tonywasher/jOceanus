@@ -65,8 +65,7 @@ Public Type CategoryStats
 	catValue As Double
 	catTaxCredit As Double
 	catNatInsurance As Double
-	catBenefit As Double
-	catCharity As Double
+	catWithheld As Double
 	
 	'Additional three fields declared to fix bug in debugger which loses last three fields
 	idx1 As Integer
@@ -133,8 +132,7 @@ Private Sub resetCategory(ByRef category As CategoryStats)
 	category.catValue = 0
 	category.catTaxCredit = 0
 	category.catNatInsurance = 0
-	category.catBenefit = 0
-	category.catCharity = 0
+	category.catWithheld = 0
 End Sub
 
 'Access the Category Statistics 

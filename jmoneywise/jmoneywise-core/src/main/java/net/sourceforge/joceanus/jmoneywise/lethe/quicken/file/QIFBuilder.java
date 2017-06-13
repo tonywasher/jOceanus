@@ -102,9 +102,9 @@ public class QIFBuilder {
     private final TransactionCategory theBenefitCategory;
 
     /**
-     * The CharityDonation category.
+     * The Withheld category.
      */
-    private final TransactionCategory theDonateCategory;
+    private final TransactionCategory theWithheldCategory;
 
     /**
      * The Opening category.
@@ -136,7 +136,7 @@ public class QIFBuilder {
         theTaxCategory = myCategories.getEventInfoCategory(TransactionInfoClass.TAXCREDIT);
         theNatInsCategory = myCategories.getEventInfoCategory(TransactionInfoClass.NATINSURANCE);
         theBenefitCategory = myCategories.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT);
-        theDonateCategory = myCategories.getEventInfoCategory(TransactionInfoClass.CHARITYDONATION);
+        theWithheldCategory = myCategories.getEventInfoCategory(TransactionInfoClass.WITHHELD);
         theOpeningCategory = myCategories.getSingularClass(TransactionCategoryClass.OPENINGBALANCE);
     }
 
@@ -399,7 +399,7 @@ public class QIFBuilder {
         if (pTrans.getDeemedBenefit() != null) {
             return true;
         }
-        if (pTrans.getCharityDonation() != null) {
+        if (pTrans.getWithheld() != null) {
             return true;
         }
         return false;
@@ -503,16 +503,36 @@ public class QIFBuilder {
         /* Handle Deemed Benefit */
         TethysMoney myBenefit = pTrans.getDeemedBenefit();
         if (myBenefit != null) {
-            /* Add to amount */
-            myAmount.addAmount(myBenefit);
-            myBenefit = new TethysMoney(myBenefit);
-            myBenefit.negate();
-
             /* Access the Category details */
             QIFEventCategory myBenCategory = theFile.registerCategory(theBenefitCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myBenCategory, myBenefit, myPayee.getName());
+
+            /* Add to amount */
+            myBenefit = new TethysMoney(myBenefit);
+            myBenefit.negate();
+
+            /* Access the Category details */
+            QIFEventCategory myWithCategory = theFile.registerCategory(theBenefitCategory);
+
+            /* Add Split event */
+            myEvent.recordSplitRecord(myWithCategory, myBenefit, myPayee.getName());
+        }
+
+        /* Handle Withheld */
+        TethysMoney myWithheld = pTrans.getWithheld();
+        if (myWithheld != null) {
+            /* Add to amount */
+            myAmount.addAmount(myWithheld);
+            myWithheld = new TethysMoney(myWithheld);
+            myWithheld.negate();
+
+            /* Access the Category details */
+            QIFEventCategory myWithCategory = theFile.registerCategory(theWithheldCategory);
+
+            /* Add Split event */
+            myEvent.recordSplitRecord(myWithCategory, myWithheld, myPayee.getName());
         }
 
         /* Add event to event list */
@@ -795,19 +815,19 @@ public class QIFBuilder {
                 myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());
             }
 
-            /* Handle Charity Donation */
-            TethysMoney myDonation = pTrans.getCharityDonation();
-            if (myDonation != null) {
+            /* Handle Withheld */
+            TethysMoney myWithheld = pTrans.getWithheld();
+            if (myWithheld != null) {
                 /* Add to amount */
-                myAmount.addAmount(myDonation);
-                myDonation = new TethysMoney(myDonation);
-                myDonation.negate();
+                myAmount.addAmount(myWithheld);
+                myWithheld = new TethysMoney(myWithheld);
+                myWithheld.negate();
 
                 /* Access the Category details */
-                QIFEventCategory myDonCategory = theFile.registerCategory(theDonateCategory);
+                QIFEventCategory myWithCategory = theFile.registerCategory(theWithheldCategory);
 
                 /* Add Split event */
-                myEvent.recordSplitRecord(myDonCategory, myDonation, myPayee.getName());
+                myEvent.recordSplitRecord(myWithCategory, myWithheld, myPayee.getName());
             }
 
             /* Handle Non-Recursion */

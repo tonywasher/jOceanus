@@ -543,7 +543,7 @@ public class TaxBasisBucket
         TethysMoney myTaxCredit = pTrans.getTaxCredit();
         TethysMoney myNatIns = pTrans.getNatInsurance();
         TethysMoney myBenefit = pTrans.getDeemedBenefit();
-        TethysMoney myDonation = pTrans.getCharityDonation();
+        TethysMoney myWithheld = pTrans.getWithheld();
 
         /* Determine style of transaction */
         AssetDirection myDir = pTrans.getDirection();
@@ -587,11 +587,11 @@ public class TaxBasisBucket
                 myGross.subtractAmount(myBenefit);
             }
 
-            /* If we have a Charity donation */
-            if ((myDonation != null) && (myDonation.isNonZero())) {
+            /* If we have a Withheld */
+            if ((myWithheld != null) && (myWithheld.isNonZero())) {
                 /* Adjust the gross and net */
-                myGross.subtractAmount(myDonation);
-                myNett.subtractAmount(myDonation);
+                myGross.subtractAmount(myWithheld);
+                myNett.subtractAmount(myWithheld);
             }
 
             /* else this is a standard income */
@@ -619,11 +619,11 @@ public class TaxBasisBucket
                 myGross.addAmount(myBenefit);
             }
 
-            /* If we have a Charity donation */
-            if ((myDonation != null) && (myDonation.isNonZero())) {
+            /* If we have a Withheld */
+            if ((myWithheld != null) && (myWithheld.isNonZero())) {
                 /* Adjust the gross and net */
-                myGross.addAmount(myDonation);
-                myNett.addAmount(myDonation);
+                myGross.addAmount(myWithheld);
+                myNett.addAmount(myWithheld);
             }
         }
 
@@ -1121,7 +1121,6 @@ public class TaxBasisBucket
             TaxBasisBucket myBucket;
             switch (pCategory.getCategoryTypeClass()) {
                 case TAXEDINCOME:
-                case BENEFITINCOME:
                     /* Adjust the Gross salary bucket */
                     myBucket = getBucket(TaxBasisClass.SALARY);
                     myBucket.addIncomeTransaction(pTrans);
@@ -1166,11 +1165,11 @@ public class TaxBasisBucket
                     myBucket.addIncomeTransaction(pTrans);
                     break;
                 case ROOMRENTALINCOME:
-                    /* Adjust the Gross roomrental bucket */
+                    /* Adjust the Gross roomRental bucket */
                     myBucket = getBucket(TaxBasisClass.ROOMRENTAL);
                     myBucket.addIncomeTransaction(pTrans);
                     break;
-                case TAXSETTLEMENT:
+                case INCOMETAX:
                     /* Adjust the Tax Paid bucket */
                     myBucket = getBucket(TaxBasisClass.TAXPAID);
                     myBucket.addExpenseTransaction(pTrans);
@@ -1178,7 +1177,7 @@ public class TaxBasisBucket
                 case TAXFREEINTEREST:
                 case TAXFREEDIVIDEND:
                 case LOANINTERESTEARNED:
-                case GRANTINCOME:
+                case PENSIONPAYMENT:
                 case INHERITED:
                 case CASHBACK:
                 case LOYALTYBONUS:
@@ -1202,7 +1201,6 @@ public class TaxBasisBucket
                 case LOCALTAXES:
                 case WRITEOFF:
                 case LOANINTERESTCHARGED:
-                case CHARITYDONATION:
                 case TAXRELIEF:
                 case RECOVEREDEXPENSES:
                     /* Adjust the Expense bucket */

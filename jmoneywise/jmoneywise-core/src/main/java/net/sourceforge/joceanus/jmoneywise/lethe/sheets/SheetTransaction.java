@@ -347,11 +347,11 @@ public class SheetTransaction
             myYears = myCell.getIntegerValue();
         }
 
-        /* Handle Donation which may be missing */
+        /* Handle Withheld which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        String myDonation = null;
+        String myWithheld = null;
         if (myCell != null) {
-            myDonation = myCell.getStringValue();
+            myWithheld = myCell.getStringValue();
         }
 
         /* Handle ThirdParty which may be missing */
@@ -393,7 +393,7 @@ public class SheetTransaction
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.DILUTION, myDilution);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.REFERENCE, myReference);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.QUALIFYYEARS, myYears);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.CHARITYDONATION, myDonation);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.WITHHELD, myWithheld);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.THIRDPARTY, myThirdParty);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.THIRDPARTYAMOUNT, myThirdPartyAmount);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PARTNERAMOUNT, myPartnerAmount);

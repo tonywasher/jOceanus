@@ -508,25 +508,25 @@ public final class PayeeBucket
             }
         }
 
-        /* If there is Charity Donation */
-        TethysMoney myDonation = pTrans.getCharityDonation();
-        if ((myDonation != null) && (myDonation.isNonZero())) {
+        /* If there is Withheld */
+        TethysMoney myWithheld = pTrans.getWithheld();
+        if ((myWithheld != null) && (myWithheld.isNonZero())) {
             /* Adjust for Charity Donation */
             if (isIncome) {
                 if (myIncome == null) {
-                    myIncome = new TethysMoney(myDonation);
+                    myIncome = new TethysMoney(myWithheld);
                 } else {
-                    myIncome.addAmount(myDonation);
+                    myIncome.addAmount(myWithheld);
                 }
-                myExpense = new TethysMoney(myDonation);
+                myExpense = new TethysMoney(myWithheld);
             } else {
-                myIncome = new TethysMoney(myDonation);
+                myIncome = new TethysMoney(myWithheld);
                 myIncome.negate();
                 if (myExpense == null) {
                     myExpense = new TethysMoney(myAmount);
                     myExpense.negate();
                 } else {
-                    myExpense.subtractAmount(myDonation);
+                    myExpense.subtractAmount(myWithheld);
                 }
             }
         }

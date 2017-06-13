@@ -57,7 +57,6 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
@@ -349,16 +348,6 @@ public class Transaction
     }
 
     /**
-     * Obtain credit date.
-     * @return the credit date
-     */
-    public final TethysDate getCreditDate() {
-        return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.CREDITDATE, TethysDate.class)
-                          : null;
-    }
-
-    /**
      * Obtain National Insurance.
      * @return the NatInsurance
      */
@@ -379,22 +368,12 @@ public class Transaction
     }
 
     /**
-     * Obtain Pension.
-     * @return the Pension
+     * Obtain Withheld amount.
+     * @return the Withheld
      */
-    public final TethysMoney getPension() {
+    public final TethysMoney getWithheld() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.PENSION, TethysMoney.class)
-                          : null;
-    }
-
-    /**
-     * Obtain Donation.
-     * @return the Donation
-     */
-    public final TethysMoney getCharityDonation() {
-        return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.CHARITYDONATION, TethysMoney.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.WITHHELD, TethysMoney.class)
                           : null;
     }
 
@@ -445,16 +424,6 @@ public class Transaction
     public final TethysMoney getThirdPartyAmount() {
         return hasInfoSet
                           ? theInfoSet.getValue(TransactionInfoClass.THIRDPARTYAMOUNT, TethysMoney.class)
-                          : null;
-    }
-
-    /**
-     * Obtain Exchange Rate.
-     * @return the Donation
-     */
-    public final TethysRatio getExchangeRate() {
-        return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.XCHANGERATE, TethysRatio.class)
                           : null;
     }
 
@@ -819,15 +788,6 @@ public class Transaction
     }
 
     /**
-     * Set a new Credit Date.
-     * @param pCreditDate the new credit date
-     * @throws OceanusException on error
-     */
-    public final void setCreditDate(final TethysDate pCreditDate) throws OceanusException {
-        setInfoSetValue(TransactionInfoClass.CREDITDATE, pCreditDate);
-    }
-
-    /**
      * Set a new NatInsurance.
      * @param pNatIns the new insurance
      * @throws OceanusException on error
@@ -846,21 +806,12 @@ public class Transaction
     }
 
     /**
-     * Set a new Pension.
-     * @param pPension the new pension
+     * Set a new Withheld.
+     * @param pWithheld the new withheld
      * @throws OceanusException on error
      */
-    public final void setPension(final TethysMoney pPension) throws OceanusException {
-        setInfoSetValue(TransactionInfoClass.PENSION, pPension);
-    }
-
-    /**
-     * Set a new Donation.
-     * @param pDonation the new donation
-     * @throws OceanusException on error
-     */
-    public final void setDonation(final TethysMoney pDonation) throws OceanusException {
-        setInfoSetValue(TransactionInfoClass.CHARITYDONATION, pDonation);
+    public final void setWithheld(final TethysMoney pWithheld) throws OceanusException {
+        setInfoSetValue(TransactionInfoClass.WITHHELD, pWithheld);
     }
 
     /**
@@ -879,15 +830,6 @@ public class Transaction
      */
     public final void setThirdPartyAmount(final TethysMoney pValue) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.THIRDPARTYAMOUNT, pValue);
-    }
-
-    /**
-     * Set a new ExchangeRate.
-     * @param pValue the new exchangeRate
-     * @throws OceanusException on error
-     */
-    public final void setXchangeRate(final TethysRate pValue) throws OceanusException {
-        setInfoSetValue(TransactionInfoClass.XCHANGERATE, pValue);
     }
 
     /**
