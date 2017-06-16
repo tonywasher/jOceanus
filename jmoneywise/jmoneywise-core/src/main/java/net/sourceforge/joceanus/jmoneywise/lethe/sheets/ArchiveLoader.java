@@ -70,6 +70,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryTyp
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
@@ -91,9 +92,9 @@ import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 public class ArchiveLoader {
     /**
      * Number of base archive load areas.
-     * 11xStatic,TransactionTags,Regions,2*Category,Schedule,Rate,Price,Account,Range+Transaction.
+     * 12xStatic,TransactionTags,Regions,2*Category,Schedule,Rate,Price,Account,Range+Transaction.
      */
-    private static final int NUM_ARCHIVE_AREAS = 21;
+    private static final int NUM_ARCHIVE_AREAS = 22;
 
     /**
      * Year boundary.
@@ -317,6 +318,8 @@ public class ArchiveLoader {
             SheetCashCategoryType.loadArchive(pReport, myWorkbook, pData);
             myStage.startTask(LoanCategoryType.LIST_NAME);
             SheetLoanCategoryType.loadArchive(pReport, myWorkbook, pData);
+            myStage.startTask(PortfolioType.LIST_NAME);
+            SheetPortfolioType.loadArchive(pReport, myWorkbook, pData);
             myStage.startTask(SecurityType.LIST_NAME);
             SheetSecurityType.loadArchive(pReport, myWorkbook, pData);
             myStage.startTask(PayeeType.LIST_NAME);

@@ -1195,12 +1195,12 @@ public class Security
         /**
          * The SecurityInfo List.
          */
-        private SecurityInfoList theInfoList = null;
+        private SecurityInfoList theInfoList;
 
         /**
          * The AccountInfoType list.
          */
-        private AccountInfoTypeList theInfoTypeList = null;
+        private AccountInfoTypeList theInfoTypeList;
 
         /**
          * Construct an empty CORE Security list.

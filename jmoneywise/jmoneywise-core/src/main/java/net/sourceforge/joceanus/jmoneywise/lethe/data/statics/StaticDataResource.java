@@ -84,6 +84,26 @@ public enum StaticDataResource implements TethysResourceId {
     LOANTYPE_LOAN("LoanType.Loan"),
 
     /**
+     * PortfolioType Standard.
+     */
+    PORTFOLIOTYPE_STANDARD("PortfolioType.Standard"),
+
+    /**
+     * PortfolioType ISA.
+     */
+    PORTFOLIOTYPE_ISA("PortfolioType.ISA"),
+
+    /**
+     * PortfolioType SIPP.
+     */
+    PORTFOLIOTYPE_SIPP("PortfolioType.SIPP"),
+
+    /**
+     * PortfolioType Pension.
+     */
+    PORTFOLIOTYPE_PENSION("PortfolioType.Pension"),
+
+    /**
      * SecurityType Shares.
      */
     SECURITYTYPE_SHARES("SecurityType.Shares"),
@@ -754,6 +774,11 @@ public enum StaticDataResource implements TethysResourceId {
     private static final Map<LoanCategoryClass, TethysResourceId> LOAN_MAP = buildLoanMap();
 
     /**
+     * The PortfolioType Map.
+     */
+    private static final Map<PortfolioTypeClass, TethysResourceId> PORTFOLIO_MAP = buildPortfolioMap();
+
+    /**
      * The SecurityType Map.
      */
     private static final Map<SecurityTypeClass, TethysResourceId> SECURITY_MAP = buildSecurityMap();
@@ -909,6 +934,29 @@ public enum StaticDataResource implements TethysResourceId {
      */
     protected static TethysResourceId getKeyForLoanType(final LoanCategoryClass pValue) {
         return TethysResourceBuilder.getKeyForEnum(LOAN_MAP, pValue);
+    }
+
+    /**
+     * Build portfolio type map.
+     * @return the map
+     */
+    private static Map<PortfolioTypeClass, TethysResourceId> buildPortfolioMap() {
+        /* Create the map and return it */
+        Map<PortfolioTypeClass, TethysResourceId> myMap = new EnumMap<>(PortfolioTypeClass.class);
+        myMap.put(PortfolioTypeClass.STANDARD, PORTFOLIOTYPE_STANDARD);
+        myMap.put(PortfolioTypeClass.ISA, PORTFOLIOTYPE_ISA);
+        myMap.put(PortfolioTypeClass.SIPP, PORTFOLIOTYPE_SIPP);
+        myMap.put(PortfolioTypeClass.PENSION, PORTFOLIOTYPE_PENSION);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for security type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    protected static TethysResourceId getKeyForPortfolioType(final PortfolioTypeClass pValue) {
+        return TethysResourceBuilder.getKeyForEnum(PORTFOLIO_MAP, pValue);
     }
 
     /**

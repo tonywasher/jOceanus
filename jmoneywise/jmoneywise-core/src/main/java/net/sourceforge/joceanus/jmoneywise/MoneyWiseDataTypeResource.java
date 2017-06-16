@@ -63,6 +63,16 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
     LOANTYPE_LIST("LoanType.List"),
 
     /**
+     * PortfolioType Name.
+     */
+    PORTFOLIOTYPE_NAME("PortfolioType.Name"),
+
+    /**
+     * PortfolioType List.
+     */
+    PORTFOLIOTYPE_LIST("PortfolioType.List"),
+
+    /**
      * SecurityType Name.
      */
     SECURITYTYPE_NAME("SecurityType.Name"),
@@ -527,6 +537,7 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
         myMap.put(MoneyWiseDataType.DEPOSITTYPE, DEPOSITTYPE_NAME);
         myMap.put(MoneyWiseDataType.CASHTYPE, CASHTYPE_NAME);
         myMap.put(MoneyWiseDataType.LOANTYPE, LOANTYPE_NAME);
+        myMap.put(MoneyWiseDataType.PORTFOLIOTYPE, PORTFOLIOTYPE_NAME);
         myMap.put(MoneyWiseDataType.SECURITYTYPE, SECURITYTYPE_NAME);
         myMap.put(MoneyWiseDataType.PAYEETYPE, PAYEETYPE_NAME);
         myMap.put(MoneyWiseDataType.TRANSTYPE, TRANSTYPE_NAME);
@@ -584,6 +595,7 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
         myMap.put(MoneyWiseDataType.DEPOSITTYPE, DEPOSITTYPE_LIST);
         myMap.put(MoneyWiseDataType.CASHTYPE, CASHTYPE_LIST);
         myMap.put(MoneyWiseDataType.LOANTYPE, LOANTYPE_LIST);
+        myMap.put(MoneyWiseDataType.PORTFOLIOTYPE, PORTFOLIOTYPE_LIST);
         myMap.put(MoneyWiseDataType.SECURITYTYPE, SECURITYTYPE_LIST);
         myMap.put(MoneyWiseDataType.PAYEETYPE, PAYEETYPE_LIST);
         myMap.put(MoneyWiseDataType.TRANSTYPE, TRANSTYPE_LIST);

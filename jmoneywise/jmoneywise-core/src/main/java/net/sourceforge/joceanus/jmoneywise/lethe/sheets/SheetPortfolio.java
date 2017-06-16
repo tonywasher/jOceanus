@@ -26,9 +26,11 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
@@ -56,9 +58,14 @@ public class SheetPortfolio
     private static final int COL_DESC = COL_NAME + 1;
 
     /**
+     * Type column.
+     */
+    private static final int COL_TYPE = COL_DESC + 1;
+
+    /**
      * Parent column.
      */
-    private static final int COL_PARENT = COL_DESC + 1;
+    private static final int COL_PARENT = COL_TYPE + 1;
 
     /**
      * Currency column.
@@ -105,6 +112,7 @@ public class SheetPortfolio
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
+        myValues.addValue(Portfolio.FIELD_PORTTYPE, loadInteger(COL_TYPE));
         myValues.addValue(Portfolio.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(Portfolio.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Portfolio.FIELD_NAME, loadBytes(COL_NAME));
@@ -120,6 +128,7 @@ public class SheetPortfolio
     protected void insertSecureItem(final Portfolio pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
+        writeInteger(COL_TYPE, pItem.getPortfolioTypeId());
         writeInteger(COL_PARENT, pItem.getParentId());
         writeInteger(COL_CURRENCY, pItem.getAssetCurrencyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
@@ -150,8 +159,19 @@ public class SheetPortfolio
         int iAdjust = -1;
         String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
-        /* Skip type and class */
-        ++iAdjust;
+        /* Access portfolio type */
+        String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+
+        /* Look for separator in category */
+        int iIndex = myType.indexOf(TransactionCategory.STR_SEP);
+        if (iIndex == -1) {
+            throw new MoneyWiseLogicException("Unexpected Portfolio Class " + myType);
+        }
+
+        /* Access subCategory as portfolio type */
+        String myPortType = myType.substring(iIndex + 1);
+
+        /* Skip class */
         ++iAdjust;
 
         /* Handle taxFree which may be missing */
@@ -193,6 +213,7 @@ public class SheetPortfolio
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = new DataValues<>(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_NAME, myName);
+        myValues.addValue(Portfolio.FIELD_PORTTYPE, myPortType);
         myValues.addValue(Portfolio.FIELD_PARENT, myParent);
         myValues.addValue(Portfolio.FIELD_CURRENCY, myCurrency);
         myValues.addValue(Portfolio.FIELD_TAXFREE, isTaxFree);

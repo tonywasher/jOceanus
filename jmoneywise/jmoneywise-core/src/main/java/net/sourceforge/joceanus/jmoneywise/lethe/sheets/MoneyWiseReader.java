@@ -54,6 +54,7 @@ public class MoneyWiseReader
         addSheet(new SheetCashCategoryType(this));
         addSheet(new SheetLoanCategoryType(this));
         addSheet(new SheetPayeeType(this));
+        addSheet(new SheetPortfolioType(this));
         addSheet(new SheetSecurityType(this));
         addSheet(new SheetTransCategoryType(this));
         addSheet(new SheetTaxBasis(this));

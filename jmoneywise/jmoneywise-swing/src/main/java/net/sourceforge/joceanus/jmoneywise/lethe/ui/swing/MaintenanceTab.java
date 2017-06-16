@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryTyp
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType.LoanCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType.PayeeTypeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType.PortfolioTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasis.TaxBasisList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
@@ -186,6 +187,7 @@ public class MaintenanceTab
         theStatic.addStatic(MoneyWiseDataType.CASHTYPE, CashCategoryTypeList.class);
         theStatic.addStatic(MoneyWiseDataType.LOANTYPE, LoanCategoryTypeList.class);
         theStatic.addStatic(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
+        theStatic.addStatic(MoneyWiseDataType.PORTFOLIOTYPE, PortfolioTypeList.class);
         theStatic.addStatic(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class);
         theStatic.addStatic(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
         theStatic.addStatic(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
@@ -196,8 +198,6 @@ public class MaintenanceTab
 
         /* Create the Preferences Tab */
         MetisPreferenceManager myPrefs = theView.getPreferenceManager();
-        // thePreferences = new MetisPreferencesPanel(myFactory, myPrefs, theView.getFieldManager(),
-        // theView.getViewerManager(), theView.getDataEntry(DataControl.DATA_MAINT));
         thePreferences = new MetisPreferenceView<>(myFactory, myPrefs);
         theTabs.addTabItem(TITLE_PREFERENCES, thePreferences);
 

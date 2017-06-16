@@ -47,6 +47,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType.PortfolioTypeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
@@ -78,6 +81,11 @@ public class Portfolio
      * Local Report fields.
      */
     private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
+
+    /**
+     * PortfolioType Field Id.
+     */
+    public static final MetisField FIELD_PORTTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.PORTFOLIOTYPE.getItemName(), MetisDataType.LINK);
 
     /**
      * Parent Field Id.
@@ -172,8 +180,16 @@ public class Portfolio
 
         /* Protect against exceptions */
         try {
+            /* Store the PortfolioType */
+            Object myValue = pValues.getValue(FIELD_PORTTYPE);
+            if (myValue instanceof Integer) {
+                setValueType((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueType((String) myValue);
+            }
+
             /* Store the Parent */
-            Object myValue = pValues.getValue(FIELD_PARENT);
+            myValue = pValues.getValue(FIELD_PARENT);
             if (myValue instanceof Integer) {
                 setValueParent((Integer) myValue);
             } else if (myValue instanceof String) {
@@ -231,6 +247,9 @@ public class Portfolio
     @Override
     public boolean includeXmlField(final MetisField pField) {
         /* Determine whether fields should be included */
+        if (FIELD_PORTTYPE.equals(pField)) {
+            return true;
+        }
         if (FIELD_PARENT.equals(pField)) {
             return true;
         }
@@ -376,6 +395,47 @@ public class Portfolio
                                   : myParent.getName();
     }
 
+    /**
+     * Obtain Portfolio Type.
+     * @return the type
+     */
+    public PortfolioType getPortfolioType() {
+        return getPortfolioType(getValueSet());
+    }
+
+    /**
+     * Obtain PortfolioTypeId.
+     * @return the portfolioTypeId
+     */
+    public Integer getPortfolioTypeId() {
+        PortfolioType myType = getPortfolioType();
+        return (myType == null)
+                                ? null
+                                : myType.getId();
+    }
+
+    /**
+     * Obtain PortfolioTypeName.
+     * @return the portfolioTypeName
+     */
+    public String getPortfolioTypeName() {
+        PortfolioType myType = getPortfolioType();
+        return (myType == null)
+                                ? null
+                                : myType.getName();
+    }
+
+    /**
+     * Obtain PortfolioTypeClass.
+     * @return the portfolioTypeClass
+     */
+    public PortfolioTypeClass getPortfolioTypeClass() {
+        PortfolioType myType = getPortfolioType();
+        return (myType == null)
+                                ? null
+                                : myType.getPortfolioClass();
+    }
+
     @Override
     public AssetCurrency getAssetCurrency() {
         return getAssetCurrency(getValueSet());
@@ -393,6 +453,15 @@ public class Portfolio
      */
     public static Payee getParent(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PARENT, Payee.class);
+    }
+
+    /**
+     * Obtain PortfolioType.
+     * @param pValueSet the valueSet
+     * @return the PortfolioType
+     */
+    public static PortfolioType getPortfolioType(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PORTTYPE, PortfolioType.class);
     }
 
     /**
@@ -435,6 +504,30 @@ public class Portfolio
      */
     private void setValueParent(final String pValue) {
         getValueSet().setValue(FIELD_PARENT, pValue);
+    }
+
+    /**
+     * Set portfolio type value.
+     * @param pValue the value
+     */
+    private void setValueType(final PortfolioType pValue) {
+        getValueSet().setValue(FIELD_PORTTYPE, pValue);
+    }
+
+    /**
+     * Set portfolio type id.
+     * @param pValue the value
+     */
+    private void setValueType(final Integer pValue) {
+        getValueSet().setValue(FIELD_PORTTYPE, pValue);
+    }
+
+    /**
+     * Set portfolio type name.
+     * @param pValue the value
+     */
+    private void setValueType(final String pValue) {
+        getValueSet().setValue(FIELD_PORTTYPE, pValue);
     }
 
     /**
@@ -602,6 +695,7 @@ public class Portfolio
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
+        setPortfolioType(getDefaultPortfolioType());
         setParent(getDefaultParent(pUpdateSet));
         setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
@@ -632,6 +726,27 @@ public class Portfolio
         return null;
     }
 
+    /**
+     * Obtain portfolio type for new portfolio account.
+     * @return the security type
+     */
+    public PortfolioType getDefaultPortfolioType() {
+        /* loop through the portfolio types */
+        PortfolioTypeList myTypes = getDataSet().getPortfolioTypes();
+        Iterator<PortfolioType> myIterator = myTypes.iterator();
+        while (myIterator.hasNext()) {
+            PortfolioType myType = myIterator.next();
+
+            /* Ignore deleted types */
+            if (!myType.isDeleted()) {
+                return myType;
+            }
+        }
+
+        /* Return no category */
+        return null;
+    }
+
     @Override
     public int compareTo(final TransactionAsset pThat) {
         /* Handle the trivial cases */
@@ -646,9 +761,13 @@ public class Portfolio
         int iDiff = super.compareTo(pThat);
         if ((iDiff == 0)
             && (pThat instanceof Portfolio)) {
-            /* Check the underlying base */
+            /* Check the portfolio type */
             Portfolio myThat = (Portfolio) pThat;
-            iDiff = super.compareAsset(myThat);
+            iDiff = MetisDifference.compareObject(getPortfolioType(), myThat.getPortfolioType());
+            if (iDiff == 0) {
+                /* Check the underlying base */
+                iDiff = super.compareAsset(myThat);
+            }
         }
 
         /* Return the result */
@@ -664,6 +783,7 @@ public class Portfolio
         MoneyWiseData myData = getDataSet();
         MetisValueSet myValues = getValueSet();
         resolveDataLink(FIELD_PARENT, myData.getPayees());
+        resolveDataLink(FIELD_PORTTYPE, myData.getPortfolioTypes());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
 
         /* Adjust TaxFree */
@@ -676,7 +796,9 @@ public class Portfolio
     @Override
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent/holding within list */
+        MoneyWiseData myData = getDataSet();
         PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        resolveDataLink(FIELD_PORTTYPE, myData.getPortfolioTypes());
         resolveDataLink(FIELD_PARENT, myPayees);
     }
 
@@ -687,6 +809,14 @@ public class Portfolio
      */
     public void setParent(final Payee pParent) throws OceanusException {
         setValueParent(pParent);
+    }
+
+    /**
+     * Set a new portfolio type.
+     * @param pType the new type
+     */
+    public void setPortfolioType(final PortfolioType pType) {
+        setValueType(pType);
     }
 
     /**
@@ -827,6 +957,7 @@ public class Portfolio
     @Override
     public void touchUnderlyingItems() {
         /* Touch parent and currency */
+        getPortfolioType().touchItem(this);
         getParent().touchItem(this);
         getAssetCurrency().touchItem(this);
 
@@ -846,10 +977,21 @@ public class Portfolio
     @Override
     public void validate() {
         Payee myParent = getParent();
+        PortfolioType myPortType = getPortfolioType();
         AssetCurrency myCurrency = getAssetCurrency();
 
         /* Validate base components */
         super.validate();
+
+        /* PortfolioType must be non-null */
+        if (myPortType == null) {
+            addError(ERROR_MISSING, FIELD_PORTTYPE);
+        } else {
+            /* PortfolioType must be enabled */
+            if (!myPortType.getEnabled()) {
+                addError(ERROR_DISABLED, FIELD_PORTTYPE);
+            }
+        }
 
         /* Parent account must exist */
         if (myParent == null) {
@@ -916,6 +1058,11 @@ public class Portfolio
         /* Apply basic changes */
         applyBasicChanges(myPortfolio);
 
+        /* Update the category type if required */
+        if (!MetisDifference.isEqual(getPortfolioType(), myPortfolio.getPortfolioType())) {
+            setValueType(myPortfolio.getPortfolioType());
+        }
+
         /* Update the parent account if required */
         if (!MetisDifference.isEqual(getParent(), myPortfolio.getParent())) {
             setValueParent(myPortfolio.getParent());
@@ -955,12 +1102,12 @@ public class Portfolio
         /**
          * The PortfolioInfo List.
          */
-        private PortfolioInfoList theInfoList = null;
+        private PortfolioInfoList theInfoList;
 
         /**
          * The AccountInfoType list.
          */
-        private AccountInfoTypeList theInfoTypeList = null;
+        private AccountInfoTypeList theInfoTypeList;
 
         /**
          * Construct an empty CORE Portfolio list.

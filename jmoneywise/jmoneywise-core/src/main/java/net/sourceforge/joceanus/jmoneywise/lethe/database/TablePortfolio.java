@@ -22,12 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
+import javax.swing.SortOrder;
+
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableEncrypted;
@@ -52,12 +55,16 @@ public class TablePortfolio
         PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
+        PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Portfolio.FIELD_PORTTYPE, TablePortfolioType.TABLE_NAME);
         myTableDef.addEncryptedColumn(Portfolio.FIELD_NAME, Portfolio.NAMELEN);
         myTableDef.addReferenceColumn(Portfolio.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Portfolio.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addNullEncryptedColumn(Portfolio.FIELD_DESC, Portfolio.DESCLEN);
         myTableDef.addBooleanColumn(Portfolio.FIELD_TAXFREE);
         myTableDef.addBooleanColumn(Portfolio.FIELD_CLOSED);
+
+        /* Declare Sort Columns */
+        myCatCol.setSortOrder(SortOrder.ASCENDING);
     }
 
     @Override
@@ -75,6 +82,7 @@ public class TablePortfolio
         DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_NAME, myTableDef.getBinaryValue(Portfolio.FIELD_NAME));
         myValues.addValue(Portfolio.FIELD_DESC, myTableDef.getBinaryValue(Portfolio.FIELD_DESC));
+        myValues.addValue(Portfolio.FIELD_PORTTYPE, myTableDef.getIntegerValue(Portfolio.FIELD_PORTTYPE));
         myValues.addValue(Portfolio.FIELD_PARENT, myTableDef.getIntegerValue(Portfolio.FIELD_PARENT));
         myValues.addValue(Portfolio.FIELD_CURRENCY, myTableDef.getIntegerValue(Portfolio.FIELD_CURRENCY));
         myValues.addValue(Portfolio.FIELD_TAXFREE, myTableDef.getBooleanValue(Portfolio.FIELD_TAXFREE));
@@ -93,6 +101,8 @@ public class TablePortfolio
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Portfolio.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
+        } else if (Portfolio.FIELD_PORTTYPE.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getPortfolioTypeId());
         } else if (Portfolio.FIELD_PARENT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else if (Portfolio.FIELD_CURRENCY.equals(iField)) {

@@ -44,6 +44,11 @@ public enum MoneyWiseDataType implements MetisFieldEnum {
     LOANTYPE,
 
     /**
+     * PortfolioType.
+     */
+    PORTFOLIOTYPE,
+
+    /**
      * SecurityType.
      */
     SECURITYTYPE,

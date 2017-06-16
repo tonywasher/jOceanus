@@ -71,6 +71,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryTyp
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType.LoanCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType.PayeeTypeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType.PortfolioTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasis.TaxBasisList;
@@ -220,6 +221,14 @@ public class MoneyWiseData
      */
     public PayeeTypeList getPayeeTypes() {
         return getDataList(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
+    }
+
+    /**
+     * Obtain PortfolioTypes.
+     * @return the Portfolio types
+     */
+    public PortfolioTypeList getPortfolioTypes() {
+        return getDataList(MoneyWiseDataType.PORTFOLIOTYPE, PortfolioTypeList.class);
     }
 
     /**
@@ -591,6 +600,8 @@ public class MoneyWiseData
                 return new LoanCategoryTypeList(this);
             case PAYEETYPE:
                 return new PayeeTypeList(this);
+            case PORTFOLIOTYPE:
+                return new PortfolioTypeList(this);
             case SECURITYTYPE:
                 return new SecurityTypeList(this);
             case TRANSTYPE:

@@ -31,57 +31,57 @@ import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType.SecurityTypeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType.PortfolioTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * SheetStaticData extension for SecurityType.
+ * SheetStaticData extension for PortfolioType.
  * @author Tony Washer
  */
-public class SheetSecurityType
-        extends PrometheusSheetStaticData<SecurityType, MoneyWiseDataType> {
+public class SheetPortfolioType
+        extends PrometheusSheetStaticData<PortfolioType, MoneyWiseDataType> {
     /**
      * NamedArea for SecurityTypes.
      */
-    private static final String AREA_SECURITYTYPES = SecurityType.LIST_NAME;
+    private static final String AREA_PORTFOLIOTYPES = PortfolioType.LIST_NAME;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetSecurityType(final MoneyWiseReader pReader) {
+    protected SheetPortfolioType(final MoneyWiseReader pReader) {
         /* Call super-constructor */
-        super(pReader, AREA_SECURITYTYPES);
+        super(pReader, AREA_PORTFOLIOTYPES);
 
-        /* Access the Security Type list */
+        /* Access the Portfolio Type list */
         MoneyWiseData myData = pReader.getData();
-        setDataList(myData.getSecurityTypes());
+        setDataList(myData.getPortfolioTypes());
     }
 
     /**
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetSecurityType(final MoneyWiseWriter pWriter) {
+    protected SheetPortfolioType(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_SECURITYTYPES);
+        super(pWriter, AREA_PORTFOLIOTYPES);
 
-        /* Access the Security Type list */
+        /* Access the Portfolio Type list */
         MoneyWiseData myData = pWriter.getData();
-        setDataList(myData.getSecurityTypes());
+        setDataList(myData.getPortfolioTypes());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        return getRowValues(SecurityType.OBJECT_NAME);
+        return getRowValues(PortfolioType.OBJECT_NAME);
     }
 
     /**
-     * Load the Security Types from an archive.
+     * Load the Portfolio Types from an archive.
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
@@ -90,18 +90,18 @@ public class SheetSecurityType
     protected static void loadArchive(final MetisThreadStatusReport pReport,
                                       final MetisDataWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
-        /* Access the list of security types */
-        SecurityTypeList myList = pData.getSecurityTypes();
+        /* Access the list of portfolio types */
+        PortfolioTypeList myList = pData.getPortfolioTypes();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            MetisDataView myView = pWorkBook.getRangeView(AREA_SECURITYTYPES);
+            MetisDataView myView = pWorkBook.getRangeView(AREA_PORTFOLIOTYPES);
 
             /* Declare the new stage */
-            pReport.setNewStage(AREA_SECURITYTYPES);
+            pReport.setNewStage(AREA_PORTFOLIOTYPES);
 
-            /* Count the number of SecurityTypes */
+            /* Count the number of PortfolioTypes */
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */

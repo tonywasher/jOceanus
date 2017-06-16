@@ -55,6 +55,7 @@ public class MoneyWiseDatabase
         addTable(new TableCashCategoryType(this));
         addTable(new TableLoanCategoryType(this));
         addTable(new TablePayeeType(this));
+        addTable(new TablePortfolioType(this));
         addTable(new TableSecurityType(this));
         addTable(new TableTransCategoryType(this));
         addTable(new TableTaxBasis(this));
