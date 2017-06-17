@@ -413,36 +413,6 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
     PORTFOLIOINFO_LIST("PortfolioInfo.List"),
 
     /**
-     * StockOption Name.
-     */
-    STOCKOPTION_NAME("StockOption.Name"),
-
-    /**
-     * StockOption List.
-     */
-    STOCKOPTION_LIST("StockOption.List"),
-
-    /**
-     * StockOptionVest Name.
-     */
-    STOCKOPTIONVEST_NAME("StockOptionVest.Name"),
-
-    /**
-     * StockOptionVest List.
-     */
-    STOCKOPTIONVEST_LIST("StockOptionVest.List"),
-
-    /**
-     * StockOptionInfo Name.
-     */
-    STOCKOPTIONINFO_NAME("StockOptionInfo.Name"),
-
-    /**
-     * StockOptionInfo List.
-     */
-    STOCKOPTIONINFO_LIST("StockOptionInfo.List"),
-
-    /**
      * Transaction Name.
      */
     TRANSACTION_NAME("Transaction.Name"),
@@ -567,9 +537,6 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
         myMap.put(MoneyWiseDataType.LOANINFO, LOANINFO_NAME);
         myMap.put(MoneyWiseDataType.PORTFOLIO, PORTFOLIO_NAME);
         myMap.put(MoneyWiseDataType.PORTFOLIOINFO, PORTFOLIOINFO_NAME);
-        myMap.put(MoneyWiseDataType.STOCKOPTION, STOCKOPTION_NAME);
-        myMap.put(MoneyWiseDataType.STOCKOPTIONVEST, STOCKOPTIONVEST_NAME);
-        myMap.put(MoneyWiseDataType.STOCKOPTIONINFO, STOCKOPTIONINFO_NAME);
         myMap.put(MoneyWiseDataType.TRANSACTION, TRANSACTION_NAME);
         myMap.put(MoneyWiseDataType.TRANSACTIONINFO, TRANSINFO_NAME);
         myMap.put(MoneyWiseDataType.SCHEDULE, SCHEDULE_NAME);
@@ -625,9 +592,6 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
         myMap.put(MoneyWiseDataType.LOANINFO, LOANINFO_LIST);
         myMap.put(MoneyWiseDataType.PORTFOLIO, PORTFOLIO_LIST);
         myMap.put(MoneyWiseDataType.PORTFOLIOINFO, PORTFOLIOINFO_LIST);
-        myMap.put(MoneyWiseDataType.STOCKOPTION, STOCKOPTION_LIST);
-        myMap.put(MoneyWiseDataType.STOCKOPTIONVEST, STOCKOPTIONVEST_LIST);
-        myMap.put(MoneyWiseDataType.STOCKOPTIONINFO, STOCKOPTIONINFO_LIST);
         myMap.put(MoneyWiseDataType.TRANSACTION, TRANSACTION_LIST);
         myMap.put(MoneyWiseDataType.TRANSACTIONINFO, TRANSINFO_LIST);
         myMap.put(MoneyWiseDataType.SCHEDULE, SCHEDULE_LIST);

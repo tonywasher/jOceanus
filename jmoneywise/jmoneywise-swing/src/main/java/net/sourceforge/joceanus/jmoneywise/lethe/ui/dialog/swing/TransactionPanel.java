@@ -217,7 +217,7 @@ public class TransactionPanel
         theAnalysisSelect = pAnalysisSelect;
         theBuilder = pBuilder;
 
-        /* Create the text fields */
+        /* Create the date button */
         theDateButton = new TethysSwingDateButton();
 
         /* Create the buttons */
@@ -354,10 +354,10 @@ public class TransactionPanel
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), MetisDataType.STRING, myReference);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), theTagButton);
 
-        /* Create the Tax panel */
+        /* Create the Info panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
-        /* Layout the tax panel */
+        /* Layout the info panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), myPanel);

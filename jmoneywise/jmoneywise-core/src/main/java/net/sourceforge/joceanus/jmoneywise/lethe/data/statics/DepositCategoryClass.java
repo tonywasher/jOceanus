@@ -48,12 +48,20 @@ public enum DepositCategoryClass implements CategoryInterface {
     SAVINGS(2, 2),
 
     /**
+     * TaxFreeSavings.
+     * <p>
+     * This a bond account which is a specialised form of an {@link #SAVINGS} account. It has an
+     * associated maturity date for the account.
+     */
+    TAXFREESAVINGS(3, 3),
+
+    /**
      * Peer2Peer Deposit.
      * <p>
      * This a peer2peer account which is a specialised form of an {@link #SAVINGS} account.
      * LoyaltyBonuses are allowed, and the tax situation varies.
      */
-    PEER2PEER(3, 3),
+    PEER2PEER(4, 4),
 
     /**
      * Bond Deposit.
@@ -61,14 +69,22 @@ public enum DepositCategoryClass implements CategoryInterface {
      * This a bond account which is a specialised form of an {@link #SAVINGS} account. It has an
      * associated maturity date for the account.
      */
-    BOND(4, 4),
+    BOND(5, 5),
+
+    /**
+     * Bond Deposit.
+     * <p>
+     * This a bond account which is a specialised form of an {@link #SAVINGS} account. It has an
+     * associated maturity date for the account.
+     */
+    TAXFREEBOND(6, 6),
 
     /**
      * Parent Category.
      * <p>
      * This is used as a sub-total bucket and is used purely for reporting purposes.
      */
-    PARENT(5, 0);
+    PARENT(7, 0);
 
     /**
      * The String name.
@@ -142,8 +158,10 @@ public enum DepositCategoryClass implements CategoryInterface {
         switch (this) {
             case CHECKING:
             case SAVINGS:
+            case TAXFREESAVINGS:
             case PEER2PEER:
             case BOND:
+            case TAXFREEBOND:
                 return true;
             default:
                 return false;
@@ -151,19 +169,42 @@ public enum DepositCategoryClass implements CategoryInterface {
     }
 
     /**
-     * Determine whether the DepositCategoryType can be tax free.
-     * @return <code>true</code> if the deposit category type can be tax free, <code>false</code>
+     * Determine whether the DepositCategoryType is be tax free.
+     * @return <code>true</code> if the deposit category type is tax free, <code>false</code>
      * otherwise.
      */
-    public boolean canTaxFree() {
+    public boolean isTaxFree() {
         switch (this) {
-            case SAVINGS:
-            case PEER2PEER:
-            case BOND:
+            case TAXFREESAVINGS:
+            case TAXFREEBOND:
                 return true;
             default:
                 return false;
         }
+    }
+
+    /**
+     * Determine whether the DepositCategoryType has a maturity date.
+     * @return <code>true</code> if the deposit category type has maturity, <code>false</code>
+     * otherwise.
+     */
+    public boolean hasMaturity() {
+        switch (this) {
+            case BOND:
+            case TAXFREEBOND:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the DepositCategoryType is gross.
+     * @return <code>true</code> if the deposit category type is gross, <code>false</code>
+     * otherwise.
+     */
+    public boolean isGross() {
+        return this == PEER2PEER;
     }
 
     /**
@@ -187,12 +228,7 @@ public enum DepositCategoryClass implements CategoryInterface {
      * <code>false</code> otherwise.
      */
     public boolean canLoyaltyBonus() {
-        switch (this) {
-            case PEER2PEER:
-                return true;
-            default:
-                return false;
-        }
+        return this == PEER2PEER;
     }
 
     /**
@@ -201,12 +237,7 @@ public enum DepositCategoryClass implements CategoryInterface {
      * <code>false</code> otherwise.
      */
     public boolean isParentCategory() {
-        switch (this) {
-            case PARENT:
-                return true;
-            default:
-                return false;
-        }
+        return this == PARENT;
     }
 
     @Override

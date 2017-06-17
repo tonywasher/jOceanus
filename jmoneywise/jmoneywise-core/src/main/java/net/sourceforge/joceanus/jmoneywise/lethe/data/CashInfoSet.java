@@ -241,6 +241,11 @@ public class CashInfoSet
             case USERID:
             case PASSWORD:
             case MATURITY:
+            case SYMBOL:
+            case REGION:
+            case GRANTDATE:
+            case UNDERLYINGSTOCK:
+            case OPTIONPRICE:
             default:
                 return MetisFieldRequired.NOTALLOWED;
         }

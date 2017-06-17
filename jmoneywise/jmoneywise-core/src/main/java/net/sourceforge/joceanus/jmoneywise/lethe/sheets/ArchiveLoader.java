@@ -358,10 +358,10 @@ public class ArchiveLoader {
             /* Load Accounts */
             myStage.startTask("Accounts");
             SheetAccount.loadArchive(pReport, myWorkbook, pData, this);
-            myStage.startTask(DepositRate.LIST_NAME);
-            SheetDepositRate.loadArchive(pReport, myWorkbook, pData);
             myStage.startTask(SecurityPrice.LIST_NAME);
             SheetSecurityPrice.loadArchive(pReport, myWorkbook, pData, this);
+            myStage.startTask(DepositRate.LIST_NAME);
+            SheetDepositRate.loadArchive(pReport, myWorkbook, pData);
 
             /* Load Transactions */
             myStage.startTask(Transaction.LIST_NAME);

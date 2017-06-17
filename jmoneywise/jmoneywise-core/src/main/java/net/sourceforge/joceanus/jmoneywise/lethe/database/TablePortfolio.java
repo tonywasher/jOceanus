@@ -60,7 +60,6 @@ public class TablePortfolio
         myTableDef.addReferenceColumn(Portfolio.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Portfolio.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addNullEncryptedColumn(Portfolio.FIELD_DESC, Portfolio.DESCLEN);
-        myTableDef.addBooleanColumn(Portfolio.FIELD_TAXFREE);
         myTableDef.addBooleanColumn(Portfolio.FIELD_CLOSED);
 
         /* Declare Sort Columns */
@@ -85,7 +84,6 @@ public class TablePortfolio
         myValues.addValue(Portfolio.FIELD_PORTTYPE, myTableDef.getIntegerValue(Portfolio.FIELD_PORTTYPE));
         myValues.addValue(Portfolio.FIELD_PARENT, myTableDef.getIntegerValue(Portfolio.FIELD_PARENT));
         myValues.addValue(Portfolio.FIELD_CURRENCY, myTableDef.getIntegerValue(Portfolio.FIELD_CURRENCY));
-        myValues.addValue(Portfolio.FIELD_TAXFREE, myTableDef.getBooleanValue(Portfolio.FIELD_TAXFREE));
         myValues.addValue(Portfolio.FIELD_CLOSED, myTableDef.getBooleanValue(Portfolio.FIELD_CLOSED));
 
         /* Return the values */
@@ -107,8 +105,6 @@ public class TablePortfolio
             myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else if (Portfolio.FIELD_CURRENCY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getAssetCurrencyId());
-        } else if (Portfolio.FIELD_TAXFREE.equals(iField)) {
-            myTableDef.setBooleanValue(iField, pItem.isTaxFree());
         } else if (Portfolio.FIELD_CLOSED.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isClosed());
         } else {

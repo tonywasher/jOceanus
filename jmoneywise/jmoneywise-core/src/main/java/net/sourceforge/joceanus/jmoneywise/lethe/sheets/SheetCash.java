@@ -149,9 +149,7 @@ public class SheetCash
         String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
         String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
-        /* Skip class, taxFree and gross */
-        ++iAdjust;
-        ++iAdjust;
+        /* Skip class */
         ++iAdjust;
 
         /* Handle closed which may be missing */
@@ -232,9 +230,7 @@ public class SheetCash
         int iAdjust = -1;
         String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
-        /* Skip type, class, taxFree and gross */
-        ++iAdjust;
-        ++iAdjust;
+        /* Skip type, class */
         ++iAdjust;
         ++iAdjust;
 

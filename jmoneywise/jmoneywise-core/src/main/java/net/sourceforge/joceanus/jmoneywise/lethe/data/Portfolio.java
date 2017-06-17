@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
@@ -96,11 +95,6 @@ public class Portfolio
      * Currency Field Id.
      */
     public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
-
-    /**
-     * isTaxFree Field Id.
-     */
-    public static final MetisField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_TAXFREE.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * PortfolioInfoSet field Id.
@@ -175,9 +169,6 @@ public class Portfolio
         /* Initialise the item */
         super(pList, pValues);
 
-        /* Access formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
-
         /* Protect against exceptions */
         try {
             /* Store the PortfolioType */
@@ -204,14 +195,6 @@ public class Portfolio
                 setValueCurrency((String) myValue);
             } else if (myValue instanceof AssetCurrency) {
                 setValueCurrency((AssetCurrency) myValue);
-            }
-
-            /* Store the taxFree flag */
-            myValue = pValues.getValue(FIELD_TAXFREE);
-            if (myValue instanceof Boolean) {
-                setValueTaxFree((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueTaxFree(myFormatter.parseValue((String) myValue, Boolean.class));
             }
 
             /* Catch Exceptions */
@@ -255,9 +238,6 @@ public class Portfolio
         }
         if (FIELD_CURRENCY.equals(pField)) {
             return true;
-        }
-        if (FIELD_TAXFREE.equals(pField)) {
-            return isTaxFree();
         }
 
         /* Pass call on */
@@ -443,7 +423,10 @@ public class Portfolio
 
     @Override
     public Boolean isTaxFree() {
-        return isTaxFree(getValueSet());
+        PortfolioType myType = getPortfolioType();
+        return (myType == null)
+                                ? Boolean.FALSE
+                                : myType.getPortfolioClass().isTaxFree();
     }
 
     /**
@@ -471,15 +454,6 @@ public class Portfolio
      */
     public static AssetCurrency getAssetCurrency(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
-    }
-
-    /**
-     * Is the portfolio taxFree.
-     * @param pValueSet the valueSet
-     * @return true/false
-     */
-    public static Boolean isTaxFree(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_TAXFREE, Boolean.class);
     }
 
     /**
@@ -552,14 +526,6 @@ public class Portfolio
      */
     private void setValueCurrency(final String pValue) {
         getValueSet().setValue(FIELD_CURRENCY, pValue);
-    }
-
-    /**
-     * Set taxFree indication.
-     * @param pValue the value
-     */
-    private void setValueTaxFree(final Boolean pValue) {
-        getValueSet().setValue(FIELD_TAXFREE, pValue);
     }
 
     @Override
@@ -699,7 +665,6 @@ public class Portfolio
         setParent(getDefaultParent(pUpdateSet));
         setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
-        setTaxFree(Boolean.FALSE);
     }
 
     /**
@@ -781,16 +746,9 @@ public class Portfolio
 
         /* Resolve holding account */
         MoneyWiseData myData = getDataSet();
-        MetisValueSet myValues = getValueSet();
         resolveDataLink(FIELD_PARENT, myData.getPayees());
         resolveDataLink(FIELD_PORTTYPE, myData.getPortfolioTypes());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
-
-        /* Adjust TaxFree */
-        Object myTaxFree = myValues.getValue(FIELD_TAXFREE);
-        if (myTaxFree == null) {
-            setValueTaxFree(Boolean.FALSE);
-        }
     }
 
     @Override
@@ -825,14 +783,6 @@ public class Portfolio
      */
     public void setAssetCurrency(final AssetCurrency pCurrency) {
         setValueCurrency(pCurrency);
-    }
-
-    /**
-     * Set a new taxFree indication.
-     * @param isTaxFree the new taxFree indication
-     */
-    public void setTaxFree(final Boolean isTaxFree) {
-        setValueTaxFree(isTaxFree);
     }
 
     /**
@@ -967,9 +917,6 @@ public class Portfolio
 
     @Override
     public void touchOnUpdate() {
-        /* Reset touches from update set */
-        clearTouches(MoneyWiseDataType.STOCKOPTION);
-
         /* Touch parent */
         getParent().touchItem(this);
     }
@@ -1071,11 +1018,6 @@ public class Portfolio
         /* Update the portfolio currency if required */
         if (!MetisDifference.isEqual(getAssetCurrency(), myPortfolio.getAssetCurrency())) {
             setValueCurrency(myPortfolio.getAssetCurrency());
-        }
-
-        /* Update the taxFree status if required */
-        if (!MetisDifference.isEqual(isTaxFree(), myPortfolio.isTaxFree())) {
-            setValueTaxFree(myPortfolio.isTaxFree());
         }
 
         /* Check for changes */
@@ -1304,6 +1246,13 @@ public class Portfolio
         @Override
         protected PortfolioDataMap allocateDataMap() {
             return new PortfolioDataMap(getDataSet().getDeposits());
+        }
+
+        @Override
+        public void postProcessOnLoad() throws OceanusException {
+            /* Resolve links and sort the data */
+            super.resolveDataSetLinks();
+            reSort();
         }
     }
 

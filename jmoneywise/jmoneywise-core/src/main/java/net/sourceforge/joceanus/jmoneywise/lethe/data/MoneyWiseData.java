@@ -56,9 +56,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding.SecurityHo
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceDataMap;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.StockOption.StockOptionList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.StockOptionInfo.StockOptionInfoList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.StockOptionVest.StockOptionVestList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo.TransactionInfoList;
@@ -456,30 +453,6 @@ public class MoneyWiseData
     }
 
     /**
-     * Obtain StockOptions.
-     * @return the Options
-     */
-    public StockOptionList getStockOptions() {
-        return getDataList(MoneyWiseDataType.STOCKOPTION, StockOptionList.class);
-    }
-
-    /**
-     * Obtain StockOptionVests.
-     * @return the OptionVests
-     */
-    public StockOptionVestList getStockOptionVests() {
-        return getDataList(MoneyWiseDataType.STOCKOPTIONVEST, StockOptionVestList.class);
-    }
-
-    /**
-     * Obtain StockOptionInfo.
-     * @return the StockOption Info
-     */
-    public StockOptionInfoList getStockOptionInfo() {
-        return getDataList(MoneyWiseDataType.STOCKOPTIONINFO, StockOptionInfoList.class);
-    }
-
-    /**
      * Obtain Transactions.
      * @return the Transactions
      */
@@ -658,12 +631,6 @@ public class MoneyWiseData
                 return new PortfolioList(this);
             case PORTFOLIOINFO:
                 return new PortfolioInfoList(this);
-            case STOCKOPTION:
-                return new StockOptionList(this);
-            case STOCKOPTIONVEST:
-                return new StockOptionVestList(this);
-            case STOCKOPTIONINFO:
-                return new StockOptionInfoList(this);
             case TRANSACTION:
                 return new TransactionList(this);
             case TRANSACTIONINFO:

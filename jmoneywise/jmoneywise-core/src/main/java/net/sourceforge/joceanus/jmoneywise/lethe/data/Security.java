@@ -30,8 +30,6 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -61,6 +59,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 
 /**
  * Security class.
@@ -79,11 +79,6 @@ public class Security
     public static final String LIST_NAME = MoneyWiseDataType.SECURITY.getListName();
 
     /**
-     * Symbol length.
-     */
-    public static final int SYMBOLLEN = 30;
-
-    /**
      * Local Report fields.
      */
     private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
@@ -97,16 +92,6 @@ public class Security
      * Parent Field Id.
      */
     public static final MetisField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue(), MetisDataType.LINK);
-
-    /**
-     * Symbol Field Id.
-     */
-    public static final MetisField FIELD_SYMBOL = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.SECURITY_SYMBOL.getValue(), MetisDataType.STRING, SYMBOLLEN);
-
-    /**
-     * Region Field Id.
-     */
-    public static final MetisField FIELD_REGION = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.REGION.getItemName(), MetisDataType.LINK);
 
     /**
      * Currency Field Id.
@@ -181,56 +166,30 @@ public class Security
         /* Initialise the item */
         super(pList, pValues);
 
-        /* Protect against exceptions */
-        try {
-            /* Store the SecurityType */
-            Object myValue = pValues.getValue(FIELD_SECTYPE);
-            if (myValue instanceof Integer) {
-                setValueType((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueType((String) myValue);
-            }
+        /* Store the SecurityType */
+        Object myValue = pValues.getValue(FIELD_SECTYPE);
+        if (myValue instanceof Integer) {
+            setValueType((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueType((String) myValue);
+        }
 
-            /* Store the Parent */
-            myValue = pValues.getValue(FIELD_PARENT);
-            if (myValue instanceof Integer) {
-                setValueParent((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueParent((String) myValue);
-            }
+        /* Store the Parent */
+        myValue = pValues.getValue(FIELD_PARENT);
+        if (myValue instanceof Integer) {
+            setValueParent((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueParent((String) myValue);
+        }
 
-            /* Store the Symbol */
-            myValue = pValues.getValue(FIELD_SYMBOL);
-            if (myValue instanceof String) {
-                setValueSymbol((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueSymbol((byte[]) myValue);
-            }
-
-            /* Store the Region */
-            myValue = pValues.getValue(FIELD_REGION);
-            if (myValue instanceof Integer) {
-                setValueRegion((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueRegion((String) myValue);
-            } else if (myValue instanceof Region) {
-                setValueRegion((Region) myValue);
-            }
-
-            /* Store the Currency */
-            myValue = pValues.getValue(FIELD_CURRENCY);
-            if (myValue instanceof Integer) {
-                setValueCurrency((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueCurrency((String) myValue);
-            } else if (myValue instanceof AssetCurrency) {
-                setValueCurrency((AssetCurrency) myValue);
-            }
-
-            /* Catch Exceptions */
-        } catch (OceanusException e) {
-            /* Pass on exception */
-            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        /* Store the Currency */
+        myValue = pValues.getValue(FIELD_CURRENCY);
+        if (myValue instanceof Integer) {
+            setValueCurrency((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueCurrency((String) myValue);
+        } else if (myValue instanceof AssetCurrency) {
+            setValueCurrency((AssetCurrency) myValue);
         }
 
         /* Create the InfoSet */
@@ -262,12 +221,6 @@ public class Security
         /* Determine whether fields should be included */
         if (FIELD_SECTYPE.equals(pField)) {
             return true;
-        }
-        if (FIELD_SYMBOL.equals(pField)) {
-            return true;
-        }
-        if (FIELD_REGION.equals(pField)) {
-            return getRegion() != null;
         }
         if (FIELD_CURRENCY.equals(pField)) {
             return true;
@@ -311,6 +264,56 @@ public class Security
     public char[] getNotes() {
         return hasInfoSet
                           ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
+                          : null;
+    }
+
+    /**
+     * Obtain Symbol.
+     * @return the symbol
+     */
+    public String getSymbol() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(AccountInfoClass.SYMBOL, String.class)
+                          : null;
+    }
+
+    /**
+     * Obtain Region.
+     * @return the region
+     */
+    public Region getRegion() {
+        return hasInfoSet
+                          ? theInfoSet.getRegion(AccountInfoClass.REGION)
+                          : null;
+    }
+
+    /**
+     * Obtain GrantDate.
+     * @return the date
+     */
+    public TethysDate getGrantDaten() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(AccountInfoClass.GRANTDATE, TethysDate.class)
+                          : null;
+    }
+
+    /**
+     * Obtain UnderlyingStock.
+     * @return the stock
+     */
+    public Security getUnderlyingStock() {
+        return hasInfoSet
+                          ? theInfoSet.getSecurity(AccountInfoClass.UNDERLYINGSTOCK)
+                          : null;
+    }
+
+    /**
+     * Obtain OptionPrice.
+     * @return the price
+     */
+    public TethysPrice getOptionPrice() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(AccountInfoClass.OPTIONPRICE, TethysPrice.class)
                           : null;
     }
 
@@ -382,60 +385,6 @@ public class Security
                                 : myType.getSecurityClass();
     }
 
-    /**
-     * Obtain Symbol.
-     * @return the symbol
-     */
-    public String getSymbol() {
-        return getSymbol(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted symbol.
-     * @return the bytes
-     */
-    public byte[] getSymbolBytes() {
-        return getSymbolBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted Symbol Field.
-     * @return the Field
-     */
-    private MetisEncryptedString getSymbolField() {
-        return getSymbolField(getValueSet());
-    }
-
-    /**
-     * Obtain Region.
-     * @return the region
-     */
-    public Region getRegion() {
-        return getRegion(getValueSet());
-    }
-
-    /**
-     * Obtain RegionId.
-     * @return the regionId
-     */
-    public Integer getRegionId() {
-        Region myRegion = getRegion();
-        return (myRegion == null)
-                                  ? null
-                                  : myRegion.getId();
-    }
-
-    /**
-     * Obtain RegionName.
-     * @return the regionName
-     */
-    public String getRegionName() {
-        Region myRegion = getRegion();
-        return (myRegion == null)
-                                  ? null
-                                  : myRegion.getName();
-    }
-
     @Override
     public AssetCurrency getAssetCurrency() {
         return getAssetCurrency(getValueSet());
@@ -457,42 +406,6 @@ public class Security
      */
     public static SecurityType getSecurityType(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_SECTYPE, SecurityType.class);
-    }
-
-    /**
-     * Obtain Symbol.
-     * @param pValueSet the valueSet
-     * @return the symbol
-     */
-    public static String getSymbol(final MetisEncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_SYMBOL, String.class);
-    }
-
-    /**
-     * Obtain Encrypted symbol.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getSymbolBytes(final MetisEncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_SYMBOL);
-    }
-
-    /**
-     * Obtain Encrypted symbol field.
-     * @param pValueSet the valueSet
-     * @return the Field
-     */
-    private static MetisEncryptedString getSymbolField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_SYMBOL, MetisEncryptedString.class);
-    }
-
-    /**
-     * Obtain Region.
-     * @param pValueSet the valueSet
-     * @return the region
-     */
-    public static Region getRegion(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_REGION, Region.class);
     }
 
     /**
@@ -550,56 +463,6 @@ public class Security
      */
     private void setValueType(final String pValue) {
         getValueSet().setValue(FIELD_SECTYPE, pValue);
-    }
-
-    /**
-     * Set symbol value.
-     * @param pValue the value
-     * @throws OceanusException on error
-     */
-    private void setValueSymbol(final String pValue) throws OceanusException {
-        setEncryptedValue(FIELD_SYMBOL, pValue);
-    }
-
-    /**
-     * Set symbol value.
-     * @param pBytes the value
-     * @throws OceanusException on error
-     */
-    private void setValueSymbol(final byte[] pBytes) throws OceanusException {
-        setEncryptedValue(FIELD_SYMBOL, pBytes, String.class);
-    }
-
-    /**
-     * Set symbol value.
-     * @param pValue the value
-     */
-    private void setValueSymbol(final MetisEncryptedString pValue) {
-        getValueSet().setValue(FIELD_SYMBOL, pValue);
-    }
-
-    /**
-     * Set region value.
-     * @param pValue the value
-     */
-    private void setValueRegion(final Region pValue) {
-        getValueSet().setValue(FIELD_REGION, pValue);
-    }
-
-    /**
-     * Set region id.
-     * @param pValue the value
-     */
-    private void setValueRegion(final Integer pValue) {
-        getValueSet().setValue(FIELD_REGION, pValue);
-    }
-
-    /**
-     * Set region name.
-     * @param pValue the value
-     */
-    private void setValueRegion(final String pValue) {
-        getValueSet().setValue(FIELD_REGION, pValue);
     }
 
     /**
@@ -897,7 +760,6 @@ public class Security
         /* Resolve data links */
         MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_SECTYPE, myData.getSecurityTypes());
-        resolveDataLink(FIELD_REGION, myData.getRegions());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
         resolveDataLink(FIELD_PARENT, myData.getPayees());
     }
@@ -915,23 +777,6 @@ public class Security
      */
     public void setSecurityType(final SecurityType pType) {
         setValueType(pType);
-    }
-
-    /**
-     * Set a new symbol.
-     * @param pSymbol the symbol
-     * @throws OceanusException on error
-     */
-    public void setSymbol(final String pSymbol) throws OceanusException {
-        setValueSymbol(pSymbol);
-    }
-
-    /**
-     * Set a new region.
-     * @param pRegion the new region
-     */
-    public void setRegion(final Region pRegion) {
-        setValueRegion(pRegion);
     }
 
     /**
@@ -958,6 +803,51 @@ public class Security
      */
     public void setNotes(final char[] pNotes) throws OceanusException {
         setInfoSetValue(AccountInfoClass.NOTES, pNotes);
+    }
+
+    /**
+     * Set a new symbol.
+     * @param pSymbol the symbol
+     * @throws OceanusException on error
+     */
+    public void setSymbol(final String pSymbol) throws OceanusException {
+        setInfoSetValue(AccountInfoClass.SYMBOL, pSymbol);
+    }
+
+    /**
+     * Set a new region.
+     * @param pRegion the new region
+     * @throws OceanusException on error
+     */
+    public void setRegion(final Region pRegion) throws OceanusException {
+        setInfoSetValue(AccountInfoClass.REGION, pRegion);
+    }
+
+    /**
+     * Set a new grantDate.
+     * @param pDate the new date
+     * @throws OceanusException on error
+     */
+    public void setGrantDate(final TethysDate pDate) throws OceanusException {
+        setInfoSetValue(AccountInfoClass.GRANTDATE, pDate);
+    }
+
+    /**
+     * Set a new underlying stock.
+     * @param pStock the new stock
+     * @throws OceanusException on error
+     */
+    public void setUnderlyingStock(final Security pStock) throws OceanusException {
+        setInfoSetValue(AccountInfoClass.UNDERLYINGSTOCK, pStock);
+    }
+
+    /**
+     * Set a new option price.
+     * @param pPrice the new price
+     * @throws OceanusException on error
+     */
+    public void setOptionPrice(final TethysPrice pPrice) throws OceanusException {
+        setInfoSetValue(AccountInfoClass.OPTIONPRICE, pPrice);
     }
 
     /**
@@ -997,12 +887,6 @@ public class Security
         getAssetCurrency().touchItem(this);
         getParent().touchItem(this);
 
-        /* Update region */
-        Region myRegion = getRegion();
-        if (myRegion != null) {
-            myRegion.touchItem(this);
-        }
-
         /* touch infoSet items */
         theInfoSet.touchUnderlyingItems();
     }
@@ -1011,7 +895,6 @@ public class Security
     public void touchOnUpdate() {
         /* Reset touches from update set */
         clearTouches(MoneyWiseDataType.SECURITYPRICE);
-        clearTouches(MoneyWiseDataType.STOCKOPTION);
 
         /* Touch parent */
         getParent().touchItem(this);
@@ -1022,7 +905,6 @@ public class Security
         Payee myParent = getParent();
         SecurityType mySecType = getSecurityType();
         AssetCurrency myCurrency = getAssetCurrency();
-        Region myRegion = getRegion();
         String mySymbol = getSymbol();
 
         /* Validate base components */
@@ -1067,33 +949,10 @@ public class Security
             }
         }
 
-        /* Symbol must be non-null */
-        if (mySymbol == null) {
-            addError(ERROR_MISSING, FIELD_SYMBOL);
-
-            /* Check symbol validity */
-        } else {
-            /* Check length of symbol */
-            if (mySymbol.length() > SYMBOLLEN) {
-                addError(ERROR_LENGTH, FIELD_SYMBOL);
-            }
-
-            /* Check symbol count */
-            if (!getList().validSymbolCount(mySymbol)) {
-                addError(ERROR_DUPLICATE, FIELD_SYMBOL);
-            }
-        }
-
-        /* Region must be present only if required */
-        if ((mySecType != null)
-            && mySecType.getSecurityClass().hasRegion()) {
-            if (myRegion == null) {
-                addError(ERROR_MISSING, FIELD_REGION);
-            }
-
-            /* Must not exist */
-        } else if (myRegion != null) {
-            addError(ERROR_EXIST, FIELD_REGION);
+        /* If symbol exists it must be unique */
+        if ((mySymbol != null)
+            && !getList().validSymbolCount(mySymbol)) {
+            addError(ERROR_DUPLICATE, SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL));
         }
 
         /* If we have an infoSet */
@@ -1154,16 +1013,6 @@ public class Security
         /* Update the parent if required */
         if (!MetisDifference.isEqual(getParent(), mySecurity.getParent())) {
             setValueParent(mySecurity.getParent());
-        }
-
-        /* Update the symbol if required */
-        if (!MetisDifference.isEqual(getSymbol(), mySecurity.getSymbol())) {
-            setValueSymbol(mySecurity.getSymbolField());
-        }
-
-        /* Update the region if required */
-        if (!MetisDifference.isEqual(getRegion(), mySecurity.getRegion())) {
-            setValueRegion(mySecurity.getRegion());
         }
 
         /* Update the security currency if required */
@@ -1408,6 +1257,13 @@ public class Security
         @Override
         protected SecurityDataMap allocateDataMap() {
             return new SecurityDataMap();
+        }
+
+        @Override
+        public void postProcessOnLoad() throws OceanusException {
+            /* Resolve links and sort the data */
+            super.resolveDataSetLinks();
+            reSort();
         }
     }
 

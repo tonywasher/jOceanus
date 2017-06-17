@@ -100,12 +100,20 @@ public enum SecurityTypeClass implements StaticInterface {
     ANNUITYPOT(9, 8),
 
     /**
+     * StockOption.
+     * <p>
+     * This is stockOption. It relates to an option to buy a particular stock at a particular price
+     * at a later date.
+     */
+    STOCKOPTION(10, 9),
+
+    /**
      * Generic Asset Account.
      * <p>
      * This is a generic asset account and represents items whose value is determined by the product
      * of the number units held and the most recent unit price.
      */
-    ASSET(10, 9);
+    ASSET(11, 10);
 
     /**
      * The String name.
@@ -210,6 +218,45 @@ public enum SecurityTypeClass implements StaticInterface {
     }
 
     /**
+     * Determine whether the SecurityType is option.
+     * @return <code>true</code> if the security type is option, <code>false</code> otherwise.
+     */
+    public boolean isOption() {
+        return this == STOCKOPTION;
+    }
+
+    /**
+     * Determine whether the SecurityType needs a symbol.
+     * @return <code>true</code> if the security type needs a symbol, <code>false</code> otherwise.
+     */
+    public boolean needsSymbol() {
+        switch (this) {
+            case SHARES:
+            case GROWTHUNITTRUST:
+            case INCOMEUNITTRUST:
+            case LIFEBOND:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the SecurityType needs a region.
+     * @return <code>true</code> if the security type needs a region, <code>false</code> otherwise.
+     */
+    public boolean needsRegion() {
+        switch (this) {
+            case INCOMEUNITTRUST:
+            case GROWTHUNITTRUST:
+            case LIFEBOND:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Determine whether the SecurityType needs market as a parent.
      * @return <code>true</code> if the security type needs market as a parent, <code>false</code>
      * otherwise.
@@ -268,21 +315,6 @@ public enum SecurityTypeClass implements StaticInterface {
             case LIFEBOND:
             case INCOMEUNITTRUST:
             case GROWTHUNITTRUST:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether the SecurityType has a region.
-     * @return <code>true</code> if the security type use region, <code>false</code> otherwise.
-     */
-    public boolean hasRegion() {
-        switch (this) {
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-            case LIFEBOND:
                 return true;
             default:
                 return false;

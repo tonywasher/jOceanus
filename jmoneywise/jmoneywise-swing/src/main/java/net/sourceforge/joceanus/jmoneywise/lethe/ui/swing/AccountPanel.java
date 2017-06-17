@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.StockOption;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
@@ -153,11 +152,6 @@ public class AccountPanel
     private final PayeeTable thePayeeTable;
 
     /**
-     * Option Table.
-     */
-    private final StockOptionTable theOptionTable;
-
-    /**
      * The UpdateSet.
      */
     private final UpdateSet<MoneyWiseDataType> theUpdateSet;
@@ -226,7 +220,6 @@ public class AccountPanel
         theCashTable = new CashTable(pView, theUpdateSet, theError);
         theLoanTable = new LoanTable(pView, theUpdateSet, theError);
         thePortfolioTable = new PortfolioTable(pView, theUpdateSet, theError);
-        theOptionTable = new StockOptionTable(pView, theUpdateSet, theError);
 
         /* Create selection button and label */
         TethysSwingLabel myLabel = myFactory.newLabel(NLS_DATA);
@@ -243,7 +236,6 @@ public class AccountPanel
         theCardPanel.addCard(PanelName.PORTFOLIOS.toString(), thePortfolioTable);
         theCardPanel.addCard(PanelName.SECURITIES.toString(), theSecurityTable);
         theCardPanel.addCard(PanelName.PAYEES.toString(), thePayeeTable);
-        theCardPanel.addCard(PanelName.OPTIONS.toString(), theOptionTable);
         theActive = PanelName.DEPOSITS;
         theSelectButton.setFixedText(theActive.toString());
 
@@ -257,7 +249,6 @@ public class AccountPanel
         theFilterCardPanel.addCard(PanelName.PORTFOLIOS.toString(), thePortfolioTable.getFilterPanel());
         theFilterCardPanel.addCard(PanelName.SECURITIES.toString(), theSecurityTable.getFilterPanel());
         theFilterCardPanel.addCard(PanelName.PAYEES.toString(), thePayeeTable.getFilterPanel());
-        theFilterCardPanel.addCard(PanelName.OPTIONS.toString(), theOptionTable.getFilterPanel());
 
         /* Create the selection panel */
         theSelectPanel = myFactory.newHBoxPane();
@@ -293,7 +284,6 @@ public class AccountPanel
         setChildListeners(thePayeeTable.getEventRegistrar());
         setChildListeners(thePortfolioTable.getEventRegistrar());
         setChildListeners(theSecurityTable.getEventRegistrar());
-        setChildListeners(theOptionTable.getEventRegistrar());
     }
 
     @Override
@@ -362,7 +352,6 @@ public class AccountPanel
         theCashTable.setShowAll(pShow);
         theLoanTable.setShowAll(pShow);
         thePortfolioTable.setShowAll(pShow);
-        theOptionTable.setShowAll(pShow);
     }
 
     /**
@@ -376,7 +365,6 @@ public class AccountPanel
         theCashTable.cancelEditing();
         theLoanTable.cancelEditing();
         thePortfolioTable.cancelEditing();
-        theOptionTable.cancelEditing();
     }
 
     /**
@@ -398,7 +386,6 @@ public class AccountPanel
         theCashTable.refreshData();
         theLoanTable.refreshData();
         thePortfolioTable.refreshData();
-        theOptionTable.refreshData();
 
         /* Clear refreshing flag */
         isRefreshing = false;
@@ -435,9 +422,6 @@ public class AccountPanel
             case PAYEES:
                 thePayeeTable.determineFocus(theViewerEntry);
                 break;
-            case OPTIONS:
-                theOptionTable.determineFocus(theViewerEntry);
-                break;
             default:
                 break;
         }
@@ -464,9 +448,6 @@ public class AccountPanel
         }
         if (!hasUpdates) {
             hasUpdates = thePayeeTable.hasUpdates();
-        }
-        if (!hasUpdates) {
-            hasUpdates = theOptionTable.hasUpdates();
         }
 
         /* Return to caller */
@@ -495,9 +476,6 @@ public class AccountPanel
         if (!hasSession) {
             hasSession = thePayeeTable.hasSession();
         }
-        if (!hasSession) {
-            hasSession = theOptionTable.hasSession();
-        }
 
         /* Return to caller */
         return hasSession;
@@ -525,9 +503,6 @@ public class AccountPanel
         if (!hasErrors) {
             hasErrors = thePayeeTable.hasErrors();
         }
-        if (!hasErrors) {
-            hasErrors = theOptionTable.hasErrors();
-        }
 
         /* Return to caller */
         return hasErrors;
@@ -554,9 +529,6 @@ public class AccountPanel
         }
         if (!isEditing) {
             isEditing = thePayeeTable.isItemEditing();
-        }
-        if (!isEditing) {
-            isEditing = theOptionTable.isItemEditing();
         }
 
         /* Return to caller */
@@ -587,9 +559,6 @@ public class AccountPanel
         } else if (pAccount instanceof Payee) {
             thePayeeTable.selectPayee((Payee) pAccount);
             showPanel(PanelName.PAYEES);
-        } else if (pAccount instanceof StockOption) {
-            theOptionTable.selectOption((StockOption) pAccount);
-            showPanel(PanelName.OPTIONS);
         }
     }
 
@@ -734,12 +703,7 @@ public class AccountPanel
         /**
          * Payees.
          */
-        PAYEES(MoneyWiseDataType.PAYEE),
-
-        /**
-         * StockOptions.
-         */
-        OPTIONS(MoneyWiseDataType.STOCKOPTION);
+        PAYEES(MoneyWiseDataType.PAYEE);
 
         /**
          * The String name.

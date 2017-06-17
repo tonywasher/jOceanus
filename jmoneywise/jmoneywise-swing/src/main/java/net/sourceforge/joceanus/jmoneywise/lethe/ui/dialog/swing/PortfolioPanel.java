@@ -50,6 +50,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType.PortfolioTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -72,6 +74,11 @@ public class PortfolioPanel
     private final MetisFieldSet<Portfolio> theFieldSet;
 
     /**
+     * Type Button Field.
+     */
+    private final JScrollButton<PortfolioType> theTypeButton;
+
+    /**
      * Parent Button Field.
      */
     private final JScrollButton<Payee> theParentButton;
@@ -87,9 +94,9 @@ public class PortfolioPanel
     private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
-     * TaxFree Button Field.
+     * The Type Menu Builder.
      */
-    private final ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
+    private final JScrollMenuBuilder<PortfolioType> theTypeMenuBuilder;
 
     /**
      * The Parent Menu Builder.
@@ -116,12 +123,12 @@ public class PortfolioPanel
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
         /* Create the buttons */
+        theTypeButton = new JScrollButton<>();
         theParentButton = new JScrollButton<>();
         theCurrencyButton = new JScrollButton<>();
 
         /* Set button states */
         theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
-        theTaxFreeState = new ComplexIconButtonState<>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -150,6 +157,8 @@ public class PortfolioPanel
         layoutPanel();
 
         /* Create the listeners */
+        theTypeMenuBuilder = theTypeButton.getMenuBuilder();
+        theTypeMenuBuilder.getEventRegistrar().addEventListener(e -> buildTypeMenu(theTypeMenuBuilder, getItem()));
         theParentMenuBuilder = theParentButton.getMenuBuilder();
         theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
         theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
@@ -164,8 +173,6 @@ public class PortfolioPanel
         /* Build the button states */
         JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
         MoneyWiseIcons.buildLockedButton(theClosedState);
-        JIconButton<Boolean> myTaxFreeButton = new JIconButton<>(theTaxFreeState);
-        MoneyWiseIcons.buildOptionButton(theTaxFreeState);
 
         /* Create the text fields */
         JTextField myName = new JTextField();
@@ -174,18 +181,18 @@ public class PortfolioPanel
         /* restrict the fields */
         restrictField(myName, Portfolio.NAMELEN);
         restrictField(myDesc, Portfolio.NAMELEN);
+        restrictField(theTypeButton, Portfolio.NAMELEN);
         restrictField(theParentButton, Portfolio.NAMELEN);
         restrictField(theCurrencyButton, Portfolio.NAMELEN);
         restrictField(myClosedButton, Portfolio.NAMELEN);
-        restrictField(myTaxFreeButton, Portfolio.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(Portfolio.FIELD_NAME, MetisDataType.STRING, myName);
         theFieldSet.addFieldElement(Portfolio.FIELD_DESC, MetisDataType.STRING, myDesc);
+        theFieldSet.addFieldElement(Portfolio.FIELD_PORTTYPE, PortfolioType.class, theTypeButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_CLOSED, Boolean.class, myClosedButton);
-        theFieldSet.addFieldElement(Portfolio.FIELD_TAXFREE, Boolean.class, myTaxFreeButton);
 
         /* Create the main panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -195,10 +202,10 @@ public class PortfolioPanel
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_DESC, myPanel);
+        theFieldSet.addFieldToPanel(Portfolio.FIELD_PORTTYPE, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_PARENT, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_CURRENCY, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_CLOSED, myPanel);
-        theFieldSet.addFieldToPanel(Portfolio.FIELD_TAXFREE, myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -313,10 +320,6 @@ public class PortfolioPanel
         theFieldSet.setEditable(Portfolio.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState.setState(bEditClosed);
 
-        /* Determine whether the taxFree button should be visible */
-        boolean bShowTaxFree = myPortfolio.isTaxFree() || bIsChangeable;
-        theFieldSet.setVisibility(Portfolio.FIELD_TAXFREE, bShowTaxFree);
-
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myPortfolio.getDesc() != null;
         theFieldSet.setVisibility(Portfolio.FIELD_DESC, bShowDesc);
@@ -339,11 +342,10 @@ public class PortfolioPanel
         boolean bShowNotes = isEditable || myPortfolio.getNotes() != null;
         theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
-        /* Parent, Currency and TaxFree status cannot be changed if the item is active */
+        /* Type, Parent and Currency status cannot be changed if the item is active */
+        theFieldSet.setEditable(Portfolio.FIELD_PORTTYPE, bIsChangeable);
         theFieldSet.setEditable(Portfolio.FIELD_PARENT, bIsChangeable);
         theFieldSet.setEditable(Portfolio.FIELD_CURRENCY, bIsChangeable);
-        theFieldSet.setEditable(Portfolio.FIELD_TAXFREE, bIsChangeable);
-        theTaxFreeState.setState(bIsChangeable);
 
         /* Set editable value for parent */
         theFieldSet.setEditable(Portfolio.FIELD_PARENT, isEditable && !bIsClosed);
@@ -362,6 +364,9 @@ public class PortfolioPanel
         } else if (myField.equals(Portfolio.FIELD_DESC)) {
             /* Update the Description */
             myPortfolio.setDescription(pUpdate.getString());
+        } else if (myField.equals(Portfolio.FIELD_PORTTYPE)) {
+            /* Update the portfolioType */
+            myPortfolio.setPortfolioType(pUpdate.getValue(PortfolioType.class));
         } else if (myField.equals(Portfolio.FIELD_PARENT)) {
             /* Update the Parent */
             myPortfolio.setParent(pUpdate.getValue(Payee.class));
@@ -371,9 +376,6 @@ public class PortfolioPanel
         } else if (myField.equals(Portfolio.FIELD_CLOSED)) {
             /* Update the Closed indication */
             myPortfolio.setClosed(pUpdate.getBoolean());
-        } else if (myField.equals(Portfolio.FIELD_TAXFREE)) {
-            /* Update the taxFree indication */
-            myPortfolio.setTaxFree(pUpdate.getBoolean());
         } else {
             /* Switch on the field */
             switch (PortfolioInfoSet.getClassForField(myField)) {
@@ -412,10 +414,48 @@ public class PortfolioPanel
         Portfolio myItem = getItem();
         Payee myParent = myItem.getParent();
         if (!pUpdates) {
+            PortfolioType myType = myItem.getPortfolioType();
+            declareGoToItem(myType);
             AssetCurrency myCurrency = myItem.getAssetCurrency();
             declareGoToItem(myCurrency);
         }
         declareGoToItem(myParent);
+    }
+
+    /**
+     * Build the portfolioType list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pPortfolio the portfolio to build for
+     */
+    public void buildTypeMenu(final JScrollMenuBuilder<PortfolioType> pMenuBuilder,
+                              final Portfolio pPortfolio) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        PortfolioType myCurr = pPortfolio.getPortfolioType();
+        JMenuItem myActive = null;
+
+        /* Access PortfolioTypes */
+        PortfolioTypeList myTypes = getDataList(MoneyWiseDataType.PORTFOLIOTYPE, PortfolioTypeList.class);
+
+        /* Loop through the Types */
+        Iterator<PortfolioType> myIterator = myTypes.iterator();
+        while (myIterator.hasNext()) {
+            PortfolioType myType = myIterator.next();
+
+            /* Create a new action for the type */
+            JMenuItem myItem = pMenuBuilder.addItem(myType);
+
+            /* If this is the active type */
+            if (myType.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
     }
 
     /**

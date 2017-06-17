@@ -121,4 +121,19 @@ public enum PortfolioTypeClass implements StaticInterface {
         }
         throw new MoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.PORTFOLIOTYPE.toString() + ":" + id);
     }
+
+    /**
+     * Determine whether the PortfolioType is tax free.
+     * @return <code>true</code> if the PortfolioTtype is tax free, <code>false</code> otherwise.
+     */
+    public boolean isTaxFree() {
+        switch (this) {
+            case ISA:
+            case SIPP:
+            case PENSION:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

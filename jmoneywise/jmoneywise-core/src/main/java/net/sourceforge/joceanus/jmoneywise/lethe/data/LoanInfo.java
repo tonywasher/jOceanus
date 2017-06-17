@@ -394,8 +394,9 @@ public class LoanInfo
             /* Validate the LoanInfo */
             validateOnLoad();
 
-            /* Validate the Loans */
+            /* Map and Validate the Loans */
             LoanList myLoans = getDataSet().getLoans();
+            myLoans.mapData();
             myLoans.validateOnLoad();
         }
     }

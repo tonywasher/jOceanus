@@ -30,7 +30,9 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
@@ -63,24 +65,14 @@ public class SheetSecurity
     private static final int COL_PARENT = COL_TYPE + 1;
 
     /**
-     * Symbol column.
-     */
-    private static final int COL_SYMBOL = COL_PARENT + 1;
-
-    /**
      * Description column.
      */
-    private static final int COL_DESC = COL_SYMBOL + 1;
-
-    /**
-     * Region column.
-     */
-    private static final int COL_REGION = COL_DESC + 1;
+    private static final int COL_DESC = COL_PARENT + 1;
 
     /**
      * Currency column.
      */
-    private static final int COL_CURRENCY = COL_REGION + 1;
+    private static final int COL_CURRENCY = COL_DESC + 1;
 
     /**
      * Closed column.
@@ -119,11 +111,9 @@ public class SheetSecurity
         DataValues<MoneyWiseDataType> myValues = getRowValues(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_SECTYPE, loadInteger(COL_TYPE));
         myValues.addValue(Security.FIELD_PARENT, loadInteger(COL_PARENT));
-        myValues.addValue(Security.FIELD_REGION, loadInteger(COL_REGION));
         myValues.addValue(Security.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Security.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Security.FIELD_DESC, loadBytes(COL_DESC));
-        myValues.addValue(Security.FIELD_SYMBOL, loadBytes(COL_SYMBOL));
         myValues.addValue(Security.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
         /* Return the values */
@@ -136,11 +126,9 @@ public class SheetSecurity
         super.insertSecureItem(pItem);
         writeInteger(COL_TYPE, pItem.getSecurityTypeId());
         writeInteger(COL_PARENT, pItem.getParentId());
-        writeInteger(COL_REGION, pItem.getRegionId());
         writeInteger(COL_CURRENCY, pItem.getAssetCurrencyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
-        writeBytes(COL_SYMBOL, pItem.getSymbolBytes());
         writeBoolean(COL_CLOSED, pItem.isClosed());
     }
 
@@ -176,9 +164,7 @@ public class SheetSecurity
         /* Access subCategory as security type */
         String mySecType = myType.substring(iIndex + 1);
 
-        /* Skip class, taxFree and gross */
-        ++iAdjust;
-        ++iAdjust;
+        /* Skip class */
         ++iAdjust;
 
         /* Handle closed which may be missing */
@@ -217,8 +203,12 @@ public class SheetSecurity
         ++iAdjust;
         ++iAdjust;
 
-        /* Access Symbol */
-        String mySymbol = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        /* Access Symbol which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        String mySymbol = null;
+        if (myCell != null) {
+            mySymbol = myCell.getStringValue();
+        }
 
         /* Handle region which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
@@ -239,14 +229,17 @@ public class SheetSecurity
         DataValues<MoneyWiseDataType> myValues = new DataValues<>(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_NAME, myName);
         myValues.addValue(Security.FIELD_SECTYPE, mySecType);
-        myValues.addValue(Security.FIELD_REGION, myRegion);
         myValues.addValue(Security.FIELD_CURRENCY, myCurrency);
         myValues.addValue(Security.FIELD_PARENT, myParent);
-        myValues.addValue(Security.FIELD_SYMBOL, mySymbol);
         myValues.addValue(Security.FIELD_CLOSED, isClosed);
 
         /* Add the value into the list */
         Security mySecurity = myList.addValuesItem(myValues);
+
+        /* Add information relating to the security */
+        SecurityInfoList myInfoList = pData.getSecurityInfo();
+        myInfoList.addInfoItem(null, mySecurity, AccountInfoClass.SYMBOL, mySymbol);
+        myInfoList.addInfoItem(null, mySecurity, AccountInfoClass.REGION, myRegion);
 
         /* Declare the security holding */
         pLoader.declareSecurityHolding(mySecurity, myPortfolio);

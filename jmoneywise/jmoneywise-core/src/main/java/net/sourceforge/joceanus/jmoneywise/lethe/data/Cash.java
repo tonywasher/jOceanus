@@ -965,6 +965,13 @@ public class Cash
         protected CashDataMap allocateDataMap() {
             return new CashDataMap(getDataSet().getDeposits());
         }
+
+        @Override
+        public void postProcessOnLoad() throws OceanusException {
+            /* Resolve links and sort the data */
+            super.resolveDataSetLinks();
+            reSort();
+        }
     }
 
     /**

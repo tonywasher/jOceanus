@@ -47,6 +47,11 @@ public class SecurityType
     public static final String LIST_NAME = MoneyWiseDataType.SECURITYTYPE.getListName();
 
     /**
+     * Symbol length.
+     */
+    public static final int SYMBOL_LEN = 30;
+
+    /**
      * Report fields.
      */
     private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);

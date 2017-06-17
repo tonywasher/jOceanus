@@ -25,9 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -90,11 +92,6 @@ public final class SecurityHolding
      * Security Field Id.
      */
     private static final MetisField FIELD_SECURITY = FIELD_DEFS.declareComparisonField(MoneyWiseDataType.SECURITY.getItemName());
-
-    /**
-     * Invalid currency combo error.
-     */
-    public static final String ERROR_CURRENCYCOMBO = MoneyWiseDataResource.SECURITYHOLDING_ERROR_CURRENCYCOMBO.getValue();
 
     /**
      * The id of the holding.
@@ -433,22 +430,21 @@ public final class SecurityHolding
      * SecurityHolding Map.
      */
     public static class SecurityHoldingMap
-            extends HashMap<Integer, PortfolioHoldingsMap>
-            implements MetisDataFormat {
-        /**
-         * SerialId.
-         */
-        private static final long serialVersionUID = -4221855114560425582L;
-
+            implements MetisDataFormat, MetisDataMap<Integer, PortfolioHoldingsMap> {
         /**
          * Underlying portfolio list.
          */
-        private final transient PortfolioList thePortfolios;
+        private final PortfolioList thePortfolios;
 
         /**
          * Underlying security list.
          */
-        private final transient SecurityList theSecurities;
+        private final SecurityList theSecurities;
+
+        /**
+         * The underlying map.
+         */
+        private final Map<Integer, PortfolioHoldingsMap> theMap;
 
         /**
          * Constructor.
@@ -458,6 +454,7 @@ public final class SecurityHolding
             /* Access lists */
             thePortfolios = pData.getPortfolios();
             theSecurities = pData.getSecurities();
+            theMap = new HashMap<>();
         }
 
         /**
@@ -468,6 +465,12 @@ public final class SecurityHolding
             /* Access lists */
             thePortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
             theSecurities = pUpdateSet.getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+            theMap = new HashMap<>();
+        }
+
+        @Override
+        public Map<Integer, PortfolioHoldingsMap> getUnderlyingMap() {
+            return theMap;
         }
 
         @Override
@@ -518,7 +521,11 @@ public final class SecurityHolding
         public SecurityHolding declareHolding(final Portfolio pPortfolio,
                                               final Security pSecurity) {
             /* Access the portfolio map */
-            PortfolioHoldingsMap myMap = getMapForPortfolio(pPortfolio.getId());
+            PortfolioHoldingsMap myPortMap = getMapForPortfolio(pPortfolio.getId());
+            if (myPortMap == null) {
+                throw new IllegalStateException("Invalid Portfolio");
+            }
+            Map<Integer, SecurityHolding> myMap = myPortMap.getUnderlyingMap();
 
             /* Look up existing holding */
             Integer myId = pSecurity.getId();
@@ -542,7 +549,7 @@ public final class SecurityHolding
          */
         private PortfolioHoldingsMap getMapForPortfolio(final Integer pId) {
             /* Look up in the map */
-            PortfolioHoldingsMap myMap = get(pId);
+            PortfolioHoldingsMap myMap = theMap.get(pId);
 
             /* If the Id is not found */
             if (myMap == null) {
@@ -556,7 +563,7 @@ public final class SecurityHolding
 
                 /* Allocate and store the map */
                 myMap = new PortfolioHoldingsMap(myPortfolio, theSecurities);
-                put(pId, myMap);
+                theMap.put(pId, myMap);
             }
 
             /* Return the map */
@@ -579,13 +586,13 @@ public final class SecurityHolding
 
             /* Look up in the map */
             Integer myId = myPortfolio.getId();
-            PortfolioHoldingsMap myMap = get(myId);
+            PortfolioHoldingsMap myMap = theMap.get(myId);
 
             /* If the Id is not found */
             if (myMap == null) {
                 /* Allocate and store the map */
                 myMap = new PortfolioHoldingsMap(myPortfolio, theSecurities);
-                put(myId, myMap);
+                theMap.put(myId, myMap);
             }
 
             /* Return the map */
@@ -597,7 +604,7 @@ public final class SecurityHolding
          */
         public void resetNames() {
             /* Iterate through the portfolio maps */
-            Iterator<PortfolioHoldingsMap> myIterator = values().iterator();
+            Iterator<PortfolioHoldingsMap> myIterator = theMap.values().iterator();
             while (myIterator.hasNext()) {
                 PortfolioHoldingsMap myMap = myIterator.next();
 
@@ -616,7 +623,7 @@ public final class SecurityHolding
         public void deRegister(final Portfolio pPortfolio) {
             /* Ensure that we do not reference this portfolio */
             Integer myId = pPortfolio.getId();
-            remove(myId);
+            theMap.remove(myId);
         }
 
         /**
@@ -628,12 +635,12 @@ public final class SecurityHolding
             Integer myId = pSecurity.getId();
 
             /* Iterate through the portfolio maps */
-            Iterator<PortfolioHoldingsMap> myIterator = values().iterator();
+            Iterator<PortfolioHoldingsMap> myIterator = theMap.values().iterator();
             while (myIterator.hasNext()) {
                 PortfolioHoldingsMap myMap = myIterator.next();
 
                 /* Ensure that we do not reference this security */
-                myMap.remove(myId);
+                myMap.getUnderlyingMap().remove(myId);
             }
         }
 
@@ -644,7 +651,7 @@ public final class SecurityHolding
          */
         public Iterator<SecurityHolding> existingIterator(final Portfolio pPortfolio) {
             /* Look up in the map */
-            PortfolioHoldingsMap myMap = get(pPortfolio.getId());
+            PortfolioHoldingsMap myMap = theMap.get(pPortfolio.getId());
 
             /* return the iterator */
             return myMap == null
@@ -658,7 +665,7 @@ public final class SecurityHolding
          * @return the iterator
          */
         public Iterator<SecurityHolding> newIterator(final Portfolio pPortfolio) {
-            return fullIterator(pPortfolio, null);
+            return newIterator(pPortfolio, null);
         }
 
         /**
@@ -670,7 +677,7 @@ public final class SecurityHolding
         public Iterator<SecurityHolding> newIterator(final Portfolio pPortfolio,
                                                      final SecurityTypeClass pClass) {
             /* Look up in the map */
-            PortfolioHoldingsMap myMap = get(pPortfolio.getId());
+            PortfolioHoldingsMap myMap = theMap.get(pPortfolio.getId());
 
             /* return the iterator */
             return myMap == null
@@ -693,7 +700,6 @@ public final class SecurityHolding
             }
 
             /* Create an empty list */
-            Currency myCurrency = pPortfolio.getCurrency();
             MetisOrderedList<SecurityHolding> myList = new MetisOrderedList<>(SecurityHolding.class);
 
             /* Loop through the securities */
@@ -701,10 +707,9 @@ public final class SecurityHolding
             while (myIterator.hasNext()) {
                 Security mySecurity = myIterator.next();
 
-                /* Ignore closed/deleted and wrong class/currency */
+                /* Ignore closed/deleted and wrong class */
                 boolean bIgnore = mySecurity.isClosed() || mySecurity.isDeleted();
                 bIgnore |= pClass != null && !pClass.equals(mySecurity.getSecurityTypeClass());
-                bIgnore |= !myCurrency.equals(mySecurity.getCurrency());
                 if (bIgnore) {
                     continue;
                 }
@@ -732,22 +737,21 @@ public final class SecurityHolding
      * PortfolioHoldings Map.
      */
     private static final class PortfolioHoldingsMap
-            extends HashMap<Integer, SecurityHolding>
-            implements MetisDataFormat {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -5532168973693014505L;
-
+            implements MetisDataFormat, MetisDataMap<Integer, SecurityHolding> {
         /**
          * Portfolio.
          */
-        private final transient Portfolio thePortfolio;
+        private final Portfolio thePortfolio;
 
         /**
          * Underlying security list.
          */
-        private final transient SecurityList theSecurities;
+        private final SecurityList theSecurities;
+
+        /**
+         * The underlying map.
+         */
+        private final Map<Integer, SecurityHolding> theMap;
 
         /**
          * Constructor.
@@ -758,6 +762,12 @@ public final class SecurityHolding
                                      final SecurityList pSecurities) {
             thePortfolio = pPortfolio;
             theSecurities = pSecurities;
+            theMap = new HashMap<>();
+        }
+
+        @Override
+        public Map<Integer, SecurityHolding> getUnderlyingMap() {
+            return theMap;
         }
 
         @Override
@@ -777,7 +787,7 @@ public final class SecurityHolding
          */
         private SecurityHolding getHoldingForSecurity(final Integer pId) {
             /* Look up in the map */
-            SecurityHolding myHolding = get(pId);
+            SecurityHolding myHolding = theMap.get(pId);
 
             /* If the Id is not found */
             if (myHolding == null) {
@@ -789,13 +799,9 @@ public final class SecurityHolding
                     return null;
                 }
 
-                /* Allocate the holding */
+                /* Allocate and store the holding */
                 myHolding = new SecurityHolding(thePortfolio, mySecurity);
-
-                /* Only store the holding if it is correct currency */
-                if (thePortfolio.getCurrency().equals(mySecurity.getCurrency())) {
-                    put(pId, myHolding);
-                }
+                theMap.put(pId, myHolding);
             }
 
             /* Return the holding */
@@ -818,17 +824,13 @@ public final class SecurityHolding
 
             /* Look up in the map */
             Integer myId = mySecurity.getId();
-            SecurityHolding myHolding = get(myId);
+            SecurityHolding myHolding = theMap.get(myId);
 
             /* If the Id is not found */
             if (myHolding == null) {
-                /* Allocate the holding */
+                /* Allocate and store the holding */
                 myHolding = new SecurityHolding(thePortfolio, mySecurity);
-
-                /* Only store the holding if it is correct currency */
-                if (thePortfolio.getCurrency().equals(mySecurity.getCurrency())) {
-                    put(myId, myHolding);
-                }
+                theMap.put(myId, myHolding);
             }
 
             /* Return the holding */
@@ -840,7 +842,7 @@ public final class SecurityHolding
          */
         private void resetNames() {
             /* Iterate through the security holdings */
-            Iterator<SecurityHolding> myIterator = values().iterator();
+            Iterator<SecurityHolding> myIterator = theMap.values().iterator();
             while (myIterator.hasNext()) {
                 SecurityHolding myHolding = myIterator.next();
 
@@ -864,7 +866,7 @@ public final class SecurityHolding
             MetisOrderedList<SecurityHolding> myList = new MetisOrderedList<>(SecurityHolding.class);
 
             /* Loop through the holdings */
-            Iterator<SecurityHolding> myIterator = values().iterator();
+            Iterator<SecurityHolding> myIterator = theMap.values().iterator();
             while (myIterator.hasNext()) {
                 SecurityHolding myHolding = myIterator.next();
                 Security mySecurity = myHolding.getSecurity();
@@ -902,7 +904,6 @@ public final class SecurityHolding
             }
 
             /* Create an empty list */
-            Currency myCurrency = thePortfolio.getCurrency();
             MetisOrderedList<SecurityHolding> myList = new MetisOrderedList<>(SecurityHolding.class);
 
             /* Loop through the securities */
@@ -913,13 +914,12 @@ public final class SecurityHolding
                 /* Ignore closed/deleted and wrong class/currency */
                 boolean bIgnore = mySecurity.isClosed() || mySecurity.isDeleted();
                 bIgnore |= pClass != null && pClass.equals(mySecurity.getSecurityTypeClass());
-                bIgnore |= !myCurrency.equals(mySecurity.getCurrency());
                 if (bIgnore) {
                     continue;
                 }
 
                 /* Only add if not currently present */
-                if (get(mySecurity.getId()) == null) {
+                if (theMap.get(mySecurity.getId()) == null) {
                     /* Create a new holding and add to the list */
                     SecurityHolding myHolding = new SecurityHolding(thePortfolio, mySecurity);
                     myList.append(myHolding);

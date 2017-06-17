@@ -156,10 +156,16 @@ public class PortfolioInfoSet
             case PASSWORD:
                 return MetisFieldRequired.CANEXIST;
 
-            /* Old style */
+            /* Not Allowed */
             case MATURITY:
             case OPENINGBALANCE:
             case AUTOEXPENSE:
+            case AUTOPAYEE:
+            case SYMBOL:
+            case REGION:
+            case GRANTDATE:
+            case UNDERLYINGSTOCK:
+            case OPTIONPRICE:
             default:
                 return MetisFieldRequired.NOTALLOWED;
         }

@@ -394,8 +394,9 @@ public class PortfolioInfo
             /* Validate the PortfolioInfo */
             validateOnLoad();
 
-            /* Validate the Portfolios */
+            /* Map and Validate the Portfolios */
             PortfolioList myPortfolios = getDataSet().getPortfolios();
+            myPortfolios.mapData();
             myPortfolios.validateOnLoad();
         }
     }

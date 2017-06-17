@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
@@ -96,16 +95,6 @@ public class Deposit
     public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
 
     /**
-     * isGross Field Id.
-     */
-    public static final MetisField FIELD_GROSS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.DEPOSIT_GROSS.getValue(), MetisDataType.BOOLEAN);
-
-    /**
-     * isTaxFree Field Id.
-     */
-    public static final MetisField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_TAXFREE.getValue(), MetisDataType.BOOLEAN);
-
-    /**
      * DepositInfoSet field Id.
      */
     private static final MetisField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
@@ -114,21 +103,6 @@ public class Deposit
      * New Account name.
      */
     private static final String NAME_NEWACCOUNT = MoneyWiseDataResource.DEPOSIT_NEWACCOUNT.getValue();
-
-    /**
-     * TaxFree Error Text.
-     */
-    private static final String ERROR_TAXFREE = MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREE.getValue();
-
-    /**
-     * GrossInterest Error Text.
-     */
-    private static final String ERROR_GROSS = MoneyWiseDataResource.DEPOSIT_ERROR_GROSS.getValue();
-
-    /**
-     * taxFree And GrossInterest Error Text.
-     */
-    private static final String ERROR_TAXFREEGROSS = MoneyWiseDataResource.DEPOSIT_ERROR_TAXFREEGROSS.getValue();
 
     /**
      * Do we have an InfoSet.
@@ -188,9 +162,6 @@ public class Deposit
         /* Initialise the item */
         super(pList, pValues);
 
-        /* Access formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
-
         /* Protect against exceptions */
         try {
             /* Store the Category */
@@ -217,22 +188,6 @@ public class Deposit
                 setValueCurrency((String) myValue);
             } else if (myValue instanceof AssetCurrency) {
                 setValueCurrency((AssetCurrency) myValue);
-            }
-
-            /* Store the gross flag */
-            myValue = pValues.getValue(FIELD_GROSS);
-            if (myValue instanceof Boolean) {
-                setValueGross((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueGross(myFormatter.parseValue((String) myValue, Boolean.class));
-            }
-
-            /* Store the taxFree flag */
-            myValue = pValues.getValue(FIELD_TAXFREE);
-            if (myValue instanceof Boolean) {
-                setValueTaxFree((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueTaxFree(myFormatter.parseValue((String) myValue, Boolean.class));
             }
 
             /* Catch Exceptions */
@@ -276,12 +231,6 @@ public class Deposit
         }
         if (FIELD_PARENT.equals(pField)) {
             return true;
-        }
-        if (FIELD_GROSS.equals(pField)) {
-            return isGross();
-        }
-        if (FIELD_TAXFREE.equals(pField)) {
-            return isTaxFree();
         }
 
         /* Pass call on */
@@ -447,12 +396,18 @@ public class Deposit
 
     @Override
     public Boolean isGross() {
-        return isGross(getValueSet());
+        DepositCategory myCategory = getCategory();
+        return (myCategory == null)
+                                    ? Boolean.FALSE
+                                    : myCategory.getCategoryTypeClass().isGross();
     }
 
     @Override
     public Boolean isTaxFree() {
-        return isTaxFree(getValueSet());
+        DepositCategory myCategory = getCategory();
+        return (myCategory == null)
+                                    ? Boolean.FALSE
+                                    : myCategory.getCategoryTypeClass().isTaxFree();
     }
 
     /**
@@ -480,24 +435,6 @@ public class Deposit
      */
     public static AssetCurrency getCurrency(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
-    }
-
-    /**
-     * Is the deposit gross.
-     * @param pValueSet the valueSet
-     * @return true/false
-     */
-    public static Boolean isGross(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_GROSS, Boolean.class);
-    }
-
-    /**
-     * Is the deposit taxFree.
-     * @param pValueSet the valueSet
-     * @return true/false
-     */
-    public static Boolean isTaxFree(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_TAXFREE, Boolean.class);
     }
 
     /**
@@ -570,22 +507,6 @@ public class Deposit
      */
     private void setValueCurrency(final String pValue) {
         getValueSet().setValue(FIELD_CURRENCY, pValue);
-    }
-
-    /**
-     * Set gross indication.
-     * @param pValue the value
-     */
-    private void setValueGross(final Boolean pValue) {
-        getValueSet().setValue(FIELD_GROSS, pValue);
-    }
-
-    /**
-     * Set taxFree indication.
-     * @param pValue the value
-     */
-    private void setValueTaxFree(final Boolean pValue) {
-        getValueSet().setValue(FIELD_TAXFREE, pValue);
     }
 
     @Override
@@ -728,8 +649,6 @@ public class Deposit
         setDepositCategory(getDefaultCategory());
         setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
-        setGross(Boolean.FALSE);
-        setTaxFree(Boolean.FALSE);
         autoCorrect(pUpdateSet);
     }
 
@@ -849,22 +768,9 @@ public class Deposit
 
         /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        MetisValueSet myValues = getValueSet();
         resolveDataLink(FIELD_CATEGORY, myData.getDepositCategories());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
         resolveDataLink(FIELD_PARENT, myData.getPayees());
-
-        /* Adjust Gross */
-        Object myGross = myValues.getValue(FIELD_GROSS);
-        if (myGross == null) {
-            setValueGross(Boolean.FALSE);
-        }
-
-        /* Adjust TaxFree */
-        Object myTaxFree = myValues.getValue(FIELD_TAXFREE);
-        if (myTaxFree == null) {
-            setValueTaxFree(Boolean.FALSE);
-        }
     }
 
     @Override
@@ -897,22 +803,6 @@ public class Deposit
      */
     public void setParent(final Payee pParent) throws OceanusException {
         setValueParent(pParent);
-    }
-
-    /**
-     * Set taxFree indication.
-     * @param pTaxFree true/false
-     */
-    public void setTaxFree(final Boolean pTaxFree) {
-        setValueTaxFree(pTaxFree);
-    }
-
-    /**
-     * Set gross indication.
-     * @param pGross true/false
-     */
-    public void setGross(final Boolean pGross) {
-        setValueGross(pGross);
     }
 
     /**
@@ -1091,22 +981,6 @@ public class Deposit
             }
         }
 
-        /* If the account is tax free, check that it is allowed */
-        if ((isTaxFree()) && (!myClass.canTaxFree())) {
-            addError(ERROR_TAXFREE, FIELD_TAXFREE);
-        }
-
-        /* If the account is gross interest, check that it is allowed */
-        if ((isGross()) && (!myClass.canTaxFree())) {
-            addError(ERROR_GROSS, FIELD_GROSS);
-        }
-
-        /* Cannot be both gross interest and taxFree */
-        if ((isGross()) && (isTaxFree())) {
-            addError(ERROR_TAXFREEGROSS, FIELD_TAXFREE);
-            addError(ERROR_TAXFREEGROSS, FIELD_GROSS);
-        }
-
         /* If we have an infoSet */
         if (theInfoSet != null) {
             /* Validate the InfoSet */
@@ -1151,16 +1025,6 @@ public class Deposit
         /* Update the deposit currency if required */
         if (!MetisDifference.isEqual(getAssetCurrency(), myDeposit.getAssetCurrency())) {
             setValueCurrency(myDeposit.getAssetCurrency());
-        }
-
-        /* Update the gross status if required */
-        if (!MetisDifference.isEqual(isGross(), myDeposit.isGross())) {
-            setValueGross(myDeposit.isGross());
-        }
-
-        /* Update the taxFree status if required */
-        if (!MetisDifference.isEqual(isTaxFree(), myDeposit.isTaxFree())) {
-            setValueTaxFree(myDeposit.isTaxFree());
         }
 
         /* Check for changes */
@@ -1397,6 +1261,13 @@ public class Deposit
         @Override
         protected DepositDataMap allocateDataMap() {
             return new DepositDataMap();
+        }
+
+        @Override
+        public void postProcessOnLoad() throws OceanusException {
+            /* Resolve links and sort the data */
+            super.resolveDataSetLinks();
+            reSort();
         }
     }
 

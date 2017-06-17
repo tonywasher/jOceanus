@@ -986,6 +986,13 @@ public class Payee
         protected PayeeDataMap allocateDataMap() {
             return new PayeeDataMap();
         }
+
+        @Override
+        public void postProcessOnLoad() throws OceanusException {
+            /* Resolve links and sort the data */
+            super.resolveDataSetLinks();
+            reSort();
+        }
     }
 
     /**

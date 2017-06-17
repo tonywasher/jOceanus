@@ -28,18 +28,16 @@ Private Const rangeAccountCategories As String = "AccountCategoryInfo"
 Private Const colAcctName As Integer = 1
 Private Const colAcctType As Integer = 2
 Private Const colAcctClass As Integer = 3
-Private Const colAcctTaxFree As Integer = 4
-Private Const colAcctGross As Integer = 5
-Private Const colAcctClosed As Integer = 6
-Private Const colAcctParent As Integer = 7
-Private Const colAcctAlias As Integer = 8
-Private Const colAcctPortfolio As Integer = 9
-Private Const colAcctMaturity As Integer = 10
-Private Const colAcctOpenBal As Integer = 11
-Private Const colAcctSymbol As Integer = 12
-Private Const colAcctRegion As Integer = 13
-Private Const colAcctCurrency As Integer = 14
-Private Const colAcctAutoExp As Integer = 15
+Private Const colAcctClosed As Integer = 4
+Private Const colAcctParent As Integer = 5
+Private Const colAcctAlias As Integer = 6
+Private Const colAcctPortfolio As Integer = 7
+Private Const colAcctMaturity As Integer = 8
+Private Const colAcctOpenBal As Integer = 9
+Private Const colAcctSymbol As Integer = 10
+Private Const colAcctRegion As Integer = 11
+Private Const colAcctCurrency As Integer = 12
+Private Const colAcctAutoExp As Integer = 13
 
 'Account Type Column locations
 Private Const colAcTpName As Integer = 0
@@ -54,6 +52,8 @@ Private Const colAcTpEndowment As Integer = 8
 Private Const colAcTpPortfolio As Integer = 9
 Private Const colAcTpCapital As Integer = 10
 Private Const colAcTpLifeBond As Integer = 11
+Private Const colAcTpTaxFree As Integer = 12
+Private Const colAcTpGross As Integer = 13
 
 'Account Type
 Public Type AccountType
@@ -65,6 +65,8 @@ Public Type AccountType
 	'Account flags
 	hasUnits As Boolean
 	hasValue As Boolean
+	isGross As Boolean
+	isTaxFree As Boolean
 	isNonAsset As Boolean
 	isUnitTrust As Boolean
 	isEndowment As Boolean
@@ -189,6 +191,8 @@ Private Sub loadAccountTypes(ByRef Context As FinanceState)
 	    myType.isLifeBond = myRow.getCellByPosition(colAcTpLifeBond, 0).getValue()
 	    myType.isEndowment = myRow.getCellByPosition(colAcTpEndowment, 0).getValue()
 	    myType.isPortfolio = myRow.getCellByPosition(colAcTpPortfolio, 0).getValue()
+	    myType.isTaxFree = myRow.getCellByPosition(colAcTpTaxFree, 0).getValue()
+	    myType.isGross = myRow.getCellByPosition(colAcTpGross, 0).getValue()
     		
     	'Store the account type
     	putHashKey(myMap, myName, myType) 
@@ -224,8 +228,6 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
     	myAcct.strAccount = myName
 	    myAcct.strParent = myRow.getCellByPosition(colAcctParent, 0).getString()
 	    myAcct.strPortfolio = myRow.getCellByPosition(colAcctPortfolio, 0).getString()
-	    myAcct.isTaxFree = myRow.getCellByPosition(colAcctTaxFree, 0).getValue()
-	    myAcct.isGross = myRow.getCellByPosition(colAcctGross, 0).getValue()
 	    myAcct.isClosed = myRow.getCellByPosition(colAcctClosed, 0).getValue()
 
 		'Promote values from account type	    
@@ -238,6 +240,8 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
 		myAcct.isLifeBond = myType.isLifeBond
 		myAcct.isEndowment = myType.isEndowment
 		myAcct.isPortfolio = myType.isPortfolio
+		myAcct.isTaxFree = myType.isTaxFree
+		myAcct.isGross = myType.isGross
 		myAcct.isActive = True()
     		
 		'Handle value accounts

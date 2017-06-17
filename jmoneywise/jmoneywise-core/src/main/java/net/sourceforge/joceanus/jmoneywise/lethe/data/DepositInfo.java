@@ -394,8 +394,9 @@ public class DepositInfo
             /* Validate the PayeeInfo */
             validateOnLoad();
 
-            /* Validate the Deposits */
+            /* Map and Validate the Deposits */
             DepositList myDeposits = getDataSet().getDeposits();
+            myDeposits.mapData();
             myDeposits.validateOnLoad();
         }
     }

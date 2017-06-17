@@ -346,21 +346,6 @@ public enum MoneyWiseDataResource implements TethysResourceId {
     DEPOSIT_NEWACCOUNT("Deposit.NewAccount"),
 
     /**
-     * Deposit TaxFree Error.
-     */
-    DEPOSIT_ERROR_TAXFREE("Deposit.Error.TaxFree"),
-
-    /**
-     * Deposit Gross Error.
-     */
-    DEPOSIT_ERROR_GROSS("Deposit.Error.Gross"),
-
-    /**
-     * Deposit TaxFree/Gross conflict Error.
-     */
-    DEPOSIT_ERROR_TAXFREEGROSS("Deposit.Error.TaxFreeGross"),
-
-    /**
      * DepositRate Bonus.
      */
     DEPOSITRATE_BONUS("DepositRate.Bonus"),
@@ -421,31 +406,6 @@ public enum MoneyWiseDataResource implements TethysResourceId {
     PORTFOLIO_CASHACCOUNT("Portfolio.CashAccount"),
 
     /**
-     * StockOption StockHolding.
-     */
-    STOCKOPTION_STOCKHOLDING("StockOption.StockHolding"),
-
-    /**
-     * StockOption Grant Date.
-     */
-    STOCKOPTION_GRANTDATE("StockOption.GrantDate"),
-
-    /**
-     * StockOption Expiry Date.
-     */
-    STOCKOPTION_EXPIRYDATE("StockOption.ExpiryDate"),
-
-    /**
-     * StockOption InfoSet.
-     */
-    STOCKOPTION_INFOSET("StockOption.InfoSet"),
-
-    /**
-     * StockOption New Account.
-     */
-    STOCKOPTION_NEWACCOUNT("StockOption.NewAccount"),
-
-    /**
      * StockOption Error BadSecurity.
      */
     STOCKOPTION_ERROR_BADSECURITY("StockOption.Error.BadSecurity"),
@@ -454,11 +414,6 @@ public enum MoneyWiseDataResource implements TethysResourceId {
      * StockOption Error BadExpiry.
      */
     STOCKOPTION_ERROR_BADEXPIRE("StockOption.Error.BadExpire"),
-
-    /**
-     * SecurityHolding InvalidCurrencyCombo Error.
-     */
-    SECURITYHOLDING_ERROR_CURRENCYCOMBO("SecurityHolding.Error.CurrencyCombo"),
 
     /**
      * SecurityHolding New Menu.

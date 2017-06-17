@@ -117,7 +117,6 @@ public class SheetPortfolio
         myValues.addValue(Portfolio.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Portfolio.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Portfolio.FIELD_DESC, loadBytes(COL_DESC));
-        myValues.addValue(Portfolio.FIELD_TAXFREE, loadBoolean(COL_TAXFREE));
         myValues.addValue(Portfolio.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
         /* Return the values */
@@ -174,18 +173,8 @@ public class SheetPortfolio
         /* Skip class */
         ++iAdjust;
 
-        /* Handle taxFree which may be missing */
-        MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        Boolean isTaxFree = Boolean.FALSE;
-        if (myCell != null) {
-            isTaxFree = myCell.getBooleanValue();
-        }
-
-        /* Skip gross column */
-        ++iAdjust;
-
         /* Handle closed which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
             isClosed = myCell.getBooleanValue();
@@ -216,7 +205,6 @@ public class SheetPortfolio
         myValues.addValue(Portfolio.FIELD_PORTTYPE, myPortType);
         myValues.addValue(Portfolio.FIELD_PARENT, myParent);
         myValues.addValue(Portfolio.FIELD_CURRENCY, myCurrency);
-        myValues.addValue(Portfolio.FIELD_TAXFREE, isTaxFree);
         myValues.addValue(Portfolio.FIELD_CLOSED, isClosed);
 
         /* Add the value into the list */

@@ -139,14 +139,14 @@ public enum MoneyWiseDataType implements MetisFieldEnum {
     SECURITY,
 
     /**
-     * SecurityPrice.
-     */
-    SECURITYPRICE,
-
-    /**
      * SecurityInfo.
      */
     SECURITYINFO,
+
+    /**
+     * SecurityPrice.
+     */
+    SECURITYPRICE,
 
     /**
      * Deposit.
@@ -154,14 +154,14 @@ public enum MoneyWiseDataType implements MetisFieldEnum {
     DEPOSIT,
 
     /**
-     * DepositRate.
-     */
-    DEPOSITRATE,
-
-    /**
      * DepositInfo.
      */
     DEPOSITINFO,
+
+    /**
+     * DepositRate.
+     */
+    DEPOSITRATE,
 
     /**
      * Cash.
@@ -192,21 +192,6 @@ public enum MoneyWiseDataType implements MetisFieldEnum {
      * PortfolioInfo.
      */
     PORTFOLIOINFO,
-
-    /**
-     * StockOption.
-     */
-    STOCKOPTION,
-
-    /**
-     * StockOptionVest.
-     */
-    STOCKOPTIONVEST,
-
-    /**
-     * StockOptionInfo.
-     */
-    STOCKOPTIONINFO,
 
     /**
      * Transaction.

@@ -24,8 +24,10 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import java.util.EnumMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataMap;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataTouch.TouchCounter;
 
 /**
@@ -33,12 +35,11 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataTouch.TouchCounter;
  * @param <E> the Data item type class
  */
 public class DataTouch<E extends Enum<E>>
-        extends EnumMap<E, TouchCounter<E>>
-        implements MetisDataFormat {
+        implements MetisDataFormat, MetisDataMap<E, TouchCounter<E>> {
     /**
-     * Serial Id.
+     * Map of touches.
      */
-    private static final long serialVersionUID = 1766620543307434230L;
+    private final Map<E, TouchCounter<E>> theTouchMap;
 
     /**
      * Constructor.
@@ -46,7 +47,12 @@ public class DataTouch<E extends Enum<E>>
      */
     public DataTouch(final Class<E> pClass) {
         /* Create the map */
-        super(pClass);
+        theTouchMap = new EnumMap<>(pClass);
+    }
+
+    @Override
+    public Map<E, TouchCounter<E>> getUnderlyingMap() {
+        return theTouchMap;
     }
 
     @Override
@@ -60,7 +66,7 @@ public class DataTouch<E extends Enum<E>>
      */
     protected void copyMap(final DataTouch<E> pSource) {
         /* Create the map */
-        putAll(pSource);
+        theTouchMap.putAll(pSource.getUnderlyingMap());
     }
 
     /**
@@ -68,7 +74,7 @@ public class DataTouch<E extends Enum<E>>
      */
     public void resetTouches() {
         /* Clear the map */
-        clear();
+        theTouchMap.clear();
     }
 
     /**
@@ -76,7 +82,7 @@ public class DataTouch<E extends Enum<E>>
      * @param pItemType the ItemType
      */
     public void resetTouches(final E pItemType) {
-        remove(pItemType);
+        theTouchMap.remove(pItemType);
     }
 
     /**
@@ -90,7 +96,7 @@ public class DataTouch<E extends Enum<E>>
         /* If this is a new dataType */
         if (myCounter == null) {
             /* Store a new counter */
-            put(pItemType, new TouchCounter<E>(pItemType));
+            theTouchMap.put(pItemType, new TouchCounter<E>(pItemType));
 
             /* else just record the touch */
         } else {
@@ -125,7 +131,7 @@ public class DataTouch<E extends Enum<E>>
      * @return the counter (or null)
      */
     public TouchCounter<E> getCounter(final E pItemType) {
-        return get(pItemType);
+        return theTouchMap.get(pItemType);
     }
 
     /**
@@ -133,7 +139,7 @@ public class DataTouch<E extends Enum<E>>
      * @return the iterator
      */
     public Iterator<TouchCounter<E>> iterator() {
-        return values().iterator();
+        return theTouchMap.values().iterator();
     }
 
     /**

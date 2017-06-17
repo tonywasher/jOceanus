@@ -163,13 +163,19 @@ public class LoanInfoSet
             case OPENINGBALANCE:
                 return MetisFieldRequired.CANEXIST;
 
-            /* Old style */
+            /* Not allowd */
             case WEBSITE:
             case CUSTOMERNO:
             case USERID:
             case PASSWORD:
             case MATURITY:
             case AUTOEXPENSE:
+            case AUTOPAYEE:
+            case SYMBOL:
+            case REGION:
+            case GRANTDATE:
+            case UNDERLYINGSTOCK:
+            case OPTIONPRICE:
             default:
                 return MetisFieldRequired.NOTALLOWED;
         }

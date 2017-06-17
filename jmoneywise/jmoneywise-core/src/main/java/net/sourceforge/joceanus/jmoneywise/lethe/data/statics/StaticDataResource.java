@@ -49,6 +49,11 @@ public enum StaticDataResource implements TethysResourceId {
     DEPOSITTYPE_SAVINGS("DepositType.Savings"),
 
     /**
+     * DepositType TaxFreeSavings.
+     */
+    DEPOSITTYPE_TAXFREESAVINGS("DepositType.TaxFreeSavings"),
+
+    /**
      * DepositType Peer2Peer.
      */
     DEPOSITTYPE_PEER2PEER("DepositType.Peer2Peer"),
@@ -57,6 +62,11 @@ public enum StaticDataResource implements TethysResourceId {
      * DepositType Bond.
      */
     DEPOSITTYPE_BOND("DepositType.Bond"),
+
+    /**
+     * DepositType TaxFreeBond.
+     */
+    DEPOSITTYPE_TAXFREEBOND("DepositType.TaxFreeBond"),
 
     /**
      * CashType Cash.
@@ -147,6 +157,11 @@ public enum StaticDataResource implements TethysResourceId {
      * SecurityType AnnuityPot.
      */
     SECURITYTYPE_ANNUITYPOT("SecurityType.AnnuityPot"),
+
+    /**
+     * SecurityType StockOption.
+     */
+    SECURITYTYPE_STOCKOPTION("SecurityType.StockOption"),
 
     /**
      * SecurityType Asset.
@@ -302,6 +317,11 @@ public enum StaticDataResource implements TethysResourceId {
      * TransType OptionsVest.
      */
     TRANSTYPE_OPTIONSVEST("TransType.OptionsVest"),
+
+    /**
+     * TransType OptionsExpire.
+     */
+    TRANSTYPE_OPTIONSEXPIRE("TransType.OptionsExpire"),
 
     /**
      * TransType OptionsExercise.
@@ -694,6 +714,31 @@ public enum StaticDataResource implements TethysResourceId {
     ACCOUNTINFO_NOTES("AccountInfoType.Notes"),
 
     /**
+     * AccountInfo Region.
+     */
+    ACCOUNTINFO_REGION("AccountInfoType.Region"),
+
+    /**
+     * AccountInfo Symbol.
+     */
+    ACCOUNTINFO_SYMBOL("AccountInfoType.Symbol"),
+
+    /**
+     * AccountInfo GrantDate.
+     */
+    ACCOUNTINFO_GRANTDATE("AccountInfoType.GrantDate"),
+
+    /**
+     * AccountInfo UnderlyingStock.
+     */
+    ACCOUNTINFO_UNDERLYINGSTOCK("AccountInfoType.UnderlyingStock"),
+
+    /**
+     * AccountInfo OptionPrice.
+     */
+    ACCOUNTINFO_OPTIONPRICE("AccountInfoType.OptionPrice"),
+
+    /**
      * TransInfo CreditUnits.
      */
     TRANSINFO_CREDITUNITS("TransInfoType.CreditUnits"),
@@ -876,8 +921,10 @@ public enum StaticDataResource implements TethysResourceId {
         Map<DepositCategoryClass, TethysResourceId> myMap = new EnumMap<>(DepositCategoryClass.class);
         myMap.put(DepositCategoryClass.CHECKING, DEPOSITTYPE_CHECKING);
         myMap.put(DepositCategoryClass.SAVINGS, DEPOSITTYPE_SAVINGS);
+        myMap.put(DepositCategoryClass.TAXFREESAVINGS, DEPOSITTYPE_TAXFREESAVINGS);
         myMap.put(DepositCategoryClass.PEER2PEER, DEPOSITTYPE_PEER2PEER);
         myMap.put(DepositCategoryClass.BOND, DEPOSITTYPE_BOND);
+        myMap.put(DepositCategoryClass.TAXFREEBOND, DEPOSITTYPE_TAXFREEBOND);
         myMap.put(DepositCategoryClass.PARENT, CATEGORYTYPE_PARENT);
         return myMap;
     }
@@ -975,6 +1022,7 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(SecurityTypeClass.VEHICLE, SECURITYTYPE_VEHICLE);
         myMap.put(SecurityTypeClass.PENSIONPOT, SECURITYTYPE_PENSIONPOT);
         myMap.put(SecurityTypeClass.ANNUITYPOT, SECURITYTYPE_ANNUITYPOT);
+        myMap.put(SecurityTypeClass.STOCKOPTION, SECURITYTYPE_STOCKOPTION);
         myMap.put(SecurityTypeClass.ASSET, SECURITYTYPE_ASSET);
         return myMap;
     }
@@ -1044,6 +1092,7 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(TransactionCategoryClass.STOCKRIGHTSISSUE, TRANSTYPE_STOCKRIGHTSISSUE);
         myMap.put(TransactionCategoryClass.PORTFOLIOXFER, TRANSTYPE_PORTFOLIOXFER);
         myMap.put(TransactionCategoryClass.OPTIONSVEST, TRANSTYPE_OPTIONSVEST);
+        myMap.put(TransactionCategoryClass.OPTIONSEXPIRE, TRANSTYPE_OPTIONSEXPIRE);
         myMap.put(TransactionCategoryClass.OPTIONSEXERCISE, TRANSTYPE_OPTIONSEXERCISE);
         myMap.put(TransactionCategoryClass.EXPENSE, TRANSTYPE_EXPENSE);
         myMap.put(TransactionCategoryClass.BADDEBTCAPITAL, TRANSTYPE_BADDEBTCAPITAL);
@@ -1180,6 +1229,11 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(AccountInfoClass.ACCOUNT, ACCOUNTINFO_ACCOUNT);
         myMap.put(AccountInfoClass.REFERENCE, ACCOUNTINFO_REFERENCE);
         myMap.put(AccountInfoClass.NOTES, ACCOUNTINFO_NOTES);
+        myMap.put(AccountInfoClass.REGION, ACCOUNTINFO_REGION);
+        myMap.put(AccountInfoClass.SYMBOL, ACCOUNTINFO_SYMBOL);
+        myMap.put(AccountInfoClass.GRANTDATE, ACCOUNTINFO_GRANTDATE);
+        myMap.put(AccountInfoClass.UNDERLYINGSTOCK, ACCOUNTINFO_UNDERLYINGSTOCK);
+        myMap.put(AccountInfoClass.OPTIONPRICE, ACCOUNTINFO_OPTIONPRICE);
         return myMap;
     }
 

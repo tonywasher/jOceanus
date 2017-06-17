@@ -394,8 +394,9 @@ public class PayeeInfo
             /* Validate the PayeeInfo */
             validateOnLoad();
 
-            /* Validate the Payees */
+            /* Map and Validate the Payees */
             PayeeList myPayees = getDataSet().getPayees();
+            myPayees.mapData();
             myPayees.validateOnLoad();
         }
     }

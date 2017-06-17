@@ -1147,6 +1147,13 @@ public class Loan
         protected LoanDataMap allocateDataMap() {
             return new LoanDataMap(getDataSet().getDeposits());
         }
+
+        @Override
+        public void postProcessOnLoad() throws OceanusException {
+            /* Resolve links and sort the data */
+            super.resolveDataSetLinks();
+            reSort();
+        }
     }
 
     /**

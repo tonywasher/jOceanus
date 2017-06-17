@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
 import java.awt.GridLayout;
+import java.util.Currency;
 import java.util.Iterator;
 
 import javax.swing.Icon;
@@ -37,6 +38,7 @@ import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
@@ -49,6 +51,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfoSet;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
@@ -60,6 +63,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateButton;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
@@ -73,6 +77,11 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
  */
 public class SecurityPanel
         extends MoneyWiseDataItemPanel<Security> {
+    /**
+     * Info Tab Title.
+     */
+    private static final String TAB_INFO = MoneyWiseUIResource.TRANSPANEL_TAB_INFO.getValue();
+
     /**
      * Prices Tab Title.
      */
@@ -94,11 +103,6 @@ public class SecurityPanel
     private final JScrollButton<Payee> theParentButton;
 
     /**
-     * Region Button Field.
-     */
-    private final JScrollButton<Region> theRegionButton;
-
-    /**
      * Currency Button Field.
      */
     private final JScrollButton<AssetCurrency> theCurrencyButton;
@@ -107,6 +111,21 @@ public class SecurityPanel
      * Closed Button Field.
      */
     private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
+
+    /**
+     * Region Button Field.
+     */
+    private final JScrollButton<Region> theRegionButton;
+
+    /**
+     * Stock Button Field.
+     */
+    private final JScrollButton<Security> theStockButton;
+
+    /**
+     * Date Button Field.
+     */
+    private final TethysSwingDateButton theDateButton;
 
     /**
      * SecurityPrice Table.
@@ -134,6 +153,11 @@ public class SecurityPanel
     private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
 
     /**
+     * The Stock Menu Builder.
+     */
+    private final JScrollMenuBuilder<Security> theStockMenuBuilder;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pView the data view
@@ -152,8 +176,12 @@ public class SecurityPanel
         /* Create the buttons */
         theTypeButton = new JScrollButton<>();
         theParentButton = new JScrollButton<>();
-        theRegionButton = new JScrollButton<>();
         theCurrencyButton = new JScrollButton<>();
+        theRegionButton = new JScrollButton<>();
+        theStockButton = new JScrollButton<>();
+
+        /* Create the date button */
+        theDateButton = new TethysSwingDateButton();
 
         /* Set closed button */
         theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
@@ -167,8 +195,12 @@ public class SecurityPanel
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
 
+        /* Build the info panel */
+        JPanel myPanel = buildInfoPanel();
+        myTabs.add(TAB_INFO, myPanel);
+
         /* Build the notes panel */
-        JPanel myPanel = buildNotesPanel();
+        myPanel = buildNotesPanel();
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
         /* Create the SecurityPrices table */
@@ -191,6 +223,8 @@ public class SecurityPanel
         theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
         theRegionMenuBuilder = theRegionButton.getMenuBuilder();
         theRegionMenuBuilder.getEventRegistrar().addEventListener(e -> buildRegionMenu(theRegionMenuBuilder, getItem()));
+        theStockMenuBuilder = theStockButton.getMenuBuilder();
+        theStockMenuBuilder.getEventRegistrar().addEventListener(e -> buildStockMenu(theStockMenuBuilder, getItem()));
         theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
         theCurrencyMenuBuilder.getEventRegistrar().addEventListener(e -> buildCurrencyMenu(theCurrencyMenuBuilder, getItem()));
         thePrices.getEventRegistrar().addEventListener(e -> {
@@ -226,10 +260,8 @@ public class SecurityPanel
         /* Build the FieldSet */
         theFieldSet.addFieldElement(Security.FIELD_NAME, MetisDataType.STRING, myName);
         theFieldSet.addFieldElement(Security.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(Security.FIELD_SYMBOL, MetisDataType.STRING, mySymbol);
         theFieldSet.addFieldElement(Security.FIELD_SECTYPE, SecurityType.class, theTypeButton);
         theFieldSet.addFieldElement(Security.FIELD_PARENT, Payee.class, theParentButton);
-        theFieldSet.addFieldElement(Security.FIELD_REGION, Region.class, theRegionButton);
         theFieldSet.addFieldElement(Security.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
         theFieldSet.addFieldElement(Security.FIELD_CLOSED, Boolean.class, myClosedButton);
 
@@ -241,12 +273,53 @@ public class SecurityPanel
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(Security.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(Security.FIELD_DESC, myPanel);
-        theFieldSet.addFieldToPanel(Security.FIELD_SYMBOL, myPanel);
         theFieldSet.addFieldToPanel(Security.FIELD_SECTYPE, myPanel);
         theFieldSet.addFieldToPanel(Security.FIELD_PARENT, myPanel);
-        theFieldSet.addFieldToPanel(Security.FIELD_REGION, myPanel);
         theFieldSet.addFieldToPanel(Security.FIELD_CURRENCY, myPanel);
         theFieldSet.addFieldToPanel(Security.FIELD_CLOSED, myPanel);
+        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build info subPanel.
+     * @return the panel
+     */
+    private JPanel buildInfoPanel() {
+        /* Allocate fields */
+        JTextField mySymbol = new JTextField();
+
+        /* Allocate fields */
+        JTextField myPrice = new JTextField();
+
+        /* Restrict the fields */
+        int myWidth = Transaction.DESCLEN >> 1;
+        restrictField(mySymbol, myWidth);
+        restrictField(myPrice, myWidth);
+        restrictField(theDateButton, myWidth);
+        restrictField(theRegionButton, myWidth);
+        restrictField(theStockButton, myWidth);
+
+        /* Build the FieldSet */
+        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL), MetisDataType.STRING, mySymbol);
+        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION), Region.class, theRegionButton);
+        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK), Security.class, theStockButton);
+        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.GRANTDATE), MetisDataType.DATE, theDateButton);
+        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE), MetisDataType.PRICE, myPrice);
+
+        /* Create the Info panel */
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+
+        /* Layout the info panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL), myPanel);
+        theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION), myPanel);
+        theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK), myPanel);
+        theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.GRANTDATE), myPanel);
+        theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -301,6 +374,7 @@ public class SecurityPanel
         boolean bIsClosed = mySecurity.isClosed();
         boolean bIsActive = mySecurity.isActive();
         boolean bIsRelevant = mySecurity.isRelevant();
+        Currency myCurrency = mySecurity.getCurrency();
 
         /* Determine whether the closed button should be visible */
         boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
@@ -321,9 +395,41 @@ public class SecurityPanel
         boolean bShowNotes = isEditable || mySecurity.getNotes() != null;
         theFieldSet.setVisibility(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
-        /* Determine whether the region should be visible */
-        boolean bShowRegion = mySecurity.getSecurityTypeClass().hasRegion();
-        theFieldSet.setVisibility(Security.FIELD_REGION, bShowRegion);
+        /* Determine whether the symbol field should be visible */
+        MetisField myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL);
+        boolean bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.SYMBOL);
+        boolean bShowField = bEditField || mySecurity.getSymbol() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the region field should be visible */
+        myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION);
+        bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.REGION);
+        bShowField = bEditField || mySecurity.getRegion() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the stock field should be visible */
+        myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK);
+        bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.UNDERLYINGSTOCK);
+        bShowField = bEditField || mySecurity.getRegion() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the grantDate field should be visible */
+        myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.GRANTDATE);
+        bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.GRANTDATE);
+        bShowField = bEditField || mySecurity.getRegion() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the price field should be visible */
+        myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE);
+        bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.OPTIONPRICE);
+        bShowField = bEditField || mySecurity.getRegion() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+        theFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Security type and currency cannot be changed if the item is active */
         theFieldSet.setEditable(Security.FIELD_SECTYPE, isEditable && !bIsActive);
@@ -331,6 +437,22 @@ public class SecurityPanel
 
         /* Set editable value for parent */
         theFieldSet.setEditable(Security.FIELD_PARENT, isEditable && !bIsClosed);
+    }
+
+    /**
+     * Is the field editable?
+     * @param pSecurity the security
+     * @param pField the field class
+     * @return true/false
+     */
+    public static boolean isEditableField(final Security pSecurity,
+                                          final AccountInfoClass pField) {
+        /* Access the infoSet */
+        SecurityInfoSet myInfoSet = pSecurity.getInfoSet();
+
+        /* Check whether the field is available */
+        MetisFieldRequired isRequired = myInfoSet.isClassRequired(pField);
+        return !isRequired.equals(MetisFieldRequired.NOTALLOWED);
     }
 
     @Override
@@ -346,9 +468,6 @@ public class SecurityPanel
         } else if (myField.equals(Security.FIELD_DESC)) {
             /* Update the Description */
             mySecurity.setDescription(pUpdate.getString());
-        } else if (myField.equals(Security.FIELD_SYMBOL)) {
-            /* Update the Symbol */
-            mySecurity.setSymbol(pUpdate.getString());
         } else if (myField.equals(Security.FIELD_SECTYPE)) {
             /* Update the Security Type */
             mySecurity.setSecurityType(pUpdate.getValue(SecurityType.class));
@@ -356,9 +475,6 @@ public class SecurityPanel
         } else if (myField.equals(Security.FIELD_PARENT)) {
             /* Update the Parent */
             mySecurity.setParent(pUpdate.getValue(Payee.class));
-        } else if (myField.equals(Security.FIELD_REGION)) {
-            /* Update the Region */
-            mySecurity.setRegion(pUpdate.getValue(Region.class));
         } else if (myField.equals(Security.FIELD_CURRENCY)) {
             /* Update the Currency */
             mySecurity.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
@@ -370,6 +486,21 @@ public class SecurityPanel
             switch (SecurityInfoSet.getClassForField(myField)) {
                 case NOTES:
                     mySecurity.setNotes(pUpdate.getCharArray());
+                    break;
+                case SYMBOL:
+                    mySecurity.setSymbol(pUpdate.getString());
+                    break;
+                case REGION:
+                    mySecurity.setRegion(pUpdate.getValue(Region.class));
+                    break;
+                case GRANTDATE:
+                    mySecurity.setGrantDate(pUpdate.getDate());
+                    break;
+                case UNDERLYINGSTOCK:
+                    mySecurity.setUnderlyingStock(pUpdate.getValue(Security.class));
+                    break;
+                case OPTIONPRICE:
+                    mySecurity.setOptionPrice(pUpdate.getPrice());
                     break;
                 default:
                     break;
@@ -557,6 +688,49 @@ public class SecurityPanel
 
             /* If this is the active region */
             if (myRegion.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        pMenuBuilder.showItem(myActive);
+    }
+
+    /**
+     * Build the stock list for an item.
+     * @param pMenuBuilder the menu builder
+     * @param pSecurity the security to build for
+     */
+    public void buildStockMenu(final JScrollMenuBuilder<Security> pMenuBuilder,
+                               final Security pSecurity) {
+        /* Clear the menu */
+        pMenuBuilder.clearMenu();
+
+        /* Record active item */
+        Security myCurr = pSecurity.getUnderlyingStock();
+        JMenuItem myActive = null;
+
+        /* Access securities */
+        SecurityList mySecurities = getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+
+        /* Loop through the Securities */
+        Iterator<Security> myIterator = mySecurities.iterator();
+        while (myIterator.hasNext()) {
+            Security mySecurity = myIterator.next();
+
+            /* Ignore deleted and non share */
+            boolean bIgnore = mySecurity.isDeleted();
+            bIgnore |= !mySecurity.getSecurityTypeClass().isShares();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the region */
+            JMenuItem myItem = pMenuBuilder.addItem(mySecurity);
+
+            /* If this is the active stock */
+            if (mySecurity.equals(myCurr)) {
                 /* Record it */
                 myActive = myItem;
             }

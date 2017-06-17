@@ -264,7 +264,7 @@ public enum PayeeTypeClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the PayeeType can provide a taxedIncome
+     * Determine whether the PayeeType can provide a taxedIncome.
      * @return <code>true</code> if the payee type can parent a portfolio, <code>false</code>
      * otherwise.
      */

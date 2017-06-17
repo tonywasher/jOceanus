@@ -90,7 +90,32 @@ public enum AccountInfoClass implements DataInfoClass {
     /**
      * Notes.
      */
-    NOTES(12, 11, MetisDataType.CHARARRAY);
+    NOTES(12, 11, MetisDataType.CHARARRAY),
+
+    /**
+     * Symbol.
+     */
+    SYMBOL(13, 12, MetisDataType.STRING),
+
+    /**
+     * Region.
+     */
+    REGION(14, 13, MetisDataType.LINK),
+
+    /**
+     * GrantDate.
+     */
+    GRANTDATE(15, 14, MetisDataType.DATE),
+
+    /**
+     * UnderlyingStock.
+     */
+    UNDERLYINGSTOCK(16, 15, MetisDataType.LINK),
+
+    /**
+     * OptionPrice.
+     */
+    OPTIONPRICE(17, 16, MetisDataType.PRICE);
 
     /**
      * The String name.
@@ -195,6 +220,8 @@ public enum AccountInfoClass implements DataInfoClass {
                 return AccountInfoType.DATA_LEN;
             case NOTES:
                 return AccountInfoType.NOTES_LEN;
+            case SYMBOL:
+                return SecurityType.SYMBOL_LEN;
             default:
                 return 0;
         }

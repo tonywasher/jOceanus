@@ -105,16 +105,6 @@ public class DepositPanel
     private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
-     * TaxFree Button Field.
-     */
-    private final ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
-
-    /**
-     * Gross Button Field.
-     */
-    private final ComplexIconButtonState<Boolean, Boolean> theGrossState;
-
-    /**
      * The Category Menu Builder.
      */
     private final JScrollMenuBuilder<DepositCategory> theCategoryMenuBuilder;
@@ -155,8 +145,6 @@ public class DepositPanel
 
         /* Create icon button states */
         theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
-        theTaxFreeState = new ComplexIconButtonState<>(Boolean.FALSE);
-        theGrossState = new ComplexIconButtonState<>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -209,10 +197,6 @@ public class DepositPanel
         /* Set states */
         JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
         MoneyWiseIcons.buildLockedButton(theClosedState);
-        JIconButton<Boolean> myTaxFreeButton = new JIconButton<>(theTaxFreeState);
-        MoneyWiseIcons.buildOptionButton(theTaxFreeState);
-        JIconButton<Boolean> myGrossButton = new JIconButton<>(theGrossState);
-        MoneyWiseIcons.buildOptionButton(theGrossState);
 
         /* Create the text fields */
         JTextField myName = new JTextField();
@@ -225,8 +209,6 @@ public class DepositPanel
         restrictField(theCurrencyButton, Deposit.NAMELEN);
         restrictField(theParentButton, Deposit.NAMELEN);
         restrictField(myClosedButton, Deposit.NAMELEN);
-        restrictField(myTaxFreeButton, Deposit.NAMELEN);
-        restrictField(myGrossButton, Deposit.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(Deposit.FIELD_NAME, MetisDataType.STRING, myName);
@@ -235,8 +217,6 @@ public class DepositPanel
         theFieldSet.addFieldElement(Deposit.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Deposit.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
         theFieldSet.addFieldElement(Deposit.FIELD_CLOSED, Boolean.class, myClosedButton);
-        theFieldSet.addFieldElement(Deposit.FIELD_TAXFREE, Boolean.class, myTaxFreeButton);
-        theFieldSet.addFieldElement(Deposit.FIELD_GROSS, Boolean.class, myGrossButton);
 
         /* Create the main panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -250,8 +230,6 @@ public class DepositPanel
         theFieldSet.addFieldToPanel(Deposit.FIELD_PARENT, myPanel);
         theFieldSet.addFieldToPanel(Deposit.FIELD_CURRENCY, myPanel);
         theFieldSet.addFieldToPanel(Deposit.FIELD_CLOSED, myPanel);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_TAXFREE, myPanel);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_GROSS, myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -347,11 +325,8 @@ public class DepositPanel
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Deposit myDeposit = getItem();
-        DepositCategoryClass myClass = myDeposit.getCategoryClass();
         boolean bIsClosed = myDeposit.isClosed();
         boolean bIsActive = myDeposit.isActive();
-        boolean bIsGross = myDeposit.isGross();
-        boolean bIsTaxFree = myDeposit.isTaxFree();
         boolean bIsRelevant = myDeposit.isRelevant();
         boolean bIsChangeable = !bIsActive && isEditable;
 
@@ -365,14 +340,6 @@ public class DepositPanel
                                         : !bIsRelevant;
         theFieldSet.setEditable(Deposit.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState.setState(bEditClosed);
-
-        /* Determine whether the taxFree/Gross buttons should be visible */
-        boolean bShowTaxFree = bIsTaxFree || (bIsChangeable && !bIsGross);
-        theFieldSet.setVisibility(Deposit.FIELD_TAXFREE, bShowTaxFree);
-        theTaxFreeState.setState(bIsChangeable);
-        boolean bShowGross = bIsGross || (bIsChangeable && !bIsTaxFree);
-        theFieldSet.setVisibility(Deposit.FIELD_GROSS, bShowGross);
-        theGrossState.setState(bIsChangeable);
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myDeposit.getDesc() != null;
@@ -398,14 +365,9 @@ public class DepositPanel
         theFieldSet.setVisibility(myMaturityField, bShowMaturity);
         theFieldSet.setEditable(myMaturityField, isEditable && !bIsClosed);
 
-        /* Category, Currency, Gross and TaxFree status cannot be changed if the item is active */
-        boolean canTaxFree = myClass.canTaxFree();
-        boolean isHolding = myDeposit.getTouchStatus().touchedBy(MoneyWiseDataType.PORTFOLIO);
-        boolean canTaxChange = canTaxFree && !isHolding && bIsChangeable;
+        /* Category, Currency, and OpeningBalance cannot be changed if the item is active */
         theFieldSet.setEditable(Deposit.FIELD_CATEGORY, bIsChangeable);
         theFieldSet.setEditable(Deposit.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
-        theFieldSet.setEditable(Deposit.FIELD_GROSS, canTaxChange && !bIsTaxFree);
-        theFieldSet.setEditable(Deposit.FIELD_TAXFREE, canTaxChange && !bIsGross);
         theFieldSet.setEditable(myOpeningField, bIsChangeable);
 
         /* Set currency for opening balance */
@@ -441,12 +403,6 @@ public class DepositPanel
         } else if (myField.equals(Deposit.FIELD_CLOSED)) {
             /* Update the Closed indication */
             myDeposit.setClosed(pUpdate.getBoolean());
-        } else if (myField.equals(Deposit.FIELD_TAXFREE)) {
-            /* Update the taxFree indication */
-            myDeposit.setTaxFree(pUpdate.getBoolean());
-        } else if (myField.equals(Deposit.FIELD_GROSS)) {
-            /* Update the Gross indication */
-            myDeposit.setGross(pUpdate.getBoolean());
         } else {
             /* Switch on the field */
             switch (DepositInfoSet.getClassForField(myField)) {

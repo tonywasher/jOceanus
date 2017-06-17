@@ -536,8 +536,9 @@ public class CashInfo
             /* Validate the CashInfo */
             validateOnLoad();
 
-            /* Validate the Cash */
+            /* Map and Validate the Cash */
             CashList myCash = getDataSet().getCash();
+            myCash.mapData();
             myCash.validateOnLoad();
         }
     }

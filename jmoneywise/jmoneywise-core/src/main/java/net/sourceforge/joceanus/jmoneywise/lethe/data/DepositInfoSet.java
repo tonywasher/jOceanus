@@ -172,16 +172,22 @@ public class DepositInfoSet
 
             /* Handle Maturity */
             case MATURITY:
-                return (myClass == DepositCategoryClass.BOND)
-                                                              ? MetisFieldRequired.MUSTEXIST
-                                                              : MetisFieldRequired.NOTALLOWED;
+                return myClass.hasMaturity()
+                                             ? MetisFieldRequired.MUSTEXIST
+                                             : MetisFieldRequired.NOTALLOWED;
 
-            /* Old style */
+            /* Not allowed */
             case AUTOEXPENSE:
+            case AUTOPAYEE:
             case WEBSITE:
             case CUSTOMERNO:
             case USERID:
             case PASSWORD:
+            case SYMBOL:
+            case REGION:
+            case GRANTDATE:
+            case UNDERLYINGSTOCK:
+            case OPTIONPRICE:
             default:
                 return MetisFieldRequired.NOTALLOWED;
         }

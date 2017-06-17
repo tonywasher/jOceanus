@@ -33,8 +33,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo.SecurityInfoL
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 
 /**
  * SecurityInfoSet class.
@@ -93,8 +95,24 @@ public class SecurityInfoSet
      * @return the value to set
      */
     private Object getInfoSetValue(final AccountInfoClass pInfoClass) {
+        Object myValue;
+
+        switch (pInfoClass) {
+            case REGION:
+                /* Access region of object */
+                myValue = getRegion(pInfoClass);
+                break;
+            case UNDERLYINGSTOCK:
+                /* Access underlying Stock of object */
+                myValue = getSecurity(pInfoClass);
+                break;
+            default:
+                /* Access value of object */
+                myValue = getField(pInfoClass);
+                break;
+        }
+
         /* Return the value */
-        Object myValue = getField(pInfoClass);
         return (myValue != null)
                                  ? myValue
                                  : MetisFieldValue.SKIP;
@@ -130,6 +148,42 @@ public class SecurityInfoSet
     }
 
     /**
+     * Obtain the region for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the deposit
+     */
+    public Region getRegion(final AccountInfoClass pInfoClass) {
+        /* Access existing entry */
+        SecurityInfo myValue = getInfo(pInfoClass);
+
+        /* If we have no entry, return null */
+        if (myValue == null) {
+            return null;
+        }
+
+        /* Return the region */
+        return myValue.getRegion();
+    }
+
+    /**
+     * Obtain the security for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the security
+     */
+    public Security getSecurity(final AccountInfoClass pInfoClass) {
+        /* Access existing entry */
+        SecurityInfo myValue = getInfo(pInfoClass);
+
+        /* If we have no entry, return null */
+        if (myValue == null) {
+            return null;
+        }
+
+        /* Return the security */
+        return myValue.getSecurity();
+    }
+
+    /**
      * Determine if a field is required.
      * @param pField the infoSet field
      * @return the status
@@ -143,13 +197,41 @@ public class SecurityInfoSet
 
     @Override
     public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
+        /* Access details about the Security */
+        Security mySec = getOwner();
+        SecurityTypeClass myType = mySec.getSecurityTypeClass();
+
+        /* If we have no Type, no class is allowed */
+        if (myType == null) {
+            return MetisFieldRequired.NOTALLOWED;
+        }
         /* Switch on class */
         switch (pClass) {
             /* Allowed set */
             case NOTES:
                 return MetisFieldRequired.CANEXIST;
 
-            /* Old style */
+            /* Symbol */
+            case SYMBOL:
+                return myType.needsSymbol()
+                                            ? MetisFieldRequired.MUSTEXIST
+                                            : MetisFieldRequired.NOTALLOWED;
+
+            /* Region */
+            case REGION:
+                return myType.needsRegion()
+                                            ? MetisFieldRequired.MUSTEXIST
+                                            : MetisFieldRequired.NOTALLOWED;
+
+            /* Options */
+            case GRANTDATE:
+            case UNDERLYINGSTOCK:
+            case OPTIONPRICE:
+                return myType.isOption()
+                                         ? MetisFieldRequired.MUSTEXIST
+                                         : MetisFieldRequired.NOTALLOWED;
+
+            /* Not Allowed */
             case SORTCODE:
             case ACCOUNT:
             case REFERENCE:
@@ -160,6 +242,7 @@ public class SecurityInfoSet
             case MATURITY:
             case OPENINGBALANCE:
             case AUTOEXPENSE:
+            case AUTOPAYEE:
             default:
                 return MetisFieldRequired.NOTALLOWED;
         }
@@ -203,6 +286,29 @@ public class SecurityInfoSet
                     char[] myArray = myInfo.getValue(char[].class);
                     if (myArray.length > myClass.getMaximumLength()) {
                         mySecurity.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
+                    }
+                    break;
+                case SYMBOL:
+                    /* Access data */
+                    String mySymbol = myInfo.getValue(String.class);
+                    if (mySymbol.length() > myClass.getMaximumLength()) {
+                        mySecurity.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
+                    }
+                    break;
+                case UNDERLYINGSTOCK:
+                    /* Access data */
+                    Security myStock = myInfo.getValue(Security.class);
+                    if (!myStock.getSecurityTypeClass().isShares()) {
+                        mySecurity.addError("Invalid underlying stock", getFieldForClass(myClass));
+                    }
+                    break;
+                case OPTIONPRICE:
+                    /* Access data */
+                    TethysPrice myPrice = myInfo.getValue(TethysPrice.class);
+                    if (myPrice.isZero()) {
+                        mySecurity.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
+                    } else if (!myPrice.isPositive()) {
+                        mySecurity.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
                     }
                     break;
                 default:

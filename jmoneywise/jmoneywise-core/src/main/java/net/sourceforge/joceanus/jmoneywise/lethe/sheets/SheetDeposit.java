@@ -74,19 +74,9 @@ public class SheetDeposit
     private static final int COL_CURRENCY = COL_DESC + 1;
 
     /**
-     * Gross column.
-     */
-    private static final int COL_GROSS = COL_CURRENCY + 1;
-
-    /**
-     * TaxFree column.
-     */
-    private static final int COL_TAXFREE = COL_GROSS + 1;
-
-    /**
      * Closed column.
      */
-    private static final int COL_CLOSED = COL_TAXFREE + 1;
+    private static final int COL_CLOSED = COL_CURRENCY + 1;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -123,8 +113,6 @@ public class SheetDeposit
         myValues.addValue(Deposit.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Deposit.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Deposit.FIELD_DESC, loadBytes(COL_DESC));
-        myValues.addValue(Deposit.FIELD_GROSS, loadBoolean(COL_GROSS));
-        myValues.addValue(Deposit.FIELD_TAXFREE, loadBoolean(COL_TAXFREE));
         myValues.addValue(Deposit.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
         /* Return the values */
@@ -140,8 +128,6 @@ public class SheetDeposit
         writeInteger(COL_CURRENCY, pItem.getAssetCurrencyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
-        writeBoolean(COL_GROSS, pItem.isGross());
-        writeBoolean(COL_TAXFREE, pItem.isTaxFree());
         writeBoolean(COL_CLOSED, pItem.isClosed());
     }
 
@@ -171,22 +157,8 @@ public class SheetDeposit
         /* Skip class */
         ++iAdjust;
 
-        /* Handle taxFree which may be missing */
-        MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        Boolean isTaxFree = Boolean.FALSE;
-        if (myCell != null) {
-            isTaxFree = myCell.getBooleanValue();
-        }
-
-        /* Handle gross which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        Boolean isGross = Boolean.FALSE;
-        if (myCell != null) {
-            isGross = myCell.getBooleanValue();
-        }
-
         /* Handle closed which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
             isClosed = myCell.getBooleanValue();
@@ -231,8 +203,6 @@ public class SheetDeposit
         myValues.addValue(Deposit.FIELD_CATEGORY, myType);
         myValues.addValue(Deposit.FIELD_CURRENCY, myCurrency);
         myValues.addValue(Deposit.FIELD_PARENT, myParent);
-        myValues.addValue(Deposit.FIELD_GROSS, isGross);
-        myValues.addValue(Deposit.FIELD_TAXFREE, isTaxFree);
         myValues.addValue(Deposit.FIELD_CLOSED, isClosed);
 
         /* Add the value into the list */

@@ -110,6 +110,9 @@ public class SecurityInfo
             SecurityInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
+            /* Resolve any link value */
+            resolveLink();
+
         } catch (OceanusException e) {
             /* Pass on exception */
             throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
@@ -137,12 +140,62 @@ public class SecurityInfo
     }
 
     /**
+     * Obtain Region.
+     * @return the Region
+     */
+    public Region getRegion() {
+        return getRegion(getValueSet());
+    }
+
+    /**
+     * Obtain Security.
+     * @return the Security
+     */
+    public Security getSecurity() {
+        return getSecurity(getValueSet());
+    }
+
+    /**
      * Obtain InfoType.
      * @param pValueSet the valueSet
      * @return the InfoType
      */
     public static AccountInfoType getInfoType(final MetisValueSet pValueSet) {
         return getInfoType(pValueSet, AccountInfoType.class);
+    }
+
+    /**
+     * Obtain Linked Region.
+     * @param pValueSet the valueSet
+     * @return the Region
+     */
+    public static Region getRegion(final MetisValueSet pValueSet) {
+        return pValueSet.isDeletion()
+                                      ? null
+                                      : pValueSet.getValue(FIELD_LINK, Region.class);
+    }
+
+    /**
+     * Obtain Linked Security.
+     * @param pValueSet the valueSet
+     * @return the Security
+     */
+    public static Security getSecurity(final MetisValueSet pValueSet) {
+        return pValueSet.isDeletion()
+                                      ? null
+                                      : pValueSet.getValue(FIELD_LINK, Security.class);
+    }
+
+    @Override
+    public String getLinkName() {
+        DataItem<?> myItem = getLink(DataItem.class);
+        if (myItem instanceof Region) {
+            return ((Region) myItem).getName();
+        }
+        if (myItem instanceof Security) {
+            return ((Security) myItem).getName();
+        }
+        return null;
     }
 
     @Override
@@ -190,9 +243,19 @@ public class SecurityInfo
         }
 
         /* Compare the Info Types */
-        iDiff = getInfoType().compareTo(pThat.getInfoType());
+        AccountInfoType myType = getInfoType();
+        iDiff = myType.compareTo(pThat.getInfoType());
         if (iDiff != 0) {
             return iDiff;
+        }
+
+        /* If this is a linkSet */
+        if (myType.getInfoClass().isLinkSet()) {
+            /* Compare names */
+            iDiff = MetisDifference.compareObject(getLinkName(), pThat.getLinkName());
+            if (iDiff != 0) {
+                return iDiff;
+            }
         }
 
         /* Compare the underlying id */
@@ -209,9 +272,45 @@ public class SecurityInfo
         resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
         resolveDataLink(FIELD_OWNER, myData.getSecurities());
 
+        /* Resolve any link value */
+        resolveLink();
+
         /* Access the SecurityInfoSet and register this data */
         SecurityInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
+    }
+
+    /**
+     * Resolve link reference.
+     * @throws OceanusException on error
+     */
+    private void resolveLink() throws OceanusException {
+        /* If we have a link */
+        AccountInfoType myType = getInfoType();
+        if (myType.isLink()) {
+            /* Access data */
+            MoneyWiseData myData = getDataSet();
+            MetisValueSet myValues = getValueSet();
+            Object myLinkId = myValues.getValue(FIELD_VALUE);
+
+            /* Switch on link type */
+            switch (myType.getInfoClass()) {
+                case REGION:
+                    resolveDataLink(FIELD_LINK, myData.getRegions());
+                    if (myLinkId == null) {
+                        setValueValue(getRegion().getId());
+                    }
+                    break;
+                case UNDERLYINGSTOCK:
+                    resolveDataLink(FIELD_LINK, myData.getSecurities());
+                    if (myLinkId == null) {
+                        setValueValue(getSecurity().getId());
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     /**
@@ -394,8 +493,9 @@ public class SecurityInfo
             /* Validate the SecurityInfo */
             validateOnLoad();
 
-            /* Validate the Securities */
+            /* Map and Validate the Securities */
             SecurityList mySecurities = getDataSet().getSecurities();
+            mySecurities.mapData();
             mySecurities.validateOnLoad();
         }
     }

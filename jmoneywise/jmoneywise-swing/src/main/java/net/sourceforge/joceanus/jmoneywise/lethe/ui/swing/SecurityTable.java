@@ -49,6 +49,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo.SecurityInfoList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfoSet;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
@@ -104,7 +106,7 @@ public class SecurityTable
     /**
      * Symbol Column Title.
      */
-    private static final String TITLE_SYMBOL = Security.FIELD_SYMBOL.getName();
+    private static final String TITLE_SYMBOL = AccountInfoClass.SYMBOL.toString();
 
     /**
      * Currency Column Title.
@@ -869,7 +871,7 @@ public class SecurityTable
                 case COLUMN_ACTIVE:
                     return Security.FIELD_TOUCH;
                 case COLUMN_SYMBOL:
-                    return Security.FIELD_SYMBOL;
+                    return SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL);
                 case COLUMN_PARENT:
                     return Security.FIELD_PARENT;
                 case COLUMN_CURR:

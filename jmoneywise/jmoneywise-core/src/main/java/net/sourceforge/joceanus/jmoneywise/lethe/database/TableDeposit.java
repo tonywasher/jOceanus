@@ -60,8 +60,6 @@ public class TableDeposit
         myTableDef.addReferenceColumn(Deposit.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addEncryptedColumn(Deposit.FIELD_NAME, Deposit.NAMELEN);
         myTableDef.addNullEncryptedColumn(Deposit.FIELD_DESC, Deposit.DESCLEN);
-        myTableDef.addBooleanColumn(Deposit.FIELD_GROSS);
-        myTableDef.addBooleanColumn(Deposit.FIELD_TAXFREE);
         myTableDef.addBooleanColumn(Deposit.FIELD_CLOSED);
 
         /* Declare Sort Columns */
@@ -86,8 +84,6 @@ public class TableDeposit
         myValues.addValue(Deposit.FIELD_CATEGORY, myTableDef.getIntegerValue(Deposit.FIELD_CATEGORY));
         myValues.addValue(Deposit.FIELD_PARENT, myTableDef.getIntegerValue(Deposit.FIELD_PARENT));
         myValues.addValue(Deposit.FIELD_CURRENCY, myTableDef.getIntegerValue(Deposit.FIELD_CURRENCY));
-        myValues.addValue(Deposit.FIELD_GROSS, myTableDef.getBooleanValue(Deposit.FIELD_GROSS));
-        myValues.addValue(Deposit.FIELD_TAXFREE, myTableDef.getBooleanValue(Deposit.FIELD_TAXFREE));
         myValues.addValue(Deposit.FIELD_CLOSED, myTableDef.getBooleanValue(Deposit.FIELD_CLOSED));
 
         /* Return the values */
@@ -109,10 +105,6 @@ public class TableDeposit
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Deposit.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
-        } else if (Deposit.FIELD_GROSS.equals(iField)) {
-            myTableDef.setBooleanValue(iField, pItem.isGross());
-        } else if (Deposit.FIELD_TAXFREE.equals(iField)) {
-            myTableDef.setBooleanValue(iField, pItem.isTaxFree());
         } else if (Deposit.FIELD_CLOSED.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isClosed());
         } else {
