@@ -99,9 +99,9 @@ public enum StaticDataResource implements TethysResourceId {
     PORTFOLIOTYPE_STANDARD("PortfolioType.Standard"),
 
     /**
-     * PortfolioType ISA.
+     * PortfolioType TaxFree.
      */
-    PORTFOLIOTYPE_ISA("PortfolioType.ISA"),
+    PORTFOLIOTYPE_TAXFREE("PortfolioType.TaxFree"),
 
     /**
      * PortfolioType SIPP.
@@ -227,6 +227,11 @@ public enum StaticDataResource implements TethysResourceId {
      * TransType Dividend.
      */
     TRANSTYPE_DIVIDEND("TransType.Dividend"),
+
+    /**
+     * TransType BShare Dividend.
+     */
+    TRANSTYPE_BSHAREDIVIDEND("TransType.Dividend.B"),
 
     /**
      * TransType VirtualIncome.
@@ -739,14 +744,14 @@ public enum StaticDataResource implements TethysResourceId {
     ACCOUNTINFO_OPTIONPRICE("AccountInfoType.OptionPrice"),
 
     /**
-     * TransInfo CreditUnits.
+     * TransInfo AccountDeltaUnits.
      */
-    TRANSINFO_CREDITUNITS("TransInfoType.CreditUnits"),
+    TRANSINFO_ACCOUNTDELTAUNITS("TransInfoType.AccountDeltaUnits"),
 
     /**
-     * TransInfo DebitUnits.
+     * TransInfo PartnerDeltaUnits.
      */
-    TRANSINFO_DEBITUNITS("TransInfoType.DebitUnits"),
+    TRANSINFO_PARTNERDELTAUNITS("TransInfoType.PartnerDeltaUnits"),
 
     /**
      * TransInfo PartnerAmount.
@@ -754,9 +759,9 @@ public enum StaticDataResource implements TethysResourceId {
     TRANSINFO_PARTNERAMOUNT("TransInfoType.PartnerAmount"),
 
     /**
-     * TransInfo ThirdPartyAmount.
+     * TransInfo ReturnedCash.
      */
-    TRANSINFO_THIRDPARTYAMOUNT("TransInfoType.ThirdPartyAmount"),
+    TRANSINFO_RETURNEDCASH("TransInfoType.ReturnedCash"),
 
     /**
      * TransInfo Dilution.
@@ -789,14 +794,9 @@ public enum StaticDataResource implements TethysResourceId {
     TRANSINFO_BENEFIT("TransInfoType.Benefit"),
 
     /**
-     * TransInfo ThirdParty.
+     * TransInfo ReturnedCashAccount.
      */
-    TRANSINFO_THIRDPARTY("TransInfoType.ThirdParty"),
-
-    /**
-     * TransInfo OptionsGrant.
-     */
-    TRANSINFO_OPTIONS("TransInfoType.OptionsGrant"),
+    TRANSINFO_RETURNEDCASHACCOUNT("TransInfoType.ReturnedCashAccount"),
 
     /**
      * TransInfo TransactionTag.
@@ -991,7 +991,7 @@ public enum StaticDataResource implements TethysResourceId {
         /* Create the map and return it */
         Map<PortfolioTypeClass, TethysResourceId> myMap = new EnumMap<>(PortfolioTypeClass.class);
         myMap.put(PortfolioTypeClass.STANDARD, PORTFOLIOTYPE_STANDARD);
-        myMap.put(PortfolioTypeClass.ISA, PORTFOLIOTYPE_ISA);
+        myMap.put(PortfolioTypeClass.TAXFREE, PORTFOLIOTYPE_TAXFREE);
         myMap.put(PortfolioTypeClass.SIPP, PORTFOLIOTYPE_SIPP);
         myMap.put(PortfolioTypeClass.PENSION, PORTFOLIOTYPE_PENSION);
         return myMap;
@@ -1074,6 +1074,7 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(TransactionCategoryClass.ROOMRENTALINCOME, TRANSTYPE_ROOMRENTINCOME);
         myMap.put(TransactionCategoryClass.INTEREST, TRANSTYPE_INTEREST);
         myMap.put(TransactionCategoryClass.DIVIDEND, TRANSTYPE_DIVIDEND);
+        myMap.put(TransactionCategoryClass.BSHAREDIVIDEND, TRANSTYPE_BSHAREDIVIDEND);
         myMap.put(TransactionCategoryClass.VIRTUALINCOME, TRANSTYPE_VIRTUALINCOME);
         myMap.put(TransactionCategoryClass.PENSIONPAYMENT, TRANSTYPE_PENSIONPAYMENT);
         myMap.put(TransactionCategoryClass.GIFTEDINCOME, TRANSTYPE_GIFTEDINCOME);
@@ -1257,16 +1258,15 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(TransactionInfoClass.NATINSURANCE, TRANSTYPE_NATINS);
         myMap.put(TransactionInfoClass.DEEMEDBENEFIT, TRANSINFO_BENEFIT);
         myMap.put(TransactionInfoClass.WITHHELD, TRANSTYPE_WITHHELD);
-        myMap.put(TransactionInfoClass.CREDITUNITS, TRANSINFO_CREDITUNITS);
-        myMap.put(TransactionInfoClass.DEBITUNITS, TRANSINFO_DEBITUNITS);
+        myMap.put(TransactionInfoClass.ACCOUNTDELTAUNITS, TRANSINFO_ACCOUNTDELTAUNITS);
+        myMap.put(TransactionInfoClass.PARTNERDELTAUNITS, TRANSINFO_PARTNERDELTAUNITS);
         myMap.put(TransactionInfoClass.PARTNERAMOUNT, TRANSINFO_PARTNERAMOUNT);
-        myMap.put(TransactionInfoClass.THIRDPARTYAMOUNT, TRANSINFO_THIRDPARTYAMOUNT);
+        myMap.put(TransactionInfoClass.RETURNEDCASH, TRANSINFO_RETURNEDCASH);
         myMap.put(TransactionInfoClass.DILUTION, TRANSINFO_DILUTION);
         myMap.put(TransactionInfoClass.QUALIFYYEARS, TRANSINFO_QUALYEARS);
         myMap.put(TransactionInfoClass.REFERENCE, TRANSINFO_REFERENCE);
         myMap.put(TransactionInfoClass.COMMENTS, TRANSINFO_COMMENTS);
-        myMap.put(TransactionInfoClass.THIRDPARTY, TRANSINFO_THIRDPARTY);
-        myMap.put(TransactionInfoClass.OPTIONSGRANT, TRANSINFO_OPTIONS);
+        myMap.put(TransactionInfoClass.RETURNEDCASHACCOUNT, TRANSINFO_RETURNEDCASHACCOUNT);
         myMap.put(TransactionInfoClass.TRANSTAG, TRANSINFO_TRANSTAG);
         return myMap;
     }

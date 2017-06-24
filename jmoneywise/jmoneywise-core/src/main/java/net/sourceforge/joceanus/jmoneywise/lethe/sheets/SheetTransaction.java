@@ -354,18 +354,18 @@ public class SheetTransaction
             myWithheld = myCell.getStringValue();
         }
 
-        /* Handle ThirdParty which may be missing */
+        /* Handle ReturnedCashAccount which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        String myThirdParty = null;
+        String myReturnedCashAccount = null;
         if (myCell != null) {
-            myThirdParty = myCell.getStringValue();
+            myReturnedCashAccount = myCell.getStringValue();
         }
 
-        /* Handle ThirdPartyAmount which may be missing */
+        /* Handle ReturnedCash which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        String myThirdPartyAmount = null;
+        String myReturnedCash = null;
         if (myCell != null) {
-            myThirdPartyAmount = myCell.getStringValue();
+            myReturnedCash = myCell.getStringValue();
         }
 
         /* Handle PartnerAmount which may be missing */
@@ -382,20 +382,36 @@ public class SheetTransaction
             myTagList = myCell.getStringValue();
         }
 
+        /* If the debit was reversed */
+        if (myCache.isDebitReversed()) {
+            /* Flip the Debit and credit values */
+            String myTemp = myDebitUnits;
+            myDebitUnits = myCreditUnits;
+            myCreditUnits = myTemp;
+            if (myCreditUnits != null) {
+                myCreditUnits = "-" + myCreditUnits;
+            }
+        } else if (myDebitUnits != null) {
+            myDebitUnits = "-" + myDebitUnits;
+        } else if (myCache.isRecursive()) {
+            myDebitUnits = myCreditUnits;
+            myCreditUnits = null;
+        }
+
         /* Add information relating to the account */
         TransactionInfoList myInfoList = pData.getTransactionInfo();
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.COMMENTS, myDesc);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TAXCREDIT, myTaxCredit);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.NATINSURANCE, myNatInsurance);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.DEEMEDBENEFIT, myBenefit);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.DEBITUNITS, myDebitUnits);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.CREDITUNITS, myCreditUnits);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.ACCOUNTDELTAUNITS, myDebitUnits);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PARTNERDELTAUNITS, myCreditUnits);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.DILUTION, myDilution);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.REFERENCE, myReference);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.QUALIFYYEARS, myYears);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.WITHHELD, myWithheld);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.THIRDPARTY, myThirdParty);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.THIRDPARTYAMOUNT, myThirdPartyAmount);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.RETURNEDCASHACCOUNT, myReturnedCashAccount);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.RETURNEDCASH, myReturnedCash);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PARTNERAMOUNT, myPartnerAmount);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TRANSTAG, myTagList);
 

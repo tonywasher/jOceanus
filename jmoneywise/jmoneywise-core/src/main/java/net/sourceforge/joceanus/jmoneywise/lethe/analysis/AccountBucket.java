@@ -626,23 +626,23 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * Adjust account for credit.
      * @param pHelper the transaction helper
      */
-    protected void adjustForThirdPartyCredit(final TransactionHelper pHelper) {
+    protected void adjustForReturnedCashCredit(final TransactionHelper pHelper) {
         /* Access event amount */
-        TethysMoney myAmount = pHelper.getThirdPartyAmount();
+        TethysMoney myAmount = pHelper.getReturnedCash();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* If we are a foreign account */
             if (isForeignCurrency) {
                 /* Access local amount amount */
-                TethysMoney myLocalAmount = pHelper.getLocalThirdPartyAmount();
+                TethysMoney myLocalAmount = pHelper.getLocalReturnedCash();
 
                 /* Adjust counters */
                 adjustCounter(AccountAttribute.FOREIGNVALUE, myAmount);
                 adjustCounter(AccountAttribute.LOCALVALUE, myLocalAmount);
 
                 /* Obtain the credit exchangeRate and convert the foreign valuation */
-                TethysRatio myRate = pHelper.getThirdPartyExchangeRate();
+                TethysRatio myRate = pHelper.getReturnedCashExchangeRate();
                 TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
 
                 /* Set the valuation */

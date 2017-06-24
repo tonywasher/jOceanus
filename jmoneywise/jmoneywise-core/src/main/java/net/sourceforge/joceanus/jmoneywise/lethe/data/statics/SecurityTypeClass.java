@@ -299,6 +299,7 @@ public enum SecurityTypeClass implements StaticInterface {
             case SHARES:
             case INCOMEUNITTRUST:
             case GROWTHUNITTRUST:
+            case PROPERTY:
                 return true;
             default:
                 return false;

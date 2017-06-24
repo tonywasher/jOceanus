@@ -343,7 +343,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     /**
-     * clear the value for the the infoClass.
+     * clear the value for the infoClass.
      * @param pInfoClass the Info Class
      * @param pLink the link value
      */
@@ -540,6 +540,20 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         } else {
             /* Remove from the map */
             theMap.remove(myClass);
+        }
+    }
+
+    /**
+     * wipe information regarding the infoClass.
+     * @param pInfoClass the Info Class
+     */
+    public void wipeInfo(final S pInfoClass) {
+        /* If we have an item for the class */
+        DataInfo<T, O, I, S, E> myInfo = theMap.get(pInfoClass);
+        if (myInfo != null) {
+            /* Remove and unlink it */
+            theMap.remove(pInfoClass);
+            theInfoList.remove(myInfo);
         }
     }
 

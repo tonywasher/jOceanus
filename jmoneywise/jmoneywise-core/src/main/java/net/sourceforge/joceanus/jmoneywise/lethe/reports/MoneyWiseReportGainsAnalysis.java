@@ -474,9 +474,13 @@ public class MoneyWiseReportGainsAnalysis {
      */
     private void formatTransferIn(final Transaction pTrans,
                                   final SecurityValues pValues) {
+
         /* Access interesting values */
         TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
-        TethysUnits myDeltaUnits = pTrans.getCreditUnits();
+        TethysUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
+        if (myDeltaUnits == null) {
+            myDeltaUnits = pTrans.getPartnerDeltaUnits();
+        }
         TethysMoney myCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
         TethysMoney myAmount = theBucket.getMoneyDeltaForTransaction(pTrans, SecurityAttribute.RESIDUALCOST);
         TethysPrice myPrice = pValues.getPriceValue(SecurityAttribute.PRICE);
@@ -586,50 +590,22 @@ public class MoneyWiseReportGainsAnalysis {
         /* Format the basic transaction */
         formatBasicTransaction(pTrans);
 
-        /* Split workings for adding/removing units */
-        if (pTrans.getDebitUnits() != null) {
-            formatRemoveUnits(pTrans, pValues);
+        /* Access interesting values */
+        TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
+        TethysUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
+
+        /* Obtain the original units */
+        SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
+        TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
+
+        /* Record the details */
+        if (myDeltaUnits.isPositive()) {
+            formatAddition(SecurityAttribute.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
         } else {
-            formatAddUnits(pTrans, pValues);
+            myDeltaUnits = new TethysUnits(myDeltaUnits);
+            myDeltaUnits.negate();
+            formatSubtraction(SecurityAttribute.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
         }
-    }
-
-    /**
-     * Format remove units.
-     * @param pTrans the transaction
-     * @param pValues the values for the transaction
-     */
-    private void formatRemoveUnits(final Transaction pTrans,
-                                   final SecurityValues pValues) {
-        /* Access interesting values */
-        TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
-        TethysUnits myDeltaUnits = pTrans.getDebitUnits();
-
-        /* Obtain the original units */
-        SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
-        TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
-
-        /* Record the details */
-        formatSubtraction(SecurityAttribute.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
-    }
-
-    /**
-     * Format add units.
-     * @param pTrans the transaction
-     * @param pValues the values for the transaction
-     */
-    private void formatAddUnits(final Transaction pTrans,
-                                final SecurityValues pValues) {
-        /* Access interesting values */
-        TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
-        TethysUnits myDeltaUnits = pTrans.getCreditUnits();
-
-        /* Obtain the original units */
-        SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
-        TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
-
-        /* Record the details */
-        formatAddition(SecurityAttribute.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
     }
 
     /**

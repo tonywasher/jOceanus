@@ -846,6 +846,22 @@ public final class MetisFields {
          * Not Allowed.
          */
         NOTALLOWED;
+
+        /**
+         * must the field exist?
+         * @return true/false
+         */
+        public boolean mustExist() {
+            return this == MUSTEXIST;
+        }
+
+        /**
+         * is the field notAllowed?
+         * @return true/false
+         */
+        public boolean notAllowed() {
+            return this == NOTALLOWED;
+        }
     }
 
     /**

@@ -164,6 +164,11 @@ public enum PrometheusDataResource implements TethysResourceId {
     DATAITEM_ERROR_NEGATIVE("DataItem.Error.Negative"),
 
     /**
+     * DataItem Error Positive.
+     */
+    DATAITEM_ERROR_POSITIVE("DataItem.Error.Positive"),
+
+    /**
      * DataItem Error Range.
      */
     DATAITEM_ERROR_RANGE("DataItem.Error.Range"),

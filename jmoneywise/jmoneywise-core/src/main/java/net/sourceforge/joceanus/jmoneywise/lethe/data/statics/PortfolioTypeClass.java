@@ -41,9 +41,9 @@ public enum PortfolioTypeClass implements StaticInterface {
     /**
      * ISA.
      * <p>
-     * This is an ISA portfolio.
+     * This is a TaxFree portfolio.
      */
-    ISA(2, 1),
+    TAXFREE(2, 1),
 
     /**
      * SIPP.
@@ -128,7 +128,7 @@ public enum PortfolioTypeClass implements StaticInterface {
      */
     public boolean isTaxFree() {
         switch (this) {
-            case ISA:
+            case TAXFREE:
             case SIPP:
             case PENSION:
                 return true;

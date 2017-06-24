@@ -53,7 +53,6 @@ import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
@@ -184,14 +183,19 @@ public class TransactionTable
     private static final String TITLE_REF = TransactionInfoClass.REFERENCE.toString();
 
     /**
-     * CreditUnits Column Title.
+     * AccountUnits Column Title.
      */
-    private static final String TITLE_CREDUNITS = TransactionInfoClass.CREDITUNITS.toString();
+    private static final String TITLE_ACCOUNTUNITS = TransactionInfoClass.ACCOUNTDELTAUNITS.toString();
 
     /**
-     * DebitUnits Column Title.
+     * PartnerUnits Column Title.
      */
-    private static final String TITLE_DEBUNITS = TransactionInfoClass.DEBITUNITS.toString();
+    private static final String TITLE_PARTNERUNITS = TransactionInfoClass.PARTNERDELTAUNITS.toString();
+
+    /**
+     * PartnerAmount Column Title.
+     */
+    private static final String TITLE_PARTNERAMOUNT = TransactionInfoClass.PARTNERAMOUNT.toString();
 
     /**
      * Dilution Column Title.
@@ -204,9 +208,14 @@ public class TransactionTable
     private static final String TITLE_QUALYEARS = MoneyWiseUIResource.STATEMENT_COLUMN_YEARS.getValue();
 
     /**
-     * ThirdParty Column Title.
+     * ReturnedAccount Column Title.
      */
-    private static final String TITLE_3RDPARTY = TransactionInfoClass.THIRDPARTY.toString();
+    private static final String TITLE_RETURNEDACCOUNT = TransactionInfoClass.RETURNEDCASHACCOUNT.toString();
+
+    /**
+     * ReturnedCash Column Title.
+     */
+    private static final String TITLE_RETURNEDCASH = TransactionInfoClass.RETURNEDCASH.toString();
 
     /**
      * TaxCredit Column Title.
@@ -877,54 +886,64 @@ public class TransactionTable
         private static final int COLUMN_REF = 12;
 
         /**
-         * CreditUnits column id.
+         * AccountUnits column id.
          */
-        private static final int COLUMN_CREDUNITS = 13;
+        private static final int COLUMN_ACCOUNTUNITS = 13;
 
         /**
-         * DebitUnits column id.
+         * PartnerUnits column id.
          */
-        private static final int COLUMN_DEBUNITS = 14;
+        private static final int COLUMN_PARTNERUNITS = 14;
+
+        /**
+         * PartnerAmount column id.
+         */
+        private static final int COLUMN_PARTNERAMOUNT = 15;
 
         /**
          * Dilution column id.
          */
-        private static final int COLUMN_DILUTION = 15;
+        private static final int COLUMN_DILUTION = 16;
 
         /**
          * QualifyYears column id.
          */
-        private static final int COLUMN_QUALYEARS = 16;
+        private static final int COLUMN_QUALYEARS = 17;
 
         /**
-         * ThirdParty column id.
+         * ReturnedAccount column id.
          */
-        private static final int COLUMN_3RDPARTY = 17;
+        private static final int COLUMN_RETURNEDACCOUNT = 18;
+
+        /**
+         * ReturnedCash column id.
+         */
+        private static final int COLUMN_RETURNEDCASH = 19;
 
         /**
          * TaxCredit column id.
          */
-        private static final int COLUMN_TAXCREDIT = 18;
+        private static final int COLUMN_TAXCREDIT = 20;
 
         /**
          * NatInsurance column id.
          */
-        private static final int COLUMN_NATINS = 19;
+        private static final int COLUMN_NATINS = 21;
 
         /**
          * DeemedBenefit column id.
          */
-        private static final int COLUMN_BENEFIT = 20;
+        private static final int COLUMN_BENEFIT = 22;
 
         /**
          * Withheld column id.
          */
-        private static final int COLUMN_WITHHELD = 21;
+        private static final int COLUMN_WITHHELD = 23;
 
         /**
          * Action column id.
          */
-        private static final int COLUMN_ACTION = 22;
+        private static final int COLUMN_ACTION = 24;
 
         /**
          * Date Renderer.
@@ -1017,9 +1036,9 @@ public class TransactionTable
         private final ScrollButtonCellEditor<TransactionCategory> theCategoryEditor;
 
         /**
-         * Deposit ScrollButton Menu Editor.
+         * Returned ScrollButton Menu Editor.
          */
-        private final ScrollButtonCellEditor<Deposit> theDepositEditor;
+        private final ScrollButtonCellEditor<TransactionAsset> theReturnedEditor;
 
         /**
          * ScrollListButton Menu Editor.
@@ -1062,14 +1081,19 @@ public class TransactionTable
         private final JDataTableColumn theTagsColumn;
 
         /**
-         * CreditUnits column.
+         * AccountUnits column.
          */
-        private final JDataTableColumn theCredUnitsColumn;
+        private final JDataTableColumn theAccountUnitsColumn;
 
         /**
-         * DebitUnits column.
+         * PartnerUnits column.
          */
-        private final JDataTableColumn theDebUnitsColumn;
+        private final JDataTableColumn thePartnerUnitsColumn;
+
+        /**
+         * PartnerAmount column.
+         */
+        private final JDataTableColumn thePartnerAmountColumn;
 
         /**
          * Dilution column.
@@ -1082,9 +1106,14 @@ public class TransactionTable
         private final JDataTableColumn theQualYearsColumn;
 
         /**
-         * ThirdParty column.
+         * ReturnedAccount column.
          */
-        private final JDataTableColumn the3rdPartyColumn;
+        private final JDataTableColumn theReturnedAccountColumn;
+
+        /**
+         * ReturnedCash column.
+         */
+        private final JDataTableColumn theReturnedCashColumn;
 
         /**
          * TaxCredit column.
@@ -1137,7 +1166,7 @@ public class TransactionTable
             theDilutionEditor = theFieldMgr.allocateDilutionCellEditor();
             theAccountEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
             theCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionCategory.class);
-            theDepositEditor = theFieldMgr.allocateScrollButtonCellEditor(Deposit.class);
+            theReturnedEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
@@ -1172,16 +1201,20 @@ public class TransactionTable
             declareColumn(theReferenceColumn);
             theTagsColumn = new JDataTableColumn(COLUMN_TAGS, WIDTH_NAME, theStringRenderer, theTagEditor);
             declareColumn(theTagsColumn);
-            theCredUnitsColumn = new JDataTableColumn(COLUMN_CREDUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor);
-            declareColumn(theCredUnitsColumn);
-            theDebUnitsColumn = new JDataTableColumn(COLUMN_DEBUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor);
-            declareColumn(theDebUnitsColumn);
+            theAccountUnitsColumn = new JDataTableColumn(COLUMN_ACCOUNTUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor);
+            declareColumn(theAccountUnitsColumn);
+            thePartnerUnitsColumn = new JDataTableColumn(COLUMN_PARTNERUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor);
+            declareColumn(thePartnerUnitsColumn);
+            thePartnerAmountColumn = new JDataTableColumn(COLUMN_PARTNERAMOUNT, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            declareColumn(thePartnerAmountColumn);
             theDilutionColumn = new JDataTableColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer, theDilutionEditor);
             declareColumn(theDilutionColumn);
             theQualYearsColumn = new JDataTableColumn(COLUMN_QUALYEARS, WIDTH_INT << 1, theIntegerRenderer, theIntegerEditor);
             declareColumn(theQualYearsColumn);
-            the3rdPartyColumn = new JDataTableColumn(COLUMN_3RDPARTY, WIDTH_NAME, theStringRenderer, theDepositEditor);
-            declareColumn(the3rdPartyColumn);
+            theReturnedAccountColumn = new JDataTableColumn(COLUMN_RETURNEDACCOUNT, WIDTH_NAME, theStringRenderer, theReturnedEditor);
+            declareColumn(theReturnedAccountColumn);
+            theReturnedCashColumn = new JDataTableColumn(COLUMN_RETURNEDCASH, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            declareColumn(theReturnedCashColumn);
             theTaxCreditColumn = new JDataTableColumn(COLUMN_TAXCREDIT, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
             declareColumn(theTaxCreditColumn);
             theNatInsColumn = new JDataTableColumn(COLUMN_NATINS, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
@@ -1196,7 +1229,7 @@ public class TransactionTable
             /* Add listeners */
             theCategoryEditor.getEventRegistrar().addEventListener(e -> buildCategoryMenu());
             theAccountEditor.getEventRegistrar().addEventListener(e -> buildAccountMenu());
-            theDepositEditor.getEventRegistrar().addEventListener(e -> buildThirdPartyMenu());
+            theReturnedEditor.getEventRegistrar().addEventListener(e -> buildReturnedMenu());
             theTagEditor.getEventRegistrar().addEventListener(e -> buildTagMenu());
         }
 
@@ -1244,16 +1277,20 @@ public class TransactionTable
                     return TITLE_TAGS;
                 case COLUMN_REF:
                     return TITLE_REF;
-                case COLUMN_CREDUNITS:
-                    return TITLE_CREDUNITS;
-                case COLUMN_DEBUNITS:
-                    return TITLE_DEBUNITS;
+                case COLUMN_ACCOUNTUNITS:
+                    return TITLE_ACCOUNTUNITS;
+                case COLUMN_PARTNERUNITS:
+                    return TITLE_PARTNERUNITS;
+                case COLUMN_PARTNERAMOUNT:
+                    return TITLE_PARTNERAMOUNT;
                 case COLUMN_DILUTION:
                     return TITLE_DILUTION;
                 case COLUMN_QUALYEARS:
                     return TITLE_QUALYEARS;
-                case COLUMN_3RDPARTY:
-                    return TITLE_3RDPARTY;
+                case COLUMN_RETURNEDACCOUNT:
+                    return TITLE_RETURNEDACCOUNT;
+                case COLUMN_RETURNEDCASH:
+                    return TITLE_RETURNEDCASH;
                 case COLUMN_TAXCREDIT:
                     return TITLE_TAXCREDIT;
                 case COLUMN_NATINS:
@@ -1299,16 +1336,20 @@ public class TransactionTable
                     return pTrans.getReference();
                 case COLUMN_TAGS:
                     return pTrans.getTagNameList();
-                case COLUMN_CREDUNITS:
-                    return pTrans.getCreditUnits();
-                case COLUMN_DEBUNITS:
-                    return pTrans.getDebitUnits();
+                case COLUMN_ACCOUNTUNITS:
+                    return pTrans.getAccountDeltaUnits();
+                case COLUMN_PARTNERUNITS:
+                    return pTrans.getPartnerDeltaUnits();
+                case COLUMN_PARTNERAMOUNT:
+                    return pTrans.getPartnerAmount();
                 case COLUMN_DILUTION:
                     return pTrans.getDilution();
                 case COLUMN_QUALYEARS:
                     return pTrans.getYears();
-                case COLUMN_3RDPARTY:
-                    return pTrans.getThirdParty();
+                case COLUMN_RETURNEDACCOUNT:
+                    return pTrans.getReturnedCashAccount();
+                case COLUMN_RETURNEDCASH:
+                    return pTrans.getReturnedCash();
                 case COLUMN_TAXCREDIT:
                     return pTrans.getTaxCredit();
                 case COLUMN_NATINS:
@@ -1395,11 +1436,14 @@ public class TransactionTable
                 case COLUMN_REF:
                     pItem.setReference((String) pValue);
                     break;
-                case COLUMN_CREDUNITS:
-                    pItem.setCreditUnits((TethysUnits) pValue);
+                case COLUMN_ACCOUNTUNITS:
+                    pItem.setAccountDeltaUnits((TethysUnits) pValue);
                     break;
-                case COLUMN_DEBUNITS:
-                    pItem.setDebitUnits((TethysUnits) pValue);
+                case COLUMN_PARTNERUNITS:
+                    pItem.setPartnerDeltaUnits((TethysUnits) pValue);
+                    break;
+                case COLUMN_PARTNERAMOUNT:
+                    pItem.setPartnerAmount((TethysMoney) pValue);
                     break;
                 case COLUMN_DILUTION:
                     pItem.setDilution((TethysDilution) pValue);
@@ -1407,8 +1451,12 @@ public class TransactionTable
                 case COLUMN_QUALYEARS:
                     pItem.setYears((Integer) pValue);
                     break;
-                case COLUMN_3RDPARTY:
-                    pItem.setThirdParty((Deposit) pValue);
+                case COLUMN_RETURNEDACCOUNT:
+                    pItem.setReturnedCashAccount((TransactionAsset) pValue);
+                    theBuilder.autoCorrect(pItem);
+                    break;
+                case COLUMN_RETURNEDCASH:
+                    pItem.setReturnedCash((TethysMoney) pValue);
                     break;
                 case COLUMN_TAXCREDIT:
                     pItem.setTaxCredit((TethysMoney) pValue);
@@ -1469,14 +1517,18 @@ public class TransactionTable
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DEEMEDBENEFIT);
                 case COLUMN_WITHHELD:
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.WITHHELD);
-                case COLUMN_CREDUNITS:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.CREDITUNITS);
-                case COLUMN_DEBUNITS:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DEBITUNITS);
+                case COLUMN_ACCOUNTUNITS:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.ACCOUNTDELTAUNITS);
+                case COLUMN_PARTNERUNITS:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.PARTNERDELTAUNITS);
+                case COLUMN_PARTNERAMOUNT:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.PARTNERAMOUNT);
                 case COLUMN_DILUTION:
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DILUTION);
-                case COLUMN_3RDPARTY:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.THIRDPARTY);
+                case COLUMN_RETURNEDACCOUNT:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.RETURNEDCASHACCOUNT);
+                case COLUMN_RETURNEDCASH:
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.RETURNEDCASH);
                 case COLUMN_QUALYEARS:
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.QUALIFYYEARS);
                 default:
@@ -1510,16 +1562,20 @@ public class TransactionTable
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE);
                 case COLUMN_TAGS:
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG);
-                case COLUMN_CREDUNITS:
-                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS);
-                case COLUMN_DEBUNITS:
-                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS);
+                case COLUMN_ACCOUNTUNITS:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS);
+                case COLUMN_PARTNERUNITS:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS);
+                case COLUMN_PARTNERAMOUNT:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT);
                 case COLUMN_DILUTION:
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION);
                 case COLUMN_QUALYEARS:
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS);
-                case COLUMN_3RDPARTY:
-                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY);
+                case COLUMN_RETURNEDACCOUNT:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT);
+                case COLUMN_RETURNEDCASH:
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH);
                 case COLUMN_TAXCREDIT:
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT);
                 case COLUMN_NATINS:
@@ -1550,10 +1606,12 @@ public class TransactionTable
             hideColumn(theNatInsColumn);
             hideColumn(theBenefitColumn);
             hideColumn(theWithheldColumn);
-            hideColumn(theCredUnitsColumn);
-            hideColumn(theDebUnitsColumn);
+            hideColumn(theAccountUnitsColumn);
+            hideColumn(thePartnerUnitsColumn);
+            hideColumn(thePartnerAmountColumn);
             hideColumn(theDilutionColumn);
-            hideColumn(the3rdPartyColumn);
+            hideColumn(theReturnedAccountColumn);
+            hideColumn(theReturnedCashColumn);
             hideColumn(theQualYearsColumn);
         }
 
@@ -1584,6 +1642,7 @@ public class TransactionTable
                     revealColumn(theAmountColumn);
                     revealColumn(theTagsColumn);
                     revealColumn(theReferenceColumn);
+                    revealColumn(thePartnerAmountColumn);
                     break;
                 case SALARY:
                     revealColumn(theAmountColumn);
@@ -1600,14 +1659,15 @@ public class TransactionTable
                 case DIVIDEND:
                     revealColumn(theAmountColumn);
                     revealColumn(theTaxCreditColumn);
-                    revealColumn(theCredUnitsColumn);
+                    revealColumn(theAccountUnitsColumn);
                     break;
                 case SECURITY:
                     revealColumn(theAmountColumn);
-                    revealColumn(theCredUnitsColumn);
-                    revealColumn(theDebUnitsColumn);
+                    revealColumn(theAccountUnitsColumn);
+                    revealColumn(thePartnerUnitsColumn);
                     revealColumn(theDilutionColumn);
-                    revealColumn(the3rdPartyColumn);
+                    revealColumn(theReturnedAccountColumn);
+                    revealColumn(theReturnedCashColumn);
                     revealColumn(theQualYearsColumn);
                     reSize = false;
                     break;
@@ -1621,10 +1681,12 @@ public class TransactionTable
                     revealColumn(theNatInsColumn);
                     revealColumn(theBenefitColumn);
                     revealColumn(theWithheldColumn);
-                    revealColumn(theCredUnitsColumn);
-                    revealColumn(theDebUnitsColumn);
+                    revealColumn(theAccountUnitsColumn);
+                    revealColumn(thePartnerUnitsColumn);
+                    revealColumn(thePartnerAmountColumn);
                     revealColumn(theDilutionColumn);
-                    revealColumn(the3rdPartyColumn);
+                    revealColumn(theReturnedAccountColumn);
+                    revealColumn(theReturnedCashColumn);
                     revealColumn(theQualYearsColumn);
                     reSize = false;
                     break;
@@ -1677,18 +1739,18 @@ public class TransactionTable
         }
 
         /**
-         * Obtain the popUpMenu for thirdParty deposits.
+         * Obtain the popUpMenu for returnedCash Accounts.
          */
-        private void buildThirdPartyMenu() {
+        private void buildReturnedMenu() {
             /* Access details */
-            JScrollMenuBuilder<Deposit> myBuilder = theDepositEditor.getMenuBuilder();
+            JScrollMenuBuilder<TransactionAsset> myBuilder = theReturnedEditor.getMenuBuilder();
 
             /* Record active item */
-            Point myCell = theDepositEditor.getPoint();
+            Point myCell = theReturnedEditor.getPoint();
             Transaction myTrans = theModel.getItemAtIndex(myCell.y);
 
             /* Build the menu */
-            theActiveTrans.buildThirdPartyMenu(myBuilder, myTrans);
+            theActiveTrans.buildReturnedAccountMenu(myBuilder, myTrans);
         }
 
         /**

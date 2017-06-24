@@ -136,7 +136,7 @@ public class PrometheusBatchControl {
             BatchTable myTable = myIterator.next();
 
             /* Commit batch items in the table */
-            switch (theCurrMode) {
+            switch (myTable.theState) {
                 case DELETED:
                     myTable.commitDeleteBatch();
                     break;
@@ -210,7 +210,9 @@ public class PrometheusBatchControl {
                 DataItem<?> myCurr = (DataItem<?>) myIterator.previous();
 
                 /* Ignore items that are not this type */
-                if (myCurr.getState() != theState) {
+                MetisDataState myState = myCurr.getState();
+                if ((myState != MetisDataState.DELETED)
+                    && (myState != MetisDataState.DELNEW)) {
                     continue;
                 }
 

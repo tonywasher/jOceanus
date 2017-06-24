@@ -26,7 +26,6 @@ import java.util.Currency;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
@@ -207,19 +206,19 @@ public class TransactionHelper {
     }
 
     /**
-     * Obtain local thirdParty amount.
-     * @return the amount.
+     * Obtain local returnedCash.
+     * @return the returnedCash.
      */
-    public TethysMoney getLocalThirdPartyAmount() {
-        return theAccountDetail.getLocalThirdPartyAmount();
+    public TethysMoney getLocalReturnedCash() {
+        return theAccountDetail.getLocalReturnedCash();
     }
 
     /**
-     * Obtain thirdParty amount.
-     * @return the amount.
+     * Obtain returnedCash.
+     * @return the returned cash.
      */
-    public TethysMoney getThirdPartyAmount() {
-        return theAccountDetail.getThirdPartyAmount();
+    public TethysMoney getReturnedCash() {
+        return theAccountDetail.getReturnedCash();
     }
 
     /**
@@ -255,11 +254,11 @@ public class TransactionHelper {
     }
 
     /**
-     * Obtain ThirdParty.
-     * @return the ThirdParty account
+     * Obtain returnedCash Account.
+     * @return the returnedCash account
      */
-    public Deposit getThirdParty() {
-        return theAccountDetail.getThirdParty();
+    public TransactionAsset getReturnedCashAccount() {
+        return theAccountDetail.getReturnedCashAccount();
     }
 
     /**
@@ -267,15 +266,40 @@ public class TransactionHelper {
      * @return the debit units
      */
     public TethysUnits getDebitUnits() {
-        return theAccountDetail.getDebitUnits();
+        TethysUnits myUnits = getDirection().isTo()
+                                                    ? getAccountDeltaUnits()
+                                                    : getPartnerDeltaUnits();
+        if (myUnits != null) {
+            myUnits = new TethysUnits(myUnits);
+            myUnits.negate();
+        }
+        return myUnits;
     }
 
     /**
      * Obtain credit units.
-     * @return the credit units
+     * @return the debit units
      */
     public TethysUnits getCreditUnits() {
-        return theAccountDetail.getCreditUnits();
+        return getDirection().isFrom()
+                                       ? getAccountDeltaUnits()
+                                       : getPartnerDeltaUnits();
+    }
+
+    /**
+     * Obtain account delta units.
+     * @return the delta units
+     */
+    public TethysUnits getAccountDeltaUnits() {
+        return theAccountDetail.getAccountDeltaUnits();
+    }
+
+    /**
+     * Obtain partner delta units.
+     * @return the delta units
+     */
+    public TethysUnits getPartnerDeltaUnits() {
+        return theAccountDetail.getPartnerDeltaUnits();
     }
 
     /**
@@ -319,11 +343,11 @@ public class TransactionHelper {
     }
 
     /**
-     * Obtain thirdParty exchangeRate.
+     * Obtain returnedCash exchangeRate.
      * @return the rate
      */
-    public TethysRatio getThirdPartyExchangeRate() {
-        return theAccountDetail.getThirdPartyExchangeRate();
+    public TethysRatio getReturnedCashExchangeRate() {
+        return theAccountDetail.getReturnedCashExchangeRate();
     }
 
     /**
@@ -367,14 +391,14 @@ public class TransactionHelper {
         private final TethysMoney theAmount;
 
         /**
-         * The ThirdParty.
+         * The ReturnedCashAccount.
          */
-        private final Deposit theThirdParty;
+        private final TransactionAsset theReturnedCashAccount;
 
         /**
-         * The thirdParty amount.
+         * The returnedCash.
          */
-        private final TethysMoney theThirdPartyAmount;
+        private final TethysMoney theReturnedCash;
 
         /**
          * The tax credit.
@@ -397,14 +421,14 @@ public class TransactionHelper {
         private final TethysMoney theWithheld;
 
         /**
-         * The debit units.
+         * The account delta units.
          */
-        private final TethysUnits theDebitUnits;
+        private final TethysUnits theAccountUnits;
 
         /**
-         * The credit units.
+         * The partner delta units.
          */
-        private final TethysUnits theCreditUnits;
+        private final TethysUnits thePartnerUnits;
 
         /**
          * The dilution.
@@ -432,9 +456,9 @@ public class TransactionHelper {
         private final ForeignPartnerDetail theForeignPartner;
 
         /**
-         * The foreign thirdParty details.
+         * The foreign returnedCash details.
          */
-        private final ForeignPartnerDetail theForeignThirdParty;
+        private final ForeignPartnerDetail theForeignReturnedCash;
 
         /**
          * Constructor.
@@ -449,15 +473,15 @@ public class TransactionHelper {
             theNatIns = theCurrent.getNatInsurance();
             theBenefit = theCurrent.getDeemedBenefit();
             theWithheld = theCurrent.getWithheld();
-            theThirdParty = theCurrent.getThirdParty();
-            theDebitUnits = theCurrent.getDebitUnits();
-            theCreditUnits = theCurrent.getCreditUnits();
+            theReturnedCashAccount = theCurrent.getReturnedCashAccount();
+            theAccountUnits = theCurrent.getAccountDeltaUnits();
+            thePartnerUnits = theCurrent.getPartnerDeltaUnits();
             theDilution = theCurrent.getDilution();
 
             /* Obtain the amounts */
             TethysMoney myAmount = theCurrent.getAmount();
             TethysMoney myPartnerAmount = theCurrent.getPartnerAmount();
-            TethysMoney myThirdPartyAmount = theCurrent.getThirdPartyAmount();
+            TethysMoney myReturnedCash = theCurrent.getReturnedCash();
 
             /* Determine account prices */
             theAccountPrice = (theAccount instanceof SecurityHolding)
@@ -480,15 +504,15 @@ public class TransactionHelper {
                                                                                        ? null
                                                                                        : new ForeignPartnerDetail(myActCurrency, myPartnerAmount);
 
-            /* If we have a thirdParty account */
-            if (theThirdParty != null) {
-                /* Determine foreign thirdParty detail */
-                myActCurrency = theThirdParty.getAssetCurrency();
-                theForeignThirdParty = MetisDifference.isEqual(myActCurrency, theCurrency)
-                                                                                           ? null
-                                                                                           : new ForeignPartnerDetail(myActCurrency, myThirdPartyAmount);
+            /* If we have a returnedCash account */
+            if (theReturnedCashAccount != null) {
+                /* Determine foreign returnedCash detail */
+                myActCurrency = theReturnedCashAccount.getAssetCurrency();
+                theForeignReturnedCash = MetisDifference.isEqual(myActCurrency, theCurrency)
+                                                                                             ? null
+                                                                                             : new ForeignPartnerDetail(myActCurrency, myReturnedCash);
             } else {
-                theForeignThirdParty = null;
+                theForeignReturnedCash = null;
             }
 
             /* Determine the local amounts */
@@ -497,9 +521,9 @@ public class TransactionHelper {
                                                   : theForeignPartner == null
                                                                               ? myPartnerAmount
                                                                               : theForeignAccount.theAmount;
-            theThirdPartyAmount = theForeignThirdParty == null
-                                                               ? myThirdPartyAmount
-                                                               : theForeignThirdParty.theAmount;
+            theReturnedCash = theForeignReturnedCash == null
+                                                             ? myReturnedCash
+                                                             : theForeignReturnedCash.theAmount;
         }
 
         /**
@@ -547,11 +571,11 @@ public class TransactionHelper {
         }
 
         /**
-         * Obtain ThirdParty.
-         * @return the ThirdParty account
+         * Obtain returnedCash account.
+         * @return the returnedCash account
          */
-        private Deposit getThirdParty() {
-            return theThirdParty;
+        private TransactionAsset getReturnedCashAccount() {
+            return theReturnedCashAccount;
         }
 
         /**
@@ -616,21 +640,21 @@ public class TransactionHelper {
         }
 
         /**
-         * Obtain local thirdParty amount.
-         * @return the local thirdParty amount
+         * Obtain local returnedCash.
+         * @return the local returnedCash
          */
-        private TethysMoney getLocalThirdPartyAmount() {
-            return theThirdPartyAmount;
+        private TethysMoney getLocalReturnedCash() {
+            return theReturnedCash;
         }
 
         /**
-         * Obtain thirdParty amount.
-         * @return the thirdParty amount
+         * Obtain returnedCash.
+         * @return the returnedCash
          */
-        private TethysMoney getThirdPartyAmount() {
-            return theForeignThirdParty == null
-                                                ? theThirdPartyAmount
-                                                : theForeignThirdParty.theBase;
+        private TethysMoney getReturnedCash() {
+            return theForeignReturnedCash == null
+                                                  ? theReturnedCash
+                                                  : theForeignReturnedCash.theBase;
         }
 
         /**
@@ -685,10 +709,10 @@ public class TransactionHelper {
          * Obtain thirdParty exchangeRate.
          * @return the rate
          */
-        private TethysRatio getThirdPartyExchangeRate() {
-            return theForeignThirdParty == null
-                                                ? null
-                                                : theForeignThirdParty.theExchangeRate;
+        private TethysRatio getReturnedCashExchangeRate() {
+            return theForeignReturnedCash == null
+                                                  ? null
+                                                  : theForeignReturnedCash.theExchangeRate;
         }
 
         /**
@@ -732,19 +756,19 @@ public class TransactionHelper {
         }
 
         /**
-         * Obtain debit units.
-         * @return the debit units
+         * Obtain account delta units.
+         * @return the delta units
          */
-        private TethysUnits getDebitUnits() {
-            return theDebitUnits;
+        private TethysUnits getAccountDeltaUnits() {
+            return theAccountUnits;
         }
 
         /**
-         * Obtain credit units.
-         * @return the credit units
+         * Obtain partner delta units.
+         * @return the partner delta units
          */
-        private TethysUnits getCreditUnits() {
-            return theCreditUnits;
+        private TethysUnits getPartnerDeltaUnits() {
+            return thePartnerUnits;
         }
 
         /**

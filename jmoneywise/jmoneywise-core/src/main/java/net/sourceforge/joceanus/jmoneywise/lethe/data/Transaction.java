@@ -298,22 +298,22 @@ public class Transaction
     }
 
     /**
-     * Obtain Debit Units.
-     * @return the Debit Units
+     * Obtain Account Delta Units.
+     * @return the Account Delta Units
      */
-    public final TethysUnits getDebitUnits() {
+    public final TethysUnits getAccountDeltaUnits() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.DEBITUNITS, TethysUnits.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.ACCOUNTDELTAUNITS, TethysUnits.class)
                           : null;
     }
 
     /**
-     * Obtain Credit Units.
-     * @return the Credit Units
+     * Obtain Partner Delta Units.
+     * @return the Partner Delta Units
      */
-    public final TethysUnits getCreditUnits() {
+    public final TethysUnits getPartnerDeltaUnits() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.CREDITUNITS, TethysUnits.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.PARTNERDELTAUNITS, TethysUnits.class)
                           : null;
     }
 
@@ -398,12 +398,12 @@ public class Transaction
     }
 
     /**
-     * Obtain ThirdParty.
-     * @return the ThirdParty
+     * Obtain ReturnedCash Account.
+     * @return the ReturnedCash
      */
-    public final Deposit getThirdParty() {
+    public final TransactionAsset getReturnedCashAccount() {
         return hasInfoSet
-                          ? theInfoSet.getDeposit(TransactionInfoClass.THIRDPARTY)
+                          ? theInfoSet.getDeposit(TransactionInfoClass.RETURNEDCASHACCOUNT)
                           : null;
     }
 
@@ -418,12 +418,12 @@ public class Transaction
     }
 
     /**
-     * Obtain ThirdParty Amount.
-     * @return the ThirdParty Amount
+     * Obtain ReturnedCash.
+     * @return the ReturnedCash
      */
-    public final TethysMoney getThirdPartyAmount() {
+    public final TethysMoney getReturnedCash() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.THIRDPARTYAMOUNT, TethysMoney.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.RETURNEDCASH, TethysMoney.class)
                           : null;
     }
 
@@ -563,9 +563,9 @@ public class Transaction
             return true;
         }
 
-        /* Check ThirdParty */
-        Deposit myThirdParty = getThirdParty();
-        return (myThirdParty != null) && myThirdParty.isClosed();
+        /* Check ReturnedCash Account */
+        TransactionAsset myReturnedCash = getReturnedCashAccount();
+        return (myReturnedCash != null) && myReturnedCash.isClosed();
     }
 
     @Override
@@ -641,8 +641,8 @@ public class Transaction
         TransactionAsset myAccount = getAccount();
         TransactionAsset myPartner = getPartner();
         TransactionCategory myCategory = getCategory();
-        TethysUnits myDebitUnits = getDebitUnits();
-        TethysUnits myCreditUnits = getCreditUnits();
+        TethysUnits myAccountUnits = getAccountDeltaUnits();
+        TethysUnits myPartnerUnits = getPartnerDeltaUnits();
 
         /* Header is always valid */
         if (isHeader()) {
@@ -664,9 +664,9 @@ public class Transaction
         /* Perform underlying checks */
         super.validate();
 
-        /* Cannot have Credit and Debit if securities are identical */
-        if ((myCreditUnits != null) && (myDebitUnits != null) && (MetisDifference.isEqual(myAccount, myPartner))) {
-            addError(ERROR_CIRCULAR, TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS));
+        /* Cannot have PartnerUnits if securities are identical */
+        if ((myAccountUnits != null) && (myPartnerUnits != null) && (MetisDifference.isEqual(myAccount, myPartner))) {
+            addError(ERROR_CIRCULAR, TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS));
         }
 
         /* If we have a category and an infoSet */
@@ -682,10 +682,10 @@ public class Transaction
     }
 
     /**
-     * Obtain default deposit for ThirdParty.
-     * @return the default thirdParty
+     * Obtain default deposit for ReturnedCashAccount.
+     * @return the default returnedCashAccount
      */
-    protected Deposit getDefaultThirdParty() {
+    protected Deposit getDefaultReturnedCashAccount() {
         /* loop through the deposits */
         DepositList myDeposits = getDataSet().getDeposits();
         Iterator<Deposit> myIterator = myDeposits.iterator();
@@ -743,21 +743,21 @@ public class Transaction
     }
 
     /**
-     * Set a new Debit Units.
+     * Set a new AccountDeltaUnits.
      * @param pUnits the new units
      * @throws OceanusException on error
      */
-    public final void setDebitUnits(final TethysUnits pUnits) throws OceanusException {
-        setInfoSetValue(TransactionInfoClass.DEBITUNITS, pUnits);
+    public final void setAccountDeltaUnits(final TethysUnits pUnits) throws OceanusException {
+        setInfoSetValue(TransactionInfoClass.ACCOUNTDELTAUNITS, pUnits);
     }
 
     /**
-     * Set a new Credit Units.
+     * Set a new PartnerDeltaUnits.
      * @param pUnits the new units
      * @throws OceanusException on error
      */
-    public final void setCreditUnits(final TethysUnits pUnits) throws OceanusException {
-        setInfoSetValue(TransactionInfoClass.CREDITUNITS, pUnits);
+    public final void setPartnerDeltaUnits(final TethysUnits pUnits) throws OceanusException {
+        setInfoSetValue(TransactionInfoClass.PARTNERDELTAUNITS, pUnits);
     }
 
     /**
@@ -824,12 +824,12 @@ public class Transaction
     }
 
     /**
-     * Set a new ThidParty Amount.
-     * @param pValue the new thirdParty amount
+     * Set a new ReturnedCash.
+     * @param pValue the new returned cash
      * @throws OceanusException on error
      */
-    public final void setThirdPartyAmount(final TethysMoney pValue) throws OceanusException {
-        setInfoSetValue(TransactionInfoClass.THIRDPARTYAMOUNT, pValue);
+    public final void setReturnedCash(final TethysMoney pValue) throws OceanusException {
+        setInfoSetValue(TransactionInfoClass.RETURNEDCASH, pValue);
     }
 
     /**
@@ -851,12 +851,12 @@ public class Transaction
     }
 
     /**
-     * Set a new ThirdParty.
-     * @param pParty the new thirdParty
+     * Set a new ReturnedCasah Account.
+     * @param pAccount the new returned cash account
      * @throws OceanusException on error
      */
-    public final void setThirdParty(final Deposit pParty) throws OceanusException {
-        setInfoSetValue(TransactionInfoClass.THIRDPARTY, pParty);
+    public final void setReturnedCashAccount(final TransactionAsset pAccount) throws OceanusException {
+        setInfoSetValue(TransactionInfoClass.RETURNEDCASHACCOUNT, pAccount);
     }
 
     /**
@@ -968,6 +968,26 @@ public class Transaction
 
         /* Check for changes */
         return checkForHistory();
+    }
+
+    @Override
+    public void flipAssets() throws OceanusException {
+        /* Handle underlying values */
+        super.flipAssets();
+
+        /* Flip deltas */
+        TethysUnits myActDelta = getAccountDeltaUnits();
+        TethysUnits myPartDelta = getPartnerDeltaUnits();
+        setAccountDeltaUnits(myPartDelta);
+        setPartnerDeltaUnits(myActDelta);
+
+        /* If we need to wipe memory of AccountDelta/PartnerDelta */
+        if ((myActDelta != null) && (myPartDelta == null)) {
+            theInfoSet.wipeInfo(TransactionInfoClass.ACCOUNTDELTAUNITS);
+        }
+        if ((myPartDelta != null) && (myActDelta == null)) {
+            theInfoSet.wipeInfo(TransactionInfoClass.PARTNERDELTAUNITS);
+        }
     }
 
     /**

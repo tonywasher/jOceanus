@@ -300,7 +300,7 @@ public class TransactionInfo
 
             /* Switch on link type */
             switch (myType.getInfoClass()) {
-                case THIRDPARTY:
+                case RETURNEDCASHACCOUNT:
                     resolveDataLink(FIELD_LINK, myData.getDeposits());
                     if (myLinkId == null) {
                         setValueValue(getDeposit().getId());
@@ -355,7 +355,7 @@ public class TransactionInfo
 
         /* Switch on info class */
         switch (getInfoClass()) {
-            case THIRDPARTY:
+            case RETURNEDCASHACCOUNT:
                 getDeposit().touchItem(getOwner());
                 break;
             case TRANSTAG:

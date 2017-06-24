@@ -699,6 +699,11 @@ public class ArchiveLoader {
         private Portfolio thePortfolio;
 
         /**
+         * Is the Debit reversed?
+         */
+        private boolean isDebitReversed;
+
+        /**
          * Constructor.
          * @param pData the dataSet
          */
@@ -741,6 +746,22 @@ public class ArchiveLoader {
 
             /* return the new transaction */
             return myTrans;
+        }
+
+        /**
+         * Is the debit reversed?
+         * @return true/false
+         */
+        protected boolean isDebitReversed() {
+            return isDebitReversed;
+        }
+
+        /**
+         * Is the transaction recursive?
+         * @return true/false
+         */
+        protected boolean isRecursive() {
+            return theLastDebit.equals(theLastCredit);
         }
 
         /**
@@ -846,33 +867,32 @@ public class ArchiveLoader {
             /* Access asset types */
             AssetType myDebitType = myDebit.getAssetType();
             AssetType myCreditType = myCredit.getAssetType();
-            boolean bDebitIsAccount;
 
             /* Handle non-Asset debit */
             if (!myDebitType.isBaseAccount()) {
                 /* Use credit as account */
-                bDebitIsAccount = false;
+                isDebitReversed = true;
 
                 /* Handle non-Asset credit */
             } else if (!myCreditType.isBaseAccount()) {
                 /* Use debit as account */
-                bDebitIsAccount = true;
+                isDebitReversed = false;
 
                 /* Handle non-child transfer */
             } else if (!isSplit) {
                 /* Flip values for StockRightsTaken and LoanInterest */
                 switch (theCategory.getCategoryTypeClass()) {
                     case STOCKRIGHTSISSUE:
-                        /* Use credit as account */
-                        bDebitIsAccount = myDebitType.isSecurityHolding();
+                        /* Use securityHolding as account */
+                        isDebitReversed = !myDebitType.isSecurityHolding();
                         break;
                     case LOANINTERESTEARNED:
                         /* Use credit as account */
-                        bDebitIsAccount = false;
+                        isDebitReversed = true;
                         break;
                     default:
                         /* Use debit as account */
-                        bDebitIsAccount = true;
+                        isDebitReversed = false;
                         break;
                 }
             } else {
@@ -883,12 +903,12 @@ public class ArchiveLoader {
                 /* If we match the parent on debit */
                 if (myDebit.equals(myParAccount)) {
                     /* Use debit as account */
-                    bDebitIsAccount = true;
+                    isDebitReversed = false;
 
                     /* else if we match credit account */
                 } else if (myCredit.equals(myParAccount)) {
                     /* Use credit as account */
-                    bDebitIsAccount = false;
+                    isDebitReversed = true;
 
                     /* else don't match the parent account, so parent must be wrong */
                 } else {
@@ -898,27 +918,27 @@ public class ArchiveLoader {
                     /* If we match the partner on debit */
                     if (myDebit.equals(myParPartner)) {
                         /* Use debit as account */
-                        bDebitIsAccount = true;
+                        isDebitReversed = false;
 
                     } else {
                         /* Use credit as account */
-                        bDebitIsAccount = false;
+                        isDebitReversed = true;
                     }
                 }
             }
 
             /* Set up values */
-            if (bDebitIsAccount) {
+            if (!isDebitReversed) {
                 /* Use debit as account */
                 theAccount = myDebit;
                 thePartner = myCredit;
-                Integer myPairId = AssetPair.getEncodedId(myDebitType, myCreditType, AssetDirection.TO);
+                Integer myPairId = AssetPair.getEncodedId(myDebitType, myCreditType, null, AssetDirection.TO);
                 thePair = theAssetPairManager.lookUpPair(myPairId);
             } else {
                 /* Use credit as account */
                 theAccount = myCredit;
                 thePartner = myDebit;
-                Integer myPairId = AssetPair.getEncodedId(myCreditType, myDebitType, AssetDirection.FROM);
+                Integer myPairId = AssetPair.getEncodedId(myCreditType, myDebitType, null, AssetDirection.FROM);
                 thePair = theAssetPairManager.lookUpPair(myPairId);
             }
 

@@ -98,6 +98,11 @@ public abstract class DataItem<E extends Enum<E>>
     public static final String ERROR_NEGATIVE = PrometheusDataResource.DATAITEM_ERROR_NEGATIVE.getValue();
 
     /**
+     * Value positive error.
+     */
+    public static final String ERROR_POSITIVE = PrometheusDataResource.DATAITEM_ERROR_POSITIVE.getValue();
+
+    /**
      * Value zero error.
      */
     public static final String ERROR_ZERO = PrometheusDataResource.DATAITEM_ERROR_ZERO.getValue();

@@ -53,14 +53,14 @@ public enum TransactionInfoClass implements DataInfoClass {
     QUALIFYYEARS(4, 3, MetisDataType.INTEGER),
 
     /**
-     * Credit Units.
+     * Account Delta Units.
      */
-    CREDITUNITS(5, 4, MetisDataType.UNITS),
+    ACCOUNTDELTAUNITS(5, 4, MetisDataType.UNITS),
 
     /**
-     * Debit Units.
+     * Partner Delta Units.
      */
-    DEBITUNITS(6, 5, MetisDataType.UNITS),
+    PARTNERDELTAUNITS(6, 5, MetisDataType.UNITS),
 
     /**
      * Dilution.
@@ -85,12 +85,12 @@ public enum TransactionInfoClass implements DataInfoClass {
     /**
      * ThirdParty Amount.
      */
-    THIRDPARTYAMOUNT(11, 10, MetisDataType.MONEY),
+    RETURNEDCASH(11, 10, MetisDataType.MONEY),
 
     /**
-     * ThirdParty.
+     * ReturnedCashAccount.
      */
-    THIRDPARTY(12, 11, MetisDataType.LINK),
+    RETURNEDCASHACCOUNT(12, 11, MetisDataType.LINK),
 
     /**
      * Comments.
@@ -98,14 +98,9 @@ public enum TransactionInfoClass implements DataInfoClass {
     COMMENTS(13, 12, MetisDataType.STRING),
 
     /**
-     * Grant.
-     */
-    OPTIONSGRANT(14, 13, MetisDataType.LINK),
-
-    /**
      * TransactionTag.
      */
-    TRANSTAG(15, 14, MetisDataType.LINKSET);
+    TRANSTAG(14, 13, MetisDataType.LINKSET);
 
     /**
      * The String name.

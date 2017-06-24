@@ -861,8 +861,9 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
     /**
      * Flip assets.
+     * @throws OceanusException on error
      */
-    public void flipAssets() {
+    public void flipAssets() throws OceanusException {
         /* Adjust pair */
         AssetPair myPair = getAssetPair();
         myPair = getAssetPairManager().flipAssets(myPair);

@@ -143,9 +143,9 @@ public class TransactionPanel
     private final JScrollButton<TransactionCategory> theCategoryButton;
 
     /**
-     * ThirdParty Button Field.
+     * ReturnedAccount Button Field.
      */
-    private final JScrollButton<Deposit> theThirdPartyButton;
+    private final JScrollButton<TransactionAsset> theReturnedAccountButton;
 
     /**
      * TransactionTag Button Field.
@@ -193,9 +193,9 @@ public class TransactionPanel
     private final JScrollMenuBuilder<TransactionCategory> theCategoryMenuBuilder;
 
     /**
-     * The ThirdParty Menu Builder.
+     * The ReturnedAccount Menu Builder.
      */
-    private final JScrollMenuBuilder<Deposit> theThirdPartyMenuBuilder;
+    private final JScrollMenuBuilder<TransactionAsset> theReturnedAccountMenuBuilder;
 
     /**
      * Constructor.
@@ -225,7 +225,7 @@ public class TransactionPanel
         thePartnerButton = new JScrollButton<>();
         theCategoryButton = new JScrollButton<>();
         theTagButton = new JScrollListButton<>();
-        theThirdPartyButton = new JScrollButton<>();
+        theReturnedAccountButton = new JScrollButton<>();
 
         /* Access tag menu builder */
         theTagMenuBuilder = theTagButton.getMenuBuilder();
@@ -271,8 +271,8 @@ public class TransactionPanel
         thePartnerMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPartnerMenu(thePartnerMenuBuilder, getItem()));
         theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
         theCategoryMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCategoryMenu(theCategoryMenuBuilder, getItem()));
-        theThirdPartyMenuBuilder = theThirdPartyButton.getMenuBuilder();
-        theThirdPartyMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildThirdPartyMenu(theThirdPartyMenuBuilder, getItem()));
+        theReturnedAccountMenuBuilder = theReturnedAccountButton.getMenuBuilder();
+        theReturnedAccountMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildReturnedAccountMenu(theReturnedAccountMenuBuilder, getItem()));
         theTagMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildTagMenu(theTagMenuBuilder, getItem()));
     }
 
@@ -360,6 +360,7 @@ public class TransactionPanel
         /* Layout the info panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), myPanel);
@@ -419,25 +420,25 @@ public class TransactionPanel
      */
     private JPanel buildSecuritiesPanel() {
         /* Allocate fields */
-        JTextField myCredUnits = new JTextField();
-        JTextField myDebUnits = new JTextField();
+        JTextField myAccountUnits = new JTextField();
+        JTextField myPartnerUnits = new JTextField();
         JTextField myDilution = new JTextField();
-        JTextField myThirdPartyAmount = new JTextField();
+        JTextField myReturnedCash = new JTextField();
 
         /* Restrict the fields */
         int myWidth = Transaction.DESCLEN >> 1;
-        restrictField(myCredUnits, myWidth);
-        restrictField(myDebUnits, myWidth);
+        restrictField(myAccountUnits, myWidth);
+        restrictField(myPartnerUnits, myWidth);
         restrictField(myDilution, myWidth);
-        restrictField(myThirdPartyAmount, myWidth);
-        restrictField(theThirdPartyButton, myWidth);
+        restrictField(myReturnedCash, myWidth);
+        restrictField(theReturnedAccountButton, myWidth);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS), MetisDataType.UNITS, myCredUnits);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS), MetisDataType.UNITS, myDebUnits);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS), MetisDataType.UNITS, myAccountUnits);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS), MetisDataType.UNITS, myPartnerUnits);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), MetisDataType.DILUTION, myDilution);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY), Deposit.class, theThirdPartyButton);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTYAMOUNT), MetisDataType.MONEY, myThirdPartyAmount);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT), TransactionAsset.class, theReturnedAccountButton);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH), MetisDataType.MONEY, myReturnedCash);
 
         /* Create the Tax panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -445,11 +446,11 @@ public class TransactionPanel
         /* Layout the tax panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS), myPanel);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS), myPanel);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTYAMOUNT), myPanel);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT), myPanel);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -578,17 +579,17 @@ public class TransactionPanel
         theFieldSet.setEditable(myField, bEditField);
         theFieldSet.setAssumedCurrency(myField, myCurrency);
 
-        /* Determine whether the creditUnits field should be visible */
-        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS);
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.CREDITUNITS);
-        bShowField = bEditField || myTrans.getCreditUnits() != null;
+        /* Determine whether the account units field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.ACCOUNTDELTAUNITS);
+        bShowField = bEditField || myTrans.getAccountDeltaUnits() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
 
-        /* Determine whether the debit units field should be visible */
-        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEBITUNITS);
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.DEBITUNITS);
-        bShowField = bEditField || myTrans.getDebitUnits() != null;
+        /* Determine whether the partnerDeltaUnits field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PARTNERDELTAUNITS);
+        bShowField = bEditField || myTrans.getPartnerDeltaUnits() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
 
@@ -599,17 +600,17 @@ public class TransactionPanel
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
 
-        /* Determine whether the thirdParty field should be visible */
-        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTY);
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.THIRDPARTY);
-        bShowField = bEditField || myTrans.getThirdParty() != null;
+        /* Determine whether the returnedAccount field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.RETURNEDCASHACCOUNT);
+        bShowField = bEditField || myTrans.getReturnedCashAccount() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
 
-        /* Determine whether the thirdPartyAmount field should be visible */
-        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.THIRDPARTYAMOUNT);
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.THIRDPARTYAMOUNT);
-        bShowField = bEditField || myTrans.getThirdPartyAmount() != null;
+        /* Determine whether the returnedCash field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.RETURNEDCASH);
+        bShowField = bEditField || myTrans.getReturnedCash() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
         theFieldSet.setAssumedCurrency(myField, myCurrency);
@@ -717,11 +718,11 @@ public class TransactionPanel
                 case PARTNERAMOUNT:
                     myTrans.setPartnerAmount(pUpdate.getMoney());
                     break;
-                case CREDITUNITS:
-                    myTrans.setCreditUnits(pUpdate.getUnits());
+                case ACCOUNTDELTAUNITS:
+                    myTrans.setAccountDeltaUnits(pUpdate.getUnits());
                     break;
-                case DEBITUNITS:
-                    myTrans.setDebitUnits(pUpdate.getUnits());
+                case PARTNERDELTAUNITS:
+                    myTrans.setPartnerDeltaUnits(pUpdate.getUnits());
                     break;
                 case DILUTION:
                     myTrans.setDilution(pUpdate.getDilution());
@@ -729,11 +730,12 @@ public class TransactionPanel
                 case QUALIFYYEARS:
                     myTrans.setYears(pUpdate.getInteger());
                     break;
-                case THIRDPARTY:
-                    myTrans.setThirdParty(pUpdate.getValue(Deposit.class));
+                case RETURNEDCASHACCOUNT:
+                    myTrans.setReturnedCashAccount(pUpdate.getValue(TransactionAsset.class));
+                    theBuilder.autoCorrect(myTrans);
                     break;
-                case THIRDPARTYAMOUNT:
-                    myTrans.setThirdPartyAmount(pUpdate.getMoney());
+                case RETURNEDCASH:
+                    myTrans.setReturnedCash(pUpdate.getMoney());
                     break;
                 case TAXCREDIT:
                     myTrans.setTaxCredit(pUpdate.getMoney());
@@ -781,7 +783,7 @@ public class TransactionPanel
             buildAssetGoTo(myItem.getAccount());
             buildAssetGoTo(myItem.getPartner());
             declareGoToItem(myItem.getCategory());
-            declareGoToItem(myItem.getThirdParty());
+            buildAssetGoTo(myItem.getReturnedCashAccount());
         }
     }
 
@@ -1106,13 +1108,13 @@ public class TransactionPanel
      * @param pMenuBuilder the menu builder
      * @param pTrans the transaction to build for
      */
-    public void buildThirdPartyMenu(final JScrollMenuBuilder<Deposit> pMenuBuilder,
-                                    final Transaction pTrans) {
+    public void buildReturnedAccountMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
+                                         final Transaction pTrans) {
         /* Clear the menu */
         pMenuBuilder.clearMenu();
 
         /* Record active item */
-        Deposit myCurr = pTrans.getThirdParty();
+        TransactionAsset myCurr = pTrans.getReturnedCashAccount();
         JMenuItem myActive = null;
 
         /* Access Deposits */

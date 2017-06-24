@@ -230,7 +230,7 @@ public class QIFPortfolioBuilder {
 
         /* Access details */
         TethysMoney myAmount = pTrans.getAmount();
-        TethysUnits myUnits = pTrans.getCreditUnits();
+        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
         TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* If we are using a holding account */
@@ -304,7 +304,9 @@ public class QIFPortfolioBuilder {
 
         /* Access details */
         TethysMoney myAmount = pTrans.getAmount();
-        TethysUnits myUnits = pTrans.getDebitUnits();
+        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
+        myUnits = new TethysUnits(myUnits);
+        myUnits.negate();
         TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* Create a sell shares event */
@@ -396,7 +398,10 @@ public class QIFPortfolioBuilder {
 
         /* Access details */
         TethysMoney myAmount = pTrans.getAmount();
-        TethysUnits myUnits = pTrans.getCreditUnits();
+        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
+        if (myUnits == null) {
+            myUnits = pTrans.getPartnerDeltaUnits();
+        }
         TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* Handle zero units */
@@ -539,11 +544,7 @@ public class QIFPortfolioBuilder {
         TethysUnits myTotalUnits = getUnitsForHoldingEvent(pHolding, pTrans);
 
         /* Access the delta units */
-        TethysUnits myDeltaUnits = pTrans.getCreditUnits();
-        if (myDeltaUnits == null) {
-            myDeltaUnits = new TethysUnits(pTrans.getDebitUnits());
-            myDeltaUnits.negate();
-        }
+        TethysUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
 
         /* Obtain number of units before event */
         TethysUnits myBaseUnits = new TethysUnits(myTotalUnits);
@@ -578,11 +579,11 @@ public class QIFPortfolioBuilder {
         QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
 
         /* Access the delta units */
-        boolean isCredit = true;
-        TethysUnits myUnits = pTrans.getCreditUnits();
-        if (myUnits == null) {
-            myUnits = pTrans.getDebitUnits();
-            isCredit = false;
+        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
+        boolean isCredit = myUnits.isPositive();
+        if (!isCredit) {
+            myUnits = new TethysUnits(myUnits);
+            myUnits.negate();
         }
 
         /* Create a share movement event */
@@ -752,7 +753,7 @@ public class QIFPortfolioBuilder {
         /* Access Transaction details */
         QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
         TethysMoney myAmount = pTrans.getAmount();
-        TethysUnits myUnits = pTrans.getCreditUnits();
+        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
         TethysMoney myTaxCredit = pTrans.getTaxCredit();
         myAmount = new TethysMoney(myAmount);
         if (myTaxCredit != null) {
@@ -877,7 +878,11 @@ public class QIFPortfolioBuilder {
 
         /* Access details */
         TethysDate myDate = pTrans.getDate();
-        TethysUnits myUnits = pTrans.getDebitUnits();
+        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
+        if (myUnits != null) {
+            myUnits = new TethysUnits(myUnits);
+            myUnits.negate();
+        }
         TethysPrice myDebitPrice = getPriceForDate(mySecurity, myDate);
         TethysPrice myCreditPrice = getPriceForDate(myCredit, myDate);
 
@@ -929,7 +934,7 @@ public class QIFPortfolioBuilder {
         myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.BUY);
         myEvent.recordAmount(myValue);
         myEvent.recordSecurity(myCreditSecurity);
-        myEvent.recordQuantity(pTrans.getCreditUnits());
+        myEvent.recordQuantity(pTrans.getPartnerDeltaUnits());
         myEvent.recordPrice(myCreditPrice);
 
         /* Add to event list */
@@ -957,11 +962,11 @@ public class QIFPortfolioBuilder {
 
         /* Access details */
         TethysDate myDate = pTrans.getDate();
-        TethysUnits myUnits = pTrans.getCreditUnits();
+        TethysUnits myUnits = pTrans.getPartnerDeltaUnits();
         TethysPrice myDebitPrice = getPriceForDate(mySource, myDate);
         TethysPrice myCreditPrice = getPriceForDate(myTarget, myDate);
-        Deposit myThirdParty = pTrans.getThirdParty();
-        TethysMoney myAmount = pTrans.getAmount();
+        Deposit myThirdParty = (Deposit) pTrans.getReturnedCashAccount();
+        TethysMoney myAmount = pTrans.getReturnedCash();
 
         /* Obtain the number of units that we are selling */
         TethysUnits myBaseUnits = getBaseUnitsForHolding(pSource, pTrans);
@@ -1062,7 +1067,14 @@ public class QIFPortfolioBuilder {
 
         /* Access details */
         TethysMoney myAmount = pTrans.getAmount();
-        TethysUnits myUnits = pTrans.getDebitUnits();
+        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
+        if (myUnits == null) {
+            myUnits = pTrans.getPartnerDeltaUnits();
+        }
+        if (myUnits != null) {
+            myUnits = new TethysUnits(myUnits);
+            myUnits.negate();
+        }
         TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* Determine whether we use return capital */
@@ -1148,8 +1160,10 @@ public class QIFPortfolioBuilder {
         /* Access details */
         TethysDate myDate = pTrans.getDate();
         TethysMoney myAmount = pTrans.getAmount();
-        TethysUnits mySourceUnits = pTrans.getDebitUnits();
-        TethysUnits myTargetUnits = pTrans.getCreditUnits();
+        TethysUnits mySourceUnits = pTrans.getAccountDeltaUnits();
+        mySourceUnits = new TethysUnits(mySourceUnits);
+        mySourceUnits.negate();
+        TethysUnits myTargetUnits = pTrans.getPartnerDeltaUnits();
         TethysPrice mySourcePrice = getPriceForDate(mySource, myDate);
         TethysPrice myTargetPrice = getPriceForDate(myTarget, myDate);
 

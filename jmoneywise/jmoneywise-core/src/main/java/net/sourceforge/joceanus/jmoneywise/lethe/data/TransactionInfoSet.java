@@ -108,7 +108,7 @@ public class TransactionInfoSet
         Object myValue;
 
         switch (pInfoClass) {
-            case THIRDPARTY:
+            case RETURNEDCASHACCOUNT:
                 /* Access deposit of object */
                 myValue = getDeposit(pInfoClass);
                 break;
@@ -226,17 +226,19 @@ public class TransactionInfoSet
             case TAXCREDIT:
                 return isTaxCreditClassRequired(myAccount, myClass, myYear);
 
-            /* Handle debit units separately */
-            case DEBITUNITS:
-                return isDebitUnitsClassRequired(myDir.isFrom()
-                                                                ? myPartner
-                                                                : myAccount, myClass);
+            /* Handle AccountUnits */
+            case ACCOUNTDELTAUNITS:
+                return isAccountUnitsDeltaRequired(myAccount, myPartner, myDir, myClass);
+            // return myDir.isTo()
+            // ? isDebitUnitsClassRequired(myAccount, myClass)
+            // : isCreditUnitsClassRequired(myAccount, myClass);
 
-            /* Handle CreditUnits separately */
-            case CREDITUNITS:
-                return isCreditUnitsClassRequired(myDir.isFrom()
-                                                                 ? myAccount
-                                                                 : myPartner, myClass);
+            /* Handle PartnerUnits */
+            case PARTNERDELTAUNITS:
+                return isPartnerUnitsDeltaRequired(myPartner, myDir, myClass);
+            // return myDir.isTo()
+            // ? isCreditUnitsClassRequired(myPartner, myClass)
+            // : isDebitUnitsClassRequired(myPartner, myClass);
 
             /* Handle Dilution separately */
             case DILUTION:
@@ -251,10 +253,10 @@ public class TransactionInfoSet
                                                                                                                       : MetisFieldRequired.NOTALLOWED;
 
             /* Handle ThirdParty separately */
-            case THIRDPARTY:
-                return isThirdPartyClassRequired(myClass);
-            case THIRDPARTYAMOUNT:
-                return isThirdPartyAmountRequired(myTransaction);
+            case RETURNEDCASHACCOUNT:
+                return isReturnedCashAccountRequired(myClass);
+            case RETURNEDCASH:
+                return isReturnedCashRequired(myTransaction);
 
             case PARTNERAMOUNT:
                 return isPartnerAmountClassRequired(myClass, myAccount, myPartner);
@@ -331,12 +333,79 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    protected static MetisFieldRequired isWithheldAmountRequired(final TransactionCategoryClass pClass) {
-        /* ThirdParty Amount is possible only if ThirdParty exists */
+    private static MetisFieldRequired isWithheldAmountRequired(final TransactionCategoryClass pClass) {
+        /* Withheld is only available for salary and interest */
         switch (pClass) {
             case TAXEDINCOME:
             case INTEREST:
                 return MetisFieldRequired.CANEXIST;
+            default:
+                return MetisFieldRequired.NOTALLOWED;
+        }
+    }
+
+    /**
+     * Determine if an AccountDeltaUnits infoSet class is required.
+     * @param pAccount the account
+     * @param pPartner the partner
+     * @param pDir the direction
+     * @param pClass the category class
+     * @return the status
+     */
+    private static MetisFieldRequired isAccountUnitsDeltaRequired(final TransactionAsset pAccount,
+                                                                  final TransactionAsset pPartner,
+                                                                  final AssetDirection pDir,
+                                                                  final TransactionCategoryClass pClass) {
+        /* Account must be security holding */
+        if (!(pAccount instanceof SecurityHolding)) {
+            return MetisFieldRequired.NOTALLOWED;
+        }
+        switch (pClass) {
+            case TRANSFER:
+            case STOCKDEMERGER:
+                return MetisFieldRequired.CANEXIST;
+            case UNITSADJUST:
+            case STOCKSPLIT:
+            case INHERITED:
+                return MetisFieldRequired.MUSTEXIST;
+            case DIVIDEND:
+                return pAccount.equals(pPartner)
+                                                 ? MetisFieldRequired.CANEXIST
+                                                 : MetisFieldRequired.NOTALLOWED;
+            case STOCKRIGHTSISSUE:
+                return pDir.isFrom()
+                                     ? MetisFieldRequired.MUSTEXIST
+                                     : MetisFieldRequired.NOTALLOWED;
+            default:
+                return MetisFieldRequired.NOTALLOWED;
+        }
+    }
+
+    /**
+     * Determine if an AccountDeltaUnits infoSet class is required.
+     * @param pDebit the account
+     * @param pDir the direction
+     * @param pClass the category class
+     * @return the status
+     */
+    private static MetisFieldRequired isPartnerUnitsDeltaRequired(final TransactionAsset pPartner,
+                                                                  final AssetDirection pDir,
+                                                                  final TransactionCategoryClass pClass) {
+        /* Account must be security holding */
+        if (!(pPartner instanceof SecurityHolding)) {
+            return MetisFieldRequired.NOTALLOWED;
+        }
+        switch (pClass) {
+            case TRANSFER:
+                return MetisFieldRequired.CANEXIST;
+            case STOCKDEMERGER:
+            case SECURITYREPLACE:
+            case STOCKTAKEOVER:
+                return MetisFieldRequired.MUSTEXIST;
+            case STOCKRIGHTSISSUE:
+                return pDir.isTo()
+                                   ? MetisFieldRequired.MUSTEXIST
+                                   : MetisFieldRequired.NOTALLOWED;
             default:
                 return MetisFieldRequired.NOTALLOWED;
         }
@@ -348,8 +417,8 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    protected static MetisFieldRequired isDebitUnitsClassRequired(final TransactionAsset pDebit,
-                                                                  final TransactionCategoryClass pClass) {
+    private static MetisFieldRequired isDebitUnitsClassRequired(final TransactionAsset pDebit,
+                                                                final TransactionCategoryClass pClass) {
         /* Debit Asset must be security holding */
         if (!(pDebit instanceof SecurityHolding)) {
             return MetisFieldRequired.NOTALLOWED;
@@ -370,8 +439,8 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    protected static MetisFieldRequired isCreditUnitsClassRequired(final TransactionAsset pCredit,
-                                                                   final TransactionCategoryClass pClass) {
+    private static MetisFieldRequired isCreditUnitsClassRequired(final TransactionAsset pCredit,
+                                                                 final TransactionCategoryClass pClass) {
         /* Credit Asset must be security holding */
         if (!(pCredit instanceof SecurityHolding)) {
             return MetisFieldRequired.NOTALLOWED;
@@ -398,7 +467,7 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    protected static MetisFieldRequired isDilutionClassRequired(final TransactionCategoryClass pClass) {
+    private static MetisFieldRequired isDilutionClassRequired(final TransactionCategoryClass pClass) {
         /* Dilution is only required for stock split/deMerger */
         switch (pClass) {
             case STOCKSPLIT:
@@ -410,27 +479,27 @@ public class TransactionInfoSet
     }
 
     /**
-     * Determine if a ThirdParty infoSet class is required.
+     * Determine if a ReturnedCash Account class is required.
      * @param pClass the category class
      * @return the status
      */
-    protected static MetisFieldRequired isThirdPartyClassRequired(final TransactionCategoryClass pClass) {
-        /* ThirdParty is possible only for StockTakeOver */
+    private static MetisFieldRequired isReturnedCashAccountRequired(final TransactionCategoryClass pClass) {
+        /* Returned Cash is possible only for StockTakeOver */
         return pClass == TransactionCategoryClass.STOCKTAKEOVER
                                                                 ? MetisFieldRequired.CANEXIST
                                                                 : MetisFieldRequired.NOTALLOWED;
     }
 
     /**
-     * Determine if a ThirdParty amount is required.
+     * Determine if a ReturnedCash value is required.
      * @param pTransaction the transaction
      * @return the status
      */
-    protected static MetisFieldRequired isThirdPartyAmountRequired(final Transaction pTransaction) {
-        /* ThirdParty Amount is possible only if ThirdParty exists */
-        return pTransaction.getThirdParty() != null
-                                                    ? MetisFieldRequired.MUSTEXIST
-                                                    : MetisFieldRequired.NOTALLOWED;
+    private static MetisFieldRequired isReturnedCashRequired(final Transaction pTransaction) {
+        /* Returned Cash Amount is possible only if ReturnedCashAccount exists */
+        return pTransaction.getReturnedCashAccount() != null
+                                                             ? MetisFieldRequired.MUSTEXIST
+                                                             : MetisFieldRequired.NOTALLOWED;
     }
 
     /**
@@ -440,9 +509,9 @@ public class TransactionInfoSet
      * @param pPartner the partner
      * @return the status
      */
-    protected static MetisFieldRequired isPartnerAmountClassRequired(final TransactionCategoryClass pCategory,
-                                                                     final TransactionAsset pAccount,
-                                                                     final TransactionAsset pPartner) {
+    private static MetisFieldRequired isPartnerAmountClassRequired(final TransactionCategoryClass pCategory,
+                                                                   final TransactionAsset pAccount,
+                                                                   final TransactionAsset pPartner) {
         /* If the transaction requires null amount, then partner amount must also be null */
         if (pCategory.needsNullAmount()) {
             return MetisFieldRequired.NOTALLOWED;
@@ -467,6 +536,8 @@ public class TransactionInfoSet
         Transaction myTransaction = getOwner();
         TransactionAsset myAccount = myTransaction.getAccount();
         TransactionAsset myPartner = myTransaction.getPartner();
+        AssetDirection myDir = myTransaction.getDirection();
+        TransactionCategoryClass myCatClass = myTransaction.getCategoryClass();
         Currency myCurrency = myAccount.getCurrency();
 
         /* Loop through the classes */
@@ -492,6 +563,9 @@ public class TransactionInfoSet
             /* If field is not allowed */
             if (myState == MetisFieldRequired.NOTALLOWED) {
                 myTransaction.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
+                continue;
+            }
+            if (myInfo == null) {
                 continue;
             }
 
@@ -537,15 +611,15 @@ public class TransactionInfoSet
                         myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
                     }
                     break;
-                case THIRDPARTY:
-                    Deposit myThirdParty = myInfo.getDeposit();
+                case RETURNEDCASHACCOUNT:
+                    TransactionAsset myThirdParty = myInfo.getDeposit();
                     if (!myCurrency.equals(myThirdParty.getCurrency())) {
                         myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
                     }
                     break;
-                case THIRDPARTYAMOUNT:
+                case RETURNEDCASH:
                     /* Check value */
-                    myThirdParty = myTransaction.getThirdParty();
+                    myThirdParty = myTransaction.getReturnedCashAccount();
                     myAmount = myInfo.getValue(TethysMoney.class);
                     if (myAmount.isZero()) {
                         myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
@@ -555,13 +629,17 @@ public class TransactionInfoSet
                         myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
                     }
                     break;
-                case CREDITUNITS:
-                case DEBITUNITS:
-                    /* Check value */
+                case ACCOUNTDELTAUNITS:
+                case PARTNERDELTAUNITS:
+                    MetisFieldRequired isRequired = myClass == TransactionInfoClass.ACCOUNTDELTAUNITS
+                                                                                                      ? isAccountUnitsPositive(myDir, myCatClass)
+                                                                                                      : isPartnerUnitsPositive(myDir, myCatClass);
                     TethysUnits myUnits = myInfo.getValue(TethysUnits.class);
                     if (myUnits.isZero()) {
                         myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
-                    } else if (!myUnits.isPositive()) {
+                    } else if (myUnits.isPositive() && isRequired.notAllowed()) {
+                        myTransaction.addError(DataItem.ERROR_POSITIVE, getFieldForClass(myClass));
+                    } else if (!myUnits.isPositive() && isRequired.mustExist()) {
                         myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
                     }
                     break;
@@ -587,13 +665,62 @@ public class TransactionInfoSet
         }
     }
 
+    /**
+     * Determine if AccountDeltaUnits can/mustBe/mustNotBe positive.
+     * @param pDir the direction
+     * @param pClass the category class
+     * @return the status
+     */
+    public static MetisFieldRequired isAccountUnitsPositive(final AssetDirection pDir,
+                                                            final TransactionCategoryClass pClass) {
+        switch (pClass) {
+            case TRANSFER:
+                return pDir.isFrom()
+                                     ? MetisFieldRequired.MUSTEXIST
+                                     : MetisFieldRequired.NOTALLOWED;
+            case UNITSADJUST:
+            case STOCKSPLIT:
+                return MetisFieldRequired.CANEXIST;
+            case INHERITED:
+            case DIVIDEND:
+            case STOCKRIGHTSISSUE:
+                return MetisFieldRequired.MUSTEXIST;
+            case STOCKDEMERGER:
+            default:
+                return MetisFieldRequired.NOTALLOWED;
+        }
+    }
+
+    /**
+     * Determine if PartnerDeltaUnits can/mustBe/mustNotBe positive.
+     * @param pDir the direction
+     * @param pClass the category class
+     * @return the status
+     */
+    public static MetisFieldRequired isPartnerUnitsPositive(final AssetDirection pDir,
+                                                            final TransactionCategoryClass pClass) {
+        switch (pClass) {
+            case TRANSFER:
+                return pDir.isTo()
+                                   ? MetisFieldRequired.MUSTEXIST
+                                   : MetisFieldRequired.NOTALLOWED;
+            case STOCKDEMERGER:
+            case SECURITYREPLACE:
+            case STOCKTAKEOVER:
+            case STOCKRIGHTSISSUE:
+                return MetisFieldRequired.MUSTEXIST;
+            default:
+                return MetisFieldRequired.NOTALLOWED;
+        }
+    }
+
     @Override
     protected void setDefaultValue(final DataListSet<MoneyWiseDataType> pUpdateSet,
                                    final TransactionInfoClass pClass) throws OceanusException {
         /* Switch on the class */
         switch (pClass) {
-            case CREDITUNITS:
-            case DEBITUNITS:
+            case ACCOUNTDELTAUNITS:
+            case PARTNERDELTAUNITS:
                 setValue(pClass, TethysUnits.getWholeUnits(1));
                 break;
             case DILUTION:
@@ -605,8 +732,8 @@ public class TransactionInfoSet
             case TAXCREDIT:
                 setValue(pClass, TethysMoney.getWholeUnits(0));
                 break;
-            case THIRDPARTY:
-                setValue(pClass, getOwner().getDefaultThirdParty());
+            case RETURNEDCASHACCOUNT:
+                setValue(pClass, getOwner().getDefaultReturnedCashAccount());
                 break;
             default:
                 break;

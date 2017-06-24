@@ -396,7 +396,11 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         T myCurr = null;
         try {
             /* Declare the number of steps */
-            pReport.setNumSteps(countStateItems(MetisDataState.NEW));
+            int mySteps = countStateItems(MetisDataState.NEW);
+            pReport.setNumSteps(mySteps);
+            if (mySteps == 0) {
+                return;
+            }
 
             /* Declare the table and mode */
             pBatch.setCurrentTable(this, MetisDataState.NEW);
@@ -468,7 +472,11 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         T myCurr = null;
         try {
             /* Declare the number of steps */
-            pReport.setNumSteps(countStateItems(MetisDataState.CHANGED));
+            int mySteps = countStateItems(MetisDataState.CHANGED);
+            pReport.setNumSteps(mySteps);
+            if (mySteps == 0) {
+                return;
+            }
 
             /* Declare the table and mode */
             pBatch.setCurrentTable(this, MetisDataState.CHANGED);
@@ -566,7 +574,12 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         T myCurr = null;
         try {
             /* Declare the number of steps */
-            pReport.setNumSteps(countStateItems(MetisDataState.DELETED));
+            int mySteps = countStateItems(MetisDataState.DELETED);
+            mySteps += countStateItems(MetisDataState.DELNEW);
+            pReport.setNumSteps(mySteps);
+            if (mySteps == 0) {
+                return;
+            }
 
             /* Declare the table and mode */
             pBatch.setCurrentTable(this, MetisDataState.DELETED);
@@ -582,7 +595,9 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             while (myIterator.hasPrevious()) {
                 /* Ignore non-deleted items */
                 myCurr = myIterator.previous();
-                if (myCurr.getState() != MetisDataState.DELETED) {
+                MetisDataState myState = myCurr.getState();
+                if ((myState != MetisDataState.DELETED)
+                    && (myState != MetisDataState.DELNEW)) {
                     continue;
                 }
 
@@ -590,7 +605,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 pBatch.addBatchItem();
 
                 /* Ignore DelNew items as far as the database is concerned */
-                if (myCurr.getBase().getState() != MetisDataState.DELNEW) {
+                if (myState != MetisDataState.DELNEW) {
                     /* Apply the id */
                     theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
                     theTable.updateValues(theStmt);

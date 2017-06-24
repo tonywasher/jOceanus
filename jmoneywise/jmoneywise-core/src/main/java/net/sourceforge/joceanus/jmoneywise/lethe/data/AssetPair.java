@@ -26,11 +26,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase.AssetBaseList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding.SecurityHoldingMap;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -51,6 +53,11 @@ public final class AssetPair
     private static final String SEP_NAME = "-";
 
     /**
+     * Returned separator.
+     */
+    private static final String SEP_RETURNED = ":";
+
+    /**
      * Account type.
      */
     private final AssetType theAccount;
@@ -59,6 +66,11 @@ public final class AssetPair
      * Partner type.
      */
     private final AssetType thePartner;
+
+    /**
+     * The returnedCash type.
+     */
+    private final AssetType theReturnedCash;
 
     /**
      * Asset direction.
@@ -79,8 +91,23 @@ public final class AssetPair
     private AssetPair(final AssetType pAccount,
                       final AssetType pPartner,
                       final AssetDirection pDirection) {
+        this(pAccount, pPartner, null, pDirection);
+    }
+
+    /**
+     * Constructor.
+     * @param pAccount the account type
+     * @param pPartner the partner type
+     * @param pReturned the returned cash type
+     * @param pDirection the direction
+     */
+    private AssetPair(final AssetType pAccount,
+                      final AssetType pPartner,
+                      final AssetType pReturned,
+                      final AssetDirection pDirection) {
         theAccount = pAccount;
         thePartner = pPartner;
+        theReturnedCash = pReturned;
         theDirection = pDirection;
     }
 
@@ -106,6 +133,14 @@ public final class AssetPair
     }
 
     /**
+     * Obtain returned cash type.
+     * @return the returned cash type.
+     */
+    public AssetType getReturnedCashType() {
+        return theReturnedCash;
+    }
+
+    /**
      * Obtain asset direction.
      * @return the asset direction.
      */
@@ -118,20 +153,26 @@ public final class AssetPair
      * @return the id
      */
     public Integer getEncodedId() {
-        return getEncodedId(theAccount, thePartner, theDirection);
+        return getEncodedId(theAccount, thePartner, theReturnedCash, theDirection);
     }
 
     /**
      * Obtain encoded id for AssetPair.
      * @param pAsset the asset type
      * @param pPartner the partner type
+     * @param pReturned the returned cash type
      * @param pDirection the direction
      * @return the id
      */
     public static Integer getEncodedId(final AssetType pAsset,
                                        final AssetType pPartner,
+                                       final AssetType pReturned,
                                        final AssetDirection pDirection) {
-        int myId = pAsset.getId();
+        int myId = pReturned == null
+                                     ? 0
+                                     : pReturned.getId();
+        myId <<= ID_SHIFT;
+        myId += pAsset.getId();
         myId <<= ID_SHIFT;
         myId += pPartner.getId();
         myId <<= ID_SHIFT;
@@ -149,6 +190,10 @@ public final class AssetPair
             myBuilder.append(theDirection);
             myBuilder.append(SEP_NAME);
             myBuilder.append(thePartner);
+            if (theReturnedCash != null) {
+                myBuilder.append(SEP_RETURNED);
+                myBuilder.append(theReturnedCash);
+            }
             theName = myBuilder.toString();
         }
 
@@ -171,6 +216,8 @@ public final class AssetPair
             resolveDataLink(pData, pOwner, theAccount, pField);
         } else if (pField.equals(Transaction.FIELD_PARTNER)) {
             resolveDataLink(pData, pOwner, thePartner, pField);
+        } else if (pField.equals(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT))) {
+            resolveDataLink(pData, pOwner, theReturnedCash, pField);
         }
     }
 
@@ -324,21 +371,26 @@ public final class AssetPair
             /* Loop through the Account AssetTypes */
             for (AssetType myAccount : AssetType.values()) {
                 /* Check asset is allowed as base account */
-                if (myAccount.isBaseAccount()) {
-                    /* Loop through the Partner AssetTypes */
-                    for (AssetType myPartner : AssetType.values()) {
-                        /* Ignore securities */
-                        if (myPartner.isSecurity()) {
-                            continue;
-                        }
+                if (!myAccount.isBaseAccount()) {
+                    continue;
+                }
 
-                        /* Create the new To AssetPair and store */
-                        AssetPair myPair = new AssetPair(myAccount, myPartner, AssetDirection.TO);
-                        myMap.put(myPair.getEncodedId(), myPair);
+                /* Loop through the Partner AssetTypes */
+                for (AssetType myPartner : AssetType.values()) {
+                    /* Ignore securities */
+                    if (myPartner.isSecurity()) {
+                        continue;
+                    }
 
-                        /* Create the new From AssetPair and store */
-                        myPair = new AssetPair(myAccount, myPartner, AssetDirection.FROM);
-                        myMap.put(myPair.getEncodedId(), myPair);
+                    /* Add the standard TO/FROM pairs */
+                    addPairToMap(myMap, new AssetPair(myAccount, myPartner, AssetDirection.TO));
+                    addPairToMap(myMap, new AssetPair(myAccount, myPartner, AssetDirection.FROM));
+
+                    /* If the account is security holding */
+                    if (myAccount.isSecurityHolding()) {
+                        /* Allow returned cash for Deposit and portfolio */
+                        addPairToMap(myMap, new AssetPair(myAccount, myPartner, AssetType.DEPOSIT, AssetDirection.TO));
+                        addPairToMap(myMap, new AssetPair(myAccount, myPartner, AssetType.PORTFOLIO, AssetDirection.TO));
                     }
                 }
             }
@@ -348,12 +400,22 @@ public final class AssetPair
         }
 
         /**
+         * Add pair to map.
+         * @param the pair map
+         * @param pPair the pair to add
+         */
+        private static void addPairToMap(final Map<Integer, AssetPair> pMap,
+                                         final AssetPair pPair) {
+            pMap.put(pPair.getEncodedId(), pPair);
+        }
+
+        /**
          * Obtain default pair.
          * @return the assetPair
          */
         public AssetPair getDefaultPair() {
             /* Access default Id */
-            Integer myId = getEncodedId(AssetType.DEPOSIT, AssetType.DEPOSIT, AssetDirection.TO);
+            Integer myId = getEncodedId(AssetType.DEPOSIT, AssetType.DEPOSIT, null, AssetDirection.TO);
 
             /* LookUp the relevant pair */
             return MAP_PAIR.get(myId);
@@ -381,7 +443,7 @@ public final class AssetPair
                 return null;
             }
 
-            /* Look up the AccountType */
+            /* Look up the AccountType and remove it */
             AssetType myAccount = checkName(pName.substring(0, iIndex));
             String myRemainder = pName.substring(iIndex + 1);
 
@@ -391,9 +453,23 @@ public final class AssetPair
                 return null;
             }
 
-            /* Look up the partnerType and direction */
+            /* Look up the direction and remove it */
             AssetDirection myDirection = AssetDirection.fromName(myRemainder.substring(0, iIndex));
-            AssetType myPartner = checkName(myRemainder.substring(iIndex + 1));
+            myRemainder = myRemainder.substring(iIndex + 1);
+
+            /* Locate the returned separator in the name */
+            AssetType myReturned = null;
+            iIndex = myRemainder.indexOf(SEP_RETURNED);
+            if (iIndex != -1) {
+                myReturned = checkName(myRemainder.substring(iIndex + 1));
+                if (myReturned == null) {
+                    return null;
+                }
+                myRemainder = myRemainder.substring(0, iIndex);
+            }
+
+            /* Resolve the partner */
+            AssetType myPartner = checkName(myRemainder);
             if ((myAccount == null)
                 || (myPartner == null)
                 || (myDirection == null)) {
@@ -401,7 +477,7 @@ public final class AssetPair
             }
 
             /* LookUp the relevant pair */
-            Integer myId = getEncodedId(myAccount, myPartner, myDirection);
+            Integer myId = getEncodedId(myAccount, myPartner, myReturned, myDirection);
             return MAP_PAIR.get(myId);
         }
 
@@ -437,7 +513,7 @@ public final class AssetPair
             }
 
             /* LookUp the relevant pair */
-            Integer myId = getEncodedId(myType, pCurr.getPartnerType(), pCurr.getDirection());
+            Integer myId = getEncodedId(myType, pCurr.getPartnerType(), pCurr.getReturnedCashType(), pCurr.getDirection());
             return MAP_PAIR.get(myId);
         }
 
@@ -458,7 +534,30 @@ public final class AssetPair
             }
 
             /* LookUp the relevant pair */
-            Integer myId = getEncodedId(pCurr.getAccountType(), myType, pCurr.getDirection());
+            Integer myId = getEncodedId(pCurr.getAccountType(), myType, pCurr.getReturnedCashType(), pCurr.getDirection());
+            return MAP_PAIR.get(myId);
+        }
+
+        /**
+         * Adjust Returned class.
+         * @param pCurr the current pair
+         * @param pReturned the returned asset
+         * @return the updated assetPair
+         */
+        public AssetPair adjustReturned(final AssetPair pCurr,
+                                        final TransactionAsset pReturned) {
+            /* Access new Asset type */
+            AssetType myType = pReturned == null
+                                                 ? null
+                                                 : getAssetType(pReturned);
+
+            /* Handle no change */
+            if (MetisDifference.isEqual(myType, pCurr.getReturnedCashType())) {
+                return pCurr;
+            }
+
+            /* LookUp the relevant pair */
+            Integer myId = getEncodedId(pCurr.getAccountType(), pCurr.getPartnerType(), myType, pCurr.getDirection());
             return MAP_PAIR.get(myId);
         }
 
@@ -469,7 +568,7 @@ public final class AssetPair
          */
         public AssetPair switchDirection(final AssetPair pCurr) {
             /* LookUp the relevant pair */
-            Integer myId = getEncodedId(pCurr.getAccountType(), pCurr.getPartnerType(), pCurr.getDirection().reverse());
+            Integer myId = getEncodedId(pCurr.getAccountType(), pCurr.getPartnerType(), pCurr.getReturnedCashType(), pCurr.getDirection().reverse());
             return MAP_PAIR.get(myId);
         }
 
@@ -480,7 +579,7 @@ public final class AssetPair
          */
         public AssetPair flipAssets(final AssetPair pCurr) {
             /* LookUp the relevant pair */
-            Integer myId = getEncodedId(pCurr.getPartnerType(), pCurr.getAccountType(), pCurr.getDirection().reverse());
+            Integer myId = getEncodedId(pCurr.getPartnerType(), pCurr.getAccountType(), pCurr.getReturnedCashType(), pCurr.getDirection().reverse());
             return MAP_PAIR.get(myId);
         }
 
