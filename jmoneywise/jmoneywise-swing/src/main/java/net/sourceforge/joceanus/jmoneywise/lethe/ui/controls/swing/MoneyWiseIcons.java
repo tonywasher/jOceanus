@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.ComplexIconBu
 
 /**
  * Utility class to manage status icon buttons.
- * @deprecated as of 1.5.0 use {@link net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon}
+ * @deprecated as of 1.5.0 use {@link net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon}
  */
 @Deprecated
 public final class MoneyWiseIcons

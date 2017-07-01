@@ -50,14 +50,7 @@ public enum PortfolioTypeClass implements StaticInterface {
      * <p>
      * This is a SIPP Portfolio.
      */
-    SIPP(3, 2),
-
-    /**
-     * Pension.
-     * <p>
-     * This is a Pension Portfolio and contains only PensionPots and AnnuityPots.
-     */
-    PENSION(4, 3);
+    SIPP(3, 2);
 
     /**
      * The String name.
@@ -130,7 +123,6 @@ public enum PortfolioTypeClass implements StaticInterface {
         switch (this) {
             case TAXFREE:
             case SIPP:
-            case PENSION:
                 return true;
             default:
                 return false;

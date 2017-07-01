@@ -103,19 +103,14 @@ public enum AccountInfoClass implements DataInfoClass {
     REGION(14, 13, MetisDataType.LINK),
 
     /**
-     * GrantDate.
-     */
-    GRANTDATE(15, 14, MetisDataType.DATE),
-
-    /**
      * UnderlyingStock.
      */
-    UNDERLYINGSTOCK(16, 15, MetisDataType.LINK),
+    UNDERLYINGSTOCK(15, 14, MetisDataType.LINK),
 
     /**
      * OptionPrice.
      */
-    OPTIONPRICE(17, 16, MetisDataType.PRICE);
+    OPTIONPRICE(16, 15, MetisDataType.PRICE);
 
     /**
      * The String name.

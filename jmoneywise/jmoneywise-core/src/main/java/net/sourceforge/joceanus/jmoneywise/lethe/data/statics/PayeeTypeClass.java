@@ -63,12 +63,19 @@ public enum PayeeTypeClass implements StaticInterface {
     INDIVIDUAL(4, 3),
 
     /**
+     * Annuity.
+     * <p>
+     * This is an annuity that pays a TaxedIncome with TaxCredit and no NatInsurance.
+     */
+    ANNUITY(5, 4),
+
+    /**
      * Inland Revenue.
      * <p>
      * This is a singular payee representing the tax authority. All TaxCredits etc. are deemed to
      * have been paid to the single account of this type.
      */
-    TAXMAN(5, 4),
+    TAXMAN(6, 5),
 
     /**
      * Government.
@@ -76,7 +83,7 @@ public enum PayeeTypeClass implements StaticInterface {
      * This is a singular payee representing the government. All Local Taxes should be paid to the
      * single account of this type.
      */
-    GOVERNMENT(6, 5),
+    GOVERNMENT(7, 6),
 
     /**
      * Market pseudo account.
@@ -85,7 +92,7 @@ public enum PayeeTypeClass implements StaticInterface {
      * asset that are due to fluctuations in unit prices are viewed as income/expense from the
      * single account of this type.
      */
-    MARKET(7, 6);
+    MARKET(8, 7);
 
     /**
      * The String name.
@@ -155,12 +162,15 @@ public enum PayeeTypeClass implements StaticInterface {
      * @return <code>true</code> if the payee is hidden, <code>false</code> otherwise.
      */
     public boolean isHiddenType() {
-        switch (this) {
-            case MARKET:
-                return true;
-            default:
-                return false;
-        }
+        return this == MARKET;
+    }
+
+    /**
+     * Determine whether the payeeType is hidden type.
+     * @return <code>true</code> if the payee is hidden, <code>false</code> otherwise.
+     */
+    public boolean isAnnuity() {
+        return this == ANNUITY;
     }
 
     /**
@@ -195,6 +205,7 @@ public enum PayeeTypeClass implements StaticInterface {
             case INDIVIDUAL:
             case MARKET:
             case TAXMAN:
+            case ANNUITY:
             default:
                 return false;
         }
@@ -216,6 +227,7 @@ public enum PayeeTypeClass implements StaticInterface {
                 return LoanCategoryClass.PRIVATELOAN.equals(pClass);
             case MARKET:
             case PAYEE:
+            case ANNUITY:
             default:
                 return false;
         }
@@ -238,6 +250,7 @@ public enum PayeeTypeClass implements StaticInterface {
             case TAXMAN:
             case INDIVIDUAL:
             case PAYEE:
+            case ANNUITY:
             default:
                 return false;
         }
@@ -258,6 +271,7 @@ public enum PayeeTypeClass implements StaticInterface {
             case TAXMAN:
             case INDIVIDUAL:
             case PAYEE:
+            case ANNUITY:
             default:
                 return false;
         }
@@ -273,6 +287,7 @@ public enum PayeeTypeClass implements StaticInterface {
             case GOVERNMENT:
             case EMPLOYER:
             case INDIVIDUAL:
+            case ANNUITY:
                 return true;
             case MARKET:
             case TAXMAN:

@@ -185,7 +185,6 @@ public class DepositInfoSet
             case PASSWORD:
             case SYMBOL:
             case REGION:
-            case GRANTDATE:
             case UNDERLYINGSTOCK:
             case OPTIONPRICE:
             default:

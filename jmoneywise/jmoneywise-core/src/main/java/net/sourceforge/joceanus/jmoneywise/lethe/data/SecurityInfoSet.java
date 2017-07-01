@@ -224,7 +224,6 @@ public class SecurityInfoSet
                                             : MetisFieldRequired.NOTALLOWED;
 
             /* Options */
-            case GRANTDATE:
             case UNDERLYINGSTOCK:
             case OPTIONPRICE:
                 return myType.isOption()

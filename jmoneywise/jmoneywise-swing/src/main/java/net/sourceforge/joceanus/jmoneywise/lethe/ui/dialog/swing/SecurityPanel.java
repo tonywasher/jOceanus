@@ -63,7 +63,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateButton;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
@@ -123,11 +122,6 @@ public class SecurityPanel
     private final JScrollButton<Security> theStockButton;
 
     /**
-     * Date Button Field.
-     */
-    private final TethysSwingDateButton theDateButton;
-
-    /**
      * SecurityPrice Table.
      */
     private final SecurityPriceTable thePrices;
@@ -179,9 +173,6 @@ public class SecurityPanel
         theCurrencyButton = new JScrollButton<>();
         theRegionButton = new JScrollButton<>();
         theStockButton = new JScrollButton<>();
-
-        /* Create the date button */
-        theDateButton = new TethysSwingDateButton();
 
         /* Set closed button */
         theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
@@ -298,7 +289,6 @@ public class SecurityPanel
         int myWidth = Transaction.DESCLEN >> 1;
         restrictField(mySymbol, myWidth);
         restrictField(myPrice, myWidth);
-        restrictField(theDateButton, myWidth);
         restrictField(theRegionButton, myWidth);
         restrictField(theStockButton, myWidth);
 
@@ -306,7 +296,6 @@ public class SecurityPanel
         theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL), MetisDataType.STRING, mySymbol);
         theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION), Region.class, theRegionButton);
         theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK), Security.class, theStockButton);
-        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.GRANTDATE), MetisDataType.DATE, theDateButton);
         theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE), MetisDataType.PRICE, myPrice);
 
         /* Create the Info panel */
@@ -318,7 +307,6 @@ public class SecurityPanel
         theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL), myPanel);
         theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION), myPanel);
         theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK), myPanel);
-        theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.GRANTDATE), myPanel);
         theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
@@ -416,13 +404,6 @@ public class SecurityPanel
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
 
-        /* Determine whether the grantDate field should be visible */
-        myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.GRANTDATE);
-        bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.GRANTDATE);
-        bShowField = bEditField || mySecurity.getRegion() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
-
         /* Determine whether the price field should be visible */
         myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE);
         bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.OPTIONPRICE);
@@ -492,9 +473,6 @@ public class SecurityPanel
                     break;
                 case REGION:
                     mySecurity.setRegion(pUpdate.getValue(Region.class));
-                    break;
-                case GRANTDATE:
-                    mySecurity.setGrantDate(pUpdate.getDate());
                     break;
                 case UNDERLYINGSTOCK:
                     mySecurity.setUnderlyingStock(pUpdate.getValue(Security.class));

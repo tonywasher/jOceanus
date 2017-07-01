@@ -243,7 +243,6 @@ public class CashInfoSet
             case MATURITY:
             case SYMBOL:
             case REGION:
-            case GRANTDATE:
             case UNDERLYINGSTOCK:
             case OPTIONPRICE:
             default:

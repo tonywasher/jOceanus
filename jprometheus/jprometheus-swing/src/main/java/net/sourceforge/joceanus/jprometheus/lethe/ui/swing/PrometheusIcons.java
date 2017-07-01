@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
 
 /**
  * Utility class to manage status icon buttons.
- * @deprecated as of 1.5.0 use {@link net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon}
+ * @deprecated as of 1.5.0 use {@link net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon}
  */
 @Deprecated
 public abstract class PrometheusIcons {

@@ -163,7 +163,6 @@ public class PayeeInfoSet
             case AUTOPAYEE:
             case SYMBOL:
             case REGION:
-            case GRANTDATE:
             case UNDERLYINGSTOCK:
             case OPTIONPRICE:
             default:

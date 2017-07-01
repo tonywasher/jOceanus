@@ -58,7 +58,7 @@ public enum MoneyWiseDataResource implements TethysResourceId {
     /**
      * MoneyWiseData Price.
      */
-    MONEYWISEDATA_FIELD_PRICE("MoneyWiseData.Field.Price"),
+    MONEYWISEDATA_FIELD_PRICE(StaticDataResource.TRANSINFO_PRICE),
 
     /**
      * MoneyWiseData Units.

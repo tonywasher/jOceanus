@@ -173,7 +173,6 @@ public class LoanInfoSet
             case AUTOPAYEE:
             case SYMBOL:
             case REGION:
-            case GRANTDATE:
             case UNDERLYINGSTOCK:
             case OPTIONPRICE:
             default:

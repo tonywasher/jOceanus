@@ -59,7 +59,6 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 
 /**
@@ -284,16 +283,6 @@ public class Security
     public Region getRegion() {
         return hasInfoSet
                           ? theInfoSet.getRegion(AccountInfoClass.REGION)
-                          : null;
-    }
-
-    /**
-     * Obtain GrantDate.
-     * @return the date
-     */
-    public TethysDate getGrantDaten() {
-        return hasInfoSet
-                          ? theInfoSet.getValue(AccountInfoClass.GRANTDATE, TethysDate.class)
                           : null;
     }
 
@@ -821,15 +810,6 @@ public class Security
      */
     public void setRegion(final Region pRegion) throws OceanusException {
         setInfoSetValue(AccountInfoClass.REGION, pRegion);
-    }
-
-    /**
-     * Set a new grantDate.
-     * @param pDate the new date
-     * @throws OceanusException on error
-     */
-    public void setGrantDate(final TethysDate pDate) throws OceanusException {
-        setInfoSetValue(AccountInfoClass.GRANTDATE, pDate);
     }
 
     /**
