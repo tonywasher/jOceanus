@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jgordianknot.crypto.jca;
 
 import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
@@ -161,14 +160,13 @@ public abstract class JcaSignature
             /* Create the PSSParameterSpec */
             try {
                 String myDigest = JcaDigest.getSignAlgorithm(pSignatureSpec.getDigestSpec());
-                setSigner(Signature.getInstance(myDigest + getSignatureBase(pSignatureSpec)));
+                setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
 
                 /* Initialise and set the signer */
                 getSigner().initSign(pPrivateKey.getPrivateKey(), pRandom);
 
                 /* Catch exceptions */
-            } catch (NoSuchAlgorithmException
-                    | InvalidKeyException e) {
+            } catch (InvalidKeyException e) {
                 throw new GordianCryptoException(SIG_ERROR, e);
             }
         }
@@ -201,14 +199,13 @@ public abstract class JcaSignature
             /* Create the PSSParameterSpec */
             try {
                 String myDigest = JcaDigest.getSignAlgorithm(pSignatureSpec.getDigestSpec());
-                setSigner(Signature.getInstance(myDigest + getSignatureBase(pSignatureSpec)));
+                setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
 
                 /* Initialise and set the signer */
                 getSigner().initVerify(pPublicKey.getPublicKey());
 
                 /* Catch exceptions */
-            } catch (NoSuchAlgorithmException
-                    | InvalidKeyException e) {
+            } catch (InvalidKeyException e) {
                 throw new GordianCryptoException(SIG_ERROR, e);
             }
         }
@@ -269,14 +266,13 @@ public abstract class JcaSignature
             /* Create the Signer */
             try {
                 String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
-                setSigner(Signature.getInstance(myDigest + getSignatureBase(pSignatureSpec)));
+                setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
 
                 /* Initialise and set the signer */
                 getSigner().initSign(pPrivateKey.getPrivateKey(), pRandom);
 
                 /* Catch exceptions */
-            } catch (NoSuchAlgorithmException
-                    | InvalidKeyException e) {
+            } catch (InvalidKeyException e) {
                 throw new GordianCryptoException(SIG_ERROR, e);
             }
         }
@@ -309,14 +305,13 @@ public abstract class JcaSignature
             /* Create the PSSParameterSpec */
             try {
                 String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
-                setSigner(Signature.getInstance(myDigest + getSignatureBase(pSignatureSpec)));
+                setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
 
                 /* Initialise and set the signer */
                 getSigner().initVerify(pPublicKey.getPublicKey());
 
                 /* Catch exceptions */
-            } catch (NoSuchAlgorithmException
-                    | InvalidKeyException e) {
+            } catch (InvalidKeyException e) {
                 throw new GordianCryptoException(SIG_ERROR, e);
             }
         }
@@ -351,14 +346,13 @@ public abstract class JcaSignature
             /* Create the Signer */
             try {
                 String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
-                setSigner(Signature.getInstance(myDigest + SPHINCS_ALGOBASE));
+                setSigner(JcaFactory.getJavaSignature(myDigest + SPHINCS_ALGOBASE, true));
 
                 /* Initialise and set the signer */
                 getSigner().initSign(pPrivateKey.getPrivateKey());
 
                 /* Catch exceptions */
-            } catch (NoSuchAlgorithmException
-                    | InvalidKeyException e) {
+            } catch (InvalidKeyException e) {
                 throw new GordianCryptoException(SIG_ERROR, e);
             }
         }
@@ -391,14 +385,13 @@ public abstract class JcaSignature
             /* Create the PSSParameterSpec */
             try {
                 String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
-                setSigner(Signature.getInstance(myDigest + SPHINCS_ALGOBASE));
+                setSigner(JcaFactory.getJavaSignature(myDigest + SPHINCS_ALGOBASE, true));
 
                 /* Initialise and set the signer */
                 getSigner().initVerify(pPublicKey.getPublicKey());
 
                 /* Catch exceptions */
-            } catch (NoSuchAlgorithmException
-                    | InvalidKeyException e) {
+            } catch (InvalidKeyException e) {
                 throw new GordianCryptoException(SIG_ERROR, e);
             }
         }
@@ -433,14 +426,13 @@ public abstract class JcaSignature
             /* Create the Signer */
             try {
                 String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
-                setSigner(Signature.getInstance(myDigest + RAINBOW_ALGOBASE));
+                setSigner(JcaFactory.getJavaSignature(myDigest + RAINBOW_ALGOBASE, true));
 
                 /* Initialise and set the signer */
                 getSigner().initSign(pPrivateKey.getPrivateKey(), pRandom);
 
                 /* Catch exceptions */
-            } catch (NoSuchAlgorithmException
-                    | InvalidKeyException e) {
+            } catch (InvalidKeyException e) {
                 throw new GordianCryptoException(SIG_ERROR, e);
             }
         }
@@ -473,14 +465,13 @@ public abstract class JcaSignature
             /* Create the PSSParameterSpec */
             try {
                 String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
-                setSigner(Signature.getInstance(myDigest + RAINBOW_ALGOBASE));
+                setSigner(JcaFactory.getJavaSignature(myDigest + RAINBOW_ALGOBASE, true));
 
                 /* Initialise and set the signer */
                 getSigner().initVerify(pPublicKey.getPublicKey());
 
                 /* Catch exceptions */
-            } catch (NoSuchAlgorithmException
-                    | InvalidKeyException e) {
+            } catch (InvalidKeyException e) {
                 throw new GordianCryptoException(SIG_ERROR, e);
             }
         }

@@ -199,6 +199,7 @@ public class GordianTestSuite {
 
         /* Create AsymTest Control */
         GordianTestAsymmetric myAsymTest = new GordianTestAsymmetric(mySymSafe, myStreamSafe);
+        // myAsymTest.testKeyPairs(myFactory, myKeySet);
         myAsymTest.createKeyPairs(myFactory, myKeySet);
 
         /* Start a new session */

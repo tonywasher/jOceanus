@@ -229,16 +229,10 @@ public class TransactionInfoSet
             /* Handle AccountUnits */
             case ACCOUNTDELTAUNITS:
                 return isAccountUnitsDeltaRequired(myAccount, myPartner, myDir, myClass);
-            // return myDir.isTo()
-            // ? isDebitUnitsClassRequired(myAccount, myClass)
-            // : isCreditUnitsClassRequired(myAccount, myClass);
 
             /* Handle PartnerUnits */
             case PARTNERDELTAUNITS:
                 return isPartnerUnitsDeltaRequired(myPartner, myDir, myClass);
-            // return myDir.isTo()
-            // ? isCreditUnitsClassRequired(myPartner, myClass)
-            // : isDebitUnitsClassRequired(myPartner, myClass);
 
             /* Handle Dilution separately */
             case DILUTION:
@@ -259,7 +253,17 @@ public class TransactionInfoSet
                 return isReturnedCashRequired(myTransaction);
 
             case PARTNERAMOUNT:
+                // case XCHANGERATE:
                 return isPartnerAmountClassRequired(myClass, myAccount, myPartner);
+
+            case FOREIGNTAXCREDIT:
+                return isForeignTaxCreditClassRequired(myClass, myAccount, myPartner);
+
+            case PRICE:
+                return isPriceClassRequired(myClass, myAccount, myPartner);
+
+            case COMMISSION:
+                return isCommissionClassRequired(myClass, myAccount, myPartner);
 
             default:
                 return MetisFieldRequired.NOTALLOWED;
@@ -382,8 +386,8 @@ public class TransactionInfoSet
     }
 
     /**
-     * Determine if an AccountDeltaUnits infoSet class is required.
-     * @param pDebit the account
+     * Determine if an PartnerDeltaUnits infoSet class is required.
+     * @param pPartner the partner
      * @param pDir the direction
      * @param pClass the category class
      * @return the status
@@ -391,7 +395,7 @@ public class TransactionInfoSet
     private static MetisFieldRequired isPartnerUnitsDeltaRequired(final TransactionAsset pPartner,
                                                                   final AssetDirection pDir,
                                                                   final TransactionCategoryClass pClass) {
-        /* Account must be security holding */
+        /* Partner must be security holding */
         if (!(pPartner instanceof SecurityHolding)) {
             return MetisFieldRequired.NOTALLOWED;
         }
@@ -406,57 +410,6 @@ public class TransactionInfoSet
                 return pDir.isTo()
                                    ? MetisFieldRequired.MUSTEXIST
                                    : MetisFieldRequired.NOTALLOWED;
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
-    }
-
-    /**
-     * Determine if a DebitUnits infoSet class is required.
-     * @param pDebit the debit account
-     * @param pClass the category class
-     * @return the status
-     */
-    private static MetisFieldRequired isDebitUnitsClassRequired(final TransactionAsset pDebit,
-                                                                final TransactionCategoryClass pClass) {
-        /* Debit Asset must be security holding */
-        if (!(pDebit instanceof SecurityHolding)) {
-            return MetisFieldRequired.NOTALLOWED;
-        }
-        switch (pClass) {
-            case TRANSFER:
-            case UNITSADJUST:
-            case STOCKDEMERGER:
-                return MetisFieldRequired.CANEXIST;
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
-    }
-
-    /**
-     * Determine if a CreditUnits infoSet class is required.
-     * @param pCredit the credit account
-     * @param pClass the category class
-     * @return the status
-     */
-    private static MetisFieldRequired isCreditUnitsClassRequired(final TransactionAsset pCredit,
-                                                                 final TransactionCategoryClass pClass) {
-        /* Credit Asset must be security holding */
-        if (!(pCredit instanceof SecurityHolding)) {
-            return MetisFieldRequired.NOTALLOWED;
-        }
-        switch (pClass) {
-            case STOCKRIGHTSISSUE:
-            case STOCKDEMERGER:
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
-            case STOCKSPLIT:
-                return MetisFieldRequired.MUSTEXIST;
-            case TRANSFER:
-            case INHERITED:
-            case UNITSADJUST:
-            case DIVIDEND:
-                return MetisFieldRequired.CANEXIST;
             default:
                 return MetisFieldRequired.NOTALLOWED;
         }
@@ -526,6 +479,83 @@ public class TransactionInfoSet
         return MetisDifference.isEqual(myCurrency, myPartnerCurrency)
                                                                       ? MetisFieldRequired.NOTALLOWED
                                                                       : MetisFieldRequired.MUSTEXIST;
+    }
+
+    /**
+     * Determine if a ForeignTaxCredit infoSet class is required.
+     * @param pCategory the category
+     * @param pAccount the account
+     * @param pPartner the partner
+     * @return the status
+     */
+    private static MetisFieldRequired isForeignTaxCreditClassRequired(final TransactionCategoryClass pCategory,
+                                                                      final TransactionAsset pAccount,
+                                                                      final TransactionAsset pPartner) {
+        /* Don't allow yet */
+        return MetisFieldRequired.NOTALLOWED;
+    }
+
+    /**
+     * Determine if a Commission infoSet class is required.
+     * @param pCategory the category
+     * @param pAccount the account
+     * @param pPartner the partner
+     * @return the status
+     */
+    private static MetisFieldRequired isPriceClassRequired(final TransactionCategoryClass pCategory,
+                                                           final TransactionAsset pAccount,
+                                                           final TransactionAsset pPartner) {
+        /* Don't allow yet */
+        return MetisFieldRequired.NOTALLOWED;
+        /* Account or Partner must be security holding */
+        // if (!(pAccount instanceof SecurityHolding)
+        // && !(pPartner instanceof SecurityHolding)) {
+        // return MetisFieldRequired.NOTALLOWED;
+        // }
+        // switch (pCategory) {
+        // case STOCKSPLIT:
+        // case STOCKTAKEOVER:
+        // case STOCKDEMERGER:
+        // case SECURITYREPLACE:
+        // case OPTIONSEXERCISE:
+        // case TRANSFER:
+        // return MetisFieldRequired.MUSTEXIST;
+        // case DIVIDEND:
+        // return MetisDifference.isEqual(pAccount, pPartner)
+        // ? MetisFieldRequired.MUSTEXIST
+        // : MetisFieldRequired.NOTALLOWED;
+        // default:
+        // return MetisFieldRequired.NOTALLOWED;
+        // }
+    }
+
+    /**
+     * Determine if a Commission infoSet class is required.
+     * @param pCategory the category
+     * @param pAccount the account
+     * @param pPartner the partner
+     * @return the status
+     */
+    private static MetisFieldRequired isCommissionClassRequired(final TransactionCategoryClass pCategory,
+                                                                final TransactionAsset pAccount,
+                                                                final TransactionAsset pPartner) {
+        /* Don't allow yet */
+        return MetisFieldRequired.NOTALLOWED;
+        /* Account or Partner must be security holding */
+        // if (!(pAccount instanceof SecurityHolding)
+        // && !(pPartner instanceof SecurityHolding)) {
+        // return MetisFieldRequired.NOTALLOWED;
+        // }
+        // switch (pCategory) {
+        // case TRANSFER:
+        // return MetisFieldRequired.CANEXIST;
+        // case DIVIDEND:
+        // return MetisDifference.isEqual(pAccount, pPartner)
+        // ? MetisFieldRequired.CANEXIST
+        // : MetisFieldRequired.NOTALLOWED;
+        // default:
+        // return MetisFieldRequired.NOTALLOWED;
+        // }
     }
 
     /**

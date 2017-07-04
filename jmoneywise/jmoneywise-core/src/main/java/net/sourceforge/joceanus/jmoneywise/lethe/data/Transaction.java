@@ -56,7 +56,9 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
@@ -328,6 +330,36 @@ public class Transaction
     }
 
     /**
+     * Obtain Foreign Tax Credit.
+     * @return the Tax Credit
+     */
+    public final TethysMoney getForeignTaxCredit() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(TransactionInfoClass.FOREIGNTAXCREDIT, TethysMoney.class)
+                          : null;
+    }
+
+    /**
+     * Obtain Price.
+     * @return the Price
+     */
+    public final TethysPrice getPrice() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(TransactionInfoClass.PRICE, TethysPrice.class)
+                          : null;
+    }
+
+    /**
+     * Obtain Commission.
+     * @return the Commission
+     */
+    public final TethysMoney getCommission() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(TransactionInfoClass.COMMISSION, TethysMoney.class)
+                          : null;
+    }
+
+    /**
      * Obtain Dilution.
      * @return the Dilution
      */
@@ -414,6 +446,16 @@ public class Transaction
     public final TethysMoney getPartnerAmount() {
         return hasInfoSet
                           ? theInfoSet.getValue(TransactionInfoClass.PARTNERAMOUNT, TethysMoney.class)
+                          : null;
+    }
+
+    /**
+     * Obtain ExchangeRate.
+     * @return the ExchangeRate
+     */
+    public final TethysRatio getExchangeRate() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(TransactionInfoClass.XCHANGERATE, TethysRatio.class)
                           : null;
     }
 
@@ -770,6 +812,33 @@ public class Transaction
     }
 
     /**
+     * Set a new ForeignTaxCredit.
+     * @param pCredit the new credit
+     * @throws OceanusException on error
+     */
+    public final void setForeignTaxCredit(final TethysMoney pCredit) throws OceanusException {
+        setInfoSetValue(TransactionInfoClass.FOREIGNTAXCREDIT, pCredit);
+    }
+
+    /**
+     * Set a new Price.
+     * @param pPrice the new price
+     * @throws OceanusException on error
+     */
+    public final void setPrice(final TethysPrice pPrice) throws OceanusException {
+        setInfoSetValue(TransactionInfoClass.PRICE, pPrice);
+    }
+
+    /**
+     * Set a new Commission.
+     * @param pCommission the new commission
+     * @throws OceanusException on error
+     */
+    public final void setCommission(final TethysMoney pCommission) throws OceanusException {
+        setInfoSetValue(TransactionInfoClass.COMMISSION, pCommission);
+    }
+
+    /**
      * Set a new Dilution.
      * @param pDilution the new dilution
      * @throws OceanusException on error
@@ -821,6 +890,15 @@ public class Transaction
      */
     public final void setPartnerAmount(final TethysMoney pValue) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.PARTNERAMOUNT, pValue);
+    }
+
+    /**
+     * Set a new ExchangeRate.
+     * @param pRate the new rate
+     * @throws OceanusException on error
+     */
+    public final void setExchangeRate(final TethysRatio pRate) throws OceanusException {
+        setInfoSetValue(TransactionInfoClass.XCHANGERATE, pRate);
     }
 
     /**

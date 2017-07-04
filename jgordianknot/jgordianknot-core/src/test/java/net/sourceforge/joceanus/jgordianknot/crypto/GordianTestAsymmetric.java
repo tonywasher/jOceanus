@@ -75,6 +75,20 @@ public class GordianTestAsymmetric {
     }
 
     /**
+     * Test keyPairs.
+     * @param pFactory the factory
+     * @param pKeySet the keySet
+     * @throws OceanusException on error
+     */
+    protected void testKeyPairs(final GordianFactory pFactory,
+                                final GordianKeySet pKeySet) throws OceanusException {
+        for (GordianElliptic myCurve : GordianElliptic.values()) {
+            createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ec(myCurve));
+        }
+        theMap.clear();
+    }
+
+    /**
      * Create keyPair.
      * @param pFactory the factory
      * @param pKeySet the keySet

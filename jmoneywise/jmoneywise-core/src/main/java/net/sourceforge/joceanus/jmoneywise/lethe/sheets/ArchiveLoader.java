@@ -803,6 +803,9 @@ public class ArchiveLoader {
             theLastCredit = theNameMap.get(pCredit);
             theCategory = theCategoryMap.get(pCategory);
 
+            /* Check resolution */
+            checkResolution(pDebit, pCredit, pCategory);
+
             /* If the category is portfolio transfer */
             if (theCategory.isCategoryClass(TransactionCategoryClass.PORTFOLIOXFER)) {
                 /* Adjust maps to reflect the transfer */
@@ -847,6 +850,9 @@ public class ArchiveLoader {
 
             /* Resolve the category */
             theCategory = theCategoryMap.get(pCategory);
+
+            /* Check resolution */
+            checkResolution(pDebit, pCredit, pCategory);
 
             /* Resolve assets */
             resolveAssets();
@@ -954,6 +960,32 @@ public class ArchiveLoader {
                 }
             } else if (isCreditHolding) {
                 thePortfolio = ((SecurityHolding) theLastCredit).getPortfolio();
+            }
+        }
+
+        /**
+         * Check resolution.
+         * @param pDebit the name of the debit object
+         * @param pCredit the name of the credit object
+         * @param pCategory the name of the category object
+         * @throws OceanusException on error
+         */
+        private void checkResolution(final String pDebit,
+                                     final String pCredit,
+                                     final String pCategory) throws OceanusException {
+            /* Check debit resolution */
+            if (theLastDebit == null) {
+                throw new MoneyWiseDataException(pDebit, "Failed to resolve debit account on " + theDate);
+            }
+
+            /* Check credit resolution */
+            if (theLastCredit == null) {
+                throw new MoneyWiseDataException(pCredit, "Failed to resolve credit account on " + theDate);
+            }
+
+            /* Check category resolution */
+            if (theCategory == null) {
+                throw new MoneyWiseDataException(pCategory, "Failed to resolve category on " + theDate);
             }
         }
     }

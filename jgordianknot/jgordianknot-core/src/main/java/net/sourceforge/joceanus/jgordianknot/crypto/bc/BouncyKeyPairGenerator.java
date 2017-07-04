@@ -33,6 +33,7 @@ import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.ElGamalParameter;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
@@ -285,10 +286,17 @@ public abstract class BouncyKeyPairGenerator
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
-            /* Create and initialise the generator */
+            /* Create the generator */
             theCurve = pKeySpec.getCurve();
             theGenerator = new ECKeyPairGenerator();
+
+            /* Lookup the parameters (take care with SM2 curves) */
             X9ECParameters x9 = ECNamedCurveTable.getByName(theCurve.getCurveName());
+            if (x9 == null) {
+                x9 = GMNamedCurves.getByName(theCurve.getCurveName());
+            }
+
+            /* Initialise the generator */
             theDomain = new ECDomainParameters(x9.getCurve(), x9.getG(), x9.getN(), x9.getH(), x9.getSeed());
             ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(theDomain, getRandom());
             theGenerator.init(myParams);

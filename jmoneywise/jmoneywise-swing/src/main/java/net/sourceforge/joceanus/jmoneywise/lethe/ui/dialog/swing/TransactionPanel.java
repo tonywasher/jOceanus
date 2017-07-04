@@ -335,21 +335,22 @@ public class TransactionPanel
      */
     private JPanel buildInfoPanel() {
         /* Allocate fields */
+        JTextField myAmount = new JTextField();
+        JTextField myRate = new JTextField();
         JTextField myComments = new JTextField();
         JTextField myReference = new JTextField();
-
-        /* Allocate fields */
-        JTextField myAmount = new JTextField();
 
         /* Restrict the fields */
         int myWidth = Transaction.DESCLEN >> 1;
         restrictField(myAmount, myWidth);
+        restrictField(myRate, myWidth);
         restrictField(myComments, myWidth);
         restrictField(myReference, myWidth);
         restrictField(theTagButton, myWidth);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), MetisDataType.MONEY, myAmount);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE), MetisDataType.RATIO, myRate);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), MetisDataType.STRING, myComments);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), MetisDataType.STRING, myReference);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), theTagButton);
@@ -361,6 +362,7 @@ public class TransactionPanel
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), myPanel);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), myPanel);
@@ -377,6 +379,7 @@ public class TransactionPanel
     private JPanel buildTaxPanel() {
         /* Allocate fields */
         JTextField myTaxCredit = new JTextField();
+        JTextField myForeignTaxCredit = new JTextField();
         JTextField myNatIns = new JTextField();
         JTextField myBenefit = new JTextField();
         JTextField myWithheld = new JTextField();
@@ -385,6 +388,7 @@ public class TransactionPanel
         /* Restrict the fields */
         int myWidth = Transaction.DESCLEN >> 1;
         restrictField(myTaxCredit, myWidth);
+        restrictField(myForeignTaxCredit, myWidth);
         restrictField(myNatIns, myWidth);
         restrictField(myBenefit, myWidth);
         restrictField(myWithheld, myWidth);
@@ -396,6 +400,7 @@ public class TransactionPanel
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), MetisDataType.MONEY, myBenefit);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD), MetisDataType.MONEY, myWithheld);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), MetisDataType.INTEGER, myYears);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.FOREIGNTAXCREDIT), MetisDataType.MONEY, myForeignTaxCredit);
 
         /* Create the Tax panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -408,6 +413,7 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), myPanel);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.FOREIGNTAXCREDIT), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -422,6 +428,8 @@ public class TransactionPanel
         /* Allocate fields */
         JTextField myAccountUnits = new JTextField();
         JTextField myPartnerUnits = new JTextField();
+        JTextField myCommission = new JTextField();
+        JTextField myPrice = new JTextField();
         JTextField myDilution = new JTextField();
         JTextField myReturnedCash = new JTextField();
 
@@ -429,6 +437,8 @@ public class TransactionPanel
         int myWidth = Transaction.DESCLEN >> 1;
         restrictField(myAccountUnits, myWidth);
         restrictField(myPartnerUnits, myWidth);
+        restrictField(myPrice, myWidth);
+        restrictField(myCommission, myWidth);
         restrictField(myDilution, myWidth);
         restrictField(myReturnedCash, myWidth);
         restrictField(theReturnedAccountButton, myWidth);
@@ -436,6 +446,8 @@ public class TransactionPanel
         /* Build the FieldSet */
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS), MetisDataType.UNITS, myAccountUnits);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS), MetisDataType.UNITS, myPartnerUnits);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PRICE), MetisDataType.PRICE, myPrice);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMISSION), MetisDataType.MONEY, myCommission);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), MetisDataType.DILUTION, myDilution);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT), TransactionAsset.class, theReturnedAccountButton);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH), MetisDataType.MONEY, myReturnedCash);
@@ -448,6 +460,8 @@ public class TransactionPanel
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS), myPanel);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PRICE), myPanel);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMISSION), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH), myPanel);
@@ -547,10 +561,25 @@ public class TransactionPanel
         theFieldSet.setEditable(myField, bEditField);
         theFieldSet.setAssumedCurrency(myField, myTrans.getPartner().getCurrency());
 
+        /* Determine whether the exchangeRate field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.XCHANGERATE);
+        bShowField = bEditField || myTrans.getExchangeRate() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
         /* Determine whether the taxCredit field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.TAXCREDIT);
         bShowField = bEditField || myTrans.getTaxCredit() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+        theFieldSet.setAssumedCurrency(myField, myCurrency);
+
+        /* Determine whether the taxCredit field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.FOREIGNTAXCREDIT);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.FOREIGNTAXCREDIT);
+        bShowField = bEditField || myTrans.getForeignTaxCredit() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
         theFieldSet.setAssumedCurrency(myField, myCurrency);
@@ -590,6 +619,20 @@ public class TransactionPanel
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PARTNERDELTAUNITS);
         bShowField = bEditField || myTrans.getPartnerDeltaUnits() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the price field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PRICE);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PRICE);
+        bShowField = bEditField || myTrans.getPrice() != null;
+        theFieldSet.setVisibility(myField, bShowField);
+        theFieldSet.setEditable(myField, bEditField);
+
+        /* Determine whether the commission field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMISSION);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.COMMISSION);
+        bShowField = bEditField || myTrans.getCommission() != null;
         theFieldSet.setVisibility(myField, bShowField);
         theFieldSet.setEditable(myField, bEditField);
 
@@ -718,11 +761,20 @@ public class TransactionPanel
                 case PARTNERAMOUNT:
                     myTrans.setPartnerAmount(pUpdate.getMoney());
                     break;
+                case XCHANGERATE:
+                    myTrans.setExchangeRate(pUpdate.getRatio());
+                    break;
                 case ACCOUNTDELTAUNITS:
                     myTrans.setAccountDeltaUnits(pUpdate.getUnits());
                     break;
                 case PARTNERDELTAUNITS:
                     myTrans.setPartnerDeltaUnits(pUpdate.getUnits());
+                    break;
+                case PRICE:
+                    myTrans.setPrice(pUpdate.getPrice());
+                    break;
+                case COMMISSION:
+                    myTrans.setCommission(pUpdate.getMoney());
                     break;
                 case DILUTION:
                     myTrans.setDilution(pUpdate.getDilution());
@@ -739,6 +791,9 @@ public class TransactionPanel
                     break;
                 case TAXCREDIT:
                     myTrans.setTaxCredit(pUpdate.getMoney());
+                    break;
+                case FOREIGNTAXCREDIT:
+                    myTrans.setForeignTaxCredit(pUpdate.getMoney());
                     break;
                 case NATINSURANCE:
                     myTrans.setNatInsurance(pUpdate.getMoney());

@@ -34,7 +34,7 @@ public class GordianSignatureSpec {
     private static final String SEP = "-";
 
     /**
-     * ASymKeyType.
+     * AsymKeyType.
      */
     private final GordianAsymKeyType theAsymKeyType;
 

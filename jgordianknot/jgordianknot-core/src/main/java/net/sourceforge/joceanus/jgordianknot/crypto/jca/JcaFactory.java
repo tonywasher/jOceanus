@@ -29,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.Signature;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -586,6 +587,29 @@ public final class JcaFactory
     }
 
     /**
+     * Create the BouncyCastle Signature via JCA.
+     * @param pAlgorithm the Algorithm
+     * @param postQuantum is this a postQuantum algorithm?
+     * @return the KeyPairGenerator
+     * @throws OceanusException on error
+     */
+    protected static Signature getJavaSignature(final String pAlgorithm,
+                                                final boolean postQuantum) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Return a KeyPairGenerator for the algorithm */
+            return Signature.getInstance(pAlgorithm, postQuantum
+                                                                 ? BCPQPROV
+                                                                 : BCPROV);
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException e) {
+            /* Throw the exception */
+            throw new GordianCryptoException("Failed to create Signature", e);
+        }
+    }
+
+    /**
      * Create the BouncyCastle KeyFactory via JCA.
      * @param pAlgorithm the Algorithm
      * @param postQuantum is this a postQuantum algorithm?
@@ -1063,8 +1087,14 @@ public final class JcaFactory
      * @return true/false
      */
     private static boolean validSPHINCSSignature(final GordianDigestSpec pSpec) {
-        return pSpec.getDigestType() == GordianDigestType.SHA3
-               && pSpec.getDigestLength() == GordianLength.LEN_512;
+        /* Switch on DigestType */
+        switch (pSpec.getDigestType()) {
+            case SHA2:
+            case SHA3:
+                return pSpec.getDigestLength() == GordianLength.LEN_512;
+            default:
+                return false;
+        }
     }
 
     /**
