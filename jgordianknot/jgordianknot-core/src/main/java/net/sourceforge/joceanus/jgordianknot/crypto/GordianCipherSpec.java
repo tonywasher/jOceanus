@@ -247,11 +247,22 @@ public abstract class GordianCipherSpec<T> {
          * @return true/false
          */
         public boolean validate(final boolean isAAD) {
-            return theMode != null
-                   && isAAD == isAAD()
-                   && theMode.hasPadding()
-                                           ? thePadding != null
-                                           : GordianPadding.NONE.equals(thePadding);
+            /* Reject null modes and wrong AAD modes */
+            if (theMode == null
+                || isAAD != theMode.isAAD()) {
+                return false;
+            }
+
+            /* Reject SIC for ciphers with small blockSizes */
+            if (GordianCipherMode.SIC.equals(theMode)
+                && getKeyType().isShortBlock()) {
+                return false;
+            }
+
+            /* Reject bad padding */
+            return theMode.hasPadding()
+                                        ? thePadding != null
+                                        : GordianPadding.NONE.equals(thePadding);
         }
 
         @Override

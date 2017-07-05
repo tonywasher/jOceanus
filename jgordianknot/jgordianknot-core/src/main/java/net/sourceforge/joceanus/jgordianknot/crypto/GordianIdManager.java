@@ -211,7 +211,7 @@ public class GordianIdManager {
      */
     protected GordianSymKeyType[] generateRandomSymKeyTypes(final int pCount) {
         /* Determine random symKeyTypes */
-        return getRandomTypes(theSymKeys, pCount);
+        return getRandomTypes(theKeySetSymKeys, pCount);
     }
 
     /**
@@ -342,19 +342,6 @@ public class GordianIdManager {
 
         /* Return the single digestType */
         return myDigest[0];
-    }
-
-    /**
-     * Derive set of standard DigestTypes from seed.
-     * @param pSeed the seed
-     * @param pCount the count
-     * @return the digestTypes
-     */
-    protected GordianDigestType[] deriveDigestTypesFromSeed(final int pSeed,
-                                                            final int pCount) {
-        GordianDigestType[] myResult = Arrays.copyOf(theDigests, pCount);
-        getSeededTypes(theDigests, myResult, pSeed);
-        return myResult;
     }
 
     /**

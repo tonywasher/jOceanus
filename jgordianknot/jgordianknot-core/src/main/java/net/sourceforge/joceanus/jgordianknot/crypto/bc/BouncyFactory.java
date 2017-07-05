@@ -54,25 +54,35 @@ import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.engines.ARIAEngine;
+import org.bouncycastle.crypto.engines.BlowfishEngine;
+import org.bouncycastle.crypto.engines.CAST5Engine;
 import org.bouncycastle.crypto.engines.CAST6Engine;
 import org.bouncycastle.crypto.engines.CamelliaEngine;
 import org.bouncycastle.crypto.engines.ChaCha7539Engine;
 import org.bouncycastle.crypto.engines.ChaChaEngine;
+import org.bouncycastle.crypto.engines.DESedeEngine;
 import org.bouncycastle.crypto.engines.Grain128Engine;
 import org.bouncycastle.crypto.engines.HC128Engine;
 import org.bouncycastle.crypto.engines.HC256Engine;
+import org.bouncycastle.crypto.engines.IDEAEngine;
 import org.bouncycastle.crypto.engines.ISAACEngine;
 import org.bouncycastle.crypto.engines.NoekeonEngine;
+import org.bouncycastle.crypto.engines.RC2Engine;
 import org.bouncycastle.crypto.engines.RC4Engine;
+import org.bouncycastle.crypto.engines.RC532Engine;
 import org.bouncycastle.crypto.engines.RC6Engine;
 import org.bouncycastle.crypto.engines.SEEDEngine;
 import org.bouncycastle.crypto.engines.SM4Engine;
 import org.bouncycastle.crypto.engines.Salsa20Engine;
 import org.bouncycastle.crypto.engines.SerpentEngine;
+import org.bouncycastle.crypto.engines.SkipjackEngine;
+import org.bouncycastle.crypto.engines.TEAEngine;
 import org.bouncycastle.crypto.engines.ThreefishEngine;
 import org.bouncycastle.crypto.engines.TwofishEngine;
 import org.bouncycastle.crypto.engines.VMPCEngine;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
+import org.bouncycastle.crypto.engines.XTEAEngine;
+import org.bouncycastle.crypto.generators.DESedeKeyGenerator;
 import org.bouncycastle.crypto.generators.Poly1305KeyGenerator;
 import org.bouncycastle.crypto.macs.CMac;
 import org.bouncycastle.crypto.macs.GMac;
@@ -126,6 +136,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.Bo
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.BouncyNewHopeSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.BouncyRSAKEMReceiver;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.BouncyRSAKEMSender;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyDSAPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyDSAPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyDiffieHellmanPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyDiffieHellmanPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyECPrivateKey;
@@ -138,14 +150,16 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyRainb
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyRainbowPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncySPHINCSPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncySPHINCSPublicKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyDiffieHellmanKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyECKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyElGamalKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyMcElieceKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyNewHopeKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyRSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncyRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPairGenerator.BouncySPHINCSKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDSASigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDSAValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyECSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyECValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyRSASigner;
@@ -794,6 +808,24 @@ public final class BouncyFactory
                 return new NoekeonEngine();
             case SEED:
                 return new SEEDEngine();
+            case BLOWFISH:
+                return new BlowfishEngine();
+            case SKIPJACK:
+                return new SkipjackEngine();
+            case IDEA:
+                return new IDEAEngine();
+            case TEA:
+                return new TEAEngine();
+            case XTEA:
+                return new XTEAEngine();
+            case RC2:
+                return new RC2Engine();
+            case RC5:
+                return new RC532Engine();
+            case CAST5:
+                return new CAST5Engine();
+            case DESEDE:
+                return new DESedeEngine();
             default:
                 throw new GordianDataException(getInvalidText(pKeyType));
         }
@@ -875,10 +907,13 @@ public final class BouncyFactory
      * @return the KeyGenerator
      */
     private static CipherKeyGenerator getBCKeyGenerator(final Object pKeyType) {
-        return (pKeyType instanceof GordianMacSpec)
-               && (((GordianMacSpec) pKeyType).getMacType() == GordianMacType.POLY1305)
-                                                                                        ? new Poly1305KeyGenerator()
-                                                                                        : new CipherKeyGenerator();
+        if ((pKeyType instanceof GordianMacSpec)
+            && (((GordianMacSpec) pKeyType).getMacType() == GordianMacType.POLY1305)) {
+            return new Poly1305KeyGenerator();
+        }
+        return GordianSymKeyType.DESEDE.equals(pKeyType)
+                                                         ? new DESedeKeyGenerator()
+                                                         : new CipherKeyGenerator();
     }
 
     /**
@@ -892,9 +927,10 @@ public final class BouncyFactory
             case RSA:
                 return new BouncyRSAKeyPairGenerator(this, pKeySpec);
             case EC:
+            case SM2:
                 return new BouncyECKeyPairGenerator(this, pKeySpec);
-            case ELGAMAL:
-                return new BouncyElGamalKeyPairGenerator(this, pKeySpec);
+            case DSA:
+                return new BouncyDSAKeyPairGenerator(this, pKeySpec);
             case DIFFIEHELLMAN:
                 return new BouncyDiffieHellmanKeyPairGenerator(this, pKeySpec);
             case SPHINCS:
@@ -923,7 +959,10 @@ public final class BouncyFactory
             case RSA:
                 return new BouncyRSASigner(this, (BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case EC:
+            case SM2:
                 return new BouncyECSigner(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+            case DSA:
+                return new BouncyDSASigner(this, (BouncyDSAPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case SPHINCS:
                 return new BouncySPHINCSSigner(this, (BouncySPHINCSPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case RAINBOW:
@@ -946,7 +985,10 @@ public final class BouncyFactory
             case RSA:
                 return new BouncyRSAValidator(this, (BouncyRSAPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case EC:
+            case SM2:
                 return new BouncyECValidator(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
+            case DSA:
+                return new BouncyDSAValidator(this, (BouncyDSAPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case SPHINCS:
                 return new BouncySPHINCSValidator(this, (BouncySPHINCSPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case RAINBOW:
@@ -969,6 +1011,7 @@ public final class BouncyFactory
             case RSA:
                 return new BouncyRSAKEMSender(this, (BouncyRSAPublicKey) pKeyPair.getPublicKey(), pDigestSpec);
             case EC:
+            case SM2:
                 return new BouncyECIESSender(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pDigestSpec);
             case DIFFIEHELLMAN:
                 return new BouncyDiffieHellmanSender(this, (BouncyDiffieHellmanPublicKey) pKeyPair.getPublicKey(), pDigestSpec);
@@ -994,6 +1037,7 @@ public final class BouncyFactory
             case RSA:
                 return new BouncyRSAKEMReceiver(this, (BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), pDigestSpec, pCipherText);
             case EC:
+            case SM2:
                 return new BouncyECIESReceiver(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pDigestSpec, pCipherText);
             case DIFFIEHELLMAN:
                 return new BouncyDiffieHellmanReceiver(this, (BouncyDiffieHellmanPrivateKey) pKeyPair.getPrivateKey(), pDigestSpec, pCipherText);

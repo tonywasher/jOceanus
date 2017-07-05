@@ -100,11 +100,12 @@ public final class JcaCipher<T>
      */
     private int getIVLength() {
         T myType = getKeyType();
-        return myType instanceof GordianStreamKeyType
-                                                      ? ((GordianStreamKeyType) myType).getIVLength()
-                                                      : needsIV()
-                                                                  ? theCipher.getBlockSize()
-                                                                  : 0;
+        if (myType instanceof GordianStreamKeyType) {
+            return ((GordianStreamKeyType) myType).getIVLength();
+        }
+        return needsIV()
+                         ? theCipher.getBlockSize()
+                         : 0;
     }
 
     @Override

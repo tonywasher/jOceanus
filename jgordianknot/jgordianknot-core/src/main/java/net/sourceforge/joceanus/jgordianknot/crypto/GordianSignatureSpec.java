@@ -102,6 +102,16 @@ public class GordianSignatureSpec {
     }
 
     /**
+     * Create SM2Spec.
+     * @param pSignatureType the signatureType
+     * @param pDigestSpec the digestSpec
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec sm2() {
+        return new GordianSignatureSpec(GordianAsymKeyType.SM2, GordianDigestSpec.sm3());
+    }
+
+    /**
      * Create SPHINCSSpec.
      * @param pDigestSpec the digestSpec
      * @return the SignatureSpec

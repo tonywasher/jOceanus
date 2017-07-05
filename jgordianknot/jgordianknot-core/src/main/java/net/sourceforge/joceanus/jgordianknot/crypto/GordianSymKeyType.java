@@ -79,7 +79,57 @@ public enum GordianSymKeyType {
     /**
      * SEED.
      */
-    SEED(128);
+    SEED(128),
+
+    /**
+     * SkipJack.
+     */
+    SKIPJACK(64),
+
+    /**
+     * IDEA.
+     */
+    IDEA(64),
+
+    /**
+     * TEA.
+     */
+    TEA(64),
+
+    /**
+     * XTEA.
+     */
+    XTEA(64),
+
+    /**
+     * DESede.
+     */
+    DESEDE(64),
+
+    /**
+     * DESede.
+     */
+    CAST5(64),
+
+    /**
+     * RC2.
+     */
+    RC2(64),
+
+    /**
+     * RC5.
+     */
+    RC5(64),
+
+    /**
+     * Blowfish.
+     */
+    BLOWFISH(64);
+
+    /**
+     * The Standard IV length.
+     */
+    private static final int STDIVLEN = 128;
 
     /**
      * The IV Length.
@@ -124,7 +174,15 @@ public enum GordianSymKeyType {
      * @return true/false
      */
     public boolean isStdBlock() {
-        return !this.equals(THREEFISH);
+        return theIVLen == STDIVLEN;
+    }
+
+    /**
+     * Does this KeyType use a short block size?
+     * @return true/false
+     */
+    public boolean isShortBlock() {
+        return theIVLen < STDIVLEN;
     }
 
     /**
@@ -139,6 +197,13 @@ public enum GordianSymKeyType {
             case SM4:
             case SEED:
             case NOEKEON:
+            case CAST5:
+            case RC5:
+            case SKIPJACK:
+            case TEA:
+            case XTEA:
+            case IDEA:
+            case DESEDE:
                 return pRestricted;
             default:
                 return true;

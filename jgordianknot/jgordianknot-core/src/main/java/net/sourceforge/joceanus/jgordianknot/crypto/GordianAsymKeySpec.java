@@ -39,14 +39,9 @@ public class GordianAsymKeySpec {
     private final GordianAsymKeyType theKeyType;
 
     /**
-     * The Modulus Length.
+     * The SubKeyType.
      */
-    private final GordianModulus theLength;
-
-    /**
-     * The Curve.
-     */
-    private final GordianElliptic theCurve;
+    private final Enum<?> theSubKeyType;
 
     /**
      * The String name.
@@ -56,31 +51,12 @@ public class GordianAsymKeySpec {
     /**
      * Constructor.
      * @param pKeyType the keyType
+     * @param pSubKeyType the subKeyType
      */
-    protected GordianAsymKeySpec(final GordianAsymKeyType pKeyType) {
-        this(pKeyType, null);
-    }
-
-    /**
-     * Constructor.
-     * @param pKeyType the keyType
-     * @param pLength the length
-     */
-    protected GordianAsymKeySpec(final GordianAsymKeyType pKeyType,
-                                 final GordianModulus pLength) {
+    private GordianAsymKeySpec(final GordianAsymKeyType pKeyType,
+                               final Enum<?> pSubKeyType) {
         theKeyType = pKeyType;
-        theLength = pLength;
-        theCurve = null;
-    }
-
-    /**
-     * Constructor.
-     * @param pCurve the curve
-     */
-    protected GordianAsymKeySpec(final GordianElliptic pCurve) {
-        theKeyType = GordianAsymKeyType.EC;
-        theLength = null;
-        theCurve = pCurve;
+        theSubKeyType = pSubKeyType;
     }
 
     /**
@@ -98,7 +74,25 @@ public class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec ec(final GordianElliptic pCurve) {
-        return new GordianAsymKeySpec(pCurve);
+        return new GordianAsymKeySpec(GordianAsymKeyType.EC, pCurve);
+    }
+
+    /**
+     * Create SM2Key.
+     * @param pCurve the curve
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec sm2(final GordianElliptic pCurve) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.SM2, pCurve);
+    }
+
+    /**
+     * Create DSAKey.
+     * @param pModulus the modulus
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec dsa(final GordianModulus pModulus) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.DSA, pModulus);
     }
 
     /**
@@ -112,10 +106,11 @@ public class GordianAsymKeySpec {
 
     /**
      * Create SPHINCSKey.
+     * @param pKeyType the SPHINCS keyType
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec sphincs() {
-        return new GordianAsymKeySpec(GordianAsymKeyType.SPHINCS);
+    public static GordianAsymKeySpec sphincs(final GordianSPHINCSKeyType pKeyType) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.SPHINCS, pKeyType);
     }
 
     /**
@@ -123,7 +118,7 @@ public class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec rainbow() {
-        return new GordianAsymKeySpec(GordianAsymKeyType.RAINBOW);
+        return new GordianAsymKeySpec(GordianAsymKeyType.RAINBOW, null);
     }
 
     /**
@@ -131,7 +126,7 @@ public class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec newHope() {
-        return new GordianAsymKeySpec(GordianAsymKeyType.NEWHOPE);
+        return new GordianAsymKeySpec(GordianAsymKeyType.NEWHOPE, null);
     }
 
     /**
@@ -143,19 +138,41 @@ public class GordianAsymKeySpec {
     }
 
     /**
+     * Obtain the subKeyType.
+     * @return the keyType.
+     */
+    public Object getSubKeyType() {
+        return theSubKeyType;
+    }
+
+    /**
      * Obtain the modulus length.
      * @return the length.
      */
     public GordianModulus getModulus() {
-        return theLength;
+        return theSubKeyType instanceof GordianModulus
+                                                       ? (GordianModulus) theSubKeyType
+                                                       : null;
     }
 
     /**
-     * Obtain the curve.
+     * Obtain the elliptic curve.
      * @return the curve.
      */
-    public GordianElliptic getCurve() {
-        return theCurve;
+    public GordianElliptic getElliptic() {
+        return theSubKeyType instanceof GordianElliptic
+                                                        ? (GordianElliptic) theSubKeyType
+                                                        : null;
+    }
+
+    /**
+     * Obtain the SPHINCS keyType.
+     * @return the keyType.
+     */
+    public GordianSPHINCSKeyType getSPHINCSType() {
+        return theSubKeyType instanceof GordianSPHINCSKeyType
+                                                              ? (GordianSPHINCSKeyType) theSubKeyType
+                                                              : null;
     }
 
     @Override
@@ -164,10 +181,8 @@ public class GordianAsymKeySpec {
         if (theName == null) {
             /* Load the name */
             theName = theKeyType.toString();
-            if (theLength != null) {
-                theName += SEP + theLength.toString();
-            } else if (theCurve != null) {
-                theName += SEP + theCurve.toString();
+            if (theSubKeyType != null) {
+                theName += SEP + theSubKeyType.toString();
             }
         }
 
@@ -199,17 +214,14 @@ public class GordianAsymKeySpec {
         }
 
         /* Match subfields */
-        return theLength == myThat.getModulus()
-               && theCurve == myThat.getCurve();
+        return theSubKeyType == myThat.theSubKeyType;
     }
 
     @Override
     public int hashCode() {
-        int hashCode = theKeyType.ordinal() + 1 << TethysDataConverter.BYTE_SHIFT;
-        if (theLength != null) {
-            hashCode += theLength.ordinal() + 1;
-        } else if (theCurve != null) {
-            hashCode += theCurve.ordinal() + 1;
+        int hashCode = theKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
+        if (theSubKeyType != null) {
+            hashCode += theSubKeyType.hashCode();
         }
         return hashCode;
     }

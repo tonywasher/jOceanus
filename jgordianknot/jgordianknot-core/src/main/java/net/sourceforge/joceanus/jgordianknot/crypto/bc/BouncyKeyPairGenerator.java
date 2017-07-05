@@ -30,13 +30,12 @@ import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.spec.DHParameterSpec;
 
 import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
-import org.bouncycastle.asn1.oiw.ElGamalParameter;
-import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.DHParameter;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -44,6 +43,7 @@ import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.bouncycastle.asn1.sec.ECPrivateKey;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.DSAParameter;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x9.ECNamedCurveTable;
 import org.bouncycastle.asn1.x9.X962Parameters;
@@ -51,25 +51,29 @@ import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.asn1.x9.X9ECPoint;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.KeyGenerationParameters;
+import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA3Digest;
+import org.bouncycastle.crypto.digests.SHA512tDigest;
 import org.bouncycastle.crypto.generators.DHKeyPairGenerator;
+import org.bouncycastle.crypto.generators.DSAKeyPairGenerator;
+import org.bouncycastle.crypto.generators.DSAParametersGenerator;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
-import org.bouncycastle.crypto.generators.ElGamalKeyPairGenerator;
-import org.bouncycastle.crypto.generators.ElGamalParametersGenerator;
 import org.bouncycastle.crypto.generators.RSAKeyPairGenerator;
 import org.bouncycastle.crypto.params.DHKeyGenerationParameters;
 import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.crypto.params.DHPrivateKeyParameters;
 import org.bouncycastle.crypto.params.DHPublicKeyParameters;
+import org.bouncycastle.crypto.params.DSAKeyGenerationParameters;
+import org.bouncycastle.crypto.params.DSAParameterGenerationParameters;
+import org.bouncycastle.crypto.params.DSAParameters;
+import org.bouncycastle.crypto.params.DSAPrivateKeyParameters;
+import org.bouncycastle.crypto.params.DSAPublicKeyParameters;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
-import org.bouncycastle.crypto.params.ElGamalKeyGenerationParameters;
-import org.bouncycastle.crypto.params.ElGamalParameters;
-import org.bouncycastle.crypto.params.ElGamalPrivateKeyParameters;
-import org.bouncycastle.crypto.params.ElGamalPublicKeyParameters;
 import org.bouncycastle.crypto.params.RSAKeyGenerationParameters;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
@@ -115,12 +119,13 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyDSAPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyDSAPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyDiffieHellmanPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyDiffieHellmanPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyECPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyECPublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyElGamalPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyElGamalPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyMcEliecePrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyMcEliecePublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyNewHopePrivateKey;
@@ -287,7 +292,7 @@ public abstract class BouncyKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Create the generator */
-            theCurve = pKeySpec.getCurve();
+            theCurve = pKeySpec.getElliptic();
             theGenerator = new ECKeyPairGenerator();
 
             /* Lookup the parameters (take care with SM2 curves) */
@@ -371,50 +376,53 @@ public abstract class BouncyKeyPairGenerator
     }
 
     /**
-     * BouncyCastle ElGamal KeyPair generator.
+     * BouncyCastle DSA KeyPair generator.
      */
-    public static class BouncyElGamalKeyPairGenerator
+    public static class BouncyDSAKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
          * Generator.
          */
-        private final ElGamalKeyPairGenerator theGenerator;
+        private final DSAKeyPairGenerator theGenerator;
 
         /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        protected BouncyElGamalKeyPairGenerator(final BouncyFactory pFactory,
-                                                final GordianAsymKeySpec pKeySpec) {
+        protected BouncyDSAKeyPairGenerator(final BouncyFactory pFactory,
+                                            final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Create the parameter generator */
-            ElGamalParametersGenerator myParmGenerator = new ElGamalParametersGenerator();
-            myParmGenerator.init(pKeySpec.getModulus().getModulus(), PRIME_CERTAINTY, getRandom());
+            GordianModulus myModulus = pKeySpec.getModulus();
+            DSAParameterGenerationParameters myGenParms = new DSAParameterGenerationParameters(myModulus.getModulus(),
+                    myModulus.getMinDSAHashLength().getLength(), PRIME_CERTAINTY, getRandom());
+            DSAParametersGenerator myParmGenerator = new DSAParametersGenerator(new SHA256Digest());
+            myParmGenerator.init(myGenParms);
 
             /* Create and initialise the generator */
-            theGenerator = new ElGamalKeyPairGenerator();
-            ElGamalKeyGenerationParameters myParams = new ElGamalKeyGenerationParameters(getRandom(), myParmGenerator.generateParameters());
+            theGenerator = new DSAKeyPairGenerator();
+            DSAKeyGenerationParameters myParams = new DSAKeyGenerationParameters(getRandom(), myParmGenerator.generateParameters());
             theGenerator.init(myParams);
         }
 
         @Override
         public BouncyKeyPair generateKeyPair() {
             AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            BouncyElGamalPublicKey myPublic = new BouncyElGamalPublicKey(getKeySpec(), ElGamalPublicKeyParameters.class.cast(myPair.getPublic()));
-            BouncyElGamalPrivateKey myPrivate = new BouncyElGamalPrivateKey(getKeySpec(), ElGamalPrivateKeyParameters.class.cast(myPair.getPrivate()));
+            BouncyDSAPublicKey myPublic = new BouncyDSAPublicKey(getKeySpec(), DSAPublicKeyParameters.class.cast(myPair.getPublic()));
+            BouncyDSAPrivateKey myPrivate = new BouncyDSAPrivateKey(getKeySpec(), DSAPrivateKeyParameters.class.cast(myPair.getPrivate()));
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianCryptoException {
             try {
-                BouncyElGamalPrivateKey myPrivateKey = BouncyElGamalPrivateKey.class.cast(getPrivateKey(pKeyPair));
-                ElGamalPrivateKeyParameters myKey = myPrivateKey.getPrivateKey();
-                ElGamalParameters myParms = myKey.getParameters();
-                PrivateKeyInfo myInfo = new PrivateKeyInfo(new AlgorithmIdentifier(OIWObjectIdentifiers.elGamalAlgorithm, new ElGamalParameter(myParms.getP(), myParms.getG())
+                BouncyDSAPrivateKey myPrivateKey = BouncyDSAPrivateKey.class.cast(getPrivateKey(pKeyPair));
+                DSAPrivateKeyParameters myKey = myPrivateKey.getPrivateKey();
+                DSAParameters myParms = myKey.getParameters();
+                PrivateKeyInfo myInfo = new PrivateKeyInfo(new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa, new DSAParameter(myParms.getP(), myParms.getQ(), myParms.getG())
                         .toASN1Primitive()), new ASN1Integer(myKey.getX()));
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
             } catch (IOException e) {
@@ -427,11 +435,11 @@ public abstract class BouncyKeyPairGenerator
                                               final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                ElGamalParameter myParams = ElGamalParameter.getInstance(myInfo.getPrivateKeyAlgorithm().getParameters());
+                DSAParameter myParams = DSAParameter.getInstance(myInfo.getPrivateKeyAlgorithm().getParameters());
                 ASN1Integer myX = ASN1Integer.getInstance(myInfo.parsePrivateKey());
-                ElGamalParameters myParms = new ElGamalParameters(myParams.getP(), myParams.getG());
-                BouncyElGamalPrivateKey myPrivate = new BouncyElGamalPrivateKey(getKeySpec(), new ElGamalPrivateKeyParameters(myX.getValue(), myParms));
-                BouncyElGamalPublicKey myPublic = derivePublicKey(pPublicKey);
+                DSAParameters myParms = new DSAParameters(myParams.getP(), myParams.getQ(), myParams.getG());
+                BouncyDSAPrivateKey myPrivate = new BouncyDSAPrivateKey(getKeySpec(), new DSAPrivateKeyParameters(myX.getValue(), myParms));
+                BouncyDSAPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -440,17 +448,17 @@ public abstract class BouncyKeyPairGenerator
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            BouncyElGamalPublicKey myPublicKey = BouncyElGamalPublicKey.class.cast(getPublicKey(pKeyPair));
-            ElGamalPublicKeyParameters myKey = myPublicKey.getPublicKey();
-            ElGamalParameters myParms = myKey.getParameters();
-            byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(OIWObjectIdentifiers.elGamalAlgorithm,
-                    new ElGamalParameter(myParms.getP(), myParms.getG()).toASN1Primitive()), new ASN1Integer(myKey.getY()));
+            BouncyDSAPublicKey myPublicKey = BouncyDSAPublicKey.class.cast(getPublicKey(pKeyPair));
+            DSAPublicKeyParameters myKey = myPublicKey.getPublicKey();
+            DSAParameters myParms = myKey.getParameters();
+            byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa,
+                    new DSAParameter(myParms.getP(), myParms.getQ(), myParms.getG()).toASN1Primitive()), new ASN1Integer(myKey.getY()));
             return new X509EncodedKeySpec(myBytes);
         }
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
-            BouncyElGamalPublicKey myPublic = derivePublicKey(pEncodedKey);
+            BouncyDSAPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -460,13 +468,13 @@ public abstract class BouncyKeyPairGenerator
          * @return the public key
          * @throws OceanusException on error
          */
-        private BouncyElGamalPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        private BouncyDSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
                 SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                ElGamalParameter myParams = ElGamalParameter.getInstance(myInfo.getAlgorithm().getParameters());
+                DSAParameter myParams = DSAParameter.getInstance(myInfo.getAlgorithm().getParameters());
                 ASN1Integer myY = ASN1Integer.getInstance(myInfo.parsePublicKey());
-                ElGamalParameters myParms = new ElGamalParameters(myParams.getP(), myParams.getG());
-                return new BouncyElGamalPublicKey(getKeySpec(), new ElGamalPublicKeyParameters(myY.getValue(), myParms));
+                DSAParameters myParms = new DSAParameters(myParams.getP(), myParams.getQ(), myParams.getG());
+                return new BouncyDSAPublicKey(getKeySpec(), new DSAPublicKeyParameters(myY.getValue(), myParms));
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -595,12 +603,21 @@ public abstract class BouncyKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Determine the algorithm Id */
+            GordianSPHINCSKeyType myKeyType = pKeySpec.getSPHINCSType();
+            ASN1ObjectIdentifier myId = GordianSPHINCSKeyType.SHA3.equals(myKeyType)
+                                                                                     ? NISTObjectIdentifiers.id_sha3_256
+                                                                                     : NISTObjectIdentifiers.id_sha256;
             theAlgorithmId = new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256,
-                    new SPHINCS256KeyParams(new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_256)));
+                    new SPHINCS256KeyParams(new AlgorithmIdentifier(myId)));
+
+            /* Determine the digest */
+            Digest myDigest = GordianSPHINCSKeyType.SHA3.equals(myKeyType)
+                                                                           ? new SHA3Digest(GordianLength.LEN_256.getLength())
+                                                                           : new SHA512tDigest(GordianLength.LEN_256.getLength());
 
             /* Create and initialise the generator */
             theGenerator = new SPHINCS256KeyPairGenerator();
-            SPHINCS256KeyGenerationParameters myParams = new SPHINCS256KeyGenerationParameters(getRandom(), new SHA3Digest(GordianLength.LEN_256.getLength()));
+            SPHINCS256KeyGenerationParameters myParams = new SPHINCS256KeyGenerationParameters(getRandom(), myDigest);
             theGenerator.init(myParams);
         }
 

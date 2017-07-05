@@ -68,8 +68,10 @@ public class GordianTestAsymmetric {
                                   final GordianKeySet pKeySet) throws OceanusException {
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.rsa(GordianModulus.MOD2048));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ec(GordianElliptic.SECT571K1));
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dsa(GordianModulus.MOD2048));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dh(GordianModulus.MOD4096));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.sphincs());
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.sm2(GordianElliptic.SM2P256V1));
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.sphincs(GordianSPHINCSKeyType.SHA2));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.rainbow());
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.newHope());
     }

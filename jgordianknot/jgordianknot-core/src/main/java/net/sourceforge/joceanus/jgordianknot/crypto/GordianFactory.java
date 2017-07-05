@@ -768,14 +768,14 @@ public abstract class GordianFactory {
         }
 
         /* Only allow SM3 for SM2 signature */
-        if (GordianSignatureType.SM2.equals(mySignType)) {
+        if (GordianAsymKeyType.SM2.equals(myType)) {
             return GordianDigestType.SM3.equals(mySpec.getDigestType());
         }
 
         /* Disallow ECNR if keySize is smaller than digestSize */
         GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
         return !GordianSignatureType.NR.equals(mySignType)
-               || myKeySpec.getCurve().getKeySize() >= mySpec.getDigestLength().getLength();
+               || myKeySpec.getElliptic().getKeySize() >= mySpec.getDigestLength().getLength();
     }
 
     /**
@@ -790,6 +790,7 @@ public abstract class GordianFactory {
         switch (pKeyPair.getKeySpec().getKeyType()) {
             case RSA:
             case EC:
+            case SM2:
             case DIFFIEHELLMAN:
             case NEWHOPE:
                 return supportedDigestSpecs().test(pDigestSpec);

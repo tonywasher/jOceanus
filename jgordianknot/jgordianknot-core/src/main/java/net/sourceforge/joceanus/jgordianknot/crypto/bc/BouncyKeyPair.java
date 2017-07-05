@@ -26,10 +26,10 @@ import java.util.Arrays;
 
 import org.bouncycastle.crypto.params.DHPrivateKeyParameters;
 import org.bouncycastle.crypto.params.DHPublicKeyParameters;
+import org.bouncycastle.crypto.params.DSAPrivateKeyParameters;
+import org.bouncycastle.crypto.params.DSAPublicKeyParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
-import org.bouncycastle.crypto.params.ElGamalPrivateKeyParameters;
-import org.bouncycastle.crypto.params.ElGamalPublicKeyParameters;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
 import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2PrivateKeyParameters;
@@ -430,22 +430,22 @@ public class BouncyKeyPair
     }
 
     /**
-     * Bouncy ElGamal PublicKey.
+     * Bouncy DSA PublicKey.
      */
-    public static class BouncyElGamalPublicKey
+    public static class BouncyDSAPublicKey
             extends BouncyPublicKey {
         /**
          * Public Key details.
          */
-        private final ElGamalPublicKeyParameters theKey;
+        private final DSAPublicKeyParameters theKey;
 
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected BouncyElGamalPublicKey(final GordianAsymKeySpec pKeySpec,
-                                         final ElGamalPublicKeyParameters pPublicKey) {
+        protected BouncyDSAPublicKey(final GordianAsymKeySpec pKeySpec,
+                                     final DSAPublicKeyParameters pPublicKey) {
             super(pKeySpec);
             theKey = pPublicKey;
         }
@@ -454,7 +454,7 @@ public class BouncyKeyPair
          * Obtain the public key.
          * @return the key
          */
-        protected ElGamalPublicKeyParameters getPublicKey() {
+        protected DSAPublicKeyParameters getPublicKey() {
             return theKey;
         }
 
@@ -469,12 +469,12 @@ public class BouncyKeyPair
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyElGamalPublicKey)) {
+            if (!(pThat instanceof BouncyDSAPublicKey)) {
                 return false;
             }
 
             /* Access the target field */
-            BouncyElGamalPublicKey myThat = (BouncyElGamalPublicKey) pThat;
+            BouncyDSAPublicKey myThat = (BouncyDSAPublicKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -492,8 +492,8 @@ public class BouncyKeyPair
          * @param pPrivate the private key
          * @return true/false
          */
-        public boolean validPrivate(final BouncyElGamalPrivateKey pPrivate) {
-            ElGamalPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
+        public boolean validPrivate(final BouncyDSAPrivateKey pPrivate) {
+            DSAPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
             return theKey.getParameters().equals(myPrivate.getParameters());
         }
 
@@ -503,30 +503,30 @@ public class BouncyKeyPair
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final ElGamalPublicKeyParameters pFirst,
-                                           final ElGamalPublicKeyParameters pSecond) {
+        private static boolean compareKeys(final DSAPublicKeyParameters pFirst,
+                                           final DSAPublicKeyParameters pSecond) {
             return pFirst.getY().equals(pSecond.getY())
                    && pFirst.getParameters().equals(pSecond.getParameters());
         }
     }
 
     /**
-     * Bouncy ElGamal PrivateKey.
+     * Bouncy DSA PrivateKey.
      */
-    public static class BouncyElGamalPrivateKey
+    public static class BouncyDSAPrivateKey
             extends BouncyPrivateKey {
         /**
          * Private Key details.
          */
-        private final ElGamalPrivateKeyParameters theKey;
+        private final DSAPrivateKeyParameters theKey;
 
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected BouncyElGamalPrivateKey(final GordianAsymKeySpec pKeySpec,
-                                          final ElGamalPrivateKeyParameters pPrivateKey) {
+        protected BouncyDSAPrivateKey(final GordianAsymKeySpec pKeySpec,
+                                      final DSAPrivateKeyParameters pPrivateKey) {
             super(pKeySpec);
             theKey = pPrivateKey;
         }
@@ -535,7 +535,7 @@ public class BouncyKeyPair
          * Obtain the private key.
          * @return the key
          */
-        protected ElGamalPrivateKeyParameters getPrivateKey() {
+        protected DSAPrivateKeyParameters getPrivateKey() {
             return theKey;
         }
 
@@ -550,12 +550,12 @@ public class BouncyKeyPair
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyElGamalPrivateKey)) {
+            if (!(pThat instanceof BouncyDSAPrivateKey)) {
                 return false;
             }
 
             /* Access the target field */
-            BouncyElGamalPrivateKey myThat = (BouncyElGamalPrivateKey) pThat;
+            BouncyDSAPrivateKey myThat = (BouncyDSAPrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -574,8 +574,8 @@ public class BouncyKeyPair
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final ElGamalPrivateKeyParameters pFirst,
-                                           final ElGamalPrivateKeyParameters pSecond) {
+        private static boolean compareKeys(final DSAPrivateKeyParameters pFirst,
+                                           final DSAPrivateKeyParameters pSecond) {
             return pFirst.getX().equals(pSecond.getX())
                    && pFirst.getParameters().equals(pSecond.getParameters());
         }

@@ -28,6 +28,8 @@ import java.security.Signature;
 import java.security.SignatureException;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianConsumer;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
@@ -70,6 +72,16 @@ public abstract class JcaSignature
      * The ECDDSA Signature.
      */
     private static final String EC_DDSA_ALGOBASE = "withECDDSA";
+
+    /**
+     * The DSA Signature.
+     */
+    private static final String DSA_ALGOBASE = "withDSA";
+
+    /**
+     * The DDSA Signature.
+     */
+    private static final String DDSA_ALGOBASE = "withDDSA";
 
     /**
      * The ECNR Signature.
@@ -160,7 +172,7 @@ public abstract class JcaSignature
             /* Create the PSSParameterSpec */
             try {
                 String myDigest = JcaDigest.getSignAlgorithm(pSignatureSpec.getDigestSpec());
-                setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
+                setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pPrivateKey.getKeySpec(), pSignatureSpec), false));
 
                 /* Initialise and set the signer */
                 getSigner().initSign(pPrivateKey.getPrivateKey(), pRandom);
@@ -199,7 +211,7 @@ public abstract class JcaSignature
             /* Create the PSSParameterSpec */
             try {
                 String myDigest = JcaDigest.getSignAlgorithm(pSignatureSpec.getDigestSpec());
-                setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
+                setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pPublicKey.getKeySpec(), pSignatureSpec), false));
 
                 /* Initialise and set the signer */
                 getSigner().initVerify(pPublicKey.getPublicKey());
@@ -223,10 +235,21 @@ public abstract class JcaSignature
 
     /**
      * Obtain Signer base.
+     * @param pKeySpec the keySpec
      * @param pSignatureSpec the signatureSpec
      * @return the base
      */
-    private static String getSignatureBase(final GordianSignatureSpec pSignatureSpec) {
+    private static String getSignatureBase(final GordianAsymKeySpec pKeySpec,
+                                           final GordianSignatureSpec pSignatureSpec) {
+        /* Handle SM2 explicitly */
+        if (GordianAsymKeyType.SM2.equals(pKeySpec.getKeyType())) {
+            return EC_SM2_ALGOBASE;
+        }
+
+        /* Note if we are DSA */
+        boolean isDSA = GordianAsymKeyType.DSA.equals(pKeySpec.getKeyType());
+
+        /* Switch on signature type */
         switch (pSignatureSpec.getSignatureType()) {
             case PSS:
                 return RSA_PSS_ALGOBASE;
@@ -235,22 +258,24 @@ public abstract class JcaSignature
             case ISO9796D2:
                 return RSA_ISO9796D2_ALGOBASE;
             case DSA:
-                return EC_DSA_ALGOBASE;
+                return isDSA
+                             ? DSA_ALGOBASE
+                             : EC_DSA_ALGOBASE;
             case DDSA:
-                return EC_DDSA_ALGOBASE;
+                return isDSA
+                             ? DDSA_ALGOBASE
+                             : EC_DDSA_ALGOBASE;
             case NR:
                 return EC_NR_ALGOBASE;
-            case SM2:
-                return EC_SM2_ALGOBASE;
             default:
                 return null;
         }
     }
 
     /**
-     * EC signer.
+     * DSA signer.
      */
-    public static class JcaECSigner
+    public static class JcaDSASigner
             extends JcaSignature
             implements GordianSigner {
         /**
@@ -260,13 +285,13 @@ public abstract class JcaSignature
          * @param pRandom the secure random
          * @throws OceanusException on error
          */
-        protected JcaECSigner(final JcaPrivateKey pPrivateKey,
-                              final GordianSignatureSpec pSignatureSpec,
-                              final SecureRandom pRandom) throws OceanusException {
+        protected JcaDSASigner(final JcaPrivateKey pPrivateKey,
+                               final GordianSignatureSpec pSignatureSpec,
+                               final SecureRandom pRandom) throws OceanusException {
             /* Create the Signer */
             try {
                 String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
-                setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
+                setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pPrivateKey.getKeySpec(), pSignatureSpec), false));
 
                 /* Initialise and set the signer */
                 getSigner().initSign(pPrivateKey.getPrivateKey(), pRandom);
@@ -289,9 +314,9 @@ public abstract class JcaSignature
     }
 
     /**
-     * EC Validator.
+     * DSA Validator.
      */
-    public static class JcaECValidator
+    public static class JcaDSAValidator
             extends JcaSignature
             implements GordianValidator {
         /**
@@ -300,12 +325,12 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @throws OceanusException on error
          */
-        protected JcaECValidator(final JcaPublicKey pPublicKey,
-                                 final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        protected JcaDSAValidator(final JcaPublicKey pPublicKey,
+                                  final GordianSignatureSpec pSignatureSpec) throws OceanusException {
             /* Create the PSSParameterSpec */
             try {
                 String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
-                setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
+                setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pPublicKey.getKeySpec(), pSignatureSpec), false));
 
                 /* Initialise and set the signer */
                 getSigner().initVerify(pPublicKey.getPublicKey());

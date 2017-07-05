@@ -109,6 +109,37 @@ public enum GordianModulus {
         }
     }
 
+    /**
+     * Is the modulus valid for DSA?
+     * @return true/false
+     */
+    public boolean isValidDSA() {
+        switch (this) {
+            case MOD1024:
+            case MOD2048:
+            case MOD3072:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Obtain the minimum hash length for DSA?
+     * @return the minimum length
+     */
+    public GordianLength getMinDSAHashLength() {
+        switch (this) {
+            case MOD1024:
+                return GordianLength.LEN_160;
+            case MOD2048:
+                return GordianLength.LEN_224;
+            case MOD3072:
+            default:
+                return GordianLength.LEN_256;
+        }
+    }
+
     @Override
     public String toString() {
         return name();

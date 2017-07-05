@@ -136,6 +136,11 @@ public class GordianTestAlgorithms {
     private void checkCipherModes(final GordianFactory pFactory,
                                   final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
         for (GordianCipherMode myMode : GordianCipherMode.values()) {
+            /* Ignore SIC for short block */
+            if (pKey.getKeyType().isShortBlock()
+                && GordianCipherMode.SIC.equals(myMode)) {
+                continue;
+            }
             checkCipherPadding(pFactory, pKey, myMode);
         }
     }

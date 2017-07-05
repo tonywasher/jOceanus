@@ -34,17 +34,22 @@ public enum GordianAsymKeyType {
     /**
      * EllipticCurve.
      */
-    EC(GordianSignatureType.DSA, GordianSignatureType.DDSA, GordianSignatureType.NR, GordianSignatureType.SM2),
+    EC(GordianSignatureType.DSA, GordianSignatureType.DDSA, GordianSignatureType.NR),
 
     /**
-     * ElGamal.
+     * DSA.
      */
-    ELGAMAL(),
+    DSA(GordianSignatureType.DSA, GordianSignatureType.DDSA),
 
     /**
      * DiffieHellman.
      */
     DIFFIEHELLMAN(),
+
+    /**
+     * SM2.
+     */
+    SM2(GordianSignatureType.NATIVE),
 
     /**
      * SPHINCS.

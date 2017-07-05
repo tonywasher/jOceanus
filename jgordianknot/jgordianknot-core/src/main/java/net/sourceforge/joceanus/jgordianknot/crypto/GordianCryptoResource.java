@@ -189,6 +189,51 @@ public enum GordianCryptoResource implements TethysResourceId {
     SYMKEY_SM4("symKey.SM4"),
 
     /**
+     * SymKey RC2.
+     */
+    SYMKEY_RC2("symKey.RC2"),
+
+    /**
+     * SymKey RC5.
+     */
+    SYMKEY_RC5("symKey.RC5"),
+
+    /**
+     * SymKey CAST5.
+     */
+    SYMKEY_CAST5("symKey.CAST5"),
+
+    /**
+     * SymKey IDEA.
+     */
+    SYMKEY_IDEA("symKey.IDEA"),
+
+    /**
+     * SymKey TEA.
+     */
+    SYMKEY_TEA("symKey.TEA"),
+
+    /**
+     * SymKey XTEA.
+     */
+    SYMKEY_XTEA("symKey.XTEA"),
+
+    /**
+     * SymKey Blowfish.
+     */
+    SYMKEY_BLOWFISH("symKey.BlowFish"),
+
+    /**
+     * SymKey SkipJack.
+     */
+    SYMKEY_SKIPJACK("symKey.Skipjack"),
+
+    /**
+     * SymKey DESede.
+     */
+    SYMKEY_DESEDE("symKey.DESede"),
+
+    /**
      * StreamKey XSALSA20.
      */
     STREAMKEY_XSALSA20("streamKey.XSALSA20"),
@@ -398,6 +443,15 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianSymKeyType.NOEKEON, SYMKEY_NOEKEON);
         myMap.put(GordianSymKeyType.SEED, SYMKEY_SEED);
         myMap.put(GordianSymKeyType.SM4, SYMKEY_SM4);
+        myMap.put(GordianSymKeyType.RC2, SYMKEY_RC2);
+        myMap.put(GordianSymKeyType.RC5, SYMKEY_RC5);
+        myMap.put(GordianSymKeyType.CAST5, SYMKEY_CAST5);
+        myMap.put(GordianSymKeyType.TEA, SYMKEY_TEA);
+        myMap.put(GordianSymKeyType.XTEA, SYMKEY_XTEA);
+        myMap.put(GordianSymKeyType.IDEA, SYMKEY_IDEA);
+        myMap.put(GordianSymKeyType.SKIPJACK, SYMKEY_SKIPJACK);
+        myMap.put(GordianSymKeyType.BLOWFISH, SYMKEY_BLOWFISH);
+        myMap.put(GordianSymKeyType.DESEDE, SYMKEY_DESEDE);
         return myMap;
     }
 

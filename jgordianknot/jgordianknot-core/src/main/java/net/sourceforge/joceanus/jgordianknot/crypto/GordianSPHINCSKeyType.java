@@ -23,41 +23,16 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 /**
- * Signature Type.
+ * SPHINCS keyTypes.
  */
-public enum GordianSignatureType {
+public enum GordianSPHINCSKeyType {
     /**
-     * Native.
+     * sha2.
      */
-    NATIVE,
+    SHA2,
 
     /**
-     * DSA.
+     * sha3.
      */
-    DSA,
-
-    /**
-     * DetDSA.
-     */
-    DDSA,
-
-    /**
-     * NR.
-     */
-    NR,
-
-    /**
-     * PSS.
-     */
-    PSS,
-
-    /**
-     * X9.31.
-     */
-    X931,
-
-    /**
-     * ISO9796d2.
-     */
-    ISO9796D2;
+    SHA3;
 }

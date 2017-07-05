@@ -59,6 +59,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianRandomSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
@@ -68,16 +69,16 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianWrapCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPublicKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDiffieHellmanKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaElGamalKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaMcElieceKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaSPHINCSKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaECSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaECValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaDSASigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaDSAValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRSASigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRSAValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRainbowSigner;
@@ -748,6 +749,15 @@ public final class JcaFactory
             case NOEKEON:
             case SM4:
             case SEED:
+            case SKIPJACK:
+            case TEA:
+            case XTEA:
+            case IDEA:
+            case RC2:
+            case RC5:
+            case CAST5:
+            case BLOWFISH:
+            case DESEDE:
                 return pKeyType.name();
             default:
                 throw new GordianDataException(getInvalidText(pKeyType));
@@ -837,9 +847,10 @@ public final class JcaFactory
             case RSA:
                 return new JcaRSAKeyPairGenerator(this, pKeySpec);
             case EC:
+            case SM2:
                 return new JcaECKeyPairGenerator(this, pKeySpec);
-            case ELGAMAL:
-                return new JcaElGamalKeyPairGenerator(this, pKeySpec);
+            case DSA:
+                return new JcaDSAKeyPairGenerator(this, pKeySpec);
             case DIFFIEHELLMAN:
                 return new JcaDiffieHellmanKeyPairGenerator(this, pKeySpec);
             case SPHINCS:
@@ -868,7 +879,9 @@ public final class JcaFactory
             case RSA:
                 return new JcaRSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case EC:
-                return new JcaECSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+            case SM2:
+            case DSA:
+                return new JcaDSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case SPHINCS:
                 return new JcaSPHINCSSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case RAINBOW:
@@ -891,7 +904,9 @@ public final class JcaFactory
             case RSA:
                 return new JcaRSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case EC:
-                return new JcaECValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
+            case SM2:
+            case DSA:
+                return new JcaDSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case SPHINCS:
                 return new JcaSPHINCSValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case RAINBOW:
@@ -1029,13 +1044,16 @@ public final class JcaFactory
                 return validRSASignature(pSpec);
             case EC:
                 return validECSignature(pSpec);
+            case SM2:
+                return true;
+            case DSA:
+                return validDSASignature(pSpec);
             case SPHINCS:
-                return validSPHINCSSignature(myDigest);
+                return validSPHINCSSignature(pKeyPair, myDigest);
             case RAINBOW:
                 return validRainbowSignature(myDigest);
             case DIFFIEHELLMAN:
             case NEWHOPE:
-            case ELGAMAL:
             case MCELIECE:
             default:
                 return false;
@@ -1082,16 +1100,44 @@ public final class JcaFactory
     }
 
     /**
-     * Check SPHINCSSignature.
+     * Check ECSignature.
      * @param pSpec the digestSpec
      * @return true/false
      */
-    private static boolean validSPHINCSSignature(final GordianDigestSpec pSpec) {
+    private static boolean validDSASignature(final GordianSignatureSpec pSpec) {
         /* Switch on DigestType */
+        GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        switch (myDigest.getDigestType()) {
+            case SHA2:
+                return myDigest.getStateLength() == null;
+            case SHA1:
+            case SHA3:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check SPHINCSSignature.
+     * @param pKeyPair the keyPair
+     * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validSPHINCSSignature(final GordianKeyPair pKeyPair,
+                                                 final GordianDigestSpec pSpec) {
+        /* Must be 512 bytes */
+        if (!GordianLength.LEN_512.equals(pSpec.getDigestLength())) {
+            return false;
+        }
+
+        /* Switch on DigestType */
+        GordianSPHINCSKeyType myType = pKeyPair.getKeySpec().getSPHINCSType();
         switch (pSpec.getDigestType()) {
             case SHA2:
+                return GordianSPHINCSKeyType.SHA2.equals(myType);
             case SHA3:
-                return pSpec.getDigestLength() == GordianLength.LEN_512;
+                return GordianSPHINCSKeyType.SHA3.equals(myType);
             default:
                 return false;
         }
