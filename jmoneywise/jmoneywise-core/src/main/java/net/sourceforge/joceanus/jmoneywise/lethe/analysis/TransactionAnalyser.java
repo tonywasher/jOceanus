@@ -757,7 +757,7 @@ public class TransactionAnalyser
             /* Determine foreign and local value */
             myRate = theHelper.getDebitExchangeRate();
             myForeignValue = myStockValue;
-            myStockValue = myStockValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
+            myStockValue = myStockValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
         }
 
         /* Allocate current profit between the two stocks */
@@ -936,7 +936,7 @@ public class TransactionAnalyser
         /* If we are foreign */
         if (isForeign) {
             /* Determine local value */
-            myValue = myValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myExchangeRate.getInverseRatio());
+            myValue = myValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myExchangeRate);
         }
 
         /* Register the transaction */
@@ -1140,7 +1140,7 @@ public class TransactionAnalyser
         /* If we are foreign */
         if (isForeign) {
             /* Determine local value */
-            myValue = myValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myXchangeRate.getInverseRatio());
+            myValue = myValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myXchangeRate);
         }
 
         /* If we are performing a capital distribution */
@@ -1418,7 +1418,7 @@ public class TransactionAnalyser
         TethysUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
         TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
         if (isForeignCredit) {
-            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate.getInverseRatio());
+            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);
         }
 
         /* Record the current/delta units */
@@ -1498,13 +1498,13 @@ public class TransactionAnalyser
         /* Handle foreign debit */
         boolean isForeignDebit = myDebitAsset.isForeignCurrency();
         if (isForeignDebit) {
-            myDebitValue = myDebitValue.convertCurrency(myCurrency, myDebitRate.getInverseRatio());
+            myDebitValue = myDebitValue.convertCurrency(myCurrency, myDebitRate);
         }
 
         /* Handle foreign credit */
         boolean isForeignCredit = myCreditAsset.isForeignCurrency();
         if (isForeignCredit) {
-            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate.getInverseRatio());
+            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);
         }
 
         /* Determine the residual cost of the old stock */
@@ -1531,7 +1531,7 @@ public class TransactionAnalyser
         myCreditUnits = myCreditAsset.getValues().getUnitsValue(SecurityAttribute.UNITS);
         TethysMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
         if (isForeignCredit) {
-            myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate.getInverseRatio());
+            myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate);
         }
 
         /* Register the transaction */
@@ -1616,13 +1616,13 @@ public class TransactionAnalyser
         /* Handle foreign debit */
         boolean isForeignDebit = myDebitAsset.isForeignCurrency();
         if (isForeignDebit) {
-            myDebitValue = myDebitValue.convertCurrency(myCurrency, myDebitRate.getInverseRatio());
+            myDebitValue = myDebitValue.convertCurrency(myCurrency, myDebitRate);
         }
 
         /* Handle foreign credit */
         boolean isForeignCredit = myCreditAsset.isForeignCurrency();
         if (isForeignCredit) {
-            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate.getInverseRatio());
+            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);
         }
 
         /* Calculate the total consideration */
@@ -1696,7 +1696,7 @@ public class TransactionAnalyser
         myCreditUnits = myCreditAsset.getValues().getUnitsValue(SecurityAttribute.UNITS);
         TethysMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
         if (isForeignCredit) {
-            myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate.getInverseRatio());
+            myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate);
         }
 
         /* Register the transaction */

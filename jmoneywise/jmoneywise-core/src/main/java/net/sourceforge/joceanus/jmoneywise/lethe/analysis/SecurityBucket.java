@@ -686,7 +686,7 @@ public final class SecurityBucket
 
         /* Calculate the value */
         TethysMoney myValue = myUnits.valueAtPrice(myPrice);
-        TethysMoney myLocalValue = myValue.convertCurrency(myCurrency, myRate.getInverseRatio());
+        TethysMoney myLocalValue = myValue.convertCurrency(myCurrency, myRate);
 
         /* Record it */
         theBaseValues.setValue(SecurityAttribute.PRICE, myPrice);
@@ -701,7 +701,7 @@ public final class SecurityBucket
 
         /* Calculate the value */
         myValue = myUnits.valueAtPrice(myPrice);
-        myLocalValue = myValue.convertCurrency(myCurrency, myRate.getInverseRatio());
+        myLocalValue = myValue.convertCurrency(myCurrency, myRate);
 
         /* Record it */
         setValue(SecurityAttribute.PRICE, myPrice);
@@ -834,7 +834,7 @@ public final class SecurityBucket
         /* Calculate the local equivalent */
         Currency myCurrency = theAnalysis.getCurrency().getCurrency();
         TethysRatio myRate = theValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
-        myValue = myValue.convertCurrency(myCurrency, myRate.getInverseRatio());
+        myValue = myValue.convertCurrency(myCurrency, myRate);
 
         /* Set the market growth */
         setValue(SecurityAttribute.MARKETGROWTH, myValue);

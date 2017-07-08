@@ -181,7 +181,7 @@ Public Function getAdjustedValueForDateAndCurrency(ByRef Context As FinanceState
 	myRate = getBaseXchgRate(Context, myCol, myRow)
 				
 	'Calculate value
-	getAdjustedValueForDateAndCurrency = Value / myRate
+	getAdjustedValueForDateAndCurrency = Value * myRate
 End Function
 
 'Get the XchgRate Index for a Date

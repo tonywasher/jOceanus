@@ -34,12 +34,16 @@ import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.spec.DHParameterSpec;
 
 import org.bouncycastle.crypto.params.DHParameters;
+import org.bouncycastle.pqc.jcajce.spec.McElieceKeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SPHINCS256KeyGenParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPrivateKey;
@@ -198,8 +202,11 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Create and initialise the generator */
+                GordianAsymKeyType myKeyType = pKeySpec.getKeyType();
                 theGenerator = JcaFactory.getJavaKeyPairGenerator(EC_ALGO, false);
-                ECGenParameterSpec myParms = new ECGenParameterSpec(pKeySpec.getElliptic().getCurveName());
+                ECGenParameterSpec myParms = new ECGenParameterSpec(GordianAsymKeyType.EC.equals(myKeyType)
+                                                                                                            ? pKeySpec.getElliptic().getCurveName()
+                                                                                                            : pKeySpec.getSM2Elliptic().getCurveName());
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -245,8 +252,9 @@ public abstract class JcaKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
+            GordianDSAKeyType myKeyType = pKeySpec.getDSAKeyType();
             theGenerator = JcaFactory.getJavaKeyPairGenerator(DSA_ALGO, false);
-            theGenerator.initialize(GordianModulus.MOD1024.getModulus(), getRandom());
+            theGenerator.initialize(myKeyType.getKeySize(), getRandom());
 
             /* Create the factory */
             setKeyFactory(JcaFactory.getJavaKeyFactory(DSA_ALGO, false));
@@ -417,9 +425,14 @@ public abstract class JcaKeyPairGenerator
     public static class JcaMcElieceKeyPairGenerator
             extends JcaKeyPairGenerator {
         /**
-         * NewHope algorithm.
+         * McEliece algorithm.
          */
-        private static final String MCELIECE_ALGO = "McEliece-CCA2";
+        private static final String MCELIECE_ALGO = "McEliece";
+
+        /**
+         * McEliece-CCA2 algorithm.
+         */
+        private static final String MCELIECECCA2_ALGO = "McEliece-CCA2";
 
         /**
          * Generator.
@@ -438,7 +451,10 @@ public abstract class JcaKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
-            theGenerator = JcaFactory.getJavaKeyPairGenerator(MCELIECE_ALGO, true);
+            GordianMcElieceKeyType myKeyType = pKeySpec.getMcElieceType();
+            theGenerator = JcaFactory.getJavaKeyPairGenerator(myKeyType.isCCA2()
+                                                                                 ? MCELIECECCA2_ALGO
+                                                                                 : MCELIECE_ALGO, true);
 
             /*
              * Note that we should create McEliece parameters and initialise using them, but that
@@ -446,7 +462,7 @@ public abstract class JcaKeyPairGenerator
              * try to generate the keyPair. Note also that obtaining PKCS8 and X509 encoding also
              * leads to NullPointer exceptions, since this is also not yet supported.
              */
-            theGenerator.initialize(GordianModulus.MOD1024.getModulus(), getRandom());
+            theGenerator.initialize(McElieceKeyGenParameterSpec.DEFAULT_M, getRandom());
 
             /* Create the factory */
             setKeyFactory(JcaFactory.getJavaKeyFactory(MCELIECE_ALGO, true));

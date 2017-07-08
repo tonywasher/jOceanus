@@ -51,6 +51,7 @@ import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.asn1.x9.X9ECPoint;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPairGenerator;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -84,6 +85,8 @@ import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.pqc.asn1.McElieceCCA2PrivateKey;
 import org.bouncycastle.pqc.asn1.McElieceCCA2PublicKey;
+import org.bouncycastle.pqc.asn1.McEliecePrivateKey;
+import org.bouncycastle.pqc.asn1.McEliecePublicKey;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 import org.bouncycastle.pqc.asn1.RainbowPrivateKey;
 import org.bouncycastle.pqc.asn1.RainbowPublicKey;
@@ -93,6 +96,11 @@ import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2KeyPairGenerator;
 import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2Parameters;
 import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2PrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2PublicKeyParameters;
+import org.bouncycastle.pqc.crypto.mceliece.McElieceKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.mceliece.McElieceKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.mceliece.McElieceParameters;
+import org.bouncycastle.pqc.crypto.mceliece.McEliecePrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.mceliece.McEliecePublicKeyParameters;
 import org.bouncycastle.pqc.crypto.newhope.NHKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.newhope.NHPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.newhope.NHPublicKeyParameters;
@@ -107,14 +115,18 @@ import org.bouncycastle.pqc.crypto.sphincs.SPHINCSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.sphincs.SPHINCSPublicKeyParameters;
 import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcElieceCCA2PrivateKey;
 import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcElieceCCA2PublicKey;
+import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcEliecePrivateKey;
+import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcEliecePublicKey;
 import org.bouncycastle.pqc.jcajce.provider.newhope.BCNHPrivateKey;
 import org.bouncycastle.pqc.jcajce.provider.newhope.BCNHPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.rainbow.BCRainbowPrivateKey;
 import org.bouncycastle.pqc.jcajce.provider.rainbow.BCRainbowPublicKey;
+import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianElliptic;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
@@ -269,7 +281,7 @@ public abstract class BouncyKeyPairGenerator
         /**
          * Curve.
          */
-        private final GordianElliptic theCurve;
+        private final String theCurve;
 
         /**
          * Generator.
@@ -292,14 +304,16 @@ public abstract class BouncyKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Create the generator */
-            theCurve = pKeySpec.getElliptic();
+            GordianAsymKeyType myKeyType = pKeySpec.getKeyType();
             theGenerator = new ECKeyPairGenerator();
+            theCurve = GordianAsymKeyType.EC.equals(myKeyType)
+                                                               ? pKeySpec.getElliptic().getCurveName()
+                                                               : pKeySpec.getSM2Elliptic().getCurveName();
 
-            /* Lookup the parameters (take care with SM2 curves) */
-            X9ECParameters x9 = ECNamedCurveTable.getByName(theCurve.getCurveName());
-            if (x9 == null) {
-                x9 = GMNamedCurves.getByName(theCurve.getCurveName());
-            }
+            /* Lookup the parameters */
+            X9ECParameters x9 = GordianAsymKeyType.EC.equals(myKeyType)
+                                                                        ? ECNamedCurveTable.getByName(theCurve)
+                                                                        : GMNamedCurves.getByName(theCurve);
 
             /* Initialise the generator */
             theDomain = new ECDomainParameters(x9.getCurve(), x9.getG(), x9.getN(), x9.getH(), x9.getSeed());
@@ -319,7 +333,7 @@ public abstract class BouncyKeyPairGenerator
         protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
             BouncyECPrivateKey myPrivateKey = BouncyECPrivateKey.class.cast(getPrivateKey(pKeyPair));
             ECPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-            X962Parameters myX962Parms = new X962Parameters(ECUtil.getNamedCurveOid(theCurve.getCurveName()));
+            X962Parameters myX962Parms = new X962Parameters(ECUtil.getNamedCurveOid(theCurve));
             BigInteger myOrder = myParms.getParameters().getCurve().getOrder();
             ECPrivateKey myKey = new ECPrivateKey(myOrder.bitLength(), myParms.getD(), myX962Parms);
             byte[] myBytes = KeyUtil.getEncodedPrivateKeyInfo(new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, myX962Parms.toASN1Primitive()),
@@ -346,7 +360,7 @@ public abstract class BouncyKeyPairGenerator
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
             BouncyECPublicKey myPublicKey = BouncyECPublicKey.class.cast(getPublicKey(pKeyPair));
             ECPublicKeyParameters myParms = myPublicKey.getPublicKey();
-            X962Parameters myX962Parms = new X962Parameters(ECUtil.getNamedCurveOid(theCurve.getCurveName()));
+            X962Parameters myX962Parms = new X962Parameters(ECUtil.getNamedCurveOid(theCurve));
             ECCurve myCurve = theDomain.getCurve();
             ASN1OctetString p = (ASN1OctetString) new X9ECPoint(myCurve.createPoint(myParms.getQ().getAffineXCoord().toBigInteger(),
                     myParms.getQ().getAffineYCoord().toBigInteger())).toASN1Primitive();
@@ -396,9 +410,9 @@ public abstract class BouncyKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Create the parameter generator */
-            GordianModulus myModulus = pKeySpec.getModulus();
-            DSAParameterGenerationParameters myGenParms = new DSAParameterGenerationParameters(myModulus.getModulus(),
-                    myModulus.getMinDSAHashLength().getLength(), PRIME_CERTAINTY, getRandom());
+            GordianDSAKeyType myKeyType = pKeySpec.getDSAKeyType();
+            DSAParameterGenerationParameters myGenParms = new DSAParameterGenerationParameters(myKeyType.getKeySize(),
+                    myKeyType.getHashSize(), PRIME_CERTAINTY, getRandom());
             DSAParametersGenerator myParmGenerator = new DSAParametersGenerator(new SHA256Digest());
             myParmGenerator.init(myGenParms);
 
@@ -781,12 +795,12 @@ public abstract class BouncyKeyPairGenerator
         /**
          * Digest String.
          */
-        private static final String MCELIECE_DIGEST = "SHA-256";
+        private static final String MCELIECE_DIGEST = McElieceCCA2KeyGenParameterSpec.SHA256;
 
         /**
          * Generator.
          */
-        private final McElieceCCA2KeyPairGenerator theGenerator;
+        private final AsymmetricCipherKeyPairGenerator theGenerator;
 
         /**
          * Constructor.
@@ -799,25 +813,43 @@ public abstract class BouncyKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
-            theGenerator = new McElieceCCA2KeyPairGenerator();
-            KeyGenerationParameters myParams = new McElieceCCA2KeyGenerationParameters(getRandom(), new McElieceCCA2Parameters(MCELIECE_DIGEST));
+            theGenerator = isCCA2()
+                                    ? new McElieceCCA2KeyPairGenerator()
+                                    : new McElieceKeyPairGenerator();
+            KeyGenerationParameters myParams = isCCA2()
+                                                        ? new McElieceCCA2KeyGenerationParameters(getRandom(), new McElieceCCA2Parameters(MCELIECE_DIGEST))
+                                                        : new McElieceKeyGenerationParameters(getRandom(), new McElieceParameters(new SHA256Digest()));
             theGenerator.init(myParams);
+        }
+
+        /**
+         * Is this a CCA2 keyType?
+         * @return true/false
+         */
+        private boolean isCCA2() {
+            return getKeySpec().getMcElieceType().isCCA2();
         }
 
         @Override
         public BouncyKeyPair generateKeyPair() {
             AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            BouncyMcEliecePublicKey myPublic = new BouncyMcEliecePublicKey(getKeySpec(), McElieceCCA2PublicKeyParameters.class.cast(myPair.getPublic()));
-            BouncyMcEliecePrivateKey myPrivate = new BouncyMcEliecePrivateKey(getKeySpec(), McElieceCCA2PrivateKeyParameters.class.cast(myPair.getPrivate()));
+            BouncyMcEliecePublicKey myPublic = new BouncyMcEliecePublicKey(getKeySpec(), myPair.getPublic());
+            BouncyMcEliecePrivateKey myPrivate = new BouncyMcEliecePrivateKey(getKeySpec(), myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
             BouncyMcEliecePrivateKey myPrivateKey = BouncyMcEliecePrivateKey.class.cast(getPrivateKey(pKeyPair));
-            McElieceCCA2PrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-            BCMcElieceCCA2PrivateKey myKey = new BCMcElieceCCA2PrivateKey(myParms);
-            return new PKCS8EncodedKeySpec(myKey.getEncoded());
+            if (isCCA2()) {
+                McElieceCCA2PrivateKeyParameters myParms = myPrivateKey.getPrivateCCA2Key();
+                BCMcElieceCCA2PrivateKey myKey = new BCMcElieceCCA2PrivateKey(myParms);
+                return new PKCS8EncodedKeySpec(myKey.getEncoded());
+            } else {
+                McEliecePrivateKeyParameters myParms = myPrivateKey.getPrivateStdKey();
+                BCMcEliecePrivateKey myKey = new BCMcEliecePrivateKey(myParms);
+                return new PKCS8EncodedKeySpec(myKey.getEncoded());
+            }
         }
 
         @Override
@@ -825,11 +857,21 @@ public abstract class BouncyKeyPairGenerator
                                               final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                McElieceCCA2PrivateKey myKey = McElieceCCA2PrivateKey.getInstance(myInfo.parsePrivateKey());
-                BouncyMcEliecePrivateKey myPrivate = new BouncyMcEliecePrivateKey(getKeySpec(),
-                        new McElieceCCA2PrivateKeyParameters(myKey.getN(), myKey.getK(), myKey.getField(), myKey.getGoppaPoly(), myKey.getP(), MCELIECE_DIGEST));
-                BouncyMcEliecePublicKey myPublic = derivePublicKey(pPublicKey);
-                return new BouncyKeyPair(myPublic, myPrivate);
+                if (isCCA2()) {
+                    McElieceCCA2PrivateKey myKey = McElieceCCA2PrivateKey.getInstance(myInfo.parsePrivateKey());
+                    BouncyMcEliecePrivateKey myPrivate = new BouncyMcEliecePrivateKey(getKeySpec(),
+                            new McElieceCCA2PrivateKeyParameters(myKey.getN(), myKey.getK(), myKey.getField(), myKey.getGoppaPoly(),
+                                    myKey.getP(), MCELIECE_DIGEST));
+                    BouncyMcEliecePublicKey myPublic = derivePublicKey(pPublicKey);
+                    return new BouncyKeyPair(myPublic, myPrivate);
+                } else {
+                    McEliecePrivateKey myKey = McEliecePrivateKey.getInstance(myInfo.parsePrivateKey());
+                    BouncyMcEliecePrivateKey myPrivate = new BouncyMcEliecePrivateKey(getKeySpec(),
+                            new McEliecePrivateKeyParameters(myKey.getN(), myKey.getK(), myKey.getField(), myKey.getGoppaPoly(),
+                                    myKey.getP1(), myKey.getP2(), myKey.getSInv()));
+                    BouncyMcEliecePublicKey myPublic = derivePublicKey(pPublicKey);
+                    return new BouncyKeyPair(myPublic, myPrivate);
+                }
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -838,9 +880,15 @@ public abstract class BouncyKeyPairGenerator
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
             BouncyMcEliecePublicKey myPublicKey = BouncyMcEliecePublicKey.class.cast(getPublicKey(pKeyPair));
-            McElieceCCA2PublicKeyParameters myParms = myPublicKey.getPublicKey();
-            BCMcElieceCCA2PublicKey myKey = new BCMcElieceCCA2PublicKey(myParms);
-            return new X509EncodedKeySpec(myKey.getEncoded());
+            if (isCCA2()) {
+                McElieceCCA2PublicKeyParameters myParms = myPublicKey.getPublicCCA2Key();
+                BCMcElieceCCA2PublicKey myKey = new BCMcElieceCCA2PublicKey(myParms);
+                return new X509EncodedKeySpec(myKey.getEncoded());
+            } else {
+                McEliecePublicKeyParameters myParms = myPublicKey.getPublicStdKey();
+                BCMcEliecePublicKey myKey = new BCMcEliecePublicKey(myParms);
+                return new X509EncodedKeySpec(myKey.getEncoded());
+            }
         }
 
         @Override
@@ -858,10 +906,17 @@ public abstract class BouncyKeyPairGenerator
         private BouncyMcEliecePublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
                 SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                McElieceCCA2PublicKey myKey = McElieceCCA2PublicKey.getInstance(myInfo.parsePublicKey());
-                McElieceCCA2PublicKeyParameters myParms = new McElieceCCA2PublicKeyParameters(myKey.getN(),
-                        myKey.getT(), myKey.getG(), MCELIECE_DIGEST);
-                return new BouncyMcEliecePublicKey(getKeySpec(), myParms);
+                if (isCCA2()) {
+                    McElieceCCA2PublicKey myKey = McElieceCCA2PublicKey.getInstance(myInfo.parsePublicKey());
+                    McElieceCCA2PublicKeyParameters myParms = new McElieceCCA2PublicKeyParameters(myKey.getN(),
+                            myKey.getT(), myKey.getG(), MCELIECE_DIGEST);
+                    return new BouncyMcEliecePublicKey(getKeySpec(), myParms);
+                } else {
+                    McEliecePublicKey myKey = McEliecePublicKey.getInstance(myInfo.parsePublicKey());
+                    McEliecePublicKeyParameters myParms = new McEliecePublicKeyParameters(myKey.getN(),
+                            myKey.getT(), myKey.getG());
+                    return new BouncyMcEliecePublicKey(getKeySpec(), myParms);
+                }
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }

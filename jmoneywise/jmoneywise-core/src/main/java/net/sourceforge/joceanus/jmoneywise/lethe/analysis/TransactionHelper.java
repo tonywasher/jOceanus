@@ -831,7 +831,7 @@ public class TransactionHelper {
             /* Obtain the required exchange rate */
             theBase = pAmount;
             theExchangeRate = theRateCursor.getExchangeRate(pCurrency, theDate);
-            TethysRatio myRate = theExchangeRate.getInverseRatio();
+            TethysRatio myRate = theExchangeRate;
             Currency myCurrency = theCurrency.getCurrency();
 
             /* Obtain local amount */
@@ -893,7 +893,7 @@ public class TransactionHelper {
             /* Obtain the required exchange rate */
             theBase = pAmount;
             theExchangeRate = theRateCursor.getExchangeRate(pCurrency, theDate);
-            TethysRatio myRate = theExchangeRate.getInverseRatio();
+            TethysRatio myRate = theExchangeRate;
             Currency myCurrency = theCurrency.getCurrency();
 
             /* Obtain local amount */

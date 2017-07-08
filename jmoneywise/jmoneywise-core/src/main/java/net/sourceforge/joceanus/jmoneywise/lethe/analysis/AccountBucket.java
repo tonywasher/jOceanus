@@ -557,7 +557,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
                 /* Obtain the debit exchangeRate and convert the foreign valuation */
                 TethysRatio myRate = pHelper.getDebitExchangeRate();
-                TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
+                TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
                 /* Set the valuation */
                 setValue(AccountAttribute.VALUATION, myLocalValue);
@@ -600,7 +600,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
                 /* Obtain the credit exchangeRate and convert the foreign valuation */
                 TethysRatio myRate = pHelper.getCreditExchangeRate();
-                TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
+                TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
                 /* Set the valuation */
                 setValue(AccountAttribute.VALUATION, myLocalValue);
@@ -643,7 +643,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
                 /* Obtain the credit exchangeRate and convert the foreign valuation */
                 TethysRatio myRate = pHelper.getReturnedCashExchangeRate();
-                TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
+                TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
                 /* Set the valuation */
                 setValue(AccountAttribute.VALUATION, myLocalValue);
@@ -684,7 +684,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
 
             /* Obtain exchange rate and reporting value */
             TethysRatio myRate = pHelper.getExchangeRate(theAccount.getAssetCurrency(), theData.getDateRange().getStart());
-            TethysMoney myLocalAmount = pBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate.getInverseRatio());
+            TethysMoney myLocalAmount = pBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
             /* Record details */
             myBaseValue.addAmount(myLocalAmount);
@@ -734,7 +734,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         TethysMoney myLocalValue = theBaseValues.getMoneyValue(AccountAttribute.LOCALVALUE);
 
         /* Calculate the base value */
-        TethysMoney myLocalValuation = myForeignValue.convertCurrency(myBaseCurrency, myRate.getInverseRatio());
+        TethysMoney myLocalValuation = myForeignValue.convertCurrency(myBaseCurrency, myRate);
         theBaseValues.setValue(AccountAttribute.EXCHANGERATE, myRate);
         theBaseValues.setValue(AccountAttribute.VALUATION, myLocalValuation);
 
@@ -749,7 +749,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         myLocalValue = theValues.getMoneyValue(AccountAttribute.LOCALVALUE);
 
         /* Calculate the current value */
-        myLocalValuation = myForeignValue.convertCurrency(myBaseCurrency, myRate.getInverseRatio());
+        myLocalValuation = myForeignValue.convertCurrency(myBaseCurrency, myRate);
         theValues.setValue(AccountAttribute.EXCHANGERATE, myRate);
         theValues.setValue(AccountAttribute.VALUATION, myLocalValuation);
 

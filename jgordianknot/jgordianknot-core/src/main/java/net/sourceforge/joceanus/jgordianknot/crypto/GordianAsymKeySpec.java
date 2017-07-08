@@ -82,17 +82,17 @@ public class GordianAsymKeySpec {
      * @param pCurve the curve
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec sm2(final GordianElliptic pCurve) {
+    public static GordianAsymKeySpec sm2(final GordianSM2Elliptic pCurve) {
         return new GordianAsymKeySpec(GordianAsymKeyType.SM2, pCurve);
     }
 
     /**
      * Create DSAKey.
-     * @param pModulus the modulus
+     * @param pKeyType the keyType
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec dsa(final GordianModulus pModulus) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.DSA, pModulus);
+    public static GordianAsymKeySpec dsa(final GordianDSAKeyType pKeyType) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.DSA, pKeyType);
     }
 
     /**
@@ -111,6 +111,15 @@ public class GordianAsymKeySpec {
      */
     public static GordianAsymKeySpec sphincs(final GordianSPHINCSKeyType pKeyType) {
         return new GordianAsymKeySpec(GordianAsymKeyType.SPHINCS, pKeyType);
+    }
+
+    /**
+     * Create McElieceKey.
+     * @param pKeyType the McEliece keyType
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec mcEliece(final GordianMcElieceKeyType pKeyType) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.MCELIECE, pKeyType);
     }
 
     /**
@@ -156,6 +165,16 @@ public class GordianAsymKeySpec {
     }
 
     /**
+     * Obtain the DSA keyType.
+     * @return the keyType.
+     */
+    public GordianDSAKeyType getDSAKeyType() {
+        return theSubKeyType instanceof GordianDSAKeyType
+                                                          ? (GordianDSAKeyType) theSubKeyType
+                                                          : null;
+    }
+
+    /**
      * Obtain the elliptic curve.
      * @return the curve.
      */
@@ -166,6 +185,16 @@ public class GordianAsymKeySpec {
     }
 
     /**
+     * Obtain the SM2 elliptic curve.
+     * @return the curve.
+     */
+    public GordianSM2Elliptic getSM2Elliptic() {
+        return theSubKeyType instanceof GordianSM2Elliptic
+                                                           ? (GordianSM2Elliptic) theSubKeyType
+                                                           : null;
+    }
+
+    /**
      * Obtain the SPHINCS keyType.
      * @return the keyType.
      */
@@ -173,6 +202,16 @@ public class GordianAsymKeySpec {
         return theSubKeyType instanceof GordianSPHINCSKeyType
                                                               ? (GordianSPHINCSKeyType) theSubKeyType
                                                               : null;
+    }
+
+    /**
+     * Obtain the mcEliece keyType.
+     * @return the keyType.
+     */
+    public GordianMcElieceKeyType getMcElieceType() {
+        return theSubKeyType instanceof GordianMcElieceKeyType
+                                                               ? (GordianMcElieceKeyType) theSubKeyType
+                                                               : null;
     }
 
     @Override

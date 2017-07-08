@@ -192,16 +192,6 @@ public enum GordianElliptic {
     SECP112R2("secp112r2", 112),
 
     /**
-     * sm2p256v1.
-     */
-    SM2P256V1("sm2p256v1", 256),
-
-    /**
-     * wapip192v1.
-     */
-    WAPIP192V1("wapip192v1", 192),
-
-    /**
      * prime256v1.
      */
     PRIME256V1("prime256v1", 256),

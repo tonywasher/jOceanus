@@ -34,6 +34,8 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
 import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2PrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2PublicKeyParameters;
+import org.bouncycastle.pqc.crypto.mceliece.McEliecePrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.mceliece.McEliecePublicKeyParameters;
 import org.bouncycastle.pqc.crypto.newhope.NHPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.newhope.NHPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.rainbow.RainbowPrivateKeyParameters;
@@ -1172,7 +1174,7 @@ public class BouncyKeyPair
         /**
          * Public Key details.
          */
-        private final McElieceCCA2PublicKeyParameters theKey;
+        private final Object theKey;
 
         /**
          * Constructor.
@@ -1180,17 +1182,37 @@ public class BouncyKeyPair
          * @param pPublicKey the public key
          */
         protected BouncyMcEliecePublicKey(final GordianAsymKeySpec pKeySpec,
-                                          final McElieceCCA2PublicKeyParameters pPublicKey) {
+                                          final Object pPublicKey) {
             super(pKeySpec);
             theKey = pPublicKey;
+        }
+
+        /**
+         * Is this a CCA2 keyType?
+         * @return true/false
+         */
+        private boolean isCCA2() {
+            return getKeySpec().getMcElieceType().isCCA2();
+        }
+
+        /**
+         * Obtain the public CCA2 key.
+         * @return the key
+         */
+        protected McElieceCCA2PublicKeyParameters getPublicCCA2Key() {
+            return theKey instanceof McElieceCCA2PublicKeyParameters
+                                                                     ? (McElieceCCA2PublicKeyParameters) theKey
+                                                                     : null;
         }
 
         /**
          * Obtain the public key.
          * @return the key
          */
-        protected McElieceCCA2PublicKeyParameters getPublicKey() {
-            return theKey;
+        protected McEliecePublicKeyParameters getPublicStdKey() {
+            return theKey instanceof McEliecePublicKeyParameters
+                                                                 ? (McEliecePublicKeyParameters) theKey
+                                                                 : null;
         }
 
         @Override
@@ -1213,7 +1235,7 @@ public class BouncyKeyPair
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPublicKey());
+                   && compareKeys(myThat);
         }
 
         @Override
@@ -1223,13 +1245,44 @@ public class BouncyKeyPair
         }
 
         /**
+         * CompareKeys.
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private boolean compareKeys(final BouncyMcEliecePublicKey pThat) {
+            return isCCA2()
+                            ? compareKeys(getPublicCCA2Key(), pThat.getPublicCCA2Key())
+                            : compareKeys(getPublicStdKey(), pThat.getPublicStdKey());
+        }
+
+        /**
          * Is the private key valid for this public key?
          * @param pPrivate the private key
          * @return true/false
          */
         public boolean validPrivate(final BouncyMcEliecePrivateKey pPrivate) {
-            McElieceCCA2PrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
-            return theKey.getN() == myPrivate.getN();
+            if (isCCA2()) {
+                McElieceCCA2PrivateKeyParameters myPrivate = pPrivate.getPrivateCCA2Key();
+                return getPublicCCA2Key().getN() == myPrivate.getN();
+            }
+            McEliecePrivateKeyParameters myPrivate = pPrivate.getPrivateStdKey();
+            return getPublicStdKey().getN() == myPrivate.getN();
+        }
+
+        /**
+         * CompareKeys.
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final McEliecePublicKeyParameters pFirst,
+                                           final McEliecePublicKeyParameters pSecond) {
+            if (pFirst.getN() != pSecond.getN()
+                || pFirst.getT() != pSecond.getT()) {
+                return false;
+            }
+            return pFirst.getG().equals(pSecond.getG());
         }
 
         /**
@@ -1257,7 +1310,7 @@ public class BouncyKeyPair
         /**
          * Private Key details.
          */
-        private final McElieceCCA2PrivateKeyParameters theKey;
+        private final Object theKey;
 
         /**
          * Constructor.
@@ -1265,17 +1318,37 @@ public class BouncyKeyPair
          * @param pPrivateKey the private key
          */
         protected BouncyMcEliecePrivateKey(final GordianAsymKeySpec pKeySpec,
-                                           final McElieceCCA2PrivateKeyParameters pPrivateKey) {
+                                           final Object pPrivateKey) {
             super(pKeySpec);
             theKey = pPrivateKey;
+        }
+
+        /**
+         * Is this a CCA2 keyType?
+         * @return true/false
+         */
+        private boolean isCCA2() {
+            return getKeySpec().getMcElieceType().isCCA2();
+        }
+
+        /**
+         * Obtain the private CCA2 key.
+         * @return the key
+         */
+        protected McElieceCCA2PrivateKeyParameters getPrivateCCA2Key() {
+            return theKey instanceof McElieceCCA2PrivateKeyParameters
+                                                                      ? (McElieceCCA2PrivateKeyParameters) theKey
+                                                                      : null;
         }
 
         /**
          * Obtain the private key.
          * @return the key
          */
-        protected McElieceCCA2PrivateKeyParameters getPrivateKey() {
-            return theKey;
+        protected McEliecePrivateKeyParameters getPrivateStdKey() {
+            return theKey instanceof McEliecePrivateKeyParameters
+                                                                  ? (McEliecePrivateKeyParameters) theKey
+                                                                  : null;
         }
 
         @Override
@@ -1298,13 +1371,45 @@ public class BouncyKeyPair
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPrivateKey());
+                   && compareKeys(myThat);
         }
 
         @Override
         public int hashCode() {
             return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
                    + theKey.hashCode();
+        }
+
+        /**
+         * CompareKeys.
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private boolean compareKeys(final BouncyMcEliecePrivateKey pThat) {
+            return isCCA2()
+                            ? compareKeys(getPrivateCCA2Key(), pThat.getPrivateCCA2Key())
+                            : compareKeys(getPrivateStdKey(), pThat.getPrivateStdKey());
+        }
+
+        /**
+         * CompareKeys.
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final McEliecePrivateKeyParameters pFirst,
+                                           final McEliecePrivateKeyParameters pSecond) {
+            if (pFirst.getN() != pSecond.getN()
+                || pFirst.getK() != pSecond.getK()) {
+                return false;
+            }
+            if (!pFirst.getP1().equals(pSecond.getP1())
+                || !pFirst.getP2().equals(pSecond.getP2())) {
+                return false;
+            }
+            return pFirst.getField().equals(pSecond.getField())
+                   && pFirst.getGoppaPoly().equals(pSecond.getGoppaPoly());
         }
 
         /**

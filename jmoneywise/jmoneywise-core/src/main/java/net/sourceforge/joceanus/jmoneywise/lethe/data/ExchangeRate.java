@@ -837,7 +837,7 @@ public class ExchangeRate
                 TethysRatio myRate = findRate(myCurrencies.findCurrency(myCurrent), pDate);
 
                 /* Convert the currency */
-                myValue = myValue.convertCurrency(myDefault, myRate.getInverseRatio());
+                myValue = myValue.convertCurrency(myDefault, myRate);
             }
 
             /* If we need to convert to a non-default currency */
