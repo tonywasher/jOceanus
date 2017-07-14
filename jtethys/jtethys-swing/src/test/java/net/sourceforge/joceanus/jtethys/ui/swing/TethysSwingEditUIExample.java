@@ -460,6 +460,7 @@ public class TethysSwingEditUIExample {
         myGrid.newRow();
         theDilutionField.getEventRegistrar().addEventListener(e -> processActionEvent(theDilutionField, e));
         theDilutionField.setValue(TethysScrollUITestHelper.DILUTION_DEF);
+        theDilutionField.setValidator(TethysScrollUITestHelper::validateDilution);
 
         /* Create DilutedPrice field line */
         myLabel = theGuiFactory.newLabel("DilutedPrice:");

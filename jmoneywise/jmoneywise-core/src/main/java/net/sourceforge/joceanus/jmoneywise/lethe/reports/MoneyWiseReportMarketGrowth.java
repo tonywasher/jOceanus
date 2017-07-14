@@ -322,7 +322,10 @@ public class MoneyWiseReportMarketGrowth
         /* Check market growth */
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
         myCalcGrowth.subtractAmount(myAdjust);
-        myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT));
+        TethysMoney myFluct = myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT);
+        if (myFluct != null) {
+            myCalcGrowth.subtractAmount(myFluct);
+        }
         TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);

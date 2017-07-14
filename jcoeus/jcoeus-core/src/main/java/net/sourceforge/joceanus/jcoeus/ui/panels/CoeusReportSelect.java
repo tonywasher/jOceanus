@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusUIResource;
 import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -412,7 +412,7 @@ public class CoeusReportSelect<N, I>
                                                    : new TethysDate(mySelected);
 
             /* Record any change and report change */
-            if (!MetisDifference.isEqual(myDate, theSelectedDate)) {
+            if (!MetisDataDifference.isEqual(myDate, theSelectedDate)) {
                 theSelectedDate = myDate;
                 determineActualDate();
                 return true;

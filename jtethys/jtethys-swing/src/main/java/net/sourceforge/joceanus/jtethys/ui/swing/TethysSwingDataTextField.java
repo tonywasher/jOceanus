@@ -33,6 +33,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Currency;
+import java.util.function.Function;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -385,6 +386,17 @@ public abstract class TethysSwingDataTextField<T>
         }
 
         /**
+         * Set the validator.
+         * <p>
+         * This should validate the value and return null for OK, and an error text for failure
+         * @param pValidator the validator
+         * @return the original validator
+         */
+        public Function<T, String> setValidator(final Function<T, String> pValidator) {
+            return theControl.setValidator(pValidator);
+        }
+
+        /**
          * Process value.
          */
         private void processValue() {
@@ -397,7 +409,7 @@ public abstract class TethysSwingDataTextField<T>
             /* If we failed to process the value */
             if (!theControl.processValue(myText)) {
                 /* Set error border */
-                theTextField.setToolTipText(TOOLTIP_BAD_VALUE);
+                theTextField.setToolTipText(theControl.getErrorText());
                 theErrorText = myText;
 
                 /* Cache the background colour */
@@ -408,7 +420,7 @@ public abstract class TethysSwingDataTextField<T>
                 setTheAttribute(TethysFieldAttribute.ERROR);
 
                 /* request focus again */
-                SwingUtilities.invokeLater(() -> theTextField.requestFocus());
+                SwingUtilities.invokeLater(theTextField::requestFocus);
 
                 /* else value was OK */
             } else {

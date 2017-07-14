@@ -27,6 +27,7 @@ import java.util.Currency;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
@@ -89,9 +90,9 @@ public abstract class TethysDataEditField<T, N, I>
     }
 
     /**
-     * Invalid value text.
+     * The InvalidValue Error Text.
      */
-    protected static final String TOOLTIP_BAD_VALUE = "Invalid Value";
+    private static final String ERROR_BADPARSE = TethysUIResource.PARSE_BADVALUE.getValue();
 
     /**
      * The Event Manager.
@@ -327,7 +328,12 @@ public abstract class TethysDataEditField<T, N, I>
         private final TethysDataEditConverter<T> theConverter;
 
         /**
-         * The vase value.
+         * The validator.
+         */
+        private Function<T, String> theValidator;
+
+        /**
+         * The base value.
          */
         private T theValue;
 
@@ -340,6 +346,11 @@ public abstract class TethysDataEditField<T, N, I>
          * The edit text.
          */
         private String theEdit;
+
+        /**
+         * Error text.
+         */
+        private String theErrorText;
 
         /**
          * Did we create a new value?
@@ -355,6 +366,7 @@ public abstract class TethysDataEditField<T, N, I>
                                               final TethysDataEditConverter<T> pConverter) {
             theField = pField;
             theConverter = pConverter;
+            theValidator = p -> null;
         }
 
         /**
@@ -397,6 +409,28 @@ public abstract class TethysDataEditField<T, N, I>
          */
         public void clearNewValue() {
             parsedNewValue = false;
+            theErrorText = null;
+        }
+
+        /**
+         * Set the validator.
+         * <p>
+         * This should validate the value and return null for OK, and an error text for failure
+         * @param pValidator the validator
+         * @return the original validator
+         */
+        public Function<T, String> setValidator(final Function<T, String> pValidator) {
+            Function<T, String> myOld = theValidator;
+            theValidator = pValidator;
+            return myOld;
+        }
+
+        /**
+         * Obtain the error text.
+         * @return the error
+         */
+        public String getErrorText() {
+            return theErrorText;
         }
 
         /**
@@ -405,31 +439,39 @@ public abstract class TethysDataEditField<T, N, I>
          * @return is value valid?
          */
         public boolean processValue(final String pNewValue) {
-            /* Clear flag */
-            parsedNewValue = false;
+            /* Clear flags */
+            clearNewValue();
 
             /* NullOp if there are no changes */
-            if (!Objects.equals(pNewValue, theEdit)) {
-                /* Protect to catch parsing errors */
-                try {
-                    /* Parse the value */
-                    T myValue = pNewValue == null
-                                                  ? null
-                                                  : theConverter.parseEditedValue(pNewValue);
-
-                    /* set the value and fire Event */
-                    setValue(myValue);
-                    theField.fireEvent(TethysUIEvent.NEWVALUE, myValue);
-                    parsedNewValue = true;
-
-                    /* Catch parsing error */
-                } catch (IllegalArgumentException e) {
-                    return false;
-                }
+            if (Objects.equals(pNewValue, theEdit)) {
+                /* Return success */
+                return true;
             }
 
-            /* Return success */
-            return true;
+            /* Protect to catch parsing errors */
+            try {
+                /* Parse the value */
+                T myValue = pNewValue == null
+                                              ? null
+                                              : theConverter.parseEditedValue(pNewValue);
+
+                /* Invoke the validator and reject value if necessary */
+                theErrorText = theValidator.apply(myValue);
+                if (theErrorText != null) {
+                    return false;
+                }
+
+                /* set the value and fire Event */
+                setValue(myValue);
+                theField.fireEvent(TethysUIEvent.NEWVALUE, myValue);
+                parsedNewValue = true;
+                return true;
+
+                /* Catch parsing error */
+            } catch (IllegalArgumentException e) {
+                theErrorText = ERROR_BADPARSE;
+                return false;
+            }
         }
 
         /**

@@ -23,8 +23,9 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.Currency;
+import java.util.function.Function;
 
-import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
@@ -135,7 +136,9 @@ public abstract class TethysFXDataTextField<T>
         theEditControl = (Control) pEditControl;
 
         /* Declare the label and edit control to be dataField */
+        theLabel.getStyleClass().add(TethysFXGuiFactory.CSS_STYLE_BASE);
         theLabel.getStyleClass().add(STYLE_FIELD);
+        theEditControl.getStyleClass().add(TethysFXGuiFactory.CSS_STYLE_BASE);
         theEditControl.getStyleClass().add(STYLE_FIELD);
 
         /* Set maximum widths for fields */
@@ -306,6 +309,11 @@ public abstract class TethysFXDataTextField<T>
     public abstract static class TethysFXTextEditField<T>
             extends TethysFXDataTextField<T> {
         /**
+         * The error pseudoClass.
+         */
+        private static final PseudoClass ERROR_CLASS = PseudoClass.getPseudoClass(STYLE_ERROR);
+
+        /**
          * The converterControl.
          */
         private final TethysDataEditTextFieldControl<T> theControl;
@@ -443,6 +451,17 @@ public abstract class TethysFXDataTextField<T>
         }
 
         /**
+         * Set the validator.
+         * <p>
+         * This should validate the value and return null for OK, and an error text for failure
+         * @param pValidator the validator
+         * @return the original validator
+         */
+        public Function<T, String> setValidator(final Function<T, String> pValidator) {
+            return theControl.setValidator(pValidator);
+        }
+
+        /**
          * Process value.
          */
         private void processValue() {
@@ -450,21 +469,19 @@ public abstract class TethysFXDataTextField<T>
             String myText = theTextField.getText();
             if (!theControl.processValue(myText)) {
                 /* Set toolTip, save error text and retain the focus */
-                theTextField.setTooltip(new Tooltip(TOOLTIP_BAD_VALUE));
+                theTextField.setTooltip(new Tooltip(theControl.getErrorText()));
                 theErrorText = myText;
-                theTextField.requestFocus();
 
                 /* add an error style */
-                ObservableList<String> myStyles = theTextField.getStyleClass();
-                if (!myStyles.contains(STYLE_ERROR)) {
-                    myStyles.add(STYLE_ERROR);
-                    setTheAttribute(TethysFieldAttribute.ERROR);
-                }
+                theTextField.pseudoClassStateChanged(ERROR_CLASS, true);
+                setTheAttribute(TethysFieldAttribute.ERROR);
+                theTextField.requestFocus();
 
                 /* else value was OK */
             } else {
                 /* Clear error indications */
                 clearError();
+                getLabel().setText(theControl.getDisplayText());
             }
         }
 
@@ -474,8 +491,7 @@ public abstract class TethysFXDataTextField<T>
         private void clearError() {
             theTextField.setTooltip(null);
             theErrorText = null;
-            ObservableList<String> myStyles = theTextField.getStyleClass();
-            myStyles.remove(STYLE_ERROR);
+            theTextField.pseudoClassStateChanged(ERROR_CLASS, false);
             clearTheAttribute(TethysFieldAttribute.ERROR);
         }
 

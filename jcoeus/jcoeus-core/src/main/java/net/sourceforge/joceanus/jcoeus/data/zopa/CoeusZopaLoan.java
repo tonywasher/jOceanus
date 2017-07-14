@@ -192,6 +192,15 @@ public class CoeusZopaLoan
     }
 
     @Override
+    public String toString() {
+        String myID = super.toString();
+        if (theMissing.isNonZero()) {
+            myID = "M:" + myID;
+        }
+        return myID;
+    }
+
+    @Override
     public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_BOOKITEM.equals(pField)) {
@@ -203,9 +212,9 @@ public class CoeusZopaLoan
                                           : theBookItems;
         }
         if (FIELD_MISSING.equals(pField)) {
-            return theMissing.isNonZero()
-                                          ? MetisDataFieldValue.SKIP
-                                          : theMissing;
+            return theMissing.isZero()
+                                       ? MetisDataFieldValue.SKIP
+                                       : theMissing;
         }
 
         /* Pass call on */

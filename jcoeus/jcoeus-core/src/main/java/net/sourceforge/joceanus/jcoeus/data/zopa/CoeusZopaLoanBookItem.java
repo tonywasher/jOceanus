@@ -29,10 +29,11 @@ import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanRisk;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -41,46 +42,46 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * Zopa LoanBook Item.
  */
 public class CoeusZopaLoanBookItem
-        implements MetisDataContents {
+        implements MetisDataFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusZopaLoanBookItem.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusZopaLoanBookItem.class);
 
     /**
      * Loan Id Field Id.
      */
-    private static final MetisField FIELD_LOANID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANID.getValue());
+    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANID.getValue());
 
     /**
      * Risk Field Id.
      */
-    private static final MetisField FIELD_RISK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANRISK.getValue());
+    private static final MetisDataField FIELD_RISK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANRISK.getValue());
 
     /**
      * Rate Field Id.
      */
-    private static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_RATE.getValue());
+    private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_RATE.getValue());
 
     /**
      * Status Field Id.
      */
-    private static final MetisField FIELD_STATUS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANSTATUS.getValue());
+    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANSTATUS.getValue());
 
     /**
      * Original Loan Field Id.
      */
-    private static final MetisField FIELD_LENT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LENT.getValue());
+    private static final MetisDataField FIELD_LENT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LENT.getValue());
 
     /**
      * Balance Field Id.
      */
-    private static final MetisField FIELD_BALANCE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BALANCE.getValue());
+    private static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BALANCE.getValue());
 
     /**
      * Missing Field Id.
      */
-    private static final MetisField FIELD_MISSING = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSING.getValue());
+    private static final MetisDataField FIELD_MISSING = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSING.getValue());
 
     /**
      * The loan Id.
@@ -461,7 +462,12 @@ public class CoeusZopaLoanBookItem
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
+    }
+
+    @Override
+    public String toString() {
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(theLoanId);
         myBuilder.append(' ');
@@ -476,17 +482,12 @@ public class CoeusZopaLoanBookItem
     }
 
     @Override
-    public String toString() {
-        return formatObject();
-    }
-
-    @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_LOANID.equals(pField)) {
             return theLoanId;
@@ -508,11 +509,11 @@ public class CoeusZopaLoanBookItem
         }
         if (FIELD_MISSING.equals(pField)) {
             return theMissing.isZero()
-                                       ? MetisFieldValue.SKIP
+                                       ? MetisDataFieldValue.SKIP
                                        : theMissing;
         }
 
         /* Not recognised */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 }

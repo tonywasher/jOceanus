@@ -237,6 +237,24 @@ public class TethysScrollUITestHelper<N, I> {
     }
 
     /**
+     * validate a dilution
+     * @param pDilution the dilution
+     * @return null for valid or error message for invalid
+     */
+    public static String validateDilution(final TethysDilution pDilution) {
+        if (pDilution == null) {
+            return "Dilution cannot be null";
+        }
+        if (!pDilution.isPositive()) {
+            return "Dilution must be positive";
+        }
+        if (pDilution.compareTo(TethysDilution.MAX_DILUTION) > 0) {
+            return "Dilution must be be less or equal to " + TethysDilution.MAX_DILUTION;
+        }
+        return null;
+    }
+
+    /**
      * ENum for state.
      */
     public enum IconState {

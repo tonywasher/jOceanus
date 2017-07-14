@@ -29,10 +29,11 @@ import org.jsoup.nodes.Element;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -42,46 +43,46 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * RateSetter Loan Book Item.
  */
 public class CoeusRateSetterLoanBookItem
-        implements MetisDataContents {
+        implements MetisDataFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(CoeusRateSetterLoanBookItem.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusRateSetterLoanBookItem.class);
 
     /**
      * Loan Id Field Id.
      */
-    private static final MetisField FIELD_LOANID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANID.getValue());
+    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANID.getValue());
 
     /**
      * StartDate Field Id.
      */
-    private static final MetisField FIELD_STARTDATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_STARTDATE.getValue());
+    private static final MetisDataField FIELD_STARTDATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_STARTDATE.getValue());
 
     /**
      * Original Loan Field Id.
      */
-    private static final MetisField FIELD_LENT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LENT.getValue());
+    private static final MetisDataField FIELD_LENT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LENT.getValue());
 
     /**
      * Outstanding Balance Field Id.
      */
-    private static final MetisField FIELD_BALANCE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BALANCE.getValue());
+    private static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BALANCE.getValue());
 
     /**
      * Rate Field Id.
      */
-    private static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_RATE.getValue());
+    private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_RATE.getValue());
 
     /**
      * LastDate Field Id.
      */
-    private static final MetisField FIELD_LASTDATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LASTDATE.getValue());
+    private static final MetisDataField FIELD_LASTDATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LASTDATE.getValue());
 
     /**
      * Status Field Id.
      */
-    private static final MetisField FIELD_STATUS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANSTATUS.getValue());
+    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANSTATUS.getValue());
 
     /**
      * The loan Id.
@@ -224,11 +225,6 @@ public class CoeusRateSetterLoanBookItem
 
     @Override
     public String toString() {
-        return formatObject();
-    }
-
-    @Override
-    public String formatObject() {
         StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(theLoanId);
         myBuilder.append(' ');
@@ -239,12 +235,17 @@ public class CoeusRateSetterLoanBookItem
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
+    }
+
+    @Override
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_LOANID.equals(pField)) {
             return theLoanId;
@@ -269,6 +270,6 @@ public class CoeusRateSetterLoanBookItem
         }
 
         /* Not recognised */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 }

@@ -27,8 +27,8 @@ import java.util.function.Predicate;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 
 /**
  * Statement calculator.
@@ -75,9 +75,9 @@ public class CoeusStatementCalculator
             return pTotals.getDeltaForField(theField);
         } else if (CoeusTotals.FIELD_BALANCE.equals(pField)) {
             Object myValue = pTotals.getFieldValue(theField);
-            return MetisFieldValue.SKIP.equals(myValue)
-                                                        ? null
-                                                        : myValue;
+            return MetisDataFieldValue.SKIP.equals(myValue)
+                                                            ? null
+                                                            : myValue;
         }
         return null;
     }

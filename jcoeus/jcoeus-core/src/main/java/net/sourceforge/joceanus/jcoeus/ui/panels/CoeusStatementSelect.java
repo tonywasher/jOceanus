@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusAnnualFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusUIResource;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -591,7 +591,7 @@ public class CoeusStatementSelect<N, I>
                                               : new TethysDate(pDate);
 
             /* Record any change and report change */
-            if (!MetisDifference.isEqual(pDate, theSelectedDate)) {
+            if (!MetisDataDifference.isEqual(pDate, theSelectedDate)) {
                 theSelectedDate = myDate;
                 return allocateNewFilter();
             }
@@ -650,7 +650,7 @@ public class CoeusStatementSelect<N, I>
          * @return true/false did a change occur
          */
         private boolean setLoan(final CoeusLoan pLoan) {
-            if (!MetisDifference.isEqual(pLoan, theLoan)) {
+            if (!MetisDataDifference.isEqual(pLoan, theLoan)) {
                 /* Adjust the filter */
                 theLoan = pLoan;
                 if (theFilter instanceof CoeusSnapShotFilter) {
@@ -667,7 +667,7 @@ public class CoeusStatementSelect<N, I>
          * @return true/false did a change occur
          */
         private boolean setMonth(final Month pMonth) {
-            if (!MetisDifference.isEqual(pMonth, theMonth)) {
+            if (!MetisDataDifference.isEqual(pMonth, theMonth)) {
                 /* Adjust the filter */
                 theMonth = pMonth;
                 if (theFilter instanceof CoeusAnnualFilter) {
