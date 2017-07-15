@@ -62,7 +62,7 @@ public class CoeusZopaLoan
     private static final MetisDataField FIELD_MISSING = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSING.getValue());
 
     /**
-     * The list of bookItems.
+     * The bookItem.
      */
     private CoeusZopaLoanBookItem theBookItem;
 
@@ -119,13 +119,14 @@ public class CoeusZopaLoan
     protected void addBookItem(final CoeusZopaLoanBookItem pBookItem) {
         /* If this is the first secondary item */
         if (theBookItems.isEmpty()) {
-            /* switch the original to the list and replace with a totalling item */
+            /* Add the original to the list */
             theBookItems.add(theBookItem);
-            theBookItem = new CoeusZopaLoanBookItem(theBookItem);
         }
 
-        /* add to list and totalling item */
-        theBookItem.addBookItem(pBookItem);
+        /* Create merged item */
+        theBookItem = new CoeusZopaLoanBookItem(theBookItem, pBookItem);
+
+        /* add to list */
         theBookItems.add(pBookItem);
     }
 
@@ -145,6 +146,14 @@ public class CoeusZopaLoan
         return theBookItems.iterator();
     }
 
+    /**
+     * Has multiple bookItems?
+     * @return true/false
+     */
+    public boolean hasMultipleBookItems() {
+        return !theBookItems.isEmpty();
+    }
+
     @Override
     protected CoeusZopaHistory newHistory() {
         return new CoeusZopaHistory(this);
@@ -159,14 +168,14 @@ public class CoeusZopaLoan
     protected void checkLoan() throws CoeusDataException {
         /* Obtain the book balance and adjust for missing payments */
         TethysDecimal myBookBalance = new TethysDecimal(theBookItem.getBalance());
-        myBookBalance.addValue(theBookItem.getMissing());
 
         /* Access the total capital */
         CoeusZopaTotals myTotals = getTotals();
         TethysDecimal myLoanBalance = myTotals.getLoanBook();
 
         /* If this is a badDebt */
-        if (CoeusLoanStatus.BADDEBT.equals(theBookItem.getStatus())) {
+        CoeusLoanStatus myStatus = theBookItem.getStatus();
+        if (CoeusLoanStatus.BADDEBT.equals(myStatus)) {
             /* Loan Balance is badDebt */
             myLoanBalance = myTotals.getBadDebt();
         }
@@ -178,6 +187,18 @@ public class CoeusZopaLoan
             myLoanBalance.subtractValue(myBookBalance);
             getMarket().recordMissingPayments(myLoanBalance);
             theMissing.addValue(myLoanBalance);
+        }
+
+        /* Check for zombieLoan */
+        boolean isZombie = CoeusLoanStatus.REPAID.equals(myStatus) && theBookItem.getBalance().isNonZero();
+        if (isZombie) {
+            getMarket().recordZombieLoan(theBookItem.getBalance());
+        }
+
+        /* If the bookBalance is negative */
+        if (hasMultipleBookItems() || theMissing.isNonZero() || isZombie) {
+            /* Record the interesting loan */
+            getMarket().recordInterestingLoan(this);
         }
     }
 

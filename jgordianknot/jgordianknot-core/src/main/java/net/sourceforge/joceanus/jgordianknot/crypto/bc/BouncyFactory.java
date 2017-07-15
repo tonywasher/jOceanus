@@ -103,6 +103,7 @@ import org.bouncycastle.crypto.modes.SICBlockCipher;
 import org.bouncycastle.crypto.paddings.ISO7816d4Padding;
 import org.bouncycastle.crypto.paddings.PKCS7Padding;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.crypto.paddings.TBCPadding;
 import org.bouncycastle.crypto.paddings.X923Padding;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
@@ -895,6 +896,8 @@ public final class BouncyFactory
                 return new PaddedBufferedBlockCipher(pEngine, new PKCS7Padding());
             case ISO7816D4:
                 return new PaddedBufferedBlockCipher(pEngine, new ISO7816d4Padding());
+            case TBC:
+                return new PaddedBufferedBlockCipher(pEngine, new TBCPadding());
             case NONE:
             default:
                 return new BufferedBlockCipher(pEngine);

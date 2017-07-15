@@ -113,6 +113,14 @@ public class MetisSwingViewerWindow
         }
     }
 
+    @Override
+    public void closeWindow() {
+        hideDialog();
+        if (theDialog != null) {
+            theDialog.closeDialog();
+        }
+    }
+
     /**
      * Dialog class.
      */
@@ -180,6 +188,14 @@ public class MetisSwingViewerWindow
                 /* hide it */
                 theFrame.setVisible(false);
             }
+        }
+
+        /**
+         * Close the dialog.
+         */
+        public void closeDialog() {
+            /* close the dialog */
+            theFrame.dispose();
         }
 
         /**

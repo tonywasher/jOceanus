@@ -53,6 +53,24 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * SEED (restricted keys) 
 
+    * SKIPJACK (restricted keys) 
+	
+    * BlowFish 
+
+    * DESede (restricted keys) 
+	
+    * CAST5 (restricted keys) 
+	
+    * RC5 (restricted keys) 
+	
+    * RC2 
+	
+    * IDEA (restricted keys) 
+	
+    * TEA (restricted keys) 
+
+    * XTEA (restricted keys) 
+	
   The following modes are available for the above keys
 
     * ECB
@@ -65,7 +83,15 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * SIC (CTR)
 
-  The following paddings are available for ECB and CBC modes
+    * GCM
+
+    * CCM
+
+    * EAX
+
+	* OCB
+
+	The following paddings are available for ECB and CBC modes
 
     * CTS
 
@@ -75,6 +101,8 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * X9.63
 
+    * TBC
+   
     * NONE (used for all modes other than ECB/CBC)
 
   The following Stream Key algorithms are supported (bracketed versions used for restricted keys).
@@ -149,7 +177,7 @@ improved compression over the Deflation standard Java method.
      [[1]] Digest is calculated on the plain text
      [[2]] LZMA compression is performed
      [[3]] StreamKey encryption is performed
-     [[4]] (N-1)*SymKey ECB encryption (first with ISO7816-4 padding, remainder with NONE(CTS for ThreeFish))
+     [[4]] (N-1)*SymKey ECB encryption (first with ISO7816-4 padding, remainder with NONE)
      [[5]] SymKey SIC encryption 
      [[6]] Mac calculated on encrypted data
 	

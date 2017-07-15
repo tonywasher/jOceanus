@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFie
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
@@ -87,6 +88,11 @@ public class CoeusZopaLoanBookItem
      * The loan Id.
      */
     private final String theLoanId;
+
+    /**
+     * The Acquired Date.
+     */
+    private final TethysDate theDate;
 
     /**
      * The risk.
@@ -162,9 +168,11 @@ public class CoeusZopaLoanBookItem
         /* Obtain IDs */
         theLoanId = myIterator.next();
 
-        /* Skip Product and date acquired */
+        /* Skip Product */
         myIterator.next();
-        myIterator.next();
+
+        /* Obtain date acquired */
+        theDate = pParser.parseDate(myIterator.next());
 
         /* Derive the risk */
         theRisk = determineRisk(myIterator.next());
@@ -221,50 +229,43 @@ public class CoeusZopaLoanBookItem
     }
 
     /**
-     * Constructor.
+     * Constructor for merged bookItem.
      * @param pSource the source item
      */
-    protected CoeusZopaLoanBookItem(final CoeusZopaLoanBookItem pSource) {
+    protected CoeusZopaLoanBookItem(final CoeusZopaLoanBookItem pBase,
+                                    final CoeusZopaLoanBookItem pNew) {
         /* Obtain IDs */
-        theLoanId = pSource.getLoanId();
+        theLoanId = pBase.getLoanId();
 
-        /* Risk varies */
-        theRisk = pSource.getRisk();
-
-        /* Derive the status */
-        theStatus = pSource.getStatus();
-
-        /* Parse the rate */
-        theRate = pSource.getRate();
+        /* Determine the most recent loan */
+        CoeusZopaLoanBookItem myRecent = pBase.getDate().compareTo(pNew.getDate()) < 0
+                                                                                       ? pNew
+                                                                                       : pBase;
+        /* Copy main details from the most recent loan */
+        theDate = myRecent.getDate();
+        theRisk = myRecent.getRisk();
+        theStatus = myRecent.getStatus();
+        theRate = myRecent.getRate();
+        thePortionRepaid = myRecent.getPortionRepaid();
+        isSafeGuarded = myRecent.isSafeGuarded();
 
         /* Parse the outstanding balances */
-        theLent = new TethysDecimal(pSource.getLent());
-        theBalance = new TethysDecimal(pSource.getBalance());
-        theRepaid = new TethysDecimal(pSource.getRepaid());
-        theCapital = new TethysDecimal(pSource.getCapitalRepaid());
-        theInterest = new TethysDecimal(pSource.getInterestRepaid());
-        theArrears = new TethysDecimal(pSource.getArrears());
-        theMissing = new TethysDecimal(pSource.getMissing());
+        theLent = new TethysDecimal(pBase.getLent());
+        theBalance = new TethysDecimal(pBase.getBalance());
+        theRepaid = new TethysDecimal(pBase.getRepaid());
+        theCapital = new TethysDecimal(pBase.getCapitalRepaid());
+        theInterest = new TethysDecimal(pBase.getInterestRepaid());
+        theArrears = new TethysDecimal(pBase.getArrears());
+        theMissing = new TethysDecimal(pBase.getMissing());
 
-        /* Determine whether the loan is safeGuarded */
-        isSafeGuarded = false;
-
-        /* Parse the rate */
-        thePortionRepaid = null;
-    }
-
-    /**
-     * Add bookItem.
-     * @param pSource the source item
-     */
-    protected void addBookItem(final CoeusZopaLoanBookItem pSource) {
-        theLent.addValue(pSource.getLent());
-        theBalance.addValue(pSource.getBalance());
-        theRepaid.addValue(pSource.getRepaid());
-        theInterest.addValue(pSource.getInterestRepaid());
-        theCapital.addValue(pSource.getCapitalRepaid());
-        theArrears.addValue(pSource.getArrears());
-        theMissing.addValue(pSource.getMissing());
+        /* Add the new totals */
+        theLent.addValue(pNew.getLent());
+        theBalance.addValue(pNew.getBalance());
+        theRepaid.addValue(pNew.getRepaid());
+        theInterest.addValue(pNew.getInterestRepaid());
+        theCapital.addValue(pNew.getCapitalRepaid());
+        theArrears.addValue(pNew.getArrears());
+        theMissing.addValue(pNew.getMissing());
     }
 
     /**
@@ -281,6 +282,14 @@ public class CoeusZopaLoanBookItem
      */
     public CoeusLoanRisk getRisk() {
         return theRisk;
+    }
+
+    /**
+     * Obtain the date.
+     * @return the date
+     */
+    public TethysDate getDate() {
+        return theDate;
     }
 
     /**

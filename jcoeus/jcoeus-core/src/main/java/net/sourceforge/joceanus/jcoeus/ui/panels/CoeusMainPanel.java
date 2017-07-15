@@ -193,4 +193,11 @@ public abstract class CoeusMainPanel<N, I> {
         /* Display the Statements Tab */
         theTotalsTab.selectItem();
     }
+
+    /**
+     * Handle application close.
+     */
+    public void handleAppClose() {
+        theDataWdw.closeWindow();
+    }
 }

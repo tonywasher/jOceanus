@@ -255,7 +255,9 @@ public class MetisViewerFormatter {
         /* Access details */
         MetisDataFieldSet myFields = pItem.getDataFieldSet();
         MetisDataVersionControl myControl = pItem.getVersionControl();
-        MetisDataVersionValues myValues = myControl.getValueSet();
+        MetisDataVersionValues myValues = myControl == null
+                                                            ? null
+                                                            : myControl.getValueSet();
 
         /* Initialise the document */
         theBuilder.newTitle(myFields.getName());
@@ -286,7 +288,8 @@ public class MetisViewerFormatter {
             /* Start the field */
             theBuilder.newTableRow();
             theBuilder.newDataCell(myField.getName());
-            if (myControl.fieldChanged(myField).isDifferent()) {
+            if (myControl != null
+                && myControl.fieldChanged(myField).isDifferent()) {
                 theBuilder.newDataCell(myValue, true);
             } else {
                 theBuilder.newDataCell(myValue);

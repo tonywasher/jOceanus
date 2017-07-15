@@ -176,6 +176,11 @@ public abstract class MetisViewerWindow<N, I>
     }
 
     /**
+     * CloseWindow on parent termination.
+     */
+    public abstract void closeWindow();
+
+    /**
      * Load CSS.
      * @param pName the name of the CSS
      * @throws OceanusException on error

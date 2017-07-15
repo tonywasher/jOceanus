@@ -360,7 +360,8 @@ public abstract class ThemisSvnManager<N, I> {
     /**
      * Handle WindowClosed.
      */
-    protected void handleWindowClosed() {
+    public void handleWindowClosed() {
         theThreadMgr.shutdown();
+        theDataWdw.closeWindow();
     }
 }

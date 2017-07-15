@@ -96,6 +96,9 @@ public class CoeusSwingMainPanel
             extends WindowAdapter {
         @Override
         public void windowClosing(final WindowEvent evt) {
+            /* Close child windows */
+            handleAppClose();
+
             /* Dispose of the frame */
             theFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             theFrame.dispose();

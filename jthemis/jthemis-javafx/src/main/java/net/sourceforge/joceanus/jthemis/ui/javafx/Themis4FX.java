@@ -87,6 +87,9 @@ public class Themis4FX
             /* Attach to the stage and show */
             thePanel.attachToStage(pStage);
             pStage.show();
+
+            /* Close child windows on close */
+            pStage.setOnCloseRequest(e -> thePanel.handleWindowClosed());
         }
     }
 

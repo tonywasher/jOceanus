@@ -802,6 +802,8 @@ public final class JcaFactory
                 return "PKCS7Padding";
             case ISO7816D4:
                 return "ISO7816-4Padding";
+            case TBC:
+                return "TBCPadding";
             case NONE:
             default:
                 return "NoPadding";

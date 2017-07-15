@@ -430,6 +430,16 @@ public enum CoeusResource
     DATA_MISSINGPAY("data.missing.payments"),
 
     /**
+     * Data Zombie Loans.
+     */
+    DATA_ZOMBIELOANS("data.zombie.loans"),
+
+    /**
+     * Data Interesting Loans.
+     */
+    DATA_INTERESTINGLOANS("data.interesting.loans"),
+
+    /**
      * Data Totals.
      */
     DATA_TOTALS("data.totals"),

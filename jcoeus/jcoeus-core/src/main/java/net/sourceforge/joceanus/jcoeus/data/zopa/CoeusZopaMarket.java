@@ -23,7 +23,9 @@
 package net.sourceforge.joceanus.jcoeus.data.zopa;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
@@ -58,6 +60,16 @@ public class CoeusZopaMarket
     private static final MetisDataField FIELD_MISSINGPAY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGPAY.getValue());
 
     /**
+     * Zombie Loans Field Id.
+     */
+    private static final MetisDataField FIELD_ZOMBIELOANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ZOMBIELOANS.getValue());
+
+    /**
+     * Interesting loans Field Id.
+     */
+    private static final MetisDataField FIELD_INTERESTINGLOANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INTERESTINGLOANS.getValue());
+
+    /**
      * The Decimal size.
      */
     protected static final int DECIMAL_SIZE = 8;
@@ -88,6 +100,16 @@ public class CoeusZopaMarket
     private final TethysDecimal theMissingPayments;
 
     /**
+     * The ZombieLoans.
+     */
+    private final TethysDecimal theZombieLoans;
+
+    /**
+     * The Interesting loans.
+     */
+    private final List<CoeusZopaLoan> theInterestingLoans;
+
+    /**
      * Constructor.
      * @param pFormatter the formatter
      */
@@ -103,6 +125,8 @@ public class CoeusZopaMarket
         /* Create missing counters */
         theMissingLoanBook = new TethysDecimal(0, DECIMAL_SIZE);
         theMissingPayments = new TethysDecimal(0, DECIMAL_SIZE);
+        theZombieLoans = new TethysDecimal(0, DECIMAL_SIZE);
+        theInterestingLoans = new ArrayList<>();
     }
 
     /**
@@ -232,6 +256,22 @@ public class CoeusZopaMarket
         theMissingPayments.addValue(pMissing);
     }
 
+    /**
+     * Record zombieLoan.
+     * @param pZombie the zombie amount
+     */
+    protected void recordZombieLoan(final TethysDecimal pZombie) {
+        theZombieLoans.addValue(pZombie);
+    }
+
+    /**
+     * Record interestingLoan.
+     * @param pLoan the loan
+     */
+    protected void recordInterestingLoan(final CoeusZopaLoan pLoan) {
+        theInterestingLoans.add(pLoan);
+    }
+
     @Override
     public String toString() {
         return FIELD_DEFS.getName();
@@ -254,6 +294,16 @@ public class CoeusZopaMarket
             return theMissingPayments.isZero()
                                                ? MetisDataFieldValue.SKIP
                                                : theMissingPayments;
+        }
+        if (FIELD_ZOMBIELOANS.equals(pField)) {
+            return theZombieLoans.isZero()
+                                           ? MetisDataFieldValue.SKIP
+                                           : theZombieLoans;
+        }
+        if (FIELD_INTERESTINGLOANS.equals(pField)) {
+            return theInterestingLoans.isEmpty()
+                                                 ? MetisDataFieldValue.SKIP
+                                                 : theInterestingLoans;
         }
 
         /* Pass call on */

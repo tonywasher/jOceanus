@@ -47,6 +47,11 @@ public enum GordianPadding {
     PKCS7,
 
     /**
+     * TBC Padding.
+     */
+    TBC,
+
+    /**
      * No Padding.
      */
     NONE;
