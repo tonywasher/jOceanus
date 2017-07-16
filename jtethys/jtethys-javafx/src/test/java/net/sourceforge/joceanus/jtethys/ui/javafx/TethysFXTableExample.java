@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableCell;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableStateIconCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutedPriceColumn;
@@ -100,7 +101,7 @@ public class TethysFXTableExample
 
         /* Create test Data */
         theData = FXCollections.observableArrayList(p -> new Observable[]
-        { p.nameProperty(), p.xtraBooleanProperty() });
+        { p.nameProperty(), p.dateProperty(), p.xtraBooleanProperty() });
         theData.add(new TethysFXTableItem(theHelper, "Damage"));
         theData.add(new TethysFXTableItem(theHelper, "Tony"));
         theData.add(new TethysFXTableItem(theHelper, "Dave"));
@@ -128,6 +129,9 @@ public class TethysFXTableExample
         /* Create the short column */
         TethysFXTableShortColumn<TethysDataId, TethysFXTableItem> myShortColumn = theTable.declareShortColumn(TethysDataId.SHORT);
         myShortColumn.setCellValueFactory(p -> p.getValue().shortProperty());
+        myShortColumn.setValidator((v, r) -> v < 0
+                                                   ? "Must be positive"
+                                                   : null);
 
         /* Create the integer column */
         TethysFXTableIntegerColumn<TethysDataId, TethysFXTableItem> myIntColumn = theTable.declareIntegerColumn(TethysDataId.INTEGER);
@@ -166,21 +170,22 @@ public class TethysFXTableExample
         myDilutedPriceColumn.setCellValueFactory(p -> p.getValue().dilutedPriceProperty());
 
         /* Create the boolean column */
-        TethysFXTableIconColumn<TethysDataId, TethysFXTableItem, Boolean> myBoolColumn = theTable.declareIconColumn(TethysDataId.BOOLEAN, Boolean.class);
+        TethysFXTableIconColumn<Boolean, TethysDataId, TethysFXTableItem> myBoolColumn = theTable.declareIconColumn(TethysDataId.BOOLEAN, Boolean.class);
         myBoolColumn.setCellValueFactory(p -> p.getValue().booleanProperty());
         myBoolColumn.setName("B");
 
         /* Create the extra boolean column */
-        TethysFXTableStateIconColumn<TethysDataId, TethysFXTableItem, Boolean> myXtraBoolColumn = theTable.declareStateIconColumn(TethysDataId.XTRABOOL, Boolean.class);
+        TethysFXTableStateIconColumn<Boolean, TethysDataId, TethysFXTableItem> myXtraBoolColumn = theTable.declareStateIconColumn(TethysDataId.XTRABOOL, Boolean.class);
         myXtraBoolColumn.setCellValueFactory(p -> p.getValue().xtraBooleanProperty());
         myXtraBoolColumn.setName("X");
+        myXtraBoolColumn.setCellEditable(p -> p.booleanProperty().getValue());
 
         /* Create the scroll column */
-        TethysFXTableScrollColumn<TethysDataId, TethysFXTableItem, String> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
+        TethysFXTableScrollColumn<String, TethysDataId, TethysFXTableItem> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
         myScrollColumn.setCellValueFactory(p -> p.getValue().scrollProperty());
 
         /* Create the list column */
-        TethysFXTableListColumn<TethysDataId, TethysFXTableItem, TethysListId> myListColumn = theTable.declareListColumn(TethysDataId.LIST, TethysListId.class);
+        TethysFXTableListColumn<TethysListId, TethysDataId, TethysFXTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST, TethysListId.class);
         myListColumn.setCellValueFactory(p -> p.getValue().listProperty());
 
         /* Create the password column */
@@ -191,6 +196,7 @@ public class TethysFXTableExample
         TethysFXTableIntegerColumn<TethysDataId, TethysFXTableItem> myUpdatesColumn = theTable.declareIntegerColumn(TethysDataId.UPDATES);
         myUpdatesColumn.setCellValueFactory(p -> p.getValue().updatesProperty());
         myUpdatesColumn.setName("U");
+        myUpdatesColumn.setEditable(false);
 
         /* Set Disabled indicator */
         theTable.setChanged((c, r) -> c == TethysDataId.NAME && r.updatesProperty().getValue() > 0);
@@ -204,7 +210,7 @@ public class TethysFXTableExample
     @SuppressWarnings("unchecked")
     private void handleCreate(final TethysEvent<TethysUIEvent> pEvent) {
         /* Obtain the Cell */
-        TethysFXTableCell<TethysDataId, TethysFXTableItem, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
+        TethysFXTableCell<?, TethysDataId, TethysFXTableItem> myCell = pEvent.getDetails(TethysFXTableCell.class);
 
         /* Configure static configuration for cells */
         switch (myCell.getColumnId()) {
@@ -236,7 +242,7 @@ public class TethysFXTableExample
     @SuppressWarnings("unchecked")
     private void handleFormat(final TethysEvent<TethysUIEvent> pEvent) {
         /* Obtain the Cell */
-        TethysFXTableCell<TethysDataId, TethysFXTableItem, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
+        TethysFXTableCell<?, TethysDataId, TethysFXTableItem> myCell = pEvent.getDetails(TethysFXTableCell.class);
 
         /* If this is the extra Boolean field */
         if (TethysDataId.XTRABOOL.equals(myCell.getColumnId())) {
@@ -253,10 +259,22 @@ public class TethysFXTableExample
      * Handle preEdit event.
      * @param pEvent the event
      */
+    @SuppressWarnings("unchecked")
     private void handlePreEdit(final TethysEvent<TethysUIEvent> pEvent) {
-        /* Make the updates column read-only */
-        if (TethysDataId.UPDATES.equals(getColumnId(pEvent))) {
-            pEvent.consume();
+        /* Access column id */
+        TethysDataId myId = getColumnId(pEvent);
+
+        /* If this is the extra Boolean field */
+        if (TethysDataId.XTRABOOL.equals(myId)) {
+            /* Access details */
+            TethysFXTableCell<?, TethysDataId, TethysFXTableItem> myCell = pEvent.getDetails(TethysFXTableCell.class);
+            TethysFXTableStateIconCell<Boolean, TethysDataId, TethysFXTableItem, IconState> myStateCell = (TethysFXTableStateIconCell<Boolean, TethysDataId, TethysFXTableItem, IconState>) myCell;
+            TethysFXTableItem myRow = myCell.getActiveRow();
+
+            /* Set correct state for extra Boolean */
+            myStateCell.getIconManager().setMachineState(myRow.booleanProperty().getValue()
+                                                                                            ? IconState.OPEN
+                                                                                            : IconState.CLOSED);
         }
     }
 
@@ -274,7 +292,7 @@ public class TethysFXTableExample
      */
     @SuppressWarnings("unchecked")
     private void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysFXTableCell<TethysDataId, TethysFXTableItem, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
+        TethysFXTableCell<?, TethysDataId, TethysFXTableItem> myCell = pEvent.getDetails(TethysFXTableCell.class);
         TethysFXTableItem myRow = myCell.getActiveRow();
         myRow.incrementUpdates();
         myCell.repaintColumnCell(TethysDataId.NAME);
@@ -290,7 +308,7 @@ public class TethysFXTableExample
      */
     @SuppressWarnings("unchecked")
     private TethysDataId getColumnId(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysFXTableCell<TethysDataId, ?, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
+        TethysFXTableCell<?, TethysDataId, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
         return myCell.getColumnId();
     }
 

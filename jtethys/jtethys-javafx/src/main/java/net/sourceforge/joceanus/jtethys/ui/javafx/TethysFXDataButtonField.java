@@ -180,7 +180,7 @@ public final class TethysFXDataButtonField {
 
         @Override
         public void startCellEditing(final Node pCell) {
-            Platform.runLater(() -> theButton.fire());
+            Platform.runLater(theButton::fire);
         }
     }
 

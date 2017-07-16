@@ -120,6 +120,11 @@ public abstract class TethysHelpWindow<N, I>
     }
 
     /**
+     * CloseWindow on parent termination.
+     */
+    public abstract void closeWindow();
+
+    /**
      * Fire event.
      * @param pEventId the eventId
      * @param pValue the relevant value

@@ -324,34 +324,34 @@ public class MetisSwingTableManager<R extends MetisDataVersionedItem>
     }
 
     @Override
-    public <T> TethysSwingTableScrollColumn<MetisDataField, R, T> declareScrollColumn(final MetisDataField pId,
+    public <T> TethysSwingTableScrollColumn<T, MetisDataField, R> declareScrollColumn(final MetisDataField pId,
                                                                                       final Class<T> pClass) {
-        TethysSwingTableScrollColumn<MetisDataField, R, T> myColumn = getTable().declareScrollColumn(pId, pClass);
+        TethysSwingTableScrollColumn<T, MetisDataField, R> myColumn = getTable().declareScrollColumn(pId, pClass);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, pClass));
         return myColumn;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> TethysSwingTableListColumn<MetisDataField, R, T> declareListColumn(final MetisDataField pId,
+    public <T> TethysSwingTableListColumn<T, MetisDataField, R> declareListColumn(final MetisDataField pId,
                                                                                   final Class<T> pClass) {
-        TethysSwingTableListColumn<MetisDataField, R, T> myColumn = getTable().declareListColumn(pId, pClass);
+        TethysSwingTableListColumn<T, MetisDataField, R> myColumn = getTable().declareListColumn(pId, pClass);
         myColumn.setCellValueFactory(p -> (TethysItemList<T>) getItemFieldValue(p, pId, TethysItemList.class));
         return myColumn;
     }
 
     @Override
-    public <T> TethysSwingTableIconColumn<MetisDataField, R, T> declareIconColumn(final MetisDataField pId,
+    public <T> TethysSwingTableIconColumn<T, MetisDataField, R> declareIconColumn(final MetisDataField pId,
                                                                                   final Class<T> pClass) {
-        TethysSwingTableIconColumn<MetisDataField, R, T> myColumn = getTable().declareIconColumn(pId, pClass);
+        TethysSwingTableIconColumn<T, MetisDataField, R> myColumn = getTable().declareIconColumn(pId, pClass);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, pClass));
         return myColumn;
     }
 
     @Override
-    public <T> TethysSwingTableStateIconColumn<MetisDataField, R, T> declareStateIconColumn(final MetisDataField pId,
+    public <T> TethysSwingTableStateIconColumn<T, MetisDataField, R> declareStateIconColumn(final MetisDataField pId,
                                                                                             final Class<T> pClass) {
-        TethysSwingTableStateIconColumn<MetisDataField, R, T> myColumn = getTable().declareStateIconColumn(pId, pClass);
+        TethysSwingTableStateIconColumn<T, MetisDataField, R> myColumn = getTable().declareStateIconColumn(pId, pClass);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, pClass));
         return myColumn;
     }

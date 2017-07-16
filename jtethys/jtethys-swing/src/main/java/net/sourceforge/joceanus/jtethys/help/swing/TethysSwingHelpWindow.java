@@ -101,6 +101,14 @@ public class TethysSwingHelpWindow
         }
     }
 
+    @Override
+    public void closeWindow() {
+        hideDialog();
+        if (theDialog != null) {
+            theDialog.closeDialog();
+        }
+    }
+
     /**
      * Dialog class.
      */
@@ -160,6 +168,14 @@ public class TethysSwingHelpWindow
                 /* hide it */
                 theFrame.setVisible(false);
             }
+        }
+
+        /**
+         * Close the dialog.
+         */
+        private void closeDialog() {
+            /* close the dialog */
+            theFrame.dispose();
         }
 
         /**

@@ -30,11 +30,21 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDisableItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
@@ -108,23 +118,6 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
     }
 
     /**
-     * Set the header predicate.
-     * @param pHeader the header predicate
-     */
-    public void setHeader(final Predicate<R> pHeader) {
-        theTable.setHeader(pHeader);
-    }
-
-    /**
-     * Is the row a header?
-     * @param pRow the row
-     * @return true/false
-     */
-    public boolean isHeader(final R pRow) {
-        return theTable.isHeader(pRow);
-    }
-
-    /**
      * Set the disabled predicate.
      * @param pDisabled the disabled predicate
      */
@@ -186,7 +179,7 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
      * @param pId the id of the column
      * @return the table column
      */
-    public TethysTableColumn<MetisDataField, R, N, I> getColumn(final MetisDataField pId) {
+    public TethysTableColumn<?, MetisDataField, R, N, I> getColumn(final MetisDataField pId) {
         return theTable.getColumn(pId);
     }
 
@@ -217,98 +210,98 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareStringColumn(MetisDataField pId);
+    public abstract TethysTableColumn<String, MetisDataField, R, N, I> declareStringColumn(MetisDataField pId);
 
     /**
      * Declare charArray column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareCharArrayColumn(MetisDataField pId);
+    public abstract TethysTableColumn<char[], MetisDataField, R, N, I> declareCharArrayColumn(MetisDataField pId);
 
     /**
      * Declare short column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareShortColumn(MetisDataField pId);
+    public abstract TethysTableColumn<Short, MetisDataField, R, N, I> declareShortColumn(MetisDataField pId);
 
     /**
      * Declare integer column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareIntegerColumn(MetisDataField pId);
+    public abstract TethysTableColumn<Integer, MetisDataField, R, N, I> declareIntegerColumn(MetisDataField pId);
 
     /**
      * Declare long column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareLongColumn(MetisDataField pId);
+    public abstract TethysTableColumn<Long, MetisDataField, R, N, I> declareLongColumn(MetisDataField pId);
 
     /**
      * Declare rawDecimal column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareRawDecimalColumn(MetisDataField pId);
+    public abstract TethysTableColumn<TethysDecimal, MetisDataField, R, N, I> declareRawDecimalColumn(MetisDataField pId);
 
     /**
      * Declare money column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareMoneyColumn(MetisDataField pId);
+    public abstract TethysTableColumn<TethysMoney, MetisDataField, R, N, I> declareMoneyColumn(MetisDataField pId);
 
     /**
      * Declare price column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declarePriceColumn(MetisDataField pId);
+    public abstract TethysTableColumn<TethysPrice, MetisDataField, R, N, I> declarePriceColumn(MetisDataField pId);
 
     /**
      * Declare rate column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareRateColumn(MetisDataField pId);
+    public abstract TethysTableColumn<TethysRate, MetisDataField, R, N, I> declareRateColumn(MetisDataField pId);
 
     /**
      * Declare units column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareUnitsColumn(MetisDataField pId);
+    public abstract TethysTableColumn<TethysUnits, MetisDataField, R, N, I> declareUnitsColumn(MetisDataField pId);
 
     /**
      * Declare dilution column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareDilutionColumn(MetisDataField pId);
+    public abstract TethysTableColumn<TethysDilution, MetisDataField, R, N, I> declareDilutionColumn(MetisDataField pId);
 
     /**
      * Declare ratio column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareRatioColumn(MetisDataField pId);
+    public abstract TethysTableColumn<TethysRatio, MetisDataField, R, N, I> declareRatioColumn(MetisDataField pId);
 
     /**
      * Declare dilutedPrice column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareDilutedPriceColumn(MetisDataField pId);
+    public abstract TethysTableColumn<TethysDilutedPrice, MetisDataField, R, N, I> declareDilutedPriceColumn(MetisDataField pId);
 
     /**
      * Declare date column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<MetisDataField, R, N, I> declareDateColumn(MetisDataField pId);
+    public abstract TethysTableColumn<TethysDate, MetisDataField, R, N, I> declareDateColumn(MetisDataField pId);
 
     /**
      * Declare scroll column.
@@ -317,8 +310,8 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<MetisDataField, R, N, I> declareScrollColumn(MetisDataField pId,
-                                                                                       Class<T> pClass);
+    public abstract <T> TethysTableColumn<T, MetisDataField, R, N, I> declareScrollColumn(MetisDataField pId,
+                                                                                          Class<T> pClass);
 
     /**
      * Declare list column.
@@ -327,8 +320,8 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<MetisDataField, R, N, I> declareListColumn(MetisDataField pId,
-                                                                                     Class<T> pClass);
+    public abstract <T> TethysTableColumn<TethysItemList<T>, MetisDataField, R, N, I> declareListColumn(MetisDataField pId,
+                                                                                                        Class<T> pClass);
 
     /**
      * Declare icon column.
@@ -337,8 +330,8 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<MetisDataField, R, N, I> declareIconColumn(MetisDataField pId,
-                                                                                     Class<T> pClass);
+    public abstract <T> TethysTableColumn<T, MetisDataField, R, N, I> declareIconColumn(MetisDataField pId,
+                                                                                        Class<T> pClass);
 
     /**
      * Declare stateIcon column.
@@ -347,8 +340,8 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<MetisDataField, R, N, I> declareStateIconColumn(MetisDataField pId,
-                                                                                          Class<T> pClass);
+    public abstract <T> TethysTableColumn<T, MetisDataField, R, N, I> declareStateIconColumn(MetisDataField pId,
+                                                                                             Class<T> pClass);
 
     /**
      * Is the table readOnly?

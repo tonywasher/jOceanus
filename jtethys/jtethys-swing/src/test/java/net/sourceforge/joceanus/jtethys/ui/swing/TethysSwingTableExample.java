@@ -152,6 +152,9 @@ public class TethysSwingTableExample {
         TethysSwingTableShortColumn<TethysDataId, TethysSwingTableItem> myShortColumn = theTable.declareShortColumn(TethysDataId.SHORT);
         myShortColumn.setCellValueFactory(p -> p.getShort());
         myShortColumn.setCellCommitFactory((p, v) -> p.setShort(v));
+        myShortColumn.setValidator((v, r) -> v < 0
+                                                   ? "Must be positive"
+                                                   : null);
 
         /* Create the integer column */
         TethysSwingTableIntegerColumn<TethysDataId, TethysSwingTableItem> myIntColumn = theTable.declareIntegerColumn(TethysDataId.INTEGER);
@@ -199,24 +202,25 @@ public class TethysSwingTableExample {
         myDilutedPriceColumn.setCellCommitFactory((p, v) -> p.setDilutedPrice(v));
 
         /* Create the boolean column */
-        TethysSwingTableIconColumn<TethysDataId, TethysSwingTableItem, Boolean> myBoolColumn = theTable.declareIconColumn(TethysDataId.BOOLEAN, Boolean.class);
+        TethysSwingTableIconColumn<Boolean, TethysDataId, TethysSwingTableItem> myBoolColumn = theTable.declareIconColumn(TethysDataId.BOOLEAN, Boolean.class);
         myBoolColumn.setCellValueFactory(p -> p.getBoolean());
         myBoolColumn.setCellCommitFactory((p, v) -> p.setBoolean(v));
         myBoolColumn.setName("B");
 
         /* Create the extra boolean column */
-        TethysSwingTableStateIconColumn<TethysDataId, TethysSwingTableItem, Boolean> myXtraBoolColumn = theTable.declareStateIconColumn(TethysDataId.XTRABOOL, Boolean.class);
+        TethysSwingTableStateIconColumn<Boolean, TethysDataId, TethysSwingTableItem> myXtraBoolColumn = theTable.declareStateIconColumn(TethysDataId.XTRABOOL, Boolean.class);
         myXtraBoolColumn.setCellValueFactory(p -> p.getXtraBoolean());
         myXtraBoolColumn.setCellCommitFactory((p, v) -> p.setXtraBoolean(v));
         myXtraBoolColumn.setName("X");
+        myXtraBoolColumn.setCellEditable(p -> p.getBoolean());
 
         /* Create the scroll column */
-        TethysSwingTableScrollColumn<TethysDataId, TethysSwingTableItem, String> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
+        TethysSwingTableScrollColumn<String, TethysDataId, TethysSwingTableItem> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
         myScrollColumn.setCellValueFactory(p -> p.getScroll());
         myScrollColumn.setCellCommitFactory((p, v) -> p.setScroll(v));
 
         /* Create the list column */
-        TethysSwingTableListColumn<TethysDataId, TethysSwingTableItem, TethysListId> myListColumn = theTable.declareListColumn(TethysDataId.LIST, TethysListId.class);
+        TethysSwingTableListColumn<TethysListId, TethysDataId, TethysSwingTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST, TethysListId.class);
         myListColumn.setCellValueFactory(p -> p.getList());
         myListColumn.setCellCommitFactory((p, v) -> p.setList(v));
 
@@ -229,6 +233,7 @@ public class TethysSwingTableExample {
         TethysSwingTableIntegerColumn<TethysDataId, TethysSwingTableItem> myUpdatesColumn = theTable.declareIntegerColumn(TethysDataId.UPDATES);
         myUpdatesColumn.setCellValueFactory(p -> p.getUpdates());
         myUpdatesColumn.setName("U");
+        myUpdatesColumn.setEditable(false);
 
         /* Set Disabled indicator */
         theTable.setChanged((c, r) -> c == TethysDataId.NAME && r.getUpdates() > 0);
@@ -242,7 +247,7 @@ public class TethysSwingTableExample {
     @SuppressWarnings("unchecked")
     private void handleCreate(final TethysEvent<TethysUIEvent> pEvent) {
         /* Obtain the Cell */
-        TethysSwingTableCell<TethysDataId, TethysSwingTableItem, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
+        TethysSwingTableCell<?, TethysDataId, TethysSwingTableItem> myCell = pEvent.getDetails(TethysSwingTableCell.class);
 
         /* Configure static configuration for cells */
         switch (myCell.getColumnId()) {
@@ -274,12 +279,12 @@ public class TethysSwingTableExample {
     @SuppressWarnings("unchecked")
     private void handleFormat(final TethysEvent<TethysUIEvent> pEvent) {
         /* Obtain the Cell */
-        TethysSwingTableCell<TethysDataId, TethysSwingTableItem, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
+        TethysSwingTableCell<?, TethysDataId, TethysSwingTableItem> myCell = pEvent.getDetails(TethysSwingTableCell.class);
 
         /* If this is the extra Boolean field */
         if (TethysDataId.XTRABOOL.equals(myCell.getColumnId())) {
             /* Set correct state for extra Boolean */
-            TethysSwingTableStateIconCell<?, ?, Boolean, IconState> myStateCell = (TethysSwingTableStateIconCell<?, ?, Boolean, IconState>) myCell;
+            TethysSwingTableStateIconCell<Boolean, ?, ?, IconState> myStateCell = (TethysSwingTableStateIconCell<Boolean, ?, ?, IconState>) myCell;
             TethysSwingTableItem myRow = myCell.getActiveRow();
             myStateCell.setRenderMachineState(myRow.getBoolean()
                                                                  ? IconState.OPEN
@@ -296,29 +301,17 @@ public class TethysSwingTableExample {
         /* Access column id */
         TethysDataId myId = getColumnId(pEvent);
 
-        /* Make the updates column read-only */
-        if (TethysDataId.UPDATES.equals(myId)) {
-            pEvent.consume();
-        }
-
         /* If this is the extra Boolean field */
         if (TethysDataId.XTRABOOL.equals(myId)) {
             /* Access details */
-            TethysSwingTableCell<TethysDataId, TethysSwingTableItem, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
-            TethysSwingTableStateIconCell<?, ?, Boolean, IconState> myStateCell = (TethysSwingTableStateIconCell<?, ?, Boolean, IconState>) myCell;
+            TethysSwingTableCell<?, TethysDataId, TethysSwingTableItem> myCell = pEvent.getDetails(TethysSwingTableCell.class);
+            TethysSwingTableStateIconCell<Boolean, ?, ?, IconState> myStateCell = (TethysSwingTableStateIconCell<Boolean, ?, ?, IconState>) myCell;
             TethysSwingTableItem myRow = myCell.getActiveRow();
 
-            /* Not editable if boolean is false */
-            if (!myRow.getBoolean()) {
-                pEvent.consume();
-
-                /* else update the state */
-            } else {
-                /* Set correct state for extra Boolean */
-                myStateCell.setEditMachineState(myRow.getBoolean()
-                                                                   ? IconState.OPEN
-                                                                   : IconState.CLOSED);
-            }
+            /* Set correct state for extra Boolean */
+            myStateCell.setEditMachineState(myRow.getBoolean()
+                                                               ? IconState.OPEN
+                                                               : IconState.CLOSED);
         }
     }
 
@@ -336,7 +329,7 @@ public class TethysSwingTableExample {
      */
     @SuppressWarnings("unchecked")
     private void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysSwingTableCell<TethysDataId, TethysSwingTableItem, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
+        TethysSwingTableCell<?, TethysDataId, TethysSwingTableItem> myCell = pEvent.getDetails(TethysSwingTableCell.class);
         TethysSwingTableItem myRow = myCell.getActiveRow();
         myRow.incrementUpdates();
         myCell.repaintColumnCell(TethysDataId.UPDATES);
@@ -353,7 +346,7 @@ public class TethysSwingTableExample {
      */
     @SuppressWarnings("unchecked")
     private TethysDataId getColumnId(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysSwingTableCell<TethysDataId, ?, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
+        TethysSwingTableCell<?, TethysDataId, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
         return myCell.getColumnId();
     }
 

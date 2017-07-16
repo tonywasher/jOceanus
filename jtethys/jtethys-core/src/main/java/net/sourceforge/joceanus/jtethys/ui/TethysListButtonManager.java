@@ -90,6 +90,11 @@ public abstract class TethysListButtonManager<T, N, I>
     private TethysItemList<T> theActiveValue;
 
     /**
+     * Is the menu Showing?
+     */
+    private boolean menuShowing;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
@@ -246,6 +251,7 @@ public abstract class TethysListButtonManager<T, N, I>
         if (buildMenu()) {
             /* Show the menu */
             showMenu();
+            menuShowing = true;
 
             /* Else nothing to display */
         } else {
@@ -318,11 +324,14 @@ public abstract class TethysListButtonManager<T, N, I>
             setValue(theActiveValue);
             theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theActiveValue);
 
-            /* else no change */
-        } else {
+            /* else if the menu is showing */
+        } else if (menuShowing) {
             /* notify cancellation */
             notifyCancelled();
         }
+
+        /* Release the menuShowing flag */
+        menuShowing = false;
     }
 
     /**

@@ -27,6 +27,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpResource;
@@ -43,11 +44,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
 public class TethysFXHelpWindow
         extends TethysHelpWindow<Node, Node> {
     /**
-     * The GUI Factory.
-     */
-    private final TethysFXGuiFactory theFactory;
-
-    /**
      * The help dialog.
      */
     private HelpDialog theDialog;
@@ -59,7 +55,6 @@ public class TethysFXHelpWindow
     public TethysFXHelpWindow(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
-        theFactory = pFactory;
     }
 
     @Override
@@ -83,56 +78,57 @@ public class TethysFXHelpWindow
         if (theDialog == null) {
             /* Create a new dialog */
             theDialog = new HelpDialog();
-
-            /* Change visibility of tree when hiding */
-            theDialog.setOnHiding(e -> handleDialogClosing());
         }
 
-        /* If the dialog is not visible */
-        if (!theDialog.isShowing()) {
-            /* Show it */
-            theDialog.showDialog();
-        }
-    }
-
-    /**
-     * Handle dialog closing.
-     */
-    private void handleDialogClosing() {
-        getTreeManager().setVisible(false);
-        fireEvent(TethysUIEvent.WINDOWCLOSED, null);
+        /* Show it */
+        theDialog.showDialog();
     }
 
     @Override
     public void hideDialog() {
-        /* If the dialog is visible */
-        if (theDialog.isShowing()) {
-            /* hide it */
-            theDialog.hide();
+        if (theDialog != null) {
+            theDialog.hideDialog();
+        }
+    }
+
+    @Override
+    public void closeWindow() {
+        if (theDialog != null) {
+            theDialog.closeDialog();
         }
     }
 
     /**
      * Dialog class.
      */
-    private final class HelpDialog
-            extends Stage {
+    private final class HelpDialog {
+        /**
+         * The Stage.
+         */
+        private Stage theStage;
+
         /**
          * Constructor.
          */
         private HelpDialog() {
+            /* Create the stage */
+            theStage = new Stage();
+
             /* Set the title */
-            setTitle(TethysHelpResource.TITLE.getValue());
+            theStage.setTitle(TethysHelpResource.TITLE.getValue());
 
             /* Initialise the dialog */
-            initModality(Modality.NONE);
-            initOwner(theFactory.getStage());
+            theStage.initModality(Modality.NONE);
+            theStage.initStyle(StageStyle.DECORATED);
 
             /* Create the scene */
             BorderPane myContainer = new BorderPane();
             myContainer.setCenter(getSplitTreeManager().getNode());
             Scene myScene = new Scene(myContainer);
-            setScene(myScene);
+            theStage.setScene(myScene);
+
+            /* Change visibility of tree when hiding */
+            theStage.setOnHiding(e -> handleDialogClosing());
         }
 
         /**
@@ -140,19 +136,46 @@ public class TethysFXHelpWindow
          */
         private void showDialog() {
             /* Centre on parent */
-            Window myParent = getOwner();
+            Window myParent = theStage.getOwner();
             if (myParent != null) {
                 double myX = (myParent.getWidth() - WINDOW_WIDTH) / 2;
                 double myY = (myParent.getHeight() - WINDOW_HEIGHT) / 2;
-                setX(myParent.getX() + myX);
-                setY(myParent.getY() + myY);
+                theStage.setX(myParent.getX() + myX);
+                theStage.setY(myParent.getY() + myY);
             }
 
             /* Set the tree as visible */
             getTreeManager().setVisible(true);
 
             /* Show the dialog */
-            show();
+            theStage.show();
+        }
+
+        /**
+         * Hide the dialog.
+         */
+        public void hideDialog() {
+            /* If the dialog is visible */
+            if (theStage.isShowing()) {
+                /* hide it */
+                theStage.hide();
+            }
+        }
+
+        /**
+         * Close the dialog.
+         */
+        public void closeDialog() {
+            /* close the dialog */
+            theStage.close();
+        }
+
+        /**
+         * Handle dialog closing.
+         */
+        private void handleDialogClosing() {
+            getTreeManager().setVisible(false);
+            fireEvent(TethysUIEvent.WINDOWCLOSED, null);
         }
     }
 }

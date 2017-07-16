@@ -404,7 +404,9 @@ public abstract class TethysFXDataTextField<T>
          */
         private void handleEnterKey() {
             processValue();
-            haltCellEditing();
+            if (!isAttributeSet(TethysFieldAttribute.ERROR)) {
+                haltCellEditing();
+            }
         }
 
         /**
@@ -431,7 +433,7 @@ public abstract class TethysFXDataTextField<T>
             if (isCellEditing) {
                 setEditable(false);
                 if (!theControl.parsedNewValue()) {
-                    fireEvent(TethysUIEvent.WINDOWCLOSED);
+                    fireEvent(TethysUIEvent.EDITFOCUSLOST);
                 }
             }
             isCellEditing = false;

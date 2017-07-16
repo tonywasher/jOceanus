@@ -83,6 +83,11 @@ public abstract class TethysDateButtonManager<N, I>
     private TethysDate theValue;
 
     /**
+     * Is the menu showing?
+     */
+    private boolean menuShowing;
+
+    /**
      * Constructor.
      * @param pFactory the GUI Factory
      */
@@ -294,13 +299,7 @@ public abstract class TethysDateButtonManager<N, I>
      */
     protected void handleDialogRequest() {
         theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theConfig);
-    }
-
-    /**
-     * handleDialogClosed.
-     */
-    protected void handleDialogClosed() {
-        theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST, theConfig);
+        menuShowing = true;
     }
 
     /**
@@ -312,9 +311,10 @@ public abstract class TethysDateButtonManager<N, I>
             theValue = myNewValue;
             theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myNewValue);
             setButtonText();
-        } else {
-            handleDialogClosed();
+        } else if (menuShowing) {
+            theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST, theConfig);
         }
+        menuShowing = false;
     }
 
     /**

@@ -68,7 +68,7 @@ public class CoeusStatementTable<N, I>
     /**
      * The Loan Column.
      */
-    private final TethysTableColumn<MetisDataField, CoeusTotals, N, I> theLoanColumn;
+    private final TethysTableColumn<CoeusLoan, MetisDataField, CoeusTotals, N, I> theLoanColumn;
 
     /**
      * The Statement Calculator.

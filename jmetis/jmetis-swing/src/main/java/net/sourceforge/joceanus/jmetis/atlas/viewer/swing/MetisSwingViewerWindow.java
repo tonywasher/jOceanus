@@ -193,7 +193,7 @@ public class MetisSwingViewerWindow
         /**
          * Close the dialog.
          */
-        public void closeDialog() {
+        private void closeDialog() {
             /* close the dialog */
             theFrame.dispose();
         }

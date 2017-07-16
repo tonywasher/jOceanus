@@ -91,9 +91,7 @@ public class MetisFXViewerWindow
 
     @Override
     public void hideDialog() {
-        /* Hide the dialog */
         if (theDialog != null) {
-            /* hide it */
             theDialog.hideDialog();
         }
     }
@@ -110,7 +108,7 @@ public class MetisFXViewerWindow
      */
     private final class ViewerDialog {
         /**
-         * The Stage
+         * The Stage.
          */
         private Stage theStage;
 

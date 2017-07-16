@@ -26,9 +26,19 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -56,17 +66,12 @@ public abstract class TethysTableManager<C, R, N, I>
     /**
      * The map of columns.
      */
-    private final Map<C, TethysTableColumn<C, R, N, I>> theColumnMap;
+    private final Map<C, TethysTableColumn<?, C, R, N, I>> theColumnMap;
 
     /**
      * The last child item.
      */
-    private TethysTableColumn<C, R, N, I> theLastChild;
-
-    /**
-     * The Header Predicate.
-     */
-    private Predicate<R> theHeader;
+    private TethysTableColumn<?, C, R, N, I> theLastChild;
 
     /**
      * The Error Predicate.
@@ -89,14 +94,14 @@ public abstract class TethysTableManager<C, R, N, I>
     private Comparator<R> theComparator;
 
     /**
-     * The Combined Comparator.
-     */
-    private Comparator<R> theCombinedComparator;
-
-    /**
      * The Filter.
      */
     private Predicate<R> theFilter;
+
+    /**
+     * Is the table editable?
+     */
+    private boolean isEditable;
 
     /**
      * Constructor.
@@ -106,6 +111,7 @@ public abstract class TethysTableManager<C, R, N, I>
         theEventManager = new TethysEventManager<>();
         theId = pFactory.getNextId();
         theColumnMap = new HashMap<>();
+        isEditable = true;
     }
 
     @Override
@@ -119,21 +125,19 @@ public abstract class TethysTableManager<C, R, N, I>
     }
 
     /**
-     * Set the header predicate.
-     * @param pHeader the header predicate
+     * Is the column editable?
+     * @return true/false
      */
-    public void setHeader(final Predicate<R> pHeader) {
-        theHeader = pHeader;
+    public boolean isEditable() {
+        return isEditable;
     }
 
     /**
-     * Is the row a header?
-     * @param pRow the row
-     * @return true/false
+     * Set the edit-ability of the table.
+     * @param pEditable true/false
      */
-    public boolean isHeader(final R pRow) {
-        return theHeader != null
-               && theHeader.test(pRow);
+    public void setEditable(final boolean pEditable) {
+        isEditable = pEditable;
     }
 
     /**
@@ -223,22 +227,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * @return the comparator
      */
     protected Comparator<R> getComparator() {
-        return (theComparator == null)
-                                       ? null
-                                       : (theHeader == null)
-                                                             ? theComparator
-                                                             : getCombinedComparator();
-    }
-
-    /**
-     * Obtain the combined comparator.
-     * @return the filter
-     */
-    private Comparator<R> getCombinedComparator() {
-        if (theCombinedComparator == null) {
-            theCombinedComparator = new CombinedComparator();
-        }
-        return theCombinedComparator;
+        return theComparator;
     }
 
     /**
@@ -272,7 +261,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the id of the column
      * @return the table column
      */
-    public TethysTableColumn<C, R, N, I> getColumn(final C pId) {
+    public TethysTableColumn<?, C, R, N, I> getColumn(final C pId) {
         return theColumnMap.get(pId);
     }
 
@@ -281,7 +270,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      */
     public void repaintColumn(final C pId) {
-        TethysTableColumn<C, R, N, I> myCol = theColumnMap.get(pId);
+        TethysTableColumn<?, C, R, N, I> myCol = theColumnMap.get(pId);
         if ((myCol != null)
             && (myCol.isVisible())) {
             myCol.setVisible(false);
@@ -293,7 +282,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * Register the column.
      * @param pColumn the column
      */
-    private void registerColumn(final TethysTableColumn<C, R, N, I> pColumn) {
+    private void registerColumn(final TethysTableColumn<?, C, R, N, I> pColumn) {
         theColumnMap.put(pColumn.getId(), pColumn);
     }
 
@@ -302,98 +291,98 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareStringColumn(C pId);
+    public abstract TethysTableColumn<String, C, R, N, I> declareStringColumn(C pId);
 
     /**
      * Declare charArray column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareCharArrayColumn(C pId);
+    public abstract TethysTableColumn<char[], C, R, N, I> declareCharArrayColumn(C pId);
 
     /**
      * Declare short column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareShortColumn(C pId);
+    public abstract TethysTableColumn<Short, C, R, N, I> declareShortColumn(C pId);
 
     /**
      * Declare integer column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareIntegerColumn(C pId);
+    public abstract TethysTableColumn<Integer, C, R, N, I> declareIntegerColumn(C pId);
 
     /**
      * Declare long column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareLongColumn(C pId);
+    public abstract TethysTableColumn<Long, C, R, N, I> declareLongColumn(C pId);
 
     /**
      * Declare rawDecimal column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareRawDecimalColumn(C pId);
+    public abstract TethysTableColumn<TethysDecimal, C, R, N, I> declareRawDecimalColumn(C pId);
 
     /**
      * Declare money column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareMoneyColumn(C pId);
+    public abstract TethysTableColumn<TethysMoney, C, R, N, I> declareMoneyColumn(C pId);
 
     /**
      * Declare price column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declarePriceColumn(C pId);
+    public abstract TethysTableColumn<TethysPrice, C, R, N, I> declarePriceColumn(C pId);
 
     /**
      * Declare rate column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareRateColumn(C pId);
+    public abstract TethysTableColumn<TethysRate, C, R, N, I> declareRateColumn(C pId);
 
     /**
      * Declare units column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareUnitsColumn(C pId);
+    public abstract TethysTableColumn<TethysUnits, C, R, N, I> declareUnitsColumn(C pId);
 
     /**
      * Declare dilution column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareDilutionColumn(C pId);
+    public abstract TethysTableColumn<TethysDilution, C, R, N, I> declareDilutionColumn(C pId);
 
     /**
      * Declare ratio column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareRatioColumn(C pId);
+    public abstract TethysTableColumn<TethysRatio, C, R, N, I> declareRatioColumn(C pId);
 
     /**
      * Declare dilutedPrice column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareDilutedPriceColumn(C pId);
+    public abstract TethysTableColumn<TethysDilutedPrice, C, R, N, I> declareDilutedPriceColumn(C pId);
 
     /**
      * Declare date column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<C, R, N, I> declareDateColumn(C pId);
+    public abstract TethysTableColumn<TethysDate, C, R, N, I> declareDateColumn(C pId);
 
     /**
      * Declare scroll column.
@@ -402,8 +391,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<C, R, N, I> declareScrollColumn(C pId,
-                                                                          Class<T> pClass);
+    public abstract <T> TethysTableColumn<T, C, R, N, I> declareScrollColumn(C pId,
+                                                                             Class<T> pClass);
 
     /**
      * Declare list column.
@@ -412,8 +401,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<C, R, N, I> declareListColumn(C pId,
-                                                                        Class<T> pClass);
+    public abstract <T> TethysTableColumn<TethysItemList<T>, C, R, N, I> declareListColumn(C pId,
+                                                                                           Class<T> pClass);
 
     /**
      * Declare icon column.
@@ -422,8 +411,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<C, R, N, I> declareIconColumn(C pId,
-                                                                        Class<T> pClass);
+    public abstract <T> TethysTableColumn<T, C, R, N, I> declareIconColumn(C pId,
+                                                                           Class<T> pClass);
 
     /**
      * Declare stateIcon column.
@@ -432,17 +421,18 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<C, R, N, I> declareStateIconColumn(C pId,
-                                                                             Class<T> pClass);
+    public abstract <T> TethysTableColumn<T, C, R, N, I> declareStateIconColumn(C pId,
+                                                                                Class<T> pClass);
 
     /**
      * Column Definition.
+     * @param <T> the value type
      * @param <C> the column identity
      * @param <R> the row type
      * @param <N> the node type
      * @param <I> the icon type
      */
-    public abstract static class TethysTableColumn<C, R, N, I>
+    public abstract static class TethysTableColumn<T, C, R, N, I>
             implements TethysEventProvider<TethysUIEvent> {
         /**
          * The table.
@@ -472,12 +462,27 @@ public abstract class TethysTableManager<C, R, N, I>
         /**
          * The previous sibling of this item.
          */
-        private TethysTableColumn<C, R, N, I> thePrevSibling;
+        private TethysTableColumn<?, C, R, N, I> thePrevSibling;
 
         /**
          * Is the column visible?
          */
         private boolean isVisible;
+
+        /**
+         * Is the column editable?
+         */
+        private boolean isEditable;
+
+        /**
+         * The cell-editable predicate.
+         */
+        private Predicate<R> isCellEditable;
+
+        /**
+         * The validator.
+         */
+        private BiFunction<T, R, String> theValidator;
 
         /**
          * Constructor.
@@ -494,12 +499,13 @@ public abstract class TethysTableManager<C, R, N, I>
             theCellType = pType;
             theName = pId.toString();
             isVisible = true;
+            isEditable = true;
 
             /* Create the event manager */
             theEventManager = new TethysEventManager<>();
 
             /* If the table already has children */
-            TethysTableColumn<C, R, N, I> myChild = theTable.theLastChild;
+            TethysTableColumn<?, C, R, N, I> myChild = theTable.theLastChild;
             if (myChild != null) {
                 /* Link to last child */
                 thePrevSibling = myChild;
@@ -510,6 +516,10 @@ public abstract class TethysTableManager<C, R, N, I>
 
             /* Register the column */
             theTable.registerColumn(this);
+
+            /* Initialise editable and validator */
+            isCellEditable = p -> true;
+            theValidator = (t, r) -> null;
         }
 
         @Override
@@ -566,6 +576,14 @@ public abstract class TethysTableManager<C, R, N, I>
         }
 
         /**
+         * Is the column editable?
+         * @return true/false
+         */
+        public boolean isEditable() {
+            return isEditable;
+        }
+
+        /**
          * Set the visibility of the column.
          * @param pVisible true/false
          */
@@ -588,6 +606,14 @@ public abstract class TethysTableManager<C, R, N, I>
         }
 
         /**
+         * Set the edit-ability of the column.
+         * @param pEditable true/false
+         */
+        public void setEditable(final boolean pEditable) {
+            isEditable = pEditable;
+        }
+
+        /**
          * Attach to table.
          */
         protected abstract void attachToTable();
@@ -604,7 +630,7 @@ public abstract class TethysTableManager<C, R, N, I>
         protected int countPreviousVisibleSiblings() {
             /* Determine the previous visible sibling */
             int myCount = 0;
-            TethysTableColumn<C, R, N, I> mySibling = thePrevSibling;
+            TethysTableColumn<?, C, R, N, I> mySibling = thePrevSibling;
             while (mySibling != null) {
                 if (mySibling.isVisible) {
                     myCount++;
@@ -619,6 +645,38 @@ public abstract class TethysTableManager<C, R, N, I>
          * @param pWidth the width
          */
         public abstract void setColumnWidth(int pWidth);
+
+        /**
+         * Set the cell-editable tester.
+         * @param pEditable the editable tester
+         */
+        public void setCellEditable(final Predicate<R> pEditable) {
+            isCellEditable = pEditable;
+        }
+
+        /**
+         * Get the cell-editable tester.
+         * @return the current tester
+         */
+        public Predicate<R> getCellEditable() {
+            return isCellEditable;
+        }
+
+        /**
+         * Set the validity tester.
+         * @param pValidator the validator
+         */
+        public void setValidator(final BiFunction<T, R, String> pValidator) {
+            theValidator = pValidator;
+        }
+
+        /**
+         * Get the validity tester.
+         * @return the current tester
+         */
+        public BiFunction<T, R, String> getValidator() {
+            return theValidator;
+        }
     }
 
     /**
@@ -640,7 +698,7 @@ public abstract class TethysTableManager<C, R, N, I>
          * Obtain the column.
          * @return the column
          */
-        TethysTableColumn<C, R, N, I> getColumn();
+        TethysTableColumn<T, C, R, N, I> getColumn();
 
         /**
          * Obtain the control.
@@ -682,26 +740,5 @@ public abstract class TethysTableManager<C, R, N, I>
          * Row changed during edit.
          */
         void repaintCellRow();
-    }
-
-    /**
-     * Header comparator.
-     */
-    private class CombinedComparator
-            implements Comparator<R> {
-        @Override
-        public int compare(final R pFirst,
-                           final R pSecond) {
-            /* Determine whether either item is a header */
-            boolean bFirst = theHeader.test(pFirst);
-            boolean bSecond = theHeader.test(pSecond);
-
-            /* Determine sort */
-            return (bFirst == bSecond)
-                                       ? theComparator.compare(pFirst, pSecond)
-                                       : bFirst
-                                                ? -1
-                                                : 1;
-        }
     }
 }

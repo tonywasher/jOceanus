@@ -89,6 +89,11 @@ public abstract class TethysScrollButtonManager<T, N, I>
     private TethysScrollMenu<T, I> theMenu;
 
     /**
+     * Is the menu Showing?
+     */
+    private boolean menuShowing;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
@@ -313,6 +318,7 @@ public abstract class TethysScrollButtonManager<T, N, I>
         if (!theMenu.isEmpty()) {
             /* Show the menu */
             showMenu();
+            menuShowing = true;
 
             /* Else nothing to display */
         } else {
@@ -340,11 +346,14 @@ public abstract class TethysScrollButtonManager<T, N, I>
             /* fire new value Event */
             theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theValue);
 
-            /* Else no value was selected */
-        } else {
+            /* Else if the menu was showing */
+        } else if (menuShowing) {
             /* notify cancellation */
             notifyCancelled();
         }
+
+        /* Release the menuShowing flag */
+        menuShowing = false;
     }
 
     /**
@@ -361,7 +370,7 @@ public abstract class TethysScrollButtonManager<T, N, I>
     /**
      * notifyCancelled.
      */
-    protected void notifyCancelled() {
+    private void notifyCancelled() {
         /* fire menu cancelled event */
         theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST);
     }

@@ -230,7 +230,8 @@ public class CoeusZopaLoanBookItem
 
     /**
      * Constructor for merged bookItem.
-     * @param pSource the source item
+     * @param pBase the base item
+     * @param pNew the new item
      */
     protected CoeusZopaLoanBookItem(final CoeusZopaLoanBookItem pBase,
                                     final CoeusZopaLoanBookItem pNew) {

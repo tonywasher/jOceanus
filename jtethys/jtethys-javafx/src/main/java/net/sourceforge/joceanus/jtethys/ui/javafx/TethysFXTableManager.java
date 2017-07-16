@@ -53,6 +53,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableCell;
 
 /**
  * JavaFX Table manager.
@@ -90,6 +91,11 @@ public class TethysFXTableManager<C, R>
      * The Sorted Items.
      */
     private ObservableList<R> theSorted;
+
+    /**
+     * The Active Cell.
+     */
+    private TethysFXTableCell<?, C, R> theActiveCell;
 
     /**
      * Constructor.
@@ -150,10 +156,9 @@ public class TethysFXTableManager<C, R>
                                : myItems.iterator();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public TethysFXTableColumn<C, R, ?> getColumn(final C pId) {
-        return (TethysFXTableColumn<C, R, ?>) super.getColumn(pId);
+    public TethysFXTableColumn<?, C, R> getColumn(final C pId) {
+        return (TethysFXTableColumn<?, C, R>) super.getColumn(pId);
     }
 
     /**
@@ -162,12 +167,6 @@ public class TethysFXTableManager<C, R>
      */
     public void setItems(final ObservableList<R> pItems) {
         theItems = pItems;
-        setTheItems();
-    }
-
-    @Override
-    public void setHeader(final Predicate<R> pHeader) {
-        super.setHeader(pHeader);
         setTheItems();
     }
 
@@ -209,6 +208,23 @@ public class TethysFXTableManager<C, R>
 
         /* Declare the items */
         theTable.setItems(myItems);
+    }
+
+    /**
+     * Set the active cell.
+     * @param pCell the actively editing cell
+     */
+    protected void setActiveCell(final TethysFXTableCell<?, C, R> pCell) {
+        theActiveCell = pCell;
+    }
+
+    /**
+     * Is the table locked for editing.
+     * @return true/false
+     */
+    protected boolean isEditLocked() {
+        return !isEditable()
+               || (theActiveCell != null && theActiveCell.isCellInError());
     }
 
     @Override
@@ -282,37 +298,37 @@ public class TethysFXTableManager<C, R>
     }
 
     @Override
-    public <T> TethysFXTableScrollColumn<C, R, T> declareScrollColumn(final C pId,
+    public <T> TethysFXTableScrollColumn<T, C, R> declareScrollColumn(final C pId,
                                                                       final Class<T> pClass) {
         return new TethysFXTableScrollColumn<>(this, pId, pClass);
     }
 
     @Override
-    public <T> TethysFXTableListColumn<C, R, T> declareListColumn(final C pId,
+    public <T> TethysFXTableListColumn<T, C, R> declareListColumn(final C pId,
                                                                   final Class<T> pClass) {
         return new TethysFXTableListColumn<>(this, pId, pClass);
     }
 
     @Override
-    public <T> TethysFXTableIconColumn<C, R, T> declareIconColumn(final C pId,
+    public <T> TethysFXTableIconColumn<T, C, R> declareIconColumn(final C pId,
                                                                   final Class<T> pClass) {
         return new TethysFXTableIconColumn<>(this, pId, pClass);
     }
 
     @Override
-    public <T> TethysFXTableStateIconColumn<C, R, T> declareStateIconColumn(final C pId,
+    public <T> TethysFXTableStateIconColumn<T, C, R> declareStateIconColumn(final C pId,
                                                                             final Class<T> pClass) {
         return new TethysFXTableStateIconColumn<>(this, pId, pClass);
     }
 
     /**
      * Column Definition.
+     * @param <T> the column type
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <T> the column type
      */
-    public static class TethysFXTableColumn<C, R, T>
-            extends TethysTableColumn<C, R, Node, Node> {
+    public static class TethysFXTableColumn<T, C, R>
+            extends TethysTableColumn<T, C, R, Node, Node> {
         /**
          * The underlying column.
          */
@@ -389,7 +405,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableStringColumn<C, R>
-            extends TethysFXTableColumn<C, R, String> {
+            extends TethysFXTableColumn<String, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -408,7 +424,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableCharArrayColumn<C, R>
-            extends TethysFXTableColumn<C, R, char[]> {
+            extends TethysFXTableColumn<char[], C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -427,7 +443,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableShortColumn<C, R>
-            extends TethysFXTableColumn<C, R, Short> {
+            extends TethysFXTableColumn<Short, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -446,7 +462,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableIntegerColumn<C, R>
-            extends TethysFXTableColumn<C, R, Integer> {
+            extends TethysFXTableColumn<Integer, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -465,7 +481,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableLongColumn<C, R>
-            extends TethysFXTableColumn<C, R, Long> {
+            extends TethysFXTableColumn<Long, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -484,7 +500,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableRawDecimalColumn<C, R>
-            extends TethysFXTableColumn<C, R, TethysDecimal> {
+            extends TethysFXTableColumn<TethysDecimal, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -503,7 +519,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableMoneyColumn<C, R>
-            extends TethysFXTableColumn<C, R, TethysMoney> {
+            extends TethysFXTableColumn<TethysMoney, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -522,7 +538,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTablePriceColumn<C, R>
-            extends TethysFXTableColumn<C, R, TethysPrice> {
+            extends TethysFXTableColumn<TethysPrice, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -541,7 +557,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableRateColumn<C, R>
-            extends TethysFXTableColumn<C, R, TethysRate> {
+            extends TethysFXTableColumn<TethysRate, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -560,7 +576,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableUnitsColumn<C, R>
-            extends TethysFXTableColumn<C, R, TethysUnits> {
+            extends TethysFXTableColumn<TethysUnits, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -579,7 +595,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableDilutionColumn<C, R>
-            extends TethysFXTableColumn<C, R, TethysDilution> {
+            extends TethysFXTableColumn<TethysDilution, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -598,7 +614,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableRatioColumn<C, R>
-            extends TethysFXTableColumn<C, R, TethysRatio> {
+            extends TethysFXTableColumn<TethysRatio, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -617,7 +633,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableDilutedPriceColumn<C, R>
-            extends TethysFXTableColumn<C, R, TethysDilutedPrice> {
+            extends TethysFXTableColumn<TethysDilutedPrice, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -636,7 +652,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableDateColumn<C, R>
-            extends TethysFXTableColumn<C, R, TethysDate> {
+            extends TethysFXTableColumn<TethysDate, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -651,12 +667,12 @@ public class TethysFXTableManager<C, R>
 
     /**
      * Scroll Column.
+     * @param <T> the column type
      * @param <C> the column identity
      * @param <R> the table item class
-     * @param <T> the column type
      */
-    public static class TethysFXTableScrollColumn<C, R, T>
-            extends TethysFXTableColumn<C, R, T> {
+    public static class TethysFXTableScrollColumn<T, C, R>
+            extends TethysFXTableColumn<T, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -673,12 +689,12 @@ public class TethysFXTableManager<C, R>
 
     /**
      * List Column.
+     * @param <T> the column type
      * @param <C> the column identity
      * @param <R> the table item class
-     * @param <T> the column type
      */
-    public static class TethysFXTableListColumn<C, R, T>
-            extends TethysFXTableColumn<C, R, TethysItemList<T>> {
+    public static class TethysFXTableListColumn<T, C, R>
+            extends TethysFXTableColumn<TethysItemList<T>, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -695,12 +711,12 @@ public class TethysFXTableManager<C, R>
 
     /**
      * Icon Column.
+     * @param <T> the column type
      * @param <C> the column identity
      * @param <R> the table item class
-     * @param <T> the column type
      */
-    public static class TethysFXTableIconColumn<C, R, T>
-            extends TethysFXTableColumn<C, R, T> {
+    public static class TethysFXTableIconColumn<T, C, R>
+            extends TethysFXTableColumn<T, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -717,12 +733,12 @@ public class TethysFXTableManager<C, R>
 
     /**
      * StateIcon Column.
+     * @param <T> the column type
      * @param <C> the column identity
      * @param <R> the table item class
-     * @param <T> the column type
      */
-    public static class TethysFXTableStateIconColumn<C, R, T>
-            extends TethysFXTableColumn<C, R, T> {
+    public static class TethysFXTableStateIconColumn<T, C, R>
+            extends TethysFXTableColumn<T, C, R> {
         /**
          * Constructor.
          * @param pTable the table
