@@ -29,8 +29,10 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javafx.beans.value.ObservableValue;
@@ -50,6 +52,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysRawDecimalEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
@@ -328,7 +331,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the row type
      */
     public static class TethysFXTableColumn<T, C, R>
-            extends TethysTableColumn<T, C, R, Node, Node> {
+            extends TethysBaseTableColumn<T, C, R, Node, Node> {
         /**
          * The underlying column.
          */
@@ -500,7 +503,13 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableRawDecimalColumn<C, R>
-            extends TethysFXTableColumn<TethysDecimal, C, R> {
+            extends TethysFXTableColumn<TethysDecimal, C, R>
+            implements TethysTableRawDecimalColumn<C, R, Node, Node> {
+        /**
+         * Raw decimals supplier.
+         */
+        private Function<R, Integer> theSupplier;
+
         /**
          * Constructor.
          * @param pTable the table
@@ -510,6 +519,20 @@ public class TethysFXTableManager<C, R>
                                                 final C pId) {
             super(pTable, pId, TethysFieldType.DECIMAL);
             declareCellFactory(getTable().theCellFactory.rawDecimalCellFactory(this));
+            theSupplier = p -> TethysRawDecimalEditConverter.DEFAULT_DECIMALS;
+        }
+
+        @Override
+        public void setNumDecimals(final Function<R, Integer> pSupplier) {
+            theSupplier = pSupplier;
+        }
+
+        /**
+         * Obtain the raw decimals supplier.
+         * @return the supplier
+         */
+        protected Function<R, Integer> getNumDecimals() {
+            return theSupplier;
         }
     }
 
@@ -519,7 +542,13 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableMoneyColumn<C, R>
-            extends TethysFXTableColumn<TethysMoney, C, R> {
+            extends TethysFXTableColumn<TethysMoney, C, R>
+            implements TethysTableCurrencyColumn<TethysMoney, C, R, Node, Node> {
+        /**
+         * Currency supplier.
+         */
+        private Function<R, Currency> theSupplier;
+
         /**
          * Constructor.
          * @param pTable the table
@@ -529,6 +558,20 @@ public class TethysFXTableManager<C, R>
                                            final C pId) {
             super(pTable, pId, TethysFieldType.MONEY);
             declareCellFactory(getTable().theCellFactory.moneyCellFactory(this));
+            theSupplier = p -> null;
+        }
+
+        @Override
+        public void setDeemedCurrency(final Function<R, Currency> pSupplier) {
+            theSupplier = pSupplier;
+        }
+
+        /**
+         * Obtain the currency supplier.
+         * @return the supplier
+         */
+        protected Function<R, Currency> getDeemedCurrency() {
+            return theSupplier;
         }
     }
 
@@ -538,7 +581,13 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTablePriceColumn<C, R>
-            extends TethysFXTableColumn<TethysPrice, C, R> {
+            extends TethysFXTableColumn<TethysPrice, C, R>
+            implements TethysTableCurrencyColumn<TethysPrice, C, R, Node, Node> {
+        /**
+         * Currency supplier.
+         */
+        private Function<R, Currency> theSupplier;
+
         /**
          * Constructor.
          * @param pTable the table
@@ -548,6 +597,20 @@ public class TethysFXTableManager<C, R>
                                            final C pId) {
             super(pTable, pId, TethysFieldType.PRICE);
             declareCellFactory(getTable().theCellFactory.priceCellFactory(this));
+            theSupplier = p -> null;
+        }
+
+        @Override
+        public void setDeemedCurrency(final Function<R, Currency> pSupplier) {
+            theSupplier = pSupplier;
+        }
+
+        /**
+         * Obtain the currency supplier.
+         * @return the supplier
+         */
+        protected Function<R, Currency> getDeemedCurrency() {
+            return theSupplier;
         }
     }
 
@@ -633,7 +696,13 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableDilutedPriceColumn<C, R>
-            extends TethysFXTableColumn<TethysDilutedPrice, C, R> {
+            extends TethysFXTableColumn<TethysDilutedPrice, C, R>
+            implements TethysTableCurrencyColumn<TethysDilutedPrice, C, R, Node, Node> {
+        /**
+         * Currency supplier.
+         */
+        private Function<R, Currency> theSupplier;
+
         /**
          * Constructor.
          * @param pTable the table
@@ -643,6 +712,20 @@ public class TethysFXTableManager<C, R>
                                                   final C pId) {
             super(pTable, pId, TethysFieldType.DILUTEDPRICE);
             declareCellFactory(getTable().theCellFactory.dilutedPriceCellFactory(this));
+            theSupplier = p -> null;
+        }
+
+        @Override
+        public void setDeemedCurrency(final Function<R, Currency> pSupplier) {
+            theSupplier = pSupplier;
+        }
+
+        /**
+         * Obtain the currency supplier.
+         * @return the supplier
+         */
+        protected Function<R, Currency> getDeemedCurrency() {
+            return theSupplier;
         }
     }
 

@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.Currency;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.Icon;
@@ -46,11 +45,8 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRawDecimalField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
@@ -80,6 +76,10 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingUnitsTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingStateIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutedPriceColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableMoneyColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTablePriceColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableRawDecimalColumn;
 
 /**
  * Swing Table Cell Factory.
@@ -584,6 +584,7 @@ public class TethysSwingTableCellFactory<C, R>
             @Override
             public boolean stopCellEditing() {
                 /* If we are OK with the value */
+                theEditControl.parseData();
                 if (!theEditControl.isAttributeSet(TethysFieldAttribute.ERROR)
                     && theEventManager.fireEvent(TethysUIEvent.CELLPRECOMMIT, TethysSwingTableCell.this)) {
                     /* Pass call onwards */
@@ -766,42 +767,12 @@ public class TethysSwingTableCellFactory<C, R>
     }
 
     /**
-     * Money Cell.
-     * @param <C> the column identity
-     * @param <R> the table item class
-     */
-    public static class TethysSwingTableMoneyCell<C, R>
-            extends TethysSwingTableCell<TethysMoney, C, R>
-            implements TethysCurrencyField {
-        /**
-         * Constructor.
-         * @param pColumn the column
-         * @param pFactory the GUI Factory
-         */
-        protected TethysSwingTableMoneyCell(final TethysSwingTableColumn<TethysMoney, C, R> pColumn,
-                                            final TethysSwingGuiFactory pFactory) {
-            super(pColumn, pFactory.newMoneyField(), TethysMoney.class);
-        }
-
-        @Override
-        public TethysSwingMoneyTextField getControl() {
-            return (TethysSwingMoneyTextField) super.getControl();
-        }
-
-        @Override
-        public void setDeemedCurrency(final Currency pCurrency) {
-            getControl().setDeemedCurrency(pCurrency);
-        }
-    }
-
-    /**
      * RawDecimal Cell.
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableRawDecimalCell<C, R>
-            extends TethysSwingTableCell<TethysDecimal, C, R>
-            implements TethysRawDecimalField {
+            extends TethysSwingTableCell<TethysDecimal, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -810,16 +781,46 @@ public class TethysSwingTableCellFactory<C, R>
         protected TethysSwingTableRawDecimalCell(final TethysSwingTableColumn<TethysDecimal, C, R> pColumn,
                                                  final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newRawDecimalField(), TethysDecimal.class);
+            getControl().setNumDecimals(() -> getColumn().getNumDecimals().apply(getActiveRow()));
+        }
+
+        @Override
+        public TethysSwingTableRawDecimalColumn<C, R> getColumn() {
+            return (TethysSwingTableRawDecimalColumn<C, R>) super.getColumn();
         }
 
         @Override
         public TethysSwingRawDecimalTextField getControl() {
             return (TethysSwingRawDecimalTextField) super.getControl();
         }
+    }
+
+    /**
+     * Money Cell.
+     * @param <C> the column identity
+     * @param <R> the table item class
+     */
+    public static class TethysSwingTableMoneyCell<C, R>
+            extends TethysSwingTableCell<TethysMoney, C, R> {
+        /**
+         * Constructor.
+         * @param pColumn the column
+         * @param pFactory the GUI Factory
+         */
+        protected TethysSwingTableMoneyCell(final TethysSwingTableColumn<TethysMoney, C, R> pColumn,
+                                            final TethysSwingGuiFactory pFactory) {
+            super(pColumn, pFactory.newMoneyField(), TethysMoney.class);
+            getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
+        }
 
         @Override
-        public void setNumDecimals(final int pNumDecimals) {
-            getControl().setNumDecimals(pNumDecimals);
+        public TethysSwingTableMoneyColumn<C, R> getColumn() {
+            return (TethysSwingTableMoneyColumn<C, R>) super.getColumn();
+        }
+
+        @Override
+        public TethysSwingMoneyTextField getControl() {
+            return (TethysSwingMoneyTextField) super.getControl();
         }
     }
 
@@ -829,8 +830,7 @@ public class TethysSwingTableCellFactory<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTablePriceCell<C, R>
-            extends TethysSwingTableCell<TethysPrice, C, R>
-            implements TethysCurrencyField {
+            extends TethysSwingTableCell<TethysPrice, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -839,16 +839,17 @@ public class TethysSwingTableCellFactory<C, R>
         protected TethysSwingTablePriceCell(final TethysSwingTableColumn<TethysPrice, C, R> pColumn,
                                             final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newPriceField(), TethysPrice.class);
+            getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
+        }
+
+        @Override
+        public TethysSwingTablePriceColumn<C, R> getColumn() {
+            return (TethysSwingTablePriceColumn<C, R>) super.getColumn();
         }
 
         @Override
         public TethysSwingPriceTextField getControl() {
             return (TethysSwingPriceTextField) super.getControl();
-        }
-
-        @Override
-        public void setDeemedCurrency(final Currency pCurrency) {
-            getControl().setDeemedCurrency(pCurrency);
         }
     }
 
@@ -927,8 +928,7 @@ public class TethysSwingTableCellFactory<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTableDilutedPriceCell<C, R>
-            extends TethysSwingTableCell<TethysDilutedPrice, C, R>
-            implements TethysCurrencyField {
+            extends TethysSwingTableCell<TethysDilutedPrice, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -937,16 +937,17 @@ public class TethysSwingTableCellFactory<C, R>
         protected TethysSwingTableDilutedPriceCell(final TethysSwingTableColumn<TethysDilutedPrice, C, R> pColumn,
                                                    final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newDilutedPriceField(), TethysDilutedPrice.class);
+            getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
+        }
+
+        @Override
+        public TethysSwingTableDilutedPriceColumn<C, R> getColumn() {
+            return (TethysSwingTableDilutedPriceColumn<C, R>) super.getColumn();
         }
 
         @Override
         public TethysSwingDilutedPriceTextField getControl() {
             return (TethysSwingDilutedPriceTextField) super.getControl();
-        }
-
-        @Override
-        public void setDeemedCurrency(final Currency pCurrency) {
-            getControl().setDeemedCurrency(pCurrency);
         }
     }
 
@@ -1043,8 +1044,7 @@ public class TethysSwingTableCellFactory<C, R>
      * @param <T> the column item class
      */
     public static class TethysSwingTableListCell<T, C, R>
-            extends TethysSwingTableCell<TethysItemList<T>, C, R>
-            implements TethysListField<T, JComponent, Icon> {
+            extends TethysSwingTableCell<TethysItemList<T>, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -1061,11 +1061,6 @@ public class TethysSwingTableCellFactory<C, R>
         @Override
         public TethysSwingListButtonField<T> getControl() {
             return (TethysSwingListButtonField<T>) super.getControl();
-        }
-
-        @Override
-        public TethysSwingListButtonManager<T> getListManager() {
-            return getControl().getListManager();
         }
 
         @SuppressWarnings("unchecked")

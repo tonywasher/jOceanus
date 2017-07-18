@@ -23,11 +23,13 @@
 package net.sourceforge.joceanus.jtethys.ui;
 
 import java.util.Comparator;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -71,7 +73,7 @@ public abstract class TethysTableManager<C, R, N, I>
     /**
      * The last child item.
      */
-    private TethysTableColumn<?, C, R, N, I> theLastChild;
+    private TethysBaseTableColumn<?, C, R, N, I> theLastChild;
 
     /**
      * The Error Predicate.
@@ -326,21 +328,21 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<TethysDecimal, C, R, N, I> declareRawDecimalColumn(C pId);
+    public abstract TethysTableRawDecimalColumn<C, R, N, I> declareRawDecimalColumn(C pId);
 
     /**
      * Declare money column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<TethysMoney, C, R, N, I> declareMoneyColumn(C pId);
+    public abstract TethysTableCurrencyColumn<TethysMoney, C, R, N, I> declareMoneyColumn(C pId);
 
     /**
      * Declare price column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<TethysPrice, C, R, N, I> declarePriceColumn(C pId);
+    public abstract TethysTableCurrencyColumn<TethysPrice, C, R, N, I> declarePriceColumn(C pId);
 
     /**
      * Declare rate column.
@@ -375,7 +377,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<TethysDilutedPrice, C, R, N, I> declareDilutedPriceColumn(C pId);
+    public abstract TethysTableCurrencyColumn<TethysDilutedPrice, C, R, N, I> declareDilutedPriceColumn(C pId);
 
     /**
      * Declare date column.
@@ -432,8 +434,136 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <N> the node type
      * @param <I> the icon type
      */
-    public abstract static class TethysTableColumn<T, C, R, N, I>
-            implements TethysEventProvider<TethysUIEvent> {
+    public interface TethysTableColumn<T, C, R, N, I>
+            extends TethysEventProvider<TethysUIEvent> {
+        /**
+         * Obtain the table manager.
+         * @return the table manager
+         */
+        TethysTableManager<C, R, N, I> getTable();
+
+        /**
+         * Obtain the id of the column.
+         * @return the column id
+         */
+        C getId();
+
+        /**
+         * Obtain the type of the column.
+         * @return the column type
+         */
+        TethysFieldType getCellType();
+
+        /**
+         * Obtain the name of the column.
+         * @return the column name
+         */
+        String getName();
+
+        /**
+         * Set the name of the column.
+         * @param pName the column name
+         */
+        void setName(String pName);
+
+        /**
+         * Set the column width.
+         * @param pWidth the width
+         */
+        void setColumnWidth(int pWidth);
+
+        /**
+         * Is the column visible?
+         * @return true/false
+         */
+        boolean isVisible();
+
+        /**
+         * Set the visibility of the column.
+         * @param pVisible true/false
+         */
+        void setVisible(boolean pVisible);
+
+        /**
+         * Is the column editable?
+         * @return true/false
+         */
+        boolean isEditable();
+
+        /**
+         * Set the edit-ability of the column.
+         * @param pEditable true/false
+         */
+        void setEditable(boolean pEditable);
+
+        /**
+         * Set the cell-editable tester.
+         * @param pEditable the editable tester
+         */
+        void setCellEditable(Predicate<R> pEditable);
+
+        /**
+         * Get the cell-editable tester.
+         * @return the current tester
+         */
+        Predicate<R> getCellEditable();
+
+        /**
+         * Set the validity tester.
+         * @param pValidator the validator
+         */
+        void setValidator(BiFunction<T, R, String> pValidator);
+
+        /**
+         * Get the validity tester.
+         * @return the current tester
+         */
+        BiFunction<T, R, String> getValidator();
+    }
+
+    /**
+     * RawDecimalTableColumn.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the Node type
+     * @param <I> the Icon type
+     */
+    public interface TethysTableRawDecimalColumn<C, R, N, I>
+            extends TethysTableColumn<TethysDecimal, C, R, N, I> {
+        /**
+         * Set the Number of decimals supplier.
+         * @param pSupplier the supplier
+         */
+        void setNumDecimals(Function<R, Integer> pSupplier);
+    }
+
+    /**
+     * CurrencyTableColumn.
+     * @param <T> the data type
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the Node type
+     * @param <I> the Icon type
+     */
+    public interface TethysTableCurrencyColumn<T extends TethysMoney, C, R, N, I>
+            extends TethysTableColumn<T, C, R, N, I> {
+        /**
+         * Set the Deemed Currency supplier.
+         * @param pSupplier the supplier
+         */
+        void setDeemedCurrency(Function<R, Currency> pSupplier);
+    }
+
+    /**
+     * Column Definition.
+     * @param <T> the value type
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public abstract static class TethysBaseTableColumn<T, C, R, N, I>
+            implements TethysTableColumn<T, C, R, N, I> {
         /**
          * The table.
          */
@@ -462,7 +592,7 @@ public abstract class TethysTableManager<C, R, N, I>
         /**
          * The previous sibling of this item.
          */
-        private TethysTableColumn<?, C, R, N, I> thePrevSibling;
+        private TethysBaseTableColumn<?, C, R, N, I> thePrevSibling;
 
         /**
          * Is the column visible?
@@ -490,9 +620,9 @@ public abstract class TethysTableManager<C, R, N, I>
          * @param pId the id of the column
          * @param pType the type of the column
          */
-        protected TethysTableColumn(final TethysTableManager<C, R, N, I> pTable,
-                                    final C pId,
-                                    final TethysFieldType pType) {
+        protected TethysBaseTableColumn(final TethysTableManager<C, R, N, I> pTable,
+                                        final C pId,
+                                        final TethysFieldType pType) {
             /* Store parameters */
             theTable = pTable;
             theId = pId;
@@ -505,7 +635,7 @@ public abstract class TethysTableManager<C, R, N, I>
             theEventManager = new TethysEventManager<>();
 
             /* If the table already has children */
-            TethysTableColumn<?, C, R, N, I> myChild = theTable.theLastChild;
+            TethysBaseTableColumn<?, C, R, N, I> myChild = theTable.theLastChild;
             if (myChild != null) {
                 /* Link to last child */
                 thePrevSibling = myChild;
@@ -527,66 +657,42 @@ public abstract class TethysTableManager<C, R, N, I>
             return theEventManager.getEventRegistrar();
         }
 
-        /**
-         * Obtain the table manager.
-         * @return the table manager
-         */
+        @Override
         public TethysTableManager<C, R, N, I> getTable() {
             return theTable;
         }
 
-        /**
-         * Obtain the id of the column.
-         * @return the column id
-         */
+        @Override
         public C getId() {
             return theId;
         }
 
-        /**
-         * Obtain the type of the column.
-         * @return the column type
-         */
+        @Override
         public TethysFieldType getCellType() {
             return theCellType;
         }
 
-        /**
-         * Obtain the name of the column.
-         * @return the column name
-         */
+        @Override
         public String getName() {
             return theName;
         }
 
-        /**
-         * Set the name of the column.
-         * @param pName the column name
-         */
+        @Override
         public void setName(final String pName) {
             theName = pName;
         }
 
-        /**
-         * Is the column visible?
-         * @return true/false
-         */
+        @Override
         public boolean isVisible() {
             return isVisible;
         }
 
-        /**
-         * Is the column editable?
-         * @return true/false
-         */
+        @Override
         public boolean isEditable() {
             return isEditable;
         }
 
-        /**
-         * Set the visibility of the column.
-         * @param pVisible true/false
-         */
+        @Override
         public void setVisible(final boolean pVisible) {
             /* If we are changing visibility */
             if (pVisible != isVisible) {
@@ -605,10 +711,7 @@ public abstract class TethysTableManager<C, R, N, I>
             }
         }
 
-        /**
-         * Set the edit-ability of the column.
-         * @param pEditable true/false
-         */
+        @Override
         public void setEditable(final boolean pEditable) {
             isEditable = pEditable;
         }
@@ -630,7 +733,7 @@ public abstract class TethysTableManager<C, R, N, I>
         protected int countPreviousVisibleSiblings() {
             /* Determine the previous visible sibling */
             int myCount = 0;
-            TethysTableColumn<?, C, R, N, I> mySibling = thePrevSibling;
+            TethysBaseTableColumn<?, C, R, N, I> mySibling = thePrevSibling;
             while (mySibling != null) {
                 if (mySibling.isVisible) {
                     myCount++;
@@ -640,40 +743,22 @@ public abstract class TethysTableManager<C, R, N, I>
             return myCount;
         }
 
-        /**
-         * Set the column width.
-         * @param pWidth the width
-         */
-        public abstract void setColumnWidth(int pWidth);
-
-        /**
-         * Set the cell-editable tester.
-         * @param pEditable the editable tester
-         */
+        @Override
         public void setCellEditable(final Predicate<R> pEditable) {
             isCellEditable = pEditable;
         }
 
-        /**
-         * Get the cell-editable tester.
-         * @return the current tester
-         */
+        @Override
         public Predicate<R> getCellEditable() {
             return isCellEditable;
         }
 
-        /**
-         * Set the validity tester.
-         * @param pValidator the validator
-         */
+        @Override
         public void setValidator(final BiFunction<T, R, String> pValidator) {
             theValidator = pValidator;
         }
 
-        /**
-         * Get the validity tester.
-         * @return the current tester
-         */
+        @Override
         public BiFunction<T, R, String> getValidator() {
             return theValidator;
         }

@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -35,6 +34,9 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysBaseDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRawDecimalEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
@@ -370,106 +372,106 @@ public abstract class TethysGuiFactory<N, I> {
      * Obtain a new string data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<String, N, I> newStringField();
+    public abstract TethysBaseDataEditField<String, N, I> newStringField();
 
     /**
      * Obtain a new charArray data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<char[], N, I> newCharArrayField();
+    public abstract TethysBaseDataEditField<char[], N, I> newCharArrayField();
 
     /**
      * Obtain a new short data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<Short, N, I> newShortField();
+    public abstract TethysBaseDataEditField<Short, N, I> newShortField();
 
     /**
-     * Obtain a new string data field.
+     * Obtain a new integer data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<Integer, N, I> newIntegerField();
+    public abstract TethysBaseDataEditField<Integer, N, I> newIntegerField();
 
     /**
-     * Obtain a new string data field.
+     * Obtain a new long data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<Long, N, I> newLongField();
+    public abstract TethysBaseDataEditField<Long, N, I> newLongField();
 
     /**
      * Obtain a new raw decimal data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<TethysDecimal, N, I> newRawDecimalField();
+    public abstract TethysRawDecimalEditField<N, I> newRawDecimalField();
 
     /**
      * Obtain a new money data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<TethysMoney, N, I> newMoneyField();
+    public abstract TethysCurrencyEditField<TethysMoney, N, I> newMoneyField();
 
     /**
      * Obtain a new price data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<TethysPrice, N, I> newPriceField();
+    public abstract TethysCurrencyEditField<TethysPrice, N, I> newPriceField();
 
     /**
      * Obtain a new dilutedPrice data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<TethysDilutedPrice, N, I> newDilutedPriceField();
+    public abstract TethysCurrencyEditField<TethysDilutedPrice, N, I> newDilutedPriceField();
 
     /**
      * Obtain a new rate data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<TethysRate, N, I> newRateField();
+    public abstract TethysBaseDataEditField<TethysRate, N, I> newRateField();
 
     /**
      * Obtain a new units data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<TethysUnits, N, I> newUnitsField();
+    public abstract TethysBaseDataEditField<TethysUnits, N, I> newUnitsField();
 
     /**
      * Obtain a new dilution data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<TethysDilution, N, I> newDilutionField();
+    public abstract TethysBaseDataEditField<TethysDilution, N, I> newDilutionField();
 
     /**
      * Obtain a new ratio data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<TethysRatio, N, I> newRatioField();
+    public abstract TethysBaseDataEditField<TethysRatio, N, I> newRatioField();
 
     /**
      * Obtain a new date data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<TethysDate, N, I> newDateField();
+    public abstract TethysBaseDataEditField<TethysDate, N, I> newDateField();
 
     /**
      * Obtain a new scroll data field.
      * @param <T> the item type
      * @return the new field
      */
-    public abstract <T> TethysDataEditField<T, N, I> newScrollField();
+    public abstract <T> TethysBaseDataEditField<T, N, I> newScrollField();
 
     /**
      * Obtain a new list data field.
      * @param <T> the item type
      * @return the new field
      */
-    public abstract <T> TethysDataEditField<TethysItemList<T>, N, I> newListField();
+    public abstract <T> TethysBaseDataEditField<TethysItemList<T>, N, I> newListField();
 
     /**
      * Obtain a new simple icon data field.
      * @param <T> the item type
      * @return the new field
      */
-    public abstract <T> TethysDataEditField<T, N, I> newSimpleIconField();
+    public abstract <T> TethysBaseDataEditField<T, N, I> newSimpleIconField();
 
     /**
      * Obtain a new state icon data field.
@@ -477,7 +479,7 @@ public abstract class TethysGuiFactory<N, I> {
      * @param <S> the state type
      * @return the new field
      */
-    public abstract <T, S> TethysDataEditField<T, N, I> newStateIconField();
+    public abstract <T, S> TethysBaseDataEditField<T, N, I> newStateIconField();
 
     /**
      * Obtain a new colour data field.

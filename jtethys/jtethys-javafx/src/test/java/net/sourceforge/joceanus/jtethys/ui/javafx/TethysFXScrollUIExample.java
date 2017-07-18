@@ -236,7 +236,7 @@ public class TethysFXScrollUIExample
         myGrid.allowCellGrowth(theListValues);
         myGrid.newRow();
 
-        theListButtonMgr.setValue(theHelper.buildToggleList(theListButtonMgr));
+        theListButtonMgr.setValue(theHelper.buildToggleList());
         theListButtonMgr.setText("Tag");
 
         /* Add listener */

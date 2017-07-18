@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
 import java.util.Currency;
+import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -37,10 +38,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
@@ -50,7 +50,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleI
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -431,8 +430,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
      * @param <I> the icon type
      */
     public static class MetisFieldSetMoneyItem<N, I>
-            extends MetisFieldSetPanelItem<TethysMoney, N, I>
-            implements TethysCurrencyField {
+            extends MetisFieldSetPanelItem<TethysMoney, N, I> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -444,9 +442,12 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
             super(pPanel, pField, TethysMoney.class, pPanel.getGuiFactory().newMoneyField());
         }
 
-        @Override
-        public void setDeemedCurrency(final Currency pCurrency) {
-            ((TethysCurrencyField) getEditField()).setDeemedCurrency(pCurrency);
+        /**
+         * Set Deemed Currency supplier.
+         * @param pCurrency the supplier
+         */
+        public void setDeemedCurrency(final Supplier<Currency> pCurrency) {
+            ((TethysCurrencyEditField<TethysMoney, N, I>) getEditField()).setDeemedCurrency(pCurrency);
         }
     }
 
@@ -456,8 +457,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
      * @param <I> the icon type
      */
     public static class MetisFieldSetPriceItem<N, I>
-            extends MetisFieldSetPanelItem<TethysPrice, N, I>
-            implements TethysCurrencyField {
+            extends MetisFieldSetPanelItem<TethysPrice, N, I> {
         /**
          * Constructor.
          * @param pPanel the panel
@@ -469,9 +469,12 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
             super(pPanel, pField, TethysPrice.class, pPanel.getGuiFactory().newPriceField());
         }
 
-        @Override
-        public void setDeemedCurrency(final Currency pCurrency) {
-            ((TethysCurrencyField) getEditField()).setDeemedCurrency(pCurrency);
+        /**
+         * Set Deemed Currency supplier.
+         * @param pCurrency the supplier
+         */
+        public void setDeemedCurrency(final Supplier<Currency> pCurrency) {
+            ((TethysCurrencyEditField<TethysPrice, N, I>) getEditField()).setDeemedCurrency(pCurrency);
         }
     }
 
@@ -627,15 +630,6 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
                                         final MetisDataField pField) {
             /* Initialise underlying class */
             super(pPanel, pField, pPanel.getGuiFactory().newListField());
-        }
-
-        /**
-         * Obtain the List Manager.
-         * @return the manager
-         */
-        @SuppressWarnings("unchecked")
-        public TethysListButtonManager<T, N, I> getListManager() {
-            return ((TethysListField<T, N, I>) getEditField()).getListManager();
         }
 
         @SuppressWarnings("unchecked")

@@ -190,11 +190,6 @@ public class TethysSwingEditUIExample {
     private final TethysSwingDateButtonField theDateField;
 
     /**
-     * The list button manager.
-     */
-    private final TethysSwingListButtonManager<TethysListId> theListButtonMgr;
-
-    /**
      * The list button field.
      */
     private final TethysSwingListButtonField<TethysListId> theListField;
@@ -270,7 +265,6 @@ public class TethysSwingEditUIExample {
         theIconField = theGuiFactory.newSimpleIconField();
         theIconButtonMgr = theIconField.getIconManager();
         theListField = theGuiFactory.newListField();
-        theListButtonMgr = theListField.getListManager();
     }
 
     /**
@@ -509,7 +503,7 @@ public class TethysSwingEditUIExample {
         myGrid.addCell(theListField);
         myGrid.allowCellGrowth(theListField);
         myGrid.newRow();
-        theListField.setValue(theHelper.buildToggleList(theListButtonMgr));
+        theListField.setValue(theHelper.buildToggleList());
         theListField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theListField, e));
 
         /* Create IconButton field line */
@@ -630,9 +624,9 @@ public class TethysSwingEditUIExample {
      */
     private void setCurrency(final Currency pCurrency) {
         /* Set the deemed currency */
-        theMoneyField.setDeemedCurrency(pCurrency);
-        thePriceField.setDeemedCurrency(pCurrency);
-        theDilutedPriceField.setDeemedCurrency(pCurrency);
+        theMoneyField.setDeemedCurrency(() -> pCurrency);
+        thePriceField.setDeemedCurrency(() -> pCurrency);
+        theDilutedPriceField.setDeemedCurrency(() -> pCurrency);
     }
 
     /**

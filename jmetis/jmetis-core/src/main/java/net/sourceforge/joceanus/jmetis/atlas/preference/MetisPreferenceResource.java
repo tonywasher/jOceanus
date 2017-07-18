@@ -139,6 +139,11 @@ public enum MetisPreferenceResource implements TethysResourceId {
     UI_RANGE_MAX("ui.range.Maximum"),
 
     /**
+     * Range error.
+     */
+    UI_RANGE_ERROR("ui.range.Error"),
+
+    /**
      * Store Error text.
      */
     UI_ERROR_STORE("ui.error.Store"),

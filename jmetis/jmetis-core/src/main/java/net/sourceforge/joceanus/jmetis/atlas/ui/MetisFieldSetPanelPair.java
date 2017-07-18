@@ -28,13 +28,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -275,16 +276,16 @@ public class MetisFieldSetPanelPair<N, I>
     /**
      * Set deemed currency.
      * @param pField the field
-     * @param pCurrency the currency
+     * @param pCurrency the currency supplier
      */
     public void setDeemedCurrency(final MetisDataField pField,
-                                  final Currency pCurrency) {
+                                  final Supplier<Currency> pCurrency) {
         /* Look up the field and check that it is a currency item */
         MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
         if ((myChild != null)
-            && myChild instanceof TethysCurrencyField) {
+            && myChild instanceof TethysCurrencyEditField) {
             /* Set the currency */
-            ((TethysCurrencyField) myChild).setDeemedCurrency(pCurrency);
+            ((TethysCurrencyEditField<?, ?, ?>) myChild).setDeemedCurrency(pCurrency);
         }
     }
 

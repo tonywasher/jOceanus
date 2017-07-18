@@ -154,19 +154,6 @@ public class TethysScrollUITestHelper<N, I> {
 
     /**
      * Create list.
-     * @param pManager the list manager
-     * @return the list
-     */
-    public TethysItemList<TethysListId> buildToggleList(final TethysListButtonManager<TethysListId, N, I> pManager) {
-        /* Set the display count */
-        pManager.getMenu().setMaxDisplayItems(MAX_ITEMS);
-
-        /* Build the toggle list */
-        return buildToggleList();
-    }
-
-    /**
-     * Create list.
      * @return the list
      */
     public TethysItemList<TethysListId> buildToggleList() {

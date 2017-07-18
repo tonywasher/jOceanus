@@ -34,6 +34,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Currency;
 import java.util.function.Function;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -54,7 +56,22 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysCharArrayEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysDilutedPriceEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysDilutionEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysIntegerEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysLongEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysMoneyEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysMoneyEditConverterBase;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysPriceEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysRateEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysRatioEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysRawDecimalEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysShortEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysStringEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysUnitsEditConverter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysBaseDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
@@ -63,7 +80,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <T> the data type
  */
 public abstract class TethysSwingDataTextField<T>
-        extends TethysDataEditField<T, JComponent, Icon> {
+        extends TethysBaseDataEditField<T, JComponent, Icon> {
     /**
      * The label name.
      */
@@ -113,11 +130,6 @@ public abstract class TethysSwingDataTextField<T>
      * The command button.
      */
     private final JButton theCmdButton;
-
-    /**
-     * Do we show the command button?
-     */
-    private boolean doShowCmdButton;
 
     /**
      * Constructor.
@@ -232,10 +244,9 @@ public abstract class TethysSwingDataTextField<T>
     public void showCmdButton(final boolean pShow) {
         /* Remove any button that is displaying */
         theEditNode.remove(theCmdButton);
-        doShowCmdButton = pShow;
 
         /* If we have a button to display */
-        if (doShowCmdButton) {
+        if (pShow) {
             theEditNode.add(theCmdButton, BorderLayout.LINE_END);
         }
     }
@@ -266,6 +277,13 @@ public abstract class TethysSwingDataTextField<T>
     @Override
     public void adjustField() {
         theAdjuster.adjustField(this);
+    }
+
+    /**
+     * parse the data.
+     */
+    protected void parseData() {
+        /* NoOp */
     }
 
     /**
@@ -385,15 +403,14 @@ public abstract class TethysSwingDataTextField<T>
             return theControl.getConverter();
         }
 
-        /**
-         * Set the validator.
-         * <p>
-         * This should validate the value and return null for OK, and an error text for failure
-         * @param pValidator the validator
-         * @return the original validator
-         */
-        public Function<T, String> setValidator(final Function<T, String> pValidator) {
-            return theControl.setValidator(pValidator);
+        @Override
+        public void setValidator(final Function<T, String> pValidator) {
+            theControl.setValidator(pValidator);
+        }
+
+        @Override
+        protected void parseData() {
+            processValue();
         }
 
         /**
@@ -605,8 +622,7 @@ public abstract class TethysSwingDataTextField<T>
      * ShortSwingTextField class.
      */
     public static class TethysSwingShortTextField
-            extends TethysSwingTextEditField<Short>
-            implements TethysRangedField<Short> {
+            extends TethysSwingTextEditField<Short> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -629,24 +645,13 @@ public abstract class TethysSwingDataTextField<T>
         protected TethysSwingShortTextField cloneField(final JLabel pLabel) {
             return new TethysSwingShortTextField(getGuiFactory(), pLabel);
         }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void setValueRange(final Short pMinimum,
-                                  final Short pMaximum) {
-            TethysDataEditConverter<Short> myConverter = getConverter();
-            if (myConverter instanceof TethysRangedField) {
-                ((TethysRangedField<Short>) myConverter).setValueRange(pMinimum, pMaximum);
-            }
-        }
     }
 
     /**
      * SwingIntegerTextField class.
      */
     public static class TethysSwingIntegerTextField
-            extends TethysSwingTextEditField<Integer>
-            implements TethysRangedField<Integer> {
+            extends TethysSwingTextEditField<Integer> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -669,24 +674,13 @@ public abstract class TethysSwingDataTextField<T>
         protected TethysSwingIntegerTextField cloneField(final JLabel pLabel) {
             return new TethysSwingIntegerTextField(getGuiFactory(), pLabel);
         }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void setValueRange(final Integer pMinimum,
-                                  final Integer pMaximum) {
-            TethysDataEditConverter<Integer> myConverter = getConverter();
-            if (myConverter instanceof TethysRangedField) {
-                ((TethysRangedField<Integer>) myConverter).setValueRange(pMinimum, pMaximum);
-            }
-        }
     }
 
     /**
      * SwingLongTextField class.
      */
     public static class TethysSwingLongTextField
-            extends TethysSwingTextEditField<Long>
-            implements TethysRangedField<Long> {
+            extends TethysSwingTextEditField<Long> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -709,16 +703,6 @@ public abstract class TethysSwingDataTextField<T>
         protected TethysSwingLongTextField cloneField(final JLabel pLabel) {
             return new TethysSwingLongTextField(getGuiFactory(), pLabel);
         }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void setValueRange(final Long pMinimum,
-                                  final Long pMaximum) {
-            TethysDataEditConverter<Long> myConverter = getConverter();
-            if (myConverter instanceof TethysRangedField) {
-                ((TethysRangedField<Long>) myConverter).setValueRange(pMinimum, pMaximum);
-            }
-        }
     }
 
     /**
@@ -726,7 +710,7 @@ public abstract class TethysSwingDataTextField<T>
      */
     public static class TethysSwingRawDecimalTextField
             extends TethysSwingTextEditField<TethysDecimal>
-            implements TethysRawDecimalField {
+            implements TethysRawDecimalEditField<JComponent, Icon> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -751,11 +735,13 @@ public abstract class TethysSwingDataTextField<T>
         }
 
         @Override
-        public void setNumDecimals(final int pNumDecimals) {
-            TethysDataEditConverter<TethysDecimal> myConverter = getConverter();
-            if (myConverter instanceof TethysRawDecimalField) {
-                ((TethysRawDecimalField) myConverter).setNumDecimals(pNumDecimals);
-            }
+        protected TethysRawDecimalEditConverter getConverter() {
+            return (TethysRawDecimalEditConverter) super.getConverter();
+        }
+
+        @Override
+        public void setNumDecimals(final IntSupplier pSupplier) {
+            getConverter().setNumDecimals(pSupplier);
         }
     }
 
@@ -765,7 +751,7 @@ public abstract class TethysSwingDataTextField<T>
      */
     protected abstract static class TethysSwingCurrencyTextFieldBase<T extends TethysMoney>
             extends TethysSwingTextEditField<T>
-            implements TethysCurrencyField {
+            implements TethysCurrencyEditField<T, JComponent, Icon> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -784,8 +770,8 @@ public abstract class TethysSwingDataTextField<T>
         }
 
         @Override
-        public void setDeemedCurrency(final Currency pCurrency) {
-            getConverter().setDeemedCurrency(pCurrency);
+        public void setDeemedCurrency(final Supplier<Currency> pSupplier) {
+            getConverter().setDeemedCurrency(pSupplier);
         }
     }
 
@@ -793,8 +779,7 @@ public abstract class TethysSwingDataTextField<T>
      * SwingMoneyTextField class.
      */
     public static class TethysSwingMoneyTextField
-            extends TethysSwingCurrencyTextFieldBase<TethysMoney>
-            implements TethysRangedField<TethysMoney> {
+            extends TethysSwingCurrencyTextFieldBase<TethysMoney> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -817,24 +802,13 @@ public abstract class TethysSwingDataTextField<T>
         protected TethysSwingMoneyTextField cloneField(final JLabel pLabel) {
             return new TethysSwingMoneyTextField(getGuiFactory(), pLabel);
         }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void setValueRange(final TethysMoney pMinimum,
-                                  final TethysMoney pMaximum) {
-            TethysDataEditConverter<TethysMoney> myConverter = getConverter();
-            if (myConverter instanceof TethysRangedField) {
-                ((TethysRangedField<TethysMoney>) myConverter).setValueRange(pMinimum, pMaximum);
-            }
-        }
     }
 
     /**
      * SwingPriceTextField class.
      */
     public static class TethysSwingPriceTextField
-            extends TethysSwingCurrencyTextFieldBase<TethysPrice>
-            implements TethysRangedField<TethysPrice> {
+            extends TethysSwingCurrencyTextFieldBase<TethysPrice> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -857,24 +831,13 @@ public abstract class TethysSwingDataTextField<T>
         protected TethysSwingPriceTextField cloneField(final JLabel pLabel) {
             return new TethysSwingPriceTextField(getGuiFactory(), pLabel);
         }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void setValueRange(final TethysPrice pMinimum,
-                                  final TethysPrice pMaximum) {
-            TethysDataEditConverter<TethysPrice> myConverter = getConverter();
-            if (myConverter instanceof TethysRangedField) {
-                ((TethysRangedField<TethysPrice>) myConverter).setValueRange(pMinimum, pMaximum);
-            }
-        }
     }
 
     /**
      * SwingDilutedPriceTextField class.
      */
     public static class TethysSwingDilutedPriceTextField
-            extends TethysSwingCurrencyTextFieldBase<TethysDilutedPrice>
-            implements TethysRangedField<TethysDilutedPrice> {
+            extends TethysSwingCurrencyTextFieldBase<TethysDilutedPrice> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -897,24 +860,13 @@ public abstract class TethysSwingDataTextField<T>
         protected TethysSwingDilutedPriceTextField cloneField(final JLabel pLabel) {
             return new TethysSwingDilutedPriceTextField(getGuiFactory(), pLabel);
         }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void setValueRange(final TethysDilutedPrice pMinimum,
-                                  final TethysDilutedPrice pMaximum) {
-            TethysDataEditConverter<TethysDilutedPrice> myConverter = getConverter();
-            if (myConverter instanceof TethysRangedField) {
-                ((TethysRangedField<TethysDilutedPrice>) myConverter).setValueRange(pMinimum, pMaximum);
-            }
-        }
     }
 
     /**
      * SwingRateTextField class.
      */
     public static class TethysSwingRateTextField
-            extends TethysSwingTextEditField<TethysRate>
-            implements TethysRangedField<TethysRate> {
+            extends TethysSwingTextEditField<TethysRate> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -937,24 +889,13 @@ public abstract class TethysSwingDataTextField<T>
         protected TethysSwingRateTextField cloneField(final JLabel pLabel) {
             return new TethysSwingRateTextField(getGuiFactory(), pLabel);
         }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void setValueRange(final TethysRate pMinimum,
-                                  final TethysRate pMaximum) {
-            TethysDataEditConverter<TethysRate> myConverter = getConverter();
-            if (myConverter instanceof TethysRangedField) {
-                ((TethysRangedField<TethysRate>) myConverter).setValueRange(pMinimum, pMaximum);
-            }
-        }
     }
 
     /**
      * SwingUnitsTextField class.
      */
     public static class TethysSwingUnitsTextField
-            extends TethysSwingTextEditField<TethysUnits>
-            implements TethysRangedField<TethysUnits> {
+            extends TethysSwingTextEditField<TethysUnits> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -977,24 +918,13 @@ public abstract class TethysSwingDataTextField<T>
         protected TethysSwingUnitsTextField cloneField(final JLabel pLabel) {
             return new TethysSwingUnitsTextField(getGuiFactory(), pLabel);
         }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void setValueRange(final TethysUnits pMinimum,
-                                  final TethysUnits pMaximum) {
-            TethysDataEditConverter<TethysUnits> myConverter = getConverter();
-            if (myConverter instanceof TethysRangedField) {
-                ((TethysRangedField<TethysUnits>) myConverter).setValueRange(pMinimum, pMaximum);
-            }
-        }
     }
 
     /**
      * SwingDilutionTextField class.
      */
     public static class TethysSwingDilutionTextField
-            extends TethysSwingTextEditField<TethysDilution>
-            implements TethysRangedField<TethysDilution> {
+            extends TethysSwingTextEditField<TethysDilution> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -1017,24 +947,13 @@ public abstract class TethysSwingDataTextField<T>
         protected TethysSwingDilutionTextField cloneField(final JLabel pLabel) {
             return new TethysSwingDilutionTextField(getGuiFactory(), pLabel);
         }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void setValueRange(final TethysDilution pMinimum,
-                                  final TethysDilution pMaximum) {
-            TethysDataEditConverter<TethysDilution> myConverter = getConverter();
-            if (myConverter instanceof TethysRangedField) {
-                ((TethysRangedField<TethysDilution>) myConverter).setValueRange(pMinimum, pMaximum);
-            }
-        }
     }
 
     /**
      * SwingRatioTextField class.
      */
     public static class TethysSwingRatioTextField
-            extends TethysSwingTextEditField<TethysRatio>
-            implements TethysRangedField<TethysRatio> {
+            extends TethysSwingTextEditField<TethysRatio> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -1056,16 +975,6 @@ public abstract class TethysSwingDataTextField<T>
         @Override
         protected TethysSwingRatioTextField cloneField(final JLabel pLabel) {
             return new TethysSwingRatioTextField(getGuiFactory(), pLabel);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void setValueRange(final TethysRatio pMinimum,
-                                  final TethysRatio pMaximum) {
-            TethysDataEditConverter<TethysRatio> myConverter = getConverter();
-            if (myConverter instanceof TethysRangedField) {
-                ((TethysRangedField<TethysRatio>) myConverter).setValueRange(pMinimum, pMaximum);
-            }
         }
     }
 }

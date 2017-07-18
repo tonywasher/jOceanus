@@ -36,7 +36,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
@@ -587,8 +586,7 @@ public final class TethysSwingDataButtonField {
      * @param <T> the data type
      */
     public static class TethysSwingListButtonField<T>
-            extends TethysSwingDataTextField<TethysItemList<T>>
-            implements TethysListField<T, JComponent, Icon> {
+            extends TethysSwingDataTextField<TethysItemList<T>> {
         /**
          * The icon manager.
          */
@@ -652,11 +650,6 @@ public final class TethysSwingDataButtonField {
                 default:
                     break;
             }
-        }
-
-        @Override
-        public TethysSwingListButtonManager<T> getListManager() {
-            return theManager;
         }
 
         @Override

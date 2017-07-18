@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
@@ -505,8 +504,7 @@ public final class TethysFXDataButtonField {
      * @param <T> the data type
      */
     public static class TethysFXListButtonField<T>
-            extends TethysFXDataTextField<TethysItemList<T>>
-            implements TethysListField<T, Node, Node> {
+            extends TethysFXDataTextField<TethysItemList<T>> {
         /**
          * The list manager.
          */
@@ -561,11 +559,6 @@ public final class TethysFXDataButtonField {
                 default:
                     break;
             }
-        }
-
-        @Override
-        public TethysFXListButtonManager<T> getListManager() {
-            return theManager;
         }
 
         @Override

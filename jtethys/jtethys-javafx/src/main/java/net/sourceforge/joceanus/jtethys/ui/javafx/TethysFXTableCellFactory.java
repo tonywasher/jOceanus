@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import java.util.Currency;
 import java.util.List;
 
 import javafx.collections.ObservableList;
@@ -45,11 +44,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRawDecimalField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
@@ -79,6 +75,10 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXUnitsTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager.TethysFXStateIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableColumn;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutedPriceColumn;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableMoneyColumn;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTablePriceColumn;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableRawDecimalColumn;
 
 /**
  * TableCell implementations built on DataEditFields.
@@ -312,11 +312,6 @@ public class TethysFXTableCellFactory<C, R>
             extends TableCell<R, T>
             implements TethysEventProvider<TethysUIEvent>, TethysTableCell<T, C, R, Node, Node> {
         /**
-         * The Table.
-         */
-        private final TethysFXTableManager<C, R> theTable;
-
-        /**
          * The Column.
          */
         private final TethysFXTableColumn<T, C, R> theColumn;
@@ -362,7 +357,6 @@ public class TethysFXTableCellFactory<C, R>
                                     final TethysFXDataTextField<T> pControl,
                                     final Class<T> pClass) {
             /* Record the parameters */
-            theTable = pColumn.getTable();
             theColumn = pColumn;
             theControl = pControl;
             theClass = pClass;
@@ -435,7 +429,7 @@ public class TethysFXTableCellFactory<C, R>
          */
         protected boolean isCellEditable() {
             /* Check for table, column and cell locks */
-            return !theTable.isEditLocked()
+            return !getTable().isEditLocked()
                    && theColumn.isEditable()
                    && theColumn.getCellEditable().test(getActiveRow());
         }
@@ -445,7 +439,7 @@ public class TethysFXTableCellFactory<C, R>
             /* Perform preEdit tasks */
             if (isCellEditable()) {
                 /* Record the active cell */
-                theTable.setActiveCell(this);
+                getTable().setActiveCell(this);
 
                 /* Start the edit */
                 super.startEdit();
@@ -522,7 +516,7 @@ public class TethysFXTableCellFactory<C, R>
 
                 /* Note that we have made a change */
                 postCommitHook();
-                theTable.setActiveCell(null);
+                getTable().setActiveCell(null);
             }
         }
 
@@ -546,7 +540,7 @@ public class TethysFXTableCellFactory<C, R>
          */
         private void handleCancel() {
             cancelEdit();
-            theTable.setActiveCell(null);
+            getTable().setActiveCell(null);
         }
 
         @Override
@@ -685,8 +679,7 @@ public class TethysFXTableCellFactory<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableRawDecimalCell<C, R>
-            extends TethysFXTableCell<TethysDecimal, C, R>
-            implements TethysRawDecimalField {
+            extends TethysFXTableCell<TethysDecimal, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -695,16 +688,17 @@ public class TethysFXTableCellFactory<C, R>
         protected TethysFXTableRawDecimalCell(final TethysFXTableColumn<TethysDecimal, C, R> pColumn,
                                               final TethysFXGuiFactory pFactory) {
             super(pColumn, pFactory.newRawDecimalField(), TethysDecimal.class);
+            getControl().setNumDecimals(() -> getColumn().getNumDecimals().apply(getActiveRow()));
+        }
+
+        @Override
+        public TethysFXTableRawDecimalColumn<C, R> getColumn() {
+            return (TethysFXTableRawDecimalColumn<C, R>) super.getColumn();
         }
 
         @Override
         public TethysFXRawDecimalTextField getControl() {
             return (TethysFXRawDecimalTextField) super.getControl();
-        }
-
-        @Override
-        public void setNumDecimals(final int pNumDecimals) {
-            getControl().setNumDecimals(pNumDecimals);
         }
     }
 
@@ -714,8 +708,7 @@ public class TethysFXTableCellFactory<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableMoneyCell<C, R>
-            extends TethysFXTableCell<TethysMoney, C, R>
-            implements TethysCurrencyField {
+            extends TethysFXTableCell<TethysMoney, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -724,16 +717,17 @@ public class TethysFXTableCellFactory<C, R>
         protected TethysFXTableMoneyCell(final TethysFXTableColumn<TethysMoney, C, R> pColumn,
                                          final TethysFXGuiFactory pFactory) {
             super(pColumn, pFactory.newMoneyField(), TethysMoney.class);
+            getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
+        }
+
+        @Override
+        public TethysFXTableMoneyColumn<C, R> getColumn() {
+            return (TethysFXTableMoneyColumn<C, R>) super.getColumn();
         }
 
         @Override
         public TethysFXMoneyTextField getControl() {
             return (TethysFXMoneyTextField) super.getControl();
-        }
-
-        @Override
-        public void setDeemedCurrency(final Currency pCurrency) {
-            getControl().setDeemedCurrency(pCurrency);
         }
     }
 
@@ -743,8 +737,7 @@ public class TethysFXTableCellFactory<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTablePriceCell<C, R>
-            extends TethysFXTableCell<TethysPrice, C, R>
-            implements TethysCurrencyField {
+            extends TethysFXTableCell<TethysPrice, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -753,16 +746,17 @@ public class TethysFXTableCellFactory<C, R>
         protected TethysFXTablePriceCell(final TethysFXTableColumn<TethysPrice, C, R> pColumn,
                                          final TethysFXGuiFactory pFactory) {
             super(pColumn, pFactory.newPriceField(), TethysPrice.class);
+            getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
+        }
+
+        @Override
+        public TethysFXTablePriceColumn<C, R> getColumn() {
+            return (TethysFXTablePriceColumn<C, R>) super.getColumn();
         }
 
         @Override
         public TethysFXPriceTextField getControl() {
             return (TethysFXPriceTextField) super.getControl();
-        }
-
-        @Override
-        public void setDeemedCurrency(final Currency pCurrency) {
-            getControl().setDeemedCurrency(pCurrency);
         }
     }
 
@@ -841,8 +835,7 @@ public class TethysFXTableCellFactory<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableDilutedPriceCell<C, R>
-            extends TethysFXTableCell<TethysDilutedPrice, C, R>
-            implements TethysCurrencyField {
+            extends TethysFXTableCell<TethysDilutedPrice, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -851,16 +844,17 @@ public class TethysFXTableCellFactory<C, R>
         protected TethysFXTableDilutedPriceCell(final TethysFXTableColumn<TethysDilutedPrice, C, R> pColumn,
                                                 final TethysFXGuiFactory pFactory) {
             super(pColumn, pFactory.newDilutedPriceField(), TethysDilutedPrice.class);
+            getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
+        }
+
+        @Override
+        public TethysFXTableDilutedPriceColumn<C, R> getColumn() {
+            return (TethysFXTableDilutedPriceColumn<C, R>) super.getColumn();
         }
 
         @Override
         public TethysFXDilutedPriceTextField getControl() {
             return (TethysFXDilutedPriceTextField) super.getControl();
-        }
-
-        @Override
-        public void setDeemedCurrency(final Currency pCurrency) {
-            getControl().setDeemedCurrency(pCurrency);
         }
     }
 
@@ -955,8 +949,7 @@ public class TethysFXTableCellFactory<C, R>
      * @param <T> the column item class
      */
     public static class TethysFXTableListCell<T, C, R>
-            extends TethysFXTableCell<TethysItemList<T>, C, R>
-            implements TethysListField<T, Node, Node> {
+            extends TethysFXTableCell<TethysItemList<T>, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -972,11 +965,6 @@ public class TethysFXTableCellFactory<C, R>
         @Override
         public TethysFXListButtonField<T> getControl() {
             return (TethysFXListButtonField<T>) super.getControl();
-        }
-
-        @Override
-        public TethysFXListButtonManager<T> getListManager() {
-            return getControl().getListManager();
         }
 
         @SuppressWarnings("unchecked")

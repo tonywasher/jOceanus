@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRangedField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysBaseDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDirectorySelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
@@ -374,12 +374,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         /**
          * The Field item.
          */
-        private final TethysDataEditField<Integer, N, I> theField;
-
-        /**
-         * The Ranged Field.
-         */
-        private final TethysRangedField<Integer> theRangedField;
+        private final TethysBaseDataEditField<Integer, N, I> theField;
 
         /**
          * The Label item.
@@ -390,18 +385,12 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
          * Constructor.
          * @param pItem the item
          */
-        @SuppressWarnings("unchecked")
         private IntegerPreferenceElement(final MetisIntegerPreference<K> pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.newIntegerField();
             theField.setEditable(true);
             theField.setPreferredWidth(TethysFieldType.INTEGER.getDefaultWidth());
-
-            /* Access the ranged field */
-            theRangedField = theField instanceof TethysRangedField
-                                                                   ? (TethysRangedField<Integer>) theField
-                                                                   : null;
 
             /* Create the label */
             TethysLabel<N, I> myLabel = theGuiFactory.newLabel(pItem.getDisplay()
@@ -431,11 +420,8 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             /* Update the field */
             theField.setValue(theItem.getValue());
 
-            /* If we have a ranged field */
-            if (theRangedField != null) {
-                /* handle the range */
-                handleRange();
-            }
+            /* handle the range */
+            handleRange();
 
             /* Set changed indication */
             theField.setTheAttributeState(TethysFieldAttribute.CHANGED, theItem.isChanged());
@@ -456,7 +442,9 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             boolean hasMax = myMax != null;
 
             /* Set the valid range */
-            theRangedField.setValueRange(myMin, myMax);
+            theField.setValidator(p -> (p < myMin) || (p > myMax)
+                                                                  ? MetisPreferenceResource.UI_RANGE_ERROR.getValue()
+                                                                  : null);
             theRangeLabel.setText(null);
 
             /* If we have a minimum or maximum */

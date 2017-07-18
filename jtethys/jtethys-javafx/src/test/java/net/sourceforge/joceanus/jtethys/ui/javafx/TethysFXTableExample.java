@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIc
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableStateIconCell;
@@ -292,13 +293,10 @@ public class TethysFXTableExample
      */
     @SuppressWarnings("unchecked")
     private void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysFXTableCell<?, TethysDataId, TethysFXTableItem> myCell = pEvent.getDetails(TethysFXTableCell.class);
+        TethysTableCell<?, TethysDataId, TethysFXTableItem, ?, ?> myCell = pEvent.getDetails(TethysTableCell.class);
         TethysFXTableItem myRow = myCell.getActiveRow();
         myRow.incrementUpdates();
-        myCell.repaintColumnCell(TethysDataId.NAME);
-        if (myCell.getColumnId().equals(TethysDataId.BOOLEAN)) {
-            myCell.repaintCellRow();
-        }
+        myCell.repaintCellRow();
     }
 
     /**
@@ -308,7 +306,7 @@ public class TethysFXTableExample
      */
     @SuppressWarnings("unchecked")
     private TethysDataId getColumnId(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysFXTableCell<?, TethysDataId, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
+        TethysTableCell<?, TethysDataId, ?, ?, ?> myCell = pEvent.getDetails(TethysTableCell.class);
         return myCell.getColumnId();
     }
 
